@@ -62,12 +62,11 @@ import libomv.assets.AssetManager.AssetDownload;
 import libomv.assets.AssetManager.AssetReceivedCallback;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.AttachmentResourcesMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ChatSessionAcceptInvitation;
-import libomv.capabilities.CapsMessage.ChatSessionRequestMessage;
 import libomv.capabilities.CapsMessage.ChatSessionRequestStartConference;
+import libomv.capabilities.IMessage;
 import libomv.packets.ActivateGesturesPacket;
 import libomv.packets.AgentAnimationPacket;
 import libomv.packets.AgentHeightWidthPacket;
@@ -1451,7 +1450,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	}
 
 	@Override
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1636,7 +1635,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
             // Allow region id to be correctly set by caller or fetched from _Client.
             if (regionID == null)
-            	regionID = _Client.Network.getCurrentSim().Region.ID;
+            	regionID = _Client.Network.getCurrentSim().RegionID;
             im.MessageBlock.RegionID = regionID;
 
             if (binaryBucket != null)
@@ -1764,13 +1763,12 @@ public class AgentManager implements PacketCallback, CapsCallback {
         URI uri = _Client.Network.getCapabilityURI("ChatSessionRequest");
         if (uri != null)
         {
-            ChatSessionRequestMessage message = (ChatSessionRequestMessage)_Client.Messages.CreateMessage(CapsEventType.ChatSessionRequest, "accept invitation");
-            ChatSessionAcceptInvitation acceptInvite = (ChatSessionAcceptInvitation)message.Request;
+            ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
  
             acceptInvite.SessionID = session_id;
 
             CapsClient request = new CapsClient(uri);
-            request.BeginGetResponse(message.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+            request.BeginGetResponse(acceptInvite.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 
             synchronized (GroupChatSessions)
             {
@@ -1799,8 +1797,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
         URI url = _Client.Network.getCapabilityURI("ChatSessionRequest");
         if (url != null)
         {
-            ChatSessionRequestMessage message = (ChatSessionRequestMessage)_Client.Messages.CreateMessage(CapsEventType.ChatSessionRequest, "start conference");
-            ChatSessionRequestStartConference startConference = (ChatSessionRequestStartConference)message.Request;
+            ChatSessionRequestStartConference startConference = _Client.Messages.new ChatSessionRequestStartConference();
             
             startConference.AgentsBlock = new UUID[participants.length];
             for (int i = 0; i < participants.length; i++)
@@ -1810,7 +1807,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
             startConference.SessionID = tmp_session_id;
 
             CapsClient request = new CapsClient(url);
-            request.BeginGetResponse(message.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+            request.BeginGetResponse(startConference.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
         }
         else
         {
@@ -3064,7 +3061,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				teleportMessage = "Teleport finished";
 				teleportStatus = TeleportStatus.Finished;
 
-				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Region.Name + "("
+				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Name + "("
 						   + _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
 			} else {
 				teleportMessage = "Failed to connect to the new sim after a teleport";

@@ -39,10 +39,10 @@ import libomv.AgentManager.InstantMessageOnline;
 import libomv.GroupManager.GroupAccountTransactions.TransactionEntry;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsCallback;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.AgentDropGroupMessage;
 import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.capabilities.IMessage;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.LLSD.LLSDXml;
@@ -697,7 +697,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	}
 
 	@Override
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
         switch (message.getType())
         {
@@ -1419,7 +1419,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     // #endregion
 
     // #region Packet Handlers
-    protected final void AgentGroupDataUpdateMessageHandler(CapsMessage message, Simulator simulator)
+    protected final void AgentGroupDataUpdateMessageHandler(IMessage message, Simulator simulator)
     {
         if (OnCurrentGroups.count() > 0)
         {
@@ -1480,7 +1480,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
-    protected final void AgentDropGroupMessageHandler(CapsMessage message, Simulator simulator)
+    protected final void AgentDropGroupMessageHandler(IMessage message, Simulator simulator)
     {
         if (OnGroupDropped.count() > 0)
         {

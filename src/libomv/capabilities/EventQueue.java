@@ -135,12 +135,12 @@ public class EventQueue extends CapsClient
             	    String name = evt.get("message").AsString();
                     CapsEventType capsKey = CapsEventType.valueOf(name);
 
-                	CapsMessage message = Simulator.getClient().Messages.DecodeEvent(capsKey, body);
+                	IMessage message = Simulator.getClient().Messages.DecodeEvent(capsKey, body);
                 	if (message != null)
                 	{
                         if (Simulator.getClient().Settings.SYNC_PACKETCALLBACKS)
                         {
-                	        Simulator.getClient().Network.DistributeCaps(capsKey, message, Simulator);
+                	        Simulator.getClient().Network.DistributeCaps(message, Simulator);
                         }
                         else
                         {

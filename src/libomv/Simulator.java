@@ -69,76 +69,88 @@ import libomv.utils.RefObject;
 // Region class representing the block of land in the metaverse.
 public class Simulator extends Thread {
     /* Simulator (region) properties */
-    public class RegionFlags
+	// [Flags]
+    public static class RegionFlags
     {
         /* No flags set */
-        public final int None = 0;
+        public static final int None = 0;
         /* Agents can take damage and be killed */
-        public final int AllowDamage = 1 << 0;
+        public static final int AllowDamage = 1 << 0;
         /* Landmarks can be created here */
-        public final int AllowLandmark = 1 << 1;
+        public static final int AllowLandmark = 1 << 1;
         /* Home position can be set in this sim */
-        public final int AllowSetHome = 1 << 2;
+        public static final int AllowSetHome = 1 << 2;
         /* Home position is reset when an agent teleports away */
-        public final int ResetHomeOnTeleport = 1 << 3;
+        public static final int ResetHomeOnTeleport = 1 << 3;
         /* Sun does not move */
-        public final int SunFixed = 1 << 4;
+        public static final int SunFixed = 1 << 4;
         /* No object, land, etc. taxes */
-        public final int TaxFree = 1 << 5;
+        public static final int TaxFree = 1 << 5;
         /* Disable heightmap alterations (agents can still plant foliage) */
-        public final int BlockTerraform = 1 << 6;
+        public static final int BlockTerraform = 1 << 6;
         /* Land cannot be released, sold, or purchased */
-        public final int BlockLandResell = 1 << 7;
+        public static final int BlockLandResell = 1 << 7;
         /* All content is wiped nightly */
-        public final int Sandbox = 1 << 8;
+        public static final int Sandbox = 1 << 8;
         /* Unknown: Related to the availability of an overview world map tile.(Think mainland images when zoomed out.) */
-        public final int NullLayer = 1 << 9;
+        public static final int NullLayer = 1 << 9;
         /* Unknown: Related to region debug flags. Possibly to skip processing of agent interaction with world. */
-        public final int SkipAgentAction = 1 << 10;
+        public static final int SkipAgentAction = 1 << 10;
         /* Region does not update agent prim interest lists. Internal debugging option. */
-        public final int SkipUpdateInterestList = 1 << 11;
+        public static final int SkipUpdateInterestList = 1 << 11;
         /* No collision detection for non-agent objects */
-        public final int SkipCollisions = 1 << 12;
+        public static final int SkipCollisions = 1 << 12;
         /* No scripts are ran */
-        public final int SkipScripts = 1 << 13;
+        public static final int SkipScripts = 1 << 13;
         /* All physics processing is turned off */
-        public final int SkipPhysics = 1 << 14;
+        public static final int SkipPhysics = 1 << 14;
         /* Region can be seen from other regions on world map. (Legacy world map option?) */
-        public final int ExternallyVisible = 1 << 15;
+        public static final int ExternallyVisible = 1 << 15;
         /* Region can be seen from mainland on world map. (Legacy world map option?) */
-        public final int MainlandVisible = 1 << 16;
+        public static final int MainlandVisible = 1 << 16;
         /* Agents not explicitly on the access list can visit the region. */
-        public final int PublicAllowed = 1 << 17;
+        public static final int PublicAllowed = 1 << 17;
         /* Traffic calculations are not run across entire region, overrides parcel settings. */
-        public final int BlockDwell = 1 << 18;
+        public static final int BlockDwell = 1 << 18;
         /* Flight is disabled (not currently enforced by the sim) */
-        public final int NoFly = 1 << 19;
+        public static final int NoFly = 1 << 19;
         /* Allow direct (p2p) teleporting */
-        public final int AllowDirectTeleport = 1 << 20;
+        public static final int AllowDirectTeleport = 1 << 20;
         /* Estate owner has temporarily disabled scripting */
-        public final int EstateSkipScripts = 1 << 21;
+        public static final int EstateSkipScripts = 1 << 21;
         /* Restricts the usage of the LSL llPushObject function, applies to whole region. */
-        public final int RestrictPushObject = 1 << 22;
+        public static final int RestrictPushObject = 1 << 22;
         /* Deny agents with no payment info on file */
-        public final int DenyAnonymous = 1 << 23;
+        public static final int DenyAnonymous = 1 << 23;
         /* Deny agents with payment info on file */
-        public final int DenyIdentified = 1 << 24;
+        public static final int DenyIdentified = 1 << 24;
         /* Deny agents who have made a monetary transaction */
-        public final int DenyTransacted = 1 << 25;
+        public static final int DenyTransacted = 1 << 25;
         /* Parcels within the region may be joined or divided by anyone, not just estate owners/managers. */
-        public final int AllowParcelChanges = 1 << 26;
+        public static final int AllowParcelChanges = 1 << 26;
         /* Abuse reports sent from within this region are sent to the estate owner defined email. */
-        public final int AbuseEmailToEstateOwner = 1 << 27;
+        public static final int AbuseEmailToEstateOwner = 1 << 27;
         /* Region is Voice Enabled */
-        public final int AllowVoice = 1 << 28;
+        public static final int AllowVoice = 1 << 28;
         /* Removes the ability from parcel owners to set their parcels to show in search. */
-        public final int BlockParcelSearch = 1 << 29;
+        public static final int BlockParcelSearch = 1 << 29;
         /* Deny agents who have not been age verified from entering the region. */
-        public final int DenyAgeUnverified = 1 << 30;
+        public static final int DenyAgeUnverified = 1 << 30;
+        
+        public static int setValue(int value)
+        {
+        	return value & _mask;
+        }
+        
+        public static int getValue(int value)
+        {
+        	return value;
+        }
+        private static final int _mask = 0x7FFFFFF;
     }
 
     /* Access level for a simulator */
-    public enum SimAccess 
+    public static enum SimAccess 
     {
         /* Minimum access level, no additional checks */
         Min(0),
@@ -155,7 +167,7 @@ public class Simulator extends Thread {
         /* Simulator does not exist */
         NonExistent(0xFF);
         
-        public SimAccess setValue(int value)
+        public static SimAccess setValue(int value)
         {
         	for (SimAccess e : values())
         	{
@@ -351,13 +363,17 @@ public class Simulator extends Thread {
     private boolean _DownloadingParcelMap = false;
 
     // Provides access to an internal thread-safe multidimensional array containing a x,y grid mapped to each 64x64 parcel's LocalID.
+    public synchronized final int[] getParcelMap()
+    {
+    	return _ParcelMap;
+    }
     public synchronized final int getParcelMap(int x, int y)
     {
-    	return _ParcelMap[x * 64 + y];
+    	return _ParcelMap[y * 64 + x];
     }
     public synchronized final void setParcelMap(int x, int y, int value)
     {
-    	_ParcelMap[x * 64 + y] = value;
+    	_ParcelMap[y * 64 + x] = value;
     }
     public synchronized final void clearParcelMap()
     {
@@ -391,7 +407,7 @@ public class Simulator extends Thread {
         {
             for (int x = 0; x < 64; x++)
             {
-                if (getParcelMap()[y][x] == 0)
+                if (getParcelMap(y, x) == 0)
                 {
                     return false;
                 }
@@ -458,7 +474,7 @@ public class Simulator extends Thread {
     /*  */
     public int Flags; /* Simulator.RegionFlags */
     /*  */
-    public byte Access; /* Simulator.SimAccess */
+    public SimAccess Access;
     /*  */
     public float BillableFactor;
     /* The regions Unique ID */

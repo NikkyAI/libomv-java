@@ -26,24 +26,22 @@
  */ 
 package libomv;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
+
+import org.apache.http.nio.concurrent.FutureCallback;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.LandResourcesMessage;
+import libomv.capabilities.CapsMessage.LandResourcesInfo;
 import libomv.capabilities.CapsMessage.LandResourcesRequest;
 import libomv.capabilities.CapsMessage.ParcelObjectOwnersReplyMessage;
 import libomv.capabilities.CapsMessage.ParcelPropertiesMessage;
@@ -51,8 +49,7 @@ import libomv.capabilities.CapsMessage.ParcelPropertiesUpdateMessage;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestMessage;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestReply;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestRequest;
-import libomv.packets.DirLandQueryPacket;
-import libomv.packets.DirLandReplyPacket;
+import libomv.capabilities.IMessage;
 import libomv.packets.EjectUserPacket;
 import libomv.packets.ForceObjectSelectPacket;
 import libomv.packets.FreezeUserPacket;
@@ -73,7 +70,6 @@ import libomv.packets.ParcelMediaCommandMessagePacket;
 import libomv.packets.ParcelMediaUpdatePacket;
 import libomv.packets.ParcelObjectOwnersRequestPacket;
 import libomv.packets.ParcelOverlayPacket;
-import libomv.packets.ParcelPropertiesPacket;
 import libomv.packets.ParcelPropertiesRequestByIDPacket;
 import libomv.packets.ParcelPropertiesRequestPacket;
 import libomv.packets.ParcelPropertiesUpdatePacket;
@@ -82,12 +78,10 @@ import libomv.packets.ParcelReleasePacket;
 import libomv.packets.ParcelReturnObjectsPacket;
 import libomv.packets.ParcelSelectObjectsPacket;
 import libomv.packets.ParcelSetOtherCleanTimePacket;
-import libomv.types.DirectoryParcel;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
-import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
@@ -741,7 +735,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public String toString()
         {
             String result = "";
-            Class parcelType = this.getClass();
+            Class<? extends Parcel> parcelType = this.getClass();
             Field[] fields = parcelType.getFields();
             for (Field field : fields)
             {
@@ -785,7 +779,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             URI url = simulator.getClient().Network.getCapabilityURI("ParcelPropertiesUpdate");
             if (url != null)
             {
-                ParcelPropertiesUpdateMessage req = (ParcelPropertiesUpdateMessage)simulator.getClient().Messages.CreateMessage(CapsEventType.ParcelPropertiesUpdate, null);
+                ParcelPropertiesUpdateMessage req = simulator.getClient().Messages.new ParcelPropertiesUpdateMessage();
                 req.AuthBuyerID = this.AuthBuyerID;
                 req.Category = this.Category;
                 req.Desc = this.Desc;
@@ -952,11 +946,6 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public Date NewestPrim;
     }
     // #endregion Structs
-
-    private GridClient Client;
-	private boolean Finished;
-	private boolean ParcelInfoTimeout;
-	private DirectoryParcel ParcelInfoParcel;
 
     // Contains a parcels dwell data returned from the simulator in response to an <see cref="RequestParcelDwell"/>
     public class ParcelDwellReplyCallbackArgs extends CallbackArgs
@@ -1187,7 +1176,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
         private final Simulator m_Simulator;
         private final HashMap<Integer, Parcel> m_Parcels;
-        private final int[][] m_ParcelMap;
+        private final int[] m_ParcelMap;
 
         // Get the simulator the parcel data was retrieved from
         public final Simulator getSimulator()
@@ -1200,7 +1189,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             return m_Parcels;
         }
         // Get the multidimensional array containing a x,y grid mapped to each 64x64 parcel's LocalID.
-        public final int[][] getParcelMap()
+        public final int[] getParcelMap()
         {
             return m_ParcelMap;
         }
@@ -1210,13 +1199,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
          * 
          * @param simulator The simulator the parcel data was retrieved from
          * @param simParcels The dictionary containing the parcel data
-         * @param parcelMap The multidimensional array containing a x,y grid mapped to each 64x64 parcel's LocalID.
+         * @param is The multidimensional array containing a x,y grid mapped to each 64x64 parcel's LocalID.
          */
-        public SimParcelsDownloadedCallbackArgs(Simulator simulator, HashMap<Integer, Parcel> simParcels, int[][] parcelMap)
+        public SimParcelsDownloadedCallbackArgs(Simulator simulator, HashMap<Integer, Parcel> simParcels, int[] is)
         {
             this.m_Simulator = simulator;
             this.m_Parcels = simParcels;
-            this.m_ParcelMap = parcelMap;
+            this.m_ParcelMap = is;
         }
     }
 
@@ -1355,32 +1344,30 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public CallbackHandlerQueue<ParcelMediaCommandCallbackArgs> OnParcelMediaCommand = new CallbackHandlerQueue<ParcelMediaCommandCallbackArgs>();
     // #endregion
 
-	public ParcelManager(GridClient client) {
-		Client = client;
+    private GridClient _Client;
+    private TimeoutEvent<Boolean> WaitForSimParcel;
+
+	public ParcelManager(GridClient client)
+	{
+		_Client = client;
 
         // Setup the callbacks
-        Client.Network.RegisterCallback(CapsEventType.ParcelObjectOwnersReply, this);
-        // CAPS packet handler, to allow for Media Data not contained in the message template
-        Client.Network.RegisterCallback(CapsEventType.ParcelProperties, this);
-		Client.Network.RegisterCallback(PacketType.ParcelProperties, this);
-        Client.Network.RegisterCallback(PacketType.ParcelInfoReply, this);
-        Client.Network.RegisterCallback(PacketType.ParcelDwellReply, this);
-        Client.Network.RegisterCallback(PacketType.ParcelAccessListReply, this);
-        Client.Network.RegisterCallback(PacketType.ForceObjectSelect, this);
-        Client.Network.RegisterCallback(PacketType.ParcelMediaUpdate, this);
-        Client.Network.RegisterCallback(PacketType.ParcelOverlay, this);
-        Client.Network.RegisterCallback(PacketType.ParcelMediaCommandMessage, this);
+        _Client.Network.RegisterCallback(CapsEventType.ParcelObjectOwnersReply, this);
+        _Client.Network.RegisterCallback(CapsEventType.ParcelProperties, this);
 
-		ParcelInfoParcel = new DirectoryParcel();
+        _Client.Network.RegisterCallback(PacketType.ParcelInfoReply, this);
+        _Client.Network.RegisterCallback(PacketType.ParcelDwellReply, this);
+        _Client.Network.RegisterCallback(PacketType.ParcelAccessListReply, this);
+        _Client.Network.RegisterCallback(PacketType.ForceObjectSelect, this);
+        _Client.Network.RegisterCallback(PacketType.ParcelMediaUpdate, this);
+        _Client.Network.RegisterCallback(PacketType.ParcelOverlay, this);
+        _Client.Network.RegisterCallback(PacketType.ParcelMediaCommandMessage, this);
 	}
 
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
 		switch (packet.getType())
 		{
-			case ParcelProperties:
-				ParcelPropertiesHandler(packet, simulator);
-				break;
 			case ParcelInfoReply:
 				ParcelInfoReplyHandler(packet, simulator);
 				break;
@@ -1406,7 +1393,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1430,11 +1417,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void RequestParcelInfo(UUID parcelID) throws Exception
     {
         ParcelInfoRequestPacket request = new ParcelInfoRequestPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.Data.ParcelID = parcelID;
 
-        Client.Network.SendPacket(request);
+        _Client.Network.SendPacket(request);
     }
 
     /** 
@@ -1450,8 +1437,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
         ParcelPropertiesRequestByIDPacket request = new ParcelPropertiesRequestByIDPacket();
 
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
 
         request.ParcelData.LocalID = localID;
         request.ParcelData.SequenceID = sequenceID;
@@ -1473,8 +1460,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
         ParcelAccessListRequestPacket request = new ParcelAccessListRequestPacket();
 
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.Data.LocalID = localID;
         request.Data.Flags = AccessList.setValue(flags);
         request.Data.SequenceID = sequenceID;
@@ -1499,8 +1486,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
         ParcelPropertiesRequestPacket request = new ParcelPropertiesRequestPacket();
 
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.ParcelData.North = north;
         request.ParcelData.East = east;
         request.ParcelData.South = south;
@@ -1532,59 +1519,61 @@ public class ParcelManager implements PacketCallback, CapsCallback
      * @param msDelay Number of milliseconds to pause in between each request
      * @throws Exception 
      */
-    public final void RequestAllSimParcels(Simulator simulator, boolean refresh, int msDelay) throws Exception
+    public final void RequestAllSimParcels(final Simulator simulator, boolean refresh, final int msDelay) throws Exception
     {
         if (simulator.getDownloadingParcelMap())
         {
-            Logger.Log("Already downloading parcels in " + simulator.getName(), LogLevel.Info, Client);
+            Logger.Log("Already downloading parcels in " + simulator.getName(), LogLevel.Info, _Client);
             return;
         }
         else
         {
             simulator.setDownloadingParcelMap(true);
-            WaitForSimParcel = new TimeoutEvent(false);
+            WaitForSimParcel = new TimeoutEvent<Boolean>();
         }
 
         if (refresh)
         {
-                for (int y = 0; y < 64; y++)
-                {
-                    for (int x = 0; x < 64; x++)
-                    {
-                        simulator.clearParcelMap();
-                    }
-                }
+            simulator.clearParcelMap();
         }
 
         // Wait the given amount of time for a reply before sending the next request
-        Thread th = new Thread(delegate());
+        Thread thread = new Thread()
         {
-            if (!Client.Network.getConnected())
-            {
-                return;
-            }
-
-            int count = 0, timeouts = 0, y, x;
-            for (y = 0; y < 64; y++)
-            {
-                for (x = 0; x < 64; x++)
+        	public void run()
+        	{
+                if (!_Client.Network.getConnected())
                 {
+                    return;
+                }
 
-                    if (simulator.getParcelMap(y, x) == 0)
+                int count = 0, timeouts = 0, y, x;
+                for (y = 0; y < 64; y++)
+                {
+                    for (x = 0; x < 64; x++)
                     {
-                        RequestParcelProperties(simulator, (y + 1) * 4.0f, (x + 1) * 4.0f, y * 4.0f, x * 4.0f, Integer.MAX_VALUE, false);
-                        if (!WaitForSimParcel.waitOne(msDelay, false))
+
+                        if (simulator.getParcelMap(y, x) == 0)
                         {
-                            ++timeouts;
-                        }
+                            try
+							{
+								RequestParcelProperties(simulator, (y + 1) * 4.0f, (x + 1) * 4.0f, y * 4.0f, x * 4.0f, Integer.MAX_VALUE, false);
+	                            if (WaitForSimParcel.waitOne(msDelay) == null)
+	                            {
+	                                ++timeouts;
+	                            }
+							}
+							catch (Exception e) { }
                             ++count;
+                        }
                     }
                 }
+                Logger.Log(String.format("Full simulator parcel information retrieved. Sent %d parcel requests. Current outgoing queue: %d, Retry Count %d", count, _Client.Network.getOutboxCount(), timeouts), LogLevel.Info, _Client);
+                WaitForSimParcel = null;
+                simulator.setDownloadingParcelMap(false);
             }
-            Logger.Log(String.format("Full simulator parcel information retrieved. Sent %d parcel requests. Current outgoing queue: %d, Retry Count %d", count, Client.Network.getOutboxCount(), timeouts), LogLevel.Info, Client);
-            simulator.setDownloadingParcelMap(false);
-        }
-        th.start();
+        };
+        thread.start();
     }
 
     /** 
@@ -1597,8 +1586,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void RequestDwell(Simulator simulator, int localID) throws Exception
     {
         ParcelDwellRequestPacket request = new ParcelDwellRequestPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.Data.LocalID = localID;
         request.Data.ParcelID = UUID.Zero; // Not used by clients
 
@@ -1622,8 +1611,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
         ParcelBuyPacket request = new ParcelBuyPacket();
 
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
 
         request.Data.Final = true;
         request.Data.GroupID = groupID;
@@ -1647,8 +1636,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void Reclaim(Simulator simulator, int localID) throws Exception
     {
         ParcelReclaimPacket request = new ParcelReclaimPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
 
         request.Data.LocalID = localID;
 
@@ -1666,8 +1655,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void DeedToGroup(Simulator simulator, int localID, UUID groupID) throws Exception
     {
         ParcelDeedToGroupPacket request = new ParcelDeedToGroupPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
 
         request.Data.LocalID = localID;
         request.Data.GroupID = groupID;
@@ -1686,8 +1675,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
         ParcelObjectOwnersRequestPacket request = new ParcelObjectOwnersRequestPacket();
 
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
 
         request.ParcelData.LocalID = localID;
         simulator.SendPacket(request);
@@ -1705,8 +1694,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void ReturnObjects(Simulator simulator, int localID, byte type, UUID[] ownerIDs) throws Exception
     {
         ParcelReturnObjectsPacket request = new ParcelReturnObjectsPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
 
         request.ParcelData.LocalID = localID;
         request.ParcelData.ReturnType = ObjectReturnType.setValue(type);
@@ -1748,8 +1737,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void ParcelSubdivide(Simulator simulator, float west, float south, float east, float north) throws Exception
     {
         ParcelDividePacket divide = new ParcelDividePacket();
-        divide.AgentData.AgentID = Client.Self.getAgentID();
-        divide.AgentData.SessionID = Client.Self.getSessionID();
+        divide.AgentData.AgentID = _Client.Self.getAgentID();
+        divide.AgentData.SessionID = _Client.Self.getSessionID();
         divide.ParcelData.East = east;
         divide.ParcelData.North = north;
         divide.ParcelData.South = south;
@@ -1771,8 +1760,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void ParcelJoin(Simulator simulator, float west, float south, float east, float north) throws Exception
     {
         ParcelJoinPacket join = new ParcelJoinPacket();
-        join.AgentData.AgentID = Client.Self.getAgentID();
-        join.AgentData.SessionID = Client.Self.getSessionID();
+        join.AgentData.AgentID = _Client.Self.getAgentID();
+        join.AgentData.SessionID = _Client.Self.getSessionID();
         join.ParcelData.East = east;
         join.ParcelData.North = north;
         join.ParcelData.South = south;
@@ -1872,7 +1861,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             Parcel p;
             if (!simulator.Parcels.containsKey(localID))
             {
-                Logger.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator), LogLevel.Warning, Client);
+                Logger.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator), LogLevel.Warning, _Client);
                 return false;
             }
             p = simulator.Parcels.get(localID);
@@ -1882,7 +1871,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         RefObject<Float> ref = new RefObject<Float>(height);
         if (!simulator.TerrainHeightAtPoint(x, y, ref))
         {
-            Logger.Log("Land Patch not stored for location", LogLevel.Warning, Client);
+            Logger.Log("Land Patch not stored for location", LogLevel.Warning, _Client);
             return false;
         }
 
@@ -1908,8 +1897,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void Terraform(Simulator simulator, int localID, float west, float south, float east, float north, TerraformAction action, byte brushSize, int seconds, float height) throws Exception
     {
         ModifyLandPacket land = new ModifyLandPacket();
-        land.AgentData.AgentID = Client.Self.getAgentID();
-        land.AgentData.SessionID = Client.Self.getSessionID();
+        land.AgentData.AgentID = _Client.Self.getAgentID();
+        land.AgentData.SessionID = _Client.Self.getSessionID();
 
         land.ModifyBlock.Action = action.getValue();
         land.ModifyBlock.BrushSize = brushSize;
@@ -1943,8 +1932,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void RequestSelectObjects(int localID, byte selectType, UUID ownerID) throws Exception
     {
         ParcelSelectObjectsPacket select = new ParcelSelectObjectsPacket();
-        select.AgentData.AgentID = Client.Self.getAgentID();
-        select.AgentData.SessionID = Client.Self.getSessionID();
+        select.AgentData.AgentID = _Client.Self.getAgentID();
+        select.AgentData.SessionID = _Client.Self.getSessionID();
 
         select.ParcelData.LocalID = localID;
         select.ParcelData.ReturnType = selectType;
@@ -1953,7 +1942,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         select.ReturnIDs[0] = select.new ReturnIDsBlock();
         select.ReturnIDs[0].ReturnID = ownerID;
 
-        Client.Network.SendPacket(select);
+        _Client.Network.SendPacket(select);
     }
 
     /** 
@@ -1965,8 +1954,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void EjectUser(UUID targetID, boolean ban) throws Exception
     {
         EjectUserPacket eject = new EjectUserPacket();
-        eject.AgentData.AgentID = Client.Self.getAgentID();
-        eject.AgentData.SessionID = Client.Self.getSessionID();
+        eject.AgentData.AgentID = _Client.Self.getAgentID();
+        eject.AgentData.SessionID = _Client.Self.getSessionID();
         eject.Data.TargetID = targetID;
         if (ban)
         {
@@ -1976,7 +1965,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
             eject.Data.Flags = 0;
         }
-        Client.Network.SendPacket(eject);
+        _Client.Network.SendPacket(eject);
     }
 
     /** 
@@ -1988,8 +1977,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void FreezeUser(UUID targetID, boolean freeze) throws Exception
     {
         FreezeUserPacket frz = new FreezeUserPacket();
-        frz.AgentData.AgentID = Client.Self.getAgentID();
-        frz.AgentData.SessionID = Client.Self.getSessionID();
+        frz.AgentData.AgentID = _Client.Self.getAgentID();
+        frz.AgentData.SessionID = _Client.Self.getSessionID();
         frz.Data.TargetID = targetID;
         if (freeze)
         {
@@ -2000,7 +1989,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             frz.Data.Flags = 1;
         }
 
-        Client.Network.SendPacket(frz);
+        _Client.Network.SendPacket(frz);
     }
 
     /** 
@@ -2012,8 +2001,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
     public final void ReleaseParcel(Simulator simulator, int localID) throws Exception
     {
         ParcelReleasePacket abandon = new ParcelReleasePacket();
-        abandon.AgentData.AgentID = Client.Self.getAgentID();
-        abandon.AgentData.SessionID = Client.Self.getSessionID();
+        abandon.AgentData.AgentID = _Client.Self.getAgentID();
+        abandon.AgentData.SessionID = _Client.Self.getSessionID();
         abandon.Data.LocalID = localID;
 
         simulator.SendPacket(abandon);
@@ -2029,26 +2018,24 @@ public class ParcelManager implements PacketCallback, CapsCallback
      */
     public final UUID RequestRemoteParcelID(Vector3 location, long regionHandle, UUID regionID)
     {
-        URI url = Client.Network.getCapabilityURI("RemoteParcelRequest");
+        URI url = _Client.Network.getCapabilityURI("RemoteParcelRequest");
         if (url != null)
         {
-        	RemoteParcelRequestMessage msg = Client.Messages.new RemoteParcelRequestMessage();
-        	RemoteParcelRequestRequest req = msg.new RemoteParcelRequestRequest();
+        	RemoteParcelRequestRequest req = _Client.Messages.new RemoteParcelRequestRequest();
             req.Location = location;
             req.RegionHandle = regionHandle;
             req.RegionID = regionID;
-            msg.Request = req;
 
             try
             {
                 CapsClient request = new CapsClient(url);
-                OSD result = request.GetResponse(msg.Serialize(), OSDFormat.Xml, Client.Settings.CAPS_TIMEOUT);
-                RemoteParcelRequestMessage response = (RemoteParcelRequestMessage)Client.Messages.DecodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap)result);
+                OSD result = request.GetResponse(req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+                RemoteParcelRequestMessage response = (RemoteParcelRequestMessage)_Client.Messages.DecodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap)result);
                 return ((RemoteParcelRequestReply)response.Request).ParcelID;
             }
             catch (Throwable t)
             {
-                Logger.Log("Failed to fetch remote parcel ID", LogLevel.Debug, Client);
+                Logger.Log("Failed to fetch remote parcel ID", LogLevel.Debug, _Client);
             }
         }
 
@@ -2056,65 +2043,94 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     }
 
+    public interface LandResourcesInfoCallback
+    {
+    	public void callback(boolean success, LandResourcesInfo info);
+    }
+    
     /** 
      * Retrieves information on resources used by the parcel
      * 
      * @param parcelID UUID of the parcel
      * @param getDetails Should per object resource usage be requested
-     * @param callback Callback invoked when the request is complete
+     * @param callback Callback invoked when the request failed or is complete
      */
-    public final void GetParcelResouces(UUID parcelID, boolean getDetails, LandResourcesCallback callback)
+    public final void GetParcelResouces(UUID parcelID, boolean getDetails, LandResourcesInfoCallback callback)
     {
         try
         {
-            URI url = Client.Network.getCapabilityURI("LandResources");
+            URI url = _Client.Network.getCapabilityURI("LandResources");
             CapsClient request = new CapsClient(url);
-
-//VB & C# TO JAVA CONVERTER TODO TASK: Anonymous methods are not converted by VB & C# to Java Converter if local variables of the outer method are referenced within the anonymous method:
-            request.OnComplete += delegate(CapsClient client, OSD result, Throwable error)
-            {
-                try
-                {
-                    if (result == null || error != null)
-                    {
-                        callback(false, null);
-                    }
-                    LandResourcesMessage response = new LandResourcesMessage((OSDMap)result);
-
-                    CapsClient summaryRequest = new CapsClient(response.ScriptResourceSummary);
-                    OSD summaryResponse = summaryRequest.GetResponse(Client.Settings.CAPS_TIMEOUT);
-
-                    LandResourcesInfo res = new LandResourcesInfo();
-                    res.Deserialize((OSDMap)summaryResponse);
-
-                    if (response.ScriptResourceDetails != null && getDetails)
-                    {
-                        CapsClient detailRequest = new CapsClient(response.ScriptResourceDetails);
-                        OSD detailResponse = detailRequest.GetResponse(Client.Settings.CAPS_TIMEOUT);
-                        res.Deserialize((OSDMap)detailResponse);
-                    }
-                    callback(true, res);
-                }
-                catch (Throwable ex)
-                {
-                    Logger.Log("Failed fetching land resources", LogLevel.Error, Client, ex);
-                    callback(false, null);
-                }
-            }
-
-            LandResourcesRequest param = new LandResourcesRequest();
-            param.ParcelID = parcelID;
-            request.BeginGetResponse(param.Serialize(), OSDFormat.Xml, Client.Settings.CAPS_TIMEOUT);
+            LandResourcesRequest req = _Client.Messages.new LandResourcesRequest();
+            req.ParcelID = parcelID;
+            request.BeginGetResponse(req, _Client.Settings.CAPS_TIMEOUT, new LandResourcesMessageHandler(getDetails, callback));
 
         }
-        catch (Throwable ex)
+        catch (Exception ex)
         {
-            Logger.Log("Failed fetching land resources:", LogLevel.Error, Client, ex);
-            callback(false, null);
+            Logger.Log("Failed fetching land resources:", LogLevel.Error, _Client, ex);
+            callback.callback(false, null);
         }
     }
     // #endregion Public Methods
 
+    private class LandResourcesMessageHandler implements FutureCallback<OSD>
+    {
+    	private final LandResourcesInfoCallback callback;
+    	private final boolean getDetails;
+    	
+    	public LandResourcesMessageHandler(boolean getDetails, LandResourcesInfoCallback callback)
+    	{
+    		this.getDetails = getDetails;
+    		this.callback = callback;
+    	}
+    	
+		@Override
+		public void completed(OSD result)
+		{
+            try
+            {
+                if (result == null)
+                {
+                    callback.callback(false, null);
+                }
+                LandResourcesMessage response = _Client.Messages.new LandResourcesMessage();
+                response.Deserialize((OSDMap)result);
+                CapsClient summaryRequest = new CapsClient(response.ScriptResourceSummary);
+                OSD osd = summaryRequest.GetResponse(_Client.Settings.CAPS_TIMEOUT);
+
+                LandResourcesInfo info = _Client.Messages.new LandResourcesInfo();
+                info.Deserialize((OSDMap)osd);
+                if (response.ScriptResourceDetails != null && getDetails)
+                {
+                    CapsClient detailRequest = new CapsClient(response.ScriptResourceDetails);
+                    osd = detailRequest.GetResponse(_Client.Settings.CAPS_TIMEOUT);
+                    info.Deserialize((OSDMap)osd);
+                }
+                callback.callback(true, info);
+            }
+            catch (Exception ex)
+            {
+            	failed(ex);
+            }
+        }
+
+		@Override
+		public void cancelled()
+		{
+            Logger.Log("Fetching land resources was cacelled", LogLevel.Error, _Client);
+            callback.callback(false, null);
+		}
+
+		@Override
+		public void failed(Exception ex)
+		{
+            Logger.Log("Failed fetching land resources", LogLevel.Error, _Client, ex);
+            callback.callback(false, null);
+		}
+    	
+    }
+    
 	private void ParcelDwellReplyHandler(Packet packet, Simulator simulator)
 	{
 		ParcelDwellReplyPacket dwell = (ParcelDwellReplyPacket) packet;
@@ -2126,131 +2142,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				simulator.Parcels.get(dwell.Data.LocalID).Dwell = dwell.Data.Dwell;
 			}
 		}
+        OnParcelDwellReply.dispatch(new ParcelDwellReplyCallbackArgs(dwell.Data.ParcelID, dwell.Data.LocalID, dwell.Data.Dwell));
 	}
 
-	private void ParcelPropertiesHandler(Packet packet, Simulator simulator) throws Exception
-	{
-		ParcelPropertiesPacket properties = (ParcelPropertiesPacket) packet;
-
-		byte[] Bitmap = properties.ParcelData.getBitmap();
-		int LocalID = properties.ParcelData.LocalID;
-
-		// Mark this area as downloaded
-		int x, y, index, subindex;
-		byte val;
-
-		for (x = 0; x < 64; x++) {
-			for (y = 0; y < 64; y++) {
-				if (simulator.ParcelMarked[y][x] == 0) {
-					index = ((x * 64) + y);
-					subindex = index % 8;
-					index /= 8;
-
-					val = Bitmap[index];
-
-					simulator.ParcelMarked[y][x] = ((val >> subindex) & 1) == 1 ? LocalID
-							: 0;
-				}
-			}
-		}
-
-		// Fire off the next request, if we are downloading the whole sim
-		boolean hasTriggered = false;
-		if (simulator.getParcelDownloading())
-		{
-			for (x = 0; x < 64; x++) {
-				for (y = 0; y < 64; y++) {
-					if (simulator.ParcelMarked[x][y] == 0)
-					{
-						ParcelPropertiesRequestPacket tPacket = new ParcelPropertiesRequestPacket();
-						tPacket.AgentData.AgentID = Client.Self.getAgentID();
-						tPacket.AgentData.SessionID = Client.Self.getSessionID();
-						tPacket.ParcelData.SequenceID = -10000;
-						tPacket.ParcelData.West = (x * 4.0f);
-						tPacket.ParcelData.South = (y * 4.0f);
-						tPacket.ParcelData.East = (x * 4.0f) + 4.0f;
-						tPacket.ParcelData.North = (y * 4.0f) + 4.0f;
-
-						simulator.SendPacket(tPacket);
-
-						hasTriggered = true;
-
-						break;
-					}
-				}
-				if (hasTriggered) {
-					break;
-				}
-			}
-		}
-		// This map is complete, fire callback
-		if (!hasTriggered)
-		{
-			simulator.FilledParcels();
-		}
-
-		Parcel parcel = null;
-
-		synchronized (simulator.Parcels)
-		{
-			if (!simulator.Parcels.containsKey(LocalID))
-			{
-				simulator.Parcels.put(LocalID, new Parcel(LocalID));
-			}
-
-			parcel = (Parcel) simulator.Parcels.get(LocalID);
-		}
-
-		// Save this parcels data
-		ParcelResult result = ParcelResult.setValue(properties.ParcelData.RequestResult);
-        int sequenceID = properties.ParcelData.SequenceID;
-        boolean snapSelection = properties.ParcelData.SnapSelection;
-		parcel.SelfCount = properties.ParcelData.SelfCount;
-		parcel.OtherCount = properties.ParcelData.OtherCount;
-		parcel.PublicCount = properties.ParcelData.PublicCount;
-		parcel.LocalID = LocalID;
-		parcel.OwnerID = properties.ParcelData.OwnerID;
-		parcel.IsGroupOwned = properties.ParcelData.IsGroupOwned;
-		parcel.AuctionID = properties.ParcelData.AuctionID;
-		parcel.ClaimDate = Helpers.UnixTimeToDateTime(properties.ParcelData.ClaimDate);
-		parcel.ClaimPrice = properties.ParcelData.ClaimPrice;
-		parcel.RentPrice = properties.ParcelData.RentPrice;
-		parcel.AABBMin = properties.ParcelData.AABBMin;
-		parcel.AABBMax = properties.ParcelData.AABBMax;
-		parcel.Bitmap = properties.ParcelData.getBitmap();
-		parcel.Area = properties.ParcelData.Area;
-		parcel.Status = ParcelStatus.setValue(properties.ParcelData.Status);
-		parcel.SimWideMaxPrims = properties.ParcelData.SimWideMaxPrims;
-		parcel.SimWideTotalPrims = properties.ParcelData.SimWideTotalPrims;
-		parcel.MaxPrims = properties.ParcelData.MaxPrims;
-		parcel.TotalPrims = properties.ParcelData.TotalPrims;
-		parcel.OwnerPrims = properties.ParcelData.OwnerPrims;
-		parcel.GroupPrims = properties.ParcelData.GroupPrims;
-		parcel.OtherPrims = properties.ParcelData.OtherPrims;
-		parcel.ParcelPrimBonus = properties.ParcelData.ParcelPrimBonus;
-		parcel.OtherCleanTime = properties.ParcelData.OtherCleanTime;
-		parcel.Flags = properties.ParcelData.ParcelFlags;
-		parcel.SalePrice = properties.ParcelData.SalePrice;
-		parcel.Name = Helpers.BytesToString(properties.ParcelData.getName());
-		parcel.Desc = Helpers.BytesToString(properties.ParcelData.getDesc());
-		parcel.MusicURL = Helpers.BytesToString(properties.ParcelData.getMusicURL());
-		parcel.Media.MediaURL = Helpers.BytesToString(properties.ParcelData.getMediaURL());
-		parcel.Media.MediaID = properties.ParcelData.MediaID;
-		parcel.Media.MediaAutoScale = properties.ParcelData.MediaAutoScale != 0;
-		parcel.GroupID = properties.ParcelData.GroupID;
-		parcel.PassPrice = properties.ParcelData.PassPrice;
-		parcel.PassHours = properties.ParcelData.PassHours;
-		parcel.Category = ParcelCategory.setValue(properties.ParcelData.Category);
-		parcel.AuthBuyerID = properties.ParcelData.AuthBuyerID;
-		parcel.SnapshotID = properties.ParcelData.SnapshotID;
-		parcel.UserLocation = properties.ParcelData.UserLocation;
-		parcel.UserLookAt = properties.ParcelData.UserLookAt;
-		parcel.Landing = LandingTypeEnum.setValue(properties.ParcelData.LandingType);
-	}
-
-    protected final void ParcelPropertiesReplyHandler(CapsMessage message, Simulator simulator)
+    protected final void ParcelPropertiesReplyHandler(IMessage message, Simulator simulator) throws Exception
     {
-        if (OnParcelProperties.count() > 0 || Client.Settings.PARCEL_TRACKING == true)
+        if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true)
         {
             ParcelPropertiesMessage msg = (ParcelPropertiesMessage)message;
 
@@ -2311,7 +2208,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             parcel.ObscureMedia = msg.ObscureMedia;
             parcel.ObscureMusic = msg.ObscureMusic;
 
-            if (Client.Settings.PARCEL_TRACKING)
+            if (_Client.Settings.PARCEL_TRACKING)
             {
                 synchronized (simulator.Parcels)
                 {
@@ -2344,17 +2241,17 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
             if (((Integer)sequenceID).equals(Integer.MAX_VALUE) && WaitForSimParcel != null)
             {
-                WaitForSimParcel.set();
+                WaitForSimParcel.set(true);
             }
 
             // auto request acl, will be stored in parcel tracking dictionary if enabled
-            if (Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
+            if (_Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
             {
                 RequestParcelAccessList(simulator, parcel.LocalID, AccessList.Both, sequenceID);
             }
 
             // auto request dwell, will be stored in parcel tracking dictionary if enables
-            if (Client.Settings.ALWAYS_REQUEST_PARCEL_DWELL)
+            if (_Client.Settings.ALWAYS_REQUEST_PARCEL_DWELL)
             {
                 RequestDwell(simulator, parcel.LocalID);
             }
@@ -2375,50 +2272,27 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     private void ParcelInfoReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		ParcelInfoReplyPacket reply = (ParcelInfoReplyPacket) packet;
+		ParcelInfoReplyPacket info = (ParcelInfoReplyPacket) packet;
 
-		if (!reply.Data.ParcelID.equals(ParcelInfoParcel.ID)) {
-			Logger.Log("Received a ParcelInfoReply for "
-					+ reply.Data.ParcelID.toString() + ", looking for "
-					+ ParcelInfoParcel.ID.toString(), LogLevel.Warning);
+        ParcelInfo parcelInfo = new ParcelInfo();
 
-			// Build and resend the ParcelInfoRequest packet
-			ParcelInfoRequestPacket request = new ParcelInfoRequestPacket();
-			request.AgentData.AgentID = Client.Self.getAgentID();
-			request.AgentData.SessionID = Client.Self.getSessionID();
-			request.Data.ParcelID = ParcelInfoParcel.ID;
+        parcelInfo.ActualArea = info.Data.ActualArea;
+        parcelInfo.AuctionID = info.Data.AuctionID;
+        parcelInfo.BillableArea = info.Data.BillableArea;
+        parcelInfo.Description = Helpers.BytesToString(info.Data.getDesc());
+        parcelInfo.Dwell = info.Data.Dwell;
+        parcelInfo.GlobalX = info.Data.GlobalX;
+        parcelInfo.GlobalY = info.Data.GlobalY;
+        parcelInfo.GlobalZ = info.Data.GlobalZ;
+        parcelInfo.ID = info.Data.ParcelID;
+        parcelInfo.Mature = ((info.Data.Flags & 1) != 0) ? true : false;
+        parcelInfo.Name = Helpers.BytesToString(info.Data.getName());
+        parcelInfo.OwnerID = info.Data.OwnerID;
+        parcelInfo.SalePrice = info.Data.SalePrice;
+        parcelInfo.SimName = Helpers.BytesToString(info.Data.getSimName());
+        parcelInfo.SnapshotID = info.Data.SnapshotID;
 
-			Client.Network.SendPacket(request);
-
-			return;
-		}
-
-		ParcelInfoParcel.SimName = Helpers.BytesToString(reply.Data.getSimName());
-		ParcelInfoParcel.ActualArea = reply.Data.ActualArea;
-		ParcelInfoParcel.GlobalPosition.X = reply.Data.GlobalX;
-		ParcelInfoParcel.GlobalPosition.Y = reply.Data.GlobalY;
-		ParcelInfoParcel.GlobalPosition.Z = reply.Data.GlobalZ;
-		ParcelInfoParcel.Name = Helpers.BytesToString(reply.Data.getName());
-		ParcelInfoParcel.Desc = Helpers.BytesToString(reply.Data.getDesc());
-		ParcelInfoParcel.SalePrice = reply.Data.SalePrice;
-		ParcelInfoParcel.OwnerID = reply.Data.OwnerID;
-		ParcelInfoParcel.SnapshotID = reply.Data.SnapshotID;
-		ParcelInfoParcel.Dwell = reply.Data.Dwell;
-
-		// Get RegionHandle from GlobalX/GlobalY
-		int handleX = (int) Math.floor(ParcelInfoParcel.GlobalPosition.X / 256.0F);
-		handleX *= 256;
-		int handleY = (int) Math.floor(ParcelInfoParcel.GlobalPosition.Y / 256.0F);
-		handleY *= 256;
-		// FIXME: Helpers function needed
-		// ParcelInfoParcel.RegionHandle = new U64(handleX, handleY);
-
-		// Get SimPosition from GlobalX/GlobalY and RegionHandle
-		ParcelInfoParcel.SimPosition.X = ParcelInfoParcel.GlobalPosition.X - handleX;
-		ParcelInfoParcel.SimPosition.Y = ParcelInfoParcel.GlobalPosition.Y - handleY;
-		ParcelInfoParcel.SimPosition.Z = ParcelInfoParcel.GlobalPosition.Z;
-
-		Finished = true;
+        OnParcelInfoReply.dispatch(new ParcelInfoReplyCallbackArgs(parcelInfo));
 	}
 
     /**
@@ -2428,7 +2302,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
      */
     protected final void ParcelAccessListReplyHandler(Packet packet, Simulator simulator)
     {
-        if (OnParcelAccessListReply.count() > 0 || Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
+        if (OnParcelAccessListReply.count() > 0 || _Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
         {
             ParcelAccessListReplyPacket reply = (ParcelAccessListReplyPacket)packet;
 
@@ -2465,7 +2339,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    protected final void ParcelObjectOwnersReplyHandler(CapsMessage message, Simulator simulator)
+    protected final void ParcelObjectOwnersReplyHandler(IMessage message, Simulator simulator)
     {
         if (OnParcelObjectOwnersReply.count() > 0)
         {
@@ -2554,7 +2428,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
         else
         {
-            Logger.Log("Parcel overlay with sequence ID of " + overlay.ParcelData.SequenceID + " received from " + simulator.toString(), LogLevel.Warning, Client);
+            Logger.Log("Parcel overlay with sequence ID of " + overlay.ParcelData.SequenceID + " received from " + simulator.toString(), LogLevel.Warning, _Client);
         }
     }
 

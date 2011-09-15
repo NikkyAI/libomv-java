@@ -59,14 +59,11 @@ import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.XferReceivedCallbackArgs;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.CopyInventoryFromNotecardMessage;
 import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
-import libomv.capabilities.CapsMessage.UpdateScriptAgentMessage;
-import libomv.capabilities.CapsMessage.UpdateScriptAgentRequestMessage;
-import libomv.capabilities.CapsMessage.UpdateScriptTaskMessage;
 import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
+import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryItem.DeRezDestination;
 import libomv.inventory.InventoryItem.InventoryType;
@@ -814,7 +811,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	}
                  
 	@Override
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
         switch (message.getType())
         {
@@ -1981,7 +1978,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         URI url = _Client.Network.getCapabilityURI("CopyInventoryFromNotecard");
         if (url != null)
         {
-            CopyInventoryFromNotecardMessage message = (CopyInventoryFromNotecardMessage)_Client.Messages.CreateMessage(CapsEventType.CopyInventoryFromNotecard, Helpers.EmptyString);
+            CopyInventoryFromNotecardMessage message = _Client.Messages.new CopyInventoryFromNotecardMessage();
             message.CallbackID = 0;
             message.FolderID = folderID;
             message.ItemID = itemID;
@@ -1989,7 +1986,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
             message.ObjectID = objectID;
 
             CapsClient request = new CapsClient(url);
-            request.BeginGetResponse(message.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT, null);
+            request.BeginGetResponse(message, _Client.Settings.CAPS_TIMEOUT, null);
         }
         else
         {
@@ -2180,13 +2177,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
         URI url = _Client.Network.getCapabilityURI("UpdateScriptAgent");
         if (url != null)
         {
-        	UpdateScriptAgentMessage message = (UpdateScriptAgentMessage)_Client.Messages.CreateMessage(CapsEventType.UpdateScriptAgent, "item_id");
-            UpdateScriptAgentRequestMessage msg = (UpdateScriptAgentRequestMessage)message.Request;
-            msg.ItemID = itemID;
-            msg.Target = mono ? "mono" : "lsl2";
+            OSDMap map = new OSDMap(2);
+            map.put("item_id", OSD.FromUUID(itemID));
+            map.put("target", OSD.FromString(mono ? "mono" : "lsl2"));
 
             CapsClient request = new CapsClient(url);
-            request.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT, new UpdateScriptAgentInventoryResponse(callback, data, itemID));
+            request.BeginGetResponse(map, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT, new UpdateScriptAgentInventoryResponse(callback, data, itemID));
         }
         else
         {
@@ -2210,8 +2206,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         URI url = _Client.Network.getCapabilityURI("UpdateScriptTask");
         if (url != null)
         {
-        	UpdateScriptTaskMessage message = (UpdateScriptTaskMessage)_Client.Messages.CreateMessage(CapsEventType.UpdateScriptTask, "task_id");
-            UpdateScriptTaskUpdateMessage msg = (UpdateScriptTaskUpdateMessage)message.Request;
+            UpdateScriptTaskUpdateMessage msg = _Client.Messages.new UpdateScriptTaskUpdateMessage();
             msg.ItemID = itemID;
             msg.TaskID = taskID;
             msg.ScriptRunning = running;
@@ -4209,7 +4204,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         OnTaskInventoryReply.dispatch(new TaskInventoryReplyCallbackArgs(reply.InventoryData.TaskID, reply.InventoryData.Serial, Helpers.BytesToString(reply.InventoryData.getFilename())));
     }
 
-    protected final void ScriptRunningReplyMessageHandler(CapsMessage message, Simulator simulator)
+    protected final void ScriptRunningReplyMessageHandler(IMessage message, Simulator simulator)
     {
         ScriptRunningReplyMessage msg = (ScriptRunningReplyMessage)message;
         OnScriptRunningReply.dispatch(new ScriptRunningReplyCallbackArgs(msg.ObjectID, msg.ItemID, msg.Mono, msg.Running));

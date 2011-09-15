@@ -36,9 +36,9 @@ import java.util.TimerTask;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.capabilities.CapsCallback;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ObjectPhysicsPropertiesMessage;
+import libomv.capabilities.IMessage;
 import libomv.packets.ImprovedTerseObjectUpdatePacket;
 import libomv.packets.KillObjectPacket;
 import libomv.packets.MultipleObjectUpdatePacket;
@@ -1101,7 +1101,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
 	@Override
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -3425,7 +3425,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         }
     }
 
-    protected void ObjectPhysicsPropertiesHandler(CapsMessage message, Simulator simulator)
+    protected void ObjectPhysicsPropertiesHandler(IMessage message, Simulator simulator)
     {
         ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage)message;
 

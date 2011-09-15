@@ -1040,7 +1040,8 @@ public class AssetManager implements PacketCallback
                 {
                     if (result instanceof OSDMap)
                     {
-                        UploadBakedTextureMessage message = _Client.Messages.new UploadBakedTextureMessage((OSDMap)result);
+                        UploadBakedTextureMessage message = _Client.Messages.new UploadBakedTextureMessage();
+                        message.Deserialize((OSDMap)result);
                         if (message.Request.State.equals("complete"))
                         {
                             callback.callback(((UploaderRequestComplete)message.Request).AssetID);

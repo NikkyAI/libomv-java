@@ -8,10 +8,28 @@ public class TerrainPatch
         Water(0x57),
         Wind(0x37),
         Cloud(0x38);
-        private final int type;
-        LayerType(int val)
+        
+        public static LayerType setValue(int value)
         {
-        	type = val;
+        	for (LayerType e : values())
+        	{
+        		if (e._value == value)
+        		{
+        			return e;
+        		}
+        	}
+        	return Land;
+        }
+
+        public byte getValue()
+        {
+        	return _value;
+        }
+        
+        private final byte _value;
+        private LayerType(int value)
+        {
+        	_value = (byte)value;
         }
     }
 

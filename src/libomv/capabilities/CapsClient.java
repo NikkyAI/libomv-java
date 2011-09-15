@@ -165,7 +165,17 @@ public class CapsClient
     {
         return GetResponseAsync(new HttpGet(), timeout, callback);
     }
+
+    public Future<OSD> BeginGetResponse(IMessage message, long timeout) throws IOException
+    {
+    	return BeginGetResponse(message.Serialize(), OSD.OSDFormat.Xml, timeout, null);
+    }
     
+    public Future<OSD> BeginGetResponse(IMessage message, long timeout, FutureCallback<OSD> callback) throws IOException
+    {
+    	return BeginGetResponse(message.Serialize(), OSD.OSDFormat.Xml, timeout, callback);
+    }
+
     public Future<OSD> BeginGetResponse(OSD data, OSD.OSDFormat format, long timeout) throws IOException
     {
         return BeginGetResponse(data, format, timeout, null);

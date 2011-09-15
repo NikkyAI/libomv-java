@@ -42,9 +42,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.LoginManager.LoginResponseCallbackArgs;
+import libomv.Simulator.RegionFlags;
+import libomv.Simulator.SimAccess;
 import libomv.capabilities.CapsCallback;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.capabilities.IMessage;
 import libomv.packets.CompletePingCheckPacket;
 import libomv.packets.EnableSimulatorPacket;
 import libomv.packets.KickUserPacket;
@@ -725,7 +727,7 @@ public class NetworkManager implements PacketCallback {
 	    }
 	}
 
-	public void DistributeCaps(CapsEventType capsKey, CapsMessage message, Simulator simulator)
+	public void DistributeCaps(IMessage message, Simulator simulator)
 	{
 	    try
 	    {
@@ -1023,7 +1025,7 @@ public class NetworkManager implements PacketCallback {
         {
             // The currently occupied simulator hasn't sent us any traffic in a while, shutdown
         	Logger.Log("Network timeout for the current simulator ("
-					  + CurrentSim.Region.Name + "), logging out", LogLevel.Warning);
+					  + CurrentSim.Name + "), logging out", LogLevel.Warning);
 
             if (DisconnectTimer != null)
             {
@@ -1068,8 +1070,7 @@ public class NetworkManager implements PacketCallback {
 			{
 				// This sim hasn't received any network traffic since the
 				// timer last elapsed, consider it disconnected
-				Logger.Log("Network timeout for simulator " + simulator.Region.Name
-						+ ", disconnecting", LogLevel.Warning);
+				Logger.Log("Network timeout for simulator " + simulator.Name + ", disconnecting", LogLevel.Warning);
 
 				DisconnectSim(simulator, false);
 			}
@@ -1099,6 +1100,42 @@ public class NetworkManager implements PacketCallback {
 
 	private void RegionHandshakeHandler(Packet packet, Simulator simulator) throws Exception
 	{
+		RegionHandshakePacket handshake = (RegionHandshakePacket)packet;
+
+        simulator.ID = handshake.RegionInfo.CacheID;
+
+		simulator.IsEstateManager = handshake.RegionInfo.IsEstateManager;
+		simulator.Name = Helpers.BytesToString(handshake.RegionInfo.getSimName());
+		simulator.SimOwner = handshake.RegionInfo.SimOwner;
+		simulator.TerrainBase0 = handshake.RegionInfo.TerrainBase0;
+		simulator.TerrainBase1 = handshake.RegionInfo.TerrainBase1;
+		simulator.TerrainBase2 = handshake.RegionInfo.TerrainBase2;
+		simulator.TerrainBase3 = handshake.RegionInfo.TerrainBase3;
+		simulator.TerrainDetail0 = handshake.RegionInfo.TerrainDetail0;
+		simulator.TerrainDetail1 = handshake.RegionInfo.TerrainDetail1;
+		simulator.TerrainDetail2 = handshake.RegionInfo.TerrainDetail2;
+		simulator.TerrainDetail3 = handshake.RegionInfo.TerrainDetail3;
+		simulator.TerrainHeightRange00 = handshake.RegionInfo.TerrainHeightRange00;
+		simulator.TerrainHeightRange01 = handshake.RegionInfo.TerrainHeightRange01;
+		simulator.TerrainHeightRange10 = handshake.RegionInfo.TerrainHeightRange10;
+		simulator.TerrainHeightRange11 = handshake.RegionInfo.TerrainHeightRange11;
+		simulator.TerrainStartHeight00 = handshake.RegionInfo.TerrainStartHeight00;
+		simulator.TerrainStartHeight01 = handshake.RegionInfo.TerrainStartHeight01;
+		simulator.TerrainStartHeight10 = handshake.RegionInfo.TerrainStartHeight10;
+		simulator.TerrainStartHeight11 = handshake.RegionInfo.TerrainStartHeight11;
+        
+        simulator.WaterHeight = handshake.RegionInfo.WaterHeight;
+        simulator.Flags = RegionFlags.setValue(handshake.RegionInfo.RegionFlags);
+        simulator.BillableFactor = handshake.RegionInfo.BillableFactor;
+        simulator.Access = SimAccess.setValue(handshake.RegionInfo.SimAccess);
+
+        simulator.RegionID = handshake.RegionInfo2.RegionID;
+        simulator.ColoLocation = Helpers.BytesToString(handshake.RegionInfo3.getColoName());
+        simulator.CPUClass = handshake.RegionInfo3.CPUClassID;
+        simulator.CPURatio = handshake.RegionInfo3.CPURatio;
+        simulator.ProductName = Helpers.BytesToString(handshake.RegionInfo3.getProductName());
+        simulator.ProductSku = Helpers.BytesToString(handshake.RegionInfo3.getProductSKU());
+
 		// Send a RegionHandshakeReply
 		RegionHandshakeReplyPacket reply = new RegionHandshakeReplyPacket();
 		reply.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1106,39 +1143,7 @@ public class NetworkManager implements PacketCallback {
 		reply.RegionInfo.Flags = 0;
 		simulator.SendPacket(reply);
 
-		// TODO: Do we need to send an AgentUpdate to each sim upon connection?
-
-		RegionHandshakePacket handshake = (RegionHandshakePacket) packet;
-
-		simulator.Region.ID = handshake.RegionInfo.CacheID;
-
-		simulator.Region.BillableFactor = handshake.RegionInfo.BillableFactor;
-		simulator.Region.Flags = handshake.RegionInfo.RegionFlags;
-		simulator.Region.Access = handshake.RegionInfo.SimAccess;
-
-		simulator.Region.IsEstateManager = handshake.RegionInfo.IsEstateManager;
-		simulator.Region.Name = Helpers.BytesToString(handshake.RegionInfo.getSimName());
-		simulator.Region.SimOwner = handshake.RegionInfo.SimOwner;
-		simulator.Region.TerrainBase0 = handshake.RegionInfo.TerrainBase0;
-		simulator.Region.TerrainBase1 = handshake.RegionInfo.TerrainBase1;
-		simulator.Region.TerrainBase2 = handshake.RegionInfo.TerrainBase2;
-		simulator.Region.TerrainBase3 = handshake.RegionInfo.TerrainBase3;
-		simulator.Region.TerrainDetail0 = handshake.RegionInfo.TerrainDetail0;
-		simulator.Region.TerrainDetail1 = handshake.RegionInfo.TerrainDetail1;
-		simulator.Region.TerrainDetail2 = handshake.RegionInfo.TerrainDetail2;
-		simulator.Region.TerrainDetail3 = handshake.RegionInfo.TerrainDetail3;
-		simulator.Region.TerrainHeightRange00 = handshake.RegionInfo.TerrainHeightRange00;
-		simulator.Region.TerrainHeightRange01 = handshake.RegionInfo.TerrainHeightRange01;
-		simulator.Region.TerrainHeightRange10 = handshake.RegionInfo.TerrainHeightRange10;
-		simulator.Region.TerrainHeightRange11 = handshake.RegionInfo.TerrainHeightRange11;
-		simulator.Region.TerrainStartHeight00 = handshake.RegionInfo.TerrainStartHeight00;
-		simulator.Region.TerrainStartHeight01 = handshake.RegionInfo.TerrainStartHeight01;
-		simulator.Region.TerrainStartHeight10 = handshake.RegionInfo.TerrainStartHeight10;
-		simulator.Region.TerrainStartHeight11 = handshake.RegionInfo.TerrainStartHeight11;
-		simulator.Region.WaterHeight = handshake.RegionInfo.WaterHeight;
-
-		Logger.Log("Received a region handshake for " + simulator.Region.Name,
-				LogLevel.Info);
+		Logger.Log("Received a region handshake for " + simulator.Name, LogLevel.Info);
 	}
 
     /** Process an incoming packet and raise the appropriate events

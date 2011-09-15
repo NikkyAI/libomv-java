@@ -31,10 +31,10 @@ import java.util.Date;
 
 import libomv.ParcelManager.ParcelCategory;
 import libomv.capabilities.CapsCallback;
-import libomv.capabilities.CapsMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.DirLandReplyMessage;
 import libomv.capabilities.CapsMessage.PlacesReplyMessage;
+import libomv.capabilities.IMessage;
 import libomv.packets.DirClassifiedQueryPacket;
 import libomv.packets.DirClassifiedReplyPacket;
 import libomv.packets.DirEventsReplyPacket;
@@ -708,7 +708,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 	
 	@Override
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1247,7 +1247,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
      *  @param message The <see cref="DirLandReplyMessage"/> event message containing the data
      *  @param simulator The simulator the message originated from
      */
-    protected final void DirLandReplyEventHandler(CapsMessage message, Simulator simulator)
+    protected final void DirLandReplyEventHandler(IMessage message, Simulator simulator)
     {
         if (OnDirLand != null)
         {
@@ -1325,7 +1325,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
      *  @param message The <see cref="PlacesReplyMessage"/> event message containing the data
      *  @param simulator The simulator the message originated from
      */
-    protected final void PlacesReplyEventHandler(CapsMessage message, Simulator simulator)
+    protected final void PlacesReplyEventHandler(IMessage message, Simulator simulator)
     {
         if (OnPlaces != null)
         {

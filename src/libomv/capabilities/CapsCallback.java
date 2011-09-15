@@ -29,5 +29,5 @@ import libomv.Simulator;
 
 public interface CapsCallback
 {
-	public void capsCallback(CapsMessage message, Simulator simulator) throws Exception;
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception;
 }
