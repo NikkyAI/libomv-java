@@ -84,8 +84,7 @@ public class GridClient
 		}
 	}
 	
-	private static final String listUri = "http://opensim-viewer.sourceforge.net/db/grids.php";
-		                               // "http://imprudenceviewer.org/app/grids/";
+	private static final String listUri = "http://libomv-java.sourceforge.net/grids/default_grids.xml";
 	private static HashMap<String, GridInfo> gridlist = new HashMap<String, GridInfo>();
 	private static int listversion = 0;
 
