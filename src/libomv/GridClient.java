@@ -153,8 +153,8 @@ public class GridClient
 	{
 		initializeGridList();
 
-		Network = new NetworkManager(this);
 		Login = new LoginManager(this);
+		Network = new NetworkManager(this);
 		Settings = settings;
 		Settings.Startup(this);
 		Self = new AgentManager(this);

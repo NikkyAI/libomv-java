@@ -423,7 +423,7 @@ public final class LLSDXml
 					writer.startTag(null, KEY_TAG)
 				          .text(kvp.getKey())
 				          .endTag(null, KEY_TAG);
-					serialize(writer, kvp.getValue());
+					serializeElement(writer, kvp.getValue());
 				}
 				writer.endTag(null, MAP_TAG);
 				break;
@@ -432,7 +432,7 @@ public final class LLSDXml
 				writer.startTag(null, ARRAY_TAG);
 				for (OSD osd : array)
 				{
-					serialize(writer, osd);
+					serializeElement(writer, osd);
 				}
 				writer.endTag(null, ARRAY_TAG);
 				break;

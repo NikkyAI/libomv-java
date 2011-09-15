@@ -30,10 +30,11 @@ public class CallbackHandlerQueue <T> {
 	 */
 	public boolean add(CallbackHandler<T> handler, boolean autoremove)
 	{
-		synchronized (callbackHandlers)
+	    if (callbackHandlers == null)
+		    callbackHandlers = new HashMap<CallbackHandler<T>,  Boolean>();
+
+	    synchronized (callbackHandlers)
 	    {
-		    if (callbackHandlers == null)
-			    callbackHandlers = new HashMap<CallbackHandler<T>,  Boolean>();
 		    return (callbackHandlers.put(handler, autoremove) != null);
 	    }
 	}

@@ -292,7 +292,7 @@ public class Settings implements PacketCallback
     ///#region Misc
 
     /* Default color used for viewer particle effects */
-    public Color4 DEFAULT_EFFECT_COLOR = new Color4(255, 0, 0, 255);
+    public Color4 DEFAULT_EFFECT_COLOR = new Color4(1, 0, 0, 1);
 
     /* Cost of uploading an asset
      * Read-only since this value is dynamically fetched at login
