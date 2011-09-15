@@ -1,0 +1,168 @@
+body {
+color:#000;
+font-family:"tahoma" , "arial" , "sans-serif";
+font-size:10pt;
+background-image:url(background.png);
+background-repeat:no-repeat;
+margin:0;
+}
+
+#omf {
+margin:0;
+padding:0;
+background-image:url('side.png');
+background-repeat:no-repeat;
+background-position:right top;
+max-width:1692px;
+min-width:600px;
+}
+
+#header {
+position:relative;
+padding-top:30px;
+margin-left:75px;
+}
+
+#sidebar-left {
+
+position: absolute;
+left: 0px;
+float:left; 
+clear:left;
+margin-top:55px;
+margin-left:25px;
+width:165px;
+}
+
+#sidebar-left .block h2.title,#sidebar-left .block h2.title a:link,#sidebar-left .block h2.title a:visited {
+font-size:12pt;
+color:#FAB000;
+font-family:"century gothic" , "sans-serif";
+font-weight:700;
+
+text-decoration:none;
+
+margin:0;
+/* text-align: right; */
+}
+
+#sidebar-left .block {
+margin-left:10px px;
+}
+
+#sidebar-left ul.menu:first-child {
+margin-bottom:1em;
+}
+
+#sidebar-left ul li,.item-list ul li {
+text-decoration:none;
+/*text-align: right; */
+padding-right:0;
+list-style-image:none;
+list-style-type:none;
+margin:0 0 0 .5em;
+padding:.2em .5em 0 0;
+}
+
+#sidebar-left li a:link,#sidebar-left li a:visited {
+text-decoration:none;
+}
+
+a:link,a:visited {
+color:#4B8000;
+}
+
+li a.active {
+color: #4B8000;
+border-bottom:dashed #000 1px;
+}
+
+a:active {
+color:#FAB000;
+}
+
+a:hover {
+color:#FAB000;
+}
+
+#main {
+margin-top:72px;
+margin-left:200px;
+}
+
+.listtable {
+font-weight:700;
+font-size:10pt;
+}
+
+.listtable td,.listtable th {
+border-bottom:solid 2px #A9A9A9;
+}
+
+.sponsor {
+border:none;
+}
+
+h1.title {
+font-size:24pt;
+font-weight:400;
+font-family:"rockwell";
+color:#A9A9A9;
+margin-left:1em;
+margin-right:5%;
+}
+
+h1.title:first-child {
+border-bottom:solid silver 1px;
+}
+
+#main .node ,.view-frontpage .node,#comments {
+font-size:10pt;
+font-family:"tahoma" , "arial" , "sans-serif";
+color:#000;
+padding-left:5em;
+margin-right:5%;
+margin-bottom:1em;
+padding-bottom:1em;
+}
+
+#comments .comment {
+background-color:#EEE;
+padding-left:1em;
+}
+
+#main .node .content,#main .node .groups {
+margin-bottom:1em;
+}
+
+#main .node .node {
+margin:0;
+padding:0;
+}
+
+.view-content .node {
+border-width:0;
+border-color:#7EB000;
+border-style:solid;
+}
+
+div.node h2 {
+font-size:14pt;
+border-bottom:solid #7EB000 1px;
+}
+
+.node h2 a:link, .node h2 a:visited {
+color:#5C9000;
+text-decoration:none;
+}
+
+
+.clear-block{  }
+
+#footer {
+font-size:10pt;
+font-family:"tahoma" , "arial" , "sans-serif";
+color:#AAF000;
+margin-left:5em;
+text-decoration:none;
+}
