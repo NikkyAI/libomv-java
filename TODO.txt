@@ -1,0 +1,5 @@
+The basic library is not yet fully ported. Look for TO BE PORTED in comments.
+
+Most examples are ported, but none of the more complex applications in the libsecondlife suite.
+
+

@@ -1,0 +1,2 @@
+Simon Whiteside (http://www.larts.co.uk) - original Java port
+Frederick Martian - bug fixing and adding ports of various newer Openmetaverse.org libomv parts
