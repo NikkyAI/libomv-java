@@ -38,7 +38,6 @@ import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
-import libomv.utils.BitFlags;
 
 /* An Item in Inventory */
 public class InventoryItem extends InventoryBase
@@ -235,7 +234,8 @@ public class InventoryItem extends InventoryBase
     }
 
     /* Upper half of the Flags field for inventory items */
-    public class InventoryItemFlags extends BitFlags<Integer> 
+    // [Flags]
+    public static class InventoryItemFlags
     {
         public static final int None = 0;
         /* Indicates that the NextOwner permission will be set to the most restrictive set of permissions
@@ -259,21 +259,17 @@ public class InventoryItem extends InventoryBase
          * or updated to reference a new assetID, the asset can be deleted */
         public static final int SharedSingleReference = 0x40000000;
         
-        public Integer getValue()
+        public static int setValue(int value)
         {
-        	return getInt();
+        	return value & _mask;
         }
         
-        public InventoryItemFlags()
+        public static int getValue(int value)
         {
-        	super(0x7F1100);
+        	return value;
         }
 
-        public InventoryItemFlags(int value)
-        {
-        	super(0x7F1100);
-        	setValue(value);
-        }
+        private static final int _mask = 0x7F1100;
     }
 
 	/* The {@link OpenMetaverse.UUID} of this item */

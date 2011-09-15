@@ -2185,8 +2185,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * @param set TODO: What does this do?
      * @throws Exception 
      */
-    public final void SetPermissions(Simulator simulator, int[] localIDs, Permissions.PermissionWho who,
-    		                         Permissions.PermissionMask permissions, boolean set) throws Exception
+    public final void SetPermissions(Simulator simulator, int[] localIDs, byte who,
+    		                         int permissions, boolean set) throws Exception
     {
         ObjectPermissionsPacket packet = new ObjectPermissionsPacket();
 
@@ -2203,8 +2203,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
             packet.ObjectData[i] = packet.new ObjectDataBlock();
 
             packet.ObjectData[i].ObjectLocalID = localIDs[i];
-            packet.ObjectData[i].Field = who.getValue();
-            packet.ObjectData[i].Mask = permissions.getValue();
+            packet.ObjectData[i].Field = who;
+            packet.ObjectData[i].Mask = permissions;
             packet.ObjectData[i].Set = (byte)(set ? 1 : 0);   
         }
 

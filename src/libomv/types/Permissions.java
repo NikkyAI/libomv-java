@@ -28,14 +28,13 @@ package libomv.types;
 import java.io.Serializable;
 
 import libomv.StructuredData.*;
-import libomv.utils.BitFlags;
 
 public class Permissions implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
 	// [Flags]
-    public class PermissionMask extends BitFlags<Integer> 
+    public static class PermissionMask
     {
 		public static final int None = 0;
 		public static final int Transfer = 1 << 13;
@@ -51,40 +50,36 @@ public class Permissions implements Serializable
 		public static final int Damage = 1 << 20;
 		public static final int All = 0x7FFFFFFF;
  
-		@Override
-		public Integer getValue() {
-			return getInt();
+		public static int setValue(int value)
+		{
+			return value & _mask;
 		}
-		public PermissionMask() {
-			super(All);
+		public static int getValue(int value)
+		{
+			return value;
 		}
-		public PermissionMask(int value) {
-			this();
-			setValue(value);
-		}
+		private static final int _mask = All;
     }
 
     // [Flags]
-    public class PermissionWho extends BitFlags<Byte>  
+    public static class PermissionWho
     {
-    	public static final int Base = 0x01;
-    	public static final int Owner = 0x02;
-    	public static final int Group = 0x04;
-    	public static final int Everyone = 0x08;
-    	public static final int NextOwner = 0x10;
-    	public static final int All = 0x1F;
+    	public static final byte Base = 0x01;
+    	public static final byte Owner = 0x02;
+    	public static final byte Group = 0x04;
+    	public static final byte Everyone = 0x08;
+    	public static final byte NextOwner = 0x10;
+    	public static final byte All = 0x1F;
         
-		@Override
-		public Byte getValue() {
-			return getByte();
+		public static byte setValue(int value)
+		{
+			return (byte)(value & _mask);
 		}
-		public PermissionWho() {
-			super(All);
+		public static int getValue(int value)
+		{
+			return value;
 		}
-		public PermissionWho(int value) {
-			this();
-			setValue(value);
-		}
+		private static final byte _mask = All;
     }
 
     public int BaseMask;

@@ -54,7 +54,6 @@ import libomv.packets.UUIDNameReplyPacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3;
-import libomv.utils.BitFlags;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackHandlerQueue;
@@ -64,7 +63,7 @@ import libomv.utils.Helpers;
  *  manage their permission. */
 public class FriendsManager implements PacketCallback
 {
-	public class FriendRights extends BitFlags <Byte>
+	public static class FriendRights
 	{
 		/** The avatar has no rights */
 		public static final byte None = 0;
@@ -75,40 +74,33 @@ public class FriendsManager implements PacketCallback
         /** The avatar can modify the ojects of the target avatar */
 		public static final byte CanModifyObjects = 4;
 		
-		private final String[] _names = new String[]{"None", "SeeOnline", "SeeOnMap", "ModifyObjects"};
+		private static final String[] _names = new String[] {"None", "SeeOnline", "SeeOnMap", "ModifyObjects"};
 
-		@Override
-		public Byte getValue() {
-			return getByte();
-		}
-
-		public FriendRights()
+		public static String toString(byte value)
 		{
-			super(0x7);
-		}
-		
-		public String toString()
-		{
-			byte value = getValue();
-			if (value > 0)
+			if ((value & _mask) == 0)
+				return _names[0];
+				
+			String rights = "";
+			for (int i = 1; i < _names.length; i++)
 			{
-				String names = new String("{");
-			    for (int i = 0; i < _names.length; i++)
-			    {
-			    	if (isSet(1 << value))
-			    	{
-			    		names.concat(_names[i] + ", ");
-			    	}
-			    }
-			    return names.substring(0, names.length() - 2) + "}";
-			}	
-			return "{" + _names[0] + "}";
+				if ((value & (1 << (i - 1))) != 0)
+				{
+					rights.concat(_names[i] + ", ");
+				}
+			}
+			return rights.substring(0, rights.length() - 2);
 		}
 		
-		public FriendRights(long value) {
-			this();
-			setValue(value);
+		public static byte setValue(int value)
+		{
+			return (byte)(value & _mask);
 		}
+		public static int getValue(int value)
+		{
+			return value;
+		}
+		private static final byte _mask = 0x7;
     }
 
 	/** This class holds information about an avatar in the friends list.  There are two ways 
@@ -121,8 +113,8 @@ public class FriendsManager implements PacketCallback
 	    private UUID ID;
 	    private String name;
 	    private boolean isOnline;
-	    private FriendRights myRights;
-	    private FriendRights theirRights;
+	    private byte myRights;
+	    private byte theirRights;
 
 	    /* System ID of the avatar */
 	    public final UUID getUUID()
@@ -153,85 +145,64 @@ public class FriendsManager implements PacketCallback
 	    /* True if the friend can see if I am online */
 	    public final boolean getCanSeeMeOnline()
 	    {
-	        return myRights.isSet(FriendRights.CanSeeOnline);
+	        return (myRights & FriendRights.CanSeeOnline) != 0;
 	    }
 	    public final void setCanSeeMeOnline(boolean value)
 	    {
 	        if (value)
 	        {
-	            myRights.set(FriendRights.CanSeeOnline);	
+	            myRights |= FriendRights.CanSeeOnline;	
 	        }
 	        else
 	        {
 	            // if they can't see me online, then they also can't see me on the map
-	            myRights.reset(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
+	            myRights &= ~(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
 	        }
 	    }
 
 	    /* True if the friend can see me on the map */
 	    public final boolean getCanSeeMeOnMap()
 	    {
-	        return myRights.isSet(FriendRights.CanSeeOnMap);
+	        return (myRights & FriendRights.CanSeeOnMap) != 0;
 	    }
 	    public final void setCanSeeMeOnMap(boolean value)
 	    {
-	        myRights.setBoolean(FriendRights.CanSeeOnMap, value);	
+	    	if (value)
+	    		myRights |= FriendRights.CanSeeOnMap;
+	    	else
+	    		myRights &= ~FriendRights.CanSeeOnMap;
+	    		
 	    }
 
 	    /* True if the friend can modify my objects */
 	    public final boolean getCanModifyMyObjects()
 	    {
-	        return myRights.isSet(FriendRights.CanModifyObjects);
+	        return (myRights & FriendRights.CanModifyObjects) != 0;
 	    }
 	    public final void setCanModifyMyObjects(boolean value)
 	    {
-	        myRights.setBoolean(FriendRights.CanModifyObjects, value);	
+	    	if (value)
+	            myRights |= FriendRights.CanModifyObjects;
+	    	else
+	            myRights &= ~FriendRights.CanModifyObjects;
 	    }
 
 	    /* True if I can see if my friend is online */
 	    public final boolean getCanSeeThemOnline()
 	    {
-	        return theirRights.isSet(FriendRights.CanSeeOnline);	
+	        return (theirRights & FriendRights.CanSeeOnline) != 0;	
 	    }
 
 	    /* True if I can see if my friend is on the map */
 	    public final boolean getCanSeeThemOnMap()
 	    {
-	       	return theirRights.isSet(FriendRights.CanSeeOnMap);	
+	       	return (theirRights & FriendRights.CanSeeOnMap) != 0;	
 	    }
 
 	    /* True if I can modify my friend's objects */
 	    public final boolean getCanModifyTheirObjects()
 	    {
-	      	return theirRights.isSet(FriendRights.CanSeeOnline);		
-	    }
-
-	    /* My friend's rights represented as bitmapped flags */
-	    public final FriendRights getTheirFriendRights()
-	    {
-	        return theirRights;
-	    }
-	    public final void setTheirFriendRights(FriendRights value)
-	    {
-	     	theirRights = value;
-	    }
-	    public final void setTheirFriendRights(int value)
-	    {
-	     	theirRights = new FriendRights(value);
-	    }
-
-	    /* My rights represented as bitmapped flags */
-	    public final FriendRights getMyFriendRights()
-	    {
-	     	return myRights;
-	    }
-	    public final void setMyFriendRights(FriendRights value)
-	    {
-	        myRights = value;
-	    }
-	    public final void setMyFriendRights(int value)
-	    {
-	        myRights = new FriendRights(value);
+	      	return (theirRights & FriendRights.CanSeeOnline) != 0;		
 	    }
 
 	    /** Used internally when building the initial list of friends at login time
@@ -243,8 +214,8 @@ public class FriendsManager implements PacketCallback
 	    public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has)
 	    {
 	        ID = id;
-	        this.theirRights = new FriendRights(buddy_rights_given);
-	        this.myRights = new FriendRights(buddy_rights_has);
+	        this.theirRights = (byte) buddy_rights_given;
+	        this.myRights = (byte)buddy_rights_has;
 	    }
 
 	    /** FriendInfo represented as a string
@@ -253,7 +224,7 @@ public class FriendsManager implements PacketCallback
 	     */
 	    public String toString()
 	    {
-	        return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(), getTheirFriendRights().toString(), getMyFriendRights().toString());
+	        return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(), FriendRights.toString(theirRights), FriendRights.toString(myRights));
 	    }
 	}
 
@@ -814,7 +785,7 @@ public class FriendsManager implements PacketCallback
                 if (FriendList.containsKey(block.AgentRelated))
                 {
                     friend = FriendList.get(block.AgentRelated);
-                    friend.setTheirFriendRights(block.RelatedRights);
+                    friend.theirRights = FriendRights.setValue(block.RelatedRights);
                     
                     OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
                 }
@@ -823,7 +794,7 @@ public class FriendsManager implements PacketCallback
                     if (FriendList.containsKey(rights.AgentData.AgentID))
                     {
                         friend = FriendList.get(rights.AgentData.AgentID);
-                        friend.setMyFriendRights(block.RelatedRights);
+                        friend.myRights = FriendRights.setValue(block.RelatedRights);
                         
                         OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
                     }

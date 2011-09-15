@@ -284,13 +284,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
 
         /** Gets or sets the upper byte of the Flags value */
-        public final InventoryItemFlags getItemFlags()
+        public final int getItemFlags()
         {
-            return new InventoryItemFlags(ItemFlags & ~0xFF);
+            return ItemFlags & ~0xFF;
         }
-        public final void setItemFlags(InventoryItemFlags value)
+        public final void setItemFlags(int value)
         {
-            ItemFlags  = (value.getValue() | (ItemFlags & 0xFF));
+            ItemFlags  = value | (ItemFlags & 0xFF);
         }
 
         /** Gets or sets the object attachment point, the lower byte of the Flags value */
@@ -1621,7 +1621,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCreateItem(UUID parentFolder, String name, String description, AssetType type, UUID assetTransactionID, InventoryType invType,
-    		                            PermissionMask nextOwnerMask, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    		                            int nextOwnerMask, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
     {
         // Even though WearableType.Shape, in this context it is treated as NOT_WEARABLE
         RequestCreateItem(parentFolder, name, description, type, assetTransactionID, invType, WearableType.Shape, nextOwnerMask, callback);
@@ -1642,7 +1642,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCreateItem(UUID parentFolder, String name, String description, AssetType type, UUID assetTransactionID, InventoryType invType,
-    		                            WearableType wearableType, PermissionMask nextOwnerMask, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    		                            WearableType wearableType, int nextOwnerMask, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
     {
         CreateInventoryItemPacket create = new CreateInventoryItemPacket();
         create.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1651,7 +1651,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         create.InventoryBlock.CallbackID = RegisterItemCreatedCallback(callback);
         create.InventoryBlock.FolderID = parentFolder;
         create.InventoryBlock.TransactionID = assetTransactionID;
-        create.InventoryBlock.NextOwnerMask = nextOwnerMask.getValue();
+        create.InventoryBlock.NextOwnerMask = nextOwnerMask;
         create.InventoryBlock.Type = type.getValue();
         create.InventoryBlock.InvType = invType.getValue();
         create.InventoryBlock.WearableType = wearableType.getValue();
