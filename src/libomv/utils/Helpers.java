@@ -2173,8 +2173,6 @@ public class Helpers {
 
 		if (cert == null)
 		{
-			URL url = Helpers.class.getResource("/res/linden.cert");
-			Logger.DebugLog(url);
 			InputStream fis = Helpers.class.getResourceAsStream("/res/linden.cert");
     	    BufferedInputStream bis = new BufferedInputStream(fis);
 			try
