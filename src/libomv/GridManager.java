@@ -550,12 +550,15 @@ public class GridManager implements PacketCallback {
 		return region;
     }
 
-	public void BeginGetGridRegion(String name, GridLayerType type, CallbackHandler<GridRegionEventArgs> grc)
-			throws Exception {
+	public void BeginGetGridRegion(String name, GridLayerType type, CallbackHandler<GridRegionEventArgs> grc) throws Exception
+	{
 		GridRegion region = Regions.get(name);
-		if (region != null) {
-			grc.callback(new GridRegionEventArgs(region));
-		} else {
+		if (region != null)
+		{
+			grc.dispatch(new GridRegionEventArgs(region));
+		}
+		else
+		{
 			OnGridRegion.add(grc);
 			RequestMapRegion(name, type);
 		}

@@ -662,18 +662,27 @@ public class TexturePipeline implements PacketCallback
             task.Transfer.TimeSinceLastPacket = 0;
 
             // Don't release this worker slot until texture is downloaded or timeout occurs
-            Boolean timeout = task.TimeoutEvent.waitOne(-1);
-            if (timeout == null || !timeout)
-            {
-                // Timed out
-                Logger.Log("Worker " + task.RequestSlot + " timeout waiting for texture " + task.RequestID + " to download got " + task.Transfer.Transferred + " of " + task.Transfer.Size, LogLevel.Warning);
+            Boolean timeout;
+			try
+			{
+				timeout = task.TimeoutEvent.waitOne(-1);
+	            if (timeout == null || !timeout)
+	            {
+	                // Timed out
+	                Logger.Log("Worker " + task.RequestSlot + " timeout waiting for texture " + task.RequestID + " to download got " + task.Transfer.Transferred + " of " + task.Transfer.Size, LogLevel.Warning);
 
-                RemoveTransfer(task.RequestID);
+	                RemoveTransfer(task.RequestID);
 
-                AssetTexture texture = new AssetTexture(task.RequestID, task.Transfer.AssetData);
-                task.CallCallback(TextureRequestState.Timeout, texture);
-                _Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
-            }
+	                AssetTexture texture = new AssetTexture(task.RequestID, task.Transfer.AssetData);
+	                task.CallCallback(TextureRequestState.Timeout, texture);
+	                _Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+	            }
+			}
+			catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
             // Free up this download slot
             synchronized (_ThreadRequests)
@@ -754,8 +763,9 @@ public class TexturePipeline implements PacketCallback
      * 
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
+     * @throws InterruptedException 
      */
-    protected final void ImagePacketHandler(Packet packet, Simulator simulator)
+    protected final void ImagePacketHandler(Packet packet, Simulator simulator) throws InterruptedException
     {
         ImagePacketPacket image = (ImagePacketPacket)packet;
         TaskInfo task = GetTransferValue(image.ImageID.ID);

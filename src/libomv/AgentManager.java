@@ -2875,22 +2875,22 @@ public class AgentManager implements PacketCallback, CapsCallback {
     	{
             if (result == null)
             {
-                callback.callback(new AttachmentResourcesCallbackArgs(false, null));
+                callback.dispatch(new AttachmentResourcesCallbackArgs(false, null));
             }
             AttachmentResourcesMessage info = (AttachmentResourcesMessage)_Client.Messages.DecodeEvent(CapsEventType.AttachmentResources, (OSDMap)result);
-            callback.callback(new AttachmentResourcesCallbackArgs(true, info));
+            callback.dispatch(new AttachmentResourcesCallbackArgs(true, info));
         }
 
 		@Override
 		public void failed(Exception ex)
 		{
-            callback.callback(new AttachmentResourcesCallbackArgs(false, null));
+            callback.dispatch(new AttachmentResourcesCallbackArgs(false, null));
 		}
 
 		@Override
 		public void cancelled()
 		{
-            callback.callback(new AttachmentResourcesCallbackArgs(false, null));
+            callback.dispatch(new AttachmentResourcesCallbackArgs(false, null));
 		}
     }
     

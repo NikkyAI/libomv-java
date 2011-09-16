@@ -1961,7 +1961,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		        GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i]; 
 		        account.HistoryItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
 		    }
-		    OnGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).callback(account);
+		    OnGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).dispatch(account);
 		}
 	}
 
@@ -1988,7 +1988,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		    	entry.Time = Helpers.BytesToString(block.getTime());
 		    	account.Transactions[i] = entry;
 		    }
-		    OnGroupAccountTransactionsCallbacks.get(transactions.AgentData.GroupID).callback(account);
+		    OnGroupAccountTransactionsCallbacks.get(transactions.AgentData.GroupID).dispatch(account);
 		}
 	}
 

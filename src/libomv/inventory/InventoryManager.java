@@ -3479,19 +3479,19 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					catch (Exception ex) { }
 
                     if (callback != null)
-                        callback.callback(new ItemCreatedFromAssetCallbackArgs(true, Helpers.EmptyString, item, asset));
+                        callback.dispatch(new ItemCreatedFromAssetCallbackArgs(true, Helpers.EmptyString, item, asset));
                 }
                 else
                 {
                     if (callback != null)
-                        callback.callback(new ItemCreatedFromAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
+                        callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
                 }
             }
             else
             {
                 // Failure
             	if (callback != null)
-                    callback.callback(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
+                    callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
             }
         }
         
@@ -3499,14 +3499,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		public void failed(Exception ex)
 		{
 			if (callback != null)
-                callback.callback(new ItemCreatedFromAssetCallbackArgs(false, ex.getMessage(), UUID.Zero, UUID.Zero));
+                callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, ex.getMessage(), UUID.Zero, UUID.Zero));
 		}
 
 		@Override
 		public void cancelled()
 		{
 			if (callback != null)
-                callback.callback(new ItemCreatedFromAssetCallbackArgs(false, "Operation canceled", UUID.Zero, UUID.Zero));
+                callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, "Operation canceled", UUID.Zero, UUID.Zero));
 		}
     }
 
@@ -3604,7 +3604,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     else
                     {
                     	if (callback != null)
-                            callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Missing uploader URL", UUID.Zero, UUID.Zero));
+                            callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Missing uploader URL", UUID.Zero, UUID.Zero));
                     }
                 }
                 else if (status.equals("complete"))
@@ -3620,24 +3620,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						catch (Exception ex) { }
 
                         if (callback != null)
-                            callback.callback(new InventoryUploadedAssetCallbackArgs(true, Helpers.EmptyString, assetID, new_asset));
+                            callback.dispatch(new InventoryUploadedAssetCallbackArgs(true, Helpers.EmptyString, assetID, new_asset));
                     }
                     else
                     {
                     	if (callback != null)
-                            callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
+                            callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
                     }
                 }
                 else
                 {
                 	if (callback != null)
-                        callback.callback(new InventoryUploadedAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
+                        callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
                 }
             }
             else
             {
             	if (callback != null)
-                    callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Unrecognized or empty response", UUID.Zero, UUID.Zero));
+                    callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Unrecognized or empty response", UUID.Zero, UUID.Zero));
             }
     	}
 
@@ -3652,7 +3652,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     			else
     				message = ex.getMessage();
     				
-                callback.callback(new InventoryUploadedAssetCallbackArgs(false, message, UUID.Zero, UUID.Zero));
+                callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, message, UUID.Zero, UUID.Zero));
 			}
 		}
 
@@ -3660,7 +3660,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		public void cancelled()
 		{
 			if (callback != null)
-				callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.Zero, UUID.Zero));
+				callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.Zero, UUID.Zero));
 		}
     }
 
@@ -3740,12 +3740,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
                         }
                     }
                     if (callback != null)
-                   	    callback.callback(new ScriptUpdatedCallbackArgs(true, status, contents.get("compiled").AsBoolean(), compileErrors, scriptID, new_asset));
+                   	    callback.dispatch(new ScriptUpdatedCallbackArgs(true, status, contents.get("compiled").AsBoolean(), compileErrors, scriptID, new_asset));
                 }
                 else
                 {
                     if (callback != null)
-                        callback.callback(new ScriptUpdatedCallbackArgs(false, "Failed to parse asset UUID", false, null, UUID.Zero, UUID.Zero));
+                        callback.dispatch(new ScriptUpdatedCallbackArgs(false, "Failed to parse asset UUID", false, null, UUID.Zero, UUID.Zero));
                 }
             }
         }
@@ -3754,14 +3754,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		public void failed(Exception ex)
 		{
             if (callback != null)
-                callback.callback(new ScriptUpdatedCallbackArgs(false, ex.getMessage(), false, null, UUID.Zero, UUID.Zero));
+                callback.dispatch(new ScriptUpdatedCallbackArgs(false, ex.getMessage(), false, null, UUID.Zero, UUID.Zero));
 		}
 
 		@Override
 		public void cancelled()
 		{
             if (callback != null)
-                callback.callback(new ScriptUpdatedCallbackArgs(false, "Operation cancelled", false, null, UUID.Zero, UUID.Zero));
+                callback.dispatch(new ScriptUpdatedCallbackArgs(false, "Operation cancelled", false, null, UUID.Zero, UUID.Zero));
 		}
     }
     // #endregion Internal Handlers
@@ -4007,7 +4007,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
                 try
                 {
-                    callback.callback(new ItemCreatedCallbackArgs(true, item));
+                    callback.dispatch(new ItemCreatedCallbackArgs(true, item));
                 }
                 catch (Throwable ex)
                 {
@@ -4024,7 +4024,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
                 try
                 {
-                    callback.callback(new ItemCopiedCallbackArgs(item));
+                    callback.dispatch(new ItemCopiedCallbackArgs(item));
                 }
                 catch (Throwable ex)
                 {
@@ -4126,7 +4126,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
                         try
                         {
-                            callback.callback(new ItemCreatedCallbackArgs(true, item));
+                            callback.dispatch(new ItemCreatedCallbackArgs(true, item));
                         }
                         catch (Throwable ex)
                         {
@@ -4141,7 +4141,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
                         try
                         {
-                            callback.callback(new ItemCopiedCallbackArgs(item));
+                            callback.dispatch(new ItemCopiedCallbackArgs(item));
                         }
                         catch (Throwable ex)
                         {

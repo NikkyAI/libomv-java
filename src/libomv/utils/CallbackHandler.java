@@ -2,20 +2,19 @@ package libomv.utils;
 
 public abstract class CallbackHandler <T>
 {
-	public abstract void callback(T params);
+	protected abstract void callback(T params);
 
-	private final Integer timer = 0;
-	public final void dispatch(T params)
+	public synchronized final void dispatch(T params)
 	{
 		callback(params);
-		this.timer.notifyAll();
+		notifyAll();
 	}
 	
-	public final boolean waitms(long timeout)
+	public synchronized final boolean waitms(long timeout)
 	{
 		try
 		{
-			this.timer.wait(timeout);
+			wait(timeout);
 			return false;
 		}
 		catch (InterruptedException e)
