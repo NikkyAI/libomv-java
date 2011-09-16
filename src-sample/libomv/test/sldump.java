@@ -68,8 +68,6 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			return;
 		}
 
-		client = new GridClient();
-
 		if (args[0].equals("--printmap")) {
 			ProtocolManager protocol;
 
@@ -84,6 +82,9 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			protocol.PrintMap();
 			return;
 		}
+
+		client = new GridClient();
+		client.setDefaultGrid("secondlife");
 		LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
 		
 		// Setup the packet callback and disconnect event handler
