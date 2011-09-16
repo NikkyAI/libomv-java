@@ -1162,9 +1162,7 @@ public class AssetManager implements PacketCallback
      * {
      *     if(state == TextureRequestState.Finished)
      *     {
-     *       Console.WriteLine("Texture {0} ({1} bytes) has been successfully downloaded", 
-     *         asset.AssetID,
-     *         asset.AssetData.Length); 
+     *         Console.WriteLine("Texture %s (%d bytes) has been successfully downloaded", asset.AssetID, asset.AssetData.Length); 
      *     }
      * }
      * </code>
@@ -1174,7 +1172,7 @@ public class AssetManager implements PacketCallback
      *                                         {
      *                                             if(state == TextureRequestState.Finished)
      *                                             {
-     *                                                 Console.WriteLine("Texture {0} ({1} bytes) has been successfully downloaded", 
+     *                                                 Console.WriteLine("Texture %s (%d bytes) has been successfully downloaded", 
      *                                                 asset.AssetID,
      *                                                 asset.AssetData.Length); 
      *                                             }
@@ -1453,7 +1451,7 @@ public class AssetManager implements PacketCallback
                     download.AssetID = new UUID(data, 80);
                     download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 96));
 
-                    Logger.DebugLog(String.format("TransferInfo packet received. AgentID: %s SessionID: %s OwnerID: %s TaskID: %s ItemID: %s AssetID: %s Type: {6}",
+                    Logger.DebugLog(String.format("TransferInfo packet received. AgentID: %s SessionID: %s OwnerID: %s TaskID: %s ItemID: %s AssetID: %s Type: %s",
                     		                      agentID, sessionID, ownerID, taskID, itemID, download.AssetID, download.AssetType));
                 }
                 else
@@ -1528,13 +1526,13 @@ public class AssetManager implements PacketCallback
             }
             catch (Exception t)
             {
-                Logger.Log(String.format("TransferPacket handling failed. TransferData.Data.Length={0}, AssetData.Length={1}, TransferData.Packet={2}", asset.TransferData.getData().length, download.AssetData.length, asset.TransferData.Packet), LogLevel.Error);
+                Logger.Log(String.format("TransferPacket handling failed. TransferData.Data.Length = %d, AssetData.Length = %d, TransferData.Packet = %d",
+                		   asset.TransferData.getData().length, download.AssetData.length, asset.TransferData.Packet), LogLevel.Error);
                 return;
             }
 
-            //_Client.DebugLog(String.Format("Transfer packet {0}, received {1}/{2}/{3} bytes for asset {4}",
-            //    asset.TransferData.Packet, asset.TransferData.Data.Length, transfer.Transferred, transfer.Size,
-            //    transfer.AssetID.ToString()));
+            //Logger.DebugLog(String.Format("Transfer packet %d, received %d/%d/%d bytes for asset %s",
+            //    asset.TransferData.Packet, asset.TransferData.Data.Length, transfer.Transferred, transfer.Size, transfer.AssetID));
 
             // Check if we downloaded the full asset
             if (download.Transferred >= download.Size)

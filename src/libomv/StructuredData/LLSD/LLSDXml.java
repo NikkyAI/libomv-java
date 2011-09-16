@@ -167,7 +167,7 @@ public final class LLSDXml
  *  } }
  *  private static void LLSDXmlSchemaValidationHandler(Object sender, ValidationEventArgs args)
  *  {
- *      String error = String.Format("Line: {0} - Position: {1} - {2}", XmlTextReader.LineNumber, XmlTextReader.LinePosition, args.Message);
+ *      String error = String.format("Line: %d - Position: %d - %s", XmlTextReader.LineNumber, XmlTextReader.LinePosition, args.Message);
  *      if (LastXmlErrors.equals(String.Empty))
  *          LastXmlErrors = error;
  *      else

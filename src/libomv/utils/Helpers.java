@@ -2172,7 +2172,7 @@ public class Helpers {
 
 		if (cert == null)
 		{
-			InputStream fis = Helpers.class.getResourceAsStream("/linden.pem");
+			InputStream fis = Helpers.class.getResourceAsStream("/linden.cert");
     	    BufferedInputStream bis = new BufferedInputStream(fis);
 			try
 			{

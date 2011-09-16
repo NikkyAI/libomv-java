@@ -326,7 +326,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     {
      *         void callback(PrimCallbackArgs e)
      *         {
-     *              Console.WriteLine("Primitive %s %s in {2} is an attachment {3}", e.getPrim().ID, e.getPrim().LocalID, e.getSimulator().Name, e.getIsAttachment());
+     *              Console.WriteLine("Primitive %s %s in %s is an attachment {3}", e.getPrim().ID, e.getPrim().LocalID, e.getSimulator().Name, e.getIsAttachment());
      *         }
      *     }
      * </code>
@@ -335,7 +335,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * {@link ObjectManager.AvatarUpdate}
      * {@link AvatarUpdateCallbackArgs}
      */
-	public class PrimCallbackArgs extends CallbackArgs{
+    public class PrimCallbackArgs extends CallbackArgs
+	{
         private final Simulator m_Simulator;
         private final boolean m_IsNew;
         private final boolean m_IsAttachment;
@@ -415,7 +416,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     // handle the properties data that arrives
      *     private void Objects_ObjectProperties(object sender, ObjectPropertiesEventArgs e)
      *     {
-     *         Console.WriteLine("Primitive Properties: {0} Name is {1}", e.Properties.ObjectID, e.Properties.Name);
+     *         Console.WriteLine("Primitive Properties: %s, Name is %s", e.Properties.ObjectID, e.Properties.Name);
      *     }   
      * </code>
      * </example>
