@@ -97,7 +97,7 @@ public class GridClient
 	private static final String DEFAULT_GRID_NAME2 = "secondlife";
 	private static final String GRID_INFO_PROTOCOL = "get_grid_info";
 	private static final String DEFAULT_GRIDS_VERSION = "default_grids_version";
-	private static final String DEFAULT_GRIDS_LIST = "/default_grids.xml";
+	private static final String DEFAULT_GRIDS_LIST = "/res/default_grids.xml";
 	// #endregion
 	
 	// Networking Subsystem

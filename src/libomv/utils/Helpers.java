@@ -122,7 +122,7 @@ public class Helpers {
 		    // Convert the hash to a hex string
 			for (byte b : hash)
 			{
-				digest.append(String.format(EnUsCulture, "%2x", b));
+				digest.append(String.format(EnUsCulture, "%02x", b));
 			}
 		}
 		catch (NoSuchAlgorithmException e) { }
