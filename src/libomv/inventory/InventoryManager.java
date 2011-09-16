@@ -1085,7 +1085,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      */
     public final void RequestFindObjectByPath(UUID baseFolder, UUID inventoryOwner, String path) throws Exception
     {
-        if (path.equals(null) || path.length() == 0)
+        if (path == null || path.length() == 0)
         {
             throw new IllegalArgumentException("Empty path is not supported");
         }

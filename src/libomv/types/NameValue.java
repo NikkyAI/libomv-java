@@ -159,7 +159,7 @@ public final class NameValue
         {
             NameValue value = values[i];
 
-            if (!value.Value.equals(null))
+            if (value.Value != null)
             {
                 String newLine = (i < values.length - 1) ? "\n" : "";
                 output.append(String.format("$1 $2 $3 $4 $5$6", value.Name, TypeStrings[value.Type.val], ClassStrings[value.Class.val], SendtoStrings[value.Sendto.val], value.Value, newLine));

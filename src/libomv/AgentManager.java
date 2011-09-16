@@ -1177,9 +1177,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
     /* Avatar Full Name (i.e. Philip Linden) */
     public final String getName()
     {
-            // This is a fairly common request, so assume the name doesn't
-            // change mid-session and cache the result
-        if (fullName.equals(null) || fullName.length() < 2)
+        // This is a fairly common request, so assume the name doesn't change mid-session and cache the result
+        if (fullName == null || fullName.length() < 2)
         {
             fullName = String.format("$1 $2", firstName, lastName);
         }

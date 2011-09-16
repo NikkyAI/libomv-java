@@ -764,7 +764,13 @@ public class LoginManager
      */
     public final boolean Login(LoginParams loginParams) throws Exception
     {
-    	TimeoutEvent<LoginStatus> loginEvent = LoginEvents.create();
+        // FIXME: Now that we're using CAPS we could cancel the current login and start a new one
+        if (LoginEvents.size() != 0)
+        {
+            throw new Exception("Login already in progress");
+        }
+
+        TimeoutEvent<LoginStatus> loginEvent = LoginEvents.create();
         RequestLogin(loginParams);
         LoginStatus status = loginEvent.waitOne(loginParams.Timeout);
         LoginEvents.cancel(loginEvent);
@@ -792,17 +798,11 @@ public class LoginManager
 
     public void RequestLogin(final LoginParams loginParams) throws Exception
     {
-        // FIXME: Now that we're using CAPS we could cancel the current login and start a new one
-        if (LoginEvents.size() != 0)
-        {
-            throw new Exception("Login already in progress");
-        }
-
         // #region Sanity Check loginParams
 
         if (loginParams.Options == null)
         {
-            loginParams.Options = new ArrayList<String>().toArray(loginParams.Options);
+            loginParams.Options = new String[] {};
         }
 
         // Convert the password to MD5 if it isn't already
@@ -811,37 +811,37 @@ public class LoginManager
             loginParams.Password = Helpers.MD5Password(loginParams.Password);
         }
 
-        if (loginParams.ViewerDigest.equals(null))
+        if (loginParams.ViewerDigest == null)
         {
             loginParams.ViewerDigest = "";
         }
 
-        if (loginParams.Version.equals(null))
+        if (loginParams.Version == null)
         {
             loginParams.Version = "";
         }
 
-        if (loginParams.UserAgent.equals(null))
+        if (loginParams.UserAgent == null)
         {
             loginParams.UserAgent = "";
         }
 
-        if (loginParams.Platform.equals(null))
+        if (loginParams.Platform == null)
         {
             loginParams.Platform = "";
         }
 
-        if (loginParams.MAC.equals(null))
+        if (loginParams.MAC == null)
         {
             loginParams.MAC = "";
         }
 
-        if (loginParams.Channel.equals(null))
+        if (loginParams.Channel == null)
         {
             loginParams.Channel = "";
         }
 
-        if (loginParams.Author.equals(null))
+        if (loginParams.Author == null)
         {
             loginParams.Author = "";
         }
@@ -972,7 +972,8 @@ public class LoginManager
                 	{
                 		try
                         {
-                             LoginReplyXmlRpcHandler(client.callEx(loginParams.MethodName, request), loginParams);
+                			Object data = client.callEx(loginParams.MethodName, request);
+                            LoginReplyXmlRpcHandler(data, loginParams);
                         }
 						catch (Exception e)
 						{
