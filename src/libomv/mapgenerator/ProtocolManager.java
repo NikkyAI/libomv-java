@@ -42,7 +42,8 @@ import libomv.utils.HashMapInt;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-public class ProtocolManager {
+public class ProtocolManager
+{
 	public Hashtable<Integer, Integer> TypeSizes;
 
 	public HashMapInt KeywordPositions;
@@ -91,7 +92,8 @@ public class ProtocolManager {
 		LoadMapFile(mapFile);
 	}
 
-	public MapPacket Command(String command) throws Exception {
+	public MapPacket Command(String command) throws Exception
+	{
 		// TODO: Get a hashtable in here quick!
 
 		MapPacket map = HighMaps.getMapPacketByName(command);
@@ -111,7 +113,8 @@ public class ProtocolManager {
 		 */
 	}
 
-	public MapPacket Command(byte[] data) throws Exception {
+	public MapPacket Command(byte[] data) throws Exception
+	{
 		int command;
 
 		if (data.length < 7) {
@@ -135,27 +138,31 @@ public class ProtocolManager {
 		}
 	}
 
-	public MapPacket Command(int command, int frequency) throws Exception {
-		switch (frequency) {
-		case PacketFrequency.High:
-			return HighMaps.getMapPacketByCommand(command);
-		case PacketFrequency.Medium:
-			return MediumMaps.getMapPacketByCommand(command);
-		case PacketFrequency.Low:
-			return LowMaps.getMapPacketByCommand(command);
+	public MapPacket Command(int command, int frequency) throws Exception
+	{
+		switch (frequency)
+		{
+			case PacketFrequency.High:
+				return HighMaps.getMapPacketByCommand(command);
+			case PacketFrequency.Medium:
+				return MediumMaps.getMapPacketByCommand(command);
+			case PacketFrequency.Low:
+				return LowMaps.getMapPacketByCommand(command);
 		}
 
 		throw new Exception("Cannot find map for command \"" + command
 				+ "\" with frequency \"" + frequency + "\"");
 	}
 
-	public void PrintMap() {
+	public void PrintMap()
+	{
 		PrintOneMap(LowMaps, "Low   ");
 		PrintOneMap(MediumMaps, "Medium");
 		PrintOneMap(HighMaps, "High  ");
 	}
 
-	private void PrintOneMap(MapPacketMap map, String frequency) {
+	private void PrintOneMap(MapPacketMap map, String frequency)
+	{
 		int i;
 
 		for (i = 0; i < map.mapPackets.size(); ++i) {
@@ -182,8 +189,8 @@ public class ProtocolManager {
 		}
 	}
 
-	public static void DecodeMapFile(String mapFile, String outputFile)
-			throws Exception {
+	public static void DecodeMapFile(String mapFile, String outputFile) throws Exception
+	{
 		byte magicKey = 0;
 		byte[] buffer = new byte[2048];
 		int nread;
