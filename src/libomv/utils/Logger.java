@@ -28,9 +28,6 @@ package libomv.utils;
 import libomv.GridClient;
 import libomv.Settings;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /* Singleton logging class for the entire library */
 public final class Logger
 {
@@ -53,6 +50,31 @@ public final class Logger
 
 		public final static int Debug = 4;
 	}
+	
+	private static class Log
+	{
+		private void output(String level, Object message, Throwable ex)
+		{
+			System.out.println(level + ": " + message + (ex != null ? " Exception: " + ex.getMessage() : ""));
+		}
+		
+		public void info(Object message, Throwable ex)
+		{
+			output("Info", message, ex);
+		}
+		public void warn(Object message, Throwable ex)
+		{
+			output("Warn", message, ex);
+		}
+		public void debug(Object message, Throwable ex)
+		{
+			output("Warn", message, ex);
+		}
+		public void error(Object message, Throwable ex)
+		{
+			output("Error", message, ex);
+		}
+	}
 
 	public interface LogCallback {
 		public void callback(Object message, int level);
@@ -71,18 +93,7 @@ public final class Logger
     /* Default constructor */
     static
     {
-        LogInstance = LogFactory.getLog("libomv");
-        System.out.println(LogInstance.toString());
-
-        // If error level reporting isn't enabled we assume no logger is configured and initialize a default
-        // ConsoleAppender
-        if (!LogInstance.isErrorEnabled())
-        {
-            if(Settings.LOG_LEVEL != LogLevel.None)
-            {
-                LogInstance.info("No log configuration found, defaulting to console logging");
-            }
-        }
+        LogInstance = new Log();
     }
 
     /** Send a log message to the logging engine
@@ -142,7 +153,6 @@ public final class Logger
                 if (Settings.LOG_LEVEL == LogLevel.Debug)
                 {
                     LogInstance.debug(message, exception);
-                    System.out.println(message + (exception != null ? exception.getMessage() : ""));
                 }
                 break;
             case LogLevel.Info:
@@ -202,7 +212,7 @@ public final class Logger
                 OnLogMessage.callback(message, LogLevel.Debug);
             }
 
-            LogInstance.debug(message);
+            LogInstance.debug(message, null);
         }
     }
 }
