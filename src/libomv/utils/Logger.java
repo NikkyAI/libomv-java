@@ -72,7 +72,7 @@ public final class Logger
     /* Default constructor */
     static
     {
-        LogInstance = LogFactory.getLog("OpenMetaverse");
+        LogInstance = LogFactory.getLog("libomv");
 
         // If error level reporting isn't enabled we assume no logger is configured and initialize a default
         // ConsoleAppender
@@ -128,7 +128,7 @@ public final class Logger
     {
         if (client != null && client.Settings.LOG_NAMES)
         {
-            message = String.format("<{0}>: {1}", client.Self.getName(), message);
+            message = String.format("<%s>: %s", client.Self.getName(), message);
         }
 
         if (OnLogMessage != null)
@@ -167,23 +167,25 @@ public final class Logger
         }
     }
 
-    /** If the library is compiled with DEBUG defined, an event will be fired if an
-     *  <code>OnLogMessage</code> handler is registered and the @param message message
-     *  will be sent to the logging engine
+    /**
+     * If the library is compiled with DEBUG defined, an event will be fired if an
+     * <code>OnLogMessage</code> handler is registered and the @param message message
+     * will be sent to the logging engine
      *  
-     *  @param message The message to log at the DEBUG level to the current logging engine
+     * @param message The message to log at the DEBUG level to the current logging engine
      */
     public static void DebugLog(Object message)
     {
         DebugLog(message, null);
     }
 
-    /** If the library is compiled with DEBUG defined and <code>GridClient.Settings.DEBUG</code> is true,
-     *  an event will be fired if an <code>OnLogMessage</code> handler is registered and the message will
-     *  be sent to the logging engine
+    /**
+     * If the library is compiled with DEBUG defined and <code>GridClient.Settings.DEBUG</code> is true,
+     * an event will be fired if an <code>OnLogMessage</code> handler is registered and the message will
+     * be sent to the logging engine
      *  
-     *  @param message The message to log at the DEBUG level to the current logging engine
-     *  @param client Instance of the client
+     * @param message The message to log at the DEBUG level to the current logging engine
+     * @param client Instance of the client
      */
     //[System.Diagnostics.Conditional("DEBUG")]
     public static void DebugLog(Object message, GridClient client)

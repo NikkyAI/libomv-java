@@ -35,9 +35,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-import net.xmlrpc.XMLRPCClient;
-
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.nio.concurrent.FutureCallback;
+
+import net.xmlrpc.XMLRPCClient;
 
 import libomv.GridClient;
 import libomv.StructuredData.OSD;
@@ -852,6 +854,17 @@ public class LoginManager
         // Even though this will compile on Mono 2.4, it throws a runtime exception
         //ServicePointManager.ServerCertificateValidationCallback = TrustAllCertificatePolicy.TrustAllCertificateHandler;
 
+        URI loginUri;
+        try
+        {
+            loginUri = new URI(loginParams.URI);
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()), LogLevel.Error, Client);
+            return;
+        }
+
         if (Client.Settings.USE_LLSD_LOGIN)
         {
             // #region LLSD Based Login
@@ -894,16 +907,6 @@ public class LoginManager
             loginLLSD.put("options", optionsOSD);
 
             // Make the CAPS POST for login
-            URI loginUri;
-            try
-            {
-                loginUri = new URI(loginParams.URI);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()), LogLevel.Error, Client);
-                return;
-            }
 
             CapsClient loginRequest = new CapsClient(loginUri);
             UpdateLoginStatus(LoginStatus.ConnectingToLogin, "Logging in as " + loginParams.FirstName + " " + loginParams.LastName + " ...", null);
@@ -959,12 +962,15 @@ public class LoginManager
 
             try
             {
-                final XMLRPCClient client = new XMLRPCClient(loginParams.URI);
+                final XMLRPCClient client = new XMLRPCClient(loginUri);
                 final Object[] request = new Object[] { loginXmlRpc };
-                // client.register(scheme);
-
-                // loginParams.Timeout
                 
+                if (loginUri.getScheme().equals("https"))
+                {
+                	int port = loginUri.getPort();
+                    client.register(new Scheme("https", port, new SSLSocketFactory(Helpers.GetExtendedKeyStore(null))));
+                }
+
                 // Start the request
                 Thread requestThread = new Thread()
                 {

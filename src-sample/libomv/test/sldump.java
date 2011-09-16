@@ -31,34 +31,42 @@ import libomv.LoginManager.LoginParams;
 import libomv.LoginManager.LoginResponseCallbackArgs;
 import libomv.NetworkManager.DisconnectType;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
+import libomv.Settings;
 import libomv.Simulator;
 import libomv.mapgenerator.ProtocolManager;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
 import libomv.utils.CallbackHandler;
+import libomv.utils.Logger.LogLevel;
 
 public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements PacketCallback
 {
 	// The main entry point for the application.
-	static public void main(String[] args) {
-		try {
+	static public void main(String[] args)
+	{
+		try
+		{
 			new sldump(args);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
 
-	public sldump(String[] args) throws Exception {
+	public sldump(String[] args) throws Exception
+	{
 		GridClient client;
 
-		if (args.length == 0 || (args.length < 3 && !args[0].equals("--printmap"))) {
-			System.out.println("Usage: sldump [--printmap] [--decrypt] [inputfile] [outputfile] [--protocol] [firstname] "
-							+ "[lastname] [password]");
+		if (args.length == 0 || (args.length < 3 && !args[0].equals("--printmap")))
+		{
+			System.out.println("Usage: sldump [--printmap] [--decrypt] [inputfile] [outputfile] [--protocol] [firstname] [lastname] [password]");
 			return;
 		}
 
-		if (args[0].equals("--decrypt")) {
+		if (args[0].equals("--decrypt"))
+		{
 			try {
 				ProtocolManager.DecodeMapFile(args[1], args[2]);
 			} catch (Exception e) {
@@ -68,7 +76,8 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			return;
 		}
 
-		if (args[0].equals("--printmap")) {
+		if (args[0].equals("--printmap"))
+		{
 			ProtocolManager protocol;
 
 			try {
@@ -147,9 +156,12 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 	public void callback(DisconnectedCallbackArgs args)
 	{
 		DisconnectType type = args.getDisconnectType();
-		if (type == DisconnectType.NetworkTimeout) {
+		if (type == DisconnectType.NetworkTimeout)
+		{
 			System.out.println("Network connection timed out, disconnected");
-		} else if (type == DisconnectType.ServerInitiated) {
+		}
+		else if (type == DisconnectType.ServerInitiated)
+		{
 			System.out.println("Server disconnected us: " + args.getMessage());
 		}
 	}

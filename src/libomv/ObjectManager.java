@@ -326,7 +326,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     {
      *         void callback(PrimCallbackArgs e)
      *         {
-     *              Console.WriteLine("Primitive %s %s in %s is an attachment {3}", e.getPrim().ID, e.getPrim().LocalID, e.getSimulator().Name, e.getIsAttachment());
+     *              Console.WriteLine("Primitive %s %s in %s is an attachment %s", e.getPrim().ID, e.getPrim().LocalID, e.getSimulator().Name, e.getIsAttachment());
      *         }
      *     }
      * </code>
