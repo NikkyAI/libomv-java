@@ -191,7 +191,7 @@ public class GridClient
 
 	public GridInfo getDefaultGrid()
 	{
-		if (defaultGrid == null)
+		if (defaultGrid == null | defaultGrid.isEmpty())
 			setDefaultGrid(null);
 		return gridlist.get(defaultGrid);
 	}
@@ -236,9 +236,6 @@ public class GridClient
 	{
 		GridInfo info = null;
 		HttpClient client = new DefaultHttpClient();
-
-//		client.getConnectionManager().getSchemeRegistry().register(sch);
-
 		HttpGet getMethod = new HttpGet(new URI(loginuri + GRID_INFO_PROTOCOL));
 		try
 		{
@@ -415,7 +412,7 @@ public class GridClient
 		OSD osd = null;
 		System.out.println(System.getProperty("java.class.path"));
 		InputStream stream = getClass().getResourceAsStream(DEFAULT_GRIDS_LIST);
-		if (stream != null)
+		if (stream != null) 
 		{
 			try
 			{

@@ -128,25 +128,10 @@ public class LoginManager
          */
         public LoginParams()
         {
-            ArrayList<String> options = new ArrayList<String>(16);
-            options.add("inventory-root");
-            options.add("inventory-skeleton");
-            options.add("inventory-lib-root");
-            options.add("inventory-lib-owner");
-            options.add("inventory-skel-lib");
-            options.add("initial-outfit");
-            options.add("gestures");
-            options.add("event_categories");
-            options.add("event_notifications");
-            options.add("classified_categories");
-            options.add("buddy-list");
-            options.add("ui-config");
-            options.add("tutorial_settings");
-            options.add("login-flags");
-            options.add("global-textures");
-            options.add("adult_compliant");
-
-            this.Options = (String[]) options.toArray();
+            this.Options = new String[]
+                {"inventory-root", "inventory-skeleton", "inventory-lib-root", "inventory-lib-owner", "inventory-skel-lib",
+                 "initial-outfit", "gestures", "event_categories", "event_notifications", "classified_categories", "buddy-list",
+                 "ui-config", "tutorial_settings", "login-flags", "global-textures", "adult_compliant"};
             this.MethodName = "login_to_simulator";
             this.Start = "last";
             this.Platform = Helpers.GetPlatform();
