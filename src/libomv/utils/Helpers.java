@@ -39,6 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -2172,7 +2173,9 @@ public class Helpers {
 
 		if (cert == null)
 		{
-			InputStream fis = Helpers.class.getResourceAsStream("/linden.cert");
+			URL url = Helpers.class.getResource("/res/linden.cert");
+			Logger.DebugLog(url);
+			InputStream fis = Helpers.class.getResourceAsStream("/res/linden.cert");
     	    BufferedInputStream bis = new BufferedInputStream(fis);
 			try
 			{

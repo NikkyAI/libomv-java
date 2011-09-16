@@ -68,7 +68,7 @@ public final class Logger
 		}
 		public void debug(Object message, Throwable ex)
 		{
-			output("Warn", message, ex);
+			output("Debug", message, ex);
 		}
 		public void error(Object message, Throwable ex)
 		{
