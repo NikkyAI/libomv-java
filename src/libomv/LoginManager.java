@@ -965,7 +965,7 @@ public class LoginManager
                 final XMLRPCClient client = new XMLRPCClient(loginUri);
                 final Object[] request = new Object[] { loginXmlRpc };
                 
-                if (loginUri.getScheme().equals("https"))
+                if (loginUri.getScheme().equals("https") && loginUri.getHost().contains("linden"))
                 {
                     client.register(new Scheme("https", 443, new SSLSocketFactory(Helpers.GetExtendedKeyStore(null))));
                 }
@@ -991,7 +991,7 @@ public class LoginManager
             }
             catch (Throwable e)
             {
-                UpdateLoginStatus(LoginStatus.Failed, "Error opening the login server connection: " + e.getMessage(), null);
+                UpdateLoginStatus(LoginStatus.Failed, "Error connecting to the login server: " + e.getMessage(), null);
             }
             // #endregion
         }
@@ -1002,7 +1002,7 @@ public class LoginManager
 
     private void UpdateLoginStatus(LoginStatus status, String message, String reason)
     {
-        Logger.DebugLog("Login status: " + status.toString() + ": " + message + "Reason: " + reason, Client);
+        Logger.DebugLog("Login status: " + status.toString() + ": " + message + (reason != null ? " Reason: " + reason : ""), Client);
 
         // If we reached a login resolution trigger the event
         if (status == LoginStatus.Success || status == LoginStatus.Failed)
@@ -1029,7 +1029,6 @@ public class LoginManager
         if (response == null || !(response instanceof HashMap))
         {
             UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", null);
-            Logger.Log("Invalid or missing login response from the server", LogLevel.Warning);
             return;
         }
 
@@ -1041,8 +1040,7 @@ public class LoginManager
         }
         catch (Exception ex)
         {
-            UpdateLoginStatus(LoginStatus.Failed, "Error retrieving the login response from the server: " + ex.getMessage(), null);
-            Logger.Log("Login response failure: " + ex.getMessage() + " " + ex.getStackTrace(), LogLevel.Warning);
+            UpdateLoginStatus(LoginStatus.Failed, "Error retrieving the login response from the server", ex.getMessage());
             return;
         }
 
