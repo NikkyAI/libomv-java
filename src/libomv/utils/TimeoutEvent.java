@@ -25,27 +25,23 @@
  */ 
 package libomv.utils;
 
-public class TimeoutEvent<T> {
-	private Boolean fired = false;
+public class TimeoutEvent<T>
+{
+	private boolean fired = false;
 	private T object = null;
 	
-	public void reset()
+	public synchronized void reset()
 	{
-		synchronized (fired) {
-			this.fired =  false;
-			this.object = null;
-			this.fired.notifyAll();
-		}
+		this.fired =  false;
+		this.object = null;
+		this.notifyAll();
 	}
 	
-	public void set(T object)
+	public synchronized void set(T object)
 	{
-		synchronized (fired)
-		{
-		   this.object = object;
-		   this.fired = (object != null);
-		   this.fired.notifyAll();
-		}
+	   this.object = object;
+	   this.fired = (object != null);
+	   this.notifyAll();
 	}
 
 	/**
@@ -53,20 +49,16 @@ public class TimeoutEvent<T> {
 	 * 
 	 * @param timeout The amount of milliseconds to wait. -1 will wait indefinitely
 	 * @return
+	 * @throws InterruptedException 
 	 */
-	public T waitOne(long timeout)
+	public synchronized T waitOne(long timeout) throws InterruptedException
 	{
- 
-        try {
-		    synchronized (fired) {
-			    if (!fired)
-			        if (timeout < 0)
-			            fired.wait(timeout);
-			        else
-			            fired.wait();
-		    }
-        }
-        catch (InterruptedException e) {}
+
+	    if (!fired)
+	        if (timeout < 0)
+	            wait(timeout);
+	        else
+	            wait();
 	    return object;
 	}
 }
