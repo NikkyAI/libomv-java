@@ -196,7 +196,7 @@ public class Quaternion {
 	 */
 	public String toString()
 	{
-		return String.format(Helpers.EnUsCulture, "<%1$f, %2$f, %3$f, %4$f>", X, Y, Z, W);
+		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", X, Y, Z, W);
 	}
 
 	public int hashCode()
@@ -285,7 +285,7 @@ public class Quaternion {
 		}
 		else
 		{
-			throw new Exception(String.format("Quaternion %1$ normalized to zero", toString()));
+			throw new Exception(String.format("Quaternion %s normalized to zero", toString()));
 		}
 	}
 	

@@ -530,7 +530,7 @@ public class TextureEntry
         @Override
         public String toString()
         {
-            return String.format("Color: $1 RepeatU: $2 RepeatV: $3 OffsetU: $4 OffsetV: $5 " + "Rotation: $6 Bump: $7 Shiny: $8 Fullbright: $9 Mapping: $10 Media: $11 Glow: $12 ID: $13",
+            return String.format("Color: %s RepeatU: %f RepeatV: %f OffsetU: %f OffsetV: %f " + "Rotation: %f Bump: %s Shiny: %s Fullbright: %s Mapping: %s Media: %s Glow: %f ID: %s",
             		             getRGBA(), getRepeatU(), getRepeatV(), getOffsetU(), getOffsetV(), getRotation(), getBump(), getShiny(), getFullbright(), getTexMapType(), getMediaFlags(), getGlow(), getTextureID());
         }
     }

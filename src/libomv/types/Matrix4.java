@@ -798,7 +798,7 @@ public final class Matrix4
 
 		public String toString()
 		{
-			return String.format(Helpers.EnUsCulture, "|%1$f, %2$f, %3$f, %4$f|\n|%5$f, %6$f, %7$f, %8$f|\n|%9$f, %10$f, %11$f, %12$f|\n|%13$f, %14$f, %15$f, %16$f|",
+			return String.format(Helpers.EnUsCulture, "|%f, %f, %f, %f|\n|%f, %f, %f, %f|\n|%f, %f, %f, %f|\n|%f, %f, %f, %f|",
 					                                 M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
 		}
 

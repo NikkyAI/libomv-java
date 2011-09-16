@@ -75,7 +75,7 @@ import libomv.utils.Helpers;
 			// like using float values from 0.0 - 255.0
 			if (r > 1f || g > 1f || b > 1f || a > 1f)
 			{
-				throw new IllegalArgumentException(String.format("Attempting to initialize Color4 with out of range values <%1$f,%2$f,%3$f,%4$f>", r, g, b, a));
+				throw new IllegalArgumentException(String.format("Attempting to initialize Color4 with out of range values <%f,%f,%f,%f>", r, g, b, a));
 			}
 
 			// Valid range is from 0.0 to 1.0
@@ -450,12 +450,12 @@ import libomv.utils.Helpers;
 		@Override
 		public String toString()
 		{
-			return String.format(Helpers.EnUsCulture, "<%1$f, %2$f, %3$f>", R, G, B, A);
+			return String.format(Helpers.EnUsCulture, "<%f, %f, %f>", R, G, B, A);
 		}
 
 		public String ToRGBString()
 		{
-			return String.format(Helpers.EnUsCulture, "<%1$f, %2$f, %3$f>", R, G, B);
+			return String.format(Helpers.EnUsCulture, "<%f, %f, %f>", R, G, B);
 		}
 
 		@Override

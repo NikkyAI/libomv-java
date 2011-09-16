@@ -162,7 +162,7 @@ public final class NameValue
             if (value.Value != null)
             {
                 String newLine = (i < values.length - 1) ? "\n" : "";
-                output.append(String.format("$1 $2 $3 $4 $5$6", value.Name, TypeStrings[value.Type.val], ClassStrings[value.Class.val], SendtoStrings[value.Sendto.val], value.Value, newLine));
+                output.append(String.format("%s %s %s %s %s%s", value.Name, TypeStrings[value.Type.val], ClassStrings[value.Class.val], SendtoStrings[value.Sendto.val], value.Value, newLine));
             }
         }
 

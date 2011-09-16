@@ -374,7 +374,7 @@ public class Avatar extends Primitive
 
                 if (!firstName.isEmpty() && !lastName.isEmpty())
                 {
-                    name = String.format("$1 $2", firstName, lastName);
+                    name = String.format("%s %s", firstName, lastName);
                     return name;
                 }
                 else
@@ -393,7 +393,7 @@ public class Avatar extends Primitive
     {
         if (!firstName.isEmpty() && !lastName.isEmpty())
         {
-            name = String.format("$1 $2", firstName, lastName);
+            name = String.format("%s %s", firstName, lastName);
         }
         else
         {

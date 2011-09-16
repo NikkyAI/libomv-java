@@ -1180,7 +1180,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
         // This is a fairly common request, so assume the name doesn't change mid-session and cache the result
         if (fullName == null || fullName.length() < 2)
         {
-            fullName = String.format("$1 $2", firstName, lastName);
+            fullName = String.format("%s %s", firstName, lastName);
         }
         return fullName;
     }
@@ -1651,7 +1651,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
         }
         else
         {
-            Logger.Log(String.format("Suppressing instant message \"$1\" to UUID.Zero", message), LogLevel.Error, _Client);
+            Logger.Log(String.format("Suppressing instant message \"%s\" to UUID.Zero", message), LogLevel.Error, _Client);
         }
     }
 

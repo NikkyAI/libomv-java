@@ -1099,7 +1099,7 @@ public class Primitive
         @Override
         public String toString()
         {
-            return String.format("Color: $1 Intensity: %2 Radius: %3 Cutoff: %4 Falloff: %5", Color.toString(), Intensity, Radius, Cutoff, Falloff);
+            return String.format("Color: %s Intensity: %s Radius: %f Cutoff: %f Falloff: %f", Color, Intensity, Radius, Cutoff, Falloff);
         }
     }
 

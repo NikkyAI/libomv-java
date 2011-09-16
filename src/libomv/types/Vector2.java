@@ -117,7 +117,7 @@ public final class Vector2
 	 */
 	public String toString()
 	{
-		return String.format(Helpers.EnUsCulture, "<%1$f, %2$f>", X, Y);
+		return String.format(Helpers.EnUsCulture, "<%f, %f>", X, Y);
 	}
 
 	/** Get a string representation of the vector elements with up to three
@@ -127,7 +127,7 @@ public final class Vector2
 	 */
 	public String ToRawString()
 	{
-		return String.format(Helpers.EnUsCulture, "%1$.3f, %2$.3f", X, Y);
+		return String.format(Helpers.EnUsCulture, "%.3f, %.3f", X, Y);
 	}
 
 	/** Creates a hash code for the vector */

@@ -967,8 +967,7 @@ public class LoginManager
                 
                 if (loginUri.getScheme().equals("https"))
                 {
-                	int port = loginUri.getPort();
-                    client.register(new Scheme("https", port, new SSLSocketFactory(Helpers.GetExtendedKeyStore(null))));
+                    client.register(new Scheme("https", 443, new SSLSocketFactory(Helpers.GetExtendedKeyStore(null))));
                 }
 
                 // Start the request

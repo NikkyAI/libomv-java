@@ -168,21 +168,21 @@ public class ProtocolManager
 		for (i = 0; i < map.mapPackets.size(); ++i) {
 			MapPacket map_packet = (MapPacket) map.mapPackets.elementAt(i);
 			if (map_packet != null) {
-				System.out.format("%1$s %2$4x - %3$s - %4$s - %5$s\n",
+				System.out.format("%s %4x - %s - %s - %s\n",
 						frequency, i, map_packet.Name, map_packet.Trusted ? "Trusted" : "Untrusted",
 					    map_packet.Encoded ? "Unencoded" : "Zerocoded");
 
 				for (int j = 0; j < map_packet.Blocks.size(); j++) {
 					MapBlock block = (MapBlock) map_packet.Blocks.get(j);
 					if (block.Count == -1) {
-						 System.out.format("\t%1$4d %2$s (Variable)\n", block.KeywordPosition, block.Name);
+						 System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, block.Name);
 					} else {
-						 System.out.format("\t1$4d %2$s (%3$d)\n", block.KeywordPosition, block.Name, block.Count);
+						 System.out.format("\t4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
 					}
 
 					for (int k = 0; k < block.Fields.size(); k++) {
 						MapField field = (MapField) block.Fields.elementAt(k);
-					    System.out.format("\t\t1$4d %2$s (%3$d / %4$d)", field.KeywordPosition, field.Name, field.Type, field.Count);
+					    System.out.format("\t\t4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type, field.Count);
 					}
 				}
 			}

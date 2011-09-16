@@ -1638,7 +1638,7 @@ public class Helpers {
 					{
 						output.append(' ');
 					}
-					output.append(String.format("%1$2x", bytes[offset + i + j]));
+					output.append(String.format("%2x", bytes[offset + i + j]));
 				}
 			}
 		}

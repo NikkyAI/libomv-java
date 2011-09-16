@@ -37,19 +37,18 @@ public final class Logger
 	// Passed to Logger.Log() to identify the severity of a log entry
 	// 
 	// Non-noisy useful information, may be helpful in debugging a problem
-	public interface LogLevel {
+	public interface LogLevel
+	{
 		public final static int None = 0;
 		
 		public final static int Info = 1;
 
-		// A non-critical error occurred. A warning will not
-		// prevent the rest of libsecondlife from operating as usual,
-		// although it may be indicative of an underlying issue
+		// A non-critical error occurred. A warning will not prevent the rest of libomv from
+		// operating as usual, although it may be indicative of an underlying issue
 		public final static int Warning = 2;
 
-		// A critical error has occurred. Generally this will
-		// be followed by the network layer shutting down, although the
-		// stability of libsecondlife after an error is uncertain
+		// A critical error has occurred. Generally this will be followed by the network layer
+		// shutting down, although the stability of libomv after an error is uncertain
 		public final static int Error = 3;
 
 		public final static int Debug = 4;
@@ -73,6 +72,7 @@ public final class Logger
     static
     {
         LogInstance = LogFactory.getLog("libomv");
+        System.out.println(LogInstance.toString());
 
         // If error level reporting isn't enabled we assume no logger is configured and initialize a default
         // ConsoleAppender
@@ -142,6 +142,7 @@ public final class Logger
                 if (Settings.LOG_LEVEL == LogLevel.Debug)
                 {
                     LogInstance.debug(message, exception);
+                    System.out.println(message + (exception != null ? exception.getMessage() : ""));
                 }
                 break;
             case LogLevel.Info:
@@ -187,14 +188,13 @@ public final class Logger
      * @param message The message to log at the DEBUG level to the current logging engine
      * @param client Instance of the client
      */
-    //[System.Diagnostics.Conditional("DEBUG")]
     public static void DebugLog(Object message, GridClient client)
     {
         if (Settings.LOG_LEVEL == LogLevel.Debug)
         {
             if (client != null && client.Settings.LOG_NAMES)
             {
-                message = String.format("<$1>: {$2}", client.Self.getName(), message);
+                message = String.format("<%s>: {%s}", client.Self.getName(), message);
             }
 
             if (OnLogMessage != null)

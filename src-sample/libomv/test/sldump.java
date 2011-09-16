@@ -31,14 +31,12 @@ import libomv.LoginManager.LoginParams;
 import libomv.LoginManager.LoginResponseCallbackArgs;
 import libomv.NetworkManager.DisconnectType;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
-import libomv.Settings;
 import libomv.Simulator;
 import libomv.mapgenerator.ProtocolManager;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.Logger.LogLevel;
 
 public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements PacketCallback
 {
