@@ -1028,7 +1028,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
         /* Print the struct data as a string
          * 
          * @return A string containing the field name, and field value */
-        public String toString()
+        @Override
+		public String toString()
         {
             return Helpers.StructToString(this);
         }
@@ -1302,16 +1303,12 @@ public class AgentManager implements PacketCallback, CapsCallback {
             	parent = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn);
                 return Quaternion.multiply(relativeRotation, parent.Rotation);
             }
-            else
-            {
-                Logger.Log("Currently sitting on object " + sittingOn + " which is not tracked, SimRotation will be inaccurate", LogLevel.Warning, _Client);
-                return relativeRotation;
-            }
-        }
-        else
-        {
+
+            Logger.Log("Currently sitting on object " + sittingOn + " which is not tracked, SimRotation will be inaccurate", LogLevel.Warning, _Client);
             return relativeRotation;
+
         }
+        return relativeRotation;
     }
     /**
      *  Returns the global grid position of the avatar
@@ -1324,12 +1321,9 @@ public class AgentManager implements PacketCallback, CapsCallback {
             Helpers.LongToUInts(_Client.Network.getCurrentSim().getHandle(), globals);
             Vector3 pos = getSimPosition();
 
-            return new Vector3d((double)globals[0] + (double)pos.X, (double)globals[1] + (double)pos.Y, (double)pos.Z);
+            return new Vector3d(globals[0] + pos.X, globals[1] + pos.Y, pos.Z);
         }
-        else
-        {
-            return Vector3d.Zero;
-        }
+        return Vector3d.Zero;
     }
 
     /* Reference to the GridClient instance */
@@ -1347,7 +1341,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
     private class Network_OnLoginResponse extends CallbackHandler<LoginResponseCallbackArgs>
     {
-    	public void callback(LoginResponseCallbackArgs e)
+    	@Override
+		public void callback(LoginResponseCallbackArgs e)
         {
             if (e.getSuccess())
             {
@@ -1370,7 +1365,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
     private class Network_OnDisconnected extends CallbackHandler<DisconnectedCallbackArgs>
     {
-    	public void callback(DisconnectedCallbackArgs e)
+    	@Override
+		public void callback(DisconnectedCallbackArgs e)
     	{
             // Null out the cached fullName since it can change after logging
             // in again (with a different account name or different login
@@ -2148,7 +2144,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
         // TODO: implement waiting for all animations to end that were triggered during playing of this guesture sequence
         Thread thread = new Thread()
         {
-        	public void run()
+        	@Override
+			public void run()
         	{
                 AssetGesture gesture = null;
                 synchronized (gestureCache)
@@ -2620,18 +2617,14 @@ public class AgentManager implements PacketCallback, CapsCallback {
             {
                 return Teleport(region.RegionHandle, position, lookAt);
             }
-            else
-            {
-                TeleportStatus teleportStat = TeleportStatus.Failed;
-                OnTeleport.dispatch(new TeleportCallbackArgs("Unable to resolve name: " + simName, teleportStat, 0));
-                return false;
-            }
+
+            TeleportStatus teleportStat = TeleportStatus.Failed;
+            OnTeleport.dispatch(new TeleportCallbackArgs("Unable to resolve name: " + simName, teleportStat, 0));
+            return false;
         }
-        else
-        {
-            // Teleporting to the sim we're already in
-            return Teleport(_Client.Network.getCurrentSim().getHandle(), position, lookAt);
-		}
+
+        // Teleporting to the sim we're already in
+        return Teleport(_Client.Network.getCurrentSim().getHandle(), position, lookAt);
 	}
 
     /**
@@ -2871,7 +2864,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
     		this.callback = callback;
     	}
     	
-    	public void completed(OSD result)
+    	@Override
+		public void completed(OSD result)
     	{
             if (result == null)
             {
@@ -3621,7 +3615,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
         private class Network_OnDisconnected extends CallbackHandler<DisconnectedCallbackArgs>
         {
-        	public void callback(DisconnectedCallbackArgs e)
+        	@Override
+			public void callback(DisconnectedCallbackArgs e)
             {
                  CleanupTimer();
             }
@@ -3629,7 +3624,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
         private class UpdateTimer extends TimerTask
         {
-            public void run()
+            @Override
+			public void run()
             {
                 if (_Client.Network.getConnected() && _Client.Settings.SEND_AGENT_UPDATES)
                 {
@@ -3706,11 +3702,9 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
                 return true;
             }
-            else
-            {
-                Logger.Log("Attempted TurnToward but agent updates are disabled", LogLevel.Warning, Client);
-                return false;
-            }
+
+            Logger.Log("Attempted TurnToward but agent updates are disabled", LogLevel.Warning, Client);
+            return false;
         }
 
         /**
@@ -3720,7 +3714,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
          * @param simulator Simulator to send the update to
          * @throws Exception 
          */
-       public final void SendUpdate(boolean reliable, Simulator simulator) throws Exception
+        public final void SendUpdate(boolean reliable, Simulator simulator) throws Exception
         {
             // Since version 1.40.4 of the Linden simulator, sending this update
             // causes corruption of the agent position in the simulator

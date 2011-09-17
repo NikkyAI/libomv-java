@@ -67,7 +67,8 @@ import libomv.utils.RefObject;
 
 // Simulator is a wrapper for a network connection to a simulator and the
 // Region class representing the block of land in the metaverse.
-public class Simulator extends Thread {
+public class Simulator extends Thread
+{
     /* Simulator (region) properties */
 	// [Flags]
     public static class RegionFlags
@@ -646,7 +647,8 @@ public class Simulator extends Thread {
         }
     	AckTimer.schedule(new TimerTask()
     	{
-    		public void run() {
+    		@Override
+			public void run() {
     	    	try {
     				AckTimer_Elapsed();
     			} catch (Exception e) {
@@ -661,7 +663,8 @@ public class Simulator extends Thread {
             StatsTimer = new Timer();
     		StatsTimer.scheduleAtFixedRate(new TimerTask()
     		{
-    			public void run() {
+    			@Override
+				public void run() {
     				try {
     					StatsTimer_Elapsed();
     				} catch (Exception e) {
@@ -677,7 +680,8 @@ public class Simulator extends Thread {
             PingTimer = new Timer();
     		PingTimer.scheduleAtFixedRate(new TimerTask()
     		{
-    			public void run() {
+    			@Override
+				public void run() {
     				try {
     					PingTimer_Elapsed();
     				} catch (Exception e) {
@@ -851,7 +855,7 @@ public class Simulator extends Thread {
         AgentPausePacket pause = new AgentPausePacket();
         pause.AgentData.AgentID = _Client.Self.getAgentID();
         pause.AgentData.SessionID = _Client.Self.getSessionID();
-        pause.AgentData.SerialNum = (int)pauseSerial.getAndIncrement();
+        pause.AgentData.SerialNum = pauseSerial.getAndIncrement();
 
         SendPacket(pause);
     }
@@ -934,6 +938,7 @@ public class Simulator extends Thread {
     	return false;
     }
     
+	@Override
 	public void run()
 	{
 		byte[] RecvBuffer = new byte[4096];
@@ -1297,7 +1302,8 @@ public class Simulator extends Thread {
         {
     		AckTimer.schedule(new TimerTask()
     		{
-    			public void run() {
+    			@Override
+				public void run() {
     				try {
     					AckTimer_Elapsed();
     				} catch (Exception e) {

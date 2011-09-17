@@ -223,7 +223,8 @@ public class TexturePipeline implements PacketCallback
 
     private class Network_LoginProgress extends CallbackHandler<LoginProgressCallbackArgs>
     {
-    	public void callback(LoginProgressCallbackArgs e)
+    	@Override
+		public void callback(LoginProgressCallbackArgs e)
     	{
     		if (e.getStatus() == LoginStatus.Success)
     		{
@@ -234,7 +235,8 @@ public class TexturePipeline implements PacketCallback
     
     private class Network_Disconnected extends CallbackHandler<DisconnectedCallbackArgs>
     {
-        public void callback(DisconnectedCallbackArgs e)
+        @Override
+		public void callback(DisconnectedCallbackArgs e)
         {
             Shutdown();
         }
@@ -321,7 +323,8 @@ public class TexturePipeline implements PacketCallback
 
     private class RefreshDownloadsTimer_Elapsed extends TimerTask
     {
-    	public void run()    
+    	@Override
+		public void run()    
         {
             synchronized (_Transfers)
             {
@@ -549,7 +552,8 @@ public class TexturePipeline implements PacketCallback
      */
     private class DownloadThread implements Runnable
     {
-    	public void run()
+    	@Override
+		public void run()
         {
             while (_Running)
             {
@@ -634,7 +638,8 @@ public class TexturePipeline implements PacketCallback
     		this.task = task;
     	}
 
-    	public void run()
+    	@Override
+		public void run()
     	{
 
             task.State = TextureRequestState.Progress;
@@ -854,7 +859,7 @@ public class TexturePipeline implements PacketCallback
             {
                 task.Transfer.Codec = ImageCodec.setValue(data.ImageID.Codec);
                 task.Transfer.PacketCount = data.ImageID.Packets;
-                task.Transfer.Size = (int)data.ImageID.Size;
+                task.Transfer.Size = data.ImageID.Size;
                 task.Transfer.AssetData = new byte[task.Transfer.Size];
                 task.Transfer.AssetType = AssetType.Texture;
                 task.Transfer.PacketsSeen = new TreeMap<Short, Short>();

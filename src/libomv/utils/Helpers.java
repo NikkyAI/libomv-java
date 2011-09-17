@@ -39,7 +39,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -58,7 +57,8 @@ import java.util.Vector;
 
 import libomv.types.UUID;
 
-public class Helpers {
+public class Helpers
+{
 	// The version of libsecondlife (not the SL protocol itself)
 	public final static String VERSION = "1.2.4";
 
@@ -665,8 +665,8 @@ public class Helpers {
     {
         int x = ((int)globalX >> 8) << 8;
         int y = ((int)globalY >> 8) << 8;
-        locals[0] = globalX - (float)x;
-        locals[1] = globalY - (float)y;
+        locals[0] = globalX - x;
+        locals[1] = globalY - y;
         return IntsToLong(x, y);
     }
 
@@ -840,8 +840,8 @@ public class Helpers {
 		{
 			return 0;
 		}
-		return (int)(((bytes[pos + 0] & 0xff) >> 0) + ((bytes[pos + 1] & 0xff) << 8) +
-				     ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
+		return (((bytes[pos + 0] & 0xff) >> 0) + ((bytes[pos + 1] & 0xff) << 8) +
+				((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
 	}
 
 	public static int BytesToInt32B(byte[] bytes)
@@ -855,8 +855,8 @@ public class Helpers {
 		{
 			return 0;
 		}
-		return (int)(((bytes[pos + 0] & 0xff) >> 24) + ((bytes[pos + 1] & 0xff) << 16) +
-				     ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
+		return (((bytes[pos + 0] & 0xff) >> 24) + ((bytes[pos + 1] & 0xff) << 16) +
+				((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
 	}
 
 	/** Convert the first eight bytes of the given array in little endian
@@ -1094,11 +1094,11 @@ public class Helpers {
             minVal *= -1;
         }
         maxVal = 1 << intBits;
-        fixedVal /= (float)(1 << fracBits);
+        fixedVal /= (1 << fracBits);
 
         if (signed)
         {
-            fixedVal -= (float)maxVal;
+            fixedVal -= maxVal;
         }
         return fixedVal;
 	}
@@ -1115,19 +1115,19 @@ public class Helpers {
 
         if (totalBits <= 8)
         {
-            fixedVal = (float)bytes[pos];
+            fixedVal = bytes[pos];
         }
         else if (totalBits <= 16)
         {
-            fixedVal = (float)BytesToUInt16L(bytes, pos);
+            fixedVal = BytesToUInt16L(bytes, pos);
         }
         else if (totalBits <= 32)
         {
-            fixedVal = (float)BytesToUInt32L(bytes, pos);
+            fixedVal = BytesToUInt32L(bytes, pos);
         }
         else
         {
-            fixedVal = (float)BytesToUInt64L(bytes, pos);
+            fixedVal = BytesToUInt64L(bytes, pos);
         }
         return FixedToFloat(fixedVal, signed, intBits, fracBits);
     }
@@ -1144,19 +1144,19 @@ public class Helpers {
 
         if (totalBits <= 8)
         {
-            fixedVal = (float)bytes[pos];
+            fixedVal = bytes[pos];
         }
         else if (totalBits <= 16)
         {
-            fixedVal = (float)BytesToUInt16B(bytes, pos);
+            fixedVal = BytesToUInt16B(bytes, pos);
         }
         else if (totalBits <= 32)
         {
-            fixedVal = (float)BytesToUInt32B(bytes, pos);
+            fixedVal = BytesToUInt32B(bytes, pos);
         }
         else
         {
-            fixedVal = (float)BytesToUInt64B(bytes, pos);
+            fixedVal = BytesToUInt64B(bytes, pos);
         }
         return FixedToFloat(fixedVal, signed, intBits, fracBits);
     }
@@ -1448,7 +1448,7 @@ public class Helpers {
 
         max = 1 << intBits;
 
-        float fixedVal = Clamp(data, (float)min, (float)max);
+        float fixedVal = Clamp(data, min, max);
         if (isSigned)
         {
             fixedVal += max;
@@ -1763,7 +1763,7 @@ public class Helpers {
 		val -= lower;
 		val /= (upper - lower);
 
-		return (byte)Math.floor(val * (float)Byte.MAX_VALUE);
+		return (byte)Math.floor(val * Byte.MAX_VALUE);
 	}
 
 	/**
@@ -1794,9 +1794,9 @@ public class Helpers {
 	*/
 	public static float ByteToFloat(byte val, float lower, float upper)
 	{
-		final float ONE_OVER_BYTEMAX = 1.0f / (float)Byte.MAX_VALUE;
+		final float ONE_OVER_BYTEMAX = 1.0f / Byte.MAX_VALUE;
 
-		float fval = (float)val * ONE_OVER_BYTEMAX;
+		float fval = val * ONE_OVER_BYTEMAX;
 		float delta = (upper - lower);
 		fval *= delta;
 		fval += lower;
@@ -1819,9 +1819,9 @@ public class Helpers {
 
 	public static float UInt16ToFloat(int val, float lower, float upper)
 	{
-		final float ONE_OVER_U16_MAX = 1.0f / (float)(2 ^16 - 1);
+		final float ONE_OVER_U16_MAX = 1.0f / (2 ^16 - 1);
 
-		float fval = (float)val * ONE_OVER_U16_MAX;
+		float fval = val * ONE_OVER_U16_MAX;
 		float delta = upper - lower;
 		fval *= delta;
 		fval += lower;
@@ -1841,7 +1841,7 @@ public class Helpers {
 		float delta = upper - lower;
 		value -= lower;
 		value /= delta;
-		value *= (float)(2 ^16 - 1);
+		value *= (2 ^16 - 1);
 
 		return (int)value;
 	}
@@ -1855,7 +1855,7 @@ public class Helpers {
 
     public static float TEOffsetFloat(byte[] bytes, int pos)
     {
-        float offset = (float)BytesToInt16L(bytes, pos);
+        float offset = BytesToInt16L(bytes, pos);
         return offset / 32767.0f;
     }
 
@@ -1869,7 +1869,7 @@ public class Helpers {
     public static float TERotationFloat(byte[] bytes, int pos)
     {
         final float TWO_PI = (float)(Math.PI * 2.0d);
-        return (float)((bytes[pos] | (bytes[pos + 1] << 8)) / 32767.0f) * TWO_PI;
+        return ((bytes[pos] | (bytes[pos + 1] << 8)) / 32767.0f) * TWO_PI;
     }
 
     public static byte TEGlowByte(float glow)
@@ -1879,7 +1879,7 @@ public class Helpers {
 
     public static float TEGlowFloat(byte[] bytes, int pos)
     {
-        return (float)bytes[pos] / 255.0f;
+        return bytes[pos] / 255.0f;
     }
 
     public static int TryParseInt(String s)

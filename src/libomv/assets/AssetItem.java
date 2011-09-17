@@ -142,6 +142,7 @@ public abstract class AssetItem
 			return _value;
 		}
 
+		@Override
 		public String toString()
 		{
 			int i = ordinal() - 1;

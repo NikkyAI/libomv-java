@@ -32,7 +32,6 @@ import java.util.Random;
 import java.util.concurrent.Future;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
@@ -66,13 +65,13 @@ public class EventQueue extends CapsClient
 
     private Simulator Simulator;
 
-    public EventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException, ClientProtocolException
+    public EventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
     {
         super(eventQueueLocation, null);
         this.Simulator = sim;
     }
 
-	public void start() throws IOException, InterruptedException
+	public void start()
     {
         Done = false;
 		// Startup the event queue for the first time
@@ -189,6 +188,7 @@ public class EventQueue extends CapsClient
     		this.first = first;
     	}
 
+		@Override
 		public void completed(OSD result)
 		{
 			if (first)
@@ -210,6 +210,7 @@ public class EventQueue extends CapsClient
 	        }
 		}
 
+		@Override
 		public void failed(Exception ex)
 		{
 	        if (ex instanceof HttpResponseException)
@@ -260,6 +261,7 @@ public class EventQueue extends CapsClient
 	        resume(false, 0, null);
 		}
 
+		@Override
 		public void cancelled()
 		{
 	        resume(false, 0, null);

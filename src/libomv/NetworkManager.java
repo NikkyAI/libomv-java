@@ -473,6 +473,7 @@ public class NetworkManager implements PacketCallback {
 
 	private boolean connected;
 
+	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
 		switch (packet.getType())
@@ -529,6 +530,7 @@ public class NetworkManager implements PacketCallback {
 		// Disconnect a sim if no network traffic has been received for 15 seconds
 		DisconnectTimer = new Timer();
 		DisconnectTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
 			public void run() {
 				try {
 					DisconnectTimer_Elapsed();
@@ -709,7 +711,7 @@ public class NetworkManager implements PacketCallback {
 				    callback.packetCallback(packet, simulator);
 			    }
 
-	            callbackArray = (ArrayList<PacketCallback>) simCallbacks.get(PacketType.Default);
+	            callbackArray = simCallbacks.get(PacketType.Default);
 				// Fire any registered callbacks
 			    for (PacketCallback callback : callbackArray)
 			    {
@@ -829,7 +831,8 @@ public class NetworkManager implements PacketCallback {
                     DisconnectTimer = new Timer();
                     DisconnectTimer.scheduleAtFixedRate(new TimerTask()
             		{
-            			public void run() {
+            			@Override
+						public void run() {
             				try {
             					DisconnectTimer_Elapsed();
             				} catch (Exception e) {

@@ -800,8 +800,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
                 req.ObscureMusic = this.ObscureMusic;
                 req.ParcelFlags = this.Flags;
                 req.PassHours = this.PassHours;
-                req.PassPrice = (int)this.PassPrice;
-                req.SalePrice = (int)this.SalePrice;
+                req.PassPrice = this.PassPrice;
+                req.SalePrice = this.SalePrice;
                 req.SnapshotID = this.SnapshotID;
                 req.UserLocation = this.UserLocation;
                 req.UserLookAt = this.UserLookAt;
@@ -834,7 +834,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
                 {
                     request.ParcelData.Flags = 1;
                 }
-                request.ParcelData.ParcelFlags = (int)this.Flags;
+                request.ParcelData.ParcelFlags = this.Flags;
                 request.ParcelData.PassHours = this.PassHours;
                 request.ParcelData.PassPrice = this.PassPrice;
                 request.ParcelData.SalePrice = this.SalePrice;
@@ -1364,6 +1364,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         _Client.Network.RegisterCallback(PacketType.ParcelMediaCommandMessage, this);
 	}
 
+	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
 		switch (packet.getType())
@@ -1526,11 +1527,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
             Logger.Log("Already downloading parcels in " + simulator.getName(), LogLevel.Info, _Client);
             return;
         }
-        else
-        {
-            simulator.setDownloadingParcelMap(true);
-            WaitForSimParcel = new TimeoutEvent<Boolean>();
-        }
+        simulator.setDownloadingParcelMap(true);
+        WaitForSimParcel = new TimeoutEvent<Boolean>();
 
         if (refresh)
         {
@@ -1540,7 +1538,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
         // Wait the given amount of time for a reply before sending the next request
         Thread thread = new Thread()
         {
-        	public void run()
+        	@Override
+			public void run()
         	{
                 if (!_Client.Network.getConnected())
                 {
@@ -1786,11 +1785,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
             return value;
         }
-        else
-        {
-            Logger.Log(String.format("ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?", (byte)position.Y / 4, (byte)position.X / 4), LogLevel.Warning);
-            return 0;
-        }
+
+        Logger.Log(String.format("ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?", (byte)position.Y / 4, (byte)position.X / 4), LogLevel.Warning);
+        return 0;
     }
 
     /** 
@@ -1915,7 +1912,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
         land.ModifyBlockExtended = new ModifyLandPacket.ModifyBlockExtendedBlock[1];
         land.ModifyBlockExtended[0] = land.new ModifyBlockExtendedBlock();
-        land.ModifyBlockExtended[0].BrushSize = (float)brushSize;
+        land.ModifyBlockExtended[0].BrushSize = brushSize;
 
         simulator.SendPacket(land);
     }
@@ -2312,7 +2309,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             {
                 ParcelAccessEntry pae = new ParcelAccessEntry();
                 pae.AgentID = reply.List[i].ID;
-                pae.Time = Helpers.UnixTimeToDateTime((int)reply.List[i].Time);
+                pae.Time = Helpers.UnixTimeToDateTime(reply.List[i].Time);
                 pae.Flags = AccessList.setValue(reply.List[i].Flags);
 
                 accessList.add(pae);

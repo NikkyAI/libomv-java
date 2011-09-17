@@ -111,10 +111,12 @@ public class Vector3 {
 		byteArray.putFloat(Z);
 	}
 
+	@Override
 	public String toString() {
 		return "" + X + " " + Y + " " + Z;
 	}
 
+	@Override
 	public int hashCode() {
 		int x = (int) X;
 		int y = (int) Y;
@@ -353,9 +355,10 @@ public class Vector3 {
 
 	public boolean equals(Vector3 val)
 	{
-		return X == val.X && Y == val.Y && Z == val.Z;
+		return val != null && X == val.X && Y == val.Y && Z == val.Z;
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		return (obj instanceof Vector3) ? equals((Vector3)obj) : false;

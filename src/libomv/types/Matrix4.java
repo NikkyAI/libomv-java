@@ -769,6 +769,7 @@ public final class Matrix4
 			return minor;
 		}
 
+		@Override
 		public boolean equals(Object obj)
 		{
 			return (obj instanceof Matrix4) ? equals((Matrix4)obj) : false;
@@ -796,6 +797,7 @@ public final class Matrix4
 		 *  @return A string representation of the vector
 		 */
 
+		@Override
 		public String toString()
 		{
 			return String.format(Helpers.EnUsCulture, "|%f, %f, %f, %f|\n|%f, %f, %f, %f|\n|%f, %f, %f, %f|\n|%f, %f, %f, %f|",

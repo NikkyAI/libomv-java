@@ -285,10 +285,7 @@ public class XMLRPCClient extends XMLRPCCommon
 							int faultCode = (Integer) map.get(Tag.FAULT_CODE);
 							throw new XMLRPCFault(faultString, faultCode);
 						}
-						else
-						{
-							throw new XMLRPCException("Bad <fault> format in XMLRPC response");
-						}
+						throw new XMLRPCException("Bad <fault> format in XMLRPC response");
 					}
 					else
 					{

@@ -101,7 +101,7 @@ public abstract class InventoryBase implements Serializable
         	throw new InvalidObjectException("InventoryItem serial version mismatch");
         UUID = (UUID)info.readObject();
         ParentUUID = (UUID)info.readObject();
-        Name = (String)info.readUTF();
+        Name = info.readUTF();
         OwnerID = (UUID)info.readObject();
     }
 
@@ -119,7 +119,8 @@ public abstract class InventoryBase implements Serializable
      *  
      *  @return A Hashcode of all the combined InventoryBase fields
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return UUID.hashCode() ^ ParentUUID.hashCode() ^ Name.hashCode() ^ OwnerID.hashCode();
     }
@@ -129,7 +130,8 @@ public abstract class InventoryBase implements Serializable
      *  @param o InventoryBase object to compare against
      *  @return true if objects are the same
      */
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         InventoryBase inv = (InventoryBase)((o instanceof InventoryBase) ? o : null);
         return inv != null && equals(inv);
@@ -142,6 +144,6 @@ public abstract class InventoryBase implements Serializable
      */
     public boolean equals(InventoryBase o)
     {
-        return o.UUID.equals(UUID) && o.ParentUUID.equals(ParentUUID) && o.Name.equals(Name) && o.OwnerID.equals(OwnerID);
+        return o != null && o.UUID.equals(UUID) && o.ParentUUID.equals(ParentUUID) && o.Name.equals(Name) && o.OwnerID.equals(OwnerID);
     }
 }

@@ -30,9 +30,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import libomv.utils.Helpers;
+import libomv.types.PacketHeader;
 import libomv.types.PacketFrequency;
 import libomv.types.OverflowException;
-import libomv.types.PacketHeader;
 import libomv.types.Vector3;
 
 public class ScriptTeleportRequestPacket extends Packet

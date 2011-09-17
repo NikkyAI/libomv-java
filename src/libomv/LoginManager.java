@@ -445,8 +445,8 @@ public class LoginManager
                         BuddyListEntry bud = new BuddyListEntry();
 
                         bud.buddy_id = ParseString("buddy_id", buddy);
-                        bud.buddy_rights_given = (int)ParseUInt("buddy_rights_given", buddy);
-                        bud.buddy_rights_has = (int)ParseUInt("buddy_rights_has", buddy);
+                        bud.buddy_rights_given = ParseUInt("buddy_rights_given", buddy);
+                        bud.buddy_rights_has = ParseUInt("buddy_rights_has", buddy);
 
                         buddys.add(bud);
                     }
@@ -973,7 +973,8 @@ public class LoginManager
                 // Start the request
                 Thread requestThread = new Thread()
                 {
-                	public void run()
+                	@Override
+					public void run()
                 	{
                 		try
                         {
@@ -1058,7 +1059,7 @@ public class LoginManager
             // #region Critical Information
 
             // Networking
-            Client.Network.setCircuitCode((int)reply.CircuitCode);
+            Client.Network.setCircuitCode(reply.CircuitCode);
 
             // #endregion Critical Information
 
@@ -1228,7 +1229,7 @@ public class LoginManager
 							try
 							{
 								// Connect to the sim given in the login reply
-								if (Client.Network.Connect(data.SimIP, data.SimPort, Helpers.UIntsToLong((int)data.RegionX, (int)data.RegionY), true, LoginSeedCapability) != null)
+								if (Client.Network.Connect(data.SimIP, data.SimPort, Helpers.UIntsToLong(data.RegionX, data.RegionY), true, LoginSeedCapability) != null)
 								{
 									// Request the economy data right after login
 									Client.Network.SendPacket(new EconomyDataRequestPacket());
@@ -1311,11 +1312,7 @@ public class LoginManager
     {
         if (reply.containsKey(key))
         {
-            UUID value = new UUID(reply.get(key).toString());
-            if (value != null)
-            {
-                return value;
-            }
+            return new UUID(reply.get(key).toString());
         }
         return UUID.Zero;
     }
@@ -1342,9 +1339,9 @@ public class LoginManager
                 if (list.size() == 3)
                 {
                     float x, y, z;
-                    x = Helpers.TryParseFloat((String)list.get(0));
-                    y = Helpers.TryParseFloat((String)list.get(1));
-                    z = Helpers.TryParseFloat((String)list.get(2));
+                    x = Helpers.TryParseFloat(list.get(0));
+                    y = Helpers.TryParseFloat(list.get(1));
+                    z = Helpers.TryParseFloat(list.get(2));
 
                     return new Vector3(x, y, z);
                 }

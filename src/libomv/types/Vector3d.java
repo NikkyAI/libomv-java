@@ -88,9 +88,20 @@ public class Vector3d {
 		return 24;
 	}
 
-	// <returns></returns>
+	@Override
 	public String toString() {
 		return "" + X + " " + Y + " " + Z;
+	}
+
+	public boolean equals(Vector3d val)
+	{
+		return val != null && X == val.X && Y == val.Y && Z == val.Z;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return (obj instanceof Vector3d) ? equals((Vector3d)obj) : false;
 	}
 
 	/** A vector with a value of 0,0,0 */

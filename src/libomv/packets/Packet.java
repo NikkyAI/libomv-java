@@ -32,8 +32,8 @@ import java.nio.ByteOrder;
 import libomv.utils.Helpers;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
-import libomv.types.PacketFrequency;
 import libomv.types.PacketHeader;
+import libomv.types.PacketFrequency;
 
 public abstract class Packet
 {

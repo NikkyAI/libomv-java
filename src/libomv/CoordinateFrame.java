@@ -285,10 +285,7 @@ public class CoordinateFrame {
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     protected final void Orthonormalize()

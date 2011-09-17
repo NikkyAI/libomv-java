@@ -125,6 +125,7 @@ public class InventoryItem extends InventoryBase
 			return _value;
 		}
 
+		@Override
 		public String toString()
 		{
 			int i = ordinal() - 1;
@@ -355,7 +356,8 @@ public class InventoryItem extends InventoryBase
         return map;
     }
 
-    public void fromOSD(OSD osd)
+    @Override
+	public void fromOSD(OSD osd)
     {
     	super.fromOSD(osd);
     	if (osd instanceof OSDMap)
@@ -480,11 +482,10 @@ public class InventoryItem extends InventoryBase
      */
     public final boolean equals(InventoryItem o)
     {
-        return super.equals((InventoryBase)((o instanceof InventoryBase) ? o : null)) && o.assetType.equals(assetType) && 
-                            o.AssetID.equals(AssetID) && o.CreationDate.equals(CreationDate) && o.Description.equals(Description) &&
-                            o.ItemFlags == ItemFlags && o.GroupID.equals(GroupID) && o.GroupOwned == GroupOwned &&
-                            o.inventoryType.equals(inventoryType) && o.Permissions.equals(Permissions) && o.SalePrice == SalePrice &&
-                            o.saleType.equals(saleType) && o.LastOwnerID.equals(LastOwnerID);
+        return o != null && super.equals(o) && o.assetType.equals(assetType) && o.AssetID.equals(AssetID) && o.CreationDate.equals(CreationDate) &&
+                            o.Description.equals(Description) && o.ItemFlags == ItemFlags && o.GroupID.equals(GroupID) &&
+                            o.GroupOwned == GroupOwned && o.inventoryType.equals(inventoryType) && o.Permissions.equals(Permissions) &&
+                            o.SalePrice == SalePrice && o.saleType.equals(saleType) && o.LastOwnerID.equals(LastOwnerID);
     }
 
 /*

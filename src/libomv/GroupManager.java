@@ -1238,7 +1238,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
         gru.RoleData[0].Powers = role.Powers;
         gru.RoleData[0].RoleID = role.ID;
         gru.RoleData[0].setTitle(Helpers.StringToBytes(role.Title));
-        gru.RoleData[0].UpdateType = (byte)GroupRoleUpdate.UpdateAll.getValue();
+        gru.RoleData[0].UpdateType = GroupRoleUpdate.UpdateAll.getValue();
         Client.Network.SendPacket(gru);
     }
 

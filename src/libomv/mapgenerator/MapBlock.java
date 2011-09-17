@@ -38,19 +38,21 @@ public class MapBlock implements Comparable<Object> {
 
 	public Vector<MapField> Fields;
 
+	@Override
 	public int compareTo(Object obj) {
 		
 		MapBlock temp = (MapBlock) obj;
 
-		if (this.KeywordPosition > temp.KeywordPosition) {
+		if (this.KeywordPosition > temp.KeywordPosition)
+		{
 			return 1;
-		} else {
-			if (temp.KeywordPosition == this.KeywordPosition) {
-				return 0;
-			} else {
-				return -1;
-			}
 		}
+
+		if (temp.KeywordPosition == this.KeywordPosition)
+		{
+			return 0;
+		}
+		return -1;
 	}
 
 }

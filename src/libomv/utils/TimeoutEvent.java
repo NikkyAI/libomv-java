@@ -53,7 +53,6 @@ public class TimeoutEvent<T>
 	 */
 	public synchronized T waitOne(long timeout) throws InterruptedException
 	{
-
 	    if (!fired)
 	        if (timeout < 0)
 	            wait(timeout);

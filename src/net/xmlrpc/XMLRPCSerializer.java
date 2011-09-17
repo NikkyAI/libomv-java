@@ -23,6 +23,7 @@ class XMLRPCSerializer implements IXMLRPCSerializer
 {
 	static SimpleDateFormat dateFormat = new SimpleDateFormat(DATETIME_FORMAT);
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void serialize(XmlSerializer serializer, Object object) throws IOException
 	{

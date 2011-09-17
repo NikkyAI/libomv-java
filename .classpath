@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="libomv/types/LowHeader.java|libomv/types/MediumHeader.java|libomv/types/HighHeader.java|libomv/LoginXML.java|libomv/types/Animation.java|libomv/types/Transaction.java|libomv/Region.java" kind="src" path="src"/>
-	<classpathentry including="*.cert|*.pem|*.xml" kind="src" path="res"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-sample"/>
 	<classpathentry kind="src" path="src-install"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

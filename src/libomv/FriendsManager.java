@@ -222,7 +222,8 @@ public class FriendsManager implements PacketCallback
 	     * 
 	     *  @return A string reprentation of both my rights and my friends rights
 	     */
-	    public String toString()
+	    @Override
+		public String toString()
 	    {
 	        return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(), FriendRights.toString(theirRights), FriendRights.toString(myRights));
 	    }
@@ -255,6 +256,7 @@ public class FriendsManager implements PacketCallback
 
 	public abstract class FriendNotificationCallback extends CallbackHandler<FriendNotificationCallbackArgs>
 	{
+		@Override
 		public abstract void callback(FriendNotificationCallbackArgs params);
 	}
 	
@@ -279,6 +281,7 @@ public class FriendsManager implements PacketCallback
 	
 	public abstract class FriendRightCallback extends CallbackHandler<FriendRightsCallbackArgs>
 	{
+		@Override
 		public abstract void callback(FriendRightsCallbackArgs params);
 	}
 
@@ -317,6 +320,7 @@ public class FriendsManager implements PacketCallback
 
 	public abstract class FriendFoundReplyCallback extends CallbackHandler<FriendFoundReplyCallbackArgs>
 	{
+		@Override
 		public abstract void callback(FriendFoundReplyCallbackArgs params);
 	}
 
@@ -355,6 +359,7 @@ public class FriendsManager implements PacketCallback
 
 	public abstract class FriendshipOfferedCallback extends CallbackHandler<FriendshipOfferedCallbackArgs>
 	{
+		@Override
 		public abstract void callback(FriendshipOfferedCallbackArgs params);
 	}
 
@@ -393,6 +398,7 @@ public class FriendsManager implements PacketCallback
 
 	public abstract class FriendshipResponseCallback extends CallbackHandler<FriendshipResponseCallbackArgs>
 	{
+		@Override
 		public abstract void callback(FriendshipResponseCallbackArgs params);
 	}
 
@@ -424,6 +430,7 @@ public class FriendsManager implements PacketCallback
 
 	public abstract class FriendshipTerminatedCallback extends CallbackHandler<FriendshipTerminatedCallbackArgs>
 	{
+		@Override
 		public abstract void callback(FriendshipTerminatedCallbackArgs params);
 	}
 
@@ -471,6 +478,7 @@ public class FriendsManager implements PacketCallback
 
     }
 
+	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
         switch (packet.getType()) {
@@ -630,7 +638,7 @@ public class FriendsManager implements PacketCallback
         request.Rights = new GrantUserRightsPacket.RightsBlock[1];
         request.Rights[0] = request.new RightsBlock();
         request.Rights[0].AgentRelated = friendID;
-        request.Rights[0].RelatedRights = (int)rights;
+        request.Rights[0].RelatedRights = rights;
 
         Client.Network.SendPacket(request);
     }
@@ -728,7 +736,7 @@ public class FriendsManager implements PacketCallback
 			            friend = FriendList.get(agentID);
 			        }
 		        }
-    			doNotify = !friend.getIsOnline(); 
+    			doNotify |= !friend.getIsOnline(); 
                 friend.setIsOnline(true);
 	        }
         }
@@ -753,14 +761,14 @@ public class FriendsManager implements PacketCallback
 		            	friend = FriendList.get(agentID);
 		            }
     			}
-    			doNotify = friend.getIsOnline();
+    			doNotify |= friend.getIsOnline();
                 friend.setIsOnline(false);
 	        }
         }
 
         // Only notify when there was a change in online status
         if (doNotify)
-	        OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentID, friend.getIsOnline()));
+	        OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentID, packet.getType() == PacketType.OnlineNotification));
 
         if (requestids.size() > 0)
         {
@@ -910,7 +918,8 @@ public class FriendsManager implements PacketCallback
      */
     private class Network_OnConnect extends CallbackHandler<LoginProgressCallbackArgs>
     {		
-        public void callback(LoginProgressCallbackArgs e)
+        @Override
+		public void callback(LoginProgressCallbackArgs e)
         {
             if (e.getStatus() == LoginStatus.Success)
             {
@@ -948,7 +957,8 @@ public class FriendsManager implements PacketCallback
      */
     private class Network_OnLoginResponse extends CallbackHandler<LoginResponseCallbackArgs>
     {		
-        public void callback(LoginResponseCallbackArgs e) 
+        @Override
+		public void callback(LoginResponseCallbackArgs e) 
         // Network_OnLoginResponse(boolean loginSuccess, boolean redirect, String message, String reason, LoginResponseData replyData)
         {
             if (e.getSuccess() && e.getReply().BuddyList != null)

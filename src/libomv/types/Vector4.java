@@ -30,7 +30,8 @@ import java.nio.ByteBuffer;
 
 import libomv.utils.Helpers;
 
-public class Vector4 {
+public class Vector4
+{
 	public float X;
 
 	public float Y;
@@ -130,9 +131,20 @@ public class Vector4 {
 		return 16;
 	}
 
-	// <returns></returns>
+	@Override
 	public String toString() {
 		return "" + X + " " + Y + " " + Z + " " + S;
+	}
+
+	public boolean equals(Vector4 val)
+	{
+		return val != null && X == val.X && Y == val.Y && Z == val.Z && S == val.S;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return (obj instanceof Vector4) ? equals((Vector4)obj) : false;
 	}
 
 	/** A vector with a value of 0,0,0,0 */

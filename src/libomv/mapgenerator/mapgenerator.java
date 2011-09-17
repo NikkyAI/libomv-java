@@ -35,8 +35,10 @@ import java.io.PrintWriter;
 
 import libomv.types.PacketFrequency;
 
-public class mapgenerator {
-	static void WriteFieldMember(PrintWriter writer, MapField field) {
+public class mapgenerator
+{
+	static void WriteFieldMember(PrintWriter writer, MapField field)
+	{
 		String type = "";
 		String init = "";
 
@@ -310,14 +312,16 @@ public class mapgenerator {
         return writer;		
 	}
 
-	static void WriteBlockClass(PrintWriter writer, MapBlock block) {
+	static void WriteBlockClass(PrintWriter writer, MapBlock block)
+	{
 		boolean variableFields = false;
 
 		writer.println("    public class " + block.Name + "Block\n" +
 				       "    {");
 
-		for (int k = 0; k < block.Fields.size(); k++) {
-			MapField field = (MapField) block.Fields.elementAt(k);
+		for (int k = 0; k < block.Fields.size(); k++)
+		{
+			MapField field = block.Fields.elementAt(k);
 			WriteFieldMember(writer, field);
 
 			if (field.Type == FieldType.Variable) {
@@ -330,7 +334,7 @@ public class mapgenerator {
 		writer.println("        public int getLength(){");
 		int length = 0;
 		for (int k = 0; k < block.Fields.size(); k++) {
-			MapField field = (MapField) block.Fields.get(k);
+			MapField field = block.Fields.get(k);
 			length += GetFieldLength(writer, field);
 		}
 
@@ -340,7 +344,7 @@ public class mapgenerator {
 			writer.println("            int length = " + length + ";");
 
 			for (int k = 0; k < block.Fields.size(); k++) {
-				MapField field = (MapField) block.Fields.get(k);
+				MapField field = block.Fields.get(k);
 				if (field.Type == FieldType.Variable) {
 					writer.println("            if (get" + field.Name + "() != null) { length += "
 							+ field.Count + " + get" + field.Name + "().length; }");
@@ -364,7 +368,7 @@ public class mapgenerator {
 		}
 
 		for (int k = 0; k < block.Fields.size(); k++) {
-			MapField field = (MapField) block.Fields.get(k);
+			MapField field = block.Fields.get(k);
 			WriteFieldFromBytes(writer, field);
 		}
 
@@ -375,7 +379,7 @@ public class mapgenerator {
 				       "        {");
 
 		for (int k = 0; k < block.Fields.size(); k++) {
-			MapField field = (MapField) block.Fields.get(k);
+			MapField field = block.Fields.get(k);
 			WriteFieldToBytes(writer, field);
 		}
 
@@ -388,7 +392,7 @@ public class mapgenerator {
 		writer.println("            try {");
 
 		for (int k = 0; k < block.Fields.size(); k++) {
-			MapField field = (MapField) block.Fields.get(k);
+			MapField field = block.Fields.get(k);
 			if (field.Type == FieldType.Variable) {
 				writer.println("                output += Helpers.FieldToString(_" + field.Name.toLowerCase() + ", \"" + field.Name + "\") + \"\\n\";");
 			} else if (field.Type == FieldType.Fixed) {
@@ -433,9 +437,9 @@ public class mapgenerator {
 		PrintWriter writer = WriteHeader(new File(packets_dir, packet.Name + "Packet.java"), template);
 
 		for (int i = 0; i < packet.Blocks.size(); i++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(i);
+			MapBlock block = packet.Blocks.get(i);
 			for (int k = 0; k < block.Fields.size(); k++) {
-				MapField field = (MapField) block.Fields.elementAt(k);
+				MapField field = block.Fields.elementAt(k);
 				
 				if (field.Type == FieldType.Variable || field.Type == FieldType.Fixed)
 			    {
@@ -450,13 +454,13 @@ public class mapgenerator {
 		writer.println("import libomv.types.PacketFrequency;");
 
 		for (int i = 0; i < packet.Blocks.size(); i++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(i);
+			MapBlock block = packet.Blocks.get(i);
 
 			if (block.Count == -1)
 				hasVariableBlocks = true;
 
 			for (int k = 0; k < block.Fields.size(); k++) {
-				MapField field = (MapField) block.Fields.elementAt(k);
+				MapField field = block.Fields.elementAt(k);
 				if (!variableField[field.Type])
 				{
 				    switch (field.Type)
@@ -494,7 +498,7 @@ public class mapgenerator {
 
 		// Write out each block class
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			WriteBlockClass(writer, block);
 		}
 
@@ -508,7 +512,7 @@ public class mapgenerator {
 
 		// Block members
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 
 			// TODO: More thorough name blacklisting
 			
@@ -536,7 +540,7 @@ public class mapgenerator {
 			writer.println("        header.setZerocoded(true);");
 		}
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -567,7 +571,7 @@ public class mapgenerator {
 		writer.println("        header = new PacketHeader(bytes, a_packetEnd, PacketFrequency."
 				       + PacketFrequency.Names[packet.Frequency] + ");");
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -604,7 +608,7 @@ public class mapgenerator {
 		writer.println("    {");
 		writer.println("        header = head;");
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -643,7 +647,7 @@ public class mapgenerator {
 		writer.println("        int length = header.getLength();");
 
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -657,7 +661,7 @@ public class mapgenerator {
 		}
 
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -689,7 +693,7 @@ public class mapgenerator {
 		writer.println("        header.ToBytes(bytes);");
 		writer.println("        bytes.order(ByteOrder.LITTLE_ENDIAN);");
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -722,7 +726,7 @@ public class mapgenerator {
 		writer.println("        String output = \"--- " + packet.Name + " ---\\n\";");
 
 		for (int k = 0; k < packet.Blocks.size(); k++) {
-			MapBlock block = (MapBlock) packet.Blocks.get(k);
+			MapBlock block = packet.Blocks.get(k);
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -782,7 +786,7 @@ public class mapgenerator {
 //			int i = 1;
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = (MapPacket) protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
 //					packettype_writer.println("    static final public int " + packet.Name + " = " + (i++) + ";");
@@ -791,7 +795,7 @@ public class mapgenerator {
 			}
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = (MapPacket) protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
 //					packettype_writer.println("    static final public int " + packet.Name + "=" + (i++) + ";");
@@ -800,7 +804,7 @@ public class mapgenerator {
 			}
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) 
 			{
-				MapPacket packet = (MapPacket) protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
 //					packettype_writer.println("    static final public int " + packet.Name + "=" + (i++) + ";");
@@ -844,11 +848,11 @@ public class mapgenerator {
 						 + "                {");
 
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.LowMaps.mapPackets
+				MapPacket packet = protocol.LowMaps.mapPackets
 						.elementAt(k);
 				if (packet != null) {
 					writer.println("                        case (short)"
-							+ (int) packet.ID + ": return PacketType."
+							+ packet.ID + ": return PacketType."
 							+ packet.Name + ";");
 				}
 			}
@@ -857,11 +861,11 @@ public class mapgenerator {
 						 + "                case PacketFrequency.Medium:\n                    switch (id)\n                    {");
 
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.MediumMaps.mapPackets
+				MapPacket packet = protocol.MediumMaps.mapPackets
 						.elementAt(k);
 				if (packet != null) {
 					writer.println("                        case (short)"
-							+ (int) packet.ID + ": return PacketType."
+							+ packet.ID + ": return PacketType."
 							+ packet.Name + ";");
 				}
 			}
@@ -873,11 +877,11 @@ public class mapgenerator {
 					     + "                    {");
 
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.HighMaps.mapPackets
+				MapPacket packet = protocol.HighMaps.mapPackets
 						.elementAt(k);
 				if (packet != null) {
 					writer.println("                        case (short)"
-							+ (int) packet.ID + ": return PacketType."
+							+ packet.ID + ": return PacketType."
 							+ packet.Name + ";");
 				}
 			}
@@ -921,7 +925,7 @@ public class mapgenerator {
 						 + "                    switch (header.getID())\n"
 						 + "                    {");
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
 				if (packet != null) {
 					writer.println("                        case " + packet.ID
 							+ ": return new " + packet.Name + "Packet(header,bytes);");
@@ -932,7 +936,7 @@ public class mapgenerator {
 						 + "                    switch (header.getID())\n"
 						 + "                    {");
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
 				if (packet != null) {
 					writer.println("                        case " + packet.ID
 							+ ": return new " + packet.Name + "Packet(header, bytes);");
@@ -942,7 +946,7 @@ public class mapgenerator {
 					     + "                case PacketFrequency.High:\n"
 					     + "                    switch (header.getID())\n"
 					     + "                    {");			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
 				if (packet != null) {
 					writer.println("                        case " + packet.ID
 						 + ": return new " + packet.Name + "Packet(header, bytes);");
@@ -955,21 +959,21 @@ public class mapgenerator {
 
 			// Write the packet classes
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
 				if (packet != null) {
 					WritePacketClass(packets_dir, args[1], packet);
 				}
 			}
 
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
 				if (packet != null) {
 					WritePacketClass(packets_dir, args[1], packet);
 				}
 			}
 
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
-				MapPacket packet = (MapPacket) protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
 				if (packet != null) {
 					WritePacketClass(packets_dir, args[1], packet);
 			   }

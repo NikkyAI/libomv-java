@@ -45,12 +45,14 @@ public class MapPacketMap {
 		nameMapPacket = new Hashtable<String, MapPacket>(size);
 	}
 
-	public MapPacket getMapPacketByName(String name) {
-		return (MapPacket) nameMapPacket.get(name);
+	public MapPacket getMapPacketByName(String name)
+	{
+		return nameMapPacket.get(name);
 	}
 
-	public MapPacket getMapPacketByCommand(int command) {
-		return (MapPacket) commandMapPacket.get(command);
+	public MapPacket getMapPacketByCommand(int command)
+	{
+		return commandMapPacket.get(command);
 	}
 
 	public void addPacket(int id, MapPacket packet) {

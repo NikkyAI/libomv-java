@@ -1118,7 +1118,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         find.QueryData.QueryID = UUID.GenerateUUID();
         find.QueryData.setQueryText(Helpers.StringToBytes(eventDay + "|" + category.ordinal() + "|" + searchText));
         find.QueryData.QueryFlags = queryFlags;
-        find.QueryData.QueryStart = (int)queryStart;
+        find.QueryData.QueryStart = queryStart;
 
         Client.Network.SendPacket(find);
         return find.QueryData.QueryID;
@@ -1156,7 +1156,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
             	return people;
             }
 
-            public void callback(DirPeopleReplyEventArgs e)
+            @Override
+			public void callback(DirPeopleReplyEventArgs e)
         	{
                 if (uuid == e.getQueryID())
                 {

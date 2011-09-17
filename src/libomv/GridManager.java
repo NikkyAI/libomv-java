@@ -163,10 +163,7 @@ public class GridManager implements PacketCallback {
             {
                 return equals((GridRegion)obj);
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         private boolean equals(GridRegion region)
@@ -197,7 +194,7 @@ public class GridManager implements PacketCallback {
         /* Get the Handle of the region */
         public final long getRegionHandle()
         {
-            return Helpers.IntsToLong((int)(GlobalX - (GlobalX % 256)), (int)(GlobalY - (GlobalY % 256)));
+            return Helpers.IntsToLong((GlobalX - (GlobalX % 256)), (GlobalY - (GlobalY % 256)));
         }
     }
 
@@ -310,8 +307,9 @@ public class GridManager implements PacketCallback {
         Client.Network.RegisterCallback(PacketType.RegionIDAndHandleReply, this);
 	}
 
-	public void packetCallback(Packet packet, Simulator simulator)
-			throws Exception {
+	@Override
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception
+	{
 		switch (packet.getType()) {
 		case MapLayerReply:
 			MapLayerReplyHandler(packet, simulator);
@@ -524,7 +522,8 @@ public class GridManager implements PacketCallback {
 		final class OnGridRegionCallback extends CallbackHandler<GridRegionEventArgs>
         {
         	private String Name;
-        	public void callback(GridRegionEventArgs args) {
+        	@Override
+			public void callback(GridRegionEventArgs args) {
         	    if (args.getRegion().Name.equals(Name))
         	    {
                     Name.notifyAll();
@@ -759,7 +758,7 @@ public class GridManager implements PacketCallback {
         {
             if(coarse.Location.length > 0)
             {
-                coarseEntries.put(coarse.AgentData[i].AgentID, new Vector3((int)coarse.Location[i].X, (int)coarse.Location[i].Y, (int)coarse.Location[i].Z * 4));
+                coarseEntries.put(coarse.AgentData[i].AgentID, new Vector3(coarse.Location[i].X, coarse.Location[i].Y, coarse.Location[i].Z * 4));
             }
 
             // the friend we are tracking on radar

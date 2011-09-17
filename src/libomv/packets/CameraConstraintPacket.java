@@ -29,8 +29,8 @@ package libomv.packets;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import libomv.types.PacketFrequency;
 import libomv.types.PacketHeader;
+import libomv.types.PacketFrequency;
 import libomv.types.Vector4;
 
 public class CameraConstraintPacket extends Packet

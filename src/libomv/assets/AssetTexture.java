@@ -91,10 +91,7 @@ public class AssetTexture extends AssetItem
 
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     /**

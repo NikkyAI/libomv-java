@@ -605,7 +605,8 @@ public class AssetManager implements PacketCallback
         _Client.Network.RegisterCallback(PacketType.InitiateDownload, this);
     }
     
-    protected void finalize()
+	@Override
+	protected void finalize()
     {
         _Client = null;
         _Cache = null;
@@ -1019,10 +1020,7 @@ public class AssetManager implements PacketCallback
 
                 return upload.ID;
             }
-            else
-            {
-                throw new Exception("Timeout waiting for previous asset upload to begin");
-            }
+            throw new Exception("Timeout waiting for previous asset upload to begin");
         }
     }
 
@@ -1036,7 +1034,8 @@ public class AssetManager implements PacketCallback
 
             class RequestUploadBakedTextureComplete implements FutureCallback<OSD>
             {
-                public void completed(OSD result)
+                @Override
+				public void completed(OSD result)
                 {
                     if (result instanceof OSDMap)
                     {
@@ -1093,14 +1092,16 @@ public class AssetManager implements PacketCallback
 
             _ThreadResult = _ThreadPool.submit(new Runnable()
             {
-            	public void run()
+            	@Override
+				public void run()
             	{
                     final UUID transactionID = new UUID();
                     final TimeoutEvent<Boolean> uploadEvent = new TimeoutEvent<Boolean>();
                     
                     CallbackHandler<AssetUploadCallbackArgs> udpCallback = new CallbackHandler<AssetUploadCallbackArgs>()
                     {
-                    	public void callback(AssetUploadCallbackArgs e)
+                    	@Override
+						public void callback(AssetUploadCallbackArgs e)
                     	{
                             if (transactionID.equals(e.getUpload().ID))
                             {
@@ -1363,10 +1364,10 @@ public class AssetManager implements PacketCallback
         else
         {
             // Special handler for the last packet which will be less than 1000 bytes
-            int lastlen = upload.Size - ((int)send.XferID.Packet * 1000);
+            int lastlen = upload.Size - send.XferID.Packet * 1000;
             byte[] data = new byte[lastlen];
-            System.arraycopy(upload.AssetData, (int)send.XferID.Packet * 1000, data, 0, lastlen);
-            send.XferID.Packet |= (int)0x80000000; // This signals the final packet
+            System.arraycopy(upload.AssetData, send.XferID.Packet * 1000, data, 0, lastlen);
+            send.XferID.Packet |= 0x80000000; // This signals the final packet
             send.DataPacket.setData(data);
             upload.Transferred += lastlen;
         }
@@ -1655,7 +1656,6 @@ public class AssetManager implements PacketCallback
 
         if (OnAssetUploaded.count() > 0)
         {
-            boolean found = false;
             Entry<UUID, Transfer> foundTransfer = null;
 
             // Xfer system sucks really really bad. Where is the damn XferID?
@@ -1669,7 +1669,6 @@ public class AssetManager implements PacketCallback
 
                         if (upload.AssetID == complete.AssetBlock.UUID)
                         {
-                            found = true;
                             foundTransfer = transfer;
                             upload.Success = complete.AssetBlock.Success;
                             upload.Type = AssetType.setValue(complete.AssetBlock.Type);
@@ -1679,7 +1678,7 @@ public class AssetManager implements PacketCallback
                 }
             }
 
-            if (found)
+            if (foundTransfer != null)
             {
                 synchronized (_Transfers)
                 {
@@ -1752,7 +1751,7 @@ public class AssetManager implements PacketCallback
             }
             else
             {
-            	System.arraycopy(bytes, 0, download.AssetData, 1000 * (int)packetNum, bytes.length);
+            	System.arraycopy(bytes, 0, download.AssetData, 1000 * packetNum, bytes.length);
                 download.Transferred += bytes.length;
             }
 

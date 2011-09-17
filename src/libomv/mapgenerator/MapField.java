@@ -26,7 +26,8 @@
  */ 
 package libomv.mapgenerator;
 
-public class MapField implements Comparable<Object> {
+public class MapField implements Comparable<Object>
+{
 	public int KeywordPosition;
 
 	public String Name;
@@ -35,17 +36,20 @@ public class MapField implements Comparable<Object> {
 
 	public int Count;
 
-	public int compareTo(Object obj) {
+	@Override
+	public int compareTo(Object obj)
+	{
 		MapField temp = (MapField) obj;
 
-		if (this.KeywordPosition > temp.KeywordPosition) {
+		if (this.KeywordPosition > temp.KeywordPosition)
+		{
 			return 1;
-		} else {
-			if (temp.KeywordPosition == this.KeywordPosition) {
-				return 0;
-			} else {
-				return -1;
-			}
 		}
+		
+		if (temp.KeywordPosition == this.KeywordPosition)
+		{
+			return 0;
+		}
+		return -1;
 	}
 }

@@ -54,10 +54,10 @@ import libomv.utils.Helpers;
 		{
 			final float quanta = 1.0f / 255.0f;
 
-			R = (float)r * quanta;
-			G = (float)g * quanta;
-			B = (float)b * quanta;
-			A = (float)a * quanta;
+			R = r * quanta;
+			G = g * quanta;
+			B = b * quanta;
+			A = a * quanta;
 		}
 
 		/** Builds a color from four values
@@ -145,25 +145,19 @@ import libomv.utils.Helpers;
 					// Monochromatic and equal, compare alpha
 					return ((Float)A).compareTo(color.A);
 				}
-				else
-				{
-					// Compare lightness
-					return ((Float)R).compareTo(R);
-				}
+
+				// Compare lightness
+				return ((Float)R).compareTo(R);
 			}
-			else
+
+			if (thisHue == thatHue)
 			{
-				if (thisHue == thatHue)
-				{
-					// RGB is equal, compare alpha
-					return ((Float)A).compareTo(color.A);
-				}
-				else
-				{
-					// Compare hues
-					return ((Float)thisHue).compareTo(thatHue);
-				}
+				// RGB is equal, compare alpha
+				return ((Float)A).compareTo(color.A);
 			}
+
+			// Compare hues
+			return ((Float)thisHue).compareTo(thatHue);
 		}
 
 		public void FromBytes(byte[] byteArray, int pos, boolean inverted)
@@ -172,17 +166,17 @@ import libomv.utils.Helpers;
 
 			if (inverted)
 			{
-				R = (float)(255 - byteArray[pos]) * quanta;
-				G = (float)(255 - byteArray[pos + 1]) * quanta;
-				B = (float)(255 - byteArray[pos + 2]) * quanta;
-				A = (float)(255 - byteArray[pos + 3]) * quanta;
+				R = (255 - byteArray[pos]) * quanta;
+				G = (255 - byteArray[pos + 1]) * quanta;
+				B = (255 - byteArray[pos + 2]) * quanta;
+				A = (255 - byteArray[pos + 3]) * quanta;
 			}
 			else
 			{
-				R = (float)byteArray[pos] * quanta;
-				G = (float)byteArray[pos + 1] * quanta;
-				B = (float)byteArray[pos + 2] * quanta;
-				A = (float)byteArray[pos + 3] * quanta;
+				R = byteArray[pos] * quanta;
+				G = byteArray[pos + 1] * quanta;
+				B = byteArray[pos + 2] * quanta;
+				A = byteArray[pos + 3] * quanta;
 			}
 		}
 

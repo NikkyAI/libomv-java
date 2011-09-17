@@ -47,7 +47,8 @@ import libomv.utils.Logger.LogLevel;
 public class AssetNotecard extends AssetItem
 {
     /* Override the base classes getAssetType */
-    public AssetType getAssetType()
+    @Override
+	public AssetType getAssetType()
     {
         return AssetType.Notecard;
     }
@@ -85,7 +86,8 @@ public class AssetNotecard extends AssetItem
     }
 
     /* Encode the raw contents of a string with the specific Linden Text properties */
-    public void Encode()
+    @Override
+	public void Encode()
     {
         String body = BodyText;
 
@@ -187,7 +189,8 @@ public class AssetNotecard extends AssetItem
     	return Pattern.compile(pattern).matcher(string);
     }
 
-    public boolean Decode()
+    @Override
+	public boolean Decode()
     {
         EmbeddedItems = new ArrayList<InventoryItem>();
         BodyText = Helpers.EmptyString;

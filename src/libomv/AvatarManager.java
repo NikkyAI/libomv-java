@@ -116,6 +116,7 @@ public class AvatarManager implements PacketCallback {
         Client.Network.RegisterCallback(PacketType.ClassifiedInfoReply, this);
 	}
 
+	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
 		switch (packet.getType())
@@ -174,12 +175,15 @@ public class AvatarManager implements PacketCallback {
 	// This function will only check if the avatar name exists locally,
 	// it will not do any networking calls to fetch the name
 	// <returns>The avatar name, or an empty String if it's not found</returns>
-	public String LocalAvatarNameLookup(UUID id) {
+	public String LocalAvatarNameLookup(UUID id)
+	{
 		String name = Helpers.EmptyString;
 
-		synchronized (Avatars) {
-			if (Avatars.containsKey(id)) {
-				name = ((Avatar) Avatars.get(id)).getName();
+		synchronized (Avatars)
+		{
+			if (Avatars.containsKey(id))
+			{
+				name = Avatars.get(id).getName();
 			}
 		}
 		return name;
@@ -209,28 +213,35 @@ public class AvatarManager implements PacketCallback {
 		Vector<UUID> neednames = new Vector<UUID>();
 
 		// Fire callbacks for the ones we already have cached
-		for (int i = 0; i < ids.size(); i++) {
-			UUID id = (UUID) ids.elementAt(i);
-			if (Avatars.containsKey(id)) {
-				havenames.put(id, ((Avatar) Avatars.get(id)).getName());
-			} else {
+		for (int i = 0; i < ids.size(); i++)
+		{
+			UUID id = ids.elementAt(i);
+			if (Avatars.containsKey(id))
+			{
+				havenames.put(id, Avatars.get(id).getName());
+			}
+			else
+			{
 				neednames.addElement(id);
 			}
 		}
 
-		if (havenames.size() > 0 && OnAgentNames != null) {
+		if (havenames.size() > 0 && OnAgentNames != null)
+		{
 			OnAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
 		}
 
-		if (neednames.size() > 0) {
+		if (neednames.size() > 0)
+		{
 			UUIDNameRequestPacket request = new UUIDNameRequestPacket();
 
 			request.UUIDNameBlock = new UUIDNameRequestPacket.UUIDNameBlockBlock[neednames
 					.size()];
 
-			for (int i = 0; i < neednames.size(); i++) {
+			for (int i = 0; i < neednames.size(); i++)
+			{
 				request.UUIDNameBlock[i] = request.createUUIDNameBlockBlock();
-				request.UUIDNameBlock[i].ID = (UUID) neednames.elementAt(i);
+				request.UUIDNameBlock[i].ID = neednames.elementAt(i);
 			}
 			Client.Network.SendPacket(request);
 		}

@@ -236,8 +236,8 @@ public class UUID
 	{
 		if (le)
             return Helpers.BytesToUInt64L(data);
-		else
-            return Helpers.BytesToUInt64B(data);
+
+        return Helpers.BytesToUInt64B(data);
 	}
 	
 	/**
@@ -265,6 +265,7 @@ public class UUID
 	 *
 	 * @return An integer composed of all the UUID bytes XORed together
 	 */
+	@Override
 	public int hashCode()
 	{
 		return toString().hashCode();
@@ -276,6 +277,7 @@ public class UUID
 	 * @param o An object to compare to this UUID
 	 * @return True if the object is a UUID and both UUIDs are equal
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if ((o.getClass() != this.getClass()))
 		{
@@ -402,24 +404,24 @@ public class UUID
 	 *  @return A string representation of this UUID, lowercase and with hyphens
 	 *  <example>11f8aa9c-b071-4242-836b-13b7abe0d489</example>
 	 */
-	public String toString() {
+	@Override
+	public String toString()
+	{
 		if (data == null)
 		{
 			return ZeroString;
 		}
-		else
-		{
-			StringBuffer uuid = new StringBuffer(36);
 
-			for (int i = 0; i < 16; ++i) {
-				byte value = data[i];
-				uuid.append(Integer.toHexString(value & 0xFF));
-				if (i == 3 || i == 5 || i == 7 || i == 9) {
-					uuid.append("-");
-				}
+		StringBuffer uuid = new StringBuffer(36);
+
+		for (int i = 0; i < 16; ++i) {
+			byte value = data[i];
+			uuid.append(Integer.toHexString(value & 0xFF));
+			if (i == 3 || i == 5 || i == 7 || i == 9) {
+				uuid.append("-");
 			}
-			return uuid.toString();
 		}
+		return uuid.toString();
 	}
 
 	/** An UUID with a value of all zeroes */

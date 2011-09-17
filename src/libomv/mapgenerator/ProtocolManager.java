@@ -126,16 +126,16 @@ public class ProtocolManager
 				// Low frequency
 				command = (data[8] * 256 + data[9]);
 				return Command(command, PacketFrequency.Low);
-			} else {
-				// Medium frequency
-				command = data[7];
-				return Command(command, PacketFrequency.Medium);
 			}
-		} else {
-			// High frequency
-			command = data[6];
-			return Command(command, PacketFrequency.High);
+
+			// Medium frequency
+			command = data[7];
+			return Command(command, PacketFrequency.Medium);
 		}
+
+		// High frequency
+		command = data[6];
+		return Command(command, PacketFrequency.High);
 	}
 
 	public MapPacket Command(int command, int frequency) throws Exception
@@ -165,23 +165,30 @@ public class ProtocolManager
 	{
 		int i;
 
-		for (i = 0; i < map.mapPackets.size(); ++i) {
-			MapPacket map_packet = (MapPacket) map.mapPackets.elementAt(i);
-			if (map_packet != null) {
+		for (i = 0; i < map.mapPackets.size(); ++i)
+		{
+			MapPacket map_packet = map.mapPackets.elementAt(i);
+			if (map_packet != null)
+			{
 				System.out.format("%s %4x - %s - %s - %s\n",
 						frequency, i, map_packet.Name, map_packet.Trusted ? "Trusted" : "Untrusted",
 					    map_packet.Encoded ? "Unencoded" : "Zerocoded");
 
-				for (int j = 0; j < map_packet.Blocks.size(); j++) {
-					MapBlock block = (MapBlock) map_packet.Blocks.get(j);
-					if (block.Count == -1) {
+				for (int j = 0; j < map_packet.Blocks.size(); j++)
+				{
+					MapBlock block = map_packet.Blocks.get(j);
+					if (block.Count == -1)
+					{
 						 System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, block.Name);
-					} else {
+					}
+					else
+					{
 						 System.out.format("\t4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
 					}
 
-					for (int k = 0; k < block.Fields.size(); k++) {
-						MapField field = (MapField) block.Fields.elementAt(k);
+					for (int k = 0; k < block.Fields.size(); k++)
+					{
+						MapField field = block.Fields.elementAt(k);
 					    System.out.format("\t\t4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type, field.Count);
 					}
 				}
@@ -229,13 +236,17 @@ public class ProtocolManager
 		int high = 1;
 
 		// Load the protocol map file
-		try {
+		try
+		{
 			map = new FileReader(mapFile);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			throw new Exception("Map file error", e);
 		}
 
-		try {
+		try
+		{
 			BufferedReader r = new BufferedReader(map);
 			String newline;
 			String trimmedline;
@@ -244,25 +255,34 @@ public class ProtocolManager
 			MapPacket currentPacket = null;
 			MapBlock currentBlock = null;
 
-			while (r.ready()) {
+			while (r.ready())
+			{
 				newline = r.readLine();
 				trimmedline = newline.trim();
 
-				if (!inPacket) {
+				if (!inPacket)
+				{
 					// Outside of all packet blocks
 
-					if (trimmedline.equals("{")) {
+					if (trimmedline.equals("{"))
+					{
 						inPacket = true;
 					}
-				} else {
+				}
+				else
+				{
 					// Inside of a packet block
 
-					if (!inBlock) {
+					if (!inBlock)
+					{
 						// Inside a packet block, outside of the blocks
 
-						if (trimmedline.equals("{")) {
+						if (trimmedline.equals("{"))
+						{
 							inBlock = true;
-						} else if (trimmedline.equals("}")) {
+						}
+						else if (trimmedline.equals("}"))
+						{
 							// Reached the end of the packet
 							if (Sort)
 								Collections.sort(currentPacket.Blocks);
@@ -401,40 +421,47 @@ public class ProtocolManager
 		}
 	}
 
-	private int KeywordPosition(String keyword) throws Exception {
-		if (KeywordPositions.containsKey(keyword)) {
+	private int KeywordPosition(String keyword) throws Exception
+	{
+		if (KeywordPositions.containsKey(keyword))
+		{
 			return KeywordPositions.get(keyword);
-		} else {
-			int hash = 0;
-			for (int i = 1; i < keyword.length(); i++) {
-				hash = (hash + (keyword.charAt(i))) * 2;
-			}
-			hash *= 2;
-			hash &= 0x1FFF;
-
-			int startHash = hash;
-
-			while (KeywordPositions.containsValue(hash)) {
-				hash++;
-				hash &= 0x1FFF;
-				if (hash == startHash) {
-					// Give up looking, went through all values and they were
-					// all taken.
-					throw new Exception(
-							"All hash values are taken. Failed to add keyword: "
-									+ keyword);
-				}
-			}
-
-			KeywordPositions.put(keyword, hash);
-			return hash;
 		}
+		
+		int hash = 0;
+		for (int i = 1; i < keyword.length(); i++)
+		{	
+			hash = (hash + (keyword.charAt(i))) * 2;
+		}
+		hash *= 2;
+		hash &= 0x1FFF;
+
+		int startHash = hash;
+
+		while (KeywordPositions.containsValue(hash))
+		{
+			hash++;
+			hash &= 0x1FFF;
+			if (hash == startHash) {
+				// Give up looking, went through all values and they were
+				// all taken.
+				throw new Exception(
+						"All hash values are taken. Failed to add keyword: "
+								+ keyword);
+			}
+		}
+
+		KeywordPositions.put(keyword, hash);
+		return hash;
 	}
 
-	public static int parseFieldType(String token) {
+	public static int parseFieldType(String token)
+	{
 		int value = 0;
-		for (int i = 0; i < FieldType.TypeNames.length; i++) {
-			if (FieldType.TypeNames[i].equals(token)) {
+		for (int i = 0; i < FieldType.TypeNames.length; i++)
+		{
+			if (FieldType.TypeNames[i].equals(token))
+			{
 				value = i;
 				break;
 			}

@@ -159,6 +159,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			return (byte)ordinal();
 		}
 		
+		@Override
 		public String toString()
 		{
 			return _SaleTypeNames[ordinal()];
@@ -927,7 +928,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     private class Network_OnDisconnected extends CallbackHandler<DisconnectedCallbackArgs>
     {
-        public void callback(DisconnectedCallbackArgs args)
+        @Override
+		public void callback(DisconnectedCallbackArgs args)
         {
             if (InterpolationTimer != null)
             {
@@ -940,7 +942,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     private class Network_OnLoginProgress extends CallbackHandler<LoginProgressCallbackArgs>
     {
-        public void callback(LoginProgressCallbackArgs args)
+        @Override
+		public void callback(LoginProgressCallbackArgs args)
         {
             if (Client.Settings.USE_INTERPOLATION_TIMER)
             {
@@ -963,7 +966,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	            long start = System.currentTimeMillis();
 
 	            long interval = start - lastInterpolation;
-	            float seconds = (float)interval / 1000f;
+	            float seconds = interval / 1000f;
 
 	            ArrayList<Simulator> simulators = Client.Network.getSimulators();
 	            synchronized (simulators)
@@ -2278,30 +2281,23 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         {
             synchronized (simulator.getObjectsPrimitives())
             {
-
                 Primitive prim = simulator.getObjectsPrimitives().get(localID);
-
                 if (prim != null)
                 {
                     return prim;
                 }
-                else
-                {
-                    prim = new Primitive();
-                    prim.LocalID = localID;
-                    prim.ID = fullID;
-                    prim.RegionHandle = simulator.getHandle();
+                
+                prim = new Primitive();
+                prim.LocalID = localID;
+                prim.ID = fullID;
+                prim.RegionHandle = simulator.getHandle();
 
-                    simulator.getObjectsPrimitives().put(localID, prim);
+                simulator.getObjectsPrimitives().put(localID, prim);
 
-                    return prim;
-                }
+                return prim;
             }
         }
-        else
-        {
-            return new Primitive();
-        }
+        return new Primitive();
     }
 
     protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
@@ -2310,30 +2306,24 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         {
             synchronized (simulator.getObjectsAvatars())
             {
-
                 Avatar avatar = simulator.getObjectsAvatars().get(localID);
 
                 if (avatar != null)
                 {
                     return avatar;
                 }
-                else
-                {
-                    avatar = new Avatar();
-                    avatar.LocalID = localID;
-                    avatar.ID = fullID;
-                    avatar.RegionHandle = simulator.getHandle();
 
-                    simulator.getObjectsAvatars().put(localID, avatar);
+                avatar = new Avatar();
+                avatar.LocalID = localID;
+                avatar.ID = fullID;
+                avatar.RegionHandle = simulator.getHandle();
 
-                    return avatar;
-                }
+                simulator.getObjectsAvatars().put(localID, avatar);
+
+                return avatar;
             }
         }
-        else
-        {
-            return new Avatar();
-        }
+        return new Avatar();
     }
 
     protected final void SetAvatarSittingOn(Simulator sim, Avatar av, int localid, int oldSeatID)
@@ -2350,7 +2340,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     protected final void UpdateDilation(Simulator s, int dilation)
     {
-        s.Stats.Dilation = (float)dilation / 65535.0f;
+        s.Stats.Dilation = dilation / 65535.0f;
     }
 
 	private ConstructionData CreateConstructionData(Primitive enclosing, PCode pcode, ObjectUpdatePacket.ObjectDataBlock block)
@@ -2364,8 +2354,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         data.PathEnd = Primitive.UnpackEndCut(block.PathEnd);
         data.PathScaleX = Primitive.UnpackPathScale(block.PathScaleX);
         data.PathScaleY = Primitive.UnpackPathScale(block.PathScaleY);
-        data.PathShearX = Primitive.UnpackPathShear((byte)block.PathShearX);
-        data.PathShearY = Primitive.UnpackPathShear((byte)block.PathShearY);
+        data.PathShearX = Primitive.UnpackPathShear(block.PathShearX);
+        data.PathShearY = Primitive.UnpackPathShear(block.PathShearY);
         data.PathTwist = Primitive.UnpackPathTwist(block.PathTwist);
         data.PathTwistBegin = Primitive.UnpackPathTwist(block.PathTwistBegin);
         data.PathRadiusOffset = Primitive.UnpackPathTwist(block.PathRadiusOffset);

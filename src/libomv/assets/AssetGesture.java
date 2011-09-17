@@ -80,10 +80,7 @@ public class AssetGesture extends AssetItem
             {
                 return "Start animation: " + Name;
             }
-            else
-            {
-                return "Stop animation: " + Name;
-            }
+            return "Stop animation: " + Name;
         }
     }
 

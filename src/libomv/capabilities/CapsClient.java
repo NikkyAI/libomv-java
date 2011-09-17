@@ -271,7 +271,8 @@ public class CapsClient
         		    Timeout = new Timer();
     				Timeout.schedule(new TimerTask()
     				{
-    					public void run()
+    					@Override
+						public void run()
     					{
     						result.cancel(false);
     					}
@@ -356,15 +357,18 @@ public class CapsClient
             }
         }
 
-        public HttpRequest generateRequest() {
+        @Override
+		public HttpRequest generateRequest() {
             return this.request;
         }
 
-        public HttpHost getTarget() {
+        @Override
+		public HttpHost getTarget() {
             return this.target;
         }
 
-        public synchronized void produceContent(final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
+        @Override
+		public synchronized void produceContent(final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
             if (this.producer == null) {
                 throw new IllegalStateException("Content producer is null");
             }
@@ -374,15 +378,18 @@ public class CapsClient
             }
         }
 
-        public synchronized boolean isRepeatable() {
-            if (this.producer != null) {
+        @Override
+		public synchronized boolean isRepeatable()
+        {
+            if (this.producer != null)
+            {
                 return this.producer.isRepeatable();
-            } else {
-                return true;
             }
+            return true;
         }
 
-        public synchronized void resetRequest() {
+        @Override
+		public synchronized void resetRequest() {
             try {
                 if (this.producer != null) {
                     this.producer.finish();
@@ -400,7 +407,8 @@ public class CapsClient
         private volatile Exception ex;
         private volatile boolean completed;
 
-        public synchronized void responseReceived(final HttpResponse response) throws IOException
+        @Override
+		public synchronized void responseReceived(final HttpResponse response) throws IOException
         {
             Logger.Log("HTTP response: " + response.getStatusLine(), LogLevel.Info);
             
@@ -439,7 +447,8 @@ public class CapsClient
          * @param decoder content decoder.
          * @param ioctrl I/O control of the underlying connection.
          */
-        public synchronized void consumeContent(final ContentDecoder decoder, final IOControl ioctrl) throws IOException
+        @Override
+		public synchronized void consumeContent(final ContentDecoder decoder, final IOControl ioctrl) throws IOException
         {
             Reader in = new InputStreamReader(new ContentDecoderStream(decoder), this.charset);
             try
@@ -459,7 +468,8 @@ public class CapsClient
         /**
          * Notification that any resources allocated for reading can be released.
          */
-        public synchronized void responseCompleted()
+        @Override
+		public synchronized void responseCompleted()
         {
             if (this.completed)
             {
@@ -468,7 +478,8 @@ public class CapsClient
             this.completed = true;
         }
 
-        public synchronized void cancel() {
+        @Override
+		public synchronized void cancel() {
             if (this.completed) {
                 return;
             }
@@ -476,7 +487,8 @@ public class CapsClient
             this.result = null;
         }
 
-        public synchronized void failed(final Exception ex) {
+        @Override
+		public synchronized void failed(final Exception ex) {
             if (this.completed) {
                 return;
             }
@@ -525,7 +537,8 @@ public class CapsClient
     			return this.buffer.get();
     		}
     		
-    		public int read(byte[] b) throws IOException
+    		@Override
+			public int read(byte[] b) throws IOException
     		{
     			return read(b, 0, b.length);
     		}
@@ -561,7 +574,8 @@ public class CapsClient
              *         has been reached.
              * @throws IOException
     		 */
-    		public int read(byte[] b, int offset, int length) throws IOException
+    		@Override
+			public int read(byte[] b, int offset, int length) throws IOException
     		{
     			int toread, bytes = 0;
     			

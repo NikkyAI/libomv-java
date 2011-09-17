@@ -32,7 +32,8 @@ import libomv.types.UUID;
 public class AssetAnimation extends AssetItem
 {
     // Override the base classes AssetType
-    public AssetItem.AssetType getAssetType()
+    @Override
+	public AssetItem.AssetType getAssetType()
     {
         return AssetItem.AssetType.Animation;
     }
@@ -54,11 +55,13 @@ public class AssetAnimation extends AssetItem
         AssetData = assetData;
     }
 
-    public void Encode()
+    @Override
+	public void Encode()
     {
     }
     
-    public boolean Decode()
+    @Override
+	public boolean Decode()
     {
         return true;
     }

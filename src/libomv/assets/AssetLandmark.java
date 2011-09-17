@@ -35,7 +35,8 @@ import libomv.utils.Helpers;
 // Represents a Landmark with RegionID and Position vector
 public class AssetLandmark extends AssetItem
 {
-    public  AssetType getAssetType()
+    @Override
+	public  AssetType getAssetType()
     {
         return AssetType.Landmark;
     }
@@ -79,7 +80,8 @@ public class AssetLandmark extends AssetItem
      * Encode the raw contents of a string with the specific Landmark format
      * 
      */
-    public void Encode()
+    @Override
+	public void Encode()
     {
         String temp = "Landmark version 2\n";
         temp += "region_id " + RegionID + "\n";

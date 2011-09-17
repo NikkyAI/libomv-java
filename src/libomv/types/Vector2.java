@@ -115,6 +115,7 @@ public final class Vector2
 	 *
 	 *  @return A string representation of the vector
 	 */
+	@Override
 	public String toString()
 	{
 		return String.format(Helpers.EnUsCulture, "<%f, %f>", X, Y);
@@ -131,6 +132,7 @@ public final class Vector2
 	}
 
 	/** Creates a hash code for the vector */
+	@Override
 	public int hashCode()
 	{
 		return ((Float)X).hashCode() ^ ((Float)Y).hashCode();
@@ -321,9 +323,15 @@ public final class Vector2
 		return X == val.X && Y == val.Y;
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		return (obj instanceof Vector2) ? equals((Vector2)obj) : false;
+	}
+
+	public boolean equals(Vector2 o)
+	{
+		return o != null && o.X == X && o.Y == Y;
 	}
 
 	public static Vector2 negate(Vector2 value)

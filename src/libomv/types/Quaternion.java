@@ -194,11 +194,13 @@ public class Quaternion {
 	 *
 	 *  @return A string representation of the vector
 	 */
+	@Override
 	public String toString()
 	{
 		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", X, Y, Z, W);
 	}
 
+	@Override
 	public int hashCode()
 	{
 		return (((Float)X).hashCode() ^ ((Float)Y).hashCode() ^ ((Float)Z).hashCode() ^ ((Float)W).hashCode());
@@ -579,10 +581,7 @@ public class Quaternion {
 		{
 			return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()), Float.parseFloat(split[2].trim()));
 		}
-		else
-		{
-			return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()), Float.parseFloat(split[2].trim()), Float.parseFloat(split[3].trim()));
-		}
+		return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()), Float.parseFloat(split[2].trim()), Float.parseFloat(split[3].trim()));
 	}
 
 	public static boolean TryParse(String val, RefObject<Quaternion> result)
@@ -599,6 +598,7 @@ public class Quaternion {
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		return (obj instanceof Quaternion) ? this == (Quaternion)obj : false;

@@ -142,7 +142,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
 	        inventoryType = InventoryType.Texture;
@@ -171,7 +172,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Sound;
@@ -200,7 +202,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.CallingCard;
@@ -229,7 +232,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Landmark;
@@ -277,7 +281,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Object;
@@ -326,7 +331,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Notecard;
@@ -359,7 +365,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Category;
@@ -388,7 +395,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
            inventoryType = InventoryType.LSL;
@@ -417,7 +425,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Snapshot;
@@ -446,7 +455,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Attachment;
@@ -485,7 +495,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Wearable;
@@ -524,7 +535,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Animation;
@@ -553,7 +565,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
          * @throws ClassNotFoundException 
          * @throws IOException 
          */
-        protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+        @Override
+		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
         {
             super.readObject(info);
             inventoryType = InventoryType.Gesture;
@@ -738,8 +751,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
     	if (library)
     		return _Store.getLibraryFolder();
-    	else
-    		return _Store.getRootFolder();
+
+   		return _Store.getRootFolder();
     }
 
     // #endregion Properties
@@ -774,7 +787,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.RegisterCallback(CapsEventType.ScriptRunningReply, this);
     }
 
-    protected void finalize() throws Throwable
+    @Override
+	protected void finalize() throws Throwable
     {
     	_Client.Self.OnInstantMessage.remove(instantMessageCallback);
     	_Client.Login.UnregisterLoginResponseCallback(loginResponseCallback);
@@ -2064,7 +2078,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
             block.Flags = item.ItemFlags;
             block.FolderID = item.ParentUUID;
             block.GroupID = item.GroupID;
-            block.GroupMask = (int)item.Permissions.GroupMask;
+            block.GroupMask = item.Permissions.GroupMask;
             block.GroupOwned = item.GroupOwned;
             block.InvType = item.inventoryType.getValue();
             block.ItemID = item.UUID;
@@ -2377,11 +2391,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
         add.InventoryData.CreatorID = item.CreatorID;
         add.InventoryData.OwnerID = item.OwnerID;
         add.InventoryData.GroupID = item.GroupID;
-        add.InventoryData.BaseMask = (int)item.Permissions.BaseMask;
-        add.InventoryData.OwnerMask = (int)item.Permissions.OwnerMask;
-        add.InventoryData.GroupMask = (int)item.Permissions.GroupMask;
-        add.InventoryData.EveryoneMask = (int)item.Permissions.EveryoneMask;
-        add.InventoryData.NextOwnerMask = (int)item.Permissions.NextOwnerMask;
+        add.InventoryData.BaseMask = item.Permissions.BaseMask;
+        add.InventoryData.OwnerMask = item.Permissions.OwnerMask;
+        add.InventoryData.GroupMask = item.Permissions.GroupMask;
+        add.InventoryData.EveryoneMask = item.Permissions.EveryoneMask;
+        add.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
         add.InventoryData.GroupOwned = item.GroupOwned;
         add.InventoryData.TransactionID = queryID;
         add.InventoryData.Type = item.inventoryType.getValue();
@@ -2454,7 +2468,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         //Add contents to bucket after folder
         for (int i = 1; i <= folderContents.size(); ++i)
         {
-            bucket[i * 17] = (byte)folderContents.get(i - 1).assetType.getValue();
+            bucket[i * 17] = folderContents.get(i - 1).assetType.getValue();
             folderContents.get(i - 1).UUID.ToBytes(bucket, i * 17 + 1);
         }
         _Client.Self.InstantMessage(_Client.Self.getName(), recipient, folderName, new UUID(), InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, _Client.Self.getSimPosition(), _Client.Network.getCurrentSim().ID, bucket);
@@ -2494,11 +2508,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
         update.InventoryData.CreatorID = item.CreatorID;
         update.InventoryData.OwnerID = item.OwnerID;
         update.InventoryData.GroupID = item.GroupID;
-        update.InventoryData.BaseMask = (int)item.Permissions.BaseMask;
-        update.InventoryData.OwnerMask = (int)item.Permissions.OwnerMask;
-        update.InventoryData.GroupMask = (int)item.Permissions.GroupMask;
-        update.InventoryData.EveryoneMask = (int)item.Permissions.EveryoneMask;
-        update.InventoryData.NextOwnerMask = (int)item.Permissions.NextOwnerMask;
+        update.InventoryData.BaseMask = item.Permissions.BaseMask;
+        update.InventoryData.OwnerMask = item.Permissions.OwnerMask;
+        update.InventoryData.GroupMask = item.Permissions.GroupMask;
+        update.InventoryData.EveryoneMask = item.Permissions.EveryoneMask;
+        update.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
         update.InventoryData.GroupOwned = item.GroupOwned;
         update.InventoryData.TransactionID = transactionID;
         update.InventoryData.Type = item.assetType.getValue();
@@ -2536,7 +2550,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
         final TimeoutEvent<String> taskReplyEvent = new TimeoutEvent<String>();
         CallbackHandler<TaskInventoryReplyCallbackArgs> callback = new CallbackHandler<TaskInventoryReplyCallbackArgs>()
         {
-            public void callback(TaskInventoryReplyCallbackArgs e)
+            @Override
+			public void callback(TaskInventoryReplyCallbackArgs e)
             {
                 if (e.getItemID().equals(objectID))
                 {
@@ -2558,7 +2573,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
                 CallbackHandler<XferReceivedCallbackArgs> xferCallback = new CallbackHandler<XferReceivedCallbackArgs>()
                 {
-                    public void callback(XferReceivedCallbackArgs e)
+                    @Override
+					public void callback(XferReceivedCallbackArgs e)
                     {
                     	if (e.getXfer().XferID == xferID)
                         {
@@ -2582,23 +2598,17 @@ public class InventoryManager implements PacketCallback, CapsCallback
                 {
                     return ParseTaskInventory(taskList);
                 }
-                else
-                {
-                    Logger.Log("Timed out waiting for task inventory download for " + filename, LogLevel.Warning, _Client);
-                    return null;
-                }
+
+                Logger.Log("Timed out waiting for task inventory download for " + filename, LogLevel.Warning, _Client);
+                return null;
             }
-            else
-            {
-                Logger.DebugLog("Task is empty for " + objectLocalID, _Client);
-                return new ArrayList<InventoryBase>(0);
-            }
+
+            Logger.DebugLog("Task is empty for " + objectLocalID, _Client);
+            return new ArrayList<InventoryBase>(0);
         }
-        else
-        {
-            Logger.Log("Timed out waiting for task inventory reply for " + objectLocalID, LogLevel.Warning, _Client);
-            return null;
-        }
+
+        Logger.Log("Timed out waiting for task inventory reply for " + objectLocalID, LogLevel.Warning, _Client);
+        return null;
     }
     
     /** 
@@ -2716,11 +2726,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
         ScriptPacket.InventoryBlock.CreatorID = item.CreatorID;
         ScriptPacket.InventoryBlock.OwnerID = item.OwnerID;
         ScriptPacket.InventoryBlock.GroupID = item.GroupID;
-        ScriptPacket.InventoryBlock.BaseMask = (int)item.Permissions.BaseMask;
-        ScriptPacket.InventoryBlock.OwnerMask = (int)item.Permissions.OwnerMask;
-        ScriptPacket.InventoryBlock.GroupMask = (int)item.Permissions.GroupMask;
-        ScriptPacket.InventoryBlock.EveryoneMask = (int)item.Permissions.EveryoneMask;
-        ScriptPacket.InventoryBlock.NextOwnerMask = (int)item.Permissions.NextOwnerMask;
+        ScriptPacket.InventoryBlock.BaseMask = item.Permissions.BaseMask;
+        ScriptPacket.InventoryBlock.OwnerMask = item.Permissions.OwnerMask;
+        ScriptPacket.InventoryBlock.GroupMask = item.Permissions.GroupMask;
+        ScriptPacket.InventoryBlock.EveryoneMask = item.Permissions.EveryoneMask;
+        ScriptPacket.InventoryBlock.NextOwnerMask = item.Permissions.NextOwnerMask;
         ScriptPacket.InventoryBlock.GroupOwned = item.GroupOwned;
         ScriptPacket.InventoryBlock.TransactionID = transactionID;
         ScriptPacket.InventoryBlock.Type = item.assetType.getValue();
@@ -3236,11 +3246,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                             }
                             else if (key.equals("shadow_id"))
                             {
-                                UUID shadowID = new UUID(val);
-                                if (shadowID != null)
-                                {
-                                    assetID = DecryptShadowID(shadowID);
-                                }
+                                assetID = DecryptShadowID(new UUID(val));
                             }
                             else if (key.equals("asset_id"))
                             {
@@ -3315,6 +3321,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 	private class Self_InstantMessage extends CallbackHandler<InstantMessageCallbackArgs>
 	{
+		@Override
 		public void callback(InstantMessageCallbackArgs e)
 		{
 			// TODO: MainAvatar.InstantMessageDialog.GroupNotice can also be an
@@ -3439,7 +3446,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.request = query;
     	}
     	
-        public void completed(OSD result)
+        @Override
+		public void completed(OSD result)
         {
             OSDMap contents = (OSDMap)result;
 
@@ -3513,6 +3521,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     private class Network_OnLoginResponse extends CallbackHandler<LoginResponseCallbackArgs>
     {
+		@Override
 		public void callback(LoginResponseCallbackArgs e)
     	{
             if (e.getSuccess())
@@ -3578,7 +3587,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.assetID = assetID;
     	}
 
-    	public void completed(OSD result)
+    	@Override
+		public void completed(OSD result)
     	{
             OSDMap contents = (OSDMap)((result instanceof OSDMap) ? result : null);
             if (contents != null)
@@ -3697,7 +3707,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.scriptID = scriptID;
     	}
     	
-        public void completed(OSD result)
+        @Override
+		public void completed(OSD result)
         {
             OSDMap contents = (OSDMap)result;
             String status = contents.get("state").AsString();
@@ -3811,42 +3822,40 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     {
                     	break;
                     }
+                    
+                    InventoryItem item;
+                    /* 
+                     * Objects that have been attached in-world prior to being stored on the 
+                     * asset server are stored with the InventoryType of 0 (Texture) 
+                     * instead of 17 (Attachment) 
+                     * 
+                     * This corrects that behavior by forcing Object Asset types that have an 
+                     * invalid InventoryType with the proper InventoryType of Attachment.
+                     */
+                    if (AssetType.Object.equals(AssetType.setValue(reply.ItemData[i].Type)) && InventoryType.Texture.equals(InventoryType.setValue(reply.ItemData[i].InvType)))
+                    {
+                        item = CreateInventoryItem(InventoryType.Attachment, reply.ItemData[i].ItemID);
+                    }
                     else
                     {
-                        InventoryItem item;
-                        /* 
-                         * Objects that have been attached in-world prior to being stored on the 
-                         * asset server are stored with the InventoryType of 0 (Texture) 
-                         * instead of 17 (Attachment) 
-                         * 
-                         * This corrects that behavior by forcing Object Asset types that have an 
-                         * invalid InventoryType with the proper InventoryType of Attachment.
-                         */
-                        if (AssetType.Object.equals(AssetType.setValue(reply.ItemData[i].Type)) && InventoryType.Texture.equals(InventoryType.setValue(reply.ItemData[i].InvType)))
-                        {
-                            item = CreateInventoryItem(InventoryType.Attachment, reply.ItemData[i].ItemID);
-                        }
-                        else
-                        {
-                            item = CreateInventoryItem(InventoryType.setValue(reply.ItemData[i].InvType), reply.ItemData[i].ItemID);
-                        }
-                        item.ParentUUID = reply.ItemData[i].FolderID;
-                        item.CreatorID = reply.ItemData[i].CreatorID;
-                        item.assetType = AssetType.setValue(reply.ItemData[i].Type);
-                        item.AssetID = reply.ItemData[i].AssetID;
-                        item.CreationDate = Helpers.UnixTimeToDateTime((int)reply.ItemData[i].CreationDate);
-                        item.Description = Helpers.BytesToString(reply.ItemData[i].getDescription());
-                        item.ItemFlags = reply.ItemData[i].Flags;
-                        item.Name = Helpers.BytesToString(reply.ItemData[i].getName());
-                        item.GroupID = reply.ItemData[i].GroupID;
-                        item.GroupOwned = reply.ItemData[i].GroupOwned;
-                        item.Permissions = new Permissions(reply.ItemData[i].BaseMask, reply.ItemData[i].EveryoneMask, reply.ItemData[i].GroupMask, reply.ItemData[i].NextOwnerMask, reply.ItemData[i].OwnerMask);
-                        item.SalePrice = reply.ItemData[i].SalePrice;
-                        item.saleType = SaleType.setValue(reply.ItemData[i].SaleType);
-                        item.OwnerID = reply.AgentData.OwnerID;
-                        _Store.setItem(item.UUID, item);
+                        item = CreateInventoryItem(InventoryType.setValue(reply.ItemData[i].InvType), reply.ItemData[i].ItemID);
                     }
-                }
+                    item.ParentUUID = reply.ItemData[i].FolderID;
+                    item.CreatorID = reply.ItemData[i].CreatorID;
+                    item.assetType = AssetType.setValue(reply.ItemData[i].Type);
+                    item.AssetID = reply.ItemData[i].AssetID;
+                    item.CreationDate = Helpers.UnixTimeToDateTime(reply.ItemData[i].CreationDate);
+                    item.Description = Helpers.BytesToString(reply.ItemData[i].getDescription());
+                    item.ItemFlags = reply.ItemData[i].Flags;
+                    item.Name = Helpers.BytesToString(reply.ItemData[i].getName());
+                    item.GroupID = reply.ItemData[i].GroupID;
+                    item.GroupOwned = reply.ItemData[i].GroupOwned;
+                    item.Permissions = new Permissions(reply.ItemData[i].BaseMask, reply.ItemData[i].EveryoneMask, reply.ItemData[i].GroupMask, reply.ItemData[i].NextOwnerMask, reply.ItemData[i].OwnerMask);
+                    item.SalePrice = reply.ItemData[i].SalePrice;
+                    item.saleType = SaleType.setValue(reply.ItemData[i].SaleType);
+                    item.OwnerID = reply.AgentData.OwnerID;
+                    _Store.setItem(item.UUID, item);
+               }
         	}
 
             InventoryFolder parentFolder = null;
@@ -3915,17 +3924,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
                                     OnFindObjectByPathReply.dispatch(new FindObjectByPathReplyCallbackArgs(string, folderContents.get(j).UUID));
                                     break;
                                 }
-                                else
-                                {
-                                    // We found a match but it is not the end of the path, request the next level
-                                    Logger.DebugLog(String.format("Matched level %d/%d in a path search of %s", search.Level, search.Path.length - 1, string), _Client);
 
-                                    search.Folder = folderContents.get(j).UUID;
-                                    search.Level++;
-                                    remaining.add(search);
+                                // We found a match but it is not the end of the path, request the next level
+                                Logger.DebugLog(String.format("Matched level %d/%d in a path search of %s", search.Level, search.Path.length - 1, string), _Client);
 
-                                    RequestFolderContents(search.Folder, search.Owner, true, true, InventorySortOrder.ByName);
-                                }
+                                search.Folder = folderContents.get(j).UUID;
+                                search.Level++;
+                                remaining.add(search);
+
+                                RequestFolderContents(search.Folder, search.Owner, true, true, InventorySortOrder.ByName);
                             }
                         }
                     }

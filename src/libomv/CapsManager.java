@@ -71,10 +71,7 @@ public class CapsManager
         {
             return EventQueue.getRunning();
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     /** Default constructor

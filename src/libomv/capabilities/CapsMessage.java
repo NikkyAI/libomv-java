@@ -137,7 +137,8 @@ public class CapsMessage implements IMessage
     	UntrustedSimulatorMessage,
     }
 
-    public CapsEventType getType()
+    @Override
+	public CapsEventType getType()
     {
     	return CapsEventType.Default;
     }
@@ -204,7 +205,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray array = (OSDArray)map.get("Info");
             OSDMap blockMap = (OSDMap)array.get(0);
@@ -257,7 +259,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             String ipAndPort = map.get("sim-ip-and-port").AsString();
             int i = ipAndPort.indexOf(':');
@@ -345,7 +348,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDMap infoMap = (OSDMap)((OSDArray)map.get("Info")).get(0);
             LookAt = infoMap.get("LookAt").AsVector3();
@@ -414,7 +418,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray array = (OSDArray)map.get("SimulatorInfo");
             Simulators = new SimulatorInfoBlock[array.size()];
@@ -489,7 +494,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
 
             OSDArray alertInfoArray = (OSDArray)map.get("AlertInfo");
@@ -585,7 +591,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
 
             OSDArray requestDataArray = (OSDArray)map.get("RequestData");
@@ -703,7 +710,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray dataArray = (OSDArray)map.get("Data");
 
@@ -907,8 +915,8 @@ public class CapsMessage implements IMessage
             parcelDataMap.put("OtherPrims", OSD.FromInteger(OtherPrims));
             parcelDataMap.put("OwnerID", OSD.FromUUID(OwnerID));
             parcelDataMap.put("OwnerPrims", OSD.FromInteger(OwnerPrims));
-            parcelDataMap.put("ParcelPrimBonus", OSD.FromReal((float)ParcelPrimBonus));
-            parcelDataMap.put("PassHours", OSD.FromReal((float)PassHours));
+            parcelDataMap.put("ParcelPrimBonus", OSD.FromReal(ParcelPrimBonus));
+            parcelDataMap.put("PassHours", OSD.FromReal(PassHours));
             parcelDataMap.put("PassPrice", OSD.FromInteger(PassPrice));
             parcelDataMap.put("PublicCount", OSD.FromInteger(PublicCount));
             parcelDataMap.put("RegionDenyAnonymous", OSD.FromBoolean(RegionDenyAnonymous));
@@ -956,7 +964,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDMap parcelDataMap = (OSDMap)((OSDArray)map.get("ParcelData")).get(0);
             LocalID = parcelDataMap.get("LocalID").AsInteger();
@@ -1142,7 +1151,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             AuthBuyerID = map.get("auth_buyer_id").AsUUID();
             MediaAutoScale = map.get("auto_scale").AsBoolean();
@@ -1208,7 +1218,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-         public void Deserialize(OSDMap map)
+         @Override
+		public void Deserialize(OSDMap map)
         {
             Location = map.get("location").AsVector3();
             RegionHandle = map.get("region_handle").AsULong();
@@ -1240,7 +1251,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map == null || !map.containsKey("parcel_id"))
                 ParcelID = UUID.Zero;
@@ -1269,7 +1281,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -1279,7 +1292,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("parcel_id"))
             {
@@ -1321,7 +1335,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(5);
             map.put("folder_id", OSD.FromUUID(FolderID));
@@ -1338,7 +1353,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             FolderID = map.get("folder_id").AsUUID();
             AssetType = AssetItem.AssetType.setValue(map.get("asset_type").AsString());
@@ -1371,12 +1387,14 @@ public class CapsMessage implements IMessage
         	return CapsEventType.WebFetchInventoryDescendents;
         }
 
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             throw new UnsupportedOperationException();
         }
 
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             throw new UnsupportedOperationException();
         }
@@ -1437,7 +1455,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(3);
 
@@ -1484,7 +1503,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray agentArray = (OSDArray)map.get("AgentData");
             OSDMap agentMap = (OSDMap)agentArray.get(0);
@@ -1562,7 +1582,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(2);
 
@@ -1577,7 +1598,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             LanguagePublic = map.get("language_is_public").AsBoolean();
             Language = map.get("language").AsString();
@@ -1614,7 +1636,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(1);
 
@@ -1637,7 +1660,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray agentDataArray = (OSDArray)map.get("AgentData");
 
@@ -1693,7 +1717,8 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Url = map.get("uploader").AsUri();
             State = map.get("state").AsString();
@@ -1721,7 +1746,8 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             AssetID = map.get("new_asset").AsUUID();
             State = map.get("state").AsString();
@@ -1749,7 +1775,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -1759,7 +1786,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
         	if (map.containsKey("state"))
         	{
@@ -1807,7 +1835,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(4);
             map.put("major_version", OSD.FromInteger(MajorVersion));
@@ -1822,7 +1851,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             MajorVersion = map.get("major_version").AsInteger();
             MinorVersion = map.get("minor_version").AsInteger();
@@ -1854,7 +1884,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(3);
             map.put("parcel_local_id", OSD.FromInteger(ParcelID));
@@ -1873,7 +1904,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             ParcelID = map.get("parcel_local_id").AsInteger();
             RegionName = map.get("region_name").AsString();
@@ -1904,7 +1936,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(2);
 
@@ -1919,7 +1952,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Username = map.get("username").AsString();
             Password = map.get("password").AsString();
@@ -1950,7 +1984,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -1970,7 +2005,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
         	if (map.containsKey("state"))
         	{
@@ -2018,7 +2054,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(2);
 
@@ -2029,7 +2066,7 @@ public class CapsMessage implements IMessage
             scriptMap.put("Running", OSD.FromBoolean(Running));
 
             OSDArray scriptArray = new OSDArray(1);
-            scriptArray.add((OSD)scriptMap);
+            scriptArray.add(scriptMap);
 
             map.put("Script", scriptArray);
 
@@ -2041,7 +2078,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray scriptArray = (OSDArray)map.get("Script");
 
@@ -2074,7 +2112,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -2084,7 +2123,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("item_id"))
             {
@@ -2134,7 +2174,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(1);
             map.put("task_id", OSD.FromUUID(TaskID));
@@ -2148,7 +2189,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             TaskID = map.get("task_id").AsUUID();
             ItemID = map.get("item_id").AsUUID();
@@ -2183,7 +2225,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             ItemID = map.get("item_id").AsUUID();
         }
@@ -2209,7 +2252,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -2219,7 +2263,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("item_id"))
             {
@@ -2269,7 +2314,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(5);
             map.put("callback-id", OSD.FromInteger(CallbackID));
@@ -2286,7 +2332,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             CallbackID = map.get("callback-id").AsInteger();
             FolderID = map.get("folder-id").AsUUID();
@@ -2321,7 +2368,8 @@ public class CapsMessage implements IMessage
             return map;
         }
         
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             AssetID = map.get("new_asset").AsUUID();
             Compiled = map.get("compiled").AsBoolean();
@@ -2368,7 +2416,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             ScriptRunning = map.get("is_script_running").AsBoolean();
             ItemID = map.get("item_id").AsUUID();
@@ -2397,7 +2446,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -2430,7 +2480,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("task_id"))
             {
@@ -2486,7 +2537,8 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             AssetID = map.get("new_asset").AsUUID();
             Compiled = map.get("compiled").AsBoolean();
@@ -2521,7 +2573,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             ItemID = map.get("item_id").AsUUID();
             Target = map.get("target").AsString();
@@ -2548,7 +2601,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -2558,7 +2612,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("item_id"))
             {
@@ -2615,7 +2670,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap(6);
             map.put("from", OSD.FromString(FromEmail));
@@ -2632,7 +2688,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             FromEmail = map.get("from").AsString();
             Message = map.get("msg").AsString();
@@ -2673,7 +2730,8 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Flags = map.get("Flags").AsInteger();
         }
@@ -2737,7 +2795,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDMap agentMap = (OSDMap)map.get("AgentData");
             Flags = agentMap.get("Flags").AsInteger();
@@ -2781,7 +2840,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             return Request.Serialize();
         }
@@ -2791,7 +2851,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("LayerData"))
             {
@@ -2829,7 +2890,8 @@ public class CapsMessage implements IMessage
          * 
          * @return An <see cref="OSDMap"/> containing the objects data
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             throw new UnsupportedOperationException();
         }
@@ -2839,7 +2901,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             throw new UnsupportedOperationException();
         }
@@ -2876,7 +2939,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             ClassifiedID = map.get("classified_id").AsUUID();
         }
@@ -2914,7 +2978,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             MapClicks = map.get("map_clicks").AsInteger();
             ProfileClicks = map.get("profile_clicks").AsInteger();
@@ -2954,7 +3019,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("map_clicks"))
             {
@@ -3020,7 +3086,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Method = map.get("method").AsString();
             OSDArray agentsArray = (OSDArray)map.get("params");
@@ -3085,7 +3152,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Method = map.get("method").AsString();
             SessionID = map.get("session-id").AsUUID();
@@ -3134,7 +3202,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Method = map.get("method").AsString();
             SessionID = map.get("session-id").AsUUID();
@@ -3170,7 +3239,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("method"))
             {
@@ -3233,7 +3303,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Success = map.get("success").AsBoolean();
             SessionID = map.get("session_id").AsUUID();
@@ -3294,7 +3365,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             SessionID = map.get("session_id").AsUUID();
             TempSessionID = map.get("temp_session_id").AsUUID();
@@ -3394,7 +3466,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("voice"))
             {
@@ -3465,7 +3538,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             this.ParcelLocalID = map.get("parcel_local_id").AsInteger();
             this.RegionName = map.get("region_name").AsString();
@@ -3556,7 +3630,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
 
             OSDMap agent_updates = (OSDMap)map.get("agent_updates");
@@ -3672,7 +3747,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Reason = map.get("reason").AsString();
             SessionID = map.get("session_id").AsUUID();
@@ -3713,7 +3789,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             AckID = map.get("ack").AsInteger();
             Done = map.get("done").AsBoolean();
@@ -3762,7 +3839,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             Sequence = map.get("id").AsInteger();
             OSDArray arrayEvents = (OSDArray)map.get("events");
@@ -3810,7 +3888,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("ack"))
             {
@@ -3984,7 +4063,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             SessionID = map.get("session_id").AsUUID();
 
@@ -4144,7 +4224,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray agentDataArray = (OSDArray)map.get("AgentData");
 
@@ -4215,7 +4296,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDMap prefsMap = (OSDMap)map.get("access_prefs");
             MaxAccess = prefsMap.get("max").AsString();
@@ -4295,7 +4377,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray agentDataArray = (OSDArray)map.get("AgentData");
             OSDMap agentDataMap = (OSDMap)agentDataArray.get(0);
@@ -4589,7 +4672,8 @@ public class CapsMessage implements IMessage
          *
          * @returns Serialized OSD
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap map = new OSDMap();
             OSDArray array = new OSDArray();
@@ -4604,7 +4688,8 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray array = (OSDArray)map.get("objects");
 
@@ -4645,7 +4730,8 @@ public class CapsMessage implements IMessage
          *
          * @returns Serialized OSD
          */
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
             OSDMap ret = new OSDMap(1);
             OSDArray array = new OSDArray(ObjectPhysicsProperties.length);
@@ -4664,7 +4750,8 @@ public class CapsMessage implements IMessage
          *
          * @param name Incoming data to deserialize
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             OSDArray array = (OSDArray)map.get("ObjectData");
             if (array != null)
@@ -4729,7 +4816,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             URL = map.get("current_url").AsString();
             PrimID = map.get("object_id").AsUUID();
@@ -4774,7 +4862,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             PrimID = map.get("object_id").AsUUID();
             Verb = map.get("verb").AsString();
@@ -4833,7 +4922,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             PrimID = map.get("object_id").AsUUID();
 
@@ -4908,7 +4998,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             PrimID = map.get("object_id").AsUUID();
 
@@ -4962,7 +5053,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("verb"))
             {
@@ -5095,7 +5187,8 @@ public class CapsMessage implements IMessage
         // Summary resource usage, keys are resource names, values are resource usage for that specific resource
         public HashMap<String, Integer> SummaryUsed;
 
-        public OSDMap Serialize()
+        @Override
+		public OSDMap Serialize()
         {
         	throw new UnsupportedOperationException();
         }
@@ -5105,7 +5198,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             SummaryAvailable = new HashMap<String, Integer>();
             SummaryUsed = new HashMap<String, Integer>();
@@ -5146,6 +5240,7 @@ public class CapsMessage implements IMessage
          * 
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
+		@Override
 		public OSDMap Serialize()
 		{
 			OSDMap map = super.Serialize();
@@ -5158,7 +5253,8 @@ public class CapsMessage implements IMessage
          * 
          * @param osd An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map != null)
             {
@@ -5219,7 +5315,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             ParcelID = map.get("parcel_id").AsUUID();
         }
@@ -5267,7 +5364,8 @@ public class CapsMessage implements IMessage
          * 
          * @param map An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             try
 			{
@@ -5302,6 +5400,7 @@ public class CapsMessage implements IMessage
          * 
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
+		@Override
 		public OSDMap Serialize()
 		{
 			OSDMap map = new OSDMap(1);
@@ -5322,7 +5421,8 @@ public class CapsMessage implements IMessage
          * 
          * @param osd An <see cref="OSDMap"/> containing the data
          */
-        public void Deserialize(OSDMap map)
+        @Override
+		public void Deserialize(OSDMap map)
         {
             if (map.containsKey("summary"))
             {
@@ -5584,11 +5684,13 @@ public class CapsMessage implements IMessage
         return message ;
     }
    
-    public OSDMap Serialize()
+    @Override
+	public OSDMap Serialize()
 	{
 		return null;
 	}
 	
+	@Override
 	public void Deserialize(OSDMap map)
 	{
 	}

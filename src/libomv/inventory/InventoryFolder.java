@@ -66,7 +66,8 @@ public class InventoryFolder extends InventoryBase
      * @throws ClassNotFoundException 
      * @throws IOException 
      */
-    protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+    @Override
+	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
     {
         super.readObject(info);
         if (serialVersionUID != info.readLong())
@@ -120,6 +121,6 @@ public class InventoryFolder extends InventoryBase
 
     public final boolean equals(InventoryFolder o)
     {
-        return super.equals((InventoryBase)((o instanceof InventoryBase) ? o : null)) && o.descendentCount == descendentCount && o.preferredType == preferredType && o.version == version;
+        return super.equals(o) && o.descendentCount == descendentCount && o.preferredType == preferredType && o.version == version;
     }
 }

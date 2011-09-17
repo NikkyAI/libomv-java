@@ -183,12 +183,12 @@ public class AgentThrottle
     {
         // Sane initial values
         resend = (value * 0.1f);
-        land = (float)(value * 0.52f / 3f);
-        wind = (float)(value * 0.05f);
-        cloud = (float)(value * 0.05f);
-        task = (float)(value * 0.704f / 3f);
-        texture = (float)(value * 0.704f / 3f);
-        asset = (float)(value * 0.484f / 3f);
+        land = (value * 0.52f / 3f);
+        wind = (value * 0.05f);
+        cloud = (value * 0.05f);
+        task = (value * 0.704f / 3f);
+        texture = (value * 0.704f / 3f);
+        asset = (value * 0.484f / 3f);
     }
 
     private GridClient Client;

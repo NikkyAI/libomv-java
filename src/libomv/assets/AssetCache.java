@@ -110,7 +110,8 @@ public class AssetCache
     
     private class Network_LoginProgress extends CallbackHandler<LoginProgressCallbackArgs>
     {
-        public void callback(LoginProgressCallbackArgs e)
+        @Override
+		public void callback(LoginProgressCallbackArgs e)
         {
             if(e.getStatus() == LoginStatus.Success)
             {
@@ -121,7 +122,8 @@ public class AssetCache
     
     private class Network_Disconnected extends CallbackHandler<DisconnectedCallbackArgs>
     {
-    	public void callback(DisconnectedCallbackArgs e)
+    	@Override
+		public void callback(DisconnectedCallbackArgs e)
         {
             DestroyTimer();
         }
@@ -146,7 +148,8 @@ public class AssetCache
             cleanerTimer = new Timer();
             cleanerTimer.schedule(new TimerTask()
             {
-            	public void run()
+            	@Override
+				public void run()
             	{
                     BeginPrune();
             	}
@@ -294,10 +297,7 @@ public class AssetCache
         {
             return fileName;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     /**
@@ -322,7 +322,8 @@ public class AssetCache
         
         class CacheNameFilter implements FilenameFilter
         {
-            public boolean accept(File dir, String name)
+            @Override
+			public boolean accept(File dir, String name)
             {
                 return name.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
             }
@@ -398,7 +399,8 @@ public class AssetCache
         {
             cleanerThread = new Thread(new Runnable()
             {
-            	public void run()
+            	@Override
+				public void run()
             	{
             		Prune();
             	}
@@ -465,7 +467,8 @@ public class AssetCache
      */
     private class SortFilesByModTimeHelper implements Comparator<File>
     {
-        public int compare(File f1, File f2)
+        @Override
+		public int compare(File f1, File f2)
         {
             if (f1.lastModified() > f2.lastModified())
             {
@@ -475,10 +478,7 @@ public class AssetCache
             {
                 return -1;
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
     }
 }

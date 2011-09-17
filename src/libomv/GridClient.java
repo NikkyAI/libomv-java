@@ -78,6 +78,7 @@ public class GridClient
 		public String password;    // password
 		public int version;
 		
+		@Override
 		public String toString()
 		{
 			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n", gridnick, gridname, platform, version);
@@ -480,6 +481,7 @@ public class GridClient
 	}
 
 	// <returns>Client Avatar's Full Name</returns>
+	@Override
 	public String toString()
 	{
 		return Self.getName();
