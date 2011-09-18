@@ -237,7 +237,7 @@ public class LoginManager
          *              automatically populates the struct properly using attributes 
          * @throws IOException 
          */
-        private void ParseLoginReply(OSDMap reply) throws IOException
+        private void ParseLoginReply(OSDMap reply)
         {
             AgentID = reply.get("agent_id").AsUUID();
             SessionID = reply.get("session_id").AsUUID();
@@ -255,9 +255,14 @@ public class LoginManager
 
             // Home
             OSD osdHome = null;
-			try {
+			try
+			{
 				osdHome = LLSDNotation.parse(reply.get("home").AsString());
-			} catch (ParseException ex) { }
+			}
+			catch (Exception ex)
+			{
+                Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
+			}
 			
 			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
             {
@@ -325,7 +330,7 @@ public class LoginManager
             LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
         }
 
-        public void Parse(HashMap<String, Object> reply)
+        private void ParseLoginReply(HashMap<String, Object> reply)
         {
             try
             {
@@ -368,10 +373,11 @@ public class LoginManager
                     }
                 }
             }
-            catch (Throwable e)
+            catch (Exception ex)
             {
-                Logger.Log("Login server returned (some) invalid data: " + e.getMessage(), LogLevel.Warning);
+                Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
             }
+
             if (!Success)
             {
                 return;
@@ -385,7 +391,10 @@ public class LoginManager
 				{
 					osdHome = LLSDNotation.parse(reply.get("home").toString());
 				}
-				catch (Exception e) { }
+				catch (Exception ex)
+				{
+	                Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
+				}
 
                 if (osdHome != null && osdHome.getType().equals(OSDType.Map))
                 {
@@ -981,18 +990,19 @@ public class LoginManager
                 			Object data = client.callEx(loginParams.MethodName, request);
                             LoginReplyXmlRpcHandler(data, loginParams);
                         }
-						catch (Exception e)
+						catch (Exception ex)
 						{
-                            UpdateLoginStatus(LoginStatus.Failed, "Error opening the login server connection: " + e.getMessage(), null);
+                            UpdateLoginStatus(LoginStatus.Failed, "Error opening the login server connection", ex.getMessage());
 						}
                     }
                 };
                 requestThread.setName("XML-RPC Login");
                 requestThread.start();
             }
-            catch (Throwable e)
+            catch (Exception ex)
             {
-                UpdateLoginStatus(LoginStatus.Failed, "Error connecting to the login server: " + e.getMessage(), null);
+                UpdateLoginStatus(LoginStatus.Failed, "Error connecting to the login server", ex.getMessage());
+                throw ex;
             }
             // #endregion
         }
@@ -1030,22 +1040,13 @@ public class LoginManager
         if (response == null || !(response instanceof HashMap))
         {
             UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", null);
-            return;
         }
 
         @SuppressWarnings("unchecked")
         HashMap<String, Object> result = (HashMap<String, Object>)response;
-        try
-        {
-            reply.Parse(result);
-        }
-        catch (Exception ex)
-        {
-            UpdateLoginStatus(LoginStatus.Failed, "Error retrieving the login response from the server", ex.getMessage());
-            return;
-        }
+        reply.ParseLoginReply(result);
 
-        if (reply.Login.equals("true"))
+        if (reply.Success)
         {
             // Remove the quotes around our first name.
             if (reply.FirstName.charAt(0) == '"')
@@ -1056,16 +1057,6 @@ public class LoginManager
             {
                 reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
             }
-            // #region Critical Information
-
-            // Networking
-            Client.Network.setCircuitCode(reply.CircuitCode);
-
-            // #endregion Critical Information
-
-            // Misc:
-            //uint timestamp = (uint)reply.seconds_since_epoch;
-            //DateTime time = Helpers.UnixTimeToDateTime(timestamp); // TODO: Do something with this?
 
             // Unhandled:
             // reply.gestures
@@ -1075,15 +1066,10 @@ public class LoginManager
             // reply.ui_config
             // reply.login_flags
             // reply.global_textures
-            // reply.inventory_lib_root
-            // reply.inventory_lib_owner
-            // reply.inventory_skeleton
-            // reply.inventory_skel_lib
             // reply.initial_outfit
         }
 
         boolean redirect = (reply.Login.equals("indeterminate"));
-
         LoginResponseCallback(reply.Success, redirect, reply.Message, reply.Reason, reply);
 
         // Make the next network jump, if needed
@@ -1104,8 +1090,7 @@ public class LoginManager
         }
         else if (reply.Success)
         {
-            // These parameters are stored in NetworkManager, so instead of registering
-            // another callback for them we just set the values here
+            // Login succeeded
             Client.Network.setCircuitCode(reply.CircuitCode);
             LoginSeedCapability = reply.SeedCapability;
 
@@ -1133,15 +1118,15 @@ public class LoginManager
         }
         else
         {
-            String reason = reply.Reason;
- 
-            // Make sure a usable error key is set
-            if (Helpers.isEmpty(reason))
+            // Login failed
+
+        	// Make sure a usable error key is set
+            if (Helpers.isEmpty(reply.Reason))
             {
-                reason = "unknown";
+            	reply.Reason = "unknown";
             }
 
-            UpdateLoginStatus(LoginStatus.Failed, reply.Message, reason);
+            UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason);
         }
     }
 
@@ -1168,107 +1153,87 @@ public class LoginManager
             {
                 OSDMap map = (OSDMap)result;
 
-                LoginResponseData data = new LoginResponseData();
-                try
-				{
-					data.ParseLoginReply(map);
-				}
-				catch (IOException e) { }
+                LoginResponseData reply = new LoginResponseData();
+			    reply.ParseLoginReply(map);
 
-                OSD osd = map.get("login");
-                if (osd != null)
+                boolean redirect = reply.Login.equals("indeterminate");
+                LoginResponseCallback(reply.Success, redirect, reply.Message, reply.Reason, reply);
+
+                if (redirect)
                 {
-                    boolean loginSuccess = osd.AsBoolean();
-                    boolean redirect = osd.AsString().equals("indeterminate");
+                    // Login redirected
 
-                    LoginResponseCallback(loginSuccess, redirect, data.Message, data.Reason, data);
+                    // Make the next login URL jump
+                    UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, null);
 
-                    if (redirect)
+                    loginParams.URI = reply.NextUrl;
+                    loginParams.MethodName = reply.NextMethod;
+                    loginParams.Options = reply.NextOptions;
+
+                    // Sleep for some amount of time while the servers work
+                    int seconds = reply.NextDuration;
+                    Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info);
+					try
+					{
+						Thread.sleep(seconds * 1000);
+					}
+					catch (InterruptedException ex) { }
+
+					try
+					{
+                         RequestLogin(loginParams);
+					}
+					catch (Exception ex)
+					{
+						UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
+					}
+                }
+                else if (reply.Success)
+                {
+                    // Login succeeded
+                    Client.Network.setCircuitCode(reply.CircuitCode);
+                    LoginSeedCapability = reply.SeedCapability;
+
+                    UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
+
+                    if (reply.SimIP != null && reply.SimPort != 0)
                     {
-                        // Login redirected
-
-                        // Make the next login URL jump
-                        UpdateLoginStatus(LoginStatus.Redirecting, data.Message, null);
-
-                        loginParams.URI = map.get("next_url").AsString();
-                        //CurrentContext.Params.MethodName = LoginResponseData.ParseString("next_method", map);
-
-                        // Sleep for some amount of time while the servers work
-                        int seconds = map.get("next_duration").AsUInteger();
-                        Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info);
 						try
 						{
-							Thread.sleep(seconds * 1000);
-						}
-						catch (InterruptedException ex) { }
+							// Connect to the sim given in the login reply
+							if (Client.Network.Connect(reply.SimIP, reply.SimPort, Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
+							{
+								// Request the economy data right after login
+								Client.Network.SendPacket(new EconomyDataRequestPacket());
 
-                        // Ignore next_options for now
-
-						try
-						{
-                             RequestLogin(loginParams);
+								// Update the login message with the MOTD returned from the server
+								UpdateLoginStatus(LoginStatus.Success, reply.Message, null);
+							}
+							else
+							{
+								UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
+							}
 						}
 						catch (Exception ex)
 						{
 							UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
 						}
                     }
-                    else if (loginSuccess)
-                    {
-                        // Login succeeded
-
-                        // These parameters are stored in NetworkManager, so instead of registering
-                        // another callback for them we just set the values here
-                        Client.Network.setCircuitCode(data.CircuitCode);
-                        LoginSeedCapability = data.SeedCapability;
-
-                        UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
-
-                        if (data.SimIP != null && data.SimPort != 0)
-                        {
-							try
-							{
-								// Connect to the sim given in the login reply
-								if (Client.Network.Connect(data.SimIP, data.SimPort, Helpers.UIntsToLong(data.RegionX, data.RegionY), true, LoginSeedCapability) != null)
-								{
-									// Request the economy data right after login
-									Client.Network.SendPacket(new EconomyDataRequestPacket());
-
-									// Update the login message with the MOTD returned from the server
-									UpdateLoginStatus(LoginStatus.Success, data.Message, null);
-								}
-								else
-								{
-									UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
-								}
-							}
-							catch (Exception ex)
-							{
-								UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
-							}
-                        }
-                        else
-                        {
-                            UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", null);
-                        }
-                    }
                     else
                     {
-                        // Login failed
-                    	String reason = data.Reason;
-
-                    	// Make sure a usable error key is set
-                        if (Helpers.isEmpty(reason))
-                        {
-                            reason = "unknown";
-                        }
-                        UpdateLoginStatus(LoginStatus.Failed, data.Message, reason);
+                        UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", null);
                     }
                 }
                 else
                 {
-                    // Got an LLSD map but no login value
-                    UpdateLoginStatus(LoginStatus.Failed, "login parameter missing in the response", null);
+                    // Login failed
+
+                	// Make sure a usable error key is set
+                    if (Helpers.isEmpty(reply.Reason))
+                    {
+                    	reply.Reason = "unknown";
+                    }
+                    UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason);
                 }
             }
             else

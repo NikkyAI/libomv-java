@@ -617,7 +617,6 @@ public class Simulator extends Thread
             Terrain = null;
             WindSpeeds = null;        
         }
-
 	}
 
     /** Attempt to connect to this simulator
