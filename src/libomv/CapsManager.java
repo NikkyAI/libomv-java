@@ -123,6 +123,7 @@ public class CapsManager
         // This list can be updated by using the following command to obtain a current list of capabilities the official linden viewer supports:
         // wget -q -O - http://svn.secondlife.com/svn/linden/branches/2010/viewer-external/indra/newview/llviewerregion.cpp | grep 'capabilityNames.append'  | sed 's/^[ \t]*//;s/capabilityNames.append("/req.Add("/'
         req.add(OSD.FromString("AttachmentResources"));
+        req.add(OSD.FromString("AvatarPickerSearch"));
         req.add(OSD.FromString("ChatSessionRequest"));
         req.add(OSD.FromString("CopyInventoryFromNotecard"));
         req.add(OSD.FromString("DispatchRegionInfo"));
@@ -131,6 +132,7 @@ public class CapsManager
         req.add(OSD.FromString("FetchInventory"));
         req.add(OSD.FromString("FetchLib"));
         req.add(OSD.FromString("FetchLibDescendents"));
+        req.add(OSD.FromString("GetDisplayNames"));
         req.add(OSD.FromString("GetTexture"));
         req.add(OSD.FromString("GroupProposalBallot"));
         req.add(OSD.FromString("HomeLocation"));
@@ -154,6 +156,10 @@ public class CapsManager
         req.add(OSD.FromString("SendUserReport"));
         req.add(OSD.FromString("SendUserReportWithScreenshot"));
         req.add(OSD.FromString("ServerReleaseNotes"));
+        req.add(OSD.FromString("SimConsole"));
+        req.add(OSD.FromString("SimulatorFeatures"));
+        req.add(OSD.FromString("SetDisplayName"));
+        req.add(OSD.FromString("SimConsoleAsync"));
         req.add(OSD.FromString("StartGroupProposal"));
         req.add(OSD.FromString("TextureStats"));
         req.add(OSD.FromString("UntrustedSimulatorMessage"));

@@ -38,6 +38,7 @@ import java.util.Map.Entry;
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.AgentManager.TeleportFlags;
+import libomv.AvatarManager.AgentDisplayName;
 import libomv.ParcelManager;
 import libomv.ParcelManager.LandingTypeEnum;
 import libomv.ParcelManager.ParcelCategory;
@@ -135,6 +136,10 @@ public class CapsMessage implements IMessage
     	UpdateNotecardTaskInventory,
     	ViewerStartAuction,
     	UntrustedSimulatorMessage,
+        GetDisplayNames,
+        SetDisplayName,
+        SetDisplayNameReply,
+        DisplayNameUpdate,
     }
 
     @Override
@@ -5442,6 +5447,213 @@ public class CapsMessage implements IMessage
     }
     // #endregion Resource usage
 
+    // #region Display names
+    
+    // Reply to request for bunch if display names
+    public class GetDisplayNamesMessage implements IMessage
+    {
+        // Current display name
+        public AgentDisplayName[] Agents = new AgentDisplayName[0];
+
+        // Following UUIDs failed to return a valid display name
+        public UUID[] BadIDs = new UUID[0];
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.GetDisplayNames;
+		}
+
+		/**
+         * Serializes the message
+         *
+         * @returns OSD containting the messaage
+         */
+        @Override
+		public OSDMap Serialize()
+        {
+            OSDArray agents = new OSDArray();
+            
+            if (Agents != null && Agents.length > 0)
+            {
+                for (int i=0; i<Agents.length; i++)
+                {
+                    agents.add(Agents[i].GetOSD());
+                }
+            }
+
+            OSDArray badIDs = new OSDArray();
+            if (BadIDs != null && BadIDs.length > 0)
+            {
+                for (int i=0; i<BadIDs.length; i++)
+                {
+                    badIDs.add(OSD.FromUUID(BadIDs[i]));
+                }
+            }
+
+            OSDMap ret = new OSDMap();
+            ret.put("agents", agents);
+            ret.put("bad_ids", badIDs);
+            return ret;
+        }
+
+        @Override
+		public void Deserialize(OSDMap map)
+        {
+            if (map.get("agents").getType() == OSDType.Array)
+            {
+                OSDArray osdAgents = (OSDArray) map.get("agents");
+
+                if (osdAgents.size() > 0)
+                {
+                    Agents = new AgentDisplayName[osdAgents.size()];
+
+                    for (int i = 0; i < osdAgents.size(); i++)
+                    {
+                        Agents[i].FromOSD(osdAgents.get(i));
+                    }
+                }
+            }
+
+            if (map.get("bad_ids").getType() == OSDType.Array)
+            {
+                OSDArray osdBadIDs = (OSDArray) map.get("bad_ids");
+                if (osdBadIDs.size() > 0)
+                {
+                    BadIDs = new UUID[osdBadIDs.size()];
+
+                    for (int i=0; i<osdBadIDs.size(); i++)
+                    {
+                        BadIDs[i] = osdBadIDs.get(i).AsUUID();
+                    }
+                }
+            }
+        }
+    }
+
+    // Message sent when requesting change of the display name
+    public class SetDisplayNameMessage implements IMessage
+    {
+        // Current display name
+        public String OldDisplayName;
+
+        // Desired new display name
+        public String NewDisplayName;
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.SetDisplayName;
+		}
+
+		/**
+         * Serializes the message
+         *
+         * @returns OSD containting the messaage
+		 */
+        @Override
+		public OSDMap Serialize()
+        {
+            OSDArray names = new OSDArray(2);
+            names.add(OSD.FromString(OldDisplayName));
+            names.add(OSD.FromString(NewDisplayName));
+
+            OSDMap name = new OSDMap();
+            name.put("display_name", names);
+            return name;
+        }
+
+        @Override
+		public void Deserialize(OSDMap map)
+        {
+            OSDArray names = (OSDArray)map.get("display_name");
+            OldDisplayName = names.get(0).AsString();
+            NewDisplayName = names.get(1).AsString();
+        }
+    }
+
+    // Message recieved in response to request to change display name
+    public class SetDisplayNameReplyMessage implements IMessage
+    {
+        // New display name
+        public AgentDisplayName DisplayName;
+
+        // String message indicating the result of the operation
+        public String Reason;
+
+        // Numerical code of the result, 200 indicates success
+        public int Status;
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.SetDisplayNameReply;
+		}
+
+		/**
+         * Serializes the message
+         *
+         * @returns OSD containting the messaage
+         */
+        @Override
+		public OSDMap Serialize()
+        {
+            OSDMap ret = new OSDMap(3);
+            ret.put("content", DisplayName.GetOSD());
+            ret.put("reason", OSD.FromString(Reason));
+            ret.put("status", OSD.FromInteger(Status));
+            return ret;
+        }
+
+        @Override
+		public void Deserialize(OSDMap map)
+        {
+            DisplayName.FromOSD(map.get("content"));
+            Reason = map.get("reason").AsString();
+            Status = map.get("status").AsInteger();
+        }
+    }
+
+    // Message recieved when someone nearby changes their display name
+    public class DisplayNameUpdateMessage implements IMessage
+    {
+        // Previous display name, empty string if default
+        public String OldDisplayName;
+
+        // New display name
+        public AgentDisplayName DisplayName;
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.DisplayNameUpdate;
+		}
+
+		/**
+         * Serializes the message
+         *
+         * @returns OSD containting the messaage
+         */
+        @Override
+		public OSDMap Serialize()
+        {
+            OSDMap agent = (OSDMap)DisplayName.GetOSD();
+            agent.put("old_display_name", OSD.FromString(OldDisplayName));
+            OSDMap ret = new OSDMap();
+            ret.put("agent", agent);
+            return ret;
+        }
+
+        @Override
+		public void Deserialize(OSDMap map)
+        {
+            OSDMap agent = (OSDMap)map.get("agent");
+            DisplayName.FromOSD(agent);
+            OldDisplayName = agent.get("old_display_name").AsString();
+        }
+    }
+    // #endregion Display names
+    
     /**
      * Return a decoded capabilities message as a strongly typed object
      * 
@@ -5661,6 +5873,23 @@ public class CapsMessage implements IMessage
                 message.Deserialize(map);
                 break;
 
+            case GetDisplayNames:
+            	message = new GetDisplayNamesMessage();
+                message.Deserialize(map);
+                break;
+            case SetDisplayName:
+            	message = new SetDisplayNameMessage();
+                message.Deserialize(map);
+                break;
+            case SetDisplayNameReply:
+            	message = new SetDisplayNameReplyMessage();
+                message.Deserialize(map);
+                break;
+            case DisplayNameUpdate:
+            	message = new DisplayNameUpdateMessage();
+                message.Deserialize(map);
+                break;
+                
             // Capabilities TODO:
             case DispatchRegionInfo:
             case EstateChangeInfo:
