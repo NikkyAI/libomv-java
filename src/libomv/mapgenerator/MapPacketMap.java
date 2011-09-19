@@ -29,7 +29,6 @@ package libomv.mapgenerator;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import libomv.utils.IntHashMap;
 
 
 public class MapPacketMap {

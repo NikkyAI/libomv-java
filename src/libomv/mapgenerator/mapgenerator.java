@@ -121,7 +121,7 @@ public class mapgenerator
 			writer.println("            if (value == null) {");
 			writer.println("                _" + field.Name.toLowerCase() + " = null;");
 			writer.println("            }");
-			writer.println("            if (value.length > " + ((field.Count == 1) ? "255" : "1024") + ") {");
+			writer.println("            else if (value.length > " + ((field.Count == 1) ? "255" : "1024") + ") {");
 			writer.println("                throw new OverflowException(\"Value exceeds " + ((field.Count == 1) ? "255" : "1024") + " characters\");");
             writer.println("            }");
 			writer.println("            else {");
@@ -190,9 +190,9 @@ public class mapgenerator
 			break;
 		case FieldType.Variable:
 			if (field.Count == 1) {
-				writer.println("            length = (int)(bytes.get()) & 0xFF;");
+				writer.println("            length = bytes.get() & 0xFF;");
 			} else {
-				writer.println("            length = (int)(bytes.getShort()) & 0xFFFF;");
+				writer.println("            length = bytes.getShort() & 0xFFFF;");
 			}
 			writer.println("            _" + field.Name.toLowerCase() + " = new byte[length];");
 			writer.println("            bytes.get(_" + field.Name.toLowerCase() + "); ");
@@ -385,8 +385,9 @@ public class mapgenerator
 
 		writer.println("        }\n");
 
-		// ToString() function
-		writer.println("        public String toString()\n" +
+		// toString() function
+		writer.println("        @Override\n" +
+		               "        public String toString()\n" +
 				       "        {");
 		writer.println("            String output = \"-- " + block.Name + " --\\n\";");
 		writer.println("            try {");
@@ -504,10 +505,13 @@ public class mapgenerator
 
 		// Header member
 		writer.println("    private PacketHeader header;");
+		writer.println("    @Override");
 		writer.println("    public PacketHeader getHeader() { return header; }");
+		writer.println("    @Override");
 		writer.println("    public void setHeader(PacketHeader value) { header = value; }");
 
 		// PacketType member
+		writer.println("    @Override");
 		writer.println("    public PacketType getType() { return PacketType." + packet.Name + "; }");
 
 		// Block members
@@ -584,10 +588,10 @@ public class mapgenerator
 			} else if (block.Count == -1) {
 				// Variable count block
 				if (!seenVariable) {
-					writer.println("        int count = (int)bytes.get() & 0xFF;");
+					writer.println("        int count = bytes.get() & 0xFF;");
 					seenVariable = true;
 				} else {
-					writer.println("        count = (int)bytes.get() & 0xFF;");
+					writer.println("        count = bytes.get() & 0xFF;");
 				}
 				writer.println("        " + sanitizedName + " = new " + block.Name + "Block[count];");
 				writer.println("        for (int j = 0; j < count; j++)");
@@ -622,10 +626,10 @@ public class mapgenerator
 				// Variable count block
 				if (!seenVariable) {
 					writer
-							.println("        int count = (int)bytes.get() & 0xFF;");
+							.println("        int count = bytes.get() & 0xFF;");
 					seenVariable = true;
 				} else {
-					writer.println("        count = (int)bytes.get() & 0xFF;");
+					writer.println("        count = bytes.get() & 0xFF;");
 				}
 				writer.println("        " + sanitizedName + " = new "
 						+ block.Name + "Block[count];");
@@ -641,6 +645,7 @@ public class mapgenerator
 		writer.println("    }\n");
 
 		// getLength() function
+		writer.println("    @Override");
 		writer.println("    public int getLength()");
 		writer.println("    {");
 
@@ -687,6 +692,7 @@ public class mapgenerator
 				     + "    }\n");
 
 		// ToBytes() function
+		writer.println("    @Override");
 		writer.println("    public ByteBuffer ToBytes() throws Exception");
 		writer.println("    {");
 		writer.println("        ByteBuffer bytes = ByteBuffer.allocate(getLength());");
@@ -720,7 +726,8 @@ public class mapgenerator
 		writer.println("        return bytes;\n" +
 				       "    }\n");
 
-		// ToString() function
+		// toString() function
+		writer.println("    @Override");
 		writer.println("    public String toString()\n" +
 				       "    {");
 		writer.println("        String output = \"--- " + packet.Name + " ---\\n\";");
@@ -764,8 +771,10 @@ public class mapgenerator
 
 		try {
 
-			if (args.length < 3) {
+			if (args.length < 3)
+			{
 				System.out.println("Invalid arguments, need [message_template.msg] [template.java.txt] [Packet.java]");
+				return;
 			}
 
 			File packets_dir = new File(args[2]).getParentFile();

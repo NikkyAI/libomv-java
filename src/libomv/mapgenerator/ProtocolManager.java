@@ -229,7 +229,8 @@ public class ProtocolManager
 		output.close();
 	}
 
-	private void LoadMapFile(String mapFile) throws Exception {
+	private void LoadMapFile(String mapFile) throws Exception
+	{
 		FileReader map;
 		int low = 1;
 		int medium = 1;
@@ -287,7 +288,13 @@ public class ProtocolManager
 							if (Sort)
 								Collections.sort(currentPacket.Blocks);
 							inPacket = false;
-						} else {
+						}
+						else if (trimmedline.startsWith("//"))
+						{
+							// ignore comment lines
+						}
+						else
+						{
 							// The packet header
 							// #region ParsePacketHeader
 
@@ -347,8 +354,7 @@ public class ProtocolManager
 
 									high++;
 								} else {
-									Logger.Log("Unknown packet frequency",
-											LogLevel.Error);
+									Logger.Log("Unknown packet frequency : " + tokens[1], LogLevel.Error);
 								}
 							}
 						}
@@ -376,12 +382,15 @@ public class ProtocolManager
 
 							// Save this field to the current block
 							currentBlock.Fields.addElement(field);
-						} else if (trimmedline.equals("}")) {
+						}
+						else if (trimmedline.equals("}"))
+						{
 							if (Sort)
 								Collections.sort(currentBlock.Fields);
 							inBlock = false;
-						} else if (trimmedline.length() != 0
-								&& trimmedline.substring(0, 2).equals("//") == false) {
+						}
+						else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false)
+						{
 							// The block header
 							// #region ParseBlockHeader
 
