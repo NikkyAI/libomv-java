@@ -273,7 +273,7 @@ public final class LLSDBinary
 			throw new ParseException("Binary LLSD parsing: Missing end marker in array.", stream.getBytePosition());
 		}
 
-		return (OSD)osdArray;
+		return osdArray;
 	}
 
 	private static OSD parseMap(LLSDInputStream stream) throws IOException, ParseException
@@ -296,7 +296,7 @@ public final class LLSDBinary
 		{
 			throw new ParseException("Binary LLSD parsing: Missing end marker in map.", stream.getBytePosition());
 		}
-		return (OSD)osdMap;
+		return osdMap;
 	}
 
 	/** 
@@ -323,11 +323,8 @@ public final class LLSDBinary
 		{
 			return true;
 		}
-		else
-		{
-			stream.unread(bt);
-			return false;
-		}
+		stream.unread(bt);
+		return false;
 	}
 
 	public static boolean find(LLSDInputStream stream, byte[] toFind) throws IOException
@@ -359,11 +356,8 @@ public final class LLSDBinary
 			stream.unread(bt);
 			return true;
 		}
-		else
-		{
-			stream.unread(toFind, 0, crrIndex);
-			return false;
-		}
+		stream.unread(toFind, 0, crrIndex);
+		return false;
 	}
 
 	private static byte[] consumeBytes(LLSDInputStream stream, int consumeBytes) throws IOException, ParseException

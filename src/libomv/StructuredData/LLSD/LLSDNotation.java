@@ -345,7 +345,7 @@ public final class LLSDNotation
 		{
 			throw new ParseException("Notation LLSD parsing: Unexpected end of array discovered.", reader.getBytePosition());
 		}
-		return (OSD)osdArray;
+		return osdArray;
 	}
 
 	private static OSD parseMap(LLSDReader reader) throws ParseException, IOException
@@ -387,7 +387,7 @@ public final class LLSDNotation
 		{
 			throw new ParseException("Notation LLSD parsing: Unexpected end of map discovered.", reader.getBytePosition());
 		}
-		return (OSD)osdMap;
+		return osdMap;
 	}
 
 	private static void serializeElement(Writer writer, OSD osd) throws IOException

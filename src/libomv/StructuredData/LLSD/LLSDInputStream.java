@@ -45,6 +45,7 @@ public class LLSDInputStream extends FilterInputStream
 		this(in, 1);
 	}
 
+	@Override
 	public int available() throws IOException 
 	{
 		if (buf == null)
