@@ -26,9 +26,16 @@
  */ 
 package libomv;
 
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDMap;
+import libomv.capabilities.CapsCallback;
+import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.capabilities.CapsMessage.DisplayNameUpdateMessage;
+import libomv.capabilities.IMessage;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.UUIDNameReplyPacket;
@@ -36,13 +43,139 @@ import libomv.packets.UUIDNameRequestPacket;
 import libomv.primitives.Avatar;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
+import libomv.types.Vector3d;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 
-public class AvatarManager implements PacketCallback {
-	/** Holds group information for Avatars such as those you might find in a profile */
+public class AvatarManager implements PacketCallback, CapsCallback
+{
+    // Information about agents display name
+	public class AgentDisplayName
+    {
+        // Agent UUID
+        public UUID ID;
+        // Username
+        public String UserName;
+        // Display name
+        public String DisplayName;
+        // First name (legacy)
+        public String LegacyFirstName;
+        // Last name (legacy)
+        public String LegacyLastName;
+        // Full name (legacy)
+        public String LegacyFullName;
+        // Is display name default display name </summary>
+        public boolean IsDefaultDisplayName;
+        // Cache display name until
+        public Date NextUpdate;
+
+        public String getLegacyFullName()
+        {
+        	return String.format("%s %s", LegacyFirstName, LegacyLastName);
+        }
+        
+        /**
+         * Creates AgentDisplayName object from OSD
+         *
+         * @param data Incoming OSD data
+         * AgentDisplayName object
+         */
+        public AgentDisplayName FromOSD(OSD data)
+        {
+            AgentDisplayName ret = new AgentDisplayName();
+
+            OSDMap map = (OSDMap)data;
+            ret.ID = map.get("id").AsUUID();
+            ret.UserName = map.get("username").AsString();
+            ret.DisplayName = map.get("display_name").AsString();
+            ret.LegacyFirstName = map.get("legacy_first_name").AsString();
+            ret.LegacyLastName = map.get("legacy_last_name").AsString();
+            ret.IsDefaultDisplayName = map.get("is_display_name_default").AsBoolean();
+            ret.NextUpdate = map.get("display_name_next_update").AsDate();
+
+            return ret;
+        }
+
+        /**
+         * Return object as OSD map
+         *
+         * @returns OSD containing agent's display name data
+         */
+        public OSD GetOSD()
+        {
+            OSDMap map = new OSDMap();
+            
+            map.put("id", OSD.FromUUID(ID));
+            map.put("username", OSD.FromString(UserName));
+            map.put("display_name", OSD.FromString(DisplayName));
+            map.put("legacy_first_name", OSD.FromString(LegacyFirstName));
+            map.put("legacy_last_name", OSD.FromString(LegacyLastName));
+            map.put("is_display_name_default", OSD.FromBoolean(IsDefaultDisplayName));
+            map.put("display_name_next_update", OSD.FromDate(NextUpdate));
+            
+            return map;
+        }
+
+        @Override
+        public String toString()
+        {
+            return Helpers.StructToString(this);
+        }
+    }
+
+    /**
+     * Contains an animation currently being played by an agent
+     */
+    public class Animation
+    {
+        // The ID of the animation asset
+        public UUID AnimationID;
+        // A number to indicate start order of currently playing animations
+        // On Linden Grids this number is unique per region, with OpenSim it is per client</remarks>
+        public int AnimationSequence;
+        // 
+        public UUID AnimationSourceObjectID;
+    }
+
+    /**
+     * Holds group information on an individual profile pick
+     */
+    public class ProfilePick
+    {
+        public UUID PickID;
+        public UUID CreatorID;
+        public boolean TopPick;
+        public UUID ParcelID;
+        public String Name;
+        public String Desc;
+        public UUID SnapshotID;
+        public String User;
+        public String OriginalName;
+        public String SimName;
+        public Vector3d PosGlobal;
+        public int SortOrder;
+        public boolean Enabled;
+    }
+
+    public class ClassifiedAd
+    {
+        public UUID ClassifiedID;
+        public int Catagory;
+        public UUID ParcelID;
+        public int ParentEstate;
+        public UUID SnapShotID;
+        public Vector3d Position;
+        public byte ClassifiedFlags;
+        public int Price;
+        public String Name;
+        public String Desc;
+    }
+	
+    /**
+     * Holds group information for Avatars such as those you might find in a profile
+     */
 	public final class AvatarGroup
 	{
 	    /* true of Avatar accepts group notices */
@@ -83,7 +216,35 @@ public class AvatarManager implements PacketCallback {
 	
 	public CallbackHandlerQueue<AgentNamesCallbackArgs> OnAgentNames = new CallbackHandlerQueue<AgentNamesCallbackArgs>();
 
-	public AvatarManager(GridClient client) {
+    /**
+     * Event args class for display name notification messages
+     */
+    public class DisplayNameUpdateCallbackArgs extends CallbackArgs
+    {
+        private String oldDisplayName;
+        private AgentDisplayName displayName;
+
+        public String getOldDisplayName()
+        {
+        	return oldDisplayName;
+        }
+        public AgentDisplayName getDisplayName()
+        { 
+        	return displayName;
+        }
+
+        public DisplayNameUpdateCallbackArgs(String oldDisplayName, AgentDisplayName displayName)
+        {
+            this.oldDisplayName = oldDisplayName;
+            this.displayName = displayName;
+        }
+    }
+
+    public CallbackHandlerQueue<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandlerQueue<DisplayNameUpdateCallbackArgs>();
+
+
+    public AvatarManager(GridClient client)
+    {
 		Client = client;
 		Avatars = new Hashtable<UUID, Avatar>();
 
@@ -92,12 +253,13 @@ public class AvatarManager implements PacketCallback {
 
         // Avatar profile callbacks
         Client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, this);
+        // Client.Network.RegisterCallback(PacketType.AvatarStatisticsReply, AvatarStatisticsHandler);
         Client.Network.RegisterCallback(PacketType.AvatarInterestsReply, this);
 
         // Avatar group callback
         Client.Network.RegisterCallback(PacketType.AvatarGroupsReply, this);
-//      Client.Network.RegisterEventCallback("AgentGroupDataUpdate", this);
-//      Client.Network.RegisterEventCallback("AvatarGroupsReply", this);
+        Client.Network.RegisterCallback(CapsEventType.AgentGroupDataUpdate, this);
+        Client.Network.RegisterCallback(CapsEventType.AvatarGroupsReply, this);
 
         // Viewer effect callback
         Client.Network.RegisterCallback(PacketType.ViewerEffect, this);
@@ -114,7 +276,9 @@ public class AvatarManager implements PacketCallback {
         // Classifieds callbacks
         Client.Network.RegisterCallback(PacketType.AvatarClassifiedReply, this);
         Client.Network.RegisterCallback(PacketType.ClassifiedInfoReply, this);
-	}
+
+        Client.Network.RegisterCallback(CapsEventType.DisplayNameUpdate, this);
+    }
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
@@ -159,7 +323,19 @@ public class AvatarManager implements PacketCallback {
             	break;
 		}
 	}
-
+	
+	@Override
+	public void capsCallback(IMessage message, Simulator simulator)
+	{
+		switch (message.getType())
+		{
+			case DisplayNameUpdate:
+				DisplayNameUpdateMessageHandler(message, simulator);
+				break;
+		}
+	}	
+	
+	
 	// Add an Avatar into the Avatars Dictionary
 	// <param name="avatar">Filled-out Avatar class to insert</param>
 	public void AddAvatar(Avatar avatar) {
@@ -273,4 +449,14 @@ public class AvatarManager implements PacketCallback {
 			OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
 		}
 	}
+	
+    /**
+     * EQ Message fired when someone nearby changes their display name
+     */
+    private void DisplayNameUpdateMessageHandler(IMessage message, Simulator simulator)
+    {
+        DisplayNameUpdateMessage msg = (DisplayNameUpdateMessage) message;
+        OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
+    }
+
 }

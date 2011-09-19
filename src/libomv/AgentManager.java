@@ -26,6 +26,7 @@
  */ 
 package libomv;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -39,6 +40,7 @@ import java.util.TimerTask;
 import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
 
+import libomv.AvatarManager.AgentDisplayName;
 import libomv.DirectoryManager.ClassifiedCategories;
 import libomv.DirectoryManager.ClassifiedFlags;
 import libomv.GridManager.GridLayerType;
@@ -66,6 +68,9 @@ import libomv.capabilities.CapsMessage.AttachmentResourcesMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ChatSessionAcceptInvitation;
 import libomv.capabilities.CapsMessage.ChatSessionRequestStartConference;
+import libomv.capabilities.CapsMessage.SetDisplayNameMessage;
+import libomv.capabilities.CapsMessage.SetDisplayNameReplyMessage;
+import libomv.capabilities.CapsMessage.UpdateAgentLanguageMessage;
 import libomv.capabilities.IMessage;
 import libomv.packets.ActivateGesturesPacket;
 import libomv.packets.AgentAnimationPacket;
@@ -117,124 +122,8 @@ import libomv.utils.Logger.LogLevel;
 import libomv.utils.TimeoutEvent;
 
 // Class to hold Client Avatar's data
-public class AgentManager implements PacketCallback, CapsCallback {
-	
-	public class TeleportCallbackArgs extends CallbackArgs {
-		String message;
-		TeleportStatus status;
-		int flags;
-		
-		public String getMessage() {
-			return message;
-		}
-		public TeleportStatus getStatus() {
-			return status;
-		}
-		
-		public TeleportCallbackArgs(String message, TeleportStatus status, int flags) {
-			this.message = message;
-			this.status = status;
-			this.flags = flags;
-		}
-	}
-	
-	public class ChatCallbackArgs extends CallbackArgs {
-		private String message, fromName;
-		private byte audible, type, sourcetype;
-		private UUID id;
-
-		public String getMessage() {
-			return message;
-		}
-		public String getFromName() {
-			return fromName;
-		}
-		public byte getAudible() {
-			return audible;
-		}
-		public byte getType() {
-			return type;
-		}
-		public byte getSourceType() {
-			return sourcetype;
-		}
-		public UUID getID() {
-			return id;
-		}
-		
-		public ChatCallbackArgs(String message, byte audible, byte type, byte sourcetype, String fromName, UUID id) {
-			this.message = message;
-			this.fromName = fromName;
-			this.audible = audible;
-			this.type = type;
-			this.sourcetype = sourcetype;
-			this.id = id;
-		}
-	}
-	
-    /* The date received from an ImprovedInstantMessage */
-	public class InstantMessageCallbackArgs
-	{
-	    private final InstantMessage m_IM;
-	    private final Simulator m_Simulator;
-
-	    /* Get the InstantMessage object */
-	    public final InstantMessage getIM()
-	    {
-	        return m_IM;
-	    }
-	    
-	    /* Get the simulator where the InstantMessage origniated */
-	    public final Simulator getSimulator()
-	    {
-	        return m_Simulator;
-	    }
-
-	    /** Construct a new instance of the InstantMessageEventArgs object
-	     * 
-	     *  @param im the InstantMessage object
-	     *  @param simulator the simulator where the InstantMessage origniated
-	     */
-	    public InstantMessageCallbackArgs(InstantMessage im, Simulator simulator)
-	    {
-	        this.m_IM = im;
-	        this.m_Simulator = simulator;
-	    }
-	}
-
-    /* The date received from an ImprovedInstantMessage */
-	public class BalanceCallbackArgs
-	{
-	    private final int balance;
-
-	    /* Get the balance value */
-	    public final int getBalance()
-	    {
-	        return balance;
-	    }
-	    
-	    /** Construct a new instance of the BalanceCallbackArgs object
-	     * 
-	     *  @param balance the InstantMessage object
-	     */
-	    public BalanceCallbackArgs(int balance)
-	    {
-	        this.balance = balance;
-	    }
-	}
-
-	public class AttachmentResourcesCallbackArgs
-	{
-		AttachmentResourcesMessage info;
-		boolean success;
-		
-		public AttachmentResourcesCallbackArgs(boolean success, AttachmentResourcesMessage info)
-		{
-			this.info = info;
-			this.success = success;
-		}
-	}
-	
+public class AgentManager implements PacketCallback, CapsCallback
+{
 	/** Permission request flags, asked when a script wants to control an Avatar */
     public static class ScriptPermission 
     {
@@ -1035,11 +924,220 @@ public class AgentManager implements PacketCallback, CapsCallback {
         }
     }
 
+    // Transaction detail sent with MoneyBalanceReply message
+    public class TransactionInfo
+    {
+        /// <summary>Type of the transaction</summary>
+        public int TransactionType; // FIXME: this should be an enum
+        /// <summary>UUID of the transaction source</summary>
+        public UUID SourceID;
+        /// <summary>Is the transaction source a group</summary>
+        public boolean IsSourceGroup;
+        /// <summary>UUID of the transaction destination</summary>
+        public UUID DestID;
+        /// <summary>Is transaction destination a group</summary>
+        public boolean IsDestGroup;
+        /// <summary>Transaction amount</summary>
+        public int Amount;
+        /// <summary>Transaction description</summary>
+        public String ItemDescription;
+    }
+
+    // Data sent when an agent joins or leaves a chat session your agent is currently participating in
+    public class ChatSessionMemberCallbackArgs extends CallbackArgs
+    {
+        private final UUID m_SessionID;
+        private final UUID m_AgentID;
+        private final boolean m_added;
+
+        // Get the ID of the chat session 
+        public UUID getSessionID()
+        {
+        	return m_SessionID;
+        }
+        // Get the ID of the agent that joined 
+        public UUID getAgentID()
+        {
+        	return m_AgentID;
+        }
+        
+        public boolean getAdded()
+        {
+        	return m_added;
+        }
+
+        public ChatSessionMemberCallbackArgs(UUID sessionID, UUID agentID, boolean added)
+        {
+            this.m_SessionID = sessionID;
+            this.m_AgentID = agentID;
+            this.m_added = added;
+        }
+    }
+	public CallbackHandlerQueue<ChatSessionMemberCallbackArgs> OnChatSessionMember = new CallbackHandlerQueue<ChatSessionMemberCallbackArgs>();
+
+    
+    public class ChatCallbackArgs extends CallbackArgs
+	{
+		private String message, fromName;
+		private byte audible, type, sourcetype;
+		private UUID id;
+
+		public String getMessage() {
+			return message;
+		}
+		public String getFromName() {
+			return fromName;
+		}
+		public byte getAudible() {
+			return audible;
+		}
+		public byte getType() {
+			return type;
+		}
+		public byte getSourceType() {
+			return sourcetype;
+		}
+		public UUID getID() {
+			return id;
+		}
+		
+		public ChatCallbackArgs(String message, byte audible, byte type, byte sourcetype, String fromName, UUID id)
+		{
+			this.message = message;
+			this.fromName = fromName;
+			this.audible = audible;
+			this.type = type;
+			this.sourcetype = sourcetype;
+			this.id = id;
+		}
+	}
 	public CallbackHandlerQueue<ChatCallbackArgs> OnChat = new CallbackHandlerQueue<ChatCallbackArgs>();
+
+	
+    /* The date received from an ImprovedInstantMessage */
+	public class InstantMessageCallbackArgs
+	{
+	    private final InstantMessage m_IM;
+	    private final Simulator m_Simulator;
+
+	    /* Get the InstantMessage object */
+	    public final InstantMessage getIM()
+	    {
+	        return m_IM;
+	    }
+	    
+	    /* Get the simulator where the InstantMessage origniated */
+	    public final Simulator getSimulator()
+	    {
+	        return m_Simulator;
+	    }
+
+	    /** Construct a new instance of the InstantMessageEventArgs object
+	     * 
+	     *  @param im the InstantMessage object
+	     *  @param simulator the simulator where the InstantMessage origniated
+	     */
+	    public InstantMessageCallbackArgs(InstantMessage im, Simulator simulator)
+	    {
+	        this.m_IM = im;
+	        this.m_Simulator = simulator;
+	    }
+	}
 	public CallbackHandlerQueue<InstantMessageCallbackArgs> OnInstantMessage = new CallbackHandlerQueue<InstantMessageCallbackArgs>();
+
+	
+	public class TeleportCallbackArgs extends CallbackArgs
+	{
+		String message;
+		TeleportStatus status;
+		int flags;
+		
+		public String getMessage() {
+			return message;
+		}
+		public TeleportStatus getStatus() {
+			return status;
+		}
+		
+		public TeleportCallbackArgs(String message, TeleportStatus status, int flags) {
+			this.message = message;
+			this.status = status;
+			this.flags = flags;
+		}
+	}
 	public CallbackHandlerQueue<TeleportCallbackArgs> OnTeleport = new CallbackHandlerQueue<TeleportCallbackArgs>();
+
+	
+	/* The date received from an ImprovedInstantMessage */
+	public class BalanceCallbackArgs
+	{
+	    private final int balance;
+
+	    /* Get the balance value */
+	    public final int getBalance()
+	    {
+	        return balance;
+	    }
+	    
+	    /** Construct a new instance of the BalanceCallbackArgs object
+	     * 
+	     *  @param balance the InstantMessage object
+	     */
+	    public BalanceCallbackArgs(int balance)
+	    {
+	        this.balance = balance;
+	    }
+	}
 	public CallbackHandlerQueue<BalanceCallbackArgs> OnBalanceUpdated = new CallbackHandlerQueue<BalanceCallbackArgs>();
 
+
+	public class AttachmentResourcesCallbackArgs
+	{
+		AttachmentResourcesMessage info;
+		boolean success;
+		
+		public AttachmentResourcesCallbackArgs(boolean success, AttachmentResourcesMessage info)
+		{
+			this.info = info;
+			this.success = success;
+		}
+	}
+
+	
+	// Event arguments with the result of setting display name operation</summary>
+    public class SetDisplayNameReplyCallbackArgs extends CallbackArgs
+    {
+        private final int m_Status;
+        private final String m_Reason;
+        private final AgentDisplayName m_DisplayName;
+
+        // Status code, 200 indicates setting display name was successful
+        public int getStatus()
+        {
+        	return m_Status;
+        }
+
+        // Textual description of the status
+        public String getReason()
+        {
+        	return m_Reason;
+        }
+
+        // Details of the newly set display name
+        public AgentDisplayName getDisplayName()
+        {
+        	return m_DisplayName;
+        }
+
+        public SetDisplayNameReplyCallbackArgs(int status, String reason, AgentDisplayName displayName)
+        {
+            m_Status = status;
+            m_Reason = reason;
+            m_DisplayName = displayName;
+        }
+    }
+	public CallbackHandlerQueue<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandlerQueue<SetDisplayNameReplyCallbackArgs>();
+	
     private UUID agentID;
     // A temporary UUID assigned to this session, used for secure transactions
     private UUID sessionID;
@@ -1428,6 +1526,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
         _Client.Network.RegisterCallback(CapsEventType.CrossedRegion, this);
         // CAPS callbacks
         _Client.Network.RegisterCallback(CapsEventType.EstablishAgentCommunication, this);
+        _Client.Network.RegisterCallback(CapsEventType.SetDisplayNameReply, this);
         // Incoming Group Chat
         _Client.Network.RegisterCallback(CapsEventType.ChatterBoxInvitation, this);
         // Outgoing Group Chat Reply
@@ -1465,6 +1564,9 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				break;
 		    case ChatterBoxSessionAgentListUpdates:
 				break;
+		    case SetDisplayNameReply:
+		    	SetDisplayNameReplyEventHandler(message, simulator);
+		    	break;
 		}
 	}
 
@@ -2897,6 +2999,54 @@ public class AgentManager implements PacketCallback, CapsCallback {
             request.BeginGetResponse(_Client.Settings.CAPS_TIMEOUT, new AttachmentResourceReplyHandler(callback));
         }
     }
+
+    /**
+     * Initates request to set a new display name
+     *
+     * @param oldName Previous display name</param>
+     * @param  newName Desired new display name
+     * @throws IOException 
+     */
+    public void SetDisplayName(String oldName, String newName) throws IOException
+    {
+        URI uri = _Client.Network.getCapabilityURI("SetDisplayName");
+        if (uri == null)
+        {
+            Logger.Log("Unable to invoke SetDisplyName capability at this time", LogLevel.Warning, _Client);
+            return;
+        }
+
+        SetDisplayNameMessage msg = _Client.Messages.new SetDisplayNameMessage();
+        msg.OldDisplayName = oldName;
+        msg.NewDisplayName = newName;
+
+        CapsClient cap = new CapsClient(uri);
+        cap.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+    }
+
+    /**
+     * Tells the sim what UI language is used, and if it's ok to share that with scripts
+     *
+     * @param language Two letter language code
+     * @param isPublic Share language info with scripts
+     */
+    public void UpdateAgentLanguage(String language, boolean isPublic)
+    {
+        try
+        {
+            UpdateAgentLanguageMessage msg = _Client.Messages.new UpdateAgentLanguageMessage();
+            msg.Language = language;
+            msg.LanguagePublic = isPublic;
+
+            URI url = _Client.Network.getCapabilityURI("UpdateAgentLanguage");
+            CapsClient request = new CapsClient(url);
+            request.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+        }
+        catch (Exception ex)
+        {
+            Logger.Log("Failes to update agent language", LogLevel.Error, _Client, ex);
+        }
+    }
     // #endregion Misc
 	
 	public void UpdateCamera(boolean reliable) throws Exception
@@ -3084,6 +3234,48 @@ public class AgentManager implements PacketCallback, CapsCallback {
             teleportTimeout.set(teleportStatus);
         }
 	}
+
+    /**
+     * Process an incoming packet and raise the appropriate events</summary>
+     */
+    protected void MoneyBalanceReplyHandler(Packet packet, Simulator simulator)
+    {
+        if (packet.getType() == PacketType.MoneyBalanceReply)
+        {
+            MoneyBalanceReplyPacket reply = (MoneyBalanceReplyPacket)packet;
+            this.balance = reply.MoneyData.MoneyBalance;
+
+            if (OnMoneyBalance.count() > 0)
+            {
+                TransactionInfo transactionInfo = new TransactionInfo();
+                transactionInfo.TransactionType = reply.TransactionInfo.TransactionType;
+                transactionInfo.SourceID = reply.TransactionInfo.SourceID;
+                transactionInfo.IsSourceGroup = reply.TransactionInfo.IsSourceGroup;
+                transactionInfo.DestID = reply.TransactionInfo.DestID;
+                transactionInfo.IsDestGroup = reply.TransactionInfo.IsDestGroup;
+                transactionInfo.Amount = reply.TransactionInfo.Amount;
+                transactionInfo.ItemDescription =  Helpers.BytesToString(reply.TransactionInfo.ItemDescription);
+
+                OnMoneyBalance.dispatch(new MoneyBalanceReplyCallbackArgs(reply.MoneyData.TransactionID,
+                    reply.MoneyData.TransactionSuccess,
+                    reply.MoneyData.MoneyBalance,
+                    reply.MoneyData.SquareMetersCredit,
+                    reply.MoneyData.SquareMetersCommitted,
+                    Helpers.BytesToString(reply.MoneyData.getDescription()),
+                    transactionInfo));
+            }
+        }
+        OnBalance.dispatch(new BalanceCallbackArgs(balance));
+    }
+
+    /**
+     * EQ Message fired with the result of SetDisplayName request
+     */
+    protected void SetDisplayNameReplyEventHandler(IMessage message, Simulator simulator)
+    {
+        SetDisplayNameReplyMessage msg = (SetDisplayNameReplyMessage)message;
+        OnSetDisplayNameReply.dispatch(new SetDisplayNameReplyCallbackArgs(msg.Status, msg.Reason, msg.DisplayName));
+    }
 
     private static final int CONTROL_AT_POS_INDEX = 0;
     private static final int CONTROL_AT_NEG_INDEX = 1;
