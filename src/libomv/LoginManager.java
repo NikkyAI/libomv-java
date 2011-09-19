@@ -229,6 +229,16 @@ public class LoginManager
         public int AOTransition;
         public String InventoryHost;
 
+        // Unhandled:
+        // reply.gestures
+        // reply.event_categories
+        // reply.classified_categories
+        // reply.event_notifications
+        // reply.ui_config
+        // reply.login_flags
+        // reply.global_textures
+        // reply.initial_outfit
+
         /**
          * Parse LLSD Login Reply Data
          *
@@ -1032,7 +1042,7 @@ public class LoginManager
      * @param the login params, used to start the next round on redirects
      * @throws Exception
      */
-	private void LoginReplyXmlRpcHandler(Object response, LoginParams context) throws Exception
+	private void LoginReplyXmlRpcHandler(Object response, LoginParams loginParams)
     {
         LoginResponseData reply = new LoginResponseData();
 
@@ -1057,77 +1067,15 @@ public class LoginManager
             {
                 reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
             }
-
-            // Unhandled:
-            // reply.gestures
-            // reply.event_categories
-            // reply.classified_categories
-            // reply.event_notifications
-            // reply.ui_config
-            // reply.login_flags
-            // reply.global_textures
-            // reply.initial_outfit
         }
-
-        boolean redirect = (reply.Login.equals("indeterminate"));
-        LoginResponseCallback(reply.Success, redirect, reply.Message, reply.Reason, reply);
-
-        // Make the next network jump, if needed
-        if (redirect)
-        {
-            UpdateLoginStatus(LoginStatus.Redirecting, "Redirecting login...", null);
-            LoginParams loginParams = context;
-            loginParams.URI = reply.NextUrl;
-            loginParams.MethodName = reply.NextMethod;
-            loginParams.Options = reply.NextOptions;
-
-            // Sleep for some amount of time while the servers work
-            int seconds = reply.NextDuration;
-            Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info);
-            Thread.sleep(seconds * 1000);
-
-            RequestLogin(loginParams);
-        }
-        else if (reply.Success)
-        {
-            // Login succeeded
-            Client.Network.setCircuitCode(reply.CircuitCode);
-            LoginSeedCapability = reply.SeedCapability;
-
-            UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
-            if (reply.SimIP != null && reply.SimPort != 0)
-            {
-                // Connect to the sim given in the login reply
-                if (Client.Network.Connect(reply.SimIP, reply.SimPort, Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
-                {
-                    // Request the economy data right after login
-                	Client.Network.SendPacket(new EconomyDataRequestPacket());
-
-                    // Update the login message with the MOTD returned from the server
-                    UpdateLoginStatus(LoginStatus.Success, reply.Message, null);
-                }
-                else
-                {
-                    UpdateLoginStatus(LoginStatus.Failed, "Unable to connect to simulator", "no connection");
-                }
-            }
-            else
-            {
-                UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", "no connection");
-            }
-        }
-        else
-        {
-            // Login failed
-
-        	// Make sure a usable error key is set
-            if (Helpers.isEmpty(reply.Reason))
-            {
-            	reply.Reason = "unknown";
-            }
-
-            UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason);
-        }
+	    try
+		{
+			HandleLoginResponse(reply, loginParams);
+		}
+		catch (Exception ex)
+		{
+            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getStackTrace().toString());
+		}
     }
 
     /**
@@ -1156,85 +1104,14 @@ public class LoginManager
                 LoginResponseData reply = new LoginResponseData();
 			    reply.ParseLoginReply(map);
 
-                boolean redirect = reply.Login.equals("indeterminate");
-                LoginResponseCallback(reply.Success, redirect, reply.Message, reply.Reason, reply);
-
-                if (redirect)
-                {
-                    // Login redirected
-
-                    // Make the next login URL jump
-                    UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, null);
-
-                    loginParams.URI = reply.NextUrl;
-                    loginParams.MethodName = reply.NextMethod;
-                    loginParams.Options = reply.NextOptions;
-
-                    // Sleep for some amount of time while the servers work
-                    int seconds = reply.NextDuration;
-                    Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info);
-					try
-					{
-						Thread.sleep(seconds * 1000);
-					}
-					catch (InterruptedException ex) { }
-
-					try
-					{
-                         RequestLogin(loginParams);
-					}
-					catch (Exception ex)
-					{
-						UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
-					}
-                }
-                else if (reply.Success)
-                {
-                    // Login succeeded
-                    Client.Network.setCircuitCode(reply.CircuitCode);
-                    LoginSeedCapability = reply.SeedCapability;
-
-                    UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
-
-                    if (reply.SimIP != null && reply.SimPort != 0)
-                    {
-						try
-						{
-							// Connect to the sim given in the login reply
-							if (Client.Network.Connect(reply.SimIP, reply.SimPort, Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
-							{
-								// Request the economy data right after login
-								Client.Network.SendPacket(new EconomyDataRequestPacket());
-
-								// Update the login message with the MOTD returned from the server
-								UpdateLoginStatus(LoginStatus.Success, reply.Message, null);
-							}
-							else
-							{
-								UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
-							}
-						}
-						catch (Exception ex)
-						{
-							UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
-						}
-                    }
-                    else
-                    {
-                        UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", null);
-                    }
-                }
-                else
-                {
-                    // Login failed
-
-                	// Make sure a usable error key is set
-                    if (Helpers.isEmpty(reply.Reason))
-                    {
-                    	reply.Reason = "unknown";
-                    }
-                    UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason);
-                }
+			    try
+			    {
+			    	HandleLoginResponse(reply, loginParams);
+			    }
+			    catch (Exception ex)
+			    {
+		            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getStackTrace().toString());
+			    }
             }
             else
             {
@@ -1247,7 +1124,7 @@ public class LoginManager
 		public void failed(Exception ex)
 		{
             // Connection error
-            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), "no connection");
+            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getStackTrace().toString());
 		}
 
 		@Override
@@ -1256,6 +1133,74 @@ public class LoginManager
             // Connection canceled
             UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "connection canceled");
 		}
+    }
+    
+    private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception
+    {
+        boolean redirect = reply.Login.equals("indeterminate");
+        LoginResponseCallback(reply.Success, redirect, reply.Message, reply.Reason, reply);
+
+        if (redirect)
+        {
+            // Login redirected
+
+            // Make the next login URL jump
+            UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, null);
+            loginParams.URI = reply.NextUrl;
+            loginParams.MethodName = reply.NextMethod;
+            loginParams.Options = reply.NextOptions;
+
+            // Sleep for some amount of time while the servers work
+            int seconds = reply.NextDuration;
+            Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info);
+			try
+			{
+				Thread.sleep(seconds * 1000);
+			}
+			catch (InterruptedException ex) { }
+
+            RequestLogin(loginParams);
+        }
+        else if (reply.Success)
+        {
+            // Login succeeded
+            Client.Network.setCircuitCode(reply.CircuitCode);
+            LoginSeedCapability = reply.SeedCapability;
+
+            UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
+
+            if (reply.SimIP != null && reply.SimPort != 0)
+            {
+				// Connect to the sim given in the login reply
+				if (Client.Network.Connect(reply.SimIP, reply.SimPort, Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
+				{
+					// Request the economy data right after login
+					Client.Network.SendPacket(new EconomyDataRequestPacket());
+
+					// Update the login message with the MOTD returned from the server
+					UpdateLoginStatus(LoginStatus.Success, reply.Message, null);
+				}
+				else
+				{
+					UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
+				}
+            }
+            else
+            {
+                UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", null);
+            }
+        }
+        else
+        {
+            // Login failed
+
+        	// Make sure a usable error key is set
+            if (Helpers.isEmpty(reply.Reason))
+            {
+            	reply.Reason = "unknown";
+            }
+            UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason);
+        }
     }
     // #endregion
 
