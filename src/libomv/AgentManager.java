@@ -37,9 +37,6 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.http.nio.concurrent.FutureCallback;
-import org.apache.http.nio.reactor.IOReactorException;
-
 import libomv.AvatarManager.AgentDisplayName;
 import libomv.DirectoryManager.ClassifiedCategories;
 import libomv.DirectoryManager.ClassifiedFlags;
@@ -107,10 +104,10 @@ import libomv.packets.TeleportStartPacket;
 import libomv.packets.ViewerEffectPacket;
 import libomv.primitives.Primitive;
 import libomv.types.Color4;
+import libomv.types.PacketCallback;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
 import libomv.types.Vector3;
-import libomv.types.PacketCallback;
 import libomv.types.Vector3d;
 import libomv.types.Vector4;
 import libomv.utils.CallbackArgs;
@@ -120,6 +117,9 @@ import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import libomv.utils.TimeoutEvent;
+
+import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.nio.reactor.IOReactorException;
 
 // Class to hold Client Avatar's data
 public class AgentManager implements PacketCallback, CapsCallback
@@ -927,19 +927,19 @@ public class AgentManager implements PacketCallback, CapsCallback
     // Transaction detail sent with MoneyBalanceReply message
     public class TransactionInfo
     {
-        /// <summary>Type of the transaction</summary>
+        // Type of the transaction</summary>
         public int TransactionType; // FIXME: this should be an enum
-        /// <summary>UUID of the transaction source</summary>
+        // UUID of the transaction source</summary>
         public UUID SourceID;
-        /// <summary>Is the transaction source a group</summary>
+        // Is the transaction source a group</summary>
         public boolean IsSourceGroup;
-        /// <summary>UUID of the transaction destination</summary>
+        // UUID of the transaction destination</summary>
         public UUID DestID;
-        /// <summary>Is transaction destination a group</summary>
+        // Is transaction destination a group</summary>
         public boolean IsDestGroup;
-        /// <summary>Transaction amount</summary>
+        // Transaction amount</summary>
         public int Amount;
-        /// <summary>Transaction description</summary>
+        // Transaction description</summary>
         public String ItemDescription;
     }
 
@@ -1138,6 +1138,77 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 	public CallbackHandlerQueue<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandlerQueue<SetDisplayNameReplyCallbackArgs>();
 	
+	
+    // Contains the transaction summary when an item is purchased, money is given, or land is purchased
+    public class MoneyBalanceReplyCallbackArgs extends CallbackArgs
+    {
+        private final UUID m_TransactionID;
+        private final boolean m_Success;
+        private final int m_Balance;
+        private final int m_MetersCredit;
+        private final int m_MetersCommitted;
+        private final String m_Description;
+        private TransactionInfo m_TransactionInfo;
+
+        // Get the ID of the transaction
+        public UUID getTransactionID()
+        {
+        	return m_TransactionID;
+        }
+        // True of the transaction was successful
+        public boolean getSuccess()
+        {
+        	return m_Success;
+        }
+        // Get the remaining currency balance
+        public int getBalance()
+        {
+        	return m_Balance;
+        }
+        // Get the meters credited
+        public int getMetersCredit()
+        {
+        	return m_MetersCredit;
+        }
+        // Get the meters comitted
+        public int getMetersCommitted()
+        {
+        	return m_MetersCommitted;
+        }
+        // Get the description of the transaction
+        public String getDescription()
+        {
+        	return m_Description;
+        }
+        // Detailed transaction information
+        public TransactionInfo getTransactionInfo()
+        {
+        	return m_TransactionInfo;
+        }
+        /** 
+         * Construct a new instance of the MoneyBalanceReplyEventArgs object
+         * 
+         * @param transactionID">The ID of the transaction
+         * @param transactionSuccess">True of the transaction was successful
+         * @param balance">The current currency balance
+         * @param metersCredit">The meters credited
+         * @param metersCommitted">The meters comitted
+         * @param description">A brief description of the transaction
+         */
+        public MoneyBalanceReplyCallbackArgs(UUID transactionID, boolean transactionSuccess, int balance, int metersCredit,
+        		                             int metersCommitted, String description, TransactionInfo transactionInfo)
+        {
+            this.m_TransactionID = transactionID;
+            this.m_Success = transactionSuccess;
+            this.m_Balance = balance;
+            this.m_MetersCredit = metersCredit;
+            this.m_MetersCommitted = metersCommitted;
+            this.m_Description = description;
+            this.m_TransactionInfo = transactionInfo;
+        }
+    }
+    public CallbackHandlerQueue<MoneyBalanceReplyCallbackArgs> OnMoneyBalanceReply = new CallbackHandlerQueue<MoneyBalanceReplyCallbackArgs>();
+
     private UUID agentID;
     // A temporary UUID assigned to this session, used for secure transactions
     private UUID sessionID;
@@ -3236,16 +3307,17 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
     /**
-     * Process an incoming packet and raise the appropriate events</summary>
+     * Process an incoming packet and raise the appropriate events
+     * @throws Exception 
      */
-    protected void MoneyBalanceReplyHandler(Packet packet, Simulator simulator)
+    protected void MoneyBalanceReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
         if (packet.getType() == PacketType.MoneyBalanceReply)
         {
             MoneyBalanceReplyPacket reply = (MoneyBalanceReplyPacket)packet;
             this.balance = reply.MoneyData.MoneyBalance;
 
-            if (OnMoneyBalance.count() > 0)
+            if (OnMoneyBalanceReply.count() > 0)
             {
                 TransactionInfo transactionInfo = new TransactionInfo();
                 transactionInfo.TransactionType = reply.TransactionInfo.TransactionType;
@@ -3254,9 +3326,9 @@ public class AgentManager implements PacketCallback, CapsCallback
                 transactionInfo.DestID = reply.TransactionInfo.DestID;
                 transactionInfo.IsDestGroup = reply.TransactionInfo.IsDestGroup;
                 transactionInfo.Amount = reply.TransactionInfo.Amount;
-                transactionInfo.ItemDescription =  Helpers.BytesToString(reply.TransactionInfo.ItemDescription);
+                transactionInfo.ItemDescription =  Helpers.BytesToString(reply.TransactionInfo.getItemDescription());
 
-                OnMoneyBalance.dispatch(new MoneyBalanceReplyCallbackArgs(reply.MoneyData.TransactionID,
+                OnMoneyBalanceReply.dispatch(new MoneyBalanceReplyCallbackArgs(reply.MoneyData.TransactionID,
                     reply.MoneyData.TransactionSuccess,
                     reply.MoneyData.MoneyBalance,
                     reply.MoneyData.SquareMetersCredit,
@@ -3265,7 +3337,6 @@ public class AgentManager implements PacketCallback, CapsCallback
                     transactionInfo));
             }
         }
-        OnBalance.dispatch(new BalanceCallbackArgs(balance));
     }
 
     /**
