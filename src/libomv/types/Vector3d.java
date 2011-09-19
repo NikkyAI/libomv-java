@@ -30,7 +30,8 @@ import java.nio.ByteBuffer;
 
 import libomv.utils.Helpers;
 
-public class Vector3d {
+public class Vector3d
+{
 	public double X;
 
 	public double Y;
@@ -102,6 +103,12 @@ public class Vector3d {
 	public boolean equals(Object obj)
 	{
 		return (obj instanceof Vector3d) ? equals((Vector3d)obj) : false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return (int)X + (int)Y + (int)Z;
 	}
 
 	/** A vector with a value of 0,0,0 */

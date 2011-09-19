@@ -147,6 +147,12 @@ public class Vector4
 		return (obj instanceof Vector4) ? equals((Vector4)obj) : false;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		return (int)X + (int)Y + (int)Z + (int)S;
+	}
+
 	/** A vector with a value of 0,0,0,0 */
 	public final static Vector4 Zero = new Vector4(0f);
 	/** A vector with a value of 1,1,1 */
