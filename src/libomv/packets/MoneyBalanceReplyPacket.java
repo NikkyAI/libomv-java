@@ -54,7 +54,7 @@ public class MoneyBalanceReplyPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -80,7 +80,7 @@ public class MoneyBalanceReplyPacket extends Packet
             MoneyBalance = bytes.getInt(); 
             SquareMetersCredit = bytes.getInt(); 
             SquareMetersCommitted = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
         }
@@ -97,6 +97,7 @@ public class MoneyBalanceReplyPacket extends Packet
             bytes.put(_description);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MoneyData --\n";
@@ -119,11 +120,98 @@ public class MoneyBalanceReplyPacket extends Packet
          return new MoneyDataBlock();
     }
 
+    public class TransactionInfoBlock
+    {
+        public int TransactionType = 0;
+        public UUID SourceID = null;
+        public boolean IsSourceGroup = false;
+        public UUID DestID = null;
+        public boolean IsDestGroup = false;
+        public int Amount = 0;
+        private byte[] _itemdescription;
+        public byte[] getItemDescription() {
+            return _itemdescription;
+        }
+
+        public void setItemDescription(byte[] value) throws Exception {
+            if (value == null) {
+                _itemdescription = null;
+            }
+            else if (value.length > 255) {
+                throw new OverflowException("Value exceeds 255 characters");
+            }
+            else {
+                _itemdescription = new byte[value.length];
+                System.arraycopy(value, 0, _itemdescription, 0, value.length);
+            }
+        }
+
+
+        public int getLength(){
+            int length = 42;
+            if (getItemDescription() != null) { length += 1 + getItemDescription().length; }
+            return length;
+        }
+
+        public TransactionInfoBlock() { }
+        public TransactionInfoBlock(ByteBuffer bytes)
+        {
+            int length;
+            TransactionType = bytes.getInt(); 
+            SourceID = new UUID(bytes);
+            IsSourceGroup = (bytes.get() != 0) ? (boolean)true : (boolean)false;
+            DestID = new UUID(bytes);
+            IsDestGroup = (bytes.get() != 0) ? (boolean)true : (boolean)false;
+            Amount = bytes.getInt(); 
+            length = bytes.get() & 0xFF;
+            _itemdescription = new byte[length];
+            bytes.get(_itemdescription); 
+        }
+
+        public void ToBytes(ByteBuffer bytes) throws Exception
+        {
+            bytes.putInt(TransactionType);
+            SourceID.GetBytes(bytes);
+            bytes.put((byte)((IsSourceGroup) ? 1 : 0));
+            DestID.GetBytes(bytes);
+            bytes.put((byte)((IsDestGroup) ? 1 : 0));
+            bytes.putInt(Amount);
+            bytes.put((byte)_itemdescription.length);
+            bytes.put(_itemdescription);
+        }
+
+        @Override
+        public String toString()
+        {
+            String output = "-- TransactionInfo --\n";
+            try {
+                output += "TransactionType: " + Integer.toString(TransactionType) + "\n";
+                output += "SourceID: " + SourceID.toString() + "\n";
+                output += "IsSourceGroup: " + Boolean.toString(IsSourceGroup) + "\n";
+                output += "DestID: " + DestID.toString() + "\n";
+                output += "IsDestGroup: " + Boolean.toString(IsDestGroup) + "\n";
+                output += "Amount: " + Integer.toString(Amount) + "\n";
+                output += Helpers.FieldToString(_itemdescription, "ItemDescription") + "\n";
+                output = output.trim();
+            }
+            catch(Exception e){}
+            return output;
+        }
+    }
+
+    public TransactionInfoBlock createTransactionInfoBlock() {
+         return new TransactionInfoBlock();
+    }
+
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MoneyBalanceReply; }
     public MoneyDataBlock MoneyData;
+    public TransactionInfoBlock TransactionInfo;
 
     public MoneyBalanceReplyPacket()
     {
@@ -132,6 +220,7 @@ public class MoneyBalanceReplyPacket extends Packet
         header.setID((short)314);
         header.setReliable(true);
         MoneyData = new MoneyDataBlock();
+        TransactionInfo = new TransactionInfoBlock();
     }
 
     public MoneyBalanceReplyPacket(ByteBuffer bytes) throws Exception
@@ -139,40 +228,48 @@ public class MoneyBalanceReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         MoneyData = new MoneyDataBlock(bytes);
+        TransactionInfo = new TransactionInfoBlock(bytes);
      }
 
     public MoneyBalanceReplyPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
         MoneyData = new MoneyDataBlock(bytes);
+        TransactionInfo = new TransactionInfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
         length += MoneyData.getLength();
+        length += TransactionInfo.getLength();
         if (header.AckList.length > 0) {
             length += header.AckList.length * 4 + 1;
         }
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
         header.ToBytes(bytes);
         bytes.order(ByteOrder.LITTLE_ENDIAN);
         MoneyData.ToBytes(bytes);
+        TransactionInfo.ToBytes(bytes);
         if (header.AckList.length > 0) {
             header.AcksToBytes(bytes);
         }
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MoneyBalanceReply ---\n";
         output += MoneyData.toString() + "\n";
+        output += TransactionInfo.toString() + "\n";
         return output;
     }
 }
