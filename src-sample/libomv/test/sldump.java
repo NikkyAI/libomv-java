@@ -55,8 +55,6 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 
 	public sldump(String[] args) throws Exception
 	{
-		GridClient client;
-
 		if (args.length == 0 || (args.length < 3 && !args[0].equals("--printmap")))
 		{
 			System.out.println("Usage: sldump [--printmap] [--decrypt] [inputfile] [outputfile] [--protocol] [firstname] [lastname] [password]");
@@ -90,7 +88,7 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			return;
 		}
 
-		client = new GridClient();
+		GridClient client = new GridClient();
 		client.setDefaultGrid("secondlife");
 		LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
 		
