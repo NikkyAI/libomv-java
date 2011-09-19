@@ -317,7 +317,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
         public String TaxDate;
     }
 
-    public class GroupAccountDetails {
+    public class GroupAccountDetails
+    {
     	public int IntervalDays;
 
     	public int CurrentInterval;

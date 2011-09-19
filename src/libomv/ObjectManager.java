@@ -974,7 +974,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		            // Iterate through all of the simulators
 		            for (Simulator sim : simulators)
 		            {
-		                float adjSeconds = seconds * sim.Stats.Dilation;
+		                float adjSeconds = seconds * sim.Statistics.Dilation;
 
 		                // Iterate through all of this sims avatars
 
@@ -2340,7 +2340,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     protected final void UpdateDilation(Simulator s, int dilation)
     {
-        s.Stats.Dilation = dilation / 65535.0f;
+        s.Statistics.Dilation = dilation / 65535.0f;
     }
 
 	private ConstructionData CreateConstructionData(Primitive enclosing, PCode pcode, ObjectUpdatePacket.ObjectDataBlock block)

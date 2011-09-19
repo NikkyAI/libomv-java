@@ -1176,14 +1176,14 @@ public class NetworkManager implements PacketCallback {
     {
         CompletePingCheckPacket pong = (CompletePingCheckPacket)packet;
         long timeMilli = System.currentTimeMillis();
-        String retval = "Pong2: " + (timeMilli - simulator.Stats.LastPingSent);
-        if ((pong.PingID.PingID - simulator.Stats.LastPingID + 1) != 0)
+        String retval = "Pong2: " + (timeMilli - simulator.Statistics.LastPingSent);
+        if ((pong.PingID.PingID - simulator.Statistics.LastPingID + 1) != 0)
         {
-            retval += " (gap of " + (pong.PingID.PingID - simulator.Stats.LastPingID + 1) + ")";
+            retval += " (gap of " + (pong.PingID.PingID - simulator.Statistics.LastPingID + 1) + ")";
         }
 
-        simulator.Stats.LastLag = timeMilli - simulator.Stats.LastPingSent;
-        simulator.Stats.ReceivedPongs.incrementAndGet();
+        simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
+        simulator.Statistics.ReceivedPongs++;
         Logger.Log(retval, LogLevel.Info);
     }
 
@@ -1205,79 +1205,79 @@ public class NetworkManager implements PacketCallback {
             switch (s.StatID)
             {
                 case 0:
-                    simulator.Stats.Dilation = s.StatValue;
+                    simulator.Statistics.Dilation = s.StatValue;
                     break;
                 case 1:
-                    simulator.Stats.FPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.FPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 2:
-                    simulator.Stats.PhysicsFPS = s.StatValue;
+                    simulator.Statistics.PhysicsFPS = s.StatValue;
                     break;
                 case 3:
-                    simulator.Stats.AgentUpdates = s.StatValue;
+                    simulator.Statistics.AgentUpdates = s.StatValue;
                     break;
                 case 4:
-                    simulator.Stats.FrameTime = s.StatValue;
+                    simulator.Statistics.FrameTime = s.StatValue;
                     break;
                 case 5:
-                    simulator.Stats.NetTime = s.StatValue;
+                    simulator.Statistics.NetTime = s.StatValue;
                     break;
                 case 6:
-                    simulator.Stats.OtherTime = s.StatValue;
+                    simulator.Statistics.OtherTime = s.StatValue;
                     break;
                 case 7:
-                    simulator.Stats.PhysicsTime = s.StatValue;
+                    simulator.Statistics.PhysicsTime = s.StatValue;
                     break;
                 case 8:
-                    simulator.Stats.AgentTime = s.StatValue;
+                    simulator.Statistics.AgentTime = s.StatValue;
                     break;
                 case 9:
-                    simulator.Stats.ImageTime = s.StatValue;
+                    simulator.Statistics.ImageTime = s.StatValue;
                     break;
                 case 10:
-                    simulator.Stats.ScriptTime = s.StatValue;
+                    simulator.Statistics.ScriptTime = s.StatValue;
                     break;
                 case 11:
-                    simulator.Stats.Objects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.Objects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 12:
-                    simulator.Stats.ScriptedObjects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.ScriptedObjects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 13:
-                    simulator.Stats.Agents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.Agents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 14:
-                    simulator.Stats.ChildAgents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.ChildAgents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 15:
-                    simulator.Stats.ActiveScripts = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.ActiveScripts = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 16:
-                    simulator.Stats.LSLIPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.LSLIPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 17:
-                    simulator.Stats.INPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.INPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 18:
-                    simulator.Stats.OUTPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.OUTPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 19:
-                    simulator.Stats.PendingDownloads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.PendingDownloads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 20:
-                    simulator.Stats.PendingUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.PendingUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 21:
-                    simulator.Stats.VirtualSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.VirtualSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 22:
-                    simulator.Stats.ResidentSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.ResidentSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 23:
-                    simulator.Stats.PendingLocalUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.PendingLocalUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
                 case 24:
-                    simulator.Stats.UnackedBytes = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+                    simulator.Statistics.UnackedBytes = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
             }
         }

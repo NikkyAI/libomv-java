@@ -43,7 +43,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import libomv.ParcelManager.Parcel;
 import libomv.packets.AgentPausePacket;
@@ -193,23 +192,23 @@ public class Simulator extends Thread
     public final class SimStats
     {
         /* Total number of packets sent by this simulator from this agent */
-        public AtomicLong SentPackets;
+        public long SentPackets;
         /* Total number of packets received by this simulator to this agent */
-        public AtomicLong RecvPackets;
+        public long RecvPackets;
         /* Total number of bytes sent by this simulator to this agent */
-        public AtomicLong SentBytes;
+        public long SentBytes;
         /* Total number of bytes received by this simulator to this agent */
-        public AtomicLong RecvBytes;
+        public long RecvBytes;
         /* Time in seconds agent has been connected to simulator */
         public long ConnectTime;
         /* Total number of packets that have been resent */
-        public AtomicLong ResentPackets;
-        /* Total number of resent packets recieved */
-        public AtomicLong ReceivedResends;
+        public long ResentPackets;
+        /* Total number of resent packets received */
+        public long ReceivedResends;
         /* Total number of pings sent to this simulator by this agent */
-        public AtomicInteger SentPings;
+        public long SentPings;
         /* Total number of ping replies sent to this agent by this simulator */
-        public AtomicLong ReceivedPongs;
+        public long ReceivedPongs;
         /* Incoming bytes per second
          * 
          * It would be nice to have this calculated on the fly, but this is far, far easier
@@ -227,7 +226,7 @@ public class Simulator extends Thread
         /* ID of last Ping sent */
         public byte LastPingID;
         /*  */
-        public AtomicLong MissedPings;
+        public long MissedPings;
         /* Current time dilation of this simulator */
         public float Dilation;
         /* Current Frames per second of simulator */
@@ -278,6 +277,10 @@ public class Simulator extends Thread
         public int PendingLocalUploads;
         /* Unacknowledged bytes in queue */
         public int UnackedBytes;
+        
+        public SimStats()
+        {
+        }
     }
     
     public final class IncomingPacketIDCollection
@@ -314,6 +317,55 @@ public class Simulator extends Thread
             return false;
         }
     }
+    
+    private class BoundedLongArray
+    {
+    	private long[] array;
+    	private int index;
+    	private int size;
+    	
+    	public BoundedLongArray(int capacity)
+    	{
+    		array = new long[capacity];
+    		index = size = 0;
+    	}
+    	
+    	public int size()
+    	{
+    		return size;
+    	}
+
+    	public boolean isFull()
+    	{
+    		return size >= array.length;
+    	}
+    	
+    	public long poll()
+    	{
+    		if (size > 0)
+    		{
+    			return array[(index - size--) % array.length];
+    		}
+    		return 0;
+    	}
+    	
+    	/**
+    	 * Offer a new value to put in the queue
+    	 * 
+    	 * @param value The value to put in the queue
+    	 * @return The previous value that was in the queue at that position
+    	 */
+    	public long offer(long value)
+    	{
+    		long old = array[index];
+    		array[index] = value;
+    		++index;
+    		index %= array.length;
+    		if (!isFull())
+    			size++;
+    		return old;
+    	}
+    }
 
     /* The reference to the client that this Simulator object is attached to */
 	private GridClient _Client;
@@ -338,16 +390,16 @@ public class Simulator extends Thread
     /* The current sequence number for packets sent to this simulator. Must be interlocked
      * before modifying. Only useful for applications manipulating sequence numbers
      */
-	private AtomicInteger Sequence;
+	private AtomicInteger _Sequence;
 
     /* Sequence numbers of packets we've received (for duplicate checking) */
-    private IncomingPacketIDCollection PacketArchive;
+    private IncomingPacketIDCollection _PacketArchive;
     /* ACKs that are queued up to be sent to the simulator */
-	private ConcurrentLinkedQueue<Integer> PendingAcks;
+	private ConcurrentLinkedQueue<Integer> _PendingAcks;
 	/* Packets we sent out that need ACKs from the simulator */
-	private HashMap<Integer, NetworkManager.OutgoingPacket> NeedAck; // int -> Packet
+	private HashMap<Integer, NetworkManager.OutgoingPacket> _NeedAck; // int -> Packet
     /* Sequence number for pause/resume */
-    private AtomicInteger pauseSerial;
+    private AtomicInteger _PauseSerial;
 
     /* Indicates if UDP connection to the sim is fully established */
     public boolean handshakeComplete;
@@ -420,7 +472,7 @@ public class Simulator extends Thread
     /* Statistics information for this simulator and the connection
      * to the simulator, calculated by the simulator itself and the library
      */
-    public SimStats Stats;
+    public SimStats Statistics;
 
 	/* The current version of software this simulator is running */
     public String SimVersion = "";
@@ -570,11 +622,11 @@ public class Simulator extends Thread
 		DisconnectCandidate = val;
 	}
 
-	private Timer AckTimer;
-
-	private Timer StatsTimer;
-
-	private Timer PingTimer;
+    private BoundedLongArray _InBytes;
+    private BoundedLongArray _OutBytes;
+    private Timer _StatsTimer;
+	private Timer _AckTimer;
+	private Timer _PingTimer;
 
     @Override
     public int hashCode()
@@ -597,15 +649,21 @@ public class Simulator extends Thread
         connected = false;
 		DisconnectCandidate = false;
 
-		Sequence.set(0);
         _Handle = handle;
         
+		_Sequence = new AtomicInteger();
+        _PauseSerial = new AtomicInteger();
+
+        Statistics = new SimStats();
+        _InBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
+        _OutBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
+        
 		// Initialize the dictionary for reliable packets waiting on ACKs from the server
-		NeedAck = new HashMap<Integer, NetworkManager.OutgoingPacket>();
+		_NeedAck = new HashMap<Integer, NetworkManager.OutgoingPacket>();
 
 		// Initialize the lists of sequence numbers we've received so far
-        PacketArchive = new IncomingPacketIDCollection(Settings.PACKET_ARCHIVE_SIZE);
-		PendingAcks = new ConcurrentLinkedQueue<Integer>();
+        _PacketArchive = new IncomingPacketIDCollection(Settings.PACKET_ARCHIVE_SIZE);
+		_PendingAcks = new ConcurrentLinkedQueue<Integer>();
 
 		if (client.Settings.STORE_LAND_PATCHES)
         {
@@ -640,50 +698,48 @@ public class Simulator extends Thread
             return true;
         }
 
-        if (AckTimer == null)
+        if (_AckTimer == null)
         {
-            AckTimer = new Timer();
+            _AckTimer = new Timer();
         }
-    	AckTimer.schedule(new TimerTask()
+    	_AckTimer.schedule(new TimerTask()
     	{
     		@Override
-			public void run() {
-    	    	try {
-    				AckTimer_Elapsed();
-    			} catch (Exception e) {
-    				e.printStackTrace();
-    			}
+			public void run()
+    		{
+   				AckTimer_Elapsed();
     		}
     	}, Settings.NETWORK_TICK_INTERVAL);
 
         // Timer for recording simulator connection statistics
-        if (StatsTimer == null)
+        if (_StatsTimer == null)
         {
-            StatsTimer = new Timer();
-    		StatsTimer.scheduleAtFixedRate(new TimerTask()
+            _StatsTimer = new Timer();
+    		_StatsTimer.scheduleAtFixedRate(new TimerTask()
     		{
     			@Override
-				public void run() {
-    				try {
-    					StatsTimer_Elapsed();
-    				} catch (Exception e) {
-    					e.printStackTrace();
-    				}
+				public void run()
+    			{
+   					StatsTimer_Elapsed();
     			}
     		}, 1000, 1000);
         }
 
         // Timer for periodically pinging the simulator
-        if (PingTimer == null && _Client.Settings.SEND_PINGS)
+        if (_PingTimer == null && _Client.Settings.SEND_PINGS)
         {
-            PingTimer = new Timer();
-    		PingTimer.scheduleAtFixedRate(new TimerTask()
+            _PingTimer = new Timer();
+    		_PingTimer.scheduleAtFixedRate(new TimerTask()
     		{
     			@Override
-				public void run() {
-    				try {
+				public void run()
+    			{
+    				try
+    				{
     					PingTimer_Elapsed();
-    				} catch (Exception e) {
+    				}
+    				catch (Exception e)
+    				{
     					e.printStackTrace();
     				}
     			}
@@ -693,18 +749,18 @@ public class Simulator extends Thread
         Logger.Log("Connecting to " + ipEndPoint.toString(), LogLevel.Info);
 		Connection.connect(ipEndPoint);
 
+		// runs background thread to read from DatagramSocket
+        start();
+
+        // Mark ourselves as connected before firing everything else up
+        connected = true;
+
 		try
         {
-    		// runs background thread to read from DatagramSocket
-            start();
-
-            // Mark ourselves as connected before firing everything else up
-            connected = true;
-
             // Initiate connection
             UseCircuitCode();
 
-            Stats.ConnectTime = System.currentTimeMillis();
+            Statistics.ConnectTime = System.currentTimeMillis();
 
             // Move our agent in to the sim to complete the connection
             if (moveToSim)
@@ -713,15 +769,17 @@ public class Simulator extends Thread
             }
 
             Logger.Log("Waiting for connection", LogLevel.Info);
-			while (true) {
-				if (connected || System.currentTimeMillis() - Stats.ConnectTime > _Client.Settings.SIMULATOR_TIMEOUT) {
-					if (connected) {
-						Logger.Log("Connected!", LogLevel.Info);
-					} else {
-						Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Warning);
-		                return false;
-					}
+			while (true)
+			{
+				if (connected)
+				{
+					Logger.Log("Connected!", LogLevel.Info);
 					break;
+				}
+				else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.SIMULATOR_TIMEOUT)
+				{
+					Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Warning);
+		            return false;
 				}
 				Thread.sleep(10);
 			}
@@ -735,14 +793,12 @@ public class Simulator extends Thread
             {
                 _Client.Self.SendMovementUpdate(true, this);
             }
-
             return true;
         }
-        catch (Throwable e)
+        catch (Exception ex)
         {
-        	Logger.Log(e.getMessage(), LogLevel.Error);
+        	Logger.Log(ex.getMessage(), LogLevel.Error);
         }
-
         return false;
     }
 
@@ -795,22 +851,22 @@ public class Simulator extends Thread
             connected = false;
             
             // Destroy the timers
-            if (AckTimer != null)
+            if (_AckTimer != null)
             {
-                AckTimer.cancel();
+                _AckTimer.cancel();
             }
-            if (StatsTimer != null)
+            if (_StatsTimer != null)
             {
-                StatsTimer.cancel();
+                _StatsTimer.cancel();
             }
-            if (PingTimer != null)
+            if (_PingTimer != null)
             {
-                PingTimer.cancel();
+                _PingTimer.cancel();
             }
 
-            AckTimer = null;
-            StatsTimer = null;
-            PingTimer = null;
+            _AckTimer = null;
+            _StatsTimer = null;
+            _PingTimer = null;
 
             // Kill the current CAPS system
             if (_Caps != null)
@@ -854,7 +910,7 @@ public class Simulator extends Thread
         AgentPausePacket pause = new AgentPausePacket();
         pause.AgentData.AgentID = _Client.Self.getAgentID();
         pause.AgentData.SessionID = _Client.Self.getSessionID();
-        pause.AgentData.SerialNum = pauseSerial.getAndIncrement();
+        pause.AgentData.SerialNum = _PauseSerial.getAndIncrement();
 
         SendPacket(pause);
     }
@@ -865,7 +921,7 @@ public class Simulator extends Thread
         AgentResumePacket resume = new AgentResumePacket();
         resume.AgentData.AgentID = _Client.Self.getAgentID();
         resume.AgentData.SessionID = _Client.Self.getSessionID();
-        resume.AgentData.SerialNum = pauseSerial.getAndIncrement();
+        resume.AgentData.SerialNum = _PauseSerial.get();
 
         SendPacket(resume);
     }
@@ -903,11 +959,11 @@ public class Simulator extends Thread
         int oldestUnacked = 0;
 
         // Get the oldest NeedAck value, the first entry in the sorted dictionary
-        synchronized (NeedAck)
+        synchronized (_NeedAck)
         {
-            if (!NeedAck.isEmpty())
+            if (!_NeedAck.isEmpty())
             {
-                Set<Integer> keys = NeedAck.keySet();
+                Set<Integer> keys = _NeedAck.keySet();
                 oldestUnacked = keys.iterator().next();
             }
         }
@@ -916,11 +972,11 @@ public class Simulator extends Thread
         //    Client.DebugLog("Sending ping with oldestUnacked=" + oldestUnacked);
 
         StartPingCheckPacket ping = new StartPingCheckPacket();
-        ping.PingID.PingID = Stats.LastPingID++;
+        ping.PingID.PingID = Statistics.LastPingID++;
         ping.PingID.OldestUnacked = oldestUnacked;
         ping.getHeader().setReliable(false);
         SendPacket(ping);
-        Stats.LastPingSent = System.currentTimeMillis();
+        Statistics.LastPingSent = System.currentTimeMillis();
     }
     
     public URI getCapabilityURI(String capability)
@@ -986,21 +1042,21 @@ public class Simulator extends Thread
 						return;
 					}
 				}
-	            Stats.RecvBytes.addAndGet(numBytes);
-	            Stats.RecvPackets.incrementAndGet();
+	            Statistics.RecvBytes += numBytes;
+	            Statistics.RecvPackets++;
 	            if (packet.getHeader().getResent())
 	            {
-	                Stats.ReceivedResends.incrementAndGet();
+	                Statistics.ReceivedResends++;
 	            }
 
 				// Handle appended ACKs
 				if (packet.getHeader().getAppendedAcks() && packet.getHeader().AckList != null)
 				{
-					synchronized (NeedAck)
+					synchronized (_NeedAck)
 					{
 						for (int ack : packet.getHeader().AckList)
 						{
-							if (NeedAck.remove(ack) == null)
+							if (_NeedAck.remove(ack) == null)
 							{
 								Logger.Log("Appended ACK for a packet we didn't send: "
 										  + ack, LogLevel.Warning);
@@ -1013,11 +1069,11 @@ public class Simulator extends Thread
 				{
 					PacketAckPacket ackPacket = (PacketAckPacket) packet;
 
-					synchronized (NeedAck)
+					synchronized (_NeedAck)
 					{
 						for (PacketAckPacket.PacketsBlock block : ackPacket.Packets)
 						{
-							if (NeedAck.remove(block.ID) == null)
+							if (_NeedAck.remove(block.ID) == null)
 							{
 								Logger.Log("Appended ACK for a packet we didn't send: "
 										  + block.ID, LogLevel.Warning);
@@ -1028,16 +1084,16 @@ public class Simulator extends Thread
 
 				// Add this packet to the list of ACKs that need to be sent out
 				int sequence = packet.getHeader().getSequence();
-				PendingAcks.add(sequence);
+				_PendingAcks.add(sequence);
 
 				// Send out ACKs if we have a lot of them
-	            if (PendingAcks.size() >= _Client.Settings.MAX_PENDING_ACKS)
+	            if (_PendingAcks.size() >= _Client.Settings.MAX_PENDING_ACKS)
 	            {
 	                SendPendingAcks();
 	            }
 
 				/* Track the sequence number for this packet if it's marked as reliable */
-				if (packet.getHeader().getReliable() && !PacketArchive.tryEnqueue(sequence))
+				if (packet.getHeader().getReliable() && !_PacketArchive.tryEnqueue(sequence))
 				{
 					Logger.Log("Received a duplicate " + packet.getType() + ", " + "sequence=" + sequence + ", "
 							 + "resent="+ ((packet.getHeader().getResent()) ? "Yes" : "No"), LogLevel.Info);
@@ -1051,7 +1107,7 @@ public class Simulator extends Thread
 	            if (_Client.Settings.TRACK_UTILIZATION)
 	            {
 	                /* TODO Implement Utilization tracking */
-	                //Client.Stats.Update(packet.Type.ToString(), OpenMetaverse.Stats.Type.Packet, 0, packet.Length);
+	                //Client.Statistics.Update(packet.Type.ToString(), OpenMetaverse.Statistics.Type.Packet, 0, packet.Length);
 	            }
 
 			}
@@ -1133,10 +1189,10 @@ public class Simulator extends Thread
         if (_Client.Settings.TRACK_UTILIZATION)
         {
 		   // Stats tracking
-		   Stats.SentBytes.addAndGet(data.capacity());
-		   Stats.SentPackets.incrementAndGet();
+		   Statistics.SentBytes += data.capacity();
+		   Statistics.SentPackets++;
 		   
-//         _Client.Stats.Update(type.ToString(), OpenMetaverse.Stats.Type.Packet, data.capacity(), 0);
+//         _Client.Statistics.Update(type.ToString(), OpenMetaverse.Statistics.Type.Packet, data.capacity(), 0);
 		   _Client.Network.RaisePacketSentCallback(data.array(), data.capacity(), this);
         }
     }	
@@ -1144,16 +1200,16 @@ public class Simulator extends Thread
 	/* Sends out pending acknowledgements */
     private void SendPendingAcks()
     {
-		synchronized (PendingAcks)
+		synchronized (_PendingAcks)
 		{
-			if (PendingAcks.size() > 0)
+			if (_PendingAcks.size() > 0)
 			{
 				PacketAckPacket acks = new PacketAckPacket();
-				acks.Packets = new PacketAckPacket.PacketsBlock[PendingAcks.size()];
+				acks.Packets = new PacketAckPacket.PacketsBlock[_PendingAcks.size()];
 				acks.getHeader().setReliable(false);
 
 				int i = 0;
-				for (int ack : PendingAcks)
+				for (int ack : _PendingAcks)
 				{
 					acks.Packets[i] = acks.createPacketsBlock();
 					acks.Packets[i].ID = ack;
@@ -1166,7 +1222,7 @@ public class Simulator extends Thread
 				catch (Exception ex)
 				{
 				}
-				PendingAcks.clear();
+				_PendingAcks.clear();
 			}
 		}
     }
@@ -1176,15 +1232,15 @@ public class Simulator extends Thread
      */
     private void ResendUnacked()
     {
-        if (NeedAck.size() > 0)
+        if (_NeedAck.size() > 0)
         {
             ArrayList<NetworkManager.OutgoingPacket> array;
 
-            synchronized (NeedAck)
+            synchronized (_NeedAck)
             {
                 // Create a temporary copy of the outgoing packets array to iterate over
-                array = new ArrayList<NetworkManager.OutgoingPacket>(NeedAck.size());
-                array.addAll(NeedAck.values());
+                array = new ArrayList<NetworkManager.OutgoingPacket>(_NeedAck.size());
+                array.addAll(_NeedAck.values());
             }
 
             long now = System.currentTimeMillis();
@@ -1211,7 +1267,7 @@ public class Simulator extends Thread
 
                         // Stats tracking
                         outgoing.ResendCount.incrementAndGet();
-                        Stats.ResentPackets.incrementAndGet();
+                        Statistics.ResentPackets++;
 
                         SendPacketFinal(outgoing);
                     }
@@ -1219,9 +1275,9 @@ public class Simulator extends Thread
                     {
                         Logger.DebugLog(String.format("Dropping packet #%d after %d failed attempts", outgoing.SequenceNumber, outgoing.ResendCount));
 
-                        synchronized (NeedAck)
+                        synchronized (_NeedAck)
                         {
-                            NeedAck.remove(outgoing.SequenceNumber);
+                            _NeedAck.remove(outgoing.SequenceNumber);
                         }
                     }
                 }
@@ -1246,9 +1302,9 @@ public class Simulator extends Thread
         // Keep appending ACKs until there is no room left in the packet or there are
         // no more ACKs to append
         int ackCount = 0; 
-        while (dataLength + 5 < buffer.limit() && !PendingAcks.isEmpty())
+        while (dataLength + 5 < buffer.limit() && !_PendingAcks.isEmpty())
         {
-        	dataLength += Helpers.UInt32ToBytesB(PendingAcks.poll(), bytes, dataLength);
+        	dataLength += Helpers.UInt32ToBytesB(_PendingAcks.poll(), bytes, dataLength);
             ++ackCount;
         }
 
@@ -1264,15 +1320,15 @@ public class Simulator extends Thread
         if (!isResend)
         {
             // Not a resend, assign a new sequence number
-            outgoingPacket.SequenceNumber = Sequence.incrementAndGet();
+            outgoingPacket.SequenceNumber = _Sequence.incrementAndGet();
             Helpers.UInt32ToBytesB(outgoingPacket.SequenceNumber, bytes, 1);
 
             if (isReliable)
             {
                 // Add this packet to the list of ACK responses we are waiting on from the server
-                synchronized (NeedAck)
+                synchronized (_NeedAck)
                 {
-                    NeedAck.put(outgoingPacket.SequenceNumber, outgoingPacket);
+                    _NeedAck.put(outgoingPacket.SequenceNumber, outgoingPacket);
                 }
             }
         }
@@ -1290,66 +1346,45 @@ public class Simulator extends Thread
 	/* #region timer callbacks */
 	private void AckTimer_Elapsed()
 	{
-		if (!connected) {
+		if (!connected)
+		{
 			return;
 		}
 
 		SendPendingAcks();
 		ResendUnacked();
 
-		try
-        {
-    		AckTimer.schedule(new TimerTask()
-    		{
-    			@Override
-				public void run() {
-    				try {
-    					AckTimer_Elapsed();
-    				} catch (Exception e) {
-    					e.printStackTrace();
-    				}
-    			}
-    		}, Settings.NETWORK_TICK_INTERVAL);
-        }
-        catch (Throwable t)
-        {
-        }
+		_AckTimer.schedule(new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+					AckTimer_Elapsed();
+			}
+		}, Settings.NETWORK_TICK_INTERVAL);
 	}
 
     private void StatsTimer_Elapsed()
     {
-        long old_in = 0, old_out = 0;
-        long recv = Stats.RecvBytes.longValue();
-        long sent = Stats.SentBytes.longValue();
+        boolean full = _InBytes.isFull();
+        long recv = Statistics.RecvBytes;
+        long sent = Statistics.SentBytes;
+        long old_in = _InBytes.offer(recv);
+        long old_out = _OutBytes.offer(sent);
 
-/*
- *         if (InBytes.size() >= Client.Settings.STATS_QUEUE_SIZE)
-
+        if (full)
         {
-            old_in = InBytes.poll();
-        }
-        if (OutBytes.size() >= Client.Settings.STATS_QUEUE_SIZE)
-        {
-            old_out = OutBytes.poll();
-        }
-
-        InBytes.offer(recv);
-        OutBytes.offer(sent);
-*/
-        if (old_in > 0 && old_out > 0)
-        {
-            Stats.IncomingBPS = (int)(recv - old_in) / _Client.Settings.STATS_QUEUE_SIZE;
-            Stats.OutgoingBPS = (int)(sent - old_out) / _Client.Settings.STATS_QUEUE_SIZE;
-            //Client.Log("Incoming: " + Stats.IncomingBPS + " Out: " + Stats.OutgoingBPS +
-            //    " Lag: " + Stats.LastLag + " Pings: " + Stats.ReceivedPongs +
-            //    "/" + Stats.SentPings, Helpers.LogLevel.Debug); 
+            Statistics.IncomingBPS = (int)(recv - old_in) / _InBytes.size();
+            Statistics.OutgoingBPS = (int)(sent - old_out) / _OutBytes.size();
+            //Logger.Log("Incoming: " + Statistics.IncomingBPS + " Out: " + Statistics.OutgoingBPS + " Lag: " + Statistics.LastLag +
+            //           " Pings: " + Statistics.ReceivedPongs + "/" + Statistics.SentPings, LogLevel.Debug); 
         }
     }
 
     private void PingTimer_Elapsed() throws Exception
     {
         SendPing();
-        Stats.SentPings.incrementAndGet();
+        Statistics.SentPings++;
     }
 }
 
