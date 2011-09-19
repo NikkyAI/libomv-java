@@ -1526,7 +1526,7 @@ public class Helpers
 	 */
 	public static long UIntsToLong(int a, int b)
 	{
-		return ((long)a << 32) | (long)b;
+		return ((long)a << 32) | b;
 	}
 
 	/**
