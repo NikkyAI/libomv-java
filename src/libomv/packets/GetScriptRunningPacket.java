@@ -57,6 +57,7 @@ public class GetScriptRunningPacket extends Packet
             ItemID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Script --\n";
@@ -75,8 +76,11 @@ public class GetScriptRunningPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GetScriptRunning; }
     public ScriptBlock Script;
 
@@ -102,6 +106,7 @@ public class GetScriptRunningPacket extends Packet
         Script = new ScriptBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -112,6 +117,7 @@ public class GetScriptRunningPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -124,6 +130,7 @@ public class GetScriptRunningPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GetScriptRunning ---\n";

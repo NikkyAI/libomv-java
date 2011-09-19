@@ -53,6 +53,7 @@ public class TeleportLandingStatusChangedPacket extends Packet
             bytes.putLong(RegionHandle);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -70,8 +71,11 @@ public class TeleportLandingStatusChangedPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TeleportLandingStatusChanged; }
     public RegionDataBlock RegionData;
 
@@ -97,6 +101,7 @@ public class TeleportLandingStatusChangedPacket extends Packet
         RegionData = new RegionDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -107,6 +112,7 @@ public class TeleportLandingStatusChangedPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -119,6 +125,7 @@ public class TeleportLandingStatusChangedPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TeleportLandingStatusChanged ---\n";

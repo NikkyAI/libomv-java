@@ -61,6 +61,7 @@ public class RezObjectFromNotecardPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -131,6 +132,7 @@ public class RezObjectFromNotecardPacket extends Packet
             bytes.putInt(NextOwnerMask);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RezData --\n";
@@ -180,6 +182,7 @@ public class RezObjectFromNotecardPacket extends Packet
             ObjectID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NotecardData --\n";
@@ -216,6 +219,7 @@ public class RezObjectFromNotecardPacket extends Packet
             ItemID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -233,8 +237,11 @@ public class RezObjectFromNotecardPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RezObjectFromNotecard; }
     public AgentDataBlock AgentData;
     public RezDataBlock RezData;
@@ -260,7 +267,7 @@ public class RezObjectFromNotecardPacket extends Packet
         AgentData = new AgentDataBlock(bytes);
         RezData = new RezDataBlock(bytes);
         NotecardData = new NotecardDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
@@ -272,12 +279,13 @@ public class RezObjectFromNotecardPacket extends Packet
         AgentData = new AgentDataBlock(bytes);
         RezData = new RezDataBlock(bytes);
         NotecardData = new NotecardDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -292,6 +300,7 @@ public class RezObjectFromNotecardPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -308,6 +317,7 @@ public class RezObjectFromNotecardPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RezObjectFromNotecard ---\n";

@@ -59,6 +59,7 @@ public class ImagePacketPacket extends Packet
             bytes.putShort(Packet);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ImageID --\n";
@@ -87,7 +88,7 @@ public class ImagePacketPacket extends Packet
             if (value == null) {
                 _data = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -107,7 +108,7 @@ public class ImagePacketPacket extends Packet
         public ImageDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _data = new byte[length];
             bytes.get(_data); 
         }
@@ -118,6 +119,7 @@ public class ImagePacketPacket extends Packet
             bytes.put(_data);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ImageData --\n";
@@ -135,8 +137,11 @@ public class ImagePacketPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ImagePacket; }
     public ImageIDBlock ImageID;
     public ImageDataBlock ImageData;
@@ -166,6 +171,7 @@ public class ImagePacketPacket extends Packet
         ImageData = new ImageDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -177,6 +183,7 @@ public class ImagePacketPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -190,6 +197,7 @@ public class ImagePacketPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ImagePacket ---\n";

@@ -54,6 +54,7 @@ public class DirPopularQueryBackendPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -98,6 +99,7 @@ public class DirPopularQueryBackendPacket extends Packet
             bytes.put((byte)((Godlike) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -118,8 +120,11 @@ public class DirPopularQueryBackendPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DirPopularQueryBackend; }
     public AgentDataBlock AgentData;
     public QueryDataBlock QueryData;
@@ -149,6 +154,7 @@ public class DirPopularQueryBackendPacket extends Packet
         QueryData = new QueryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -160,6 +166,7 @@ public class DirPopularQueryBackendPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +180,7 @@ public class DirPopularQueryBackendPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DirPopularQueryBackend ---\n";

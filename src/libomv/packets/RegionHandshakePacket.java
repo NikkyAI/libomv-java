@@ -50,7 +50,7 @@ public class RegionHandshakePacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -93,7 +93,7 @@ public class RegionHandshakePacket extends Packet
             int length;
             RegionFlags = bytes.getInt(); 
             SimAccess = bytes.get(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             SimOwner = new UUID(bytes);
@@ -148,6 +148,7 @@ public class RegionHandshakePacket extends Packet
             bytes.putFloat(TerrainHeightRange11);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionInfo --\n";
@@ -206,6 +207,7 @@ public class RegionHandshakePacket extends Packet
             RegionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionInfo2 --\n";
@@ -235,7 +237,7 @@ public class RegionHandshakePacket extends Packet
             if (value == null) {
                 _coloname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -253,7 +255,7 @@ public class RegionHandshakePacket extends Packet
             if (value == null) {
                 _productsku = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -271,7 +273,7 @@ public class RegionHandshakePacket extends Packet
             if (value == null) {
                 _productname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -295,13 +297,13 @@ public class RegionHandshakePacket extends Packet
             int length;
             CPUClassID = bytes.getInt(); 
             CPURatio = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _coloname = new byte[length];
             bytes.get(_coloname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _productsku = new byte[length];
             bytes.get(_productsku); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _productname = new byte[length];
             bytes.get(_productname); 
         }
@@ -318,6 +320,7 @@ public class RegionHandshakePacket extends Packet
             bytes.put(_productname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionInfo3 --\n";
@@ -339,8 +342,11 @@ public class RegionHandshakePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RegionHandshake; }
     public RegionInfoBlock RegionInfo;
     public RegionInfo2Block RegionInfo2;
@@ -374,6 +380,7 @@ public class RegionHandshakePacket extends Packet
         RegionInfo3 = new RegionInfo3Block(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -386,6 +393,7 @@ public class RegionHandshakePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -400,6 +408,7 @@ public class RegionHandshakePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RegionHandshake ---\n";

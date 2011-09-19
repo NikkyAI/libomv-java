@@ -66,6 +66,7 @@ public class AgentSetAppearancePacket extends Packet
             Size.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -107,6 +108,7 @@ public class AgentSetAppearancePacket extends Packet
             bytes.put(TextureIndex);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- WearableData --\n";
@@ -135,7 +137,7 @@ public class AgentSetAppearancePacket extends Packet
             if (value == null) {
                 _textureentry = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -155,7 +157,7 @@ public class AgentSetAppearancePacket extends Packet
         public ObjectDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _textureentry = new byte[length];
             bytes.get(_textureentry); 
         }
@@ -166,6 +168,7 @@ public class AgentSetAppearancePacket extends Packet
             bytes.put(_textureentry);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -201,6 +204,7 @@ public class AgentSetAppearancePacket extends Packet
             bytes.put(ParamValue);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- VisualParam --\n";
@@ -218,8 +222,11 @@ public class AgentSetAppearancePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentSetAppearance; }
     public AgentDataBlock AgentData;
     public WearableDataBlock[] WearableData;
@@ -243,12 +250,12 @@ public class AgentSetAppearancePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         WearableData = new WearableDataBlock[count];
         for (int j = 0; j < count; j++)
         { WearableData[j] = new WearableDataBlock(bytes); }
         ObjectData = new ObjectDataBlock(bytes);
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         VisualParam = new VisualParamBlock[count];
         for (int j = 0; j < count; j++)
         { VisualParam[j] = new VisualParamBlock(bytes); }
@@ -258,17 +265,18 @@ public class AgentSetAppearancePacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         WearableData = new WearableDataBlock[count];
         for (int j = 0; j < count; j++)
         { WearableData[j] = new WearableDataBlock(bytes); }
         ObjectData = new ObjectDataBlock(bytes);
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         VisualParam = new VisualParamBlock[count];
         for (int j = 0; j < count; j++)
         { VisualParam[j] = new VisualParamBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -284,6 +292,7 @@ public class AgentSetAppearancePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -301,6 +310,7 @@ public class AgentSetAppearancePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentSetAppearance ---\n";

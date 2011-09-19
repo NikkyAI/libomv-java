@@ -60,6 +60,7 @@ public class CrossedRegionPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,7 +92,7 @@ public class CrossedRegionPacket extends Packet
             if (value == null) {
                 _seedcapability = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -114,7 +115,7 @@ public class CrossedRegionPacket extends Packet
             SimIP = bytes.getInt(); 
             SimPort = (short)((bytes.get() << 8) + bytes.get());
             RegionHandle = bytes.getLong(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _seedcapability = new byte[length];
             bytes.get(_seedcapability); 
         }
@@ -129,6 +130,7 @@ public class CrossedRegionPacket extends Packet
             bytes.put(_seedcapability);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -170,6 +172,7 @@ public class CrossedRegionPacket extends Packet
             LookAt.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Info --\n";
@@ -188,8 +191,11 @@ public class CrossedRegionPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.CrossedRegion; }
     public AgentDataBlock AgentData;
     public RegionDataBlock RegionData;
@@ -223,6 +229,7 @@ public class CrossedRegionPacket extends Packet
         Info = new InfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -235,6 +242,7 @@ public class CrossedRegionPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -249,6 +257,7 @@ public class CrossedRegionPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- CrossedRegion ---\n";

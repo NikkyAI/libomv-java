@@ -59,6 +59,7 @@ public class StartGroupProposalPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,7 +92,7 @@ public class StartGroupProposalPacket extends Packet
             if (value == null) {
                 _proposaltext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class StartGroupProposalPacket extends Packet
             Quorum = bytes.getInt(); 
             Majority = bytes.getFloat();
             Duration = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _proposaltext = new byte[length];
             bytes.get(_proposaltext); 
         }
@@ -130,6 +131,7 @@ public class StartGroupProposalPacket extends Packet
             bytes.put(_proposaltext);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ProposalData --\n";
@@ -151,8 +153,11 @@ public class StartGroupProposalPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.StartGroupProposal; }
     public AgentDataBlock AgentData;
     public ProposalDataBlock ProposalData;
@@ -182,6 +187,7 @@ public class StartGroupProposalPacket extends Packet
         ProposalData = new ProposalDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -193,6 +199,7 @@ public class StartGroupProposalPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -206,6 +213,7 @@ public class StartGroupProposalPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- StartGroupProposal ---\n";

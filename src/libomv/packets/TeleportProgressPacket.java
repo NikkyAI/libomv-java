@@ -56,6 +56,7 @@ public class TeleportProgressPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -84,7 +85,7 @@ public class TeleportProgressPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -105,7 +106,7 @@ public class TeleportProgressPacket extends Packet
         {
             int length;
             TeleportFlags = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -117,6 +118,7 @@ public class TeleportProgressPacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Info --\n";
@@ -135,8 +137,11 @@ public class TeleportProgressPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TeleportProgress; }
     public AgentDataBlock AgentData;
     public InfoBlock Info;
@@ -166,6 +171,7 @@ public class TeleportProgressPacket extends Packet
         Info = new InfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -177,6 +183,7 @@ public class TeleportProgressPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -190,6 +197,7 @@ public class TeleportProgressPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TeleportProgress ---\n";

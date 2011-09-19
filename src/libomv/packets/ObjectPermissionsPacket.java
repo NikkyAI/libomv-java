@@ -57,6 +57,7 @@ public class ObjectPermissionsPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class ObjectPermissionsPacket extends Packet
             bytes.put((byte)((Override) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- HeaderData --\n";
@@ -137,6 +139,7 @@ public class ObjectPermissionsPacket extends Packet
             bytes.putInt(Mask);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -157,8 +160,11 @@ public class ObjectPermissionsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectPermissions; }
     public AgentDataBlock AgentData;
     public HeaderDataBlock HeaderData;
@@ -181,7 +187,7 @@ public class ObjectPermissionsPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         HeaderData = new HeaderDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -192,12 +198,13 @@ public class ObjectPermissionsPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         HeaderData = new HeaderDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -211,6 +218,7 @@ public class ObjectPermissionsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -226,6 +234,7 @@ public class ObjectPermissionsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectPermissions ---\n";

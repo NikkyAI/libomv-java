@@ -56,6 +56,7 @@ public class AvatarNotesReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -84,7 +85,7 @@ public class AvatarNotesReplyPacket extends Packet
             if (value == null) {
                 _notes = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -105,7 +106,7 @@ public class AvatarNotesReplyPacket extends Packet
         {
             int length;
             TargetID = new UUID(bytes);
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _notes = new byte[length];
             bytes.get(_notes); 
         }
@@ -117,6 +118,7 @@ public class AvatarNotesReplyPacket extends Packet
             bytes.put(_notes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -135,8 +137,11 @@ public class AvatarNotesReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarNotesReply; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -166,6 +171,7 @@ public class AvatarNotesReplyPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -177,6 +183,7 @@ public class AvatarNotesReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -190,6 +197,7 @@ public class AvatarNotesReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarNotesReply ---\n";

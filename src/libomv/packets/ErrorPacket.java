@@ -56,6 +56,7 @@ public class ErrorPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -84,7 +85,7 @@ public class ErrorPacket extends Packet
             if (value == null) {
                 _token = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -103,7 +104,7 @@ public class ErrorPacket extends Packet
             if (value == null) {
                 _system = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -121,7 +122,7 @@ public class ErrorPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -139,7 +140,7 @@ public class ErrorPacket extends Packet
             if (value == null) {
                 _data = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -163,17 +164,17 @@ public class ErrorPacket extends Packet
         {
             int length;
             Code = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _token = new byte[length];
             bytes.get(_token); 
             ID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _system = new byte[length];
             bytes.get(_system); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _message = new byte[length];
             bytes.get(_message); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _data = new byte[length];
             bytes.get(_data); 
         }
@@ -192,6 +193,7 @@ public class ErrorPacket extends Packet
             bytes.put(_data);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -214,8 +216,11 @@ public class ErrorPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.Error; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -245,6 +250,7 @@ public class ErrorPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -256,6 +262,7 @@ public class ErrorPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -269,6 +276,7 @@ public class ErrorPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- Error ---\n";

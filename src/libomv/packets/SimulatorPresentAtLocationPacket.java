@@ -67,6 +67,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
             bytes.putInt(GridY);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SimulatorPublicHostBlock --\n";
@@ -109,6 +110,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
             bytes.put((byte)(Port % 256));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NeighborBlock --\n";
@@ -137,7 +139,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -162,7 +164,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
         public SimulatorBlockBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             SimAccess = bytes.get(); 
@@ -183,6 +185,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
             bytes.putInt(ParentEstateID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SimulatorBlock --\n";
@@ -226,6 +229,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
             TelehubPos.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TelehubBlock --\n";
@@ -244,8 +248,11 @@ public class SimulatorPresentAtLocationPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimulatorPresentAtLocation; }
     public SimulatorPublicHostBlockBlock SimulatorPublicHostBlock;
     public NeighborBlockBlock[] NeighborBlock;
@@ -273,7 +280,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
         for (int j = 0; j < 4; j++)
         { NeighborBlock[j] = new NeighborBlockBlock(bytes); }
         SimulatorBlock = new SimulatorBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         TelehubBlock = new TelehubBlockBlock[count];
         for (int j = 0; j < count; j++)
         { TelehubBlock[j] = new TelehubBlockBlock(bytes); }
@@ -287,12 +294,13 @@ public class SimulatorPresentAtLocationPacket extends Packet
         for (int j = 0; j < 4; j++)
         { NeighborBlock[j] = new NeighborBlockBlock(bytes); }
         SimulatorBlock = new SimulatorBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         TelehubBlock = new TelehubBlockBlock[count];
         for (int j = 0; j < count; j++)
         { TelehubBlock[j] = new TelehubBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -307,6 +315,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -323,6 +332,7 @@ public class SimulatorPresentAtLocationPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimulatorPresentAtLocation ---\n";

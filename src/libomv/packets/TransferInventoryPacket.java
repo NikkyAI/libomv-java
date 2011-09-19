@@ -60,6 +60,7 @@ public class TransferInventoryPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InfoBlock --\n";
@@ -100,6 +101,7 @@ public class TransferInventoryPacket extends Packet
             bytes.put(Type);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryBlock --\n";
@@ -118,8 +120,11 @@ public class TransferInventoryPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TransferInventory; }
     public InfoBlockBlock InfoBlock;
     public InventoryBlockBlock[] InventoryBlock;
@@ -139,7 +144,7 @@ public class TransferInventoryPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         InfoBlock = new InfoBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryBlock = new InventoryBlockBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryBlock[j] = new InventoryBlockBlock(bytes); }
@@ -149,12 +154,13 @@ public class TransferInventoryPacket extends Packet
     {
         header = head;
         InfoBlock = new InfoBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryBlock = new InventoryBlockBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryBlock[j] = new InventoryBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -167,6 +173,7 @@ public class TransferInventoryPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -181,6 +188,7 @@ public class TransferInventoryPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TransferInventory ---\n";

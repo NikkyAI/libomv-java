@@ -47,7 +47,7 @@ public class AlertMessagePacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -67,7 +67,7 @@ public class AlertMessagePacket extends Packet
         public AlertDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -78,6 +78,7 @@ public class AlertMessagePacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AlertData --\n";
@@ -105,7 +106,7 @@ public class AlertMessagePacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -123,7 +124,7 @@ public class AlertMessagePacket extends Packet
             if (value == null) {
                 _extraparams = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -144,10 +145,10 @@ public class AlertMessagePacket extends Packet
         public AlertInfoBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _message = new byte[length];
             bytes.get(_message); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _extraparams = new byte[length];
             bytes.get(_extraparams); 
         }
@@ -160,6 +161,7 @@ public class AlertMessagePacket extends Packet
             bytes.put(_extraparams);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AlertInfo --\n";
@@ -178,8 +180,11 @@ public class AlertMessagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AlertMessage; }
     public AlertDataBlock AlertData;
     public AlertInfoBlock[] AlertInfo;
@@ -199,7 +204,7 @@ public class AlertMessagePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AlertData = new AlertDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AlertInfo = new AlertInfoBlock[count];
         for (int j = 0; j < count; j++)
         { AlertInfo[j] = new AlertInfoBlock(bytes); }
@@ -209,12 +214,13 @@ public class AlertMessagePacket extends Packet
     {
         header = head;
         AlertData = new AlertDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AlertInfo = new AlertInfoBlock[count];
         for (int j = 0; j < count; j++)
         { AlertInfo[j] = new AlertInfoBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -227,6 +233,7 @@ public class AlertMessagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -241,6 +248,7 @@ public class AlertMessagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AlertMessage ---\n";

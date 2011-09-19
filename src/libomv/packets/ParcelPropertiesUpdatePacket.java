@@ -60,6 +60,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -92,7 +93,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -110,7 +111,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -128,7 +129,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _musicurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -146,7 +147,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _mediaurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -184,16 +185,16 @@ public class ParcelPropertiesUpdatePacket extends Packet
             Flags = bytes.getInt(); 
             ParcelFlags = bytes.getInt(); 
             SalePrice = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _desc = new byte[length];
             bytes.get(_desc); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _musicurl = new byte[length];
             bytes.get(_musicurl); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediaurl = new byte[length];
             bytes.get(_mediaurl); 
             MediaID = new UUID(bytes);
@@ -236,6 +237,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
             bytes.put(LandingType);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -271,8 +273,11 @@ public class ParcelPropertiesUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelPropertiesUpdate; }
     public AgentDataBlock AgentData;
     public ParcelDataBlock ParcelData;
@@ -302,6 +307,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
         ParcelData = new ParcelDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -313,6 +319,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -326,6 +333,7 @@ public class ParcelPropertiesUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelPropertiesUpdate ---\n";

@@ -54,6 +54,7 @@ public class SetFollowCamPropertiesPacket extends Packet
             ObjectID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -92,6 +93,7 @@ public class SetFollowCamPropertiesPacket extends Packet
             bytes.putFloat(Value);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- CameraProperty --\n";
@@ -110,8 +112,11 @@ public class SetFollowCamPropertiesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SetFollowCamProperties; }
     public ObjectDataBlock ObjectData;
     public CameraPropertyBlock[] CameraProperty;
@@ -131,7 +136,7 @@ public class SetFollowCamPropertiesPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         ObjectData = new ObjectDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         CameraProperty = new CameraPropertyBlock[count];
         for (int j = 0; j < count; j++)
         { CameraProperty[j] = new CameraPropertyBlock(bytes); }
@@ -141,12 +146,13 @@ public class SetFollowCamPropertiesPacket extends Packet
     {
         header = head;
         ObjectData = new ObjectDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         CameraProperty = new CameraPropertyBlock[count];
         for (int j = 0; j < count; j++)
         { CameraProperty[j] = new CameraPropertyBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -159,6 +165,7 @@ public class SetFollowCamPropertiesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +180,7 @@ public class SetFollowCamPropertiesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SetFollowCamProperties ---\n";

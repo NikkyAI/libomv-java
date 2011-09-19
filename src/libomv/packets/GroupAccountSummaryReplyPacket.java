@@ -59,6 +59,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -90,7 +91,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
             if (value == null) {
                 _startdate = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -122,7 +123,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
             if (value == null) {
                 _lasttaxdate = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -140,7 +141,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
             if (value == null) {
                 _taxdate = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -165,7 +166,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
             RequestID = new UUID(bytes);
             IntervalDays = bytes.getInt(); 
             CurrentInterval = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _startdate = new byte[length];
             bytes.get(_startdate); 
             Balance = bytes.getInt(); 
@@ -182,10 +183,10 @@ public class GroupAccountSummaryReplyPacket extends Packet
             GroupTaxEstimate = bytes.getInt(); 
             ParcelDirFeeEstimate = bytes.getInt(); 
             NonExemptMembers = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _lasttaxdate = new byte[length];
             bytes.get(_lasttaxdate); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _taxdate = new byte[length];
             bytes.get(_taxdate); 
         }
@@ -217,6 +218,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
             bytes.put(_taxdate);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MoneyData --\n";
@@ -253,8 +255,11 @@ public class GroupAccountSummaryReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupAccountSummaryReply; }
     public AgentDataBlock AgentData;
     public MoneyDataBlock MoneyData;
@@ -284,6 +289,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
         MoneyData = new MoneyDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -295,6 +301,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -308,6 +315,7 @@ public class GroupAccountSummaryReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupAccountSummaryReply ---\n";

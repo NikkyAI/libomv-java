@@ -54,7 +54,7 @@ public class RegionPresenceResponsePacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -80,7 +80,7 @@ public class RegionPresenceResponsePacket extends Packet
             ExternalRegionIP = bytes.getInt(); 
             RegionPort = (short)((bytes.get() << 8) + bytes.get());
             ValidUntil = bytes.getDouble();
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -98,6 +98,7 @@ public class RegionPresenceResponsePacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -121,8 +122,11 @@ public class RegionPresenceResponsePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RegionPresenceResponse; }
     public RegionDataBlock[] RegionData;
 
@@ -139,7 +143,7 @@ public class RegionPresenceResponsePacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         RegionData = new RegionDataBlock[count];
         for (int j = 0; j < count; j++)
         { RegionData[j] = new RegionDataBlock(bytes); }
@@ -148,12 +152,13 @@ public class RegionPresenceResponsePacket extends Packet
     public RegionPresenceResponsePacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         RegionData = new RegionDataBlock[count];
         for (int j = 0; j < count; j++)
         { RegionData[j] = new RegionDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -165,6 +170,7 @@ public class RegionPresenceResponsePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -178,6 +184,7 @@ public class RegionPresenceResponsePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RegionPresenceResponse ---\n";

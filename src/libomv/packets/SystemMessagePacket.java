@@ -48,7 +48,7 @@ public class SystemMessagePacket extends Packet
             if (value == null) {
                 _method = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -70,7 +70,7 @@ public class SystemMessagePacket extends Packet
         public MethodDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _method = new byte[length];
             bytes.get(_method); 
             Invoice = new UUID(bytes);
@@ -86,6 +86,7 @@ public class SystemMessagePacket extends Packet
             bytes.put(Digest);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MethodData --\n";
@@ -115,7 +116,7 @@ public class SystemMessagePacket extends Packet
             if (value == null) {
                 _parameter = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -135,7 +136,7 @@ public class SystemMessagePacket extends Packet
         public ParamListBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _parameter = new byte[length];
             bytes.get(_parameter); 
         }
@@ -146,6 +147,7 @@ public class SystemMessagePacket extends Packet
             bytes.put(_parameter);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParamList --\n";
@@ -163,8 +165,11 @@ public class SystemMessagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SystemMessage; }
     public MethodDataBlock MethodData;
     public ParamListBlock[] ParamList;
@@ -184,7 +189,7 @@ public class SystemMessagePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         MethodData = new MethodDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParamList = new ParamListBlock[count];
         for (int j = 0; j < count; j++)
         { ParamList[j] = new ParamListBlock(bytes); }
@@ -194,12 +199,13 @@ public class SystemMessagePacket extends Packet
     {
         header = head;
         MethodData = new MethodDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParamList = new ParamListBlock[count];
         for (int j = 0; j < count; j++)
         { ParamList[j] = new ParamListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -212,6 +218,7 @@ public class SystemMessagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -226,6 +233,7 @@ public class SystemMessagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SystemMessage ---\n";

@@ -53,6 +53,7 @@ public class SimulatorMapUpdatePacket extends Packet
             bytes.putInt(Flags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MapData --\n";
@@ -70,8 +71,11 @@ public class SimulatorMapUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimulatorMapUpdate; }
     public MapDataBlock MapData;
 
@@ -97,6 +101,7 @@ public class SimulatorMapUpdatePacket extends Packet
         MapData = new MapDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -107,6 +112,7 @@ public class SimulatorMapUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -119,6 +125,7 @@ public class SimulatorMapUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimulatorMapUpdate ---\n";

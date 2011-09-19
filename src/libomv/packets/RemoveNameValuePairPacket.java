@@ -56,6 +56,7 @@ public class RemoveNameValuePairPacket extends Packet
             ID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TaskData --\n";
@@ -83,7 +84,7 @@ public class RemoveNameValuePairPacket extends Packet
             if (value == null) {
                 _nvpair = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -103,7 +104,7 @@ public class RemoveNameValuePairPacket extends Packet
         public NameValueDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _nvpair = new byte[length];
             bytes.get(_nvpair); 
         }
@@ -114,6 +115,7 @@ public class RemoveNameValuePairPacket extends Packet
             bytes.put(_nvpair);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NameValueData --\n";
@@ -131,8 +133,11 @@ public class RemoveNameValuePairPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RemoveNameValuePair; }
     public TaskDataBlock TaskData;
     public NameValueDataBlock[] NameValueData;
@@ -152,7 +157,7 @@ public class RemoveNameValuePairPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         TaskData = new TaskDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         NameValueData = new NameValueDataBlock[count];
         for (int j = 0; j < count; j++)
         { NameValueData[j] = new NameValueDataBlock(bytes); }
@@ -162,12 +167,13 @@ public class RemoveNameValuePairPacket extends Packet
     {
         header = head;
         TaskData = new TaskDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         NameValueData = new NameValueDataBlock[count];
         for (int j = 0; j < count; j++)
         { NameValueData[j] = new NameValueDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -180,6 +186,7 @@ public class RemoveNameValuePairPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -194,6 +201,7 @@ public class RemoveNameValuePairPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RemoveNameValuePair ---\n";

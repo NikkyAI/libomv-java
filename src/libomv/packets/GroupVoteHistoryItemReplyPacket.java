@@ -59,6 +59,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -98,6 +99,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             bytes.putInt(TotalNumItems);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionData --\n";
@@ -127,7 +129,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _tersedateid = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -145,7 +147,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _startdatetime = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -163,7 +165,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _enddatetime = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -182,7 +184,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _votetype = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -200,7 +202,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _voteresult = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -220,7 +222,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _proposaltext = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -246,25 +248,25 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
         {
             int length;
             VoteID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _tersedateid = new byte[length];
             bytes.get(_tersedateid); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _startdatetime = new byte[length];
             bytes.get(_startdatetime); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _enddatetime = new byte[length];
             bytes.get(_enddatetime); 
             VoteInitiator = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _votetype = new byte[length];
             bytes.get(_votetype); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _voteresult = new byte[length];
             bytes.get(_voteresult); 
             Majority = bytes.getFloat();
             Quorum = bytes.getInt(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _proposaltext = new byte[length];
             bytes.get(_proposaltext); 
         }
@@ -289,6 +291,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             bytes.put(_proposaltext);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- HistoryItemData --\n";
@@ -326,7 +329,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             if (value == null) {
                 _votecast = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -348,7 +351,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
         {
             int length;
             CandidateID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _votecast = new byte[length];
             bytes.get(_votecast); 
             NumVotes = bytes.getInt(); 
@@ -362,6 +365,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
             bytes.putInt(NumVotes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- VoteItem --\n";
@@ -381,8 +385,11 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupVoteHistoryItemReply; }
     public AgentDataBlock AgentData;
     public TransactionDataBlock TransactionData;
@@ -408,7 +415,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
         AgentData = new AgentDataBlock(bytes);
         TransactionData = new TransactionDataBlock(bytes);
         HistoryItemData = new HistoryItemDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         VoteItem = new VoteItemBlock[count];
         for (int j = 0; j < count; j++)
         { VoteItem[j] = new VoteItemBlock(bytes); }
@@ -420,12 +427,13 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
         AgentData = new AgentDataBlock(bytes);
         TransactionData = new TransactionDataBlock(bytes);
         HistoryItemData = new HistoryItemDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         VoteItem = new VoteItemBlock[count];
         for (int j = 0; j < count; j++)
         { VoteItem[j] = new VoteItemBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -440,6 +448,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -456,6 +465,7 @@ public class GroupVoteHistoryItemReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupVoteHistoryItemReply ---\n";

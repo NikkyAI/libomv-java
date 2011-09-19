@@ -59,6 +59,7 @@ public class CreateLandmarkForEventPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -95,6 +96,7 @@ public class CreateLandmarkForEventPacket extends Packet
             bytes.putInt(EventID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EventData --\n";
@@ -123,7 +125,7 @@ public class CreateLandmarkForEventPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -144,7 +146,7 @@ public class CreateLandmarkForEventPacket extends Packet
         {
             int length;
             FolderID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
         }
@@ -156,6 +158,7 @@ public class CreateLandmarkForEventPacket extends Packet
             bytes.put(_name);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryBlock --\n";
@@ -174,8 +177,11 @@ public class CreateLandmarkForEventPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.CreateLandmarkForEvent; }
     public AgentDataBlock AgentData;
     public EventDataBlock EventData;
@@ -209,6 +215,7 @@ public class CreateLandmarkForEventPacket extends Packet
         InventoryBlock = new InventoryBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -221,6 +228,7 @@ public class CreateLandmarkForEventPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -235,6 +243,7 @@ public class CreateLandmarkForEventPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- CreateLandmarkForEvent ---\n";

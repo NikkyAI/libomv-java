@@ -57,6 +57,7 @@ public class SetGroupAcceptNoticesPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -96,6 +97,7 @@ public class SetGroupAcceptNoticesPacket extends Packet
             bytes.put((byte)((AcceptNotices) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -132,6 +134,7 @@ public class SetGroupAcceptNoticesPacket extends Packet
             bytes.put((byte)((ListInProfile) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NewData --\n";
@@ -149,8 +152,11 @@ public class SetGroupAcceptNoticesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SetGroupAcceptNotices; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -184,6 +190,7 @@ public class SetGroupAcceptNoticesPacket extends Packet
         NewData = new NewDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -196,6 +203,7 @@ public class SetGroupAcceptNoticesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -210,6 +218,7 @@ public class SetGroupAcceptNoticesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SetGroupAcceptNotices ---\n";

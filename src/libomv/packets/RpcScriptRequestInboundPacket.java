@@ -59,6 +59,7 @@ public class RpcScriptRequestInboundPacket extends Packet
             bytes.putInt(GridY);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TargetBlock --\n";
@@ -91,7 +92,7 @@ public class RpcScriptRequestInboundPacket extends Packet
             if (value == null) {
                 _stringvalue = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class RpcScriptRequestInboundPacket extends Packet
             ItemID = new UUID(bytes);
             ChannelID = new UUID(bytes);
             IntValue = bytes.getInt(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _stringvalue = new byte[length];
             bytes.get(_stringvalue); 
         }
@@ -130,6 +131,7 @@ public class RpcScriptRequestInboundPacket extends Packet
             bytes.put(_stringvalue);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -151,8 +153,11 @@ public class RpcScriptRequestInboundPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RpcScriptRequestInbound; }
     public TargetBlockBlock TargetBlock;
     public DataBlockBlock DataBlock;
@@ -182,6 +187,7 @@ public class RpcScriptRequestInboundPacket extends Packet
         DataBlock = new DataBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -193,6 +199,7 @@ public class RpcScriptRequestInboundPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -206,6 +213,7 @@ public class RpcScriptRequestInboundPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RpcScriptRequestInbound ---\n";

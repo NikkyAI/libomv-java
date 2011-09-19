@@ -54,6 +54,7 @@ public class EventLocationRequestPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -89,6 +90,7 @@ public class EventLocationRequestPacket extends Packet
             bytes.putInt(EventID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EventData --\n";
@@ -106,8 +108,11 @@ public class EventLocationRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EventLocationRequest; }
     public QueryDataBlock QueryData;
     public EventDataBlock EventData;
@@ -137,6 +142,7 @@ public class EventLocationRequestPacket extends Packet
         EventData = new EventDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -148,6 +154,7 @@ public class EventLocationRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -161,6 +168,7 @@ public class EventLocationRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EventLocationRequest ---\n";

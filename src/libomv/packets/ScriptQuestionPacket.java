@@ -50,7 +50,7 @@ public class ScriptQuestionPacket extends Packet
             if (value == null) {
                 _objectname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -68,7 +68,7 @@ public class ScriptQuestionPacket extends Packet
             if (value == null) {
                 _objectowner = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -92,10 +92,10 @@ public class ScriptQuestionPacket extends Packet
             int length;
             TaskID = new UUID(bytes);
             ItemID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _objectname = new byte[length];
             bytes.get(_objectname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _objectowner = new byte[length];
             bytes.get(_objectowner); 
             Questions = bytes.getInt(); 
@@ -112,6 +112,7 @@ public class ScriptQuestionPacket extends Packet
             bytes.putInt(Questions);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -133,8 +134,11 @@ public class ScriptQuestionPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptQuestion; }
     public DataBlock Data;
 
@@ -160,6 +164,7 @@ public class ScriptQuestionPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -170,6 +175,7 @@ public class ScriptQuestionPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -182,6 +188,7 @@ public class ScriptQuestionPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptQuestion ---\n";

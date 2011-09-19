@@ -57,6 +57,7 @@ public class FetchInventoryPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -96,6 +97,7 @@ public class FetchInventoryPacket extends Packet
             ItemID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -114,8 +116,11 @@ public class FetchInventoryPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.FetchInventory; }
     public AgentDataBlock AgentData;
     public InventoryDataBlock[] InventoryData;
@@ -135,7 +140,7 @@ public class FetchInventoryPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
@@ -145,12 +150,13 @@ public class FetchInventoryPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -163,6 +169,7 @@ public class FetchInventoryPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -177,6 +184,7 @@ public class FetchInventoryPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- FetchInventory ---\n";

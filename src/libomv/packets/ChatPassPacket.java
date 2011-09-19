@@ -53,7 +53,7 @@ public class ChatPassPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -75,7 +75,7 @@ public class ChatPassPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -100,14 +100,14 @@ public class ChatPassPacket extends Packet
             Position = new Vector3(bytes); 
             ID = new UUID(bytes);
             OwnerID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
             SourceType = bytes.get(); 
             Type = bytes.get(); 
             Radius = bytes.getFloat();
             SimAccess = bytes.get(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -128,6 +128,7 @@ public class ChatPassPacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ChatData --\n";
@@ -154,8 +155,11 @@ public class ChatPassPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ChatPass; }
     public ChatDataBlock ChatData;
 
@@ -181,6 +185,7 @@ public class ChatPassPacket extends Packet
         ChatData = new ChatDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -191,6 +196,7 @@ public class ChatPassPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -203,6 +209,7 @@ public class ChatPassPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ChatPass ---\n";

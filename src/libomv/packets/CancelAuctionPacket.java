@@ -54,6 +54,7 @@ public class CancelAuctionPacket extends Packet
             ParcelID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -71,8 +72,11 @@ public class CancelAuctionPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.CancelAuction; }
     public ParcelDataBlock[] ParcelData;
 
@@ -89,7 +93,7 @@ public class CancelAuctionPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
@@ -98,12 +102,13 @@ public class CancelAuctionPacket extends Packet
     public CancelAuctionPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -115,6 +120,7 @@ public class CancelAuctionPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -128,6 +134,7 @@ public class CancelAuctionPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- CancelAuction ---\n";

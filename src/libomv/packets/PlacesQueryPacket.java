@@ -62,6 +62,7 @@ public class PlacesQueryPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -99,6 +100,7 @@ public class PlacesQueryPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionData --\n";
@@ -126,7 +128,7 @@ public class PlacesQueryPacket extends Packet
             if (value == null) {
                 _querytext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -146,7 +148,7 @@ public class PlacesQueryPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -167,12 +169,12 @@ public class PlacesQueryPacket extends Packet
         public QueryDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _querytext = new byte[length];
             bytes.get(_querytext); 
             QueryFlags = bytes.getInt(); 
             Category = bytes.get(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
         }
@@ -187,6 +189,7 @@ public class PlacesQueryPacket extends Packet
             bytes.put(_simname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -207,8 +210,11 @@ public class PlacesQueryPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.PlacesQuery; }
     public AgentDataBlock AgentData;
     public TransactionDataBlock TransactionData;
@@ -242,6 +248,7 @@ public class PlacesQueryPacket extends Packet
         QueryData = new QueryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -254,6 +261,7 @@ public class PlacesQueryPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -268,6 +276,7 @@ public class PlacesQueryPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- PlacesQuery ---\n";

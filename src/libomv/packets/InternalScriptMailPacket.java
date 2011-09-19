@@ -48,7 +48,7 @@ public class InternalScriptMailPacket extends Packet
             if (value == null) {
                 _from = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -67,7 +67,7 @@ public class InternalScriptMailPacket extends Packet
             if (value == null) {
                 _subject = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -85,7 +85,7 @@ public class InternalScriptMailPacket extends Packet
             if (value == null) {
                 _body = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -107,14 +107,14 @@ public class InternalScriptMailPacket extends Packet
         public DataBlockBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _from = new byte[length];
             bytes.get(_from); 
             To = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _subject = new byte[length];
             bytes.get(_subject); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _body = new byte[length];
             bytes.get(_body); 
         }
@@ -130,6 +130,7 @@ public class InternalScriptMailPacket extends Packet
             bytes.put(_body);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -150,8 +151,11 @@ public class InternalScriptMailPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.InternalScriptMail; }
     public DataBlockBlock DataBlock;
 
@@ -177,6 +181,7 @@ public class InternalScriptMailPacket extends Packet
         DataBlock = new DataBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -187,6 +192,7 @@ public class InternalScriptMailPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -199,6 +205,7 @@ public class InternalScriptMailPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- InternalScriptMail ---\n";

@@ -59,6 +59,7 @@ public class CreateGroupRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -87,7 +88,7 @@ public class CreateGroupRequestPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -105,7 +106,7 @@ public class CreateGroupRequestPacket extends Packet
             if (value == null) {
                 _charter = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -132,10 +133,10 @@ public class CreateGroupRequestPacket extends Packet
         public GroupDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _charter = new byte[length];
             bytes.get(_charter); 
             ShowInList = (bytes.get() != 0) ? (boolean)true : (boolean)false;
@@ -160,6 +161,7 @@ public class CreateGroupRequestPacket extends Packet
             bytes.put((byte)((MaturePublish) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -184,8 +186,11 @@ public class CreateGroupRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.CreateGroupRequest; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -215,6 +220,7 @@ public class CreateGroupRequestPacket extends Packet
         GroupData = new GroupDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -226,6 +232,7 @@ public class CreateGroupRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -239,6 +246,7 @@ public class CreateGroupRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- CreateGroupRequest ---\n";

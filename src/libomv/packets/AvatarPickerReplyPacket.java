@@ -59,6 +59,7 @@ public class AvatarPickerReplyPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class AvatarPickerReplyPacket extends Packet
             if (value == null) {
                 _firstname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -106,7 +107,7 @@ public class AvatarPickerReplyPacket extends Packet
             if (value == null) {
                 _lastname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -128,10 +129,10 @@ public class AvatarPickerReplyPacket extends Packet
         {
             int length;
             AvatarID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _firstname = new byte[length];
             bytes.get(_firstname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _lastname = new byte[length];
             bytes.get(_lastname); 
         }
@@ -145,6 +146,7 @@ public class AvatarPickerReplyPacket extends Packet
             bytes.put(_lastname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -164,8 +166,11 @@ public class AvatarPickerReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarPickerReply; }
     public AgentDataBlock AgentData;
     public DataBlock[] Data;
@@ -185,7 +190,7 @@ public class AvatarPickerReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Data = new DataBlock[count];
         for (int j = 0; j < count; j++)
         { Data[j] = new DataBlock(bytes); }
@@ -195,12 +200,13 @@ public class AvatarPickerReplyPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Data = new DataBlock[count];
         for (int j = 0; j < count; j++)
         { Data[j] = new DataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -213,6 +219,7 @@ public class AvatarPickerReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -227,6 +234,7 @@ public class AvatarPickerReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarPickerReply ---\n";

@@ -59,6 +59,7 @@ public class SimulatorLoadPacket extends Packet
             bytes.put((byte)((CanAcceptAgents) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SimulatorLoad --\n";
@@ -102,6 +103,7 @@ public class SimulatorLoadPacket extends Packet
             bytes.put(Y);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentList --\n";
@@ -121,8 +123,11 @@ public class SimulatorLoadPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimulatorLoad; }
     public SimulatorLoadBlock SimulatorLoad;
     public AgentListBlock[] AgentList;
@@ -142,7 +147,7 @@ public class SimulatorLoadPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         SimulatorLoad = new SimulatorLoadBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AgentList = new AgentListBlock[count];
         for (int j = 0; j < count; j++)
         { AgentList[j] = new AgentListBlock(bytes); }
@@ -152,12 +157,13 @@ public class SimulatorLoadPacket extends Packet
     {
         header = head;
         SimulatorLoad = new SimulatorLoadBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AgentList = new AgentListBlock[count];
         for (int j = 0; j < count; j++)
         { AgentList[j] = new AgentListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -170,6 +176,7 @@ public class SimulatorLoadPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -184,6 +191,7 @@ public class SimulatorLoadPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimulatorLoad ---\n";

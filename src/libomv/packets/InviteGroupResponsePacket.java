@@ -66,6 +66,7 @@ public class InviteGroupResponsePacket extends Packet
             bytes.putInt(MembershipFee);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InviteData --\n";
@@ -87,8 +88,11 @@ public class InviteGroupResponsePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.InviteGroupResponse; }
     public InviteDataBlock InviteData;
 
@@ -114,6 +118,7 @@ public class InviteGroupResponsePacket extends Packet
         InviteData = new InviteDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -124,6 +129,7 @@ public class InviteGroupResponsePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -136,6 +142,7 @@ public class InviteGroupResponsePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- InviteGroupResponse ---\n";

@@ -59,6 +59,7 @@ public class PlacesReplyPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -95,6 +96,7 @@ public class PlacesReplyPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionData --\n";
@@ -123,7 +125,7 @@ public class PlacesReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -141,7 +143,7 @@ public class PlacesReplyPacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -165,7 +167,7 @@ public class PlacesReplyPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -191,10 +193,10 @@ public class PlacesReplyPacket extends Packet
         {
             int length;
             OwnerID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _desc = new byte[length];
             bytes.get(_desc); 
             ActualArea = bytes.getInt(); 
@@ -203,7 +205,7 @@ public class PlacesReplyPacket extends Packet
             GlobalX = bytes.getFloat();
             GlobalY = bytes.getFloat();
             GlobalZ = bytes.getFloat();
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             SnapshotID = new UUID(bytes);
@@ -231,6 +233,7 @@ public class PlacesReplyPacket extends Packet
             bytes.putInt(Price);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -260,8 +263,11 @@ public class PlacesReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.PlacesReply; }
     public AgentDataBlock AgentData;
     public TransactionDataBlock TransactionData;
@@ -284,7 +290,7 @@ public class PlacesReplyPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         TransactionData = new TransactionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryData = new QueryDataBlock[count];
         for (int j = 0; j < count; j++)
         { QueryData[j] = new QueryDataBlock(bytes); }
@@ -295,12 +301,13 @@ public class PlacesReplyPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         TransactionData = new TransactionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryData = new QueryDataBlock[count];
         for (int j = 0; j < count; j++)
         { QueryData[j] = new QueryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -314,6 +321,7 @@ public class PlacesReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -329,6 +337,7 @@ public class PlacesReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- PlacesReply ---\n";

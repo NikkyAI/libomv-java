@@ -61,6 +61,7 @@ public class ObjectAttachPacket extends Packet
             bytes.put(AttachmentPoint);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -101,6 +102,7 @@ public class ObjectAttachPacket extends Packet
             Rotation.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -119,8 +121,11 @@ public class ObjectAttachPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectAttach; }
     public AgentDataBlock AgentData;
     public ObjectDataBlock[] ObjectData;
@@ -140,7 +145,7 @@ public class ObjectAttachPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -150,12 +155,13 @@ public class ObjectAttachPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -168,6 +174,7 @@ public class ObjectAttachPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -182,6 +189,7 @@ public class ObjectAttachPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectAttach ---\n";

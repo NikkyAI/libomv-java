@@ -63,6 +63,7 @@ public class DataServerLogoutPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- UserData --\n";
@@ -83,8 +84,11 @@ public class DataServerLogoutPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DataServerLogout; }
     public UserDataBlock UserData;
 
@@ -110,6 +114,7 @@ public class DataServerLogoutPacket extends Packet
         UserData = new UserDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -120,6 +125,7 @@ public class DataServerLogoutPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -132,6 +138,7 @@ public class DataServerLogoutPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DataServerLogout ---\n";

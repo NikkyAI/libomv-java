@@ -48,7 +48,7 @@ public class ScriptMailRegistrationPacket extends Packet
             if (value == null) {
                 _targetip = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -71,7 +71,7 @@ public class ScriptMailRegistrationPacket extends Packet
         public DataBlockBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _targetip = new byte[length];
             bytes.get(_targetip); 
             TargetPort = (short)((bytes.get() << 8) + bytes.get());
@@ -89,6 +89,7 @@ public class ScriptMailRegistrationPacket extends Packet
             bytes.putInt(Flags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -109,8 +110,11 @@ public class ScriptMailRegistrationPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptMailRegistration; }
     public DataBlockBlock DataBlock;
 
@@ -136,6 +140,7 @@ public class ScriptMailRegistrationPacket extends Packet
         DataBlock = new DataBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -146,6 +151,7 @@ public class ScriptMailRegistrationPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -158,6 +164,7 @@ public class ScriptMailRegistrationPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptMailRegistration ---\n";

@@ -59,6 +59,7 @@ public class ScriptControlChangePacket extends Packet
             bytes.put((byte)((PassToAgent) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -78,8 +79,11 @@ public class ScriptControlChangePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptControlChange; }
     public DataBlock[] Data;
 
@@ -96,7 +100,7 @@ public class ScriptControlChangePacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Data = new DataBlock[count];
         for (int j = 0; j < count; j++)
         { Data[j] = new DataBlock(bytes); }
@@ -105,12 +109,13 @@ public class ScriptControlChangePacket extends Packet
     public ScriptControlChangePacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Data = new DataBlock[count];
         for (int j = 0; j < count; j++)
         { Data[j] = new DataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -122,6 +127,7 @@ public class ScriptControlChangePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -135,6 +141,7 @@ public class ScriptControlChangePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptControlChange ---\n";

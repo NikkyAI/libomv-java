@@ -59,6 +59,7 @@ public class LandStatRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,7 +90,7 @@ public class LandStatRequestPacket extends Packet
             if (value == null) {
                 _filter = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -112,7 +113,7 @@ public class LandStatRequestPacket extends Packet
             int length;
             ReportType = bytes.getInt(); 
             RequestFlags = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _filter = new byte[length];
             bytes.get(_filter); 
             ParcelLocalID = bytes.getInt(); 
@@ -127,6 +128,7 @@ public class LandStatRequestPacket extends Packet
             bytes.putInt(ParcelLocalID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RequestData --\n";
@@ -147,8 +149,11 @@ public class LandStatRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.LandStatRequest; }
     public AgentDataBlock AgentData;
     public RequestDataBlock RequestData;
@@ -178,6 +183,7 @@ public class LandStatRequestPacket extends Packet
         RequestData = new RequestDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -189,6 +195,7 @@ public class LandStatRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -202,6 +209,7 @@ public class LandStatRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- LandStatRequest ---\n";

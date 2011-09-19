@@ -57,6 +57,7 @@ public class MapLayerReplyPacket extends Packet
             bytes.putInt(Flags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -105,6 +106,7 @@ public class MapLayerReplyPacket extends Packet
             ImageID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- LayerData --\n";
@@ -126,8 +128,11 @@ public class MapLayerReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MapLayerReply; }
     public AgentDataBlock AgentData;
     public LayerDataBlock[] LayerData;
@@ -147,7 +152,7 @@ public class MapLayerReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         LayerData = new LayerDataBlock[count];
         for (int j = 0; j < count; j++)
         { LayerData[j] = new LayerDataBlock(bytes); }
@@ -157,12 +162,13 @@ public class MapLayerReplyPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         LayerData = new LayerDataBlock[count];
         for (int j = 0; j < count; j++)
         { LayerData[j] = new LayerDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -175,6 +181,7 @@ public class MapLayerReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -189,6 +196,7 @@ public class MapLayerReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MapLayerReply ---\n";

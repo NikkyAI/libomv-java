@@ -59,6 +59,7 @@ public class ChatFromViewerPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -87,7 +88,7 @@ public class ChatFromViewerPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -109,7 +110,7 @@ public class ChatFromViewerPacket extends Packet
         public ChatDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _message = new byte[length];
             bytes.get(_message); 
             Type = bytes.get(); 
@@ -124,6 +125,7 @@ public class ChatFromViewerPacket extends Packet
             bytes.putInt(Channel);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ChatData --\n";
@@ -143,8 +145,11 @@ public class ChatFromViewerPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ChatFromViewer; }
     public AgentDataBlock AgentData;
     public ChatDataBlock ChatData;
@@ -174,6 +179,7 @@ public class ChatFromViewerPacket extends Packet
         ChatData = new ChatDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -185,6 +191,7 @@ public class ChatFromViewerPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -198,6 +205,7 @@ public class ChatFromViewerPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ChatFromViewer ---\n";

@@ -59,6 +59,7 @@ public class UpdateUserInfoPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class UpdateUserInfoPacket extends Packet
             if (value == null) {
                 _directoryvisibility = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -109,7 +110,7 @@ public class UpdateUserInfoPacket extends Packet
         {
             int length;
             IMViaEMail = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _directoryvisibility = new byte[length];
             bytes.get(_directoryvisibility); 
         }
@@ -121,6 +122,7 @@ public class UpdateUserInfoPacket extends Packet
             bytes.put(_directoryvisibility);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- UserData --\n";
@@ -139,8 +141,11 @@ public class UpdateUserInfoPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UpdateUserInfo; }
     public AgentDataBlock AgentData;
     public UserDataBlock UserData;
@@ -170,6 +175,7 @@ public class UpdateUserInfoPacket extends Packet
         UserData = new UserDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -181,6 +187,7 @@ public class UpdateUserInfoPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -194,6 +201,7 @@ public class UpdateUserInfoPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UpdateUserInfo ---\n";

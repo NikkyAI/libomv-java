@@ -60,6 +60,7 @@ public class AgentMovementCompletePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -105,6 +106,7 @@ public class AgentMovementCompletePacket extends Packet
             bytes.putInt(Timestamp);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -135,7 +137,7 @@ public class AgentMovementCompletePacket extends Packet
             if (value == null) {
                 _channelversion = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -155,7 +157,7 @@ public class AgentMovementCompletePacket extends Packet
         public SimDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _channelversion = new byte[length];
             bytes.get(_channelversion); 
         }
@@ -166,6 +168,7 @@ public class AgentMovementCompletePacket extends Packet
             bytes.put(_channelversion);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SimData --\n";
@@ -183,8 +186,11 @@ public class AgentMovementCompletePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentMovementComplete; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -218,6 +224,7 @@ public class AgentMovementCompletePacket extends Packet
         SimData = new SimDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -230,6 +237,7 @@ public class AgentMovementCompletePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -244,6 +252,7 @@ public class AgentMovementCompletePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentMovementComplete ---\n";

@@ -57,6 +57,7 @@ public class PurgeInventoryDescendentsPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class PurgeInventoryDescendentsPacket extends Packet
             FolderID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -110,8 +112,11 @@ public class PurgeInventoryDescendentsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.PurgeInventoryDescendents; }
     public AgentDataBlock AgentData;
     public InventoryDataBlock InventoryData;
@@ -141,6 +146,7 @@ public class PurgeInventoryDescendentsPacket extends Packet
         InventoryData = new InventoryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -152,6 +158,7 @@ public class PurgeInventoryDescendentsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -165,6 +172,7 @@ public class PurgeInventoryDescendentsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- PurgeInventoryDescendents ---\n";

@@ -59,6 +59,7 @@ public class AvatarGroupsReplyPacket extends Packet
             AvatarID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,7 +90,7 @@ public class AvatarGroupsReplyPacket extends Packet
             if (value == null) {
                 _grouptitle = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -108,7 +109,7 @@ public class AvatarGroupsReplyPacket extends Packet
             if (value == null) {
                 _groupname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -132,11 +133,11 @@ public class AvatarGroupsReplyPacket extends Packet
             int length;
             GroupPowers = bytes.getLong(); 
             AcceptNotices = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _grouptitle = new byte[length];
             bytes.get(_grouptitle); 
             GroupID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _groupname = new byte[length];
             bytes.get(_groupname); 
             GroupInsigniaID = new UUID(bytes);
@@ -154,6 +155,7 @@ public class AvatarGroupsReplyPacket extends Packet
             GroupInsigniaID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -194,6 +196,7 @@ public class AvatarGroupsReplyPacket extends Packet
             bytes.put((byte)((ListInProfile) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NewGroupData --\n";
@@ -211,8 +214,11 @@ public class AvatarGroupsReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarGroupsReply; }
     public AgentDataBlock AgentData;
     public GroupDataBlock[] GroupData;
@@ -234,7 +240,7 @@ public class AvatarGroupsReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         GroupData = new GroupDataBlock[count];
         for (int j = 0; j < count; j++)
         { GroupData[j] = new GroupDataBlock(bytes); }
@@ -245,13 +251,14 @@ public class AvatarGroupsReplyPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         GroupData = new GroupDataBlock[count];
         for (int j = 0; j < count; j++)
         { GroupData[j] = new GroupDataBlock(bytes); }
         NewGroupData = new NewGroupDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -265,6 +272,7 @@ public class AvatarGroupsReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -280,6 +288,7 @@ public class AvatarGroupsReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarGroupsReply ---\n";

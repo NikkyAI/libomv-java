@@ -57,6 +57,7 @@ public class ParcelAccessListUpdatePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -105,6 +106,7 @@ public class ParcelAccessListUpdatePacket extends Packet
             bytes.putInt(Sections);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -150,6 +152,7 @@ public class ParcelAccessListUpdatePacket extends Packet
             bytes.putInt(Flags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- List --\n";
@@ -169,8 +172,11 @@ public class ParcelAccessListUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelAccessListUpdate; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -193,7 +199,7 @@ public class ParcelAccessListUpdatePacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         List = new ListBlock[count];
         for (int j = 0; j < count; j++)
         { List[j] = new ListBlock(bytes); }
@@ -204,12 +210,13 @@ public class ParcelAccessListUpdatePacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         List = new ListBlock[count];
         for (int j = 0; j < count; j++)
         { List[j] = new ListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -223,6 +230,7 @@ public class ParcelAccessListUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -238,6 +246,7 @@ public class ParcelAccessListUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelAccessListUpdate ---\n";

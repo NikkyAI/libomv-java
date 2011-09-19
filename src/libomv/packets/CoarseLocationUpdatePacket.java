@@ -60,6 +60,7 @@ public class CoarseLocationUpdatePacket extends Packet
             bytes.put(Z);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Location --\n";
@@ -100,6 +101,7 @@ public class CoarseLocationUpdatePacket extends Packet
             bytes.putShort(Prey);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Index --\n";
@@ -136,6 +138,7 @@ public class CoarseLocationUpdatePacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -153,8 +156,11 @@ public class CoarseLocationUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.CoarseLocationUpdate; }
     public LocationBlock[] Location;
     public IndexBlock Index;
@@ -175,12 +181,12 @@ public class CoarseLocationUpdatePacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Location = new LocationBlock[count];
         for (int j = 0; j < count; j++)
         { Location[j] = new LocationBlock(bytes); }
         Index = new IndexBlock(bytes);
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         AgentData = new AgentDataBlock[count];
         for (int j = 0; j < count; j++)
         { AgentData[j] = new AgentDataBlock(bytes); }
@@ -189,17 +195,18 @@ public class CoarseLocationUpdatePacket extends Packet
     public CoarseLocationUpdatePacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Location = new LocationBlock[count];
         for (int j = 0; j < count; j++)
         { Location[j] = new LocationBlock(bytes); }
         Index = new IndexBlock(bytes);
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         AgentData = new AgentDataBlock[count];
         for (int j = 0; j < count; j++)
         { AgentData[j] = new AgentDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -214,6 +221,7 @@ public class CoarseLocationUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -230,6 +238,7 @@ public class CoarseLocationUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- CoarseLocationUpdate ---\n";

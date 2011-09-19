@@ -59,6 +59,7 @@ public class AvatarTextureUpdatePacket extends Packet
             bytes.put((byte)((TexturesChanged) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,7 +90,7 @@ public class AvatarTextureUpdatePacket extends Packet
             if (value == null) {
                 _hostname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -111,7 +112,7 @@ public class AvatarTextureUpdatePacket extends Packet
             int length;
             CacheID = new UUID(bytes);
             TextureIndex = bytes.get(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _hostname = new byte[length];
             bytes.get(_hostname); 
         }
@@ -124,6 +125,7 @@ public class AvatarTextureUpdatePacket extends Packet
             bytes.put(_hostname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- WearableData --\n";
@@ -161,6 +163,7 @@ public class AvatarTextureUpdatePacket extends Packet
             TextureID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TextureData --\n";
@@ -178,8 +181,11 @@ public class AvatarTextureUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarTextureUpdate; }
     public AgentDataBlock AgentData;
     public WearableDataBlock[] WearableData;
@@ -201,11 +207,11 @@ public class AvatarTextureUpdatePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         WearableData = new WearableDataBlock[count];
         for (int j = 0; j < count; j++)
         { WearableData[j] = new WearableDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         TextureData = new TextureDataBlock[count];
         for (int j = 0; j < count; j++)
         { TextureData[j] = new TextureDataBlock(bytes); }
@@ -215,16 +221,17 @@ public class AvatarTextureUpdatePacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         WearableData = new WearableDataBlock[count];
         for (int j = 0; j < count; j++)
         { WearableData[j] = new WearableDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         TextureData = new TextureDataBlock[count];
         for (int j = 0; j < count; j++)
         { TextureData[j] = new TextureDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -239,6 +246,7 @@ public class AvatarTextureUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -255,6 +263,7 @@ public class AvatarTextureUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarTextureUpdate ---\n";

@@ -56,6 +56,7 @@ public class ParcelInfoReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -85,7 +86,7 @@ public class ParcelInfoReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -103,7 +104,7 @@ public class ParcelInfoReplyPacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -127,7 +128,7 @@ public class ParcelInfoReplyPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -155,10 +156,10 @@ public class ParcelInfoReplyPacket extends Packet
             int length;
             ParcelID = new UUID(bytes);
             OwnerID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _desc = new byte[length];
             bytes.get(_desc); 
             ActualArea = bytes.getInt(); 
@@ -167,7 +168,7 @@ public class ParcelInfoReplyPacket extends Packet
             GlobalX = bytes.getFloat();
             GlobalY = bytes.getFloat();
             GlobalZ = bytes.getFloat();
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             SnapshotID = new UUID(bytes);
@@ -198,6 +199,7 @@ public class ParcelInfoReplyPacket extends Packet
             bytes.putInt(AuctionID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -229,8 +231,11 @@ public class ParcelInfoReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelInfoReply; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -260,6 +265,7 @@ public class ParcelInfoReplyPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -271,6 +277,7 @@ public class ParcelInfoReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -284,6 +291,7 @@ public class ParcelInfoReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelInfoReply ---\n";

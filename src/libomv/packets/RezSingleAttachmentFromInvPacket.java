@@ -59,6 +59,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -94,7 +95,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -112,7 +113,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -140,10 +141,10 @@ public class RezSingleAttachmentFromInvPacket extends Packet
             GroupMask = bytes.getInt(); 
             EveryoneMask = bytes.getInt(); 
             NextOwnerMask = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
         }
@@ -163,6 +164,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
             bytes.put(_description);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -188,8 +190,11 @@ public class RezSingleAttachmentFromInvPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RezSingleAttachmentFromInv; }
     public AgentDataBlock AgentData;
     public ObjectDataBlock ObjectData;
@@ -219,6 +224,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
         ObjectData = new ObjectDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -230,6 +236,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -243,6 +250,7 @@ public class RezSingleAttachmentFromInvPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RezSingleAttachmentFromInv ---\n";

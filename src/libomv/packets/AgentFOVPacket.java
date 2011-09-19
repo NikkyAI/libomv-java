@@ -60,6 +60,7 @@ public class AgentFOVPacket extends Packet
             bytes.putInt(CircuitCode);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -100,6 +101,7 @@ public class AgentFOVPacket extends Packet
             bytes.putFloat(VerticalAngle);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- FOVBlock --\n";
@@ -118,8 +120,11 @@ public class AgentFOVPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentFOV; }
     public AgentDataBlock AgentData;
     public FOVBlockBlock FOVBlock;
@@ -149,6 +154,7 @@ public class AgentFOVPacket extends Packet
         FOVBlock = new FOVBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -160,6 +166,7 @@ public class AgentFOVPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +180,7 @@ public class AgentFOVPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentFOV ---\n";

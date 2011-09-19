@@ -59,6 +59,7 @@ public class StartLurePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class StartLurePacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -109,7 +110,7 @@ public class StartLurePacket extends Packet
         {
             int length;
             LureType = bytes.get(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -121,6 +122,7 @@ public class StartLurePacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Info --\n";
@@ -157,6 +159,7 @@ public class StartLurePacket extends Packet
             TargetID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TargetData --\n";
@@ -174,8 +177,11 @@ public class StartLurePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.StartLure; }
     public AgentDataBlock AgentData;
     public InfoBlock Info;
@@ -198,7 +204,7 @@ public class StartLurePacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         Info = new InfoBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         TargetData = new TargetDataBlock[count];
         for (int j = 0; j < count; j++)
         { TargetData[j] = new TargetDataBlock(bytes); }
@@ -209,12 +215,13 @@ public class StartLurePacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         Info = new InfoBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         TargetData = new TargetDataBlock[count];
         for (int j = 0; j < count; j++)
         { TargetData[j] = new TargetDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -228,6 +235,7 @@ public class StartLurePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -243,6 +251,7 @@ public class StartLurePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- StartLure ---\n";

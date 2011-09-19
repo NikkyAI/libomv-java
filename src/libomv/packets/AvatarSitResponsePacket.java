@@ -56,6 +56,7 @@ public class AvatarSitResponsePacket extends Packet
             ID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SitObject --\n";
@@ -106,6 +107,7 @@ public class AvatarSitResponsePacket extends Packet
             bytes.put((byte)((ForceMouselook) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SitTransform --\n";
@@ -128,8 +130,11 @@ public class AvatarSitResponsePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarSitResponse; }
     public SitObjectBlock SitObject;
     public SitTransformBlock SitTransform;
@@ -159,6 +164,7 @@ public class AvatarSitResponsePacket extends Packet
         SitTransform = new SitTransformBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -170,6 +176,7 @@ public class AvatarSitResponsePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -183,6 +190,7 @@ public class AvatarSitResponsePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarSitResponse ---\n";

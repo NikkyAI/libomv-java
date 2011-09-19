@@ -59,6 +59,7 @@ public class ScriptDialogReplyPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -90,7 +91,7 @@ public class ScriptDialogReplyPacket extends Packet
             if (value == null) {
                 _buttonlabel = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -113,7 +114,7 @@ public class ScriptDialogReplyPacket extends Packet
             ObjectID = new UUID(bytes);
             ChatChannel = bytes.getInt(); 
             ButtonIndex = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _buttonlabel = new byte[length];
             bytes.get(_buttonlabel); 
         }
@@ -127,6 +128,7 @@ public class ScriptDialogReplyPacket extends Packet
             bytes.put(_buttonlabel);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -147,8 +149,11 @@ public class ScriptDialogReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptDialogReply; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -178,6 +183,7 @@ public class ScriptDialogReplyPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -189,6 +195,7 @@ public class ScriptDialogReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -202,6 +209,7 @@ public class ScriptDialogReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptDialogReply ---\n";

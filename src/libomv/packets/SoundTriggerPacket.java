@@ -73,6 +73,7 @@ public class SoundTriggerPacket extends Packet
             bytes.putFloat(Gain);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SoundData --\n";
@@ -96,8 +97,11 @@ public class SoundTriggerPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SoundTrigger; }
     public SoundDataBlock SoundData;
 
@@ -123,6 +127,7 @@ public class SoundTriggerPacket extends Packet
         SoundData = new SoundDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -133,6 +138,7 @@ public class SoundTriggerPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -145,6 +151,7 @@ public class SoundTriggerPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SoundTrigger ---\n";

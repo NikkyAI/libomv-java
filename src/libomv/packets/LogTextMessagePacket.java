@@ -53,7 +53,7 @@ public class LogTextMessagePacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -78,7 +78,7 @@ public class LogTextMessagePacket extends Packet
             GlobalX = bytes.getDouble();
             GlobalY = bytes.getDouble();
             Time = bytes.getInt(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -94,6 +94,7 @@ public class LogTextMessagePacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -116,8 +117,11 @@ public class LogTextMessagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.LogTextMessage; }
     public DataBlockBlock[] DataBlock;
 
@@ -134,7 +138,7 @@ public class LogTextMessagePacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         DataBlock = new DataBlockBlock[count];
         for (int j = 0; j < count; j++)
         { DataBlock[j] = new DataBlockBlock(bytes); }
@@ -143,12 +147,13 @@ public class LogTextMessagePacket extends Packet
     public LogTextMessagePacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         DataBlock = new DataBlockBlock[count];
         for (int j = 0; j < count; j++)
         { DataBlock[j] = new DataBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -160,6 +165,7 @@ public class LogTextMessagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +179,7 @@ public class LogTextMessagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- LogTextMessage ---\n";

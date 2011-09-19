@@ -56,6 +56,7 @@ public class DirPeopleReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,6 +92,7 @@ public class DirPeopleReplyPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -119,7 +121,7 @@ public class DirPeopleReplyPacket extends Packet
             if (value == null) {
                 _firstname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -137,7 +139,7 @@ public class DirPeopleReplyPacket extends Packet
             if (value == null) {
                 _lastname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -155,7 +157,7 @@ public class DirPeopleReplyPacket extends Packet
             if (value == null) {
                 _group = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -180,13 +182,13 @@ public class DirPeopleReplyPacket extends Packet
         {
             int length;
             AgentID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _firstname = new byte[length];
             bytes.get(_firstname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _lastname = new byte[length];
             bytes.get(_lastname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _group = new byte[length];
             bytes.get(_group); 
             Online = (bytes.get() != 0) ? (boolean)true : (boolean)false;
@@ -206,6 +208,7 @@ public class DirPeopleReplyPacket extends Packet
             bytes.putInt(Reputation);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryReplies --\n";
@@ -228,8 +231,11 @@ public class DirPeopleReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DirPeopleReply; }
     public AgentDataBlock AgentData;
     public QueryDataBlock QueryData;
@@ -252,7 +258,7 @@ public class DirPeopleReplyPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         QueryData = new QueryDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryReplies = new QueryRepliesBlock[count];
         for (int j = 0; j < count; j++)
         { QueryReplies[j] = new QueryRepliesBlock(bytes); }
@@ -263,12 +269,13 @@ public class DirPeopleReplyPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         QueryData = new QueryDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryReplies = new QueryRepliesBlock[count];
         for (int j = 0; j < count; j++)
         { QueryReplies[j] = new QueryRepliesBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -282,6 +289,7 @@ public class DirPeopleReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -297,6 +305,7 @@ public class DirPeopleReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DirPeopleReply ---\n";

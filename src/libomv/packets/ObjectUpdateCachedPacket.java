@@ -56,6 +56,7 @@ public class ObjectUpdateCachedPacket extends Packet
             bytes.putShort(TimeDilation);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -98,6 +99,7 @@ public class ObjectUpdateCachedPacket extends Packet
             bytes.putInt(UpdateFlags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -117,8 +119,11 @@ public class ObjectUpdateCachedPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectUpdateCached; }
     public RegionDataBlock RegionData;
     public ObjectDataBlock[] ObjectData;
@@ -138,7 +143,7 @@ public class ObjectUpdateCachedPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -148,12 +153,13 @@ public class ObjectUpdateCachedPacket extends Packet
     {
         header = head;
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -166,6 +172,7 @@ public class ObjectUpdateCachedPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -180,6 +187,7 @@ public class ObjectUpdateCachedPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectUpdateCached ---\n";

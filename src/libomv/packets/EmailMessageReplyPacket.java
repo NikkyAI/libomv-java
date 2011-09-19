@@ -51,7 +51,7 @@ public class EmailMessageReplyPacket extends Packet
             if (value == null) {
                 _fromaddress = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -69,7 +69,7 @@ public class EmailMessageReplyPacket extends Packet
             if (value == null) {
                 _subject = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -87,7 +87,7 @@ public class EmailMessageReplyPacket extends Packet
             if (value == null) {
                 _data = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -105,7 +105,7 @@ public class EmailMessageReplyPacket extends Packet
             if (value == null) {
                 _mailfilter = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -131,16 +131,16 @@ public class EmailMessageReplyPacket extends Packet
             ObjectID = new UUID(bytes);
             More = bytes.getInt(); 
             Time = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _fromaddress = new byte[length];
             bytes.get(_fromaddress); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _subject = new byte[length];
             bytes.get(_subject); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _data = new byte[length];
             bytes.get(_data); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mailfilter = new byte[length];
             bytes.get(_mailfilter); 
         }
@@ -160,6 +160,7 @@ public class EmailMessageReplyPacket extends Packet
             bytes.put(_mailfilter);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -183,8 +184,11 @@ public class EmailMessageReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EmailMessageReply; }
     public DataBlockBlock DataBlock;
 
@@ -210,6 +214,7 @@ public class EmailMessageReplyPacket extends Packet
         DataBlock = new DataBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -220,6 +225,7 @@ public class EmailMessageReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -232,6 +238,7 @@ public class EmailMessageReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EmailMessageReply ---\n";

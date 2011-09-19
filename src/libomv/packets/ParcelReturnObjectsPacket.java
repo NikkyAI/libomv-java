@@ -57,6 +57,7 @@ public class ParcelReturnObjectsPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -96,6 +97,7 @@ public class ParcelReturnObjectsPacket extends Packet
             bytes.putInt(ReturnType);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -132,6 +134,7 @@ public class ParcelReturnObjectsPacket extends Packet
             TaskID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TaskIDs --\n";
@@ -167,6 +170,7 @@ public class ParcelReturnObjectsPacket extends Packet
             OwnerID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- OwnerIDs --\n";
@@ -184,8 +188,11 @@ public class ParcelReturnObjectsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelReturnObjects; }
     public AgentDataBlock AgentData;
     public ParcelDataBlock ParcelData;
@@ -210,11 +217,11 @@ public class ParcelReturnObjectsPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         ParcelData = new ParcelDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         TaskIDs = new TaskIDsBlock[count];
         for (int j = 0; j < count; j++)
         { TaskIDs[j] = new TaskIDsBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         OwnerIDs = new OwnerIDsBlock[count];
         for (int j = 0; j < count; j++)
         { OwnerIDs[j] = new OwnerIDsBlock(bytes); }
@@ -225,16 +232,17 @@ public class ParcelReturnObjectsPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         ParcelData = new ParcelDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         TaskIDs = new TaskIDsBlock[count];
         for (int j = 0; j < count; j++)
         { TaskIDs[j] = new TaskIDsBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         OwnerIDs = new OwnerIDsBlock[count];
         for (int j = 0; j < count; j++)
         { OwnerIDs[j] = new OwnerIDsBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -250,6 +258,7 @@ public class ParcelReturnObjectsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -267,6 +276,7 @@ public class ParcelReturnObjectsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelReturnObjects ---\n";

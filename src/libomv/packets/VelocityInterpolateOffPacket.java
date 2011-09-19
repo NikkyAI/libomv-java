@@ -57,6 +57,7 @@ public class VelocityInterpolateOffPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -75,8 +76,11 @@ public class VelocityInterpolateOffPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.VelocityInterpolateOff; }
     public AgentDataBlock AgentData;
 
@@ -102,6 +106,7 @@ public class VelocityInterpolateOffPacket extends Packet
         AgentData = new AgentDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -112,6 +117,7 @@ public class VelocityInterpolateOffPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -124,6 +130,7 @@ public class VelocityInterpolateOffPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- VelocityInterpolateOff ---\n";

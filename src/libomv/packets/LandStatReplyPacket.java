@@ -62,6 +62,7 @@ public class LandStatReplyPacket extends Packet
             bytes.putInt(TotalObjectCount);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RequestData --\n";
@@ -97,7 +98,7 @@ public class LandStatReplyPacket extends Packet
             if (value == null) {
                 _taskname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class LandStatReplyPacket extends Packet
             if (value == null) {
                 _ownername = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -142,10 +143,10 @@ public class LandStatReplyPacket extends Packet
             LocationY = bytes.getFloat();
             LocationZ = bytes.getFloat();
             Score = bytes.getFloat();
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _taskname = new byte[length];
             bytes.get(_taskname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _ownername = new byte[length];
             bytes.get(_ownername); 
         }
@@ -164,6 +165,7 @@ public class LandStatReplyPacket extends Packet
             bytes.put(_ownername);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ReportData --\n";
@@ -188,8 +190,11 @@ public class LandStatReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.LandStatReply; }
     public RequestDataBlock RequestData;
     public ReportDataBlock[] ReportData;
@@ -209,7 +214,7 @@ public class LandStatReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         RequestData = new RequestDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ReportData = new ReportDataBlock[count];
         for (int j = 0; j < count; j++)
         { ReportData[j] = new ReportDataBlock(bytes); }
@@ -219,12 +224,13 @@ public class LandStatReplyPacket extends Packet
     {
         header = head;
         RequestData = new RequestDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ReportData = new ReportDataBlock[count];
         for (int j = 0; j < count; j++)
         { ReportData[j] = new ReportDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -237,6 +243,7 @@ public class LandStatReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -251,6 +258,7 @@ public class LandStatReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- LandStatReply ---\n";

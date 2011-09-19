@@ -59,6 +59,7 @@ public class RezRestoreToWorldPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -104,7 +105,7 @@ public class RezRestoreToWorldPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -122,7 +123,7 @@ public class RezRestoreToWorldPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -162,10 +163,10 @@ public class RezRestoreToWorldPacket extends Packet
             Flags = bytes.getInt(); 
             SaleType = bytes.get(); 
             SalePrice = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
             CreationDate = bytes.getInt(); 
@@ -199,6 +200,7 @@ public class RezRestoreToWorldPacket extends Packet
             bytes.putInt(CRC);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -236,8 +238,11 @@ public class RezRestoreToWorldPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RezRestoreToWorld; }
     public AgentDataBlock AgentData;
     public InventoryDataBlock InventoryData;
@@ -267,6 +272,7 @@ public class RezRestoreToWorldPacket extends Packet
         InventoryData = new InventoryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -278,6 +284,7 @@ public class RezRestoreToWorldPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -291,6 +298,7 @@ public class RezRestoreToWorldPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RezRestoreToWorld ---\n";

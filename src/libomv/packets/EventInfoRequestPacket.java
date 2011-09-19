@@ -57,6 +57,7 @@ public class EventInfoRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class EventInfoRequestPacket extends Packet
             bytes.putInt(EventID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EventData --\n";
@@ -110,8 +112,11 @@ public class EventInfoRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EventInfoRequest; }
     public AgentDataBlock AgentData;
     public EventDataBlock EventData;
@@ -141,6 +146,7 @@ public class EventInfoRequestPacket extends Packet
         EventData = new EventDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -152,6 +158,7 @@ public class EventInfoRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -165,6 +172,7 @@ public class EventInfoRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EventInfoRequest ---\n";

@@ -57,6 +57,7 @@ public class EjectGroupMemberRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class EjectGroupMemberRequestPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -128,6 +130,7 @@ public class EjectGroupMemberRequestPacket extends Packet
             EjecteeID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EjectData --\n";
@@ -145,8 +148,11 @@ public class EjectGroupMemberRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EjectGroupMemberRequest; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -169,7 +175,7 @@ public class EjectGroupMemberRequestPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         GroupData = new GroupDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         EjectData = new EjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { EjectData[j] = new EjectDataBlock(bytes); }
@@ -180,12 +186,13 @@ public class EjectGroupMemberRequestPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         GroupData = new GroupDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         EjectData = new EjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { EjectData[j] = new EjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -199,6 +206,7 @@ public class EjectGroupMemberRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -214,6 +222,7 @@ public class EjectGroupMemberRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EjectGroupMemberRequest ---\n";

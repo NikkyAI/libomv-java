@@ -60,6 +60,7 @@ public class ObjectUpdatePacket extends Packet
             bytes.putShort(TimeDilation);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -96,7 +97,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _objectdata = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -134,7 +135,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _textureentry = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -152,7 +153,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _textureanim = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -170,7 +171,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _namevalue = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -188,7 +189,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _data = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -206,7 +207,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _text = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -225,7 +226,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _mediaurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -243,7 +244,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _psblock = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -261,7 +262,7 @@ public class ObjectUpdatePacket extends Packet
             if (value == null) {
                 _extraparams = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -305,7 +306,7 @@ public class ObjectUpdatePacket extends Packet
             Material = bytes.get(); 
             ClickAction = bytes.get(); 
             Scale = new Vector3(bytes); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _objectdata = new byte[length];
             bytes.get(_objectdata); 
             ParentID = bytes.getInt(); 
@@ -328,30 +329,30 @@ public class ObjectUpdatePacket extends Packet
             ProfileBegin = bytes.getShort(); 
             ProfileEnd = bytes.getShort(); 
             ProfileHollow = bytes.getShort(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _textureentry = new byte[length];
             bytes.get(_textureentry); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _textureanim = new byte[length];
             bytes.get(_textureanim); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _namevalue = new byte[length];
             bytes.get(_namevalue); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _data = new byte[length];
             bytes.get(_data); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _text = new byte[length];
             bytes.get(_text); 
             TextColor = new byte[4];
             bytes.get(TextColor);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediaurl = new byte[length];
             bytes.get(_mediaurl); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _psblock = new byte[length];
             bytes.get(_psblock); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _extraparams = new byte[length];
             bytes.get(_extraparams); 
             Sound = new UUID(bytes);
@@ -423,6 +424,7 @@ public class ObjectUpdatePacket extends Packet
             JointAxisOrAnchor.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -485,8 +487,11 @@ public class ObjectUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectUpdate; }
     public RegionDataBlock RegionData;
     public ObjectDataBlock[] ObjectData;
@@ -506,7 +511,7 @@ public class ObjectUpdatePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -516,12 +521,13 @@ public class ObjectUpdatePacket extends Packet
     {
         header = head;
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -534,6 +540,7 @@ public class ObjectUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -548,6 +555,7 @@ public class ObjectUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectUpdate ---\n";

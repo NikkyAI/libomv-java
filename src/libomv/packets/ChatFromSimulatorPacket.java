@@ -49,7 +49,7 @@ public class ChatFromSimulatorPacket extends Packet
             if (value == null) {
                 _fromname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -73,7 +73,7 @@ public class ChatFromSimulatorPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -94,7 +94,7 @@ public class ChatFromSimulatorPacket extends Packet
         public ChatDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _fromname = new byte[length];
             bytes.get(_fromname); 
             SourceID = new UUID(bytes);
@@ -103,7 +103,7 @@ public class ChatFromSimulatorPacket extends Packet
             ChatType = bytes.get(); 
             Audible = bytes.get(); 
             Position = new Vector3(bytes); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _message = new byte[length];
             bytes.get(_message); 
         }
@@ -122,6 +122,7 @@ public class ChatFromSimulatorPacket extends Packet
             bytes.put(_message);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ChatData --\n";
@@ -146,8 +147,11 @@ public class ChatFromSimulatorPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ChatFromSimulator; }
     public ChatDataBlock ChatData;
 
@@ -173,6 +177,7 @@ public class ChatFromSimulatorPacket extends Packet
         ChatData = new ChatDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -183,6 +188,7 @@ public class ChatFromSimulatorPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -195,6 +201,7 @@ public class ChatFromSimulatorPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ChatFromSimulator ---\n";

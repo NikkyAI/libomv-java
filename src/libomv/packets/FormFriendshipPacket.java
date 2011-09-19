@@ -57,6 +57,7 @@ public class FormFriendshipPacket extends Packet
             DestID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentBlock --\n";
@@ -75,8 +76,11 @@ public class FormFriendshipPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.FormFriendship; }
     public AgentBlockBlock AgentBlock;
 
@@ -102,6 +106,7 @@ public class FormFriendshipPacket extends Packet
         AgentBlock = new AgentBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -112,6 +117,7 @@ public class FormFriendshipPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -124,6 +130,7 @@ public class FormFriendshipPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- FormFriendship ---\n";

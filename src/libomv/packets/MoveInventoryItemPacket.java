@@ -62,6 +62,7 @@ public class MoveInventoryItemPacket extends Packet
             bytes.put((byte)((Stamp) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,7 +94,7 @@ public class MoveInventoryItemPacket extends Packet
             if (value == null) {
                 _newname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class MoveInventoryItemPacket extends Packet
             int length;
             ItemID = new UUID(bytes);
             FolderID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _newname = new byte[length];
             bytes.get(_newname); 
         }
@@ -128,6 +129,7 @@ public class MoveInventoryItemPacket extends Packet
             bytes.put(_newname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -147,8 +149,11 @@ public class MoveInventoryItemPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MoveInventoryItem; }
     public AgentDataBlock AgentData;
     public InventoryDataBlock[] InventoryData;
@@ -168,7 +173,7 @@ public class MoveInventoryItemPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
@@ -178,12 +183,13 @@ public class MoveInventoryItemPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -196,6 +202,7 @@ public class MoveInventoryItemPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -210,6 +217,7 @@ public class MoveInventoryItemPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MoveInventoryItem ---\n";

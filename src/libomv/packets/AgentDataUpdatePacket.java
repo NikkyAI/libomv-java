@@ -49,7 +49,7 @@ public class AgentDataUpdatePacket extends Packet
             if (value == null) {
                 _firstname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -67,7 +67,7 @@ public class AgentDataUpdatePacket extends Packet
             if (value == null) {
                 _lastname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -85,7 +85,7 @@ public class AgentDataUpdatePacket extends Packet
             if (value == null) {
                 _grouptitle = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -105,7 +105,7 @@ public class AgentDataUpdatePacket extends Packet
             if (value == null) {
                 _groupname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -129,18 +129,18 @@ public class AgentDataUpdatePacket extends Packet
         {
             int length;
             AgentID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _firstname = new byte[length];
             bytes.get(_firstname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _lastname = new byte[length];
             bytes.get(_lastname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _grouptitle = new byte[length];
             bytes.get(_grouptitle); 
             ActiveGroupID = new UUID(bytes);
             GroupPowers = bytes.getLong(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _groupname = new byte[length];
             bytes.get(_groupname); 
         }
@@ -160,6 +160,7 @@ public class AgentDataUpdatePacket extends Packet
             bytes.put(_groupname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -183,8 +184,11 @@ public class AgentDataUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentDataUpdate; }
     public AgentDataBlock AgentData;
 
@@ -210,6 +214,7 @@ public class AgentDataUpdatePacket extends Packet
         AgentData = new AgentDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -220,6 +225,7 @@ public class AgentDataUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -232,6 +238,7 @@ public class AgentDataUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentDataUpdate ---\n";

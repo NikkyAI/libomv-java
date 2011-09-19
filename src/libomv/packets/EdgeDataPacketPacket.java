@@ -49,7 +49,7 @@ public class EdgeDataPacketPacket extends Packet
             if (value == null) {
                 _layerdata = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -71,7 +71,7 @@ public class EdgeDataPacketPacket extends Packet
             int length;
             LayerType = bytes.get(); 
             Direction = bytes.get(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _layerdata = new byte[length];
             bytes.get(_layerdata); 
         }
@@ -84,6 +84,7 @@ public class EdgeDataPacketPacket extends Packet
             bytes.put(_layerdata);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EdgeData --\n";
@@ -103,8 +104,11 @@ public class EdgeDataPacketPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EdgeDataPacket; }
     public EdgeDataBlock EdgeData;
 
@@ -130,6 +134,7 @@ public class EdgeDataPacketPacket extends Packet
         EdgeData = new EdgeDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -140,6 +145,7 @@ public class EdgeDataPacketPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -152,6 +158,7 @@ public class EdgeDataPacketPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EdgeDataPacket ---\n";

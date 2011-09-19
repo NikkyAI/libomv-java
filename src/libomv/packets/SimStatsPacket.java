@@ -62,6 +62,7 @@ public class SimStatsPacket extends Packet
             bytes.putInt(ObjectCapacity);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Region --\n";
@@ -103,6 +104,7 @@ public class SimStatsPacket extends Packet
             bytes.putFloat(StatValue);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Stat --\n";
@@ -139,6 +141,7 @@ public class SimStatsPacket extends Packet
             bytes.putInt(PID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PidStat --\n";
@@ -156,8 +159,11 @@ public class SimStatsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimStats; }
     public RegionBlock Region;
     public StatBlock[] Stat;
@@ -179,7 +185,7 @@ public class SimStatsPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Region = new RegionBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Stat = new StatBlock[count];
         for (int j = 0; j < count; j++)
         { Stat[j] = new StatBlock(bytes); }
@@ -190,13 +196,14 @@ public class SimStatsPacket extends Packet
     {
         header = head;
         Region = new RegionBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Stat = new StatBlock[count];
         for (int j = 0; j < count; j++)
         { Stat[j] = new StatBlock(bytes); }
         PidStat = new PidStatBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -210,6 +217,7 @@ public class SimStatsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -225,6 +233,7 @@ public class SimStatsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimStats ---\n";

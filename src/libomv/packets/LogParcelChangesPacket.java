@@ -54,6 +54,7 @@ public class LogParcelChangesPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,6 +90,7 @@ public class LogParcelChangesPacket extends Packet
             bytes.putLong(RegionHandle);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -139,6 +141,7 @@ public class LogParcelChangesPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -161,8 +164,11 @@ public class LogParcelChangesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.LogParcelChanges; }
     public AgentDataBlock AgentData;
     public RegionDataBlock RegionData;
@@ -185,7 +191,7 @@ public class LogParcelChangesPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
@@ -196,12 +202,13 @@ public class LogParcelChangesPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -215,6 +222,7 @@ public class LogParcelChangesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -230,6 +238,7 @@ public class LogParcelChangesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- LogParcelChanges ---\n";

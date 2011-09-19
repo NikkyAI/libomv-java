@@ -58,6 +58,7 @@ public class ObjectUpdateCompressedPacket extends Packet
             bytes.putShort(TimeDilation);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionData --\n";
@@ -87,7 +88,7 @@ public class ObjectUpdateCompressedPacket extends Packet
             if (value == null) {
                 _data = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -108,7 +109,7 @@ public class ObjectUpdateCompressedPacket extends Packet
         {
             int length;
             UpdateFlags = bytes.getInt(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _data = new byte[length];
             bytes.get(_data); 
         }
@@ -120,6 +121,7 @@ public class ObjectUpdateCompressedPacket extends Packet
             bytes.put(_data);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -138,8 +140,11 @@ public class ObjectUpdateCompressedPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectUpdateCompressed; }
     public RegionDataBlock RegionData;
     public ObjectDataBlock[] ObjectData;
@@ -159,7 +164,7 @@ public class ObjectUpdateCompressedPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -169,12 +174,13 @@ public class ObjectUpdateCompressedPacket extends Packet
     {
         header = head;
         RegionData = new RegionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -187,6 +193,7 @@ public class ObjectUpdateCompressedPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -201,6 +208,7 @@ public class ObjectUpdateCompressedPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectUpdateCompressed ---\n";

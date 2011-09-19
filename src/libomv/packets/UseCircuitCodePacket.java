@@ -60,6 +60,7 @@ public class UseCircuitCodePacket extends Packet
             ID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- CircuitCode --\n";
@@ -79,8 +80,11 @@ public class UseCircuitCodePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UseCircuitCode; }
     public CircuitCodeBlock CircuitCode;
 
@@ -106,6 +110,7 @@ public class UseCircuitCodePacket extends Packet
         CircuitCode = new CircuitCodeBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -116,6 +121,7 @@ public class UseCircuitCodePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -128,6 +134,7 @@ public class UseCircuitCodePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UseCircuitCode ---\n";

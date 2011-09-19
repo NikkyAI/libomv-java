@@ -52,7 +52,7 @@ public class AssetUploadRequestPacket extends Packet
             if (value == null) {
                 _assetdata = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -76,7 +76,7 @@ public class AssetUploadRequestPacket extends Packet
             Type = bytes.get(); 
             Tempfile = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             StoreLocal = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _assetdata = new byte[length];
             bytes.get(_assetdata); 
         }
@@ -91,6 +91,7 @@ public class AssetUploadRequestPacket extends Packet
             bytes.put(_assetdata);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AssetBlock --\n";
@@ -112,8 +113,11 @@ public class AssetUploadRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AssetUploadRequest; }
     public AssetBlockBlock AssetBlock;
 
@@ -139,6 +143,7 @@ public class AssetUploadRequestPacket extends Packet
         AssetBlock = new AssetBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -149,6 +154,7 @@ public class AssetUploadRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -161,6 +167,7 @@ public class AssetUploadRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AssetUploadRequest ---\n";

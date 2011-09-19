@@ -53,6 +53,7 @@ public class PacketAckPacket extends Packet
             bytes.putInt(ID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Packets --\n";
@@ -70,8 +71,11 @@ public class PacketAckPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.PacketAck; }
     public PacketsBlock[] Packets;
 
@@ -88,7 +92,7 @@ public class PacketAckPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Packets = new PacketsBlock[count];
         for (int j = 0; j < count; j++)
         { Packets[j] = new PacketsBlock(bytes); }
@@ -97,12 +101,13 @@ public class PacketAckPacket extends Packet
     public PacketAckPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Packets = new PacketsBlock[count];
         for (int j = 0; j < count; j++)
         { Packets[j] = new PacketsBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -114,6 +119,7 @@ public class PacketAckPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -127,6 +133,7 @@ public class PacketAckPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- PacketAck ---\n";

@@ -62,6 +62,7 @@ public class UpdateInventoryItemPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -109,7 +110,7 @@ public class UpdateInventoryItemPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -127,7 +128,7 @@ public class UpdateInventoryItemPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -168,10 +169,10 @@ public class UpdateInventoryItemPacket extends Packet
             Flags = bytes.getInt(); 
             SaleType = bytes.get(); 
             SalePrice = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
             CreationDate = bytes.getInt(); 
@@ -206,6 +207,7 @@ public class UpdateInventoryItemPacket extends Packet
             bytes.putInt(CRC);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -244,8 +246,11 @@ public class UpdateInventoryItemPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UpdateInventoryItem; }
     public AgentDataBlock AgentData;
     public InventoryDataBlock[] InventoryData;
@@ -265,7 +270,7 @@ public class UpdateInventoryItemPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
@@ -275,12 +280,13 @@ public class UpdateInventoryItemPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -293,6 +299,7 @@ public class UpdateInventoryItemPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -307,6 +314,7 @@ public class UpdateInventoryItemPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UpdateInventoryItem ---\n";

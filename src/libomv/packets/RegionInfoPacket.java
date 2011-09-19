@@ -59,6 +59,7 @@ public class RegionInfoPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -87,7 +88,7 @@ public class RegionInfoPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -122,7 +123,7 @@ public class RegionInfoPacket extends Packet
         public RegionInfoBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             EstateID = bytes.getInt(); 
@@ -163,6 +164,7 @@ public class RegionInfoPacket extends Packet
             bytes.putFloat(SunHour);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionInfo --\n";
@@ -205,7 +207,7 @@ public class RegionInfoPacket extends Packet
             if (value == null) {
                 _productsku = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -223,7 +225,7 @@ public class RegionInfoPacket extends Packet
             if (value == null) {
                 _productname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -247,10 +249,10 @@ public class RegionInfoPacket extends Packet
         public RegionInfo2Block(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _productsku = new byte[length];
             bytes.get(_productsku); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _productname = new byte[length];
             bytes.get(_productname); 
             MaxAgents32 = bytes.getInt(); 
@@ -269,6 +271,7 @@ public class RegionInfoPacket extends Packet
             bytes.putInt(HardMaxObjects);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RegionInfo2 --\n";
@@ -290,8 +293,11 @@ public class RegionInfoPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RegionInfo; }
     public AgentDataBlock AgentData;
     public RegionInfoBlock RegionInfo;
@@ -325,6 +331,7 @@ public class RegionInfoPacket extends Packet
         RegionInfo2 = new RegionInfo2Block(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -337,6 +344,7 @@ public class RegionInfoPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -351,6 +359,7 @@ public class RegionInfoPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RegionInfo ---\n";

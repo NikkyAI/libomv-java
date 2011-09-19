@@ -53,6 +53,7 @@ public class ViewerFrozenMessagePacket extends Packet
             bytes.put((byte)((Data) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- FrozenData --\n";
@@ -70,8 +71,11 @@ public class ViewerFrozenMessagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ViewerFrozenMessage; }
     public FrozenDataBlock FrozenData;
 
@@ -97,6 +101,7 @@ public class ViewerFrozenMessagePacket extends Packet
         FrozenData = new FrozenDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -107,6 +112,7 @@ public class ViewerFrozenMessagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -119,6 +125,7 @@ public class ViewerFrozenMessagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ViewerFrozenMessage ---\n";

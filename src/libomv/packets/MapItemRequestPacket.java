@@ -66,6 +66,7 @@ public class MapItemRequestPacket extends Packet
             bytes.put((byte)((Godlike) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -108,6 +109,7 @@ public class MapItemRequestPacket extends Packet
             bytes.putLong(RegionHandle);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RequestData --\n";
@@ -126,8 +128,11 @@ public class MapItemRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MapItemRequest; }
     public AgentDataBlock AgentData;
     public RequestDataBlock RequestData;
@@ -157,6 +162,7 @@ public class MapItemRequestPacket extends Packet
         RequestData = new RequestDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -168,6 +174,7 @@ public class MapItemRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -181,6 +188,7 @@ public class MapItemRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MapItemRequest ---\n";

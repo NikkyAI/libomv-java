@@ -54,7 +54,7 @@ public class UpdateParcelPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -72,7 +72,7 @@ public class UpdateParcelPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -90,7 +90,7 @@ public class UpdateParcelPacket extends Packet
             if (value == null) {
                 _musicurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -130,13 +130,13 @@ public class UpdateParcelPacket extends Packet
             OwnerID = new UUID(bytes);
             GroupOwned = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             Status = bytes.get(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _musicurl = new byte[length];
             bytes.get(_musicurl); 
             RegionX = bytes.getFloat();
@@ -182,6 +182,7 @@ public class UpdateParcelPacket extends Packet
             bytes.put((byte)((MaturePublish) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -219,8 +220,11 @@ public class UpdateParcelPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UpdateParcel; }
     public ParcelDataBlock ParcelData;
 
@@ -246,6 +250,7 @@ public class UpdateParcelPacket extends Packet
         ParcelData = new ParcelDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -256,6 +261,7 @@ public class UpdateParcelPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -268,6 +274,7 @@ public class UpdateParcelPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UpdateParcel ---\n";

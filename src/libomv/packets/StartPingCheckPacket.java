@@ -56,6 +56,7 @@ public class StartPingCheckPacket extends Packet
             bytes.putInt(OldestUnacked);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PingID --\n";
@@ -74,8 +75,11 @@ public class StartPingCheckPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.StartPingCheck; }
     public PingIDBlock PingID;
 
@@ -101,6 +105,7 @@ public class StartPingCheckPacket extends Packet
         PingID = new PingIDBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -111,6 +116,7 @@ public class StartPingCheckPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -123,6 +129,7 @@ public class StartPingCheckPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- StartPingCheck ---\n";

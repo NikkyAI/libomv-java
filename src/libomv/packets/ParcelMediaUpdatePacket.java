@@ -48,7 +48,7 @@ public class ParcelMediaUpdatePacket extends Packet
             if (value == null) {
                 _mediaurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -70,7 +70,7 @@ public class ParcelMediaUpdatePacket extends Packet
         public DataBlockBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediaurl = new byte[length];
             bytes.get(_mediaurl); 
             MediaID = new UUID(bytes);
@@ -85,6 +85,7 @@ public class ParcelMediaUpdatePacket extends Packet
             bytes.put(MediaAutoScale);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -114,7 +115,7 @@ public class ParcelMediaUpdatePacket extends Packet
             if (value == null) {
                 _mediatype = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -132,7 +133,7 @@ public class ParcelMediaUpdatePacket extends Packet
             if (value == null) {
                 _mediadesc = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -156,10 +157,10 @@ public class ParcelMediaUpdatePacket extends Packet
         public DataBlockExtendedBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediatype = new byte[length];
             bytes.get(_mediatype); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediadesc = new byte[length];
             bytes.get(_mediadesc); 
             MediaWidth = bytes.getInt(); 
@@ -178,6 +179,7 @@ public class ParcelMediaUpdatePacket extends Packet
             bytes.put(MediaLoop);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlockExtended --\n";
@@ -199,8 +201,11 @@ public class ParcelMediaUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelMediaUpdate; }
     public DataBlockBlock DataBlock;
     public DataBlockExtendedBlock DataBlockExtended;
@@ -230,6 +235,7 @@ public class ParcelMediaUpdatePacket extends Packet
         DataBlockExtended = new DataBlockExtendedBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -241,6 +247,7 @@ public class ParcelMediaUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -254,6 +261,7 @@ public class ParcelMediaUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelMediaUpdate ---\n";

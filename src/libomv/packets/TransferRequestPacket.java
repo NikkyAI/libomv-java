@@ -52,7 +52,7 @@ public class TransferRequestPacket extends Packet
             if (value == null) {
                 _params = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -76,7 +76,7 @@ public class TransferRequestPacket extends Packet
             ChannelType = bytes.getInt(); 
             SourceType = bytes.getInt(); 
             Priority = bytes.getFloat();
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _params = new byte[length];
             bytes.get(_params); 
         }
@@ -91,6 +91,7 @@ public class TransferRequestPacket extends Packet
             bytes.put(_params);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransferInfo --\n";
@@ -112,8 +113,11 @@ public class TransferRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TransferRequest; }
     public TransferInfoBlock TransferInfo;
 
@@ -139,6 +143,7 @@ public class TransferRequestPacket extends Packet
         TransferInfo = new TransferInfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -149,6 +154,7 @@ public class TransferRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -161,6 +167,7 @@ public class TransferRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TransferRequest ---\n";

@@ -63,6 +63,7 @@ public class ParcelAccessListReplyPacket extends Packet
             bytes.putInt(LocalID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -107,6 +108,7 @@ public class ParcelAccessListReplyPacket extends Packet
             bytes.putInt(Flags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- List --\n";
@@ -126,8 +128,11 @@ public class ParcelAccessListReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelAccessListReply; }
     public DataBlock Data;
     public ListBlock[] List;
@@ -147,7 +152,7 @@ public class ParcelAccessListReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         List = new ListBlock[count];
         for (int j = 0; j < count; j++)
         { List[j] = new ListBlock(bytes); }
@@ -157,12 +162,13 @@ public class ParcelAccessListReplyPacket extends Packet
     {
         header = head;
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         List = new ListBlock[count];
         for (int j = 0; j < count; j++)
         { List[j] = new ListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -175,6 +181,7 @@ public class ParcelAccessListReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -189,6 +196,7 @@ public class ParcelAccessListReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelAccessListReply ---\n";

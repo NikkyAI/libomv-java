@@ -62,6 +62,7 @@ public class AvatarPickerRequestPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,7 +92,7 @@ public class AvatarPickerRequestPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -111,7 +112,7 @@ public class AvatarPickerRequestPacket extends Packet
         public DataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
         }
@@ -122,6 +123,7 @@ public class AvatarPickerRequestPacket extends Packet
             bytes.put(_name);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -139,8 +141,11 @@ public class AvatarPickerRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarPickerRequest; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -170,6 +175,7 @@ public class AvatarPickerRequestPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -181,6 +187,7 @@ public class AvatarPickerRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -194,6 +201,7 @@ public class AvatarPickerRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarPickerRequest ---\n";

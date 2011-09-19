@@ -60,6 +60,7 @@ public class FindAgentPacket extends Packet
             bytes.putInt(SpaceIP);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentBlock --\n";
@@ -100,6 +101,7 @@ public class FindAgentPacket extends Packet
             bytes.putDouble(GlobalY);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- LocationBlock --\n";
@@ -118,8 +120,11 @@ public class FindAgentPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.FindAgent; }
     public AgentBlockBlock AgentBlock;
     public LocationBlockBlock[] LocationBlock;
@@ -139,7 +144,7 @@ public class FindAgentPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentBlock = new AgentBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         LocationBlock = new LocationBlockBlock[count];
         for (int j = 0; j < count; j++)
         { LocationBlock[j] = new LocationBlockBlock(bytes); }
@@ -149,12 +154,13 @@ public class FindAgentPacket extends Packet
     {
         header = head;
         AgentBlock = new AgentBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         LocationBlock = new LocationBlockBlock[count];
         for (int j = 0; j < count; j++)
         { LocationBlock[j] = new LocationBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -167,6 +173,7 @@ public class FindAgentPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -181,6 +188,7 @@ public class FindAgentPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- FindAgent ---\n";

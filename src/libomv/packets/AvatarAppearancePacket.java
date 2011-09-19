@@ -59,6 +59,7 @@ public class AvatarAppearancePacket extends Packet
             bytes.put((byte)((IsTrial) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Sender --\n";
@@ -87,7 +88,7 @@ public class AvatarAppearancePacket extends Packet
             if (value == null) {
                 _textureentry = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -107,7 +108,7 @@ public class AvatarAppearancePacket extends Packet
         public ObjectDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _textureentry = new byte[length];
             bytes.get(_textureentry); 
         }
@@ -118,6 +119,7 @@ public class AvatarAppearancePacket extends Packet
             bytes.put(_textureentry);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -153,6 +155,7 @@ public class AvatarAppearancePacket extends Packet
             bytes.put(ParamValue);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- VisualParam --\n";
@@ -170,8 +173,11 @@ public class AvatarAppearancePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarAppearance; }
     public SenderBlock Sender;
     public ObjectDataBlock ObjectData;
@@ -194,7 +200,7 @@ public class AvatarAppearancePacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Sender = new SenderBlock(bytes);
         ObjectData = new ObjectDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         VisualParam = new VisualParamBlock[count];
         for (int j = 0; j < count; j++)
         { VisualParam[j] = new VisualParamBlock(bytes); }
@@ -205,12 +211,13 @@ public class AvatarAppearancePacket extends Packet
         header = head;
         Sender = new SenderBlock(bytes);
         ObjectData = new ObjectDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         VisualParam = new VisualParamBlock[count];
         for (int j = 0; j < count; j++)
         { VisualParam[j] = new VisualParamBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -224,6 +231,7 @@ public class AvatarAppearancePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -239,6 +247,7 @@ public class AvatarAppearancePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarAppearance ---\n";

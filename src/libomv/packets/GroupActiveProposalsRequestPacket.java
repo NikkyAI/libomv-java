@@ -57,6 +57,7 @@ public class GroupActiveProposalsRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class GroupActiveProposalsRequestPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -128,6 +130,7 @@ public class GroupActiveProposalsRequestPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionData --\n";
@@ -145,8 +148,11 @@ public class GroupActiveProposalsRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupActiveProposalsRequest; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -180,6 +186,7 @@ public class GroupActiveProposalsRequestPacket extends Packet
         TransactionData = new TransactionDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -192,6 +199,7 @@ public class GroupActiveProposalsRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -206,6 +214,7 @@ public class GroupActiveProposalsRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupActiveProposalsRequest ---\n";

@@ -59,6 +59,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             AvatarID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -90,7 +91,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             if (value == null) {
                 _abouttext = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -108,7 +109,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             if (value == null) {
                 _flabouttext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -126,7 +127,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             if (value == null) {
                 _bornon = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -144,7 +145,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             if (value == null) {
                 _profileurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -162,7 +163,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             if (value == null) {
                 _chartermember = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -190,19 +191,19 @@ public class AvatarPropertiesReplyPacket extends Packet
             ImageID = new UUID(bytes);
             FLImageID = new UUID(bytes);
             PartnerID = new UUID(bytes);
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _abouttext = new byte[length];
             bytes.get(_abouttext); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _flabouttext = new byte[length];
             bytes.get(_flabouttext); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _bornon = new byte[length];
             bytes.get(_bornon); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _profileurl = new byte[length];
             bytes.get(_profileurl); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _chartermember = new byte[length];
             bytes.get(_chartermember); 
             Flags = bytes.getInt(); 
@@ -226,6 +227,7 @@ public class AvatarPropertiesReplyPacket extends Packet
             bytes.putInt(Flags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PropertiesData --\n";
@@ -251,8 +253,11 @@ public class AvatarPropertiesReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarPropertiesReply; }
     public AgentDataBlock AgentData;
     public PropertiesDataBlock PropertiesData;
@@ -282,6 +287,7 @@ public class AvatarPropertiesReplyPacket extends Packet
         PropertiesData = new PropertiesDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -293,6 +299,7 @@ public class AvatarPropertiesReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -306,6 +313,7 @@ public class AvatarPropertiesReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarPropertiesReply ---\n";

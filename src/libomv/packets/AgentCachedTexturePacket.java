@@ -60,6 +60,7 @@ public class AgentCachedTexturePacket extends Packet
             bytes.putInt(SerialNum);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -100,6 +101,7 @@ public class AgentCachedTexturePacket extends Packet
             bytes.put(TextureIndex);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- WearableData --\n";
@@ -118,8 +120,11 @@ public class AgentCachedTexturePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentCachedTexture; }
     public AgentDataBlock AgentData;
     public WearableDataBlock[] WearableData;
@@ -139,7 +144,7 @@ public class AgentCachedTexturePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         WearableData = new WearableDataBlock[count];
         for (int j = 0; j < count; j++)
         { WearableData[j] = new WearableDataBlock(bytes); }
@@ -149,12 +154,13 @@ public class AgentCachedTexturePacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         WearableData = new WearableDataBlock[count];
         for (int j = 0; j < count; j++)
         { WearableData[j] = new WearableDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -167,6 +173,7 @@ public class AgentCachedTexturePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -181,6 +188,7 @@ public class AgentCachedTexturePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentCachedTexture ---\n";

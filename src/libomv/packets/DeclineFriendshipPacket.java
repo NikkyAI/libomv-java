@@ -57,6 +57,7 @@ public class DeclineFriendshipPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class DeclineFriendshipPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionBlock --\n";
@@ -110,8 +112,11 @@ public class DeclineFriendshipPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DeclineFriendship; }
     public AgentDataBlock AgentData;
     public TransactionBlockBlock TransactionBlock;
@@ -141,6 +146,7 @@ public class DeclineFriendshipPacket extends Packet
         TransactionBlock = new TransactionBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -152,6 +158,7 @@ public class DeclineFriendshipPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -165,6 +172,7 @@ public class DeclineFriendshipPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DeclineFriendship ---\n";

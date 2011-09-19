@@ -60,6 +60,7 @@ public class UserReportPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -95,7 +96,7 @@ public class UserReportPacket extends Packet
             if (value == null) {
                 _abuseregionname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -114,7 +115,7 @@ public class UserReportPacket extends Packet
             if (value == null) {
                 _summary = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -132,7 +133,7 @@ public class UserReportPacket extends Packet
             if (value == null) {
                 _details = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -150,7 +151,7 @@ public class UserReportPacket extends Packet
             if (value == null) {
                 _versionstring = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -180,17 +181,17 @@ public class UserReportPacket extends Packet
             ScreenshotID = new UUID(bytes);
             ObjectID = new UUID(bytes);
             AbuserID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _abuseregionname = new byte[length];
             bytes.get(_abuseregionname); 
             AbuseRegionID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _summary = new byte[length];
             bytes.get(_summary); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _details = new byte[length];
             bytes.get(_details); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _versionstring = new byte[length];
             bytes.get(_versionstring); 
         }
@@ -215,6 +216,7 @@ public class UserReportPacket extends Packet
             bytes.put(_versionstring);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ReportData --\n";
@@ -243,8 +245,11 @@ public class UserReportPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UserReport; }
     public AgentDataBlock AgentData;
     public ReportDataBlock ReportData;
@@ -274,6 +279,7 @@ public class UserReportPacket extends Packet
         ReportData = new ReportDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -285,6 +291,7 @@ public class UserReportPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -298,6 +305,7 @@ public class UserReportPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UserReport ---\n";

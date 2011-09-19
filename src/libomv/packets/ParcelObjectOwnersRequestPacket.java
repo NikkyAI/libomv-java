@@ -57,6 +57,7 @@ public class ParcelObjectOwnersRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class ParcelObjectOwnersRequestPacket extends Packet
             bytes.putInt(LocalID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -110,8 +112,11 @@ public class ParcelObjectOwnersRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelObjectOwnersRequest; }
     public AgentDataBlock AgentData;
     public ParcelDataBlock ParcelData;
@@ -141,6 +146,7 @@ public class ParcelObjectOwnersRequestPacket extends Packet
         ParcelData = new ParcelDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -152,6 +158,7 @@ public class ParcelObjectOwnersRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -165,6 +172,7 @@ public class ParcelObjectOwnersRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelObjectOwnersRequest ---\n";

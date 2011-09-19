@@ -62,6 +62,7 @@ public class GroupRoleUpdatePacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -92,7 +93,7 @@ public class GroupRoleUpdatePacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -110,7 +111,7 @@ public class GroupRoleUpdatePacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -128,7 +129,7 @@ public class GroupRoleUpdatePacket extends Packet
             if (value == null) {
                 _title = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -153,13 +154,13 @@ public class GroupRoleUpdatePacket extends Packet
         {
             int length;
             RoleID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _title = new byte[length];
             bytes.get(_title); 
             Powers = bytes.getLong(); 
@@ -179,6 +180,7 @@ public class GroupRoleUpdatePacket extends Packet
             bytes.put(UpdateType);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RoleData --\n";
@@ -201,8 +203,11 @@ public class GroupRoleUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupRoleUpdate; }
     public AgentDataBlock AgentData;
     public RoleDataBlock[] RoleData;
@@ -222,7 +227,7 @@ public class GroupRoleUpdatePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         RoleData = new RoleDataBlock[count];
         for (int j = 0; j < count; j++)
         { RoleData[j] = new RoleDataBlock(bytes); }
@@ -232,12 +237,13 @@ public class GroupRoleUpdatePacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         RoleData = new RoleDataBlock[count];
         for (int j = 0; j < count; j++)
         { RoleData[j] = new RoleDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -250,6 +256,7 @@ public class GroupRoleUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -264,6 +271,7 @@ public class GroupRoleUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupRoleUpdate ---\n";

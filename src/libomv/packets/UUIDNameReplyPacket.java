@@ -49,7 +49,7 @@ public class UUIDNameReplyPacket extends Packet
             if (value == null) {
                 _firstname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -67,7 +67,7 @@ public class UUIDNameReplyPacket extends Packet
             if (value == null) {
                 _lastname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -89,10 +89,10 @@ public class UUIDNameReplyPacket extends Packet
         {
             int length;
             ID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _firstname = new byte[length];
             bytes.get(_firstname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _lastname = new byte[length];
             bytes.get(_lastname); 
         }
@@ -106,6 +106,7 @@ public class UUIDNameReplyPacket extends Packet
             bytes.put(_lastname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- UUIDNameBlock --\n";
@@ -125,8 +126,11 @@ public class UUIDNameReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UUIDNameReply; }
     public UUIDNameBlockBlock[] UUIDNameBlock;
 
@@ -143,7 +147,7 @@ public class UUIDNameReplyPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         UUIDNameBlock = new UUIDNameBlockBlock[count];
         for (int j = 0; j < count; j++)
         { UUIDNameBlock[j] = new UUIDNameBlockBlock(bytes); }
@@ -152,12 +156,13 @@ public class UUIDNameReplyPacket extends Packet
     public UUIDNameReplyPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         UUIDNameBlock = new UUIDNameBlockBlock[count];
         for (int j = 0; j < count; j++)
         { UUIDNameBlock[j] = new UUIDNameBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -169,6 +174,7 @@ public class UUIDNameReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -182,6 +188,7 @@ public class UUIDNameReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UUIDNameReply ---\n";

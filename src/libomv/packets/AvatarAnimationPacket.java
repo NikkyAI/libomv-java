@@ -56,6 +56,7 @@ public class AvatarAnimationPacket extends Packet
             ID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Sender --\n";
@@ -94,6 +95,7 @@ public class AvatarAnimationPacket extends Packet
             bytes.putInt(AnimSequenceID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AnimationList --\n";
@@ -130,6 +132,7 @@ public class AvatarAnimationPacket extends Packet
             ObjectID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AnimationSourceList --\n";
@@ -157,7 +160,7 @@ public class AvatarAnimationPacket extends Packet
             if (value == null) {
                 _typedata = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -177,7 +180,7 @@ public class AvatarAnimationPacket extends Packet
         public PhysicalAvatarEventListBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _typedata = new byte[length];
             bytes.get(_typedata); 
         }
@@ -188,6 +191,7 @@ public class AvatarAnimationPacket extends Packet
             bytes.put(_typedata);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PhysicalAvatarEventList --\n";
@@ -205,8 +209,11 @@ public class AvatarAnimationPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarAnimation; }
     public SenderBlock Sender;
     public AnimationListBlock[] AnimationList;
@@ -230,15 +237,15 @@ public class AvatarAnimationPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Sender = new SenderBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AnimationList = new AnimationListBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationList[j] = new AnimationListBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         AnimationSourceList = new AnimationSourceListBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationSourceList[j] = new AnimationSourceListBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         PhysicalAvatarEventList = new PhysicalAvatarEventListBlock[count];
         for (int j = 0; j < count; j++)
         { PhysicalAvatarEventList[j] = new PhysicalAvatarEventListBlock(bytes); }
@@ -248,20 +255,21 @@ public class AvatarAnimationPacket extends Packet
     {
         header = head;
         Sender = new SenderBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AnimationList = new AnimationListBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationList[j] = new AnimationListBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         AnimationSourceList = new AnimationSourceListBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationSourceList[j] = new AnimationSourceListBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         PhysicalAvatarEventList = new PhysicalAvatarEventListBlock[count];
         for (int j = 0; j < count; j++)
         { PhysicalAvatarEventList[j] = new PhysicalAvatarEventListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -278,6 +286,7 @@ public class AvatarAnimationPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -296,6 +305,7 @@ public class AvatarAnimationPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarAnimation ---\n";

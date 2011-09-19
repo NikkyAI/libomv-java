@@ -63,6 +63,7 @@ public class ParcelObjectOwnersReplyPacket extends Packet
             bytes.put((byte)((OnlineStatus) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -83,8 +84,11 @@ public class ParcelObjectOwnersReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelObjectOwnersReply; }
     public DataBlock[] Data;
 
@@ -101,7 +105,7 @@ public class ParcelObjectOwnersReplyPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Data = new DataBlock[count];
         for (int j = 0; j < count; j++)
         { Data[j] = new DataBlock(bytes); }
@@ -110,12 +114,13 @@ public class ParcelObjectOwnersReplyPacket extends Packet
     public ParcelObjectOwnersReplyPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Data = new DataBlock[count];
         for (int j = 0; j < count; j++)
         { Data[j] = new DataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -127,6 +132,7 @@ public class ParcelObjectOwnersReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -140,6 +146,7 @@ public class ParcelObjectOwnersReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelObjectOwnersReply ---\n";

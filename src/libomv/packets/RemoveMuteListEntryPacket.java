@@ -59,6 +59,7 @@ public class RemoveMuteListEntryPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class RemoveMuteListEntryPacket extends Packet
             if (value == null) {
                 _mutename = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -109,7 +110,7 @@ public class RemoveMuteListEntryPacket extends Packet
         {
             int length;
             MuteID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mutename = new byte[length];
             bytes.get(_mutename); 
         }
@@ -121,6 +122,7 @@ public class RemoveMuteListEntryPacket extends Packet
             bytes.put(_mutename);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MuteData --\n";
@@ -139,8 +141,11 @@ public class RemoveMuteListEntryPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RemoveMuteListEntry; }
     public AgentDataBlock AgentData;
     public MuteDataBlock MuteData;
@@ -170,6 +175,7 @@ public class RemoveMuteListEntryPacket extends Packet
         MuteData = new MuteDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -181,6 +187,7 @@ public class RemoveMuteListEntryPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -194,6 +201,7 @@ public class RemoveMuteListEntryPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RemoveMuteListEntry ---\n";

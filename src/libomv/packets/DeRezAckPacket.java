@@ -57,6 +57,7 @@ public class DeRezAckPacket extends Packet
             bytes.put((byte)((Success) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionData --\n";
@@ -75,8 +76,11 @@ public class DeRezAckPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DeRezAck; }
     public TransactionDataBlock TransactionData;
 
@@ -102,6 +106,7 @@ public class DeRezAckPacket extends Packet
         TransactionData = new TransactionDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -112,6 +117,7 @@ public class DeRezAckPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -124,6 +130,7 @@ public class DeRezAckPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DeRezAck ---\n";

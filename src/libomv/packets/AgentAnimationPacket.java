@@ -59,6 +59,7 @@ public class AgentAnimationPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -98,6 +99,7 @@ public class AgentAnimationPacket extends Packet
             bytes.put((byte)((StartAnim) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AnimationList --\n";
@@ -126,7 +128,7 @@ public class AgentAnimationPacket extends Packet
             if (value == null) {
                 _typedata = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -146,7 +148,7 @@ public class AgentAnimationPacket extends Packet
         public PhysicalAvatarEventListBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _typedata = new byte[length];
             bytes.get(_typedata); 
         }
@@ -157,6 +159,7 @@ public class AgentAnimationPacket extends Packet
             bytes.put(_typedata);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PhysicalAvatarEventList --\n";
@@ -174,8 +177,11 @@ public class AgentAnimationPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentAnimation; }
     public AgentDataBlock AgentData;
     public AnimationListBlock[] AnimationList;
@@ -197,11 +203,11 @@ public class AgentAnimationPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AnimationList = new AnimationListBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationList[j] = new AnimationListBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         PhysicalAvatarEventList = new PhysicalAvatarEventListBlock[count];
         for (int j = 0; j < count; j++)
         { PhysicalAvatarEventList[j] = new PhysicalAvatarEventListBlock(bytes); }
@@ -211,16 +217,17 @@ public class AgentAnimationPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AnimationList = new AnimationListBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationList[j] = new AnimationListBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         PhysicalAvatarEventList = new PhysicalAvatarEventListBlock[count];
         for (int j = 0; j < count; j++)
         { PhysicalAvatarEventList[j] = new PhysicalAvatarEventListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -235,6 +242,7 @@ public class AgentAnimationPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -251,6 +259,7 @@ public class AgentAnimationPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentAnimation ---\n";

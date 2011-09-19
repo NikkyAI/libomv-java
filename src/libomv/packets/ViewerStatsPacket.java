@@ -60,7 +60,7 @@ public class ViewerStatsPacket extends Packet
             if (value == null) {
                 _sysos = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -78,7 +78,7 @@ public class ViewerStatsPacket extends Packet
             if (value == null) {
                 _syscpu = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -96,7 +96,7 @@ public class ViewerStatsPacket extends Packet
             if (value == null) {
                 _sysgpu = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -130,13 +130,13 @@ public class ViewerStatsPacket extends Packet
             MetersTraveled = bytes.getDouble();
             RegionsVisited = bytes.getInt(); 
             SysRAM = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _sysos = new byte[length];
             bytes.get(_sysos); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _syscpu = new byte[length];
             bytes.get(_syscpu); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _sysgpu = new byte[length];
             bytes.get(_sysgpu); 
         }
@@ -163,6 +163,7 @@ public class ViewerStatsPacket extends Packet
             bytes.put(_sysgpu);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -218,6 +219,7 @@ public class ViewerStatsPacket extends Packet
             bytes.putInt(Textures);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DownloadTotals --\n";
@@ -264,6 +266,7 @@ public class ViewerStatsPacket extends Packet
             bytes.putInt(Savings);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NetStats --\n";
@@ -317,6 +320,7 @@ public class ViewerStatsPacket extends Packet
             bytes.putInt(Invalid);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- FailStats --\n";
@@ -360,6 +364,7 @@ public class ViewerStatsPacket extends Packet
             bytes.putDouble(Value);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MiscStats --\n";
@@ -378,8 +383,11 @@ public class ViewerStatsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ViewerStats; }
     public AgentDataBlock AgentData;
     public DownloadTotalsBlock DownloadTotals;
@@ -410,7 +418,7 @@ public class ViewerStatsPacket extends Packet
         for (int j = 0; j < 2; j++)
         { NetStats[j] = new NetStatsBlock(bytes); }
         FailStats = new FailStatsBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         MiscStats = new MiscStatsBlock[count];
         for (int j = 0; j < count; j++)
         { MiscStats[j] = new MiscStatsBlock(bytes); }
@@ -425,12 +433,13 @@ public class ViewerStatsPacket extends Packet
         for (int j = 0; j < 2; j++)
         { NetStats[j] = new NetStatsBlock(bytes); }
         FailStats = new FailStatsBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         MiscStats = new MiscStatsBlock[count];
         for (int j = 0; j < count; j++)
         { MiscStats[j] = new MiscStatsBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -446,6 +455,7 @@ public class ViewerStatsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -463,6 +473,7 @@ public class ViewerStatsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ViewerStats ---\n";

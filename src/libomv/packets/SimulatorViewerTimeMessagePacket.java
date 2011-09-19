@@ -69,6 +69,7 @@ public class SimulatorViewerTimeMessagePacket extends Packet
             SunAngVelocity.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TimeInfo --\n";
@@ -91,8 +92,11 @@ public class SimulatorViewerTimeMessagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimulatorViewerTimeMessage; }
     public TimeInfoBlock TimeInfo;
 
@@ -118,6 +122,7 @@ public class SimulatorViewerTimeMessagePacket extends Packet
         TimeInfo = new TimeInfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -128,6 +133,7 @@ public class SimulatorViewerTimeMessagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -140,6 +146,7 @@ public class SimulatorViewerTimeMessagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimulatorViewerTimeMessage ---\n";

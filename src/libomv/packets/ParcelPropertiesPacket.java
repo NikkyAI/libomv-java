@@ -64,7 +64,7 @@ public class ParcelPropertiesPacket extends Packet
             if (value == null) {
                 _bitmap = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -96,7 +96,7 @@ public class ParcelPropertiesPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -114,7 +114,7 @@ public class ParcelPropertiesPacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -132,7 +132,7 @@ public class ParcelPropertiesPacket extends Packet
             if (value == null) {
                 _musicurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -150,7 +150,7 @@ public class ParcelPropertiesPacket extends Packet
             if (value == null) {
                 _mediaurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -204,7 +204,7 @@ public class ParcelPropertiesPacket extends Packet
             RentPrice = bytes.getInt(); 
             AABBMin = new Vector3(bytes); 
             AABBMax = new Vector3(bytes); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _bitmap = new byte[length];
             bytes.get(_bitmap); 
             Area = bytes.getInt(); 
@@ -221,16 +221,16 @@ public class ParcelPropertiesPacket extends Packet
             OtherCleanTime = bytes.getInt(); 
             ParcelFlags = bytes.getInt(); 
             SalePrice = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _desc = new byte[length];
             bytes.get(_desc); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _musicurl = new byte[length];
             bytes.get(_musicurl); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediaurl = new byte[length];
             bytes.get(_mediaurl); 
             MediaID = new UUID(bytes);
@@ -308,6 +308,7 @@ public class ParcelPropertiesPacket extends Packet
             bytes.put((byte)((RegionDenyTransacted) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -391,6 +392,7 @@ public class ParcelPropertiesPacket extends Packet
             bytes.put((byte)((RegionDenyAgeUnverified) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgeVerificationBlock --\n";
@@ -408,8 +410,11 @@ public class ParcelPropertiesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelProperties; }
     public ParcelDataBlock ParcelData;
     public AgeVerificationBlockBlock AgeVerificationBlock;
@@ -439,6 +444,7 @@ public class ParcelPropertiesPacket extends Packet
         AgeVerificationBlock = new AgeVerificationBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -450,6 +456,7 @@ public class ParcelPropertiesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -463,6 +470,7 @@ public class ParcelPropertiesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelProperties ---\n";

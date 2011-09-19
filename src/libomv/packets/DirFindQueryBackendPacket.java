@@ -56,6 +56,7 @@ public class DirFindQueryBackendPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -84,7 +85,7 @@ public class DirFindQueryBackendPacket extends Packet
             if (value == null) {
                 _querytext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -109,7 +110,7 @@ public class DirFindQueryBackendPacket extends Packet
         {
             int length;
             QueryID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _querytext = new byte[length];
             bytes.get(_querytext); 
             QueryFlags = bytes.getInt(); 
@@ -129,6 +130,7 @@ public class DirFindQueryBackendPacket extends Packet
             bytes.put((byte)((Godlike) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -151,8 +153,11 @@ public class DirFindQueryBackendPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DirFindQueryBackend; }
     public AgentDataBlock AgentData;
     public QueryDataBlock QueryData;
@@ -182,6 +187,7 @@ public class DirFindQueryBackendPacket extends Packet
         QueryData = new QueryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -193,6 +199,7 @@ public class DirFindQueryBackendPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -206,6 +213,7 @@ public class DirFindQueryBackendPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DirFindQueryBackend ---\n";

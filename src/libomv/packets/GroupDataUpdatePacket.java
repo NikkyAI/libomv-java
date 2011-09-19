@@ -51,7 +51,7 @@ public class GroupDataUpdatePacket extends Packet
             if (value == null) {
                 _grouptitle = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -74,7 +74,7 @@ public class GroupDataUpdatePacket extends Packet
             AgentID = new UUID(bytes);
             GroupID = new UUID(bytes);
             AgentPowers = bytes.getLong(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _grouptitle = new byte[length];
             bytes.get(_grouptitle); 
         }
@@ -88,6 +88,7 @@ public class GroupDataUpdatePacket extends Packet
             bytes.put(_grouptitle);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentGroupData --\n";
@@ -108,8 +109,11 @@ public class GroupDataUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupDataUpdate; }
     public AgentGroupDataBlock[] AgentGroupData;
 
@@ -126,7 +130,7 @@ public class GroupDataUpdatePacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AgentGroupData = new AgentGroupDataBlock[count];
         for (int j = 0; j < count; j++)
         { AgentGroupData[j] = new AgentGroupDataBlock(bytes); }
@@ -135,12 +139,13 @@ public class GroupDataUpdatePacket extends Packet
     public GroupDataUpdatePacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AgentGroupData = new AgentGroupDataBlock[count];
         for (int j = 0; j < count; j++)
         { AgentGroupData[j] = new AgentGroupDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -152,6 +157,7 @@ public class GroupDataUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -165,6 +171,7 @@ public class GroupDataUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupDataUpdate ---\n";

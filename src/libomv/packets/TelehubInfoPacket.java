@@ -51,7 +51,7 @@ public class TelehubInfoPacket extends Packet
             if (value == null) {
                 _objectname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -74,7 +74,7 @@ public class TelehubInfoPacket extends Packet
         {
             int length;
             ObjectID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _objectname = new byte[length];
             bytes.get(_objectname); 
             TelehubPos = new Vector3(bytes); 
@@ -90,6 +90,7 @@ public class TelehubInfoPacket extends Packet
             TelehubRot.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TelehubBlock --\n";
@@ -128,6 +129,7 @@ public class TelehubInfoPacket extends Packet
             SpawnPointPos.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SpawnPointBlock --\n";
@@ -145,8 +147,11 @@ public class TelehubInfoPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TelehubInfo; }
     public TelehubBlockBlock TelehubBlock;
     public SpawnPointBlockBlock[] SpawnPointBlock;
@@ -166,7 +171,7 @@ public class TelehubInfoPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         TelehubBlock = new TelehubBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SpawnPointBlock = new SpawnPointBlockBlock[count];
         for (int j = 0; j < count; j++)
         { SpawnPointBlock[j] = new SpawnPointBlockBlock(bytes); }
@@ -176,12 +181,13 @@ public class TelehubInfoPacket extends Packet
     {
         header = head;
         TelehubBlock = new TelehubBlockBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SpawnPointBlock = new SpawnPointBlockBlock[count];
         for (int j = 0; j < count; j++)
         { SpawnPointBlock[j] = new SpawnPointBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -194,6 +200,7 @@ public class TelehubInfoPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -208,6 +215,7 @@ public class TelehubInfoPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TelehubInfo ---\n";

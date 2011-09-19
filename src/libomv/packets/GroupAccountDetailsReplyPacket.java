@@ -59,6 +59,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -90,7 +91,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
             if (value == null) {
                 _startdate = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -113,7 +114,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
             RequestID = new UUID(bytes);
             IntervalDays = bytes.getInt(); 
             CurrentInterval = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _startdate = new byte[length];
             bytes.get(_startdate); 
         }
@@ -127,6 +128,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
             bytes.put(_startdate);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MoneyData --\n";
@@ -157,7 +159,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -178,7 +180,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
         public HistoryDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
             Amount = bytes.getInt(); 
@@ -191,6 +193,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
             bytes.putInt(Amount);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- HistoryData --\n";
@@ -209,8 +212,11 @@ public class GroupAccountDetailsReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupAccountDetailsReply; }
     public AgentDataBlock AgentData;
     public MoneyDataBlock MoneyData;
@@ -233,7 +239,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         MoneyData = new MoneyDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         HistoryData = new HistoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { HistoryData[j] = new HistoryDataBlock(bytes); }
@@ -244,12 +250,13 @@ public class GroupAccountDetailsReplyPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         MoneyData = new MoneyDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         HistoryData = new HistoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { HistoryData[j] = new HistoryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -263,6 +270,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -278,6 +286,7 @@ public class GroupAccountDetailsReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupAccountDetailsReply ---\n";

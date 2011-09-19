@@ -56,6 +56,7 @@ public class GroupProfileReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -84,7 +85,7 @@ public class GroupProfileReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -102,7 +103,7 @@ public class GroupProfileReplyPacket extends Packet
             if (value == null) {
                 _charter = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -121,7 +122,7 @@ public class GroupProfileReplyPacket extends Packet
             if (value == null) {
                 _membertitle = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -155,14 +156,14 @@ public class GroupProfileReplyPacket extends Packet
         {
             int length;
             GroupID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _charter = new byte[length];
             bytes.get(_charter); 
             ShowInList = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _membertitle = new byte[length];
             bytes.get(_membertitle); 
             PowersMask = bytes.getLong(); 
@@ -201,6 +202,7 @@ public class GroupProfileReplyPacket extends Packet
             OwnerRole.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -233,8 +235,11 @@ public class GroupProfileReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupProfileReply; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -264,6 +269,7 @@ public class GroupProfileReplyPacket extends Packet
         GroupData = new GroupDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -275,6 +281,7 @@ public class GroupProfileReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -288,6 +295,7 @@ public class GroupProfileReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupProfileReply ---\n";

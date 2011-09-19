@@ -49,7 +49,7 @@ public class ParcelRenamePacket extends Packet
             if (value == null) {
                 _newname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -70,7 +70,7 @@ public class ParcelRenamePacket extends Packet
         {
             int length;
             ParcelID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _newname = new byte[length];
             bytes.get(_newname); 
         }
@@ -82,6 +82,7 @@ public class ParcelRenamePacket extends Packet
             bytes.put(_newname);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -100,8 +101,11 @@ public class ParcelRenamePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelRename; }
     public ParcelDataBlock[] ParcelData;
 
@@ -118,7 +122,7 @@ public class ParcelRenamePacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
@@ -127,12 +131,13 @@ public class ParcelRenamePacket extends Packet
     public ParcelRenamePacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -144,6 +149,7 @@ public class ParcelRenamePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -157,6 +163,7 @@ public class ParcelRenamePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelRename ---\n";

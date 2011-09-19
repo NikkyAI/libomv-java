@@ -57,6 +57,7 @@ public class InviteGroupRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class InviteGroupRequestPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -131,6 +133,7 @@ public class InviteGroupRequestPacket extends Packet
             RoleID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InviteData --\n";
@@ -149,8 +152,11 @@ public class InviteGroupRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.InviteGroupRequest; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -173,7 +179,7 @@ public class InviteGroupRequestPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         GroupData = new GroupDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InviteData = new InviteDataBlock[count];
         for (int j = 0; j < count; j++)
         { InviteData[j] = new InviteDataBlock(bytes); }
@@ -184,12 +190,13 @@ public class InviteGroupRequestPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         GroupData = new GroupDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InviteData = new InviteDataBlock[count];
         for (int j = 0; j < count; j++)
         { InviteData[j] = new InviteDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -203,6 +210,7 @@ public class InviteGroupRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -218,6 +226,7 @@ public class InviteGroupRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- InviteGroupRequest ---\n";

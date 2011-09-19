@@ -84,6 +84,7 @@ public class RequestParcelTransferPacket extends Packet
             bytes.put((byte)((Final) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -111,8 +112,11 @@ public class RequestParcelTransferPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RequestParcelTransfer; }
     public DataBlock Data;
 
@@ -138,6 +142,7 @@ public class RequestParcelTransferPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -148,6 +153,7 @@ public class RequestParcelTransferPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -160,6 +166,7 @@ public class RequestParcelTransferPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RequestParcelTransfer ---\n";

@@ -57,6 +57,7 @@ public class ScriptAnswerYesPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -99,6 +100,7 @@ public class ScriptAnswerYesPacket extends Packet
             bytes.putInt(Questions);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -118,8 +120,11 @@ public class ScriptAnswerYesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptAnswerYes; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -149,6 +154,7 @@ public class ScriptAnswerYesPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -160,6 +166,7 @@ public class ScriptAnswerYesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +180,7 @@ public class ScriptAnswerYesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptAnswerYes ---\n";

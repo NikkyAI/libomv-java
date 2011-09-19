@@ -59,6 +59,7 @@ public class MoneyTransferRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -94,7 +95,7 @@ public class MoneyTransferRequestPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -121,7 +122,7 @@ public class MoneyTransferRequestPacket extends Packet
             AggregatePermNextOwner = bytes.get(); 
             AggregatePermInventory = bytes.get(); 
             TransactionType = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
         }
@@ -139,6 +140,7 @@ public class MoneyTransferRequestPacket extends Packet
             bytes.put(_description);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MoneyData --\n";
@@ -163,8 +165,11 @@ public class MoneyTransferRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MoneyTransferRequest; }
     public AgentDataBlock AgentData;
     public MoneyDataBlock MoneyData;
@@ -194,6 +199,7 @@ public class MoneyTransferRequestPacket extends Packet
         MoneyData = new MoneyDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -205,6 +211,7 @@ public class MoneyTransferRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -218,6 +225,7 @@ public class MoneyTransferRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MoneyTransferRequest ---\n";

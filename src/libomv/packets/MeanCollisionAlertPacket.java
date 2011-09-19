@@ -66,6 +66,7 @@ public class MeanCollisionAlertPacket extends Packet
             bytes.put(Type);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MeanCollision --\n";
@@ -87,8 +88,11 @@ public class MeanCollisionAlertPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MeanCollisionAlert; }
     public MeanCollisionBlock[] MeanCollision;
 
@@ -105,7 +109,7 @@ public class MeanCollisionAlertPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         MeanCollision = new MeanCollisionBlock[count];
         for (int j = 0; j < count; j++)
         { MeanCollision[j] = new MeanCollisionBlock(bytes); }
@@ -114,12 +118,13 @@ public class MeanCollisionAlertPacket extends Packet
     public MeanCollisionAlertPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         MeanCollision = new MeanCollisionBlock[count];
         for (int j = 0; j < count; j++)
         { MeanCollision[j] = new MeanCollisionBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -131,6 +136,7 @@ public class MeanCollisionAlertPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -144,6 +150,7 @@ public class MeanCollisionAlertPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MeanCollisionAlert ---\n";

@@ -65,6 +65,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
             bytes.put(GodLevel);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -95,7 +96,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
         public DataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
         }
@@ -126,6 +127,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
             bytes.put(_name);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -143,8 +145,11 @@ public class AvatarPickerRequestBackendPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarPickerRequestBackend; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -174,6 +179,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -185,6 +191,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -198,6 +205,7 @@ public class AvatarPickerRequestBackendPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarPickerRequestBackend ---\n";

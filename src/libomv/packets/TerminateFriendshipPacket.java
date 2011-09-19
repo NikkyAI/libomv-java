@@ -57,6 +57,7 @@ public class TerminateFriendshipPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -93,6 +94,7 @@ public class TerminateFriendshipPacket extends Packet
             OtherID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ExBlock --\n";
@@ -110,8 +112,11 @@ public class TerminateFriendshipPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TerminateFriendship; }
     public AgentDataBlock AgentData;
     public ExBlockBlock ExBlock;
@@ -141,6 +146,7 @@ public class TerminateFriendshipPacket extends Packet
         ExBlock = new ExBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -152,6 +158,7 @@ public class TerminateFriendshipPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -165,6 +172,7 @@ public class TerminateFriendshipPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TerminateFriendship ---\n";

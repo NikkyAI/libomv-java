@@ -59,6 +59,7 @@ public class ObjectExtraParamsPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,7 +92,7 @@ public class ObjectExtraParamsPacket extends Packet
             if (value == null) {
                 _paramdata = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class ObjectExtraParamsPacket extends Packet
             ParamType = bytes.getShort(); 
             ParamInUse = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             ParamSize = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _paramdata = new byte[length];
             bytes.get(_paramdata); 
         }
@@ -130,6 +131,7 @@ public class ObjectExtraParamsPacket extends Packet
             bytes.put(_paramdata);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -151,8 +153,11 @@ public class ObjectExtraParamsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectExtraParams; }
     public AgentDataBlock AgentData;
     public ObjectDataBlock[] ObjectData;
@@ -172,7 +177,7 @@ public class ObjectExtraParamsPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -182,12 +187,13 @@ public class ObjectExtraParamsPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -200,6 +206,7 @@ public class ObjectExtraParamsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -214,6 +221,7 @@ public class ObjectExtraParamsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectExtraParams ---\n";

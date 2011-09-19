@@ -59,6 +59,7 @@ public class AvatarInterestsReplyPacket extends Packet
             AvatarID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class AvatarInterestsReplyPacket extends Packet
             if (value == null) {
                 _wanttotext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -107,7 +108,7 @@ public class AvatarInterestsReplyPacket extends Packet
             if (value == null) {
                 _skillstext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -125,7 +126,7 @@ public class AvatarInterestsReplyPacket extends Packet
             if (value == null) {
                 _languagestext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -148,14 +149,14 @@ public class AvatarInterestsReplyPacket extends Packet
         {
             int length;
             WantToMask = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _wanttotext = new byte[length];
             bytes.get(_wanttotext); 
             SkillsMask = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _skillstext = new byte[length];
             bytes.get(_skillstext); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _languagestext = new byte[length];
             bytes.get(_languagestext); 
         }
@@ -172,6 +173,7 @@ public class AvatarInterestsReplyPacket extends Packet
             bytes.put(_languagestext);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PropertiesData --\n";
@@ -193,8 +195,11 @@ public class AvatarInterestsReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarInterestsReply; }
     public AgentDataBlock AgentData;
     public PropertiesDataBlock PropertiesData;
@@ -224,6 +229,7 @@ public class AvatarInterestsReplyPacket extends Packet
         PropertiesData = new PropertiesDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -235,6 +241,7 @@ public class AvatarInterestsReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -248,6 +255,7 @@ public class AvatarInterestsReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarInterestsReply ---\n";

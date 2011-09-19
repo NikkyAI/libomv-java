@@ -56,6 +56,7 @@ public class DirPopularReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,6 +92,7 @@ public class DirPopularReplyPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -119,7 +121,7 @@ public class DirPopularReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -141,7 +143,7 @@ public class DirPopularReplyPacket extends Packet
         {
             int length;
             ParcelID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
             Dwell = bytes.getFloat();
@@ -155,6 +157,7 @@ public class DirPopularReplyPacket extends Packet
             bytes.putFloat(Dwell);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryReplies --\n";
@@ -174,8 +177,11 @@ public class DirPopularReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DirPopularReply; }
     public AgentDataBlock AgentData;
     public QueryDataBlock QueryData;
@@ -198,7 +204,7 @@ public class DirPopularReplyPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         QueryData = new QueryDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryReplies = new QueryRepliesBlock[count];
         for (int j = 0; j < count; j++)
         { QueryReplies[j] = new QueryRepliesBlock(bytes); }
@@ -209,12 +215,13 @@ public class DirPopularReplyPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         QueryData = new QueryDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryReplies = new QueryRepliesBlock[count];
         for (int j = 0; j < count; j++)
         { QueryReplies[j] = new QueryRepliesBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -228,6 +235,7 @@ public class DirPopularReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -243,6 +251,7 @@ public class DirPopularReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DirPopularReply ---\n";

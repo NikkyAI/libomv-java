@@ -57,6 +57,7 @@ public class EventInfoReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -85,7 +86,7 @@ public class EventInfoReplyPacket extends Packet
             if (value == null) {
                 _creator = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -103,7 +104,7 @@ public class EventInfoReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -121,7 +122,7 @@ public class EventInfoReplyPacket extends Packet
             if (value == null) {
                 _category = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -139,7 +140,7 @@ public class EventInfoReplyPacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -157,7 +158,7 @@ public class EventInfoReplyPacket extends Packet
             if (value == null) {
                 _date = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -179,7 +180,7 @@ public class EventInfoReplyPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -207,26 +208,26 @@ public class EventInfoReplyPacket extends Packet
         {
             int length;
             EventID = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _creator = new byte[length];
             bytes.get(_creator); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _category = new byte[length];
             bytes.get(_category); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _desc = new byte[length];
             bytes.get(_desc); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _date = new byte[length];
             bytes.get(_date); 
             DateUTC = bytes.getInt(); 
             Duration = bytes.getInt(); 
             Cover = bytes.getInt(); 
             Amount = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             GlobalPos = new Vector3d(bytes); 
@@ -256,6 +257,7 @@ public class EventInfoReplyPacket extends Packet
             bytes.putInt(EventFlags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EventData --\n";
@@ -285,8 +287,11 @@ public class EventInfoReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EventInfoReply; }
     public AgentDataBlock AgentData;
     public EventDataBlock EventData;
@@ -316,6 +321,7 @@ public class EventInfoReplyPacket extends Packet
         EventData = new EventDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -327,6 +333,7 @@ public class EventInfoReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -340,6 +347,7 @@ public class EventInfoReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EventInfoReply ---\n";

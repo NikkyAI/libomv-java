@@ -57,6 +57,7 @@ public class AtomicPassObjectPacket extends Packet
             bytes.put((byte)((AttachmentNeedsSave) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TaskData --\n";
@@ -75,8 +76,11 @@ public class AtomicPassObjectPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AtomicPassObject; }
     public TaskDataBlock TaskData;
 
@@ -102,6 +106,7 @@ public class AtomicPassObjectPacket extends Packet
         TaskData = new TaskDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -112,6 +117,7 @@ public class AtomicPassObjectPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -124,6 +130,7 @@ public class AtomicPassObjectPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AtomicPassObject ---\n";

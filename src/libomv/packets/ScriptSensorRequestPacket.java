@@ -55,7 +55,7 @@ public class ScriptSensorRequestPacket extends Packet
             if (value == null) {
                 _searchname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -85,7 +85,7 @@ public class ScriptSensorRequestPacket extends Packet
             SearchID = new UUID(bytes);
             SearchPos = new Vector3(bytes); 
             SearchDir = new Quaternion(bytes, true); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _searchname = new byte[length];
             bytes.get(_searchname); 
             Type = bytes.getInt(); 
@@ -111,6 +111,7 @@ public class ScriptSensorRequestPacket extends Packet
             bytes.put(SearchRegions);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Requester --\n";
@@ -138,8 +139,11 @@ public class ScriptSensorRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptSensorRequest; }
     public RequesterBlock Requester;
 
@@ -165,6 +169,7 @@ public class ScriptSensorRequestPacket extends Packet
         Requester = new RequesterBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -175,6 +180,7 @@ public class ScriptSensorRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -187,6 +193,7 @@ public class ScriptSensorRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptSensorRequest ---\n";

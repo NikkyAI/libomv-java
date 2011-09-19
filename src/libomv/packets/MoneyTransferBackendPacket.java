@@ -60,7 +60,7 @@ public class MoneyTransferBackendPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -92,7 +92,7 @@ public class MoneyTransferBackendPacket extends Packet
             RegionID = new UUID(bytes);
             GridX = bytes.getInt(); 
             GridY = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
         }
@@ -115,6 +115,7 @@ public class MoneyTransferBackendPacket extends Packet
             bytes.put(_description);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MoneyData --\n";
@@ -144,8 +145,11 @@ public class MoneyTransferBackendPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MoneyTransferBackend; }
     public MoneyDataBlock MoneyData;
 
@@ -171,6 +175,7 @@ public class MoneyTransferBackendPacket extends Packet
         MoneyData = new MoneyDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -181,6 +186,7 @@ public class MoneyTransferBackendPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -193,6 +199,7 @@ public class MoneyTransferBackendPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MoneyTransferBackend ---\n";

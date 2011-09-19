@@ -53,7 +53,7 @@ public class NeighborListPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -79,7 +79,7 @@ public class NeighborListPacket extends Packet
             PublicIP = bytes.getInt(); 
             PublicPort = (short)((bytes.get() << 8) + bytes.get());
             RegionID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
             SimAccess = bytes.get(); 
@@ -99,6 +99,7 @@ public class NeighborListPacket extends Packet
             bytes.put(SimAccess);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NeighborBlock --\n";
@@ -122,8 +123,11 @@ public class NeighborListPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.NeighborList; }
     public NeighborBlockBlock[] NeighborBlock;
 
@@ -153,6 +157,7 @@ public class NeighborListPacket extends Packet
         { NeighborBlock[j] = new NeighborBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -163,6 +168,7 @@ public class NeighborListPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -175,6 +181,7 @@ public class NeighborListPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- NeighborList ---\n";

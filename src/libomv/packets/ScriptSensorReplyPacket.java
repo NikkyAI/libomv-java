@@ -58,6 +58,7 @@ public class ScriptSensorReplyPacket extends Packet
             SourceID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Requester --\n";
@@ -91,7 +92,7 @@ public class ScriptSensorReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -119,7 +120,7 @@ public class ScriptSensorReplyPacket extends Packet
             Position = new Vector3(bytes); 
             Velocity = new Vector3(bytes); 
             Rotation = new Quaternion(bytes, true); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
             Type = bytes.getInt(); 
@@ -140,6 +141,7 @@ public class ScriptSensorReplyPacket extends Packet
             bytes.putFloat(Range);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SensedData --\n";
@@ -165,8 +167,11 @@ public class ScriptSensorReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptSensorReply; }
     public RequesterBlock Requester;
     public SensedDataBlock[] SensedData;
@@ -186,7 +191,7 @@ public class ScriptSensorReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Requester = new RequesterBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SensedData = new SensedDataBlock[count];
         for (int j = 0; j < count; j++)
         { SensedData[j] = new SensedDataBlock(bytes); }
@@ -196,12 +201,13 @@ public class ScriptSensorReplyPacket extends Packet
     {
         header = head;
         Requester = new RequesterBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SensedData = new SensedDataBlock[count];
         for (int j = 0; j < count; j++)
         { SensedData[j] = new SensedDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -214,6 +220,7 @@ public class ScriptSensorReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -228,6 +235,7 @@ public class ScriptSensorReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptSensorReply ---\n";

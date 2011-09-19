@@ -50,7 +50,7 @@ public class EstateCovenantReplyPacket extends Packet
             if (value == null) {
                 _estatename = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -73,7 +73,7 @@ public class EstateCovenantReplyPacket extends Packet
             int length;
             CovenantID = new UUID(bytes);
             CovenantTimestamp = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _estatename = new byte[length];
             bytes.get(_estatename); 
             EstateOwnerID = new UUID(bytes);
@@ -88,6 +88,7 @@ public class EstateCovenantReplyPacket extends Packet
             EstateOwnerID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -108,8 +109,11 @@ public class EstateCovenantReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EstateCovenantReply; }
     public DataBlock Data;
 
@@ -135,6 +139,7 @@ public class EstateCovenantReplyPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -145,6 +150,7 @@ public class EstateCovenantReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -157,6 +163,7 @@ public class EstateCovenantReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EstateCovenantReply ---\n";

@@ -54,6 +54,7 @@ public class RebakeAvatarTexturesPacket extends Packet
             TextureID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TextureData --\n";
@@ -71,8 +72,11 @@ public class RebakeAvatarTexturesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.RebakeAvatarTextures; }
     public TextureDataBlock TextureData;
 
@@ -98,6 +102,7 @@ public class RebakeAvatarTexturesPacket extends Packet
         TextureData = new TextureDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -108,6 +113,7 @@ public class RebakeAvatarTexturesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -120,6 +126,7 @@ public class RebakeAvatarTexturesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- RebakeAvatarTextures ---\n";

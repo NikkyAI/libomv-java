@@ -54,6 +54,7 @@ public class CameraConstraintPacket extends Packet
             Plane.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- CameraCollidePlane --\n";
@@ -71,8 +72,11 @@ public class CameraConstraintPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.CameraConstraint; }
     public CameraCollidePlaneBlock CameraCollidePlane;
 
@@ -98,6 +102,7 @@ public class CameraConstraintPacket extends Packet
         CameraCollidePlane = new CameraCollidePlaneBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -108,6 +113,7 @@ public class CameraConstraintPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -120,6 +126,7 @@ public class CameraConstraintPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- CameraConstraint ---\n";

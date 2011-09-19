@@ -59,6 +59,7 @@ public class EventGodDeletePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -95,6 +96,7 @@ public class EventGodDeletePacket extends Packet
             bytes.putInt(EventID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- EventData --\n";
@@ -123,7 +125,7 @@ public class EventGodDeletePacket extends Packet
             if (value == null) {
                 _querytext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -146,7 +148,7 @@ public class EventGodDeletePacket extends Packet
         {
             int length;
             QueryID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _querytext = new byte[length];
             bytes.get(_querytext); 
             QueryFlags = bytes.getInt(); 
@@ -162,6 +164,7 @@ public class EventGodDeletePacket extends Packet
             bytes.putInt(QueryStart);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -182,8 +185,11 @@ public class EventGodDeletePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.EventGodDelete; }
     public AgentDataBlock AgentData;
     public EventDataBlock EventData;
@@ -217,6 +223,7 @@ public class EventGodDeletePacket extends Packet
         QueryData = new QueryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -229,6 +236,7 @@ public class EventGodDeletePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -243,6 +251,7 @@ public class EventGodDeletePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- EventGodDelete ---\n";

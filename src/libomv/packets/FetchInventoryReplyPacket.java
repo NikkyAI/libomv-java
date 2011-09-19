@@ -56,6 +56,7 @@ public class FetchInventoryReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -100,7 +101,7 @@ public class FetchInventoryReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -118,7 +119,7 @@ public class FetchInventoryReplyPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -158,10 +159,10 @@ public class FetchInventoryReplyPacket extends Packet
             Flags = bytes.getInt(); 
             SaleType = bytes.get(); 
             SalePrice = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
             CreationDate = bytes.getInt(); 
@@ -195,6 +196,7 @@ public class FetchInventoryReplyPacket extends Packet
             bytes.putInt(CRC);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -232,8 +234,11 @@ public class FetchInventoryReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.FetchInventoryReply; }
     public AgentDataBlock AgentData;
     public InventoryDataBlock[] InventoryData;
@@ -253,7 +258,7 @@ public class FetchInventoryReplyPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
@@ -263,12 +268,13 @@ public class FetchInventoryReplyPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         InventoryData = new InventoryDataBlock[count];
         for (int j = 0; j < count; j++)
         { InventoryData[j] = new InventoryDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -281,6 +287,7 @@ public class FetchInventoryReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -295,6 +302,7 @@ public class FetchInventoryReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- FetchInventoryReply ---\n";

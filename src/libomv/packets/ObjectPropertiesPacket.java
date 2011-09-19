@@ -70,7 +70,7 @@ public class ObjectPropertiesPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -88,7 +88,7 @@ public class ObjectPropertiesPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -106,7 +106,7 @@ public class ObjectPropertiesPacket extends Packet
             if (value == null) {
                 _touchname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -124,7 +124,7 @@ public class ObjectPropertiesPacket extends Packet
             if (value == null) {
                 _sitname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -142,7 +142,7 @@ public class ObjectPropertiesPacket extends Packet
             if (value == null) {
                 _textureid = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -188,19 +188,19 @@ public class ObjectPropertiesPacket extends Packet
             FolderID = new UUID(bytes);
             FromTaskID = new UUID(bytes);
             LastOwnerID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _touchname = new byte[length];
             bytes.get(_touchname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _sitname = new byte[length];
             bytes.get(_sitname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _textureid = new byte[length];
             bytes.get(_textureid); 
         }
@@ -241,6 +241,7 @@ public class ObjectPropertiesPacket extends Packet
             bytes.put(_textureid);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -284,8 +285,11 @@ public class ObjectPropertiesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectProperties; }
     public ObjectDataBlock[] ObjectData;
 
@@ -302,7 +306,7 @@ public class ObjectPropertiesPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -311,12 +315,13 @@ public class ObjectPropertiesPacket extends Packet
     public ObjectPropertiesPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -328,6 +333,7 @@ public class ObjectPropertiesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -341,6 +347,7 @@ public class ObjectPropertiesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectProperties ---\n";

@@ -54,6 +54,7 @@ public class MergeParcelPacket extends Packet
             MasterID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MasterParcelData --\n";
@@ -89,6 +90,7 @@ public class MergeParcelPacket extends Packet
             SlaveID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SlaveParcelData --\n";
@@ -106,8 +108,11 @@ public class MergeParcelPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.MergeParcel; }
     public MasterParcelDataBlock MasterParcelData;
     public SlaveParcelDataBlock[] SlaveParcelData;
@@ -127,7 +132,7 @@ public class MergeParcelPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         MasterParcelData = new MasterParcelDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SlaveParcelData = new SlaveParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { SlaveParcelData[j] = new SlaveParcelDataBlock(bytes); }
@@ -137,12 +142,13 @@ public class MergeParcelPacket extends Packet
     {
         header = head;
         MasterParcelData = new MasterParcelDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SlaveParcelData = new SlaveParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { SlaveParcelData[j] = new SlaveParcelDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -155,6 +161,7 @@ public class MergeParcelPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -169,6 +176,7 @@ public class MergeParcelPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- MergeParcel ---\n";

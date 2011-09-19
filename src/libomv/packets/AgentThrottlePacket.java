@@ -62,6 +62,7 @@ public class AgentThrottlePacket extends Packet
             bytes.putInt(CircuitCode);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -92,7 +93,7 @@ public class AgentThrottlePacket extends Packet
             if (value == null) {
                 _throttles = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -113,7 +114,7 @@ public class AgentThrottlePacket extends Packet
         {
             int length;
             GenCounter = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _throttles = new byte[length];
             bytes.get(_throttles); 
         }
@@ -125,6 +126,7 @@ public class AgentThrottlePacket extends Packet
             bytes.put(_throttles);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Throttle --\n";
@@ -143,8 +145,11 @@ public class AgentThrottlePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentThrottle; }
     public AgentDataBlock AgentData;
     public ThrottleBlock Throttle;
@@ -174,6 +179,7 @@ public class AgentThrottlePacket extends Packet
         Throttle = new ThrottleBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -185,6 +191,7 @@ public class AgentThrottlePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -198,6 +205,7 @@ public class AgentThrottlePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentThrottle ---\n";

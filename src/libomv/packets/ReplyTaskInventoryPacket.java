@@ -50,7 +50,7 @@ public class ReplyTaskInventoryPacket extends Packet
             if (value == null) {
                 _filename = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -72,7 +72,7 @@ public class ReplyTaskInventoryPacket extends Packet
             int length;
             TaskID = new UUID(bytes);
             Serial = bytes.getShort(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _filename = new byte[length];
             bytes.get(_filename); 
         }
@@ -85,6 +85,7 @@ public class ReplyTaskInventoryPacket extends Packet
             bytes.put(_filename);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- InventoryData --\n";
@@ -104,8 +105,11 @@ public class ReplyTaskInventoryPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ReplyTaskInventory; }
     public InventoryDataBlock InventoryData;
 
@@ -131,6 +135,7 @@ public class ReplyTaskInventoryPacket extends Packet
         InventoryData = new InventoryDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -141,6 +146,7 @@ public class ReplyTaskInventoryPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -153,6 +159,7 @@ public class ReplyTaskInventoryPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ReplyTaskInventory ---\n";

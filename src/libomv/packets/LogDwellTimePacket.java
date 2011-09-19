@@ -51,7 +51,7 @@ public class LogDwellTimePacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -78,7 +78,7 @@ public class LogDwellTimePacket extends Packet
             AgentID = new UUID(bytes);
             SessionID = new UUID(bytes);
             Duration = bytes.getFloat();
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             RegionX = bytes.getInt(); 
@@ -100,6 +100,7 @@ public class LogDwellTimePacket extends Packet
             bytes.put(AvgViewerFPS);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DwellInfo --\n";
@@ -124,8 +125,11 @@ public class LogDwellTimePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.LogDwellTime; }
     public DwellInfoBlock DwellInfo;
 
@@ -151,6 +155,7 @@ public class LogDwellTimePacket extends Packet
         DwellInfo = new DwellInfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -161,6 +166,7 @@ public class LogDwellTimePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +179,7 @@ public class LogDwellTimePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- LogDwellTime ---\n";

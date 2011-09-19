@@ -59,6 +59,7 @@ public class ViewerEffectPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -92,7 +93,7 @@ public class ViewerEffectPacket extends Packet
             if (value == null) {
                 _typedata = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -118,7 +119,7 @@ public class ViewerEffectPacket extends Packet
             Duration = bytes.getFloat();
             Color = new byte[4];
             bytes.get(Color);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _typedata = new byte[length];
             bytes.get(_typedata); 
         }
@@ -134,6 +135,7 @@ public class ViewerEffectPacket extends Packet
             bytes.put(_typedata);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Effect --\n";
@@ -156,8 +158,11 @@ public class ViewerEffectPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ViewerEffect; }
     public AgentDataBlock AgentData;
     public EffectBlock[] Effect;
@@ -177,7 +182,7 @@ public class ViewerEffectPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Effect = new EffectBlock[count];
         for (int j = 0; j < count; j++)
         { Effect[j] = new EffectBlock(bytes); }
@@ -187,12 +192,13 @@ public class ViewerEffectPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Effect = new EffectBlock[count];
         for (int j = 0; j < count; j++)
         { Effect[j] = new EffectBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -205,6 +211,7 @@ public class ViewerEffectPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -219,6 +226,7 @@ public class ViewerEffectPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ViewerEffect ---\n";

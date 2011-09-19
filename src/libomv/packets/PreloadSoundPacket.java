@@ -60,6 +60,7 @@ public class PreloadSoundPacket extends Packet
             SoundID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -79,8 +80,11 @@ public class PreloadSoundPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.PreloadSound; }
     public DataBlockBlock[] DataBlock;
 
@@ -97,7 +101,7 @@ public class PreloadSoundPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         DataBlock = new DataBlockBlock[count];
         for (int j = 0; j < count; j++)
         { DataBlock[j] = new DataBlockBlock(bytes); }
@@ -106,12 +110,13 @@ public class PreloadSoundPacket extends Packet
     public PreloadSoundPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         DataBlock = new DataBlockBlock[count];
         for (int j = 0; j < count; j++)
         { DataBlock[j] = new DataBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -123,6 +128,7 @@ public class PreloadSoundPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -136,6 +142,7 @@ public class PreloadSoundPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- PreloadSound ---\n";

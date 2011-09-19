@@ -60,6 +60,7 @@ public class AgentHeightWidthPacket extends Packet
             bytes.putInt(CircuitCode);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -103,6 +104,7 @@ public class AgentHeightWidthPacket extends Packet
             bytes.putShort(Width);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- HeightWidthBlock --\n";
@@ -122,8 +124,11 @@ public class AgentHeightWidthPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AgentHeightWidth; }
     public AgentDataBlock AgentData;
     public HeightWidthBlockBlock HeightWidthBlock;
@@ -153,6 +158,7 @@ public class AgentHeightWidthPacket extends Packet
         HeightWidthBlock = new HeightWidthBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -164,6 +170,7 @@ public class AgentHeightWidthPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -177,6 +184,7 @@ public class AgentHeightWidthPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AgentHeightWidth ---\n";

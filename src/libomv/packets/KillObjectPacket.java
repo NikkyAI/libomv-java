@@ -53,6 +53,7 @@ public class KillObjectPacket extends Packet
             bytes.putInt(ID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -70,8 +71,11 @@ public class KillObjectPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.KillObject; }
     public ObjectDataBlock[] ObjectData;
 
@@ -88,7 +92,7 @@ public class KillObjectPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -97,12 +101,13 @@ public class KillObjectPacket extends Packet
     public KillObjectPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -114,6 +119,7 @@ public class KillObjectPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -127,6 +133,7 @@ public class KillObjectPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- KillObject ---\n";

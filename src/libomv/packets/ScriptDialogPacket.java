@@ -49,7 +49,7 @@ public class ScriptDialogPacket extends Packet
             if (value == null) {
                 _firstname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -67,7 +67,7 @@ public class ScriptDialogPacket extends Packet
             if (value == null) {
                 _lastname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -85,7 +85,7 @@ public class ScriptDialogPacket extends Packet
             if (value == null) {
                 _objectname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -103,7 +103,7 @@ public class ScriptDialogPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -129,16 +129,16 @@ public class ScriptDialogPacket extends Packet
         {
             int length;
             ObjectID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _firstname = new byte[length];
             bytes.get(_firstname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _lastname = new byte[length];
             bytes.get(_lastname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _objectname = new byte[length];
             bytes.get(_objectname); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _message = new byte[length];
             bytes.get(_message); 
             ChatChannel = bytes.getInt(); 
@@ -160,6 +160,7 @@ public class ScriptDialogPacket extends Packet
             ImageID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -193,7 +194,7 @@ public class ScriptDialogPacket extends Packet
             if (value == null) {
                 _buttonlabel = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -213,7 +214,7 @@ public class ScriptDialogPacket extends Packet
         public ButtonsBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _buttonlabel = new byte[length];
             bytes.get(_buttonlabel); 
         }
@@ -224,6 +225,7 @@ public class ScriptDialogPacket extends Packet
             bytes.put(_buttonlabel);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Buttons --\n";
@@ -241,8 +243,11 @@ public class ScriptDialogPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptDialog; }
     public DataBlock Data;
     public ButtonsBlock[] Buttons;
@@ -262,7 +267,7 @@ public class ScriptDialogPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Buttons = new ButtonsBlock[count];
         for (int j = 0; j < count; j++)
         { Buttons[j] = new ButtonsBlock(bytes); }
@@ -272,12 +277,13 @@ public class ScriptDialogPacket extends Packet
     {
         header = head;
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Buttons = new ButtonsBlock[count];
         for (int j = 0; j < count; j++)
         { Buttons[j] = new ButtonsBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -290,6 +296,7 @@ public class ScriptDialogPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -304,6 +311,7 @@ public class ScriptDialogPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptDialog ---\n";

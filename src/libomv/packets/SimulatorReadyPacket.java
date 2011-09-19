@@ -49,7 +49,7 @@ public class SimulatorReadyPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -74,7 +74,7 @@ public class SimulatorReadyPacket extends Packet
         public SimulatorBlockBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             SimAccess = bytes.get(); 
@@ -95,6 +95,7 @@ public class SimulatorReadyPacket extends Packet
             bytes.putInt(ParentEstateID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SimulatorBlock --\n";
@@ -138,6 +139,7 @@ public class SimulatorReadyPacket extends Packet
             TelehubPos.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TelehubBlock --\n";
@@ -156,8 +158,11 @@ public class SimulatorReadyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimulatorReady; }
     public SimulatorBlockBlock SimulatorBlock;
     public TelehubBlockBlock TelehubBlock;
@@ -187,6 +192,7 @@ public class SimulatorReadyPacket extends Packet
         TelehubBlock = new TelehubBlockBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -198,6 +204,7 @@ public class SimulatorReadyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -211,6 +218,7 @@ public class SimulatorReadyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimulatorReady ---\n";

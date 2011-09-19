@@ -57,6 +57,7 @@ public class SimCrashedPacket extends Packet
             bytes.putInt(RegionY);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -93,6 +94,7 @@ public class SimCrashedPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Users --\n";
@@ -110,8 +112,11 @@ public class SimCrashedPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SimCrashed; }
     public DataBlock Data;
     public UsersBlock[] Users;
@@ -131,7 +136,7 @@ public class SimCrashedPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Users = new UsersBlock[count];
         for (int j = 0; j < count; j++)
         { Users[j] = new UsersBlock(bytes); }
@@ -141,12 +146,13 @@ public class SimCrashedPacket extends Packet
     {
         header = head;
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         Users = new UsersBlock[count];
         for (int j = 0; j < count; j++)
         { Users[j] = new UsersBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -159,6 +165,7 @@ public class SimCrashedPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -173,6 +180,7 @@ public class SimCrashedPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SimCrashed ---\n";

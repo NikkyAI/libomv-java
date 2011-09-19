@@ -60,6 +60,7 @@ public class GroupRoleChangesPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -103,6 +104,7 @@ public class GroupRoleChangesPacket extends Packet
             bytes.putInt(Change);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- RoleChange --\n";
@@ -122,8 +124,11 @@ public class GroupRoleChangesPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupRoleChanges; }
     public AgentDataBlock AgentData;
     public RoleChangeBlock[] RoleChange;
@@ -143,7 +148,7 @@ public class GroupRoleChangesPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         RoleChange = new RoleChangeBlock[count];
         for (int j = 0; j < count; j++)
         { RoleChange[j] = new RoleChangeBlock(bytes); }
@@ -153,12 +158,13 @@ public class GroupRoleChangesPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         RoleChange = new RoleChangeBlock[count];
         for (int j = 0; j < count; j++)
         { RoleChange[j] = new RoleChangeBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -171,6 +177,7 @@ public class GroupRoleChangesPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -185,6 +192,7 @@ public class GroupRoleChangesPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupRoleChanges ---\n";

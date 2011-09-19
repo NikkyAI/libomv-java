@@ -59,6 +59,7 @@ public class ObjectImagePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class ObjectImagePacket extends Packet
             if (value == null) {
                 _mediaurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -106,7 +107,7 @@ public class ObjectImagePacket extends Packet
             if (value == null) {
                 _textureentry = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -128,10 +129,10 @@ public class ObjectImagePacket extends Packet
         {
             int length;
             ObjectLocalID = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _mediaurl = new byte[length];
             bytes.get(_mediaurl); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _textureentry = new byte[length];
             bytes.get(_textureentry); 
         }
@@ -145,6 +146,7 @@ public class ObjectImagePacket extends Packet
             bytes.put(_textureentry);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -164,8 +166,11 @@ public class ObjectImagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectImage; }
     public AgentDataBlock AgentData;
     public ObjectDataBlock[] ObjectData;
@@ -185,7 +190,7 @@ public class ObjectImagePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
@@ -195,12 +200,13 @@ public class ObjectImagePacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ObjectData = new ObjectDataBlock[count];
         for (int j = 0; j < count; j++)
         { ObjectData[j] = new ObjectDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -213,6 +219,7 @@ public class ObjectImagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -227,6 +234,7 @@ public class ObjectImagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectImage ---\n";

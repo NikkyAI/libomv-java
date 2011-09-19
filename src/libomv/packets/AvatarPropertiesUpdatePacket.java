@@ -59,6 +59,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,7 +90,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _abouttext = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -107,7 +108,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _flabouttext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -127,7 +128,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
             if (value == null) {
                 _profileurl = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -151,15 +152,15 @@ public class AvatarPropertiesUpdatePacket extends Packet
             int length;
             ImageID = new UUID(bytes);
             FLImageID = new UUID(bytes);
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _abouttext = new byte[length];
             bytes.get(_abouttext); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _flabouttext = new byte[length];
             bytes.get(_flabouttext); 
             AllowPublish = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             MaturePublish = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _profileurl = new byte[length];
             bytes.get(_profileurl); 
         }
@@ -178,6 +179,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
             bytes.put(_profileurl);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- PropertiesData --\n";
@@ -201,8 +203,11 @@ public class AvatarPropertiesUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AvatarPropertiesUpdate; }
     public AgentDataBlock AgentData;
     public PropertiesDataBlock PropertiesData;
@@ -232,6 +237,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
         PropertiesData = new PropertiesDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -243,6 +249,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -256,6 +263,7 @@ public class AvatarPropertiesUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AvatarPropertiesUpdate ---\n";

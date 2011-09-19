@@ -53,6 +53,7 @@ public class TeleportStartPacket extends Packet
             bytes.putInt(TeleportFlags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Info --\n";
@@ -70,8 +71,11 @@ public class TeleportStartPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TeleportStart; }
     public InfoBlock Info;
 
@@ -97,6 +101,7 @@ public class TeleportStartPacket extends Packet
         Info = new InfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -107,6 +112,7 @@ public class TeleportStartPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -119,6 +125,7 @@ public class TeleportStartPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TeleportStart ---\n";

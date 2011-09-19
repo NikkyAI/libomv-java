@@ -62,6 +62,7 @@ public class GodlikeMessagePacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,7 +92,7 @@ public class GodlikeMessagePacket extends Packet
             if (value == null) {
                 _method = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -112,7 +113,7 @@ public class GodlikeMessagePacket extends Packet
         public MethodDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _method = new byte[length];
             bytes.get(_method); 
             Invoice = new UUID(bytes);
@@ -125,6 +126,7 @@ public class GodlikeMessagePacket extends Packet
             Invoice.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- MethodData --\n";
@@ -153,7 +155,7 @@ public class GodlikeMessagePacket extends Packet
             if (value == null) {
                 _parameter = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -173,7 +175,7 @@ public class GodlikeMessagePacket extends Packet
         public ParamListBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _parameter = new byte[length];
             bytes.get(_parameter); 
         }
@@ -184,6 +186,7 @@ public class GodlikeMessagePacket extends Packet
             bytes.put(_parameter);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParamList --\n";
@@ -201,8 +204,11 @@ public class GodlikeMessagePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GodlikeMessage; }
     public AgentDataBlock AgentData;
     public MethodDataBlock MethodData;
@@ -225,7 +231,7 @@ public class GodlikeMessagePacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         MethodData = new MethodDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParamList = new ParamListBlock[count];
         for (int j = 0; j < count; j++)
         { ParamList[j] = new ParamListBlock(bytes); }
@@ -236,12 +242,13 @@ public class GodlikeMessagePacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         MethodData = new MethodDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParamList = new ParamListBlock[count];
         for (int j = 0; j < count; j++)
         { ParamList[j] = new ParamListBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -255,6 +262,7 @@ public class GodlikeMessagePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -270,6 +278,7 @@ public class GodlikeMessagePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GodlikeMessage ---\n";

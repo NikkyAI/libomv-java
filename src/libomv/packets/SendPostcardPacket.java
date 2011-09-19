@@ -53,7 +53,7 @@ public class SendPostcardPacket extends Packet
             if (value == null) {
                 _to = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -71,7 +71,7 @@ public class SendPostcardPacket extends Packet
             if (value == null) {
                 _from = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -89,7 +89,7 @@ public class SendPostcardPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -107,7 +107,7 @@ public class SendPostcardPacket extends Packet
             if (value == null) {
                 _subject = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -125,7 +125,7 @@ public class SendPostcardPacket extends Packet
             if (value == null) {
                 _msg = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -155,19 +155,19 @@ public class SendPostcardPacket extends Packet
             SessionID = new UUID(bytes);
             AssetID = new UUID(bytes);
             PosGlobal = new Vector3d(bytes); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _to = new byte[length];
             bytes.get(_to); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _from = new byte[length];
             bytes.get(_from); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _subject = new byte[length];
             bytes.get(_subject); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _msg = new byte[length];
             bytes.get(_msg); 
             AllowPublish = (bytes.get() != 0) ? (boolean)true : (boolean)false;
@@ -194,6 +194,7 @@ public class SendPostcardPacket extends Packet
             bytes.put((byte)((MaturePublish) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -221,8 +222,11 @@ public class SendPostcardPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SendPostcard; }
     public AgentDataBlock AgentData;
 
@@ -248,6 +252,7 @@ public class SendPostcardPacket extends Packet
         AgentData = new AgentDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -258,6 +263,7 @@ public class SendPostcardPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -270,6 +276,7 @@ public class SendPostcardPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SendPostcard ---\n";

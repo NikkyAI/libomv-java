@@ -57,6 +57,7 @@ public class ClassifiedInfoReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,7 +90,7 @@ public class ClassifiedInfoReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -107,7 +108,7 @@ public class ClassifiedInfoReplyPacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -128,7 +129,7 @@ public class ClassifiedInfoReplyPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -147,7 +148,7 @@ public class ClassifiedInfoReplyPacket extends Packet
             if (value == null) {
                 _parcelname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -177,20 +178,20 @@ public class ClassifiedInfoReplyPacket extends Packet
             CreationDate = bytes.getInt(); 
             ExpirationDate = bytes.getInt(); 
             Category = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _desc = new byte[length];
             bytes.get(_desc); 
             ParcelID = new UUID(bytes);
             ParentEstate = bytes.getInt(); 
             SnapshotID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             PosGlobal = new Vector3d(bytes); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _parcelname = new byte[length];
             bytes.get(_parcelname); 
             ClassifiedFlags = bytes.get(); 
@@ -220,6 +221,7 @@ public class ClassifiedInfoReplyPacket extends Packet
             bytes.putInt(PriceForListing);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -251,8 +253,11 @@ public class ClassifiedInfoReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ClassifiedInfoReply; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -282,6 +287,7 @@ public class ClassifiedInfoReplyPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -293,6 +299,7 @@ public class ClassifiedInfoReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -306,6 +313,7 @@ public class ClassifiedInfoReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ClassifiedInfoReply ---\n";

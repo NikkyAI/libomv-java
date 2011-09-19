@@ -57,6 +57,7 @@ public class GroupMembersRequestPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -96,6 +97,7 @@ public class GroupMembersRequestPacket extends Packet
             RequestID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -114,8 +116,11 @@ public class GroupMembersRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupMembersRequest; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -145,6 +150,7 @@ public class GroupMembersRequestPacket extends Packet
         GroupData = new GroupDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -156,6 +162,7 @@ public class GroupMembersRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -169,6 +176,7 @@ public class GroupMembersRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupMembersRequest ---\n";

@@ -59,6 +59,7 @@ public class BulkUpdateInventoryPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -90,7 +91,7 @@ public class BulkUpdateInventoryPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -113,7 +114,7 @@ public class BulkUpdateInventoryPacket extends Packet
             FolderID = new UUID(bytes);
             ParentID = new UUID(bytes);
             Type = bytes.get(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
         }
@@ -127,6 +128,7 @@ public class BulkUpdateInventoryPacket extends Packet
             bytes.put(_name);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- FolderData --\n";
@@ -175,7 +177,7 @@ public class BulkUpdateInventoryPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -193,7 +195,7 @@ public class BulkUpdateInventoryPacket extends Packet
             if (value == null) {
                 _description = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -234,10 +236,10 @@ public class BulkUpdateInventoryPacket extends Packet
             Flags = bytes.getInt(); 
             SaleType = bytes.get(); 
             SalePrice = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _description = new byte[length];
             bytes.get(_description); 
             CreationDate = bytes.getInt(); 
@@ -272,6 +274,7 @@ public class BulkUpdateInventoryPacket extends Packet
             bytes.putInt(CRC);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ItemData --\n";
@@ -310,8 +313,11 @@ public class BulkUpdateInventoryPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.BulkUpdateInventory; }
     public AgentDataBlock AgentData;
     public FolderDataBlock[] FolderData;
@@ -333,11 +339,11 @@ public class BulkUpdateInventoryPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         FolderData = new FolderDataBlock[count];
         for (int j = 0; j < count; j++)
         { FolderData[j] = new FolderDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         ItemData = new ItemDataBlock[count];
         for (int j = 0; j < count; j++)
         { ItemData[j] = new ItemDataBlock(bytes); }
@@ -347,16 +353,17 @@ public class BulkUpdateInventoryPacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         FolderData = new FolderDataBlock[count];
         for (int j = 0; j < count; j++)
         { FolderData[j] = new FolderDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         ItemData = new ItemDataBlock[count];
         for (int j = 0; j < count; j++)
         { ItemData[j] = new ItemDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -371,6 +378,7 @@ public class BulkUpdateInventoryPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -387,6 +395,7 @@ public class BulkUpdateInventoryPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- BulkUpdateInventory ---\n";

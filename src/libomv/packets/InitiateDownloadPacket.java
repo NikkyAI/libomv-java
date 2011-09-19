@@ -56,6 +56,7 @@ public class InitiateDownloadPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -83,7 +84,7 @@ public class InitiateDownloadPacket extends Packet
             if (value == null) {
                 _simfilename = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -101,7 +102,7 @@ public class InitiateDownloadPacket extends Packet
             if (value == null) {
                 _viewerfilename = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -122,10 +123,10 @@ public class InitiateDownloadPacket extends Packet
         public FileDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simfilename = new byte[length];
             bytes.get(_simfilename); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _viewerfilename = new byte[length];
             bytes.get(_viewerfilename); 
         }
@@ -138,6 +139,7 @@ public class InitiateDownloadPacket extends Packet
             bytes.put(_viewerfilename);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- FileData --\n";
@@ -156,8 +158,11 @@ public class InitiateDownloadPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.InitiateDownload; }
     public AgentDataBlock AgentData;
     public FileDataBlock FileData;
@@ -187,6 +192,7 @@ public class InitiateDownloadPacket extends Packet
         FileData = new FileDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -198,6 +204,7 @@ public class InitiateDownloadPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -211,6 +218,7 @@ public class InitiateDownloadPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- InitiateDownload ---\n";

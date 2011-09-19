@@ -64,7 +64,7 @@ public class ChildAgentUpdatePacket extends Packet
             if (value == null) {
                 _throttles = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -91,7 +91,7 @@ public class ChildAgentUpdatePacket extends Packet
             if (value == null) {
                 _agenttextures = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -127,7 +127,7 @@ public class ChildAgentUpdatePacket extends Packet
             ChangedGrid = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             Far = bytes.getFloat();
             Aspect = bytes.getFloat();
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _throttles = new byte[length];
             bytes.get(_throttles); 
             LocomotionState = bytes.getInt(); 
@@ -139,7 +139,7 @@ public class ChildAgentUpdatePacket extends Packet
             AlwaysRun = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             PreyAgent = new UUID(bytes);
             AgentAccess = bytes.get(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _agenttextures = new byte[length];
             bytes.get(_agenttextures); 
             ActiveGroupID = new UUID(bytes);
@@ -177,6 +177,7 @@ public class ChildAgentUpdatePacket extends Packet
             ActiveGroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -243,6 +244,7 @@ public class ChildAgentUpdatePacket extends Packet
             bytes.put((byte)((AcceptNotices) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -283,6 +285,7 @@ public class ChildAgentUpdatePacket extends Packet
             ObjectID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AnimationData --\n";
@@ -319,6 +322,7 @@ public class ChildAgentUpdatePacket extends Packet
             GranterID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GranterBlock --\n";
@@ -346,7 +350,7 @@ public class ChildAgentUpdatePacket extends Packet
             if (value == null) {
                 _nvpairs = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -366,7 +370,7 @@ public class ChildAgentUpdatePacket extends Packet
         public NVPairDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _nvpairs = new byte[length];
             bytes.get(_nvpairs); 
         }
@@ -377,6 +381,7 @@ public class ChildAgentUpdatePacket extends Packet
             bytes.put(_nvpairs);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- NVPairData --\n";
@@ -412,6 +417,7 @@ public class ChildAgentUpdatePacket extends Packet
             bytes.put(ParamValue);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- VisualParam --\n";
@@ -429,8 +435,11 @@ public class ChildAgentUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ChildAgentUpdate; }
     public AgentDataBlock AgentData;
     public GroupDataBlock[] GroupData;
@@ -458,23 +467,23 @@ public class ChildAgentUpdatePacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         GroupData = new GroupDataBlock[count];
         for (int j = 0; j < count; j++)
         { GroupData[j] = new GroupDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         AnimationData = new AnimationDataBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationData[j] = new AnimationDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         GranterBlock = new GranterBlockBlock[count];
         for (int j = 0; j < count; j++)
         { GranterBlock[j] = new GranterBlockBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         NVPairData = new NVPairDataBlock[count];
         for (int j = 0; j < count; j++)
         { NVPairData[j] = new NVPairDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         VisualParam = new VisualParamBlock[count];
         for (int j = 0; j < count; j++)
         { VisualParam[j] = new VisualParamBlock(bytes); }
@@ -484,28 +493,29 @@ public class ChildAgentUpdatePacket extends Packet
     {
         header = head;
         AgentData = new AgentDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         GroupData = new GroupDataBlock[count];
         for (int j = 0; j < count; j++)
         { GroupData[j] = new GroupDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         AnimationData = new AnimationDataBlock[count];
         for (int j = 0; j < count; j++)
         { AnimationData[j] = new AnimationDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         GranterBlock = new GranterBlockBlock[count];
         for (int j = 0; j < count; j++)
         { GranterBlock[j] = new GranterBlockBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         NVPairData = new NVPairDataBlock[count];
         for (int j = 0; j < count; j++)
         { NVPairData[j] = new NVPairDataBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         VisualParam = new VisualParamBlock[count];
         for (int j = 0; j < count; j++)
         { VisualParam[j] = new VisualParamBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -526,6 +536,7 @@ public class ChildAgentUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -548,6 +559,7 @@ public class ChildAgentUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ChildAgentUpdate ---\n";

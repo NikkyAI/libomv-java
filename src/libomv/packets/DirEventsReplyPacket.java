@@ -56,6 +56,7 @@ public class DirEventsReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -91,6 +92,7 @@ public class DirEventsReplyPacket extends Packet
             QueryID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryData --\n";
@@ -119,7 +121,7 @@ public class DirEventsReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -138,7 +140,7 @@ public class DirEventsReplyPacket extends Packet
             if (value == null) {
                 _date = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -162,11 +164,11 @@ public class DirEventsReplyPacket extends Packet
         {
             int length;
             OwnerID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
             EventID = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _date = new byte[length];
             bytes.get(_date); 
             UnixTime = bytes.getInt(); 
@@ -185,6 +187,7 @@ public class DirEventsReplyPacket extends Packet
             bytes.putInt(EventFlags);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- QueryReplies --\n";
@@ -225,6 +228,7 @@ public class DirEventsReplyPacket extends Packet
             bytes.putInt(Status);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- StatusData --\n";
@@ -242,8 +246,11 @@ public class DirEventsReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.DirEventsReply; }
     public AgentDataBlock AgentData;
     public QueryDataBlock QueryData;
@@ -268,11 +275,11 @@ public class DirEventsReplyPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         QueryData = new QueryDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryReplies = new QueryRepliesBlock[count];
         for (int j = 0; j < count; j++)
         { QueryReplies[j] = new QueryRepliesBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         StatusData = new StatusDataBlock[count];
         for (int j = 0; j < count; j++)
         { StatusData[j] = new StatusDataBlock(bytes); }
@@ -283,16 +290,17 @@ public class DirEventsReplyPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         QueryData = new QueryDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         QueryReplies = new QueryRepliesBlock[count];
         for (int j = 0; j < count; j++)
         { QueryReplies[j] = new QueryRepliesBlock(bytes); }
-        count = (int)bytes.get() & 0xFF;
+        count = bytes.get() & 0xFF;
         StatusData = new StatusDataBlock[count];
         for (int j = 0; j < count; j++)
         { StatusData[j] = new StatusDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -308,6 +316,7 @@ public class DirEventsReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -325,6 +334,7 @@ public class DirEventsReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- DirEventsReply ---\n";

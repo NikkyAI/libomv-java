@@ -49,7 +49,7 @@ public class TeleportFailedPacket extends Packet
             if (value == null) {
                 _reason = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -70,7 +70,7 @@ public class TeleportFailedPacket extends Packet
         {
             int length;
             AgentID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _reason = new byte[length];
             bytes.get(_reason); 
         }
@@ -82,6 +82,7 @@ public class TeleportFailedPacket extends Packet
             bytes.put(_reason);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Info --\n";
@@ -110,7 +111,7 @@ public class TeleportFailedPacket extends Packet
             if (value == null) {
                 _message = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -128,7 +129,7 @@ public class TeleportFailedPacket extends Packet
             if (value == null) {
                 _extraparams = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -149,10 +150,10 @@ public class TeleportFailedPacket extends Packet
         public AlertInfoBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _message = new byte[length];
             bytes.get(_message); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _extraparams = new byte[length];
             bytes.get(_extraparams); 
         }
@@ -165,6 +166,7 @@ public class TeleportFailedPacket extends Packet
             bytes.put(_extraparams);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AlertInfo --\n";
@@ -183,8 +185,11 @@ public class TeleportFailedPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.TeleportFailed; }
     public InfoBlock Info;
     public AlertInfoBlock[] AlertInfo;
@@ -204,7 +209,7 @@ public class TeleportFailedPacket extends Packet
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         Info = new InfoBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AlertInfo = new AlertInfoBlock[count];
         for (int j = 0; j < count; j++)
         { AlertInfo[j] = new AlertInfoBlock(bytes); }
@@ -214,12 +219,13 @@ public class TeleportFailedPacket extends Packet
     {
         header = head;
         Info = new InfoBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         AlertInfo = new AlertInfoBlock[count];
         for (int j = 0; j < count; j++)
         { AlertInfo[j] = new AlertInfoBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -232,6 +238,7 @@ public class TeleportFailedPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -246,6 +253,7 @@ public class TeleportFailedPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- TeleportFailed ---\n";

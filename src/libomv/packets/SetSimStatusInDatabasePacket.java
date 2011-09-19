@@ -49,7 +49,7 @@ public class SetSimStatusInDatabasePacket extends Packet
             if (value == null) {
                 _hostname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -72,7 +72,7 @@ public class SetSimStatusInDatabasePacket extends Packet
             if (value == null) {
                 _status = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -94,7 +94,7 @@ public class SetSimStatusInDatabasePacket extends Packet
         {
             int length;
             RegionID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _hostname = new byte[length];
             bytes.get(_hostname); 
             X = bytes.getInt(); 
@@ -102,7 +102,7 @@ public class SetSimStatusInDatabasePacket extends Packet
             PID = bytes.getInt(); 
             AgentCount = bytes.getInt(); 
             TimeToLive = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _status = new byte[length];
             bytes.get(_status); 
         }
@@ -121,6 +121,7 @@ public class SetSimStatusInDatabasePacket extends Packet
             bytes.put(_status);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -145,8 +146,11 @@ public class SetSimStatusInDatabasePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SetSimStatusInDatabase; }
     public DataBlock Data;
 
@@ -172,6 +176,7 @@ public class SetSimStatusInDatabasePacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -182,6 +187,7 @@ public class SetSimStatusInDatabasePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -194,6 +200,7 @@ public class SetSimStatusInDatabasePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SetSimStatusInDatabase ---\n";

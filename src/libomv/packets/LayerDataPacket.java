@@ -55,6 +55,7 @@ public class LayerDataPacket extends Packet
             bytes.put(Type);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- LayerID --\n";
@@ -82,7 +83,7 @@ public class LayerDataPacket extends Packet
             if (value == null) {
                 _data = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -102,7 +103,7 @@ public class LayerDataPacket extends Packet
         public LayerDataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _data = new byte[length];
             bytes.get(_data); 
         }
@@ -113,6 +114,7 @@ public class LayerDataPacket extends Packet
             bytes.put(_data);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- LayerData --\n";
@@ -130,8 +132,11 @@ public class LayerDataPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.LayerData; }
     public LayerIDBlock LayerID;
     public LayerDataBlock LayerData;
@@ -161,6 +166,7 @@ public class LayerDataPacket extends Packet
         LayerData = new LayerDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -172,6 +178,7 @@ public class LayerDataPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -185,6 +192,7 @@ public class LayerDataPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- LayerData ---\n";

@@ -59,6 +59,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             GroupID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -98,6 +99,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             bytes.putInt(TotalNumItems);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TransactionData --\n";
@@ -128,7 +130,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             if (value == null) {
                 _tersedateid = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -146,7 +148,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             if (value == null) {
                 _startdatetime = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -164,7 +166,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             if (value == null) {
                 _enddatetime = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -183,7 +185,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             if (value == null) {
                 _votecast = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -203,7 +205,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             if (value == null) {
                 _proposaltext = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -229,22 +231,22 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             int length;
             VoteID = new UUID(bytes);
             VoteInitiator = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _tersedateid = new byte[length];
             bytes.get(_tersedateid); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _startdatetime = new byte[length];
             bytes.get(_startdatetime); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _enddatetime = new byte[length];
             bytes.get(_enddatetime); 
             AlreadyVoted = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _votecast = new byte[length];
             bytes.get(_votecast); 
             Majority = bytes.getFloat();
             Quorum = bytes.getInt(); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _proposaltext = new byte[length];
             bytes.get(_proposaltext); 
         }
@@ -268,6 +270,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
             bytes.put(_proposaltext);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ProposalData --\n";
@@ -294,8 +297,11 @@ public class GroupActiveProposalItemReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupActiveProposalItemReply; }
     public AgentDataBlock AgentData;
     public TransactionDataBlock TransactionData;
@@ -318,7 +324,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         TransactionData = new TransactionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ProposalData = new ProposalDataBlock[count];
         for (int j = 0; j < count; j++)
         { ProposalData[j] = new ProposalDataBlock(bytes); }
@@ -329,12 +335,13 @@ public class GroupActiveProposalItemReplyPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         TransactionData = new TransactionDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ProposalData = new ProposalDataBlock[count];
         for (int j = 0; j < count; j++)
         { ProposalData[j] = new ProposalDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -348,6 +355,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -363,6 +371,7 @@ public class GroupActiveProposalItemReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupActiveProposalItemReply ---\n";

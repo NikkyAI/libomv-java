@@ -56,6 +56,7 @@ public class AbortXferPacket extends Packet
             bytes.putInt(Result);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- XferID --\n";
@@ -74,8 +75,11 @@ public class AbortXferPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.AbortXfer; }
     public XferIDBlock XferID;
 
@@ -101,6 +105,7 @@ public class AbortXferPacket extends Packet
         XferID = new XferIDBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -111,6 +116,7 @@ public class AbortXferPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -123,6 +129,7 @@ public class AbortXferPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- AbortXfer ---\n";

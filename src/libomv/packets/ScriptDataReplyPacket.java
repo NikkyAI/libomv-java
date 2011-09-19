@@ -48,7 +48,7 @@ public class ScriptDataReplyPacket extends Packet
             if (value == null) {
                 _reply = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -69,7 +69,7 @@ public class ScriptDataReplyPacket extends Packet
         {
             int length;
             Hash = bytes.getLong(); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _reply = new byte[length];
             bytes.get(_reply); 
         }
@@ -81,6 +81,7 @@ public class ScriptDataReplyPacket extends Packet
             bytes.put(_reply);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- DataBlock --\n";
@@ -99,8 +100,11 @@ public class ScriptDataReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptDataReply; }
     public DataBlockBlock[] DataBlock;
 
@@ -117,7 +121,7 @@ public class ScriptDataReplyPacket extends Packet
     {
         int [] a_packetEnd = new int[] { bytes.position()-1 };
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         DataBlock = new DataBlockBlock[count];
         for (int j = 0; j < count; j++)
         { DataBlock[j] = new DataBlockBlock(bytes); }
@@ -126,12 +130,13 @@ public class ScriptDataReplyPacket extends Packet
     public ScriptDataReplyPacket(PacketHeader head, ByteBuffer bytes)
     {
         header = head;
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         DataBlock = new DataBlockBlock[count];
         for (int j = 0; j < count; j++)
         { DataBlock[j] = new DataBlockBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -143,6 +148,7 @@ public class ScriptDataReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -156,6 +162,7 @@ public class ScriptDataReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptDataReply ---\n";

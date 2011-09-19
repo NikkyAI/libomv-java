@@ -53,6 +53,7 @@ public class SetCPURatioPacket extends Packet
             bytes.put(Ratio);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -70,8 +71,11 @@ public class SetCPURatioPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.SetCPURatio; }
     public DataBlock Data;
 
@@ -97,6 +101,7 @@ public class SetCPURatioPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -107,6 +112,7 @@ public class SetCPURatioPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -119,6 +125,7 @@ public class SetCPURatioPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- SetCPURatio ---\n";

@@ -57,6 +57,7 @@ public class PickInfoReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class PickInfoReplyPacket extends Packet
             if (value == null) {
                 _name = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -106,7 +107,7 @@ public class PickInfoReplyPacket extends Packet
             if (value == null) {
                 _desc = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -125,7 +126,7 @@ public class PickInfoReplyPacket extends Packet
             if (value == null) {
                 _user = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -143,7 +144,7 @@ public class PickInfoReplyPacket extends Packet
             if (value == null) {
                 _originalname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -161,7 +162,7 @@ public class PickInfoReplyPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -192,20 +193,20 @@ public class PickInfoReplyPacket extends Packet
             CreatorID = new UUID(bytes);
             TopPick = (bytes.get() != 0) ? (boolean)true : (boolean)false;
             ParcelID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _name = new byte[length];
             bytes.get(_name); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _desc = new byte[length];
             bytes.get(_desc); 
             SnapshotID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _user = new byte[length];
             bytes.get(_user); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _originalname = new byte[length];
             bytes.get(_originalname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             PosGlobal = new Vector3d(bytes); 
@@ -235,6 +236,7 @@ public class PickInfoReplyPacket extends Packet
             bytes.put((byte)((Enabled) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -264,8 +266,11 @@ public class PickInfoReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.PickInfoReply; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -295,6 +300,7 @@ public class PickInfoReplyPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -306,6 +312,7 @@ public class PickInfoReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -319,6 +326,7 @@ public class PickInfoReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- PickInfoReply ---\n";

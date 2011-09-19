@@ -59,6 +59,7 @@ public class UpdateGroupInfoPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -88,7 +89,7 @@ public class UpdateGroupInfoPacket extends Packet
             if (value == null) {
                 _charter = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -115,7 +116,7 @@ public class UpdateGroupInfoPacket extends Packet
         {
             int length;
             GroupID = new UUID(bytes);
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _charter = new byte[length];
             bytes.get(_charter); 
             ShowInList = (bytes.get() != 0) ? (boolean)true : (boolean)false;
@@ -139,6 +140,7 @@ public class UpdateGroupInfoPacket extends Packet
             bytes.put((byte)((MaturePublish) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- GroupData --\n";
@@ -163,8 +165,11 @@ public class UpdateGroupInfoPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UpdateGroupInfo; }
     public AgentDataBlock AgentData;
     public GroupDataBlock GroupData;
@@ -194,6 +199,7 @@ public class UpdateGroupInfoPacket extends Packet
         GroupData = new GroupDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -205,6 +211,7 @@ public class UpdateGroupInfoPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -218,6 +225,7 @@ public class UpdateGroupInfoPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UpdateGroupInfo ---\n";

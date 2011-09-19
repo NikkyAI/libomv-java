@@ -60,6 +60,7 @@ public class KickUserPacket extends Packet
             bytes.put((byte)(TargetPort % 256));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- TargetBlock --\n";
@@ -90,7 +91,7 @@ public class KickUserPacket extends Packet
             if (value == null) {
                 _reason = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -112,7 +113,7 @@ public class KickUserPacket extends Packet
             int length;
             AgentID = new UUID(bytes);
             SessionID = new UUID(bytes);
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _reason = new byte[length];
             bytes.get(_reason); 
         }
@@ -125,6 +126,7 @@ public class KickUserPacket extends Packet
             bytes.put(_reason);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- UserInfo --\n";
@@ -144,8 +146,11 @@ public class KickUserPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.KickUser; }
     public TargetBlockBlock TargetBlock;
     public UserInfoBlock UserInfo;
@@ -175,6 +180,7 @@ public class KickUserPacket extends Packet
         UserInfo = new UserInfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -186,6 +192,7 @@ public class KickUserPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -199,6 +206,7 @@ public class KickUserPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- KickUser ---\n";

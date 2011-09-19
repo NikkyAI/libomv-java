@@ -57,6 +57,7 @@ public class ParcelSelectObjectsPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -96,6 +97,7 @@ public class ParcelSelectObjectsPacket extends Packet
             bytes.putInt(ReturnType);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -132,6 +134,7 @@ public class ParcelSelectObjectsPacket extends Packet
             ReturnID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ReturnIDs --\n";
@@ -149,8 +152,11 @@ public class ParcelSelectObjectsPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelSelectObjects; }
     public AgentDataBlock AgentData;
     public ParcelDataBlock ParcelData;
@@ -173,7 +179,7 @@ public class ParcelSelectObjectsPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         ParcelData = new ParcelDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ReturnIDs = new ReturnIDsBlock[count];
         for (int j = 0; j < count; j++)
         { ReturnIDs[j] = new ReturnIDsBlock(bytes); }
@@ -184,12 +190,13 @@ public class ParcelSelectObjectsPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         ParcelData = new ParcelDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ReturnIDs = new ReturnIDsBlock[count];
         for (int j = 0; j < count; j++)
         { ReturnIDs[j] = new ReturnIDsBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -203,6 +210,7 @@ public class ParcelSelectObjectsPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -218,6 +226,7 @@ public class ParcelSelectObjectsPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelSelectObjects ---\n";

@@ -57,6 +57,7 @@ public class ConfirmAuctionStartPacket extends Packet
             bytes.putInt(AuctionID);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AuctionData --\n";
@@ -75,8 +76,11 @@ public class ConfirmAuctionStartPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ConfirmAuctionStart; }
     public AuctionDataBlock AuctionData;
 
@@ -102,6 +106,7 @@ public class ConfirmAuctionStartPacket extends Packet
         AuctionData = new AuctionDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -112,6 +117,7 @@ public class ConfirmAuctionStartPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -124,6 +130,7 @@ public class ConfirmAuctionStartPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ConfirmAuctionStart ---\n";

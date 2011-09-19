@@ -57,6 +57,7 @@ public class ParcelClaimPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -99,6 +100,7 @@ public class ParcelClaimPacket extends Packet
             bytes.put((byte)((Final) ? 1 : 0));
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -145,6 +147,7 @@ public class ParcelClaimPacket extends Packet
             bytes.putFloat(North);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ParcelData --\n";
@@ -165,8 +168,11 @@ public class ParcelClaimPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ParcelClaim; }
     public AgentDataBlock AgentData;
     public DataBlock Data;
@@ -189,7 +195,7 @@ public class ParcelClaimPacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
@@ -200,12 +206,13 @@ public class ParcelClaimPacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         Data = new DataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         ParcelData = new ParcelDataBlock[count];
         for (int j = 0; j < count; j++)
         { ParcelData[j] = new ParcelDataBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -219,6 +226,7 @@ public class ParcelClaimPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -234,6 +242,7 @@ public class ParcelClaimPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ParcelClaim ---\n";

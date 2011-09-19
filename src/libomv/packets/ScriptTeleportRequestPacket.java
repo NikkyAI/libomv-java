@@ -48,7 +48,7 @@ public class ScriptTeleportRequestPacket extends Packet
             if (value == null) {
                 _objectname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -66,7 +66,7 @@ public class ScriptTeleportRequestPacket extends Packet
             if (value == null) {
                 _simname = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -89,10 +89,10 @@ public class ScriptTeleportRequestPacket extends Packet
         public DataBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _objectname = new byte[length];
             bytes.get(_objectname); 
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _simname = new byte[length];
             bytes.get(_simname); 
             SimPosition = new Vector3(bytes); 
@@ -109,6 +109,7 @@ public class ScriptTeleportRequestPacket extends Packet
             LookAt.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- Data --\n";
@@ -129,8 +130,11 @@ public class ScriptTeleportRequestPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ScriptTeleportRequest; }
     public DataBlock Data;
 
@@ -156,6 +160,7 @@ public class ScriptTeleportRequestPacket extends Packet
         Data = new DataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -166,6 +171,7 @@ public class ScriptTeleportRequestPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -178,6 +184,7 @@ public class ScriptTeleportRequestPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ScriptTeleportRequest ---\n";

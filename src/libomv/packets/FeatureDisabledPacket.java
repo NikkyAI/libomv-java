@@ -48,7 +48,7 @@ public class FeatureDisabledPacket extends Packet
             if (value == null) {
                 _errormessage = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -70,7 +70,7 @@ public class FeatureDisabledPacket extends Packet
         public FailureInfoBlock(ByteBuffer bytes)
         {
             int length;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _errormessage = new byte[length];
             bytes.get(_errormessage); 
             AgentID = new UUID(bytes);
@@ -85,6 +85,7 @@ public class FeatureDisabledPacket extends Packet
             TransactionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- FailureInfo --\n";
@@ -104,8 +105,11 @@ public class FeatureDisabledPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.FeatureDisabled; }
     public FailureInfoBlock FailureInfo;
 
@@ -131,6 +135,7 @@ public class FeatureDisabledPacket extends Packet
         FailureInfo = new FailureInfoBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -141,6 +146,7 @@ public class FeatureDisabledPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -153,6 +159,7 @@ public class FeatureDisabledPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- FeatureDisabled ---\n";

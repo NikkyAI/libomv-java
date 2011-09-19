@@ -56,6 +56,7 @@ public class UserInfoReplyPacket extends Packet
             AgentID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -84,7 +85,7 @@ public class UserInfoReplyPacket extends Packet
             if (value == null) {
                 _directoryvisibility = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -102,7 +103,7 @@ public class UserInfoReplyPacket extends Packet
             if (value == null) {
                 _email = null;
             }
-            if (value.length > 1024) {
+            else if (value.length > 1024) {
                 throw new OverflowException("Value exceeds 1024 characters");
             }
             else {
@@ -124,10 +125,10 @@ public class UserInfoReplyPacket extends Packet
         {
             int length;
             IMViaEMail = (bytes.get() != 0) ? (boolean)true : (boolean)false;
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _directoryvisibility = new byte[length];
             bytes.get(_directoryvisibility); 
-            length = (int)(bytes.getShort()) & 0xFFFF;
+            length = bytes.getShort() & 0xFFFF;
             _email = new byte[length];
             bytes.get(_email); 
         }
@@ -141,6 +142,7 @@ public class UserInfoReplyPacket extends Packet
             bytes.put(_email);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- UserData --\n";
@@ -160,8 +162,11 @@ public class UserInfoReplyPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.UserInfoReply; }
     public AgentDataBlock AgentData;
     public UserDataBlock UserData;
@@ -191,6 +196,7 @@ public class UserInfoReplyPacket extends Packet
         UserData = new UserDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -202,6 +208,7 @@ public class UserInfoReplyPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -215,6 +222,7 @@ public class UserInfoReplyPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- UserInfoReply ---\n";

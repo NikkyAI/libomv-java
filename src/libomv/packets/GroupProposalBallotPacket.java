@@ -59,6 +59,7 @@ public class GroupProposalBallotPacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -89,7 +90,7 @@ public class GroupProposalBallotPacket extends Packet
             if (value == null) {
                 _votecast = null;
             }
-            if (value.length > 255) {
+            else if (value.length > 255) {
                 throw new OverflowException("Value exceeds 255 characters");
             }
             else {
@@ -111,7 +112,7 @@ public class GroupProposalBallotPacket extends Packet
             int length;
             ProposalID = new UUID(bytes);
             GroupID = new UUID(bytes);
-            length = (int)(bytes.get()) & 0xFF;
+            length = bytes.get() & 0xFF;
             _votecast = new byte[length];
             bytes.get(_votecast); 
         }
@@ -124,6 +125,7 @@ public class GroupProposalBallotPacket extends Packet
             bytes.put(_votecast);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ProposalData --\n";
@@ -143,8 +145,11 @@ public class GroupProposalBallotPacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.GroupProposalBallot; }
     public AgentDataBlock AgentData;
     public ProposalDataBlock ProposalData;
@@ -174,6 +179,7 @@ public class GroupProposalBallotPacket extends Packet
         ProposalData = new ProposalDataBlock(bytes);
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -185,6 +191,7 @@ public class GroupProposalBallotPacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -198,6 +205,7 @@ public class GroupProposalBallotPacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- GroupProposalBallot ---\n";

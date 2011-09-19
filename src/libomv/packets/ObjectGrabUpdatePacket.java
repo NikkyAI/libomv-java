@@ -58,6 +58,7 @@ public class ObjectGrabUpdatePacket extends Packet
             SessionID.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- AgentData --\n";
@@ -103,6 +104,7 @@ public class ObjectGrabUpdatePacket extends Packet
             bytes.putInt(TimeSinceLast);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- ObjectData --\n";
@@ -156,6 +158,7 @@ public class ObjectGrabUpdatePacket extends Packet
             Binormal.GetBytes(bytes);
         }
 
+        @Override
         public String toString()
         {
             String output = "-- SurfaceInfo --\n";
@@ -178,8 +181,11 @@ public class ObjectGrabUpdatePacket extends Packet
     }
 
     private PacketHeader header;
+    @Override
     public PacketHeader getHeader() { return header; }
+    @Override
     public void setHeader(PacketHeader value) { header = value; }
+    @Override
     public PacketType getType() { return PacketType.ObjectGrabUpdate; }
     public AgentDataBlock AgentData;
     public ObjectDataBlock ObjectData;
@@ -202,7 +208,7 @@ public class ObjectGrabUpdatePacket extends Packet
         header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         ObjectData = new ObjectDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SurfaceInfo = new SurfaceInfoBlock[count];
         for (int j = 0; j < count; j++)
         { SurfaceInfo[j] = new SurfaceInfoBlock(bytes); }
@@ -213,12 +219,13 @@ public class ObjectGrabUpdatePacket extends Packet
         header = head;
         AgentData = new AgentDataBlock(bytes);
         ObjectData = new ObjectDataBlock(bytes);
-        int count = (int)bytes.get() & 0xFF;
+        int count = bytes.get() & 0xFF;
         SurfaceInfo = new SurfaceInfoBlock[count];
         for (int j = 0; j < count; j++)
         { SurfaceInfo[j] = new SurfaceInfoBlock(bytes); }
     }
 
+    @Override
     public int getLength()
     {
         int length = header.getLength();
@@ -232,6 +239,7 @@ public class ObjectGrabUpdatePacket extends Packet
         return length;
     }
 
+    @Override
     public ByteBuffer ToBytes() throws Exception
     {
         ByteBuffer bytes = ByteBuffer.allocate(getLength());
@@ -247,6 +255,7 @@ public class ObjectGrabUpdatePacket extends Packet
         return bytes;
     }
 
+    @Override
     public String toString()
     {
         String output = "--- ObjectGrabUpdate ---\n";
