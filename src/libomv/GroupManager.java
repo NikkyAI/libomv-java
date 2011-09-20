@@ -1772,7 +1772,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     {
         GroupActiveProposalItemReplyPacket proposal = (GroupActiveProposalItemReplyPacket)packet;
 
-        UUID transactionID = proposal.TransactionData.TransactionID;
+//      UUID transactionID = proposal.TransactionData.TransactionID;
 
         ArrayList<GroupProposalItem> array = new ArrayList<GroupProposalItem>(proposal.ProposalData.length);
         for (GroupActiveProposalItemReplyPacket.ProposalDataBlock block : proposal.ProposalData)

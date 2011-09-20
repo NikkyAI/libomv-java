@@ -232,8 +232,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Material) != 0)
                 return material;
-            else
-                return defaultTexture.material;
+            return defaultTexture.material;
         }
        
         public void setMaterial(byte value)
@@ -246,8 +245,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Media) != 0)
                 return media;
-            else
-                return defaultTexture.media;
+            return defaultTexture.media;
         }
         public void setMedia(byte value)
         {
@@ -259,8 +257,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.RGBA) != 0)
                 return rgba;
-            else
-                return defaultTexture.rgba;
+            return defaultTexture.rgba;
         }
         public void setRGBA(Color4 value)
         {
@@ -272,8 +269,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.RepeatU) != 0)
                 return repeatU;
-            else
-                return defaultTexture.repeatU;
+            return defaultTexture.repeatU;
         }
         public void setRepeatU(float value)
         {
@@ -285,8 +281,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.RepeatV) != 0)
                 return repeatU;
-            else
-                return defaultTexture.repeatV;
+            return defaultTexture.repeatV;
         }
         public void setRepeatV(float value)
         {
@@ -298,8 +293,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.OffsetU) != 0)
                 return offsetU;
-            else
-                return defaultTexture.offsetU;
+            return defaultTexture.offsetU;
         }
         public void setOffsetU(float value)
         {
@@ -311,8 +305,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.OffsetV) != 0)
                 return offsetV;
-            else
-                return defaultTexture.offsetV;
+            return defaultTexture.offsetV;
         }
         public void setOffsetV(float value)
         {
@@ -324,8 +317,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Rotation) != 0)
                 return rotation;
-            else
-                return defaultTexture.rotation;
+            return defaultTexture.rotation;
         }
         public void setRotation(float value)
         {
@@ -337,8 +329,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Glow) != 0)
                 return glow;
-            else
-                return defaultTexture.glow;
+            return defaultTexture.glow;
         }
         public void setGlow(float value)
         {
@@ -350,8 +341,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Material) != 0)
                 return Bumpiness.setValue(material & BUMP_MASK);
-            else
-                return defaultTexture.getBump();
+            return defaultTexture.getBump();
         }
         public void setBump(Bumpiness value)
         {
@@ -366,8 +356,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Material) != 0)
                 return Shininess.setValue(material & SHINY_MASK);
-            else
-                return defaultTexture.getShiny();
+            return defaultTexture.getShiny();
         }
         public void setShiny(Shininess value)
         {
@@ -382,8 +371,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Material) != 0)
                 return (material & FULLBRIGHT_MASK) != 0;
-            else
-                return defaultTexture.getFullbright();
+            return defaultTexture.getFullbright();
         }
         public void setFullbright(boolean value)
         {
@@ -401,8 +389,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Media) != 0)
                 return (media & MEDIA_MASK) != 0;
-            else
-                return defaultTexture.getMediaFlags();
+            return defaultTexture.getMediaFlags();
         }
         public void setMediaFlags(boolean value)
         {
@@ -419,15 +406,14 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.Media) != 0)
                 return MappingType.setValue(media & TEX_MAP_MASK);
-            else
-                return defaultTexture.getTexMapType();
+            return defaultTexture.getTexMapType();
         }
         public void setTexMapType(MappingType value)
         {
             // Clear out the old texmap value
             media &= ~TEX_MAP_MASK;
             // Put the new texmap value in the media byte
-            media |= (byte)value.getValue();
+            media |= value.getValue();
             hasAttribute |= TextureAttributes.Media;
         }
 
@@ -435,8 +421,7 @@ public class TextureEntry
         {
             if ((hasAttribute & TextureAttributes.TextureID) != 0)
                 return textureID;
-            else
-                return defaultTexture.textureID;
+            return defaultTexture.textureID;
         }
         public void setTextureID(UUID value)
         {
@@ -774,8 +759,7 @@ public class TextureEntry
 
         if (faceTextures[index] != null)
             return faceTextures[index];
-        else
-            return defaultTexture;
+        return defaultTexture;
     }
 
     public OSD Serialize()
@@ -830,12 +814,8 @@ public class TextureEntry
             defaultTexture = null;
             return;
         }
-        else
-        {
-            defaultTexture = new TextureEntryFace(null);
-        }
+        defaultTexture = new TextureEntryFace(null);
 
-    	
     	off.i = pos;
 
         // #region Texture
@@ -1028,61 +1008,61 @@ public class TextureEntry
             {
                 if (textures[i] == Integer.MAX_VALUE)
                     textures[i] = 0;
-                textures[i] |= (int)(1 << i);
+                textures[i] |= (1 << i);
             }
             if (faceTextures[i].getRGBA() != defaultTexture.getRGBA())
             {
                 if (rgbas[i] == Integer.MAX_VALUE)
                     rgbas[i] = 0;
-                rgbas[i] |= (int)(1 << i);
+                rgbas[i] |= (1 << i);
             }
             if (faceTextures[i].getRepeatU() != defaultTexture.getRepeatU())
             {
                 if (repeatus[i] == Integer.MAX_VALUE)
                     repeatus[i] = 0;
-                repeatus[i] |= (int)(1 << i);
+                repeatus[i] |= (1 << i);
             }
             if (faceTextures[i].getRepeatV() != defaultTexture.getRepeatV())
             {
                 if (repeatvs[i] == Integer.MAX_VALUE)
                     repeatvs[i] = 0;
-                repeatvs[i] |= (int)(1 << i);
+                repeatvs[i] |= (1 << i);
             }
             if (Helpers.TEOffsetShort(faceTextures[i].getOffsetU()) != Helpers.TEOffsetShort(defaultTexture.getOffsetU()))
             {
                 if (offsetus[i] == Integer.MAX_VALUE)
                     offsetus[i] = 0;
-                offsetus[i] |= (int)(1 << i);
+                offsetus[i] |= (1 << i);
             }
             if (Helpers.TEOffsetShort(faceTextures[i].getOffsetV()) != Helpers.TEOffsetShort(defaultTexture.getOffsetV()))
             {
                 if (offsetvs[i] == Integer.MAX_VALUE)
                     offsetvs[i] = 0;
-                offsetvs[i] |= (int)(1 << i);
+                offsetvs[i] |= (1 << i);
             }
             if (Helpers.TERotationShort(faceTextures[i].getRotation()) != Helpers.TERotationShort(defaultTexture.getRotation()))
             {
                 if (rotations[i] == Integer.MAX_VALUE)
                     rotations[i] = 0;
-                rotations[i] |= (int)(1 << i);
+                rotations[i] |= (1 << i);
             }
             if (faceTextures[i].material != defaultTexture.material)
             {
                 if (materials[i] == Integer.MAX_VALUE)
                     materials[i] = 0;
-                materials[i] |= (int)(1 << i);
+                materials[i] |= (1 << i);
             }
             if (faceTextures[i].media != defaultTexture.media)
             {
                 if (medias[i] == Integer.MAX_VALUE)
                     medias[i] = 0;
-                medias[i] |= (int)(1 << i);
+                medias[i] |= (1 << i);
             }
             if (Helpers.TEGlowByte(faceTextures[i].getGlow()) != Helpers.TEGlowByte(defaultTexture.getGlow()))
             {
                 if (glows[i] == Integer.MAX_VALUE)
                     glows[i] = 0;
-                glows[i] |= (int)(1 << i);
+                glows[i] |= (1 << i);
             }
         }
         // #endregion Bitfield Setup
@@ -1275,7 +1255,7 @@ public class TextureEntry
         do
         {
             b = data[pos.i];
-            pos.faceBits = (pos.faceBits << 7) | (int)(b & 0x7F);
+            pos.faceBits = (pos.faceBits << 7) | (b & 0x7F);
             pos.bitfieldSize += 7;
             pos.i++;
         }

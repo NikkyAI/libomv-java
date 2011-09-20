@@ -377,16 +377,9 @@ public class Avatar extends Primitive
                     name = String.format("%s %s", firstName, lastName);
                     return name;
                 }
-                else
-                {
-                    return Helpers.EmptyString;
-                }
             }
         }
-        else
-        {
-            return Helpers.EmptyString;
-        }
+        return Helpers.EmptyString;
     }
 
     public void setNames(String firstName, String lastName)
@@ -426,28 +419,22 @@ public class Avatar extends Primitive
         {
             return groupName;
         }
-        else
+        
+        if (NameValues != null || NameValues.length > 0)
         {
-            if (NameValues == null || NameValues.length == 0)
+            synchronized (NameValues)
             {
-                return Helpers.EmptyString;
-            }
-            else
-            {
-                synchronized (NameValues)
+                for (int i = 0; i < NameValues.length; i++)
                 {
-                    for (int i = 0; i < NameValues.length; i++)
+                    if (NameValues[i].Name.equals("Title") && NameValues[i].Type == NameValue.ValueType.String)
                     {
-                        if (NameValues[i].Name.equals("Title") && NameValues[i].Type == NameValue.ValueType.String)
-                        {
-                            groupName = (String)NameValues[i].Value;
-                            return groupName;
-                        }
+                        groupName = (String)NameValues[i].Value;
+                        return groupName;
                     }
                 }
-                return Helpers.EmptyString;
             }
         }
+        return Helpers.EmptyString;
     }
 
     @Override

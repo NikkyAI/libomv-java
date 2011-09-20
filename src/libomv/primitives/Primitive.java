@@ -876,13 +876,32 @@ public class Primitive
         	}
         }
         
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             return Material.hashCode() ^ (int)PathBegin ^ PathCurve.hashCode() ^ (int)PathEnd ^
                    (int)PathRadiusOffset ^ (int)PathRevolutions ^ (int)PathScaleX ^ (int)PathScaleY ^
                    (int)PathShearX ^ (int)PathShearY ^ (int)PathSkew ^ (int)PathTaperX ^ (int)PathTaperY ^
                    (int)PathTwist ^ (int)PathTwistBegin ^ PCode.hashCode() ^ (int)ProfileBegin ^
                    ProfileCurve.hashCode() ^ (int)ProfileEnd ^ (int)ProfileHollow ^ State;
+
+        }
+
+        @Override
+		public boolean equals(Object o)
+        {
+        	return o != null && o instanceof ConstructionData ? equals((ConstructionData)o) : false;
+        }
+
+        public boolean equals(ConstructionData o)
+        {
+            return o != null && Material == null ? Material == o.Material : Material.equals(o.Material) && PathBegin == o.PathBegin &&
+                   PathCurve.getValue() == o.PathCurve.getValue() && PathEnd == o.PathEnd && PathRadiusOffset == o.PathRadiusOffset &&
+                   PathRevolutions == o.PathRevolutions && PathScaleX == o.PathScaleX && PathScaleY == o.PathScaleY &&
+                   PathShearX == o.PathShearX && PathShearY == o.PathShearY && PathSkew == o.PathSkew && PathTaperX == o.PathTaperX &&
+                   PathTaperY == o.PathTaperY && PathTwist == o.PathTwist && PathTwistBegin == o.PathTwistBegin &&
+                   PCode.getValue() == o.PCode.getValue() && ProfileCurve.getValue() == o.ProfileCurve.getValue() &&
+                   ProfileBegin == o.ProfileBegin && ProfileEnd == o.ProfileEnd && ProfileHollow == o.ProfileHollow && State == o.State;
 
         }
     }
@@ -913,10 +932,10 @@ public class Primitive
             {
                 Softness = ((data[pos] & 0x80) >> 6) | ((data[pos + 1] & 0x80) >> 7);
 
-                Tension = (float)(data[pos++] & 0x7F) / 10.0f;
-                Drag = (float)(data[pos++] & 0x7F) / 10.0f;
-                Gravity = (float)(data[pos++] / 10.0f) - 10.0f;
-                Wind = (float)data[pos++] / 10.0f;
+                Tension = (data[pos++] & 0x7F) / 10.0f;
+                Drag = (data[pos++] & 0x7F) / 10.0f;
+                Gravity = (data[pos++] / 10.0f) - 10.0f;
+                Wind = data[pos++] / 10.0f;
                 Force = new Vector3(data, pos);
             }
             else
@@ -1293,40 +1312,33 @@ public class Primitive
                     return PrimType.Unknown;
             }
         }
-        else
+
+        switch (PrimData.PathCurve)
         {
-            switch (PrimData.PathCurve)
-            {
-                case Flexible:
-                    return PrimType.Unknown;
-                case Circle:
-                    switch (PrimData.ProfileCurve)
-                    {
-                        case Circle:
-                            if (scaleY > 0.75f)
-                                return PrimType.Sphere;
-                            else
-                                return PrimType.Torus;
-                        case HalfCircle:
+            case Flexible:
+                return PrimType.Unknown;
+            case Circle:
+                switch (PrimData.ProfileCurve)
+                {
+                    case Circle:
+                        if (scaleY > 0.75f)
                             return PrimType.Sphere;
-                        case EqualTriangle:
-                            return PrimType.Ring;
-                        case Square:
-                            if (scaleY <= 0.75f)
-                                return PrimType.Tube;
-                            else
-                                return PrimType.Unknown;
-                        default:
-                            return PrimType.Unknown;
-                    }
-                case Circle2:
-                    if (PrimData.ProfileCurve == ProfileCurve.Circle)
+                        return PrimType.Torus;
+                    case HalfCircle:
                         return PrimType.Sphere;
-                    else
+                    case EqualTriangle:
+                        return PrimType.Ring;
+                    case Square:
+                        if (scaleY <= 0.75f)
+                            return PrimType.Tube;
+                    default:
                         return PrimType.Unknown;
-                default:
-                    return PrimType.Unknown;
-            }
+                }
+            case Circle2:
+                if (PrimData.ProfileCurve == ProfileCurve.Circle)
+                    return PrimType.Sphere;
+            default:
+                return PrimType.Unknown;
         }
     }
 
@@ -1518,8 +1530,8 @@ public class Primitive
                     Sculpt = new SculptData(data, i);
                     break;
             }
-            i += (int)paramLength;
-            totalLength += (int)paramLength + 6;
+            i += paramLength;
+            totalLength += paramLength + 6;
         }
         return totalLength;
     }
@@ -1629,7 +1641,8 @@ public class Primitive
         }
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Position.hashCode() ^ Velocity.hashCode() ^ Acceleration.hashCode() ^ Rotation.hashCode() ^
                AngularVelocity.hashCode() ^ clickAction.hashCode() ^ (Flexible != null ? Flexible.hashCode() : 0) ^
@@ -1696,22 +1709,22 @@ public class Primitive
 
     public static float UnpackBeginCut(short beginCut)
     {
-        return (float)beginCut * CUT_QUANTA;
+        return beginCut * CUT_QUANTA;
     }
 
     public static float UnpackEndCut(short endCut)
     {
-        return (float)(50000 - endCut) * CUT_QUANTA;
+        return (50000 - endCut) * CUT_QUANTA;
     }
 
     public static float UnpackPathScale(byte pathScale)
     {
-        return (float)(200 - pathScale) * SCALE_QUANTA;
+        return (200 - pathScale) * SCALE_QUANTA;
     }
 
     public static float UnpackPathShear(byte pathShear)
     {
-        return (float)pathShear * SHEAR_QUANTA;
+        return pathShear * SHEAR_QUANTA;
     }
 
     /**
@@ -1723,21 +1736,21 @@ public class Primitive
      */
     public static float UnpackPathTwist(byte pathTwist)
     {
-        return (float)pathTwist * SCALE_QUANTA;
+        return pathTwist * SCALE_QUANTA;
     }
 
     public static float UnpackPathTaper(byte pathTaper)
     {
-        return (float)pathTaper * TAPER_QUANTA;
+        return pathTaper * TAPER_QUANTA;
     }
 
     public static float UnpackPathRevolutions(byte pathRevolutions)
     {
-        return (float)pathRevolutions * REV_QUANTA + 1f;
+        return pathRevolutions * REV_QUANTA + 1f;
     }
 
     public static float UnpackProfileHollow(short profileHollow)
     {
-        return (float)profileHollow * HOLLOW_QUANTA;
+        return profileHollow * HOLLOW_QUANTA;
     }
 }
