@@ -562,7 +562,7 @@ public class Simulator extends Thread
      */
     public String ProductSku;
 
-	private DatagramSocket Connection;
+	private DatagramSocket _Connection;
     // The IP address and port of the server.
 	private InetSocketAddress ipEndPoint;
 
@@ -613,13 +613,13 @@ public class Simulator extends Thread
 		return connected;
 	}
 	/* Used internally to track sim disconnections, do not modify this variable. */
-	private boolean DisconnectCandidate = false;
+	private boolean _DisconnectCandidate = false;
 	public boolean getDisconnectCandidate() {
-		return DisconnectCandidate;
+		return _DisconnectCandidate;
 	}
 
 	public void setDisconnectCandidate(boolean val) {
-		DisconnectCandidate = val;
+		_DisconnectCandidate = val;
 	}
 
     private BoundedLongArray _InBytes;
@@ -645,9 +645,9 @@ public class Simulator extends Thread
 		_Client = client;
 
 		ipEndPoint = endPoint;
-		Connection = new DatagramSocket();
+		_Connection = new DatagramSocket();
         connected = false;
-		DisconnectCandidate = false;
+		_DisconnectCandidate = false;
 
         _Handle = handle;
         
@@ -747,7 +747,7 @@ public class Simulator extends Thread
         }
 
         Logger.Log("Connecting to " + ipEndPoint.toString(), LogLevel.Info);
-		Connection.connect(ipEndPoint);
+		_Connection.connect(ipEndPoint);
 
 		// runs background thread to read from DatagramSocket
         start();
@@ -883,7 +883,7 @@ public class Simulator extends Thread
 		        try
 		        {
 			        ByteBuffer data = close.ToBytes();
-			        Connection.send(new DatagramPacket(data.array(), data.position()));
+			        _Connection.send(new DatagramPacket(data.array(), data.position()));
 		        }
 		        catch (IOException e)
 		        {
@@ -895,7 +895,7 @@ public class Simulator extends Thread
 		    try
 		    {
 			    // Shut the socket communication down
-			    Connection.close();
+			    _Connection.close();
 		    }
 		    catch (Exception e)
 		    {
@@ -1002,7 +1002,7 @@ public class Simulator extends Thread
 		{
 			try
 			{
-				Connection.receive(p);
+				_Connection.receive(p);
 				Packet packet = null;
 				int numBytes;
 
@@ -1010,7 +1010,7 @@ public class Simulator extends Thread
 				connected = true;
 
 				// Update the disconnect flag so this sim doesn't time out
-				DisconnectCandidate = false;
+				_DisconnectCandidate = false;
 
 				synchronized (RecvBuffer)
 				{
@@ -1033,9 +1033,9 @@ public class Simulator extends Thread
 						System.out.println("Decoded packet " + packet.getClass().getName());
 						System.out.println(packet.toString());
 					}
-					catch (IOException e)
+					catch (IOException ex)
 					{
-						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, e);
+						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, ex);
 
 						connected = false;
 						_Client.Network.DisconnectSim(this, true);
@@ -1111,9 +1111,9 @@ public class Simulator extends Thread
 	            }
 
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				e.printStackTrace();
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -1335,7 +1335,7 @@ public class Simulator extends Thread
 
 		try
 		{
-			Connection.send(new DatagramPacket(buffer.array(), dataLength));
+			_Connection.send(new DatagramPacket(buffer.array(), dataLength));
 		}
 		catch (IOException ex)
 		{

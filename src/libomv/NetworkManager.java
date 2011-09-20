@@ -469,7 +469,7 @@ public class NetworkManager implements PacketCallback {
     /** Outgoing packets that are awaiting handling */
     public BlockingQueue<OutgoingPacket> PacketOutbox = new LinkedBlockingQueue<OutgoingPacket>(Settings.PACKET_INBOX_SIZE);
 
-	private Timer DisconnectTimer;
+	private Timer _DisconnectTimer;
 
 	private boolean connected;
 
@@ -528,8 +528,8 @@ public class NetworkManager implements PacketCallback {
         RegisterCallback(PacketType.SimStats, this);
 
 		// Disconnect a sim if no network traffic has been received for 15 seconds
-		DisconnectTimer = new Timer();
-		DisconnectTimer.scheduleAtFixedRate(new TimerTask() {
+		_DisconnectTimer = new Timer();
+		_DisconnectTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
 				try {
@@ -825,11 +825,11 @@ public class NetworkManager implements PacketCallback {
             // Attempt to establish a connection to the simulator
             if (simulator.Connect(setDefault))
             {
-                if (DisconnectTimer == null)
+                if (_DisconnectTimer == null)
                 {
                     // Start a timer that checks if we've been disconnected
-                    DisconnectTimer = new Timer();
-                    DisconnectTimer.scheduleAtFixedRate(new TimerTask()
+                    _DisconnectTimer = new Timer();
+                    _DisconnectTimer.scheduleAtFixedRate(new TimerTask()
             		{
             			@Override
 						public void run() {
@@ -899,7 +899,7 @@ public class NetworkManager implements PacketCallback {
 
 		Logger.Log("Logging out", LogLevel.Info);
 
-		DisconnectTimer.cancel();
+		_DisconnectTimer.cancel();
 		connected = false;
 
 		// Send a logout request to the current sim
@@ -1013,27 +1013,27 @@ public class NetworkManager implements PacketCallback {
 	}
 
 
-	private void DisconnectTimer_Elapsed() throws Exception {
+	private void DisconnectTimer_Elapsed() throws Exception
+	{
 		// If the current simulator is disconnected, shutdown + callback + return
         if (!connected || CurrentSim == null)
         {
-            if (DisconnectTimer != null)
+            if (_DisconnectTimer != null)
             {
-			    DisconnectTimer.cancel();
-			    DisconnectTimer = null;
+			    _DisconnectTimer.cancel();
+			    _DisconnectTimer = null;
             }
             connected = false;
         }
         else if (CurrentSim.getDisconnectCandidate())
         {
             // The currently occupied simulator hasn't sent us any traffic in a while, shutdown
-        	Logger.Log("Network timeout for the current simulator ("
-					  + CurrentSim.Name + "), logging out", LogLevel.Warning);
+        	Logger.Log("Network timeout for the current simulator (" + CurrentSim.Name + "), logging out", LogLevel.Warning);
 
-            if (DisconnectTimer != null)
+            if (_DisconnectTimer != null)
             {
-			    DisconnectTimer.cancel();
-			    DisconnectTimer = null;
+			    _DisconnectTimer.cancel();
+			    _DisconnectTimer = null;
             }
             connected = false;
 
