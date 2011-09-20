@@ -694,7 +694,7 @@ public class LoginManager
     // #endregion
 
     // #region Private Members
-    private GridClient Client;
+    private GridClient _Client;
 
     private TimeoutEventQueue<LoginStatus> LoginEvents = new TimeoutEventQueue<LoginStatus>();
     // #endregion
@@ -702,7 +702,7 @@ public class LoginManager
     
 	public LoginManager(GridClient client)
 	{
-		this.Client = client;
+		this._Client = client;
 	}
 
     // #region Public Methods
@@ -711,7 +711,7 @@ public class LoginManager
 
 	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password) throws Exception
 	{
-		return new LoginParams(Client, firstName, lastName, password, Settings.APPLICATION_NAME, Settings.APPLICATION_VERSION);
+		return new LoginParams(_Client, firstName, lastName, password, Settings.APPLICATION_NAME, Settings.APPLICATION_VERSION);
 	}
 
 	/**
@@ -726,7 +726,7 @@ public class LoginManager
      */
     public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String userAgent, String userVersion)
     {
-        return new LoginParams(Client, firstName, lastName, password, userAgent, userVersion);
+        return new LoginParams(_Client, firstName, lastName, password, userAgent, userVersion);
     }
 
     /**
@@ -745,7 +745,7 @@ public class LoginManager
      */
     public final boolean Login(String firstName, String lastName, String password, String userAgent, String userVersion) throws Exception
     {
-        LoginParams loginParams = new LoginParams(Client, firstName, lastName, password, userAgent, userVersion);
+        LoginParams loginParams = new LoginParams(_Client, firstName, lastName, password, userAgent, userVersion);
         return Login(loginParams);
     }
 
@@ -767,7 +767,7 @@ public class LoginManager
      */
     public final boolean Login(String firstName, String lastName, String password, String userAgent, String start, String userVersion) throws Exception
     {
-        LoginParams loginParams = new LoginParams(Client, firstName, lastName, password, userAgent, userVersion);
+        LoginParams loginParams = new LoginParams(_Client, firstName, lastName, password, userAgent, userVersion);
         loginParams.Start = start;
 
         return Login(loginParams);
@@ -880,11 +880,11 @@ public class LoginManager
         }
         catch (Exception ex)
         {
-            Logger.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()), LogLevel.Error, Client);
+            Logger.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()), LogLevel.Error, _Client);
             return;
         }
 
-        if (Client.Settings.USE_LLSD_LOGIN)
+        if (_Client.Settings.USE_LLSD_LOGIN)
         {
             // #region LLSD Based Login
 
@@ -1023,7 +1023,7 @@ public class LoginManager
 
     private void UpdateLoginStatus(LoginStatus status, String message, String reason)
     {
-        Logger.DebugLog("Login status: " + status.toString() + ", Message: " + message + (reason != null ? " Reason: " + reason : ""), Client);
+        Logger.DebugLog("Login status: " + status.toString() + ", Message: " + message + (reason != null ? " Reason: " + reason : ""), _Client);
 
         // If we reached a login resolution trigger the event
         if (status == LoginStatus.Success || status == LoginStatus.Failed)
@@ -1152,7 +1152,7 @@ public class LoginManager
 
             // Sleep for some amount of time while the servers work
             int seconds = reply.NextDuration;
-            Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info, Client);
+            Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info, _Client);
 			try
 			{
 				Thread.sleep(seconds * 1000);
@@ -1164,7 +1164,8 @@ public class LoginManager
         else if (reply.Success)
         {
             // Login succeeded
-            Client.Network.setCircuitCode(reply.CircuitCode);
+            _Client.Network.setCircuitCode(reply.CircuitCode);
+            _Client.Network.setUDPBlackList(reply.UDPBlacklist);
             LoginSeedCapability = reply.SeedCapability;
 
             UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
@@ -1172,10 +1173,10 @@ public class LoginManager
             if (reply.SimIP != null && reply.SimPort != 0)
             {
 				// Connect to the sim given in the login reply
-				if (Client.Network.Connect(reply.SimIP, reply.SimPort, Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
+				if (_Client.Network.Connect(reply.SimIP, reply.SimPort, Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
 				{
 					// Request the economy data right after login
-					Client.Network.SendPacket(new EconomyDataRequestPacket());
+					_Client.Network.SendPacket(new EconomyDataRequestPacket());
 
 					// Update the login message with the MOTD returned from the server
 					UpdateLoginStatus(LoginStatus.Success, reply.Message, null);

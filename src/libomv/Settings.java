@@ -152,14 +152,10 @@ public class Settings implements PacketCallback
 
     ///#region Configuration options (mostly booleans)
 
-    /* Enable to process packets synchronously, where all of the
-     * callbacks for each packet must return before the next packet is
-     * processed
-     * This is an experimental feature and is not completely
-     * reliable yet. Ideally it would reduce context switches and thread
-     * overhead, but several calls currently block for a long time and
-     * would need to be rewritten as asynchronous code before this is
-     * feasible
+    /* Enable to process packets synchronously, where all of the callbacks for each packet must return before
+     * the next packet is processed. This is an experimental feature and is not completely reliable yet.
+     * Ideally it would reduce context switches and thread overhead, but several calls currently block for a
+     * long time and would need to be rewritten as asynchronous code before this is feasible
      */
     public boolean SYNC_PACKETCALLBACKS = false;
     
@@ -176,111 +172,91 @@ public class Settings implements PacketCallback
      */
     public boolean SEND_AGENT_APPEARANCE = true;
 
-    /* Enable/disable automatically setting the bandwidth throttle
-     * after connecting to each simulator
-     * The default throttle uses the equivalent of the maximum
-     * bandwidth setting in the official client. If you do not set a
-     * throttle your connection will by default be throttled well below
-     * the minimum values and you may experience connection problems
+    /* Enable/disable automatically setting the bandwidth throttle after connecting to each simulator
+     * The default throttle uses the equivalent of the maximum bandwidth setting in the official client.
+     * If you do not set a throttle your connection will by default be throttled well below the minimum
+     * values and you may experience connection problems
      */
     public boolean SEND_AGENT_THROTTLE = true;
 
-    /* Enable/disable the sending of pings to monitor lag and 
-     * packet loss
+    /* Enable/disable the sending of pings to monitor lag and packet loss
      */
     public boolean SEND_PINGS = true;
 
-    /* Should we connect to multiple sims? This will allow
-     * viewing in to neighboring simulators and sim crossings
-     * (Experimental)
+    /* Should we connect to multiple sims? This will allow viewing in to neighboring simulators and sim
+     * crossings (Experimental)
      */
     public boolean MULTIPLE_SIMS = true;
 
-    /* If true, all object update packets will be decoded in to
-     * native objects. If false, only updates for our own agent will be
-     * decoded. Registering an event handler will force objects for that
-     * type to always be decoded. If this is disabled the object tracking
-     * will have missing or partial prim and avatar information
+    /* If true, all object update packets will be decoded in to native objects. If false, only updates
+     * for our own agent will be decoded. Registering an event handler will force objects for that
+     * type to always be decoded. If this is disabled the object tracking will have missing or partial
+     * prim and avatar information
      */
     public boolean ALWAYS_DECODE_OBJECTS = true;
 
-    /* If true, when a cached object check is received from the
-     * server the full object info will automatically be requested
+    /* If true, when a cached object check is received from the server the full object info will
+     * automatically be requested
      */
     public boolean ALWAYS_REQUEST_OBJECTS = true;
 
-    /* Whether to establish connections to HTTP capabilities
-     * servers for simulators
+    /* Whether to establish connections to HTTP capabilities servers for simulators
      */
     public boolean ENABLE_CAPS = true;
 
     /* Whether to decode sim stats */
     public boolean ENABLE_SIMSTATS = true;
 
-    /* The capabilities servers are currently designed to
-     * periodically return a 502 error which signals for the client to
-     * re-establish a connection. Set this to true to log those 502 errors
+    /* The capabilities servers are currently designed to periodically return a 502 error which
+     * signals for the client to re-establish a connection. Set this to true to log those 502 errors
      */
     public boolean LOG_ALL_CAPS_ERRORS = false;
 
-    /* If true, any reference received for a folder or item
-     * the library is not aware of will automatically be fetched
+    /* If true, any reference received for a folder or item the library is not aware of will automatically be fetched
      */
     public boolean FETCH_MISSING_INVENTORY = true;
 
-    /* If true, and <code>SEND_AGENT_UPDATES</code> is true,
-     * AgentUpdate packets will continuously be sent out to give the bot
-     * smoother movement and autopiloting
+    /* If true, and <code>SEND_AGENT_UPDATES</code> is true, AgentUpdate packets will continuously be
+     * sent out to give the bot smoother movement and autopiloting
      */
     public boolean DISABLE_AGENT_UPDATE_DUPLICATE_CHECK = true;
 
-    /* If true, currently visible avatars will be stored
-     * in dictionaries inside <code>Simulator.ObjectAvatars</code>.
-     * If false, a new Avatar or Primitive object will be created
-     * each time an object update packet is received
+    /* If true, currently visible avatars will be stored in dictionaries inside <code>Simulator.ObjectAvatars</code>.
+     * If false, a new Avatar or Primitive object will be created each time an object update packet is received
      */
     public boolean AVATAR_TRACKING = true;
 
-    /* If true, currently visible avatars will be stored
-     * in dictionaries inside <code>Simulator.ObjectPrimitives</code>.
-     * If false, a new Avatar or Primitive object will be created
-     * each time an object update packet is received
+    /* If true, currently visible avatars will be stored in dictionaries inside <code>Simulator.ObjectPrimitives</code>.
+     * If false, a new Avatar or Primitive object will be created each time an object update packet is received
      */
     public boolean OBJECT_TRACKING = true;
 
-    /* If true, position and velocity will periodically be
-     * interpolated (extrapolated, technically) for objects and 
-     * avatars that are being tracked by the library. This is
-     * necessary to increase the accuracy of speed and position
+    /* If true, position and velocity will periodically be interpolated (extrapolated, technically) for objects and 
+     * avatars that are being tracked by the library. This is necessary to increase the accuracy of speed and position
      * estimates for simulated objects
      */
     public boolean USE_INTERPOLATION_TIMER = true;
 
-    /* If true, utilization statistics will be tracked. There is a minor penalty
-     * in CPU time for enabling this option.
+    /* If true, utilization statistics will be tracked. There is a minor penalty in CPU time for enabling this option.
      */
     public boolean TRACK_UTILIZATION = false;
-    ///#region Parcel Tracking
+    // #region Parcel Tracking
 
-    /* If true, parcel details will be stored in the 
-     * <code>Simulator.Parcels</code> dictionary as they are received
+    /* If true, parcel details will be stored in the <code>Simulator.Parcels</code> dictionary as they are received
      */
     public boolean PARCEL_TRACKING = true;
 
-    /* If true, an incoming parcel properties reply will automatically send
-     * a request for the parcel access list
+    /* If true, an incoming parcel properties reply will automatically send a request for the parcel access list
      */
     public boolean ALWAYS_REQUEST_PARCEL_ACL = true;
 
-    /* if true, an incoming parcel properties reply will automatically send 
-     * a request for the traffic count.
+    /* if true, an incoming parcel properties reply will automatically send a request for the traffic count.
      */
     public boolean ALWAYS_REQUEST_PARCEL_DWELL = true;
 
-    ///#region Asset Cache
+    // #region Asset Cache
 
-    /* If true, images, and other assets downloaded from the server 
-     * will be cached in a local directory
+    /* If true, images, and other assets downloaded from the server will be cached in a local directory
      */
     public boolean USE_ASSET_CACHE = true;
 
@@ -290,13 +266,12 @@ public class Settings implements PacketCallback
     /* Maximum size cached files are allowed to take on disk (bytes) */
     public long ASSET_CACHE_MAX_SIZE = 1024 * 1024 * 1024; // 1GB
 
-    ///#region Misc
+    // #region Misc
 
     /* Default color used for viewer particle effects */
     public Color4 DEFAULT_EFFECT_COLOR = new Color4(1, 0, 0, 1);
 
-    /* Cost of uploading an asset
-     * Read-only since this value is dynamically fetched at login
+    /* Cost of uploading an asset, Read-only since this value is dynamically fetched at login
      */
     public final int getUPLOAD_COST()
     {
@@ -312,7 +287,7 @@ public class Settings implements PacketCallback
     /* UUID of a texture used by some viewers to identify type of client used */
     public UUID CLIENT_IDENTIFICATION_TAG = UUID.Zero;
 
-    ///#region Texture Pipeline
+    // #region Texture Pipeline
 
     /* The maximum number of concurrent texture downloads allowed
      * Increasing this number will not necessarily increase texture retrieval times due to

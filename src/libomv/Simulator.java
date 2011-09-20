@@ -1110,8 +1110,14 @@ public class Simulator extends Thread
 				/* Track the sequence number for this packet if it's marked as reliable */
 				if (packet.getHeader().getReliable() && !_PacketArchive.tryEnqueue(sequence))
 				{
-					Logger.Log("Received a duplicate " + packet.getType() + ", " + "sequence=" + sequence + ", "
-							 + "resent="+ ((packet.getHeader().getResent()) ? "Yes" : "No"), LogLevel.Info);
+	                if (packet.getHeader().getResent())
+	                {
+	                    Logger.DebugLog("Received a resend of already processed packet #" + sequence + ", type: " + packet.getType(), _Client);
+	                }
+	                else
+	                {
+	                    Logger.Log("Received a duplicate (not marked as resend) of packet #" + sequence + ", type: " + packet.getType(), LogLevel.Warning, _Client);
+	                }
 					// Avoid firing a callback twice for the same packet
 					return;
 				}
@@ -1196,7 +1202,7 @@ public class Simulator extends Thread
         }
         else
         {
-            _Client.Network.PacketOutbox.put(outgoingPacket);
+            _Client.Network.QueuePacket(outgoingPacket);
         }
         // #endregion Queue or Send
 
