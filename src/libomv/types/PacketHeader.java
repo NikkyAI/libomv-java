@@ -85,27 +85,10 @@ public class PacketHeader {
 		return (Data[0] & Helpers.MSG_APPENDED_ACKS) != 0;
 	}
 
-	/* Comment out as we add those to the packets on final sending only
-	public void setAppendedAcks(boolean value) {
-		if (value) {
-			Data[0] |= Helpers.MSG_APPENDED_ACKS;
-		} else {
-			Data[0] -= Helpers.MSG_APPENDED_ACKS;
-		}
-	}
-	*/
 	public int getSequence() {
 		return ((Data[1] << 24) + (Data[2] << 16) + (Data[3] << 8) + Data[4]);
 	}
 
-	/* Comment out as we add those to the packets on final sending only
-	public void setSequence(int value) {
-		Data[1] = (byte) ((value >> 24) & 0xFF);
-		Data[2] = (byte) ((value >> 16) & 0xFF);
-		Data[3] = (byte) ((value >> 8) & 0xFF);
-		Data[4] = (byte) ((value >> 0) & 0xFF);
-	}
-	*/
 	public int getExtraLength() {
 		return Data[5];
 	}
@@ -179,18 +162,6 @@ public class PacketHeader {
 		    bytes.get(Extra, 0, extra);
 		}
 		bytes.get(Data, fixedLen, getLength() - fixedLen);
-		
-	    if (frequency == PacketFrequency.Low && getZerocoded() && bytes.get(8) == 0)
-	    {
-			if (bytes.get(9) == 1)
-			{
-				Data[9] = bytes.get(10);
-			}
-			else
-			{
-				throw new Exception("Invalid data in packet header");
-			}
-		}
 	}
 
 	// Constructors
@@ -206,17 +177,16 @@ public class PacketHeader {
 		    case PacketFrequency.Medium:
 		        Data[6] = (byte) 0xFF;
 		}
-		AckList = new int[0];
 	}
 	
-	public PacketHeader(ByteBuffer bytes, int [] packetEnd, byte frequency) throws Exception
+	public PacketHeader(ByteBuffer bytes, byte frequency) throws Exception
 	{
 		setFrequency(frequency);
 		BuildHeader(bytes);
-		CreateAckList(bytes, packetEnd);
+		CreateAckList(bytes);
 	}
 
-	public PacketHeader(ByteBuffer bytes, int [] packetEnd) throws Exception
+	public PacketHeader(ByteBuffer bytes) throws Exception
 	{
 		if (bytes.get(6) == (byte) 0xFF)
 		{
@@ -234,7 +204,7 @@ public class PacketHeader {
 			setFrequency(PacketFrequency.High);
 		}
 		BuildHeader(bytes);
-		CreateAckList(bytes, packetEnd);
+		CreateAckList(bytes);
 	}
 
 	public byte getLength()
@@ -257,37 +227,22 @@ public class PacketHeader {
 		bytes.put(Data, fixedLen, getLength() - fixedLen);
 	}
 
-	public int[] AckList;
+	public int[] AckList = null;
 
-	public void AcksToBytes(ByteBuffer bytes) {
-		for (int element : AckList) {
-			bytes.putInt(element);
-		}
-		if (AckList.length > 0) {
-			bytes.put((byte) AckList.length);
-		}
-	}
-
-	private void CreateAckList(ByteBuffer bytes, int[] a_packetEnd)
+	private void CreateAckList(ByteBuffer bytes)
 	{
-		int packetEnd = a_packetEnd[0];
 		if (getAppendedAcks())
 		{
-			int count = bytes.get(packetEnd--);
+			int packetEnd = bytes.limit() - 1;
+			byte[] array = bytes.array();
+			int count = bytes.get(packetEnd);
 			AckList = new int[count];
 
 			for (int i = 0; i < count; i++)
 			{
-				AckList[i] = ((((bytes.get(packetEnd - i * 4) - 3) & 0xFF) << 24)
-						    | (((bytes.get(packetEnd - i * 4) - 2) & 0xFF) << 16)
-				            | (((bytes.get(packetEnd - i * 4) - 1) & 0xFF) << 8)
-				            | (((bytes.get(packetEnd - i * 4) - 0) & 0xFF) << 0));
+				AckList[i] = Helpers.BytesToInt32B(array, packetEnd - i * 4);
 			}
-
-			packetEnd -= (count * 4);
-		} else {
-			AckList = new int[0];
+			bytes.limit(packetEnd - count * 4);
 		}
-		a_packetEnd[0] = packetEnd;
 	}
 }

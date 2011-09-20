@@ -571,8 +571,7 @@ public class mapgenerator
 		boolean seenVariable = false;
 		writer.println("    public " + packet.Name + "Packet(ByteBuffer bytes) throws Exception");
 		writer.println("    {");
-		writer.println("        int [] a_packetEnd = new int[] { bytes.position()-1 };");
-		writer.println("        header = new PacketHeader(bytes, a_packetEnd, PacketFrequency."
+		writer.println("        header = new PacketHeader(bytes, PacketFrequency."
 				       + PacketFrequency.Names[packet.Frequency] + ");");
 		for (int k = 0; k < packet.Blocks.size(); k++) {
 			MapBlock block = packet.Blocks.get(k);
@@ -685,10 +684,7 @@ public class mapgenerator
 			}
 		}
 
-		writer.println("        if (header.AckList.length > 0) {\n"
-				     + "            length += header.AckList.length * 4 + 1;\n"
-				     + "        }\n"
-				     + "        return length;\n"
+		writer.println("        return length;\n"
 				     + "    }\n");
 
 		// ToBytes() function
@@ -720,9 +716,6 @@ public class mapgenerator
 			}
 		}
 
-		writer.println("        if (header.AckList.length > 0) {\n"
-				     + "            header.AcksToBytes(bytes);\n"
-				     + "        }");
 		writer.println("        return bytes;\n" +
 				       "    }\n");
 
@@ -824,8 +817,7 @@ public class mapgenerator
 			packettype_writer.close();
 			
 			// Write the base Packet class
-			writer.println("import libomv.utils.Helpers;\n"
-	                     + "import libomv.StructuredData.OSDMap;\n"
+			writer.println("import libomv.StructuredData.OSDMap;\n"
 	                     + "import libomv.capabilities.CapsMessage.CapsEventType;\n"
 		                 + "import libomv.types.PacketHeader;\n"
 		                 + "import libomv.types.PacketFrequency;\n\n"
@@ -917,16 +909,9 @@ public class mapgenerator
 						 + "         * @param packetEnd The last byte of the packet. If the packet was 76 bytes long, packetEnd would be 75\n"
 						 + "         * @returns The native packet class for this type of packet, typecasted to the generic Packet\n"
                          + "         */\n"
-						 + "        public static Packet BuildPacket(ByteBuffer bytes,  int [] a_packetEnd) throws Exception\n"
+						 + "        public static Packet BuildPacket(ByteBuffer bytes) throws Exception\n"
 						 + "        {\n"
-						 + "            PacketHeader header = new PacketHeader(bytes,  a_packetEnd);\n"
-						 + "            if (header.getZerocoded())\n"
-						 + "            {\n"
-						 + "                byte[] zeroBuffer = new byte[8192];\n"
-						 + "                a_packetEnd[0] = Helpers.ZeroDecode(bytes, a_packetEnd[0] + 1, zeroBuffer);\n"
-						 + "                bytes = ByteBuffer.wrap(zeroBuffer, 0, a_packetEnd[0]);\n"
-						 + "                a_packetEnd[0]--;\n"
-						 + "            }\n"
+						 + "            PacketHeader header = new PacketHeader(bytes);\n"
 						 + "            bytes.order(ByteOrder.LITTLE_ENDIAN);\n"
 						 + "            bytes.position(header.getLength());\n\n"
 						 + "            switch (header.getFrequency())"
