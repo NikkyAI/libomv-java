@@ -60,11 +60,11 @@ public final class Logger
 		
 		public void info(Object message, Throwable ex)
 		{
-			output("Info", message, ex);
+			output("Info ", message, ex);
 		}
 		public void warn(Object message, Throwable ex)
 		{
-			output("Warn", message, ex);
+			output("Warn ", message, ex);
 		}
 		public void debug(Object message, Throwable ex)
 		{
@@ -139,7 +139,7 @@ public final class Logger
     {
         if (client != null && client.Settings.LOG_NAMES)
         {
-            message = String.format("<%s>: %s", client.Self.getName(), message);
+            message = String.format("<%s>: {%s}", client.Self.getName(), message);
         }
 
         if (OnLogMessage != null)
@@ -191,9 +191,8 @@ public final class Logger
     }
 
     /**
-     * If the library is compiled with DEBUG defined and <code>GridClient.Settings.DEBUG</code> is true,
-     * an event will be fired if an <code>OnLogMessage</code> handler is registered and the message will
-     * be sent to the logging engine
+     * If  <code>GridClient.Settings.DEBUG</code> is true, an event will be fired if an
+     * <code>OnLogMessage</code> handler is registered and the message will be sent to the logging engine
      *  
      * @param message The message to log at the DEBUG level to the current logging engine
      * @param client Instance of the client
