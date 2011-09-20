@@ -155,11 +155,11 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 		DisconnectType type = args.getDisconnectType();
 		if (type == DisconnectType.NetworkTimeout)
 		{
-			System.out.println("Network connection timed out, disconnected");
+			System.out.println("sldump: Network connection timed out, disconnected");
 		}
 		else if (type == DisconnectType.ServerInitiated)
 		{
-			System.out.println("Server disconnected us: " + args.getMessage());
+			System.out.println("sldump: Server disconnected us: " + args.getMessage());
 		}
 	}
 }

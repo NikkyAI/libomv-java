@@ -342,7 +342,8 @@ public class Simulator extends Thread
     		return size >= array.length;
     	}
     	
-    	public long poll()
+/*
+     	public long poll()
     	{
     		if (size > 0)
     		{
@@ -350,7 +351,7 @@ public class Simulator extends Thread
     		}
     		return 0;
     	}
-    	
+*/    	
     	/**
     	 * Offer a new value to put in the queue
     	 * 
@@ -1036,10 +1037,6 @@ public class Simulator extends Thread
 						if (_Client.Settings.LOG_RAW_PACKET_BYTES)
 						{
 							Logger.Log("Decoded packet " + packet.getClass().getName() + packet.toString(), Logger.LogLevel.Debug, _Client);
-						}
-						else
-						{
-							Logger.Log("Decoded packet " + packet.getClass().getName(), Logger.LogLevel.Debug, _Client);
 						}
 					}
 					catch (IOException ex)

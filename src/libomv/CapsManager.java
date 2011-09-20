@@ -48,18 +48,18 @@ import libomv.utils.Logger.LogLevel;
 public class CapsManager
 {
     /* Reference to the simulator this system is connected to */
-    private Simulator Simulator;
+    private Simulator _Simulator;
 
-    private String SeedCapsURI;
-    private Hashtable<String, URI> Capabilities = new Hashtable<String, URI>();
+    private String _SeedCapsURI;
+    private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
 
-    private Future<OSD> SeedRequest = null;
-    private EventQueue EventQueue = null;
+    private Future<OSD> _SeedRequest = null;
+    private EventQueue _EventQueue = null;
 
     /* Capabilities URI this system was initialized with */
     public final String getSeedCapsURI()
     {
-        return SeedCapsURI;
+        return _SeedCapsURI;
     }
 
     /* Whether the capabilities event queue is connected and
@@ -67,9 +67,9 @@ public class CapsManager
      */  
     public final boolean getIsEventQueueRunning()
     {
-        if (EventQueue != null)
+        if (_EventQueue != null)
         {
-            return EventQueue.getRunning();
+            return _EventQueue.getRunning();
         }
         return false;
     }
@@ -81,23 +81,23 @@ public class CapsManager
      */
     public CapsManager(Simulator simulator, String seedcaps)
     {
-        Simulator = simulator;
-        SeedCapsURI = seedcaps;
+        _Simulator = simulator;
+        _SeedCapsURI = seedcaps;
 		MakeSeedRequest();
     }
 
     public final void Disconnect(boolean immediate)
     {
-        Logger.Log(String.format("Caps system for " + Simulator.toString() + " is " + (immediate ? "aborting" : "disconnecting")), LogLevel.Info);
+        Logger.Log(String.format("Caps system for " + _Simulator.Name + " is " + (immediate ? "aborting" : "disconnecting")), LogLevel.Info, _Simulator.getClient());
 
-        if (SeedRequest != null)
+        if (_SeedRequest != null)
         {
-            SeedRequest.cancel(immediate);
+            _SeedRequest.cancel(immediate);
         }
 
-        if (EventQueue != null)
+        if (_EventQueue != null)
         {
-            EventQueue.stop(immediate);
+            _EventQueue.stop(immediate);
         }
     }
 
@@ -108,12 +108,12 @@ public class CapsManager
      */
     public final URI CapabilityURI(String capability)
     {
-        return Capabilities.get(capability);
+        return _Capabilities.get(capability);
     }
 
     private void MakeSeedRequest()
     {
-        if (Simulator == null || !Simulator.getClient().Network.getConnected())
+        if (_Simulator == null || !_Simulator.getClient().Network.getConnected())
         {
             return;
         }
@@ -178,8 +178,8 @@ public class CapsManager
 
         try
 		{
-			CapsClient request = new CapsClient(new URI(SeedCapsURI));
-            SeedRequest = request.BeginGetResponse(req, OSD.OSDFormat.Xml, Simulator.getClient().Settings.CAPS_TIMEOUT, new SeedRequestHandler());
+			CapsClient request = new CapsClient(new URI(_SeedCapsURI));
+            _SeedRequest = request.BeginGetResponse(req, OSD.OSDFormat.Xml, _Simulator.getClient().Settings.CAPS_TIMEOUT, new SeedRequestHandler());
 		}
 		catch (Exception e)
 		{
@@ -195,23 +195,23 @@ public class CapsManager
             if (result != null && result.getType().equals(OSDType.Map))
             {
             	// Our request succeeded, clear the Future as it is not needed anymore
-            	SeedRequest = null;
+            	_SeedRequest = null;
             	
             	OSDMap respTable = (OSDMap)result;
-                synchronized (Capabilities)
+                synchronized (_Capabilities)
                 {
                     for (String cap : respTable.keySet())
                     {
-                         Capabilities.put(cap, respTable.get(cap).AsUri());
+                         _Capabilities.put(cap, respTable.get(cap).AsUri());
                     }
 
-                    if (Capabilities.containsKey("EventQueueGet"))
+                    if (_Capabilities.containsKey("EventQueueGet"))
                     {
-                	    Logger.DebugLog("Starting event queue for " + Simulator.toString());
+                	    Logger.DebugLog("Starting event queue for " + _Simulator.Name, _Simulator.getClient());
                         try
 						{
-							EventQueue = new EventQueue(Simulator, Capabilities.get("EventQueueGet"));
-	                        EventQueue.start();
+							_EventQueue = new EventQueue(_Simulator, _Capabilities.get("EventQueueGet"));
+	                        _EventQueue.start();
 						}
 						catch (Exception ex)
 						{
@@ -232,7 +232,7 @@ public class CapsManager
     	{
     		if (ex instanceof HttpResponseException && ((HttpResponseException)ex).getStatusCode() == HttpStatus.SC_NOT_FOUND )
     		{
-                Logger.Log("Seed capability returned a 404 status, capability system is aborting", LogLevel.Error);
+                Logger.Log("Seed capability returned a 404 status, capability system is aborting", LogLevel.Error, _Simulator.getClient());
     		}
     		else
             {
@@ -244,7 +244,7 @@ public class CapsManager
     	@Override
     	public void cancelled()
     	{
-            Logger.Log("Seed capability got cancelled, capability system is shutting down", LogLevel.Error);    		
+            Logger.Log("Seed capability got cancelled, capability system is shutting down", LogLevel.Info, _Simulator.getClient());    		
     	}
     }
 }
