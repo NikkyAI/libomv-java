@@ -414,10 +414,12 @@ public class UUID
 
 		StringBuffer uuid = new StringBuffer(36);
 
-		for (int i = 0; i < 16; ++i) {
+		for (int i = 0; i < 16; ++i)
+		{
 			byte value = data[i];
-			uuid.append(Integer.toHexString(value & 0xFF));
-			if (i == 3 || i == 5 || i == 7 || i == 9) {
+			uuid.append(String.format("%02x", value & 0xFF));
+			if (i == 3 || i == 5 || i == 7 || i == 9)
+			{
 				uuid.append("-");
 			}
 		}
