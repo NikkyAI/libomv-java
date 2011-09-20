@@ -541,7 +541,8 @@ public class Helpers
 	// <param name="srclen">The length of the byte array to decode</param>
 	// <param name="dest">The output byte array to decode to</param>
 	// <returns>The length of the output buffer</returns>
-	public static int ZeroDecode(ByteBuffer src, int srclen, byte[] dest) throws Exception {
+	public static int ZeroDecode(ByteBuffer src, int srclen, byte[] dest) throws Exception
+	{
 		int bodylen = srclen;
 		int i, zerolen;
 
@@ -555,14 +556,18 @@ public class Helpers
 		zerolen = 6 + src.get(5);
 		src.get(dest, 0, zerolen);
 
-		for (i = zerolen; i < bodylen; i++) {
-			if (src.get(i) == 0x00) {
-				for (byte j = 0; j < src.get(i + 1); j++) {
+		for (i = zerolen; i < bodylen; i++)
+		{
+			if (src.get(i) == 0x00)
+			{
+				for (byte j = 0; j < src.get(i + 1); j++)
+				{
 					dest[zerolen++] = 0x00;
 				}
-
 				i++;
-			} else {
+			}
+			else
+			{
 				dest[zerolen++] = src.get(i);
 			}
 		}
@@ -574,12 +579,14 @@ public class Helpers
 
 		// copy appended ACKs
 		srclen = src.limit();
-		for (; i < srclen; i++) {
+		for (; i < srclen; i++)
+		{
 			dest[zerolen++] = src.get(i);
 		}
 		System.out.println("Zero-decoded packet length=" + zerolen);
 		StringBuffer dump = new StringBuffer(zerolen * 2);
-		for (i = 0; i < zerolen; i++) {
+		for (i = 0; i < zerolen; i++)
+		{
 			byte value = dest[i];
 			dump.append(Integer.toHexString(value & 0xFF));
 			dump.append(" ");
