@@ -1023,7 +1023,7 @@ public class LoginManager
 
     private void UpdateLoginStatus(LoginStatus status, String message, String reason)
     {
-        Logger.DebugLog("Login status: " + status.toString() + ": " + message + (reason != null ? " Reason: " + reason : ""), Client);
+        Logger.DebugLog("Login status: " + status.toString() + ", Message: " + message + (reason != null ? " Reason: " + reason : ""), Client);
 
         // If we reached a login resolution trigger the event
         if (status == LoginStatus.Success || status == LoginStatus.Failed)
@@ -1152,7 +1152,7 @@ public class LoginManager
 
             // Sleep for some amount of time while the servers work
             int seconds = reply.NextDuration;
-            Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info);
+            Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info, Client);
 			try
 			{
 				Thread.sleep(seconds * 1000);

@@ -411,7 +411,6 @@ public class GridClient
 	private OSD loadDefaults() throws IOException, ParseException
 	{
 		OSD osd = null;
-		System.out.println(System.getProperty("java.class.path"));
 		InputStream stream = getClass().getResourceAsStream(DEFAULT_GRIDS_LIST);
 		if (stream != null) 
 		{

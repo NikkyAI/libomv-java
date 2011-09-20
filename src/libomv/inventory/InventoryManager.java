@@ -3459,8 +3459,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
                 Logger.DebugLog("CreateItemFromAsset: uploading to " + uploadURL);
 
-                // This makes the assumption that all uploads go to CurrentSim, to avoid
-                // the problem of HttpRequestState not knowing anything about simulators
+                // This makes the assumption that all uploads go to CurrentSim, to avoid the problem of HttpRequestState not knowing anything about simulators
 				try
 				{
 					CapsClient upload = new CapsClient(new URI(uploadURL));
@@ -3599,8 +3598,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     URI uploadURL = contents.get("uploader").AsUri();
                     if (uploadURL != null)
                     {
-                        // This makes the assumption that all uploads go to CurrentSim, to avoid
-                        // the problem of HttpRequestState not knowing anything about simulators
+                        // This makes the assumption that all uploads go to CurrentSim, to avoid the problem of HttpRequestState not knowing anything about simulators
 						try
 						{
 							CapsClient upload = new CapsClient(uploadURL);

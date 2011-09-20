@@ -107,8 +107,7 @@ public class Settings implements PacketCallback
      * connection to a simulator is assumed lost */
     public int SIMULATOR_TIMEOUT = 30 * 1000;
 
-    /* Milliseconds to wait for a simulator info request through
-     * the grid interface
+    /* Milliseconds to wait for a simulator info request through the grid interface
      */
     public int MAP_REQUEST_TIMEOUT = 5 * 1000;
 
@@ -163,6 +162,8 @@ public class Settings implements PacketCallback
      * feasible
      */
     public boolean SYNC_PACKETCALLBACKS = false;
+    
+    public boolean LOG_RAW_PACKET_BYTES = false;
 
     /* Enable/disable storing terrain heightmaps in the TerrainManager */
     public boolean STORE_LAND_PATCHES = false;

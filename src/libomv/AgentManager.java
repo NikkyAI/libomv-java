@@ -67,6 +67,8 @@ import libomv.capabilities.CapsMessage.ChatSessionAcceptInvitation;
 import libomv.capabilities.CapsMessage.ChatSessionRequestStartConference;
 import libomv.capabilities.CapsMessage.SetDisplayNameMessage;
 import libomv.capabilities.CapsMessage.SetDisplayNameReplyMessage;
+import libomv.capabilities.CapsMessage.TeleportFailedMessage;
+import libomv.capabilities.CapsMessage.TeleportFinishMessage;
 import libomv.capabilities.CapsMessage.UpdateAgentLanguageMessage;
 import libomv.capabilities.IMessage;
 import libomv.packets.ActivateGesturesPacket;
@@ -1620,8 +1622,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case TeleportFailed:
+		    	HandleTeleportFailed(message, simulator);
 				break;
 		    case TeleportFinish:
+		    	HandleTeleportFinish(message, simulator);
 				break;
 		    case CrossedRegion:
 				break;
@@ -1636,7 +1640,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		    case ChatterBoxSessionAgentListUpdates:
 				break;
 		    case SetDisplayNameReply:
-		    	SetDisplayNameReplyEventHandler(message, simulator);
+		    	HandleSetDisplayNameReply(message, simulator);
 		    	break;
 		}
 	}
@@ -1652,25 +1656,25 @@ public class AgentManager implements PacketCallback, CapsCallback
 			case TeleportFinish:
 			case TeleportCancel:
 			case TeleportLocal:
-				TeleportHandler(packet, simulator);
+				HandleTeleport(packet, simulator);
 				break;
 			case MoneyBalanceReply:
-				BalanceHandler(packet, simulator);
+				HandleMoneyBalanceReply(packet, simulator);
 				break;
 			case ImprovedInstantMessage:
-				InstantMessageHandler(packet, simulator);
+				HandleInstantMessage(packet, simulator);
 				break;
 			case ChatFromSimulator:
-				ChatHandler(packet, simulator);
+				HandleChat(packet, simulator);
 				break;
 			case CoarseLocationUpdate:
-				CoarseLocationHandler(packet, simulator);
+				HandleCoarseLocation(packet, simulator);
 				break;
 			case AgentMovementComplete:
-				MovementCompleteHandler(packet, simulator);
+				HandleMovementComplete(packet, simulator);
 				break;
 			case HealthMessage:
-				HealthHandler(packet, simulator);
+				HandleHealthMessage(packet, simulator);
 				break;
 		}
 	}
@@ -1685,7 +1689,8 @@ public class AgentManager implements PacketCallback, CapsCallback
      *                can be used however only scripts listening on the specified channel will see the message
      * @param type Denotes the type of message being sent, shout, whisper, etc.
      */
-	public void Chat(String message, int channel, ChatType type) throws Exception {
+	public void Chat(String message, int channel, ChatType type) throws Exception
+	{
 		ChatFromViewerPacket chat = new ChatFromViewerPacket();
 		chat.AgentData.AgentID = this.agentID;
 		chat.AgentData.SessionID = this.sessionID;
@@ -1714,7 +1719,8 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param target The recipients <see cref="UUID"/>
      * @param message A <see cref="string"/> containing the message to send
      */
-	public void InstantMessage(UUID target, String message) throws Exception {
+	public void InstantMessage(UUID target, String message) throws Exception
+	{
         InstantMessage(getName(), target, message, UUID.Zero, InstantMessageDialog.MessageFromAgent,
         		       InstantMessageOnline.Offline, null, null, null);
 	}
@@ -1726,7 +1732,8 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param message A <see cref="string"/> containing the message to send
      * @param imSessionID IM session ID (to differentiate between IM windows)
      */
-	public void InstantMessage(UUID target, String message, UUID imSessionID) throws Exception {
+	public void InstantMessage(UUID target, String message, UUID imSessionID) throws Exception
+	{
         InstantMessage(getName(), target, message, imSessionID, InstantMessageDialog.MessageFromAgent,
         		       InstantMessageOnline.Offline, null, null, null);
 	}
@@ -1740,13 +1747,16 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param imSessionID IM session ID (to differentiate between IM windows)
      * @param conferenceIDs IDs of sessions for a conference
      */
-	public void InstantMessage(String fromName, UUID target, String message, UUID imSessionID, UUID[] conferenceIDs) throws Exception {
+	public void InstantMessage(String fromName, UUID target, String message, UUID imSessionID, UUID[] conferenceIDs) throws Exception
+	{
 		byte[] binaryBucket = null;
 		
-		if (conferenceIDs != null && conferenceIDs.length > 0) {
+		if (conferenceIDs != null && conferenceIDs.length > 0)
+		{
 			binaryBucket = new byte[16 * conferenceIDs.length];
 
-			for (int i = 0; i < conferenceIDs.length; ++i) {
+			for (int i = 0; i < conferenceIDs.length; ++i)
+			{
 				System.arraycopy(conferenceIDs[i].getData(), 0, binaryBucket, i * 16, 16);
 			}
 		}
@@ -1844,9 +1854,8 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param groupID {@link UUID} of the group to send message to
      * @param message Text message being sent
      * @throws Exception 
-     * @throws UnsupportedEncodingException 
      */
-    public final void InstantMessageGroup(String fromName, UUID groupID, String message) throws UnsupportedEncodingException, Exception
+    public final void InstantMessageGroup(String fromName, UUID groupID, String message) throws Exception
     {
         synchronized (GroupChatSessions)
         {
@@ -3153,12 +3162,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 */
 	}
 
-	private void CoarseLocationHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleCoarseLocation(Packet packet, Simulator simulator) throws Exception
 	{
 		// TODO: This will be useful one day
 	}
 
-	private void InstantMessageHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleInstantMessage(Packet packet, Simulator simulator) throws Exception
 	{
 		if (packet.getType() == PacketType.ImprovedInstantMessage)
 		{
@@ -3183,9 +3192,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void ChatHandler(Packet packet, Simulator simulator)
-			throws Exception {
-		if (packet.getType() == PacketType.ChatFromSimulator) {
+	private void HandleChat(Packet packet, Simulator simulator) throws Exception
+	{
+		if (packet.getType() == PacketType.ChatFromSimulator)
+		{
 			ChatFromSimulatorPacket chat = (ChatFromSimulatorPacket) packet;
 
 			OnChat.dispatch(new ChatCallbackArgs(Helpers.BytesToString(chat.ChatData.getMessage()), chat.ChatData.Audible,
@@ -3194,7 +3204,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void MovementCompleteHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+	private void HandleMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
 		AgentMovementCompletePacket movement = (AgentMovementCompletePacket) packet;
 
@@ -3204,26 +3214,20 @@ public class AgentManager implements PacketCallback, CapsCallback
         simulator.SimVersion = Helpers.BytesToString(movement.SimData.getChannelVersion());
 	}
 
-	private void HealthHandler(Packet packet, Simulator simulator)
+	private void HandleHealthMessage(Packet packet, Simulator simulator)
 	{
 		health = ((HealthMessagePacket) packet).HealthData.Health;
 	}
 
-	private void BalanceHandler(Packet packet, Simulator simulator) {
-		if (packet.getType() == PacketType.MoneyBalanceReply) {
-			balance = ((MoneyBalanceReplyPacket) packet).MoneyData.MoneyBalance;
-		}
-
-		OnBalanceUpdated.dispatch(new BalanceCallbackArgs(balance));
-	}
-
-	private void TeleportHandler(Packet packet, Simulator simulator) throws Exception {
+	private void HandleTeleport(Packet packet, Simulator simulator) throws Exception
+	{
 		int flags = 0;
 		TeleportStatus teleportStatus =  TeleportStatus.None; 
         String teleportMessage = Helpers.EmptyString;
         boolean finished = false;
 
-        if (packet.getType() == PacketType.TeleportStart) {
+        if (packet.getType() == PacketType.TeleportStart)
+        {
             TeleportStartPacket start = (TeleportStartPacket)packet;
 
             teleportStatus = TeleportStatus.Start;
@@ -3231,7 +3235,9 @@ public class AgentManager implements PacketCallback, CapsCallback
             flags = start.Info.TeleportFlags;
 
             Logger.DebugLog("TeleportStart received, Flags: " + flags, _Client);
-		} else if (packet.getType() == PacketType.TeleportProgress) {
+		}
+        else if (packet.getType() == PacketType.TeleportProgress)
+        {
             TeleportProgressPacket progress = (TeleportProgressPacket)packet;
 
 			teleportStatus = TeleportStatus.Progress;
@@ -3239,7 +3245,9 @@ public class AgentManager implements PacketCallback, CapsCallback
             flags = progress.Info.TeleportFlags;
 
             Logger.DebugLog("TeleportProgress received, Message: " + teleportMessage + ", Flags: " + flags, _Client);
-		} else if (packet.getType() == PacketType.TeleportFailed) { 
+		}
+        else if (packet.getType() == PacketType.TeleportFailed)
+        { 
             TeleportFailedPacket failed = (TeleportFailedPacket)packet;
 
             teleportMessage = Helpers.BytesToString(failed.Info.getReason());
@@ -3247,7 +3255,9 @@ public class AgentManager implements PacketCallback, CapsCallback
             finished = true;
 
             Logger.DebugLog("TeleportFailed received, Reason: " + teleportMessage, _Client);
-		} else if (packet.getType() == PacketType.TeleportCancel) {
+		}
+        else if (packet.getType() == PacketType.TeleportCancel)
+        {
             // TeleportCancelPacket cancel = (TeleportCancelPacket)packet;
 
             teleportMessage = "Cancelled";
@@ -3255,7 +3265,9 @@ public class AgentManager implements PacketCallback, CapsCallback
             finished = true;
 
             Logger.DebugLog("TeleportCancel received from " + simulator.toString(), _Client);
-    	} else if (packet.getType() == PacketType.TeleportFinish) {
+    	}
+		else if (packet.getType() == PacketType.TeleportFinish)
+    	{
 			TeleportFinishPacket finish = (TeleportFinishPacket) packet;
 
 			flags = finish.Info.TeleportFlags;
@@ -3263,21 +3275,21 @@ public class AgentManager implements PacketCallback, CapsCallback
             finished = true;
 
             Logger.DebugLog("TeleportFinish received, Flags: " + flags, _Client);
-			// Connect to the new sim
-			/**
-			 * TO BE PORTED Original code created InetAddress from
-			 * (ulong)finish.InfoSimIP
-			 */
-			Simulator newSimulator = _Client.Network.Connect(InetAddress.getByName("" + finish.Info.SimIP),
-					finish.Info.SimPort, _Client.Network.getCircuitCode(), true, seedcaps);
 
-			if (newSimulator != null) {
+            // Connect to the new sim
+			InetAddress addr = InetAddress.getByAddress(Helpers.Int32ToBytesB(finish.Info.SimIP));
+			Simulator newSimulator = _Client.Network.Connect(addr,	finish.Info.SimPort, finish.Info.RegionHandle, true, seedcaps);
+
+			if (newSimulator != null)
+			{
 				teleportMessage = "Teleport finished";
 				teleportStatus = TeleportStatus.Finished;
 
-				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Name + "("
+				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Name + " ("
 						   + _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
-			} else {
+			}
+			else
+			{
 				teleportMessage = "Failed to connect to the new sim after a teleport";
 				teleportStatus = TeleportStatus.Failed;
 
@@ -3305,19 +3317,59 @@ public class AgentManager implements PacketCallback, CapsCallback
             teleportTimeout.set(teleportStatus);
         }
 	}
+	
+    /** 
+     * Process TeleportFailed message sent via EventQueue, informs agent its last teleport has failed and why.
+     */
+	private void HandleTeleportFailed(IMessage message, Simulator simulator)
+	{
+        TeleportFailedMessage failed = (TeleportFailedMessage)message;
+        OnTeleport.dispatch(new TeleportCallbackArgs(failed.Reason, TeleportStatus.Failed, 0));
+        teleportTimeout.set(TeleportStatus.Failed);
+	}
 
+	private void HandleTeleportFinish(IMessage message, Simulator simulator) throws Exception
+	{
+		TeleportStatus teleportStatus =  TeleportStatus.None; 
+        String teleportMessage = Helpers.EmptyString;
+		TeleportFinishMessage msg = (TeleportFinishMessage)message;
+
+        Logger.DebugLog("TeleportFinish received, Flags: " + msg.Flags, _Client);
+
+        // Connect to the new sim
+		Simulator newSimulator = _Client.Network.Connect(msg.IP, (short)msg.Port, msg.RegionHandle, true, msg.SeedCapability.toString());
+		if (newSimulator != null)
+		{
+			teleportMessage = "Teleport finished";
+			teleportStatus = TeleportStatus.Finished;
+
+			Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Name + " ("
+					   + _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
+		}
+		else
+		{
+			teleportMessage = "Failed to connect to the new sim after a teleport";
+			teleportStatus = TeleportStatus.Failed;
+
+			Logger.Log(teleportMessage, LogLevel.Error, _Client);
+		}
+        OnTeleport.dispatch(new TeleportCallbackArgs(teleportMessage, teleportStatus, msg.Flags));
+        teleportTimeout.set(teleportStatus);
+	}
+	
     /**
      * Process an incoming packet and raise the appropriate events
      * @throws Exception 
      */
-    protected void MoneyBalanceReplyHandler(Packet packet, Simulator simulator) throws Exception
+    private void HandleMoneyBalanceReply(Packet packet, Simulator simulator) throws Exception
     {
         if (packet.getType() == PacketType.MoneyBalanceReply)
         {
             MoneyBalanceReplyPacket reply = (MoneyBalanceReplyPacket)packet;
             this.balance = reply.MoneyData.MoneyBalance;
+    		OnBalanceUpdated.dispatch(new BalanceCallbackArgs(balance));
 
-            if (OnMoneyBalanceReply.count() > 0)
+            if (OnMoneyBalanceReply.count() > 0 && reply.TransactionInfo != null && reply.TransactionInfo.TransactionType != 0)
             {
                 TransactionInfo transactionInfo = new TransactionInfo();
                 transactionInfo.TransactionType = reply.TransactionInfo.TransactionType;
@@ -3342,7 +3394,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     /**
      * EQ Message fired with the result of SetDisplayName request
      */
-    protected void SetDisplayNameReplyEventHandler(IMessage message, Simulator simulator)
+    private void HandleSetDisplayNameReply(IMessage message, Simulator simulator)
     {
         SetDisplayNameReplyMessage msg = (SetDisplayNameReplyMessage)message;
         OnSetDisplayNameReply.dispatch(new SetDisplayNameReplyCallbackArgs(msg.Status, msg.Reason, msg.DisplayName));
@@ -3977,14 +4029,18 @@ public class AgentManager implements PacketCallback, CapsCallback
          * @param simulator Simulator to send the update to
          * @throws Exception 
          */
+        private boolean disableUpdate = true;
         public final void SendUpdate(boolean reliable, Simulator simulator) throws Exception
         {
-            // Since version 1.40.4 of the Linden simulator, sending this update
-            // causes corruption of the agent position in the simulator
-            if (simulator != null && (!simulator.handshakeComplete))
+            if (simulator == null || (!simulator.handshakeComplete))
             {
                 return;
             }
+
+            // Since version 1.40.4 of the Linden simulator, sending this update
+            // causes corruption of the agent position in the simulator
+            if (disableUpdate)
+            	return;
 
             Vector3 origin = Camera.getPosition();
             Vector3 xAxis = Camera.getLeftAxis();
