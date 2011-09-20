@@ -31,7 +31,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.net.URI;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -608,9 +610,9 @@ public class Simulator extends Thread
 	}
 	// A boolean representing whether there is a working connection to the
 	// simulator or not.
-	private boolean connected;
+	private boolean _Connected;
 	public boolean getConnected() {
-		return connected;
+		return _Connected;
 	}
 	/* Used internally to track sim disconnections, do not modify this variable. */
 	private boolean _DisconnectCandidate = false;
@@ -646,7 +648,7 @@ public class Simulator extends Thread
 
 		ipEndPoint = endPoint;
 		_Connection = new DatagramSocket();
-        connected = false;
+        _Connected = false;
 		_DisconnectCandidate = false;
 
         _Handle = handle;
@@ -677,18 +679,18 @@ public class Simulator extends Thread
         }
 	}
 
-    /** Attempt to connect to this simulator
+    /**
+     * Attempt to connect to this simulator
      * 
-     *  @param moveToSim Whether to move our agent in to this sim or not
-     *  @return True if the connection succeeded or connection status is
-     *          unknown, false if there was a failure
+     * @param moveToSim Whether to move our agent in to this sim or not
+     * @return True if the connection succeeded or connection status is unknown, false if there was a failure
      * @throws Exception 
      */
     public final boolean Connect(boolean moveToSim) throws Exception
     {
         handshakeComplete = false;
 
-        if (connected)
+        if (_Connected)
         {
             UseCircuitCode();
             if (moveToSim)
@@ -702,87 +704,55 @@ public class Simulator extends Thread
         {
             _AckTimer = new Timer();
         }
-    	_AckTimer.schedule(new TimerTask()
-    	{
-    		@Override
-			public void run()
-    		{
-   				AckTimer_Elapsed();
-    		}
-    	}, Settings.NETWORK_TICK_INTERVAL);
+    	_AckTimer.schedule(new AckTimer_Elapsed(), Settings.NETWORK_TICK_INTERVAL);
 
         // Timer for recording simulator connection statistics
         if (_StatsTimer == null)
         {
             _StatsTimer = new Timer();
-    		_StatsTimer.scheduleAtFixedRate(new TimerTask()
-    		{
-    			@Override
-				public void run()
-    			{
-   					StatsTimer_Elapsed();
-    			}
-    		}, 1000, 1000);
+    		_StatsTimer.scheduleAtFixedRate(new StatsTimer_Elapsed(), 1000, 1000);
         }
 
         // Timer for periodically pinging the simulator
         if (_PingTimer == null && _Client.Settings.SEND_PINGS)
         {
             _PingTimer = new Timer();
-    		_PingTimer.scheduleAtFixedRate(new TimerTask()
-    		{
-    			@Override
-				public void run()
-    			{
-    				try
-    				{
-    					PingTimer_Elapsed();
-    				}
-    				catch (Exception e)
-    				{
-    					e.printStackTrace();
-    				}
-    			}
-    		}, Settings.PING_INTERVAL, Settings.PING_INTERVAL);
+    		_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), Settings.PING_INTERVAL, Settings.PING_INTERVAL);
         }
 
-        Logger.Log("Connecting to " + ipEndPoint.toString(), LogLevel.Info);
-		_Connection.connect(ipEndPoint);
+        Logger.Log("Connecting to " + ipEndPoint.toString(), LogLevel.Info, _Client);
 
 		// runs background thread to read from DatagramSocket
         start();
 
-        // Mark ourselves as connected before firing everything else up
-        connected = true;
+        Statistics.ConnectTime = System.currentTimeMillis();
+
+        Logger.Log("Waiting for connection", LogLevel.Info, _Client);
+		while (true)
+		{
+			if (_Connected)
+			{
+				Logger.Log(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime), LogLevel.Info, _Client);
+				break;
+			}
+			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.SIMULATOR_TIMEOUT)
+			{
+				Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Warning, _Client);
+	            return false;
+			}
+			Thread.sleep(10);
+		}
 
 		try
         {
             // Initiate connection
             UseCircuitCode();
 
-            Statistics.ConnectTime = System.currentTimeMillis();
-
             // Move our agent in to the sim to complete the connection
             if (moveToSim)
             {
                 _Client.Self.CompleteAgentMovement(this);
             }
-
-            Logger.Log("Waiting for connection", LogLevel.Info);
-			while (true)
-			{
-				if (connected)
-				{
-					Logger.Log("Connected!", LogLevel.Info);
-					break;
-				}
-				else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.SIMULATOR_TIMEOUT)
-				{
-					Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Warning);
-		            return false;
-				}
-				Thread.sleep(10);
-			}
 
             if (_Client.Settings.SEND_AGENT_THROTTLE)
             {
@@ -797,7 +767,7 @@ public class Simulator extends Thread
         }
         catch (Exception ex)
         {
-        	Logger.Log(ex.getMessage(), LogLevel.Error);
+        	Logger.Log(ex.getMessage(), LogLevel.Error, _Client);
         }
         return false;
     }
@@ -846,9 +816,9 @@ public class Simulator extends Thread
 
 	public void Disconnect(boolean sendCloseCircuit) throws Exception
 	{
-        if (connected)
+        if (_Connected)
         {
-            connected = false;
+            _Connected = false;
             
             // Destroy the timers
             if (_AckTimer != null)
@@ -992,58 +962,105 @@ public class Simulator extends Thread
     	    return _Caps.getIsEventQueueRunning();
     	return false;
     }
+   
+    private void DebugDumpBuffer(byte[] byteBuffer, int numBytes, String head)
+    {
+		Logger.Log(head + numBytes, Logger.LogLevel.Debug, _Client);
+		StringBuffer dump = new StringBuffer(numBytes * 2);
+		for (int i = 0; i < numBytes; i++)
+		{
+			byte value = byteBuffer[i];
+			dump.append(Integer.toHexString(value & 0xFF));
+			dump.append(" ");
+		}
+		Logger.Log(dump, Logger.LogLevel.Debug, _Client);
+	
+    }
     
 	@Override
 	public void run()
 	{
+		try
+		{
+			_Connection.connect(ipEndPoint);
+		}
+		catch (SocketException e)
+		{
+			Logger.Log("Failed to startup the UDP socket", Logger.LogLevel.Error, _Client);
+			return;
+		}
 		byte[] RecvBuffer = new byte[4096];
 		DatagramPacket p = new DatagramPacket(RecvBuffer, RecvBuffer.length);
+
+		_Connected = true;
+
 		while (true)
 		{
 			try
 			{
 				_Connection.receive(p);
+				int numBytes = p.getLength();
 				Packet packet = null;
-				int numBytes;
-
-				// If we're receiving data the sim connection is open
-				connected = true;
 
 				// Update the disconnect flag so this sim doesn't time out
 				_DisconnectCandidate = false;
 
 				synchronized (RecvBuffer)
 				{
-					// Retrieve the incoming packet
-					try {
-						numBytes = p.getLength();
+					byte[] byteBuffer = RecvBuffer;
 
-						int packetEnd = numBytes - 1;
-						int a_packetEnd[] = { packetEnd }; // gaz
-						System.out.println("\n<=============== Received packet length=" + numBytes);
-						StringBuffer dump = new StringBuffer(numBytes * 2);
-						for (int i = 0; i < numBytes; i++) {
-							byte value = RecvBuffer[i];
-							dump.append(Integer.toHexString(value & 0xFF));
-							dump.append(" ");
+					// Retrieve the incoming packet
+					try
+					{
+						if (_Client.Settings.LOG_RAW_PACKET_BYTES)
+						{
+							DebugDumpBuffer(byteBuffer, numBytes, "<=============== Received packet length = ");
 						}
-						System.out.println(dump);
-						ByteBuffer byte_buffer = ByteBuffer.wrap(RecvBuffer, 0, numBytes);
-						packet = Packet.BuildPacket(byte_buffer, a_packetEnd);
-						System.out.println("Decoded packet " + packet.getClass().getName());
-						System.out.println(packet.toString());
+						
+						if ((byteBuffer[0] & Helpers.MSG_ZEROCODED) != 0)
+						{
+							int bodylen = numBytes;
+							if ((byteBuffer[0] & Helpers.MSG_APPENDED_ACKS) != 0)
+							{
+								bodylen -= (byteBuffer[numBytes - 1] * 4 + 1);
+							}
+						    byteBuffer = new byte[numBytes > 1000 ? 2000 : numBytes * 4];
+						    numBytes = ZeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
+							if (_Client.Settings.LOG_RAW_PACKET_BYTES)
+							{
+								DebugDumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet length=");
+							}
+						}
+
+						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
+						if (_Client.Settings.LOG_RAW_PACKET_BYTES)
+						{
+							Logger.Log("Decoded packet " + packet.getClass().getName() + packet.toString(), Logger.LogLevel.Debug, _Client);
+						}
+						else
+						{
+							Logger.Log("Decoded packet " + packet.getClass().getName(), Logger.LogLevel.Debug, _Client);
+						}
 					}
 					catch (IOException ex)
 					{
-						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, ex);
+						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, _Client, ex);
 
-						connected = false;
+						_Connected = false;
 						_Client.Network.DisconnectSim(this, true);
 						return;
+					}
+					catch (BufferUnderflowException ex)
+					{
+						DebugDumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet length = "); 						
 					}
 				}
 	            Statistics.RecvBytes += numBytes;
 	            Statistics.RecvPackets++;
+	            
+	            if (packet == null)
+	            	return;
+
 	            if (packet.getHeader().getResent())
 	            {
 	                Statistics.ReceivedResends++;
@@ -1058,8 +1075,7 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(ack) == null)
 							{
-								Logger.Log("Appended ACK for a packet we didn't send: "
-										  + ack, LogLevel.Warning);
+								Logger.Log(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack, packet.getClass().getName()), LogLevel.Warning, _Client);
 							}
 						}
 					}
@@ -1075,8 +1091,7 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(block.ID) == null)
 							{
-								Logger.Log("Appended ACK for a packet we didn't send: "
-										  + block.ID, LogLevel.Warning);
+								Logger.Log(String.format("ACK for a packet (%d) we didn't send: %s", block.ID, packet.getClass().getName()), LogLevel.Warning, _Client);
 							}
 						}
 					}
@@ -1109,7 +1124,6 @@ public class Simulator extends Thread
 	                /* TODO Implement Utilization tracking */
 	                //Client.Statistics.Update(packet.Type.ToString(), OpenMetaverse.Statistics.Type.Packet, 0, packet.Length);
 	            }
-
 			}
 			catch (Exception ex)
 			{
@@ -1170,6 +1184,7 @@ public class Simulator extends Thread
     			data.position(0);
     		}
         }
+		_Client.Network.RaisePacketSentCallback(data.array(), data.limit(), this);
 
         // #region Queue or Send
         NetworkManager.OutgoingPacket outgoingPacket = _Client.Network.new OutgoingPacket(this, data);
@@ -1193,7 +1208,6 @@ public class Simulator extends Thread
 		   Statistics.SentPackets++;
 		   
 //         _Client.Statistics.Update(type.ToString(), OpenMetaverse.Statistics.Type.Packet, data.capacity(), 0);
-		   _Client.Network.RaisePacketSentCallback(data.array(), data.capacity(), this);
         }
     }	
 
@@ -1252,7 +1266,7 @@ public class Simulator extends Thread
 
                 if (outgoing.TickCount != 0 && now - outgoing.TickCount > _Client.Settings.RESEND_TIMEOUT)
                 {
-                    if (outgoing.ResendCount.get() < _Client.Settings.MAX_RESEND_COUNT)
+                    if (outgoing.ResendCount < _Client.Settings.MAX_RESEND_COUNT)
                     {
                         if (_Client.Settings.LOG_RESENDS)
                         {
@@ -1266,14 +1280,14 @@ public class Simulator extends Thread
                         outgoing.Buffer.array()[0] |= Helpers.MSG_RESENT;
 
                         // Stats tracking
-                        outgoing.ResendCount.incrementAndGet();
+                        outgoing.ResendCount++;
                         Statistics.ResentPackets++;
 
                         SendPacketFinal(outgoing);
                     }
                     else
                     {
-                        Logger.DebugLog(String.format("Dropping packet #%d after %d failed attempts", outgoing.SequenceNumber, outgoing.ResendCount));
+                        Logger.DebugLog(String.format("Dropping packet #%d after %d failed attempts", outgoing.SequenceNumber, outgoing.ResendCount, _Client));
 
                         synchronized (_NeedAck)
                         {
@@ -1297,12 +1311,11 @@ public class Simulator extends Thread
         outgoingPacket.TickCount = System.currentTimeMillis();
 
         // #region ACK Appending
-        int dataLength = buffer.capacity();
+        int dataLength = buffer.limit();
 
-        // Keep appending ACKs until there is no room left in the packet or there are
-        // no more ACKs to append
+        // Keep appending ACKs until there is no room left in the packet or there are no more ACKs to append
         int ackCount = 0; 
-        while (dataLength + 5 < buffer.limit() && !_PendingAcks.isEmpty())
+        while (dataLength + 5 < buffer.capacity() && !_PendingAcks.isEmpty())
         {
         	dataLength += Helpers.UInt32ToBytesB(_PendingAcks.poll(), bytes, dataLength);
             ++ackCount;
@@ -1311,9 +1324,11 @@ public class Simulator extends Thread
         if (ackCount > 0)
         {
             // Set the last byte of the packet equal to the number of appended ACKs
-            buffer.put(dataLength++, (byte)ackCount);
+        	bytes[dataLength++] = (byte)ackCount;
             // Set the appended ACKs flag on this packet
-            buffer.put(0, (byte)(flags | Helpers.MSG_APPENDED_ACKS));
+            bytes[0] =  (byte)(flags | Helpers.MSG_APPENDED_ACKS);
+            // Increase the byte buffer limit to the new length
+        	buffer.limit(dataLength);
         }
         // #endregion ACK Appending
 
@@ -1339,52 +1354,111 @@ public class Simulator extends Thread
 		}
 		catch (IOException ex)
 		{
-			Logger.Log(ex.toString(), LogLevel.Error, ex);
+			Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
 		}
     }
 
 	/* #region timer callbacks */
-	private void AckTimer_Elapsed()
+	private class AckTimer_Elapsed extends TimerTask
 	{
-		if (!connected)
+		@Override
+		public void run()
 		{
-			return;
-		}
-
-		SendPendingAcks();
-		ResendUnacked();
-
-		_AckTimer.schedule(new TimerTask()
-		{
-			@Override
-			public void run()
+			if (!_Connected)
 			{
-					AckTimer_Elapsed();
+				return;
 			}
-		}, Settings.NETWORK_TICK_INTERVAL);
+
+			SendPendingAcks();
+			ResendUnacked();
+
+			_AckTimer.schedule(new AckTimer_Elapsed(), Settings.NETWORK_TICK_INTERVAL);
+		}
 	}
 
-    private void StatsTimer_Elapsed()
+    private class StatsTimer_Elapsed extends TimerTask
     {
-        boolean full = _InBytes.isFull();
-        long recv = Statistics.RecvBytes;
-        long sent = Statistics.SentBytes;
-        long old_in = _InBytes.offer(recv);
-        long old_out = _OutBytes.offer(sent);
+    	@Override
+		public void run()
+    	{
+            boolean full = _InBytes.isFull();
+            long recv = Statistics.RecvBytes;
+            long sent = Statistics.SentBytes;
+            long old_in = _InBytes.offer(recv);
+            long old_out = _OutBytes.offer(sent);
 
-        if (full)
-        {
-            Statistics.IncomingBPS = (int)(recv - old_in) / _InBytes.size();
-            Statistics.OutgoingBPS = (int)(sent - old_out) / _OutBytes.size();
-            //Logger.Log("Incoming: " + Statistics.IncomingBPS + " Out: " + Statistics.OutgoingBPS + " Lag: " + Statistics.LastLag +
-            //           " Pings: " + Statistics.ReceivedPongs + "/" + Statistics.SentPings, LogLevel.Debug); 
-        }
+            if (full)
+            {
+                Statistics.IncomingBPS = (int)(recv - old_in) / _InBytes.size();
+                Statistics.OutgoingBPS = (int)(sent - old_out) / _OutBytes.size();
+                Logger.Log("Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS + " bps, Lag: " + Statistics.LastLag +
+                           " ms, Pings: " + Statistics.ReceivedPongs + "/" + Statistics.SentPings, LogLevel.Debug, _Client); 
+            }
+    	}
     }
 
-    private void PingTimer_Elapsed() throws Exception
+    private class PingTimer_Elapsed extends TimerTask
     {
-        SendPing();
-        Statistics.SentPings++;
+    	@Override
+		public void run()
+    	{
+            try
+			{
+				SendPing();
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+            Statistics.SentPings++;
+    	}
     }
+    
+	/**
+	 * Decode a zerocoded byte array, used to decompress packets marked with the zerocoded flag
+	 * Any time a zero is encountered, the next byte is a count of how many zeroes to expand.
+	 * One zero is encoded with 0x00 0x01, two zeroes is 0x00 0x02, three zeroes is 0x00 0x03,
+	 * etc. The first six bytes puls and extra bytes are copied directly to the output buffer.
+	 * 
+	 * @param src The byte array to decode
+	 * @param srclen The length of the byte array to decode
+	 * @param dest The output byte array to decode to
+	 * @return The length of the output buffer
+	 * @throws Exception
+	 */
+	private static int ZeroDecode(byte[] src, int srclen, int bodylen, byte[] dest) throws Exception
+	{
+		int i, zerolen = 6 + src[5];
+		
+		/* Copy the first 6 + extra header bytes as they are never compressed */
+		System.arraycopy(src, 0, dest, 0, zerolen);
+		for (i = zerolen; i < bodylen; i++)
+		{
+			if (src[i] == 0x00)
+			{
+				for (byte j = 0; j < src[i + 1]; j++)
+				{
+					dest[zerolen++] = 0x00;
+				}
+				i++;
+			}
+			else
+			{
+				dest[zerolen++] = src[i];
+			}
+		}
+		// HACK: Fix truncated zerocoded messages
+//		for (int j = zerolen; j < zerolen + 16; j++) {
+//			dest[j] = 0;
+//		}
+//		zerolen += 16;
+
+		// copy appended ACKs
+		for (; i < srclen; i++)
+		{
+			dest[zerolen++] = src[i];
+		}
+		return zerolen;
+	}
 }
 

@@ -39,7 +39,6 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.LoginManager.LoginResponseCallbackArgs;
 import libomv.Simulator.RegionFlags;
@@ -114,7 +113,7 @@ public class NetworkManager implements PacketCallback {
         /** Sequence number of the wrapped packet */
         public int SequenceNumber;
         /** Number of times this packet has been resent */
-        public AtomicInteger ResendCount;
+        public int ResendCount;
         /** Environment.TickCount when this packet was last sent over the wire */
         public long TickCount;
 
@@ -126,15 +125,15 @@ public class NetworkManager implements PacketCallback {
     }
     
 	// The simulator that the logged in avatar is currently occupying
-	private Simulator CurrentSim;
+	private Simulator _CurrentSim;
 	
 	public Simulator getCurrentSim()
 	{
-		return CurrentSim;
+		return _CurrentSim;
 	}
     public final void setCurrentSim(Simulator value)
     {
-        CurrentSim = value;
+        _CurrentSim = value;
     }
 
     /** Number of packets in the incoming queue */
@@ -479,28 +478,28 @@ public class NetworkManager implements PacketCallback {
 		switch (packet.getType())
 		{
 		case RegionHandshake:
-			RegionHandshakeHandler(packet, simulator);
+			HandleRegionHandshake(packet, simulator);
 			break;
 		case StartPingCheck:
-			StartPingCheckHandler(packet, simulator);
+			HandleStartPingCheck(packet, simulator);
 			break;
 	    case CompletePingCheck:
-			CompletePingCheckHandler(packet, simulator);
+	    	HandleCompletePingCheck(packet, simulator);
 			break;
 		case EnableSimulator:
-			EnableSimulatorHandler(packet, simulator);
+			HandleEnableSimulator(packet, simulator);
 			break;
 		case DisableSimulator:
-			DisableSimulatorHandler(packet, simulator);
+			HandleDisableSimulator(packet, simulator);
 			break;
 		case LogoutReply:
-			LogoutReplyHandler(packet, simulator);
+			HandleLogoutReply(packet, simulator);
 			break;
 		case SimStats:
-			SimStatsHandler(packet, simulator);
+			HandleSimStats(packet, simulator);
 			break;
 		case KickUser:
-			KickUserHandler(packet, simulator);
+			HandleKickUser(packet, simulator);
 			break;
 		}
 	}
@@ -513,7 +512,7 @@ public class NetworkManager implements PacketCallback {
 		Simulators = new ArrayList<Simulator>();
 		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
 		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
-		CurrentSim = null;
+		_CurrentSim = null;
 		
 		_Client.Login.RegisterLoginResponseCallback(new Network_OnLogin(), null, false);
 		
@@ -565,9 +564,9 @@ public class NetworkManager implements PacketCallback {
 	
 	public URI getCapabilityURI(String capability)
 	{
-		if (CurrentSim != null)
+		if (_CurrentSim != null)
 		{
-			return CurrentSim.getCapabilityURI(capability);
+			return _CurrentSim.getCapabilityURI(capability);
 		}
 		return null;
 	}
@@ -575,7 +574,7 @@ public class NetworkManager implements PacketCallback {
 	public URI getCapabilityURI(String capability, Simulator simulator)
 	{
 		if (simulator == null)
-			simulator = CurrentSim;
+			simulator = _CurrentSim;
 
 		if (simulator != null)
 		{
@@ -586,7 +585,7 @@ public class NetworkManager implements PacketCallback {
 
 	public boolean getIsEventQueueRunning()
 	{
-		return (CurrentSim != null && CurrentSim.getIsEventQueueRunning());
+		return (_CurrentSim != null && _CurrentSim.getIsEventQueueRunning());
 	}
 	
 	public void RegisterCallback(CapsEventType capability, CapsCallback callback)
@@ -678,7 +677,7 @@ public class NetworkManager implements PacketCallback {
 	{
         // try CurrentSim, however directly after login this will be null, so if it is, we'll try to
 		// find the first simulator we're connected to in order to send the packet.
-        Simulator simulator = CurrentSim;
+        Simulator simulator = _CurrentSim;
 
         if (simulator == null && Simulators.size() >= 1)
         {
@@ -722,10 +721,10 @@ public class NetworkManager implements PacketCallback {
 	        {
 	        }
 	    }
-	    catch (Exception e)
+	    catch (Exception ex)
 	    {
-		    e.printStackTrace();
-		    Logger.Log("Caught an exception in a packet callback: " + e.toString(), LogLevel.Warning);
+		    ex.printStackTrace();
+		    Logger.Log("Caught an exception in a packet callback: " + ex.toString(), LogLevel.Warning);
 	    }
 	}
 
@@ -733,30 +732,32 @@ public class NetworkManager implements PacketCallback {
 	{
 	    try
 	    {
-	    	if (simulator == null)
-	    		simulator = CurrentSim;
+	        if (_Client.Settings.SYNC_PACKETCALLBACKS)
+	        {
+				// Fire the registered capability callbacks
+		    	ArrayList<CapsCallback> callbackArray = capCallbacks.get(message.getType());
+				// Fire any registered callbacks
+				for (CapsCallback callback : callbackArray)
+				{
+				    callback.capsCallback(message, simulator);
+				}
 
-			// Fire the registered capability callbacks
-	    	ArrayList<CapsCallback> callbackArray = capCallbacks.get(message.getType());
-			// Fire any registered callbacks
-			for (CapsCallback callback : callbackArray)
-			{
-			    callback.capsCallback(message, simulator);
-			}
-
-			// Fire any default capability callbacks
-		    callbackArray = capCallbacks.get(CapsEventType.Default);
-			// Fire any registered callbacks
-			for (CapsCallback callback : callbackArray)
-			{
-			    callback.capsCallback(message, simulator);
-			}
+				// Fire any default capability callbacks
+			    callbackArray = capCallbacks.get(CapsEventType.Default);
+				// Fire any registered callbacks
+				for (CapsCallback callback : callbackArray)
+				{
+				    callback.capsCallback(message, simulator);
+				}
+		    }
+	        else
+	        {
+	        }
 	    }
-	    catch (Exception e)
+	    catch (Exception ex)
 	    {
-		    e.printStackTrace();
-		    Logger.Log("Caught an exception in a packet callback: "
-				+ e.toString(), LogLevel.Warning, e);
+		    ex.printStackTrace();
+		    Logger.Log("Caught an exception in a packet callback: " + ex.toString(), LogLevel.Warning, ex);
 	    }
 	}
 
@@ -879,8 +880,7 @@ public class NetworkManager implements PacketCallback {
             // Send an initial AgentUpdate to complete our movement in to the sim
             if (_Client.Settings.SEND_AGENT_UPDATES)
             {
-            	/*  TODO: implement AgentManager.Movement class
-                _Client.Self.Movement.SendUpdate(true, simulator); */
+                _Client.Self.SendMovementUpdate(true, simulator);
             }
         }
         else
@@ -893,7 +893,7 @@ public class NetworkManager implements PacketCallback {
 
 	public void Logout() throws Exception {
 		// This will catch a Logout when the client is not logged in
-		if (CurrentSim == null || !connected) {
+		if (_CurrentSim == null || !connected) {
 			return;
 		}
 
@@ -907,7 +907,7 @@ public class NetworkManager implements PacketCallback {
 		logout.AgentData.AgentID = _Client.Self.getAgentID();
 		logout.AgentData.SessionID = _Client.Self.getSessionID();
 
-		CurrentSim.SendPacket(logout);
+		_CurrentSim.SendPacket(logout);
 
 		// TODO: We should probably check if the server actually received the
 		// logout request
@@ -987,7 +987,7 @@ public class NetworkManager implements PacketCallback {
 				Simulator simulator = Simulators.get(i);
 				// Don't disconnect the current sim, we'll use LogoutRequest for
 				// that
-				if (simulator != null && simulator != CurrentSim)
+				if (simulator != null && simulator != _CurrentSim)
 				{
 					simulator.Disconnect(sendCloseCircuit);
 
@@ -998,12 +998,12 @@ public class NetworkManager implements PacketCallback {
 			}
 			Simulators.clear();
 
-			if (CurrentSim != null)
+			if (_CurrentSim != null)
 			{
-				CurrentSim.Disconnect(sendCloseCircuit);
+				_CurrentSim.Disconnect(sendCloseCircuit);
 
 				// Fire the SimDisconnected event if a handler is registered
-				OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(CurrentSim, DisconnectType.NetworkTimeout));
+				OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(_CurrentSim, DisconnectType.NetworkTimeout));
 			}
 		}
         connected = false;
@@ -1016,7 +1016,7 @@ public class NetworkManager implements PacketCallback {
 	private void DisconnectTimer_Elapsed() throws Exception
 	{
 		// If the current simulator is disconnected, shutdown + callback + return
-        if (!connected || CurrentSim == null)
+        if (!connected || _CurrentSim == null)
         {
             if (_DisconnectTimer != null)
             {
@@ -1025,10 +1025,10 @@ public class NetworkManager implements PacketCallback {
             }
             connected = false;
         }
-        else if (CurrentSim.getDisconnectCandidate())
+        else if (_CurrentSim.getDisconnectCandidate())
         {
             // The currently occupied simulator hasn't sent us any traffic in a while, shutdown
-        	Logger.Log("Network timeout for the current simulator (" + CurrentSim.Name + "), logging out", LogLevel.Warning);
+        	Logger.Log("Network timeout for the current simulator (" + _CurrentSim.Name + "), logging out", LogLevel.Warning);
 
             if (_DisconnectTimer != null)
             {
@@ -1101,7 +1101,7 @@ public class NetworkManager implements PacketCallback {
         return null;
     }
 
-	private void RegionHandshakeHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleRegionHandshake(Packet packet, Simulator simulator) throws Exception
 	{
 		RegionHandshakePacket handshake = (RegionHandshakePacket)packet;
 
@@ -1146,7 +1146,10 @@ public class NetworkManager implements PacketCallback {
 		reply.RegionInfo.Flags = 0;
 		simulator.SendPacket(reply);
 
-		Logger.Log("Received a region handshake for " + simulator.Name, LogLevel.Info);
+        // We're officially connected to this sim
+        simulator.handshakeComplete = true;
+ 
+        Logger.Log("Received a region handshake for " + simulator.Name, LogLevel.Info, _Client);
 	}
 
     /** Process an incoming packet and raise the appropriate events
@@ -1155,7 +1158,7 @@ public class NetworkManager implements PacketCallback {
      *  @param simulator The sender
      *  @throws Exception 
      */
-    private void StartPingCheckHandler(Packet packet, Simulator simulator) throws Exception
+    private void HandleStartPingCheck(Packet packet, Simulator simulator) throws Exception
     {
         StartPingCheckPacket incomingPing = (StartPingCheckPacket)packet;
         CompletePingCheckPacket ping = new CompletePingCheckPacket();
@@ -1167,24 +1170,23 @@ public class NetworkManager implements PacketCallback {
         simulator.SendPacket(ping);
     }
 
-    /** Process an incoming packet and raise the appropriate events
-     * 
-     *  @param packet The packet data
-     *  @param simulator The sender
+    /**
+     * Process a ping answer
      */
-    protected final void CompletePingCheckHandler(Packet packet, Simulator simulator)
+    private final void HandleCompletePingCheck(Packet packet, Simulator simulator)
     {
         CompletePingCheckPacket pong = (CompletePingCheckPacket)packet;
         long timeMilli = System.currentTimeMillis();
-        String retval = "Pong2: " + (timeMilli - simulator.Statistics.LastPingSent);
+
+        simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
+        simulator.Statistics.ReceivedPongs++;
+        String retval = "Pong2: " + simulator.Statistics.LastLag;
         if ((pong.PingID.PingID - simulator.Statistics.LastPingID + 1) != 0)
         {
             retval += " (gap of " + (pong.PingID.PingID - simulator.Statistics.LastPingID + 1) + ")";
         }
 
-        simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
-        simulator.Statistics.ReceivedPongs++;
-        Logger.Log(retval, LogLevel.Info);
+        Logger.Log(retval, LogLevel.Info, _Client);
     }
 
     /** Process an incoming packet and raise the appropriate events
@@ -1192,7 +1194,7 @@ public class NetworkManager implements PacketCallback {
      *  @param packet The packet data
      *  @param simulator The sender
      */
-    protected final void SimStatsHandler(Packet packet, Simulator simulator)
+    private final void HandleSimStats(Packet packet, Simulator simulator)
     {
         if (!_Client.Settings.ENABLE_SIMSTATS)
         {
@@ -1283,7 +1285,7 @@ public class NetworkManager implements PacketCallback {
         }
     }
 
-	private void EnableSimulatorHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleEnableSimulator(Packet packet, Simulator simulator) throws Exception
 	{
         if (!_Client.Settings.MULTIPLE_SIMS)
         {
@@ -1312,7 +1314,7 @@ public class NetworkManager implements PacketCallback {
      *  @param packet The packet data
      *  @throws Exception 
      */
-    protected final void DisableSimulatorHandler(Packet packet, Simulator simulator) throws Exception
+    private final void HandleDisableSimulator(Packet packet, Simulator simulator) throws Exception
     {
          DisconnectSim(simulator, false);
     }
@@ -1323,14 +1325,14 @@ public class NetworkManager implements PacketCallback {
      *  @param simulator The sender
      *  @throws Exception 
      */
-    private void LogoutReplyHandler(Packet packet, Simulator simulator) throws Exception
+    private void HandleLogoutReply(Packet packet, Simulator simulator) throws Exception
     {
         LogoutReplyPacket logout = (LogoutReplyPacket)packet;
 
         if ((logout.AgentData.SessionID == _Client.Self.getSessionID()) && 
             (logout.AgentData.AgentID == _Client.Self.getAgentID()))
         {
-        	Logger.DebugLog("Logout reply received");
+        	Logger.DebugLog("Logout reply received", _Client);
 
             // Deal with callbacks, if any
             if (OnLoggedOut.count() > 0)
@@ -1349,7 +1351,7 @@ public class NetworkManager implements PacketCallback {
         }
         else
         {
-        	Logger.Log("Invalid Session or Agent ID received in Logout Reply... ignoring", LogLevel.Warning);
+        	Logger.Log("Invalid Session or Agent ID received in Logout Reply... ignoring", LogLevel.Warning, _Client);
         }
     }
 
@@ -1359,7 +1361,8 @@ public class NetworkManager implements PacketCallback {
      * @param simulator The sender
      * @param packet The packet data
      */
-	private void KickUserHandler(Packet packet, Simulator simulator) throws Exception {
+	private void HandleKickUser(Packet packet, Simulator simulator) throws Exception
+	{
 		String message = Helpers.BytesToString(((KickUserPacket) packet).UserInfo.getReason());
 
 		// Shutdown the network layer

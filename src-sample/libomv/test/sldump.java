@@ -123,16 +123,16 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			if (e.getSuccess())
 			{
 				// Login was successful
-				System.out.println("Message of the day: " + e.getMessage());
+				System.out.println("sldump: Message of the day: " + e.getMessage());
 			}
 			else if (e.getRedirect())
 			{
 				// Server requested redirection
-				System.out.println("Server requested redirection: " + e.getReason());
+				System.out.println("sldump: Server requested redirection: " + e.getReason());
 			}
 			else
 			{
-				System.out.println("Error logging in: " + e.getReason());			
+				System.out.println("sldump: Error logging in: " + e.getReason());			
 			}
 		}
 		
