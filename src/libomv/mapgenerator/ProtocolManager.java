@@ -318,8 +318,9 @@ public class ProtocolManager
 									currentPacket.ID = fixedID;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = (tokens[3].equals("Trusted"));
-									currentPacket.Encoded = (tokens[4].equals("Zerocoded"));
+									currentPacket.Trusted = tokens[3].equals("Trusted");
+									currentPacket.Encoded = tokens[4].equals("Zerocoded");
+									currentPacket.Deprecated = tokens.length > 5 ? tokens[5].contains("Deprecated") : false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									LowMaps.addPacket(fixedID, currentPacket);
 								} else if (tokens[1].equals("Low")) {
@@ -327,8 +328,9 @@ public class ProtocolManager
 									currentPacket.ID = low;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = (tokens[2].equals("Trusted"));
-									currentPacket.Encoded = (tokens[3].equals("Zerocoded"));
+									currentPacket.Trusted = tokens[2].equals("Trusted");
+									currentPacket.Encoded = tokens[3].equals("Zerocoded");
+									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated") : false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									LowMaps.addPacket(low, currentPacket);
 									low++;
@@ -337,8 +339,9 @@ public class ProtocolManager
 									currentPacket.ID = medium;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = (tokens[2].equals("Trusted"));
-									currentPacket.Encoded = (tokens[3].equals("Zerocoded"));
+									currentPacket.Trusted = tokens[2].equals("Trusted");
+									currentPacket.Encoded = tokens[3].equals("Zerocoded");
+									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated") : false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									MediumMaps.addPacket(medium, currentPacket);
 
@@ -348,8 +351,9 @@ public class ProtocolManager
 									currentPacket.ID = high;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = (tokens[2].equals("Trusted"));
-									currentPacket.Encoded = (tokens[3].equals("Zerocoded"));
+									currentPacket.Trusted = tokens[2].equals("Trusted");
+									currentPacket.Encoded = tokens[3].equals("Zerocoded");
+									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated") : false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									HighMaps.addPacket(high, currentPacket);
 

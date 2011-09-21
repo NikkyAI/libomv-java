@@ -41,5 +41,7 @@ public class MapPacket {
 
 	public boolean Encoded;
 
+	public boolean Deprecated;
+
 	public ArrayList<MapBlock> Blocks;
 }
