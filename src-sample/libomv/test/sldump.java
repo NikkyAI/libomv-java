@@ -38,22 +38,13 @@ import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
 import libomv.utils.CallbackHandler;
 
-public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements PacketCallback
+public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements PacketCallback 
 {
+	private boolean disconnected = false;
+	private GridClient client;
+	
 	// The main entry point for the application.
-	static public void main(String[] args)
-	{
-		try
-		{
-			new sldump(args);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public sldump(String[] args) throws Exception
+	public void main(String[] args)
 	{
 		if (args.length == 0 || (args.length < 3 && !args[0].equals("--printmap")))
 		{
@@ -88,31 +79,45 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			return;
 		}
 
-		GridClient client = new GridClient();
-		client.setDefaultGrid("secondlife");
-		LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
-		
-		// Setup the packet callback and disconnect event handler
-		client.Network.RegisterCallback(PacketType.Default, this);
-		client.Network.OnDisconnected.add(this);
-		
-		// Setup the Login Response handler to print out the result of the login
-		client.Login.RegisterLoginResponseCallback(new Network_OnLogin(), loginParams.Options, false);
-
-		// An example of how to pass additional options to the login server
-		// loginParams.ID0 = "65e142a8d3c1ee6632259f111cb168c9";
-		// loginParams.ViewerDigest = "0e63550f-0991-a092-3158-b4206e728ffa";
-
-		if (!client.Login.Login(loginParams))
+		try
 		{
-			// Login failed
-			return;
+			client = new GridClient();
+			client.setDefaultGrid("secondlife");
+			LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
+			
+			// Setup the packet callback and disconnect event handler
+			client.Network.RegisterCallback(PacketType.Default, this);
+			client.Network.OnDisconnected.add(this);
+			
+			// Setup the Login Response handler to print out the result of the login
+			client.Login.RegisterLoginResponseCallback(new Network_OnLogin(), loginParams.Options, false);
+
+			// An example of how to pass additional options to the login server
+			// loginParams.ID0 = "65e142a8d3c1ee6632259f111cb168c9";
+			// loginParams.ViewerDigest = "0e63550f-0991-a092-3158-b4206e728ffa";
+
+			if (!client.Login.Login(loginParams))
+			{
+				// Login failed
+				return;
+			}
+
+			disconnected = false;
+			while (!disconnected)
+			{
+				client.Tick(100);
+			}
 		}
-		
-		while (true)
+		catch (Exception ex)
 		{
-			client.Tick(100);
+			ex.printStackTrace();
 		}
+		client.Network.UnregisterCallback(PacketType.Default, this);
+		client.Network.OnDisconnected.remove(this);
+	}
+
+	public sldump(String[] args) throws Exception
+	{
 	}
 
 	public class Network_OnLogin extends CallbackHandler<LoginResponseCallbackArgs>
@@ -141,12 +146,7 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
-		switch (packet.getType())
-		{
-		    case Default:
-				System.out.println(packet.toString());
-			    break;
-		}
+		System.out.println(packet.toString());
 	}
 
 	@Override
@@ -161,5 +161,6 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 		{
 			System.out.println("sldump: Server disconnected us: " + args.getMessage());
 		}
+		disconnected = true;
 	}
 }

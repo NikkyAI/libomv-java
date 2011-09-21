@@ -443,31 +443,37 @@ public class NetworkManager implements PacketCallback
     	{
     		// Fire any default callbacks
             ArrayList<PacketCallback> callbackArray = simCallbacks.get(CapsEventType.Default);
-        	for (PacketCallback callback : callbackArray)
-        	{
-        	    try
-        	    {
-        	    	callback.packetCallback(packet, simulator);
-        	    }
-	            catch (Exception ex)
-                {
-                    Logger.Log("Default packet event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
-                }
-        	}
+            if (callbackArray != null)
+            {
+            	for (PacketCallback callback : callbackArray)
+            	{
+            	    try
+            	    {
+            	    	callback.packetCallback(packet, simulator);
+            	    }
+    	            catch (Exception ex)
+                    {
+                        Logger.Log("Default packet event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+                    }
+            	}
+            }
         	// Fire any registered callbacks
         	callbackArray = simCallbacks.get(packet.getType());
-        	for (PacketCallback callback : callbackArray)
+        	if (callbackArray != null)
         	{
-        	    try
-        	    {
-        	    	callback.packetCallback(packet, simulator);
-        	    }
-	            catch (Exception ex)
-                {
-                    Logger.Log("Packet event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
-                }
-	            specialHandler = true;
-         	}
+            	for (PacketCallback callback : callbackArray)
+            	{
+            	    try
+            	    {
+            	    	callback.packetCallback(packet, simulator);
+            	    }
+    	            catch (Exception ex)
+                    {
+                        Logger.Log("Packet event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+                    }
+    	            specialHandler = true;
+             	}
+            	}
     	}
     	
         if (!specialHandler && packet.getType() != PacketType.Default && packet.getType() != PacketType.PacketAck)
@@ -484,31 +490,37 @@ public class NetworkManager implements PacketCallback
 		{
 	        // Fire any default callbacks
 	        ArrayList<CapsCallback> callbackArray = capCallbacks.get(CapsEventType.Default);
-	    	for (CapsCallback callback : callbackArray)
-	    	{
-	    	    try
-	    	    {
-	    	    	callback.capsCallback(message, simulator);
-	    	    }
-	            catch (Exception ex)
-	            {
-	                Logger.Log("CAPS event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
-	            }
-	    	}
+	        if (callbackArray != null)
+	        {
+		    	for (CapsCallback callback : callbackArray)
+		    	{
+		    	    try
+		    	    {
+		    	    	callback.capsCallback(message, simulator);
+		    	    }
+		            catch (Exception ex)
+		            {
+		                Logger.Log("CAPS event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+		            }
+		    	}
+	        }
 	    	// Fire any registered callbacks
 	    	callbackArray = capCallbacks.get(message.getType());
-	    	for (CapsCallback callback : callbackArray)
-	    	{
-	    	    try
-	    	    {
-	    	    	callback.capsCallback(message, simulator);
-	    	    }
-	            catch (Exception ex)
-	            {
-	                Logger.Log("CAPS event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
-	            }
-	            specialHandler = true;
-	     	}
+	        if (callbackArray != null)
+	        {
+		    	for (CapsCallback callback : callbackArray)
+		    	{
+		    	    try
+		    	    {
+		    	    	callback.capsCallback(message, simulator);
+		    	    }
+		            catch (Exception ex)
+		            {
+		                Logger.Log("CAPS event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+		            }
+		            specialHandler = true;
+		     	}
+	        }
 		}
     	if (!specialHandler)
         {
@@ -538,10 +550,10 @@ public class NetworkManager implements PacketCallback
     private class IncomingPacketHandler implements Runnable
     {
     	ExecutorService threadPool = Executors.newCachedThreadPool();
-
+    	
     	public void shutdown()
     	{
-    		threadPool.shutdownNow();
+    		threadPool.shutdown();
     	}
     	
     	@Override
