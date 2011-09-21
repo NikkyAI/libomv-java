@@ -59,9 +59,6 @@ import libomv.types.UUID;
 
 public class Helpers
 {
-	// The version of libsecondlife (not the SL protocol itself)
-	public final static String VERSION = "1.2.4";
-
 	// This header flag signals that ACKs are appended to the packet
 	public final static byte MSG_APPENDED_ACKS = 0x10;
 
@@ -375,7 +372,8 @@ public class Helpers
 	// hex dump will be put in the String instead</remarks>
 	// <param name="bytes">The byte array to convert to a String</param>
 	// <returns>A UTF8 String, minus the null terminator</returns>
-	public static String FieldToString(byte[] bytes) throws Exception {
+	public static String FieldToString(byte[] bytes) throws Exception
+	{
 		return FieldToString(bytes, "");
 	}
 
@@ -388,31 +386,40 @@ public class Helpers
 	// <param name="fieldName">A field name to prepend to each line of
 	// output</param>
 	// <returns>A UTF8 String, minus the null terminator</returns>
-	public static String FieldToString(byte[] bytes, String fieldName)
-			throws Exception {
+	public static String FieldToString(byte[] bytes, String fieldName) throws Exception
+	{
 		String output = "";
 		boolean printable = true;
 
-		for (byte element : bytes) {
+		for (byte element : bytes)
+		{
 			// Check if there are any unprintable characters in the array
 			if ((element < 0x20 || element > 0x7E) && element != 0x09
-					&& element != 0x0D && element != 0x0A && element != 0x00) {
+					&& element != 0x0D && element != 0x0A && element != 0x00)
+			{
 				printable = false;
 				break;
 			}
 		}
 
-		if (printable) {
-			if (fieldName.length() > 0) {
+		if (printable)
+		{
+			int length = bytes.length;
+			if (length > 0)
+			{
 				output += fieldName + ": ";
 			}
-
-			output += new String(bytes, "UTF8");
-			// output +=
-			// System.Text.Encoding.UTF8.GetString(bytes).Replace("\0", "");
-		} else {
-			for (int i = 0; i < bytes.length; i += 16) {
-				if (i != 0) {
+			if (bytes[length - 1] == 0)
+				output += new String(bytes, 0, length - 1, UTF8_ENCODING);
+			else
+			    output += new String(bytes, UTF8_ENCODING);
+		}
+		else
+		{
+			for (int i = 0; i < bytes.length; i += 16)
+			{
+				if (i != 0)
+				{
 					output += "\n";
 				}
 				if (fieldName != "") {
@@ -450,12 +457,13 @@ public class Helpers
 	//
 	// <param name="str">The String to convert to a byte array</param>
 	// <returns>A null-terminated byte array</returns>
-	public static byte[] StringToField(String str) throws Exception {
-		return str.getBytes("UTF8");
-		/*
-		 * if (!str.EndsWith("\0")) { str += "\0"; } return
-		 * System.Text.UTF8Encoding.UTF8.GetBytes(str);
-		 */
+	public static byte[] StringToField(String str) throws Exception
+	{
+		if (!str.endsWith("\0"))
+		{
+			str += "\0";
+		}
+		return str.getBytes(UTF8_ENCODING);
 	}
 
     /** Converts a struct or class object containing fields only into a key value separated string
@@ -1531,7 +1539,7 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
-		if (bytes[length - 1] == 0) length--;
+		if (bytes[offset + length - 1] == 0) length--;
 	    return new String(bytes, offset, length, UTF8_ENCODING);
 	}
 
