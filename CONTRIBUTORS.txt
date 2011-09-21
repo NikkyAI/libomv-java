@@ -1,2 +1,3 @@
+OpenMetaverse.org original C# code for translation to Java
 Simon Whiteside (http://www.larts.co.uk) - original Java port
 Frederick Martian - bug fixing and adding ports of various newer Openmetaverse.org libomv parts
