@@ -758,16 +758,17 @@ public class mapgenerator
 		writer.close();
 	}
 
-	static public void main(String[] args) {
+	static public void main(String[] args)
+	{
 		ProtocolManager protocol = null;
 		PrintWriter writer = null;
 
-		try {
-
+		try
+		{
 			if (args.length < 3)
 			{
-				System.out.println("Invalid arguments, need [message_template.msg] [template.java.txt] [Packet.java]");
-				return;
+				System.out.println("Invalid arguments, using default values for [message_template.msg] [template.java.txt] [Packet.java]");
+				args = new String[] {"src/libomv/mapgenerator/message_template.msg", "src/libomv/mapgenerator/template.java.txt", "src/libomv/packets/Packet.java"};
 			}
 
 			File packets_dir = new File(args[2]).getParentFile();
@@ -783,15 +784,12 @@ public class mapgenerator
 			packettype_writer.println("package libomv.packets;\n "
 					                + "public enum PacketType\n"
 					                + "{\n"
-//					                + "    static final public int Default = 0;");
                                     + "    Default,");
-//			int i = 1;
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
 				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
-//					packettype_writer.println("    static final public int " + packet.Name + " = " + (i++) + ";");
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
@@ -800,7 +798,6 @@ public class mapgenerator
 				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
-//					packettype_writer.println("    static final public int " + packet.Name + "=" + (i++) + ";");
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
@@ -809,7 +806,6 @@ public class mapgenerator
 				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
-//					packettype_writer.println("    static final public int " + packet.Name + "=" + (i++) + ";");
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
