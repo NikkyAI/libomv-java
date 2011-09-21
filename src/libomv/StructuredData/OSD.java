@@ -442,10 +442,7 @@ public class OSD
 			{
 				return ((OSDArray)value).AsVector3();
 			}
-			else
-			{
-				return Vector3.Zero;
-			}
+			return Vector3.Zero;
 		}
 		else if (type == Vector4.class)
 		{
@@ -453,10 +450,7 @@ public class OSD
 			{
 				return ((OSDArray)value).AsVector4();
 			}
-			else
-			{
-				return Vector4.Zero;
-			}
+			return Vector4.Zero;
 		}
 		else if (type == Quaternion.class)
 		{
@@ -464,10 +458,7 @@ public class OSD
 			{
 				return ((OSDArray)value).AsQuaternion();
 			}
-			else
-			{
-				return Quaternion.Identity;
-			}
+			return Quaternion.Identity;
 		}
 		else
 		{

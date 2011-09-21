@@ -140,8 +140,7 @@ public class OSDString extends OSD
 			int i = value.indexOf(':');
 			if (i < 0)
 			    return InetAddress.getByName(value);
-			else
-			    return InetAddress.getByName(value.substring(0, i));
+		    return InetAddress.getByName(value.substring(0, i));
 		}
 		catch (UnknownHostException ex)
 		{
