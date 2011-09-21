@@ -31,7 +31,7 @@ import libomv.LoginManager.LoginParams;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.utils.Callback;
 
-public class Bot extends Callback<DisconnectedCallbackArgs>
+public class Bot implements Callback<DisconnectedCallbackArgs>
 {
 	public final static String LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
 
