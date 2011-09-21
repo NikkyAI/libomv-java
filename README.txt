@@ -10,69 +10,66 @@ by Frederick Martian.
 Building the library and examples
 ---------------------------------
 
-The library can be built using ANT with the enclosed build.xml.
+The library can be built using Eclipse.
 
-You should customize the build.xml file to suit your environment, in particular properties:
-
-java_lib_dir - the location of the your installations java jar files
-forename, surname, password - the login credentials for a SecondLife account to use for testing
-
-You will need various existing Java libraries installed - more details to follow.
+You will need various existing Java libraries installed - more details to follow. Most non-standard Java
+libraries are provided in the lib directory of this project download.
 
 LindenLabs server certificate
 -----------------------------
 
-There seem to be issues with the SSL certificate used by the linden labs server. You will need to import their certificate
-into your keychain.
-
-You can extract the certificate with:
-
-ant installcert
-
-This puts the certificate into a file called jssecacerts in the current directory.
-
-You can copy this into your $JAVA_HOME/jre/lib/security directory. 
-
-The InstallCert.java program, and the instructions were taken from http://blogs.sun.com/andreas/entry/no_more_unable_to_find. 
-
-You can visit that page for more information.
+There seems to be issues with the SSL certificate used by the linden labs server, since it is not traceable
+to any standard root certification agency. The current library will install a modified KeyStore with an added
+lindenlab root certificate, loaded from the res directory, when attempting to open an https connection to
+a server having "lindenlab" in its URI. 
 
 Running examples
 ----------------
 
-You can run examples using the enclosed build.xml
+You can run examples directlry from within Eclipse.
 
-Each example is a separate target within the build.xml file.
-
-For example to run the "sldump" test application execute the following command:
-
-ant sldump
-
-
-
-
+For example to run the "sldump" test application select the src-smapl/libomv.test/sldump entry and select
+Run as Java Application from the context menu.
 
 Rebuilding packet classes
 -------------------------
 
-The packet classes, which are used when communicating with the secondlife servers, are generated from the
-current protocol definition using an application called mapgenerator, which has also been ported.
+The UDP packet classes, which are used when communicating with the secondlife or OpenSim based servers,
+are generated from the current protocol definition using an application called mapgenerator, which has
+also been ported.
 
-You can obtain the latest protocol definition files (called message_template.msg and keywords.txt) from the libsecondlife site.
+You can obtain the latest protocol definition files (called message_template.msg and keywords.txt) from
+the libsecondlife site.
 
-Put these files into the libsecondlife/mapgenerator/ directory, and rerun the code generator:
-
-ant mapgenerator
-
+Put these files into the libsecondlife/mapgenerator/ directory, and rerun the code generator by right
+clicking src/libomv.mapgenerator/mapgenerator and selecting Run as Java Application. Don't forget to
+refresh the src/libomv.packets directory in the Eclipse Package Explorer pane before compiling the
+library or opening one of the generated packet files in that directory.
 
 
 Porting Information
 -------------------
 
-The initial port was taken pretty straight from the original C# code as of October 26th 2006
+The initial port was performed by Simon Whiteside and taken pretty straight from the original C# code
+as of October 26th 2006
 
 Principal areas of porting were:
 
 *) change "bit-twiddling" code into calls into Java ByteBuffer class
-
 *) altered C# style networking code into Java networking code
+
+This code has been provided and is still available on sourceforge in the libsecondlife-java project.
+
+Another attempt to make this library more useful was performed by Frederick Martian, using the
+libsecondlife-java code as a starting base and performing many modifications and additions, using
+the OpenMetaverse 0.8.3 C# code as a guideline.
+
+The current library has provisions to do XML-RPC and LLSD CAPS based logins, send and receive UDP
+and CAPS messages, implement agent and avatar operations including display names support, instant
+messaging, teleporting, friends and groups, as well as basic inventory, asset, object and parcel
+management.
+
+There is currently no image handling at all, and also no voice chat support. While image handling
+will be required to implement proper baking (de-clouding) of the avatar, voice chat is not likely
+to be added anytime soon, unless someone else provides an implementation of this.
+
