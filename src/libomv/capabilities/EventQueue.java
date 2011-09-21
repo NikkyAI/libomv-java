@@ -153,7 +153,6 @@ public class EventQueue extends CapsClient
                     	Logger.Log("Please report this information to http://jira.openmv.org/: \n" + body, LogLevel.Debug, Simulator.getClient());
 
                         // try generic decoder next which takes a caps event and tries to match it to an existing packet
-
                         Packet packet = CapsToPacket.BuildPacket(name, body);
                         if (packet != null)
                         {
