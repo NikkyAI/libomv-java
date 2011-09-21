@@ -139,7 +139,7 @@ public class EventQueue extends CapsClient
                 	{
                         if (Simulator.getClient().Settings.SYNC_PACKETCALLBACKS)
                         {
-                	        Simulator.getClient().Network.DistributeCaps(message, Simulator);
+                	        Simulator.getClient().Network.DistributeCaps(Simulator, message);
                         }
                         else
                         {
