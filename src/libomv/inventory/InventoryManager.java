@@ -99,7 +99,7 @@ import libomv.packets.UpdateCreateInventoryItemPacket;
 import libomv.packets.UpdateInventoryFolderPacket;
 import libomv.packets.UpdateInventoryItemPacket;
 import libomv.packets.UpdateTaskInventoryPacket;
-import libomv.packetsold.LinkInventoryItemPacket;
+import libomv.packets.LinkInventoryItemPacket;
 import libomv.primitives.Primitive.AttachmentPoint;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
@@ -1883,8 +1883,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
         create.InventoryBlock.OldItemID = itemID;
         create.InventoryBlock.Type = assetType.getValue();
         create.InventoryBlock.InvType = invType.getValue();
-        create.InventoryBlock.Name = Helpers.StringToBytes(name);
-        create.InventoryBlock.Description = Helpers.StringToBytes(description);
+        create.InventoryBlock.setName(Helpers.StringToBytes(name));
+        create.InventoryBlock.setDescription(Helpers.StringToBytes(description));
 
         _Client.Network.SendPacket(create);
     }
