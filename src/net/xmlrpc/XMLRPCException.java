@@ -3,7 +3,7 @@ package net.xmlrpc;
 public class XMLRPCException extends Exception {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7499675036625522379L;
 

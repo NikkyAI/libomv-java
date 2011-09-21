@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.types;
 
 import java.nio.ByteBuffer;
@@ -147,7 +147,7 @@ public class Vector3 {
 			Z = Helpers.BytesToFloatB(bytes, pos + 8);
 		}
 	}
-	
+
 	/** Writes the raw bytes for this vector to a byte array
 	 *
 	 *  @param dest Destination byte array
@@ -158,7 +158,7 @@ public class Vector3 {
 	{
 		ToBytes(dest, pos, false);
 	}
-	
+
 	public void ToBytes(byte[] dest, int pos, boolean le)
 	{
 		if (le)
@@ -244,7 +244,7 @@ public class Vector3 {
 
 	public static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount)
 	{
-		
+
 		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount), Helpers.Lerp(value1.Z, value2.Z, amount));
 	}
 
@@ -317,7 +317,7 @@ public class Vector3 {
 
 	/** Parse a vector from a string
 	 *
-	 *  @param val A string representation of a 3D vector, enclosed 
+	 *  @param val A string representation of a 3D vector, enclosed
 	 *         in arrow brackets and separated by commas
 	 */
 	public static Vector3 Parse(String val)

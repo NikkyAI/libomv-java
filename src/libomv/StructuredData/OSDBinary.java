@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData;
 
 import java.net.InetAddress;
@@ -83,7 +83,7 @@ public class OSDBinary extends OSD
 			return null;
 		}
 	}
-	
+
 	@Override
 	public int AsUInteger()
 	{

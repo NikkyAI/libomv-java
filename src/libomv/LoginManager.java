@@ -3,26 +3,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.IOException;
@@ -95,13 +95,13 @@ public class LoginManager
         /** A md5 hashed password, plaintext password will be automatically hashed */
         public String Password;
         /** The agents starting location once logged in
-            Either "last", "home", or a string encoded URI 
+            Either "last", "home", or a string encoded URI
             containing the simulator name and x/y/z coordinates e.g: uri:hooper&amp;128&amp;152&amp;17 */
         public String Start;
         /** A string containing the client software channel information <example>Second Life Release</example> */
         public String Channel;
         /** The client software version information
-            The official viewer uses: Second Life Release n.n.n.n 
+            The official viewer uses: Second Life Release n.n.n.n
             where n is replaced with the current version of the viewer */
         public String Version;
         /** A string containing the platform information the agent is running on */
@@ -146,7 +146,7 @@ public class LoginManager
 
         /**
          * Instantiates new LoginParams object and fills in the values
-         * 
+         *
          * @param client Instance of GridClient to read settings from
          * @param firstName Login first name
          * @param lastName Login last name
@@ -243,9 +243,9 @@ public class LoginManager
          * Parse LLSD Login Reply Data
          *
          * @param reply An {@link OSDMap} containing the login response data.
-         *              XML-RPC logins do not require this as XML-RPC.NET 
-         *              automatically populates the struct properly using attributes 
-         * @throws IOException 
+         *              XML-RPC logins do not require this as XML-RPC.NET
+         *              automatically populates the struct properly using attributes
+         * @throws IOException
          */
         private void ParseLoginReply(OSDMap reply)
         {
@@ -273,7 +273,7 @@ public class LoginManager
 			{
                 Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
 			}
-			
+
 			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
             {
             	OSDMap home = (OSDMap)osdHome;
@@ -627,32 +627,32 @@ public class LoginManager
     	private String message;
     	private String reason;
     	private LoginResponseData reply;
-		
+
     	public boolean getSuccess()
     	{
     		return success;
     	}
-    	
+
     	public boolean getRedirect()
     	{
     		return redirect;
     	}
-    	
+
     	public String getMessage()
     	{
     		return message;
     	}
-    	
+
     	public String getReason()
     	{
     		return reason;
     	}
-    	
+
     	public LoginResponseData getReply()
     	{
     		return reply;
     	}
-		
+
 		public LoginResponseCallbackArgs(boolean success, boolean redirect,
 				String message, String reason, LoginResponseData reply) {
 			this.success = success;
@@ -678,7 +678,7 @@ public class LoginManager
         CallbackOptions.put(callback, options);
         OnLoginResponse.add(callback, autoremove);
     }
-    
+
     public final void UnregisterLoginResponseCallback(Callback<LoginResponseCallbackArgs> callback)
     {
         CallbackOptions.remove(callback);
@@ -686,7 +686,7 @@ public class LoginManager
     }
     // #endregion Callback handlers
 
-	
+
     // #region Public Members
     /** Seed CAPS URL returned from the login server */
     public String LoginSeedCapability = "";
@@ -699,7 +699,7 @@ public class LoginManager
     private TimeoutEventQueue<LoginStatus> LoginEvents = new TimeoutEventQueue<LoginStatus>();
     // #endregion
 
-    
+
 	public LoginManager(GridClient client)
 	{
 		this._Client = client;
@@ -716,7 +716,7 @@ public class LoginManager
 
 	/**
      * Generate sane default values for a login request
-     * 
+     *
      * @param firstName Account first name
      * @param lastName Account last name
      * @param password Account password
@@ -732,7 +732,7 @@ public class LoginManager
     /**
      * Simplified login that takes the most common and required fields
      * To receive
-     * 
+     *
      * @param firstName Account first name
      * @param lastName Account last name
      * @param password Account password
@@ -741,7 +741,7 @@ public class LoginManager
      * @return Whether the login was successful or not. On failure the
      *           LoginErrorKey string will contain the error code and LoginMessage
      *           will contain a description of the error
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Login(String firstName, String lastName, String password, String userAgent, String userVersion) throws Exception
     {
@@ -752,7 +752,7 @@ public class LoginManager
     /**
      * Simplified login that takes the most common fields along with a
      * starting location URI, and can accept an MD5 string instead of a plaintext password
-     *  
+     *
      * @param firstName Account first name
      * @param lastName Account last name
      * @param password Account password or MD5 hash of the password
@@ -763,7 +763,7 @@ public class LoginManager
      * @return Whether the login was successful or not. On failure the
      *           LoginErrorKey string will contain the error code and LoginMessage
      *           will contain a description of the error
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Login(String firstName, String lastName, String password, String userAgent, String start, String userVersion) throws Exception
     {
@@ -775,13 +775,13 @@ public class LoginManager
 
     /**
      * Login that takes a struct of all the values that will be passed to the login server
-     * 
+     *
      * @param loginParams The values that will be passed to the login
      *          server, all fields must be set even if they are ""
      * @return Whether the login was successful or not. On failure the
      *           LoginErrorKey string will contain the error code and LoginMessage
      *           will contain a description of the error
-     * @throws Throwable 
+     * @throws Throwable
      */
     public final boolean Login(LoginParams loginParams) throws Exception
     {
@@ -805,7 +805,7 @@ public class LoginManager
 
     /**
      * Build a start location URI for passing to the Login function
-     * 
+     *
      * @param sim Name of the simulator to start in
      * @param x X coordinate to start at
      * @param y Y coordinate to start at
@@ -983,7 +983,7 @@ public class LoginManager
             {
                 final XMLRPCClient client = new XMLRPCClient(loginUri);
                 final Object[] request = new Object[] { loginXmlRpc };
-                
+
                 if (loginUri.getScheme().equals("https") && loginUri.getHost().contains("linden"))
                 {
                     client.register(new Scheme("https", 443, new SSLSocketFactory(Helpers.GetExtendedKeyStore(null))));
@@ -1034,10 +1034,10 @@ public class LoginManager
         LoginProgressCallback(status, message, reason);
     }
 
-    
+
     /**
-     * Handles response from XML-RPC login replies 
-     * 
+     * Handles response from XML-RPC login replies
+     *
      * @param response the response object
      * @param the login params, used to start the next round on redirects
      * @throws Exception
@@ -1080,7 +1080,7 @@ public class LoginManager
 
     /**
      * Handle response from LLSD login replies
-     * 
+     *
      * @param client
      * @param result
      * @param error
@@ -1088,12 +1088,12 @@ public class LoginManager
     private class LoginReplyLLSDHandler implements FutureCallback<OSD>
     {
     	private final LoginParams loginParams;
-    	
+
     	public LoginReplyLLSDHandler(LoginParams loginParams)
     	{
     		this.loginParams = loginParams;
     	}
-    	
+
 		@Override
 		public void completed(OSD result)
 		{
@@ -1134,7 +1134,7 @@ public class LoginManager
             UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "connection canceled");
 		}
     }
-    
+
     private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception
     {
         boolean redirect = reply.Login.equals("indeterminate");

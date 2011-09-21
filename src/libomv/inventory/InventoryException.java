@@ -23,10 +23,10 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.inventory;
 
-/** Exception class to identify inventory exceptions */  
+/** Exception class to identify inventory exceptions */
 public class InventoryException extends Exception
 {
 	private static final long serialVersionUID = 1L;

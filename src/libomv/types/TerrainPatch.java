@@ -2,13 +2,13 @@ package libomv.types;
 
 public class TerrainPatch
 {
-    public enum LayerType 
+    public enum LayerType
     {
         Land(0x4C),
         Water(0x57),
         Wind(0x37),
         Cloud(0x38);
-        
+
         public static LayerType setValue(int value)
         {
         	for (LayerType e : values())
@@ -25,7 +25,7 @@ public class TerrainPatch
         {
         	return _value;
         }
-        
+
         private final byte _value;
         private LayerType(int value)
         {
@@ -65,7 +65,7 @@ public class TerrainPatch
         {
             PatchIDs |= value & 0x1F;
         }
-    }    
+    }
 
     /* X position of this patch */
     public int X;

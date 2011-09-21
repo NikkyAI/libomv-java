@@ -5,7 +5,7 @@
 
  - Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  - Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
@@ -13,7 +13,7 @@
  nor the names
  of its contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -126,8 +126,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	{
 		/**
 	     * Construct an InventoryTexture object
-	     * 
-	     * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+	     *
+	     * @param itemID A {@link OpenMetaverse.UUID} which becomes the
 	     *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	     */
 	    public InventoryTexture(UUID itemID)
@@ -137,10 +137,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryTexture object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -156,8 +156,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventorySound object
-         * 
-         * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+         *
+         * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
         public InventorySound(UUID itemID)
@@ -167,10 +167,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventorySound object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -186,8 +186,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryCallingCard object
-         * 
-         * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+         *
+         * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
         public InventoryCallingCard(UUID itemID)
@@ -197,10 +197,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryCallingCard object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -216,7 +216,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryLandmark object
-         * 
+         *
          * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
@@ -227,10 +227,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryLandmark object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -265,7 +265,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryObject object
-         * 
+         *
          * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
@@ -276,10 +276,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryObject object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -315,8 +315,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryNotecard object
-         * 
-         * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+         *
+         * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
         public InventoryNotecard(UUID itemID)
@@ -326,10 +326,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryNotecard object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -341,7 +341,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     /**
      * InventoryCategory Class
-     * 
+     *
      * TODO: Is this even used for anything?
      */
     @SuppressWarnings("serial")
@@ -349,7 +349,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryCategory object
-         * 
+         *
          * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
@@ -360,10 +360,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryCategory object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -379,7 +379,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryLSL object
-         * 
+         *
          * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
@@ -390,10 +390,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryLSL object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -409,7 +409,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventorySnapshot object
-         * 
+         *
          * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
@@ -420,10 +420,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventorySnapshot object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -439,7 +439,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         /**
          * Construct an InventoryAttachment object
-         * 
+         *
          * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
@@ -450,10 +450,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryAttachment object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -480,7 +480,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         /**
          * Construct an InventoryWearable object
          *
-         * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+         * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
         public InventoryWearable(UUID itemID)
@@ -490,10 +490,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryWearable object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -520,7 +520,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		/**
          * Construct an InventoryAnimation object
          *
-         * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+         * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
         public InventoryAnimation(UUID itemID)
@@ -530,10 +530,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryAnimation object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -547,10 +547,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
     @SuppressWarnings("serial")
 	public class InventoryGesture extends InventoryItem
     {
-        /** 
+        /**
          * Construct an InventoryGesture object
-         * 
-         * @param itemID A {@link OpenMetaverse.UUID} which becomes the 
+         *
+         * @param itemID A {@link OpenMetaverse.UUID} which becomes the
          *                 {@link OpenMetaverse.InventoryItem} objects AssetUUID
          */
         public InventoryGesture(UUID itemID)
@@ -560,10 +560,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         /**
          * Construct an InventoryGesture object from a serialization stream
-         * 
+         *
          * @param info serialization stream
-         * @throws ClassNotFoundException 
-         * @throws IOException 
+         * @throws ClassNotFoundException
+         * @throws IOException
          */
         @Override
 		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -585,7 +585,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     	/* Place system folders at the top */
     	public static final byte SystemFoldersToTop = 4;
 
-    	
+
         public static byte setValue(int value)
         {
         	return (byte)(value & _mask);
@@ -595,7 +595,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         {
         	return value & _mask;
         }
-        
+
         private static final byte _mask = 0x7;
     }
 
@@ -628,29 +628,29 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ScriptRunningReplyCallbackArgs> OnScriptRunningReply = new CallbackHandler<ScriptRunningReplyCallbackArgs>();
 
-    /** 
+    /**
      * Callback for inventory item creation finishing
      *
      * @param success Whether the request to create an inventory item succeeded or not
      * @param item Inventory item being created. If success is false this will be null
      */
     public CallbackHandler<ItemCreatedCallbackArgs> OnItemCreatedCallback = new CallbackHandler<ItemCreatedCallbackArgs>();
-    
+
     public class ItemCreatedCallbackArgs implements CallbackArgs
     {
     	boolean success;
     	InventoryItem item;
-    	
+
     	public boolean getSuccess()
     	{
     		return success;
     	}
-    	
+
     	public InventoryItem getInventoryItem()
     	{
     		return item;
     	}
-    	
+
     	public ItemCreatedCallbackArgs(boolean success, InventoryItem item)
     	{
     		this.success = success;
@@ -659,7 +659,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     }
     private Hashtable<Integer, Callback<ItemCreatedCallbackArgs>> _ItemCreatedCallbacks = new Hashtable<Integer, Callback<ItemCreatedCallbackArgs>>();
 
-    /** 
+    /**
      * Callback for an inventory item being create from an uploaded asset
      *
      * @param success true if inventory item creation was successful
@@ -668,24 +668,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param assetID
      */
     public CallbackHandler<ItemCreatedFromAssetCallbackArgs> OnItemCreatedFromAssetCallback = new CallbackHandler<ItemCreatedFromAssetCallbackArgs>();
-    
+
     public class ItemCreatedFromAssetCallbackArgs implements CallbackArgs
     {
     	boolean success;
     	String status;
     	UUID itemID;
     	UUID assetID;
-    	
+
     	public boolean getSuccess()
     	{
     		return success;
     	}
-    	
+
     	public String getStatus()
     	{
     		return status;
     	}
- 
+
     	public UUID getItemID()
     	{
     		return itemID;
@@ -705,17 +705,17 @@ public class InventoryManager implements PacketCallback, CapsCallback
     	}
     }
 
-    /** 
+    /**
      * Callback for an inventory item copying finished
      *
      * @param item InventoryItem being copied
      */
     public CallbackHandler<ItemCopiedCallbackArgs> OnItemCopiedCallback = new CallbackHandler<ItemCopiedCallbackArgs>();
-    
+
     public class ItemCopiedCallbackArgs implements CallbackArgs
     {
     	InventoryItem item;
-    	
+
     	public InventoryItem getInventoryItem()
     	{
     		return item;
@@ -759,7 +759,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     private Callback<InstantMessageCallbackArgs> instantMessageCallback;
     private Callback<LoginResponseCallbackArgs> loginResponseCallback;
-    /** 
+    /**
      * Default constructor
      *
      * @param client Reference to the GridClient object
@@ -794,7 +794,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     	_Client.Login.UnregisterLoginResponseCallback(loginResponseCallback);
     	super.finalize();
     }
-    
+
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
@@ -823,7 +823,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                  break;
         }
 	}
-                 
+
 	@Override
 	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
@@ -836,7 +836,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Fetch
 
-	/** 
+	/**
      * Fetch an inventory item from the dataserver
      * Items will also be sent to the {@link InventoryManager.OnItemReceived} event
      *
@@ -844,7 +844,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param ownerID The item Owners {@link OpenMetaverse.UUID}
      * @param timeout a integer representing the number of milliseconds to wait for results
      * @return An {@link InventoryItem} object on success, or null if no item was found
-     * @throws Exception 
+     * @throws Exception
      */
     public final InventoryItem FetchItem(final UUID itemID, UUID ownerID, int timeout) throws Exception
     {
@@ -861,7 +861,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                 }
         	}
         }
-        
+
         Callback<ItemReceivedCallbackArgs> callback = new FetchedItemsCallback();
 
         OnItemReceived.add(callback, true);
@@ -871,13 +871,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return item;
     }
 
-    /** 
+    /**
      * Request A single inventory item
      * {@link InventoryManager.OnItemReceived}
      *
      * @param itemID The items {@link OpenMetaverse.UUID}
      * @param ownerID The item Owners {@link OpenMetaverse.UUID}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestFetchInventory(UUID itemID, UUID ownerID) throws Exception
     {
@@ -894,13 +894,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(fetch);
     }
 
-    /** 
+    /**
      * Request inventory items
      * {@link InventoryManager.OnItemReceived}
      *
      * @param itemIDs Inventory items to request
      * @param ownerIDs Owners of the inventory items
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestFetchInventory(ArrayList<UUID> itemIDs, ArrayList<UUID> ownerIDs) throws Exception
     {
@@ -924,11 +924,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(fetch);
     }
 
-    /** 
+    /**
      * Get contents of a folder
      * {@link InventoryManager.OnRequestFolderContents}
      * InventoryFolder.DescendentCount will only be accurate if both folders and items are requested
-     * 
+     *
      * @param folder The {@link UUID} of the folder to search
      * @param owner The {@link UUID} of the folders owner
      * @param folders true to retrieve folders
@@ -936,8 +936,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param order sort order to return results in
      * @param timeout a integer representing the number of milliseconds to wait for results
      * @return A list of inventory items matching search criteria within folder
-     * @throws InventoryException 
-     * @throws Exception 
+     * @throws InventoryException
+     * @throws Exception
      */
     public final ArrayList<InventoryBase> FolderContents(final UUID folder, UUID owner, boolean folders, boolean items, byte order, int timeout) throws InventoryException, Exception
     {
@@ -949,7 +949,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
             public void callback(FolderUpdatedCallbackArgs e)
             {
 		    	ArrayList<InventoryBase> contents = null;
-		    	
+
                 if (e.getFolderID().equals(folder))
                 {
                 	synchronized (_Store)
@@ -980,10 +980,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return contents;
     }
 
-    /** 
+    /**
      * Request the contents of an inventory folder
      * {@link InventoryManager.FolderContents}
-     * 
+     *
      * @param folder The folder to search
      * @param owner The folder owner {@link UUID}
      * @param folders true to return {@link InventoryManager.InventoryFolder} s contained in folder
@@ -1009,14 +1009,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Find
 
-    /** 
+    /**
      * Returns the UUID of the folder (category) that defaults to containing 'type'. The folder
      * is not necessarily only for that type
      *
      * This will return the root folder if one does not exist
      * @param type
      * @return The UUID of the desired folder if found, the UUID of the RootFolder if not found, or UUID.Zero on failure
-     * @throws InventoryException 
+     * @throws InventoryException
      */
     public final UUID FindFolderForType(AssetType type) throws InventoryException
     {
@@ -1055,15 +1055,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Find an object in inventory using a specific path to search
-     * 
+     *
      * @param baseFolder The folder to begin the search in
      * @param inventoryOwner The object owners {@link UUID}
      * @param path A string path to search
      * @param timeout milliseconds to wait for a reply
      * @return Found items {@link UUID} or {@link UUID.Zero} if timeout occurs or item is not found
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID FindObjectByPath(UUID baseFolder, UUID inventoryOwner, final String path, int timeout) throws Exception
     {
@@ -1089,9 +1089,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return foundItem == null ? UUID.Zero : foundItem;
     }
 
-    /** 
+    /**
      * Find inventory items by path
-     * 
+     *
      * @param baseFolder The folder to begin the search in
      * @param inventoryOwner The object owners {@link UUID}
      * @param path A string path to search, folders/objects separated by a '/'
@@ -1119,15 +1119,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
         RequestFolderContents(baseFolder, inventoryOwner, true, true, InventorySortOrder.ByName);
     }
 
-    /** 
+    /**
      * Search inventory Store object for an item or folder
-     * 
+     *
      * @param baseFolder The folder to begin the search in
      * @param path An array which creates a path to search
      * @param level Number of levels below baseFolder to conduct searches
      * @param firstOnly if True, will stop searching after first match is found
      * @return A list of inventory items found
-     * @throws InventoryException 
+     * @throws InventoryException
      */
     public final ArrayList<InventoryBase> LocalFind(UUID baseFolder, String[] path, int level, boolean firstOnly) throws InventoryException
     {
@@ -1161,12 +1161,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Move/Rename
 
-    /** 
+    /**
      * Move an inventory item or folder to a new location
      *
      * @param item The {@link T:InventoryBase} item or folder to move
      * @param newParent The {@link T:InventoryFolder} to move item or folder to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Move(InventoryBase item, InventoryFolder newParent) throws Exception
     {
@@ -1180,14 +1180,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Move an inventory item or folder to a new location and change its name
-     * 
+     *
      * @param item The {@link T:InventoryBase} item or folder to move
      * @param newParent The {@link T:InventoryFolder} to move item or folder to
      * @param newName The name to change the item or folder to
-     * @throws Exception 
-     * @throws UnsupportedEncodingException 
+     * @throws Exception
+     * @throws UnsupportedEncodingException
      */
     public final void Move(InventoryBase item, InventoryFolder newParent, String newName) throws UnsupportedEncodingException, Exception
     {
@@ -1203,26 +1203,26 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     /**
      * Move and rename a folder
-     * 
+     *
      * @param folderID The source folders {@link UUID}
      * @param newparentID The destination folders {@link UUID}
      * @param newName The name to change the folder to
-     * @throws Exception 
-     * @throws UnsupportedEncodingException 
+     * @throws Exception
+     * @throws UnsupportedEncodingException
      */
     public final void MoveFolder(UUID folderID, UUID newparentID, String newName) throws UnsupportedEncodingException, Exception
     {
         UpdateFolderProperties(folderID, newparentID, newName, AssetType.Unknown);
     }
 
-    /** 
+    /**
      * Update folder properties
-     * 
+     *
      * @param folderID {@link UUID} of the folder to update
      * @param parentID Sets folder's parent to {@link UUID}
      * @param name Folder name
      * @param type Folder type
-     * @throws Exception 
+     * @throws Exception
      */
     public final void UpdateFolderProperties(UUID folderID, UUID parentID, String name, AssetType type) throws Exception
     {
@@ -1251,12 +1251,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(invFolder);
     }
 
-    /** 
+    /**
      * Move a folder
      *
      * @param folderID The source folders {@link UUID}
      * @param newParentID The destination folders {@link UUID}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void MoveFolder(UUID folderID, UUID newParentID) throws Exception
     {
@@ -1283,14 +1283,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(move);
     }
 
-    /** 
+    /**
      * Move multiple folders, the keys in the Dictionary parameter,
      * to a new parents, the value of that folder's key.
-     * 
-     * @param foldersNewParents A Dictionary containing the 
-     *                {@link UUID} of the source as the key, and the 
+     *
+     * @param foldersNewParents A Dictionary containing the
+     *                {@link UUID} of the source as the key, and the
      *                {@link UUID} of the destination as the value
-     * @throws Exception 
+     * @throws Exception
      */
     public final void MoveFolders(Hashtable<UUID, UUID> foldersNewParents) throws Exception
     {
@@ -1328,26 +1328,26 @@ public class InventoryManager implements PacketCallback, CapsCallback
     }
 
 
-    /** 
+    /**
      * Move an inventory item to a new folder
      *
      * @param itemID The {@link UUID} of the source item to move
      * @param folderID The {@link UUID} of the destination folder
-     * @throws Exception 
-     * @throws UnsupportedEncodingException 
+     * @throws Exception
+     * @throws UnsupportedEncodingException
      */
     public final void MoveItem(UUID itemID, UUID folderID) throws UnsupportedEncodingException, Exception
     {
         MoveItem(itemID, folderID, Helpers.EmptyString);
     }
 
-    /** 
+    /**
      * Move and rename an inventory item
      *
      * @param itemID The {@link UUID} of the source item to move
      * @param folderID The {@link UUID} of the destination folder
      * @param newName The name to change the folder to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void MoveItem(UUID itemID, UUID folderID, String newName) throws Exception
     {
@@ -1376,13 +1376,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(move);
     }
 
-    /** 
+    /**
      * Move multiple inventory items to new locations
      *
-     * @param itemsNewParents A Dictionary containing the 
-     *             {@link UUID} of the source item as the key, and the 
+     * @param itemsNewParents A Dictionary containing the
+     *             {@link UUID} of the source item as the key, and the
      *             {@link UUID} of the destination folder as the value
-     * @throws Exception 
+     * @throws Exception
      */
     public final void MoveItems(java.util.Hashtable<UUID, UUID> itemsNewParents) throws Exception
     {
@@ -1421,12 +1421,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Remove
 
-    /** 
+    /**
      * Remove descendants of a folder
      *
      * @param folder The {@link UUID} of the folder
-     * @throws Exception 
-     * @throws InventoryException 
+     * @throws Exception
+     * @throws InventoryException
      */
     public final void RemoveDescendants(UUID folder) throws Exception, InventoryException
     {
@@ -1450,11 +1450,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Remove a single item from inventory
      *
      * @param item The {@link UUID} of the inventory item to remove
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RemoveItem(UUID item) throws Exception
     {
@@ -1464,11 +1464,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
         Remove(items, null);
     }
 
-    /** 
+    /**
      * Remove a folder from inventory
      *
      * @param folder The {@link UUID} of the folder to remove
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RemoveFolder(UUID folder) throws Exception
     {
@@ -1478,12 +1478,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
         Remove(null, folders);
     }
 
-    /** 
+    /**
      * Remove multiple items or folders from inventory
      *
      * @param items A List containing the {@link UUID} s of items to remove
      * @param folders A List containing the {@link UUID} s of the folders to remove
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Remove(ArrayList<UUID> items, ArrayList<UUID> folders) throws Exception
     {
@@ -1552,34 +1552,34 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(rem);
     }
 
-    /** 
+    /**
      * Empty the Lost and Found folder
-     * 
-     * @throws Exception 
-     * @throws InventoryException 
+     *
+     * @throws Exception
+     * @throws InventoryException
      */
     public final void EmptyLostAndFound() throws InventoryException, Exception
     {
         EmptySystemFolder(AssetType.LostAndFoundFolder);
     }
 
-    /** 
+    /**
      * Empty the Trash folder
-     * 
-     * @throws Exception 
-     * @throws InventoryException 
+     *
+     * @throws Exception
+     * @throws InventoryException
      */
     public final void EmptyTrash() throws InventoryException, Exception
     {
         EmptySystemFolder(AssetType.TrashFolder);
     }
 
-    /** 
+    /**
      * Empty the Lost and Found folder
-     * 
+     *
      * @param folderType The type of folder to empty
-     * @throws Exception 
-     * @throws InventoryException 
+     * @throws Exception
+     * @throws InventoryException
      */
     private void EmptySystemFolder(AssetType folderType) throws Exception, InventoryException
     {
@@ -1600,7 +1600,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                 }
             }
             items = _Store.getContents(folderKey);
-        
+
             ArrayList<UUID> remItems = new ArrayList<UUID>();
             ArrayList<UUID> remFolders = new ArrayList<UUID>();
             for (InventoryBase item : items)
@@ -1621,7 +1621,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     ///#region Create
 
-    /** 
+    /**
      *
      *
      * @param parentFolder
@@ -1632,7 +1632,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param invType
      * @param nextOwnerMask
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCreateItem(UUID parentFolder, String name, String description, AssetType type, UUID assetTransactionID, InventoryType invType,
     		                            int nextOwnerMask, Callback<ItemCreatedCallbackArgs> callback) throws Exception
@@ -1641,7 +1641,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         RequestCreateItem(parentFolder, name, description, type, assetTransactionID, invType, WearableType.Shape, nextOwnerMask, callback);
     }
 
-    /** 
+    /**
      *
      *
      * @param parentFolder
@@ -1653,7 +1653,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param wearableType
      * @param nextOwnerMask
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCreateItem(UUID parentFolder, String name, String description, AssetType type, UUID assetTransactionID, InventoryType invType,
     		                            WearableType wearableType, int nextOwnerMask, Callback<ItemCreatedCallbackArgs> callback) throws Exception
@@ -1675,20 +1675,20 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(create);
     }
 
-    /** 
+    /**
      * Creates a new inventory folder
      *
      * @param parentID ID of the folder to put this folder in
      * @param name Name of the folder to create
      * @return The UUID of the newly created folder
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID CreateFolder(UUID parentID, String name) throws Exception
     {
         return CreateFolder(parentID, name, AssetType.Unknown);
     }
 
-    /** 
+    /**
      * Creates a new inventory folder
      * If you specify a preferred type of <code>AsseType.Folder</code> it will create a new root folder
      * which may likely cause all sorts of strange problems
@@ -1696,10 +1696,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param parentID ID of the folder to put this folder in
      * @param name Name of the folder to create
      * @param preferredType Sets this folder as the default folder for new assets of the specified type.
-     *             Use <code>AssetType.Unknown</code> to create a normal folder, otherwise it will likely 
+     *             Use <code>AssetType.Unknown</code> to create a normal folder, otherwise it will likely
      *             create a duplicate of an existing folder type
      * @return The UUID of the newly created folder
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID CreateFolder(UUID parentID, String name, AssetType preferredType) throws Exception
     {
@@ -1729,7 +1729,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         // Update the local store
         _Store.setItem(newFolder.UUID, newFolder);
-        
+
         // Create the create folder packet and send it
         CreateInventoryFolderPacket create = new CreateInventoryFolderPacket();
         create.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1745,9 +1745,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return id;
     }
 
-    /** 
+    /**
      * Create an inventory item and upload asset data
-     * 
+     *
      * @param data Asset data
      * @param name Inventory item name
      * @param description Inventory item description
@@ -1755,7 +1755,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param invType Inventory type
      * @param folderID Put newly created inventory in this folder
      * @param callback Callback that will receive feedback on success or failure
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCreateItemFromAsset(byte[] data, String name, String description, AssetType assetType, InventoryType invType,
     		                                     UUID folderID, Callback<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
@@ -1768,7 +1768,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         RequestCreateItemFromAsset(data, name, description, assetType, invType, folderID, permissions, callback);
     }
 
-    /** 
+    /**
      * Create an inventory item and upload asset data
      *
      * @param data Asset data
@@ -1777,10 +1777,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param assetType Asset type
      * @param invType Inventory type
      * @param folderID Put newly created inventory in this folder
-     * @param permissions Permission of the newly created item 
+     * @param permissions Permission of the newly created item
      *             (EveryoneMask, GroupMask, and NextOwnerMask of Permissions struct are supported)
      * @param callback Delegate that will receive feedback on success or failure
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCreateItemFromAsset(byte[] data, String name, String description, AssetType assetType, InventoryType invType,
     		                                     UUID folderID, Permissions permissions, Callback<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
@@ -1809,13 +1809,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Creates inventory link to another inventory item or folder
      *
      * @param folderID Put newly created link in folder with this UUID
      * @param bse Inventory item or folder
      * @param callback Method to call upon creation of the link
-     * @throws Exception 
+     * @throws Exception
      */
     public final void CreateLink(UUID folderID, InventoryBase bse, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
@@ -1831,33 +1831,33 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Creates inventory link to another inventory item
      *
      * @param folderID Put newly created link in folder with this UUID
      * @param item Original inventory item
      * @param callback Method to call upon creation of the link
-     * @throws Exception 
+     * @throws Exception
      */
     public final void CreateLink(UUID folderID, InventoryItem item, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.inventoryType, new UUID(), callback);
     }
 
-    /** 
+    /**
      * Creates inventory link to another inventory folder
      *
      * @param folderID Put newly created link in folder with this UUID
      * @param folder Original inventory folder
      * @param callback Method to call upon creation of the link
-     * @throws Exception 
+     * @throws Exception
      */
     public final void CreateLink(UUID folderID, InventoryFolder folder, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         CreateLink(folderID, folder.UUID, folder.Name, "", AssetType.LinkFolder, InventoryType.Folder, new UUID(), callback);
     }
 
-    /** 
+    /**
      * Creates inventory link to another inventory item or folder
      *
      * @param folderID Put newly created link in folder with this UUID
@@ -1868,7 +1868,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param invType Inventory Type
      * @param transactionID Transaction UUID
      * @param callback Method to call upon creation of the link
-     * @throws Exception 
+     * @throws Exception
      */
     public final void CreateLink(UUID folderID, UUID itemID, String name, String description, AssetType assetType, InventoryType invType,
     		                     UUID transactionID, Callback<ItemCreatedCallbackArgs> callback) throws Exception
@@ -1892,21 +1892,21 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Copy
 
-    /** 
+    /**
      *
      *
      * @param item
      * @param newParent
      * @param newName
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCopyItem(UUID item, UUID newParent, String newName, Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
         RequestCopyItem(item, newParent, newName, _Client.Self.getAgentID(), callback);
     }
 
-    /** 
+    /**
      *
      *
      * @param item
@@ -1914,7 +1914,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param newName
      * @param oldOwnerID
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCopyItem(UUID item, UUID newParent, String newName, UUID oldOwnerID, Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
@@ -1930,7 +1930,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         RequestCopyItems(items, folders, names, oldOwnerID, callback);
     }
 
-    /** 
+    /**
      *
      *
      * @param items
@@ -1938,7 +1938,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param newName
      * @param oldOwnerID
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCopyItems(ArrayList<UUID> items, ArrayList<UUID> targetFolders, ArrayList<String> newNames, UUID oldOwnerID,
     		                           Callback<ItemCopiedCallbackArgs> callback) throws Exception
@@ -1975,7 +1975,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(copy);
     }
 
-    /** 
+    /**
      * Request a copy of an asset embedded within a notecard
      *
      * @param objectID Usually UUID.Zero for copying an asset from a notecard
@@ -1983,7 +1983,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param folderID Target folder for asset to go to in your inventory
      * @param itemID UUID of the embedded asset
      * @param callback callback to run when item is copied to inventory
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCopyItemFromNotecard(UUID objectID, UUID notecardID, UUID folderID, UUID itemID, Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
@@ -2023,11 +2023,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     ///#region Update
 
-    /** 
+    /**
      *
      *
      * @param item
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestUpdateItem(InventoryItem item) throws Exception
     {
@@ -2037,24 +2037,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return RequestUpdateItems(items, new UUID());
     }
 
-    /** 
+    /**
      *
      *
      * @param items
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestUpdateItems(ArrayList<InventoryItem> items) throws Exception
     {
         return RequestUpdateItems(items, new UUID());
     }
 
-    /** 
+    /**
      *
      *
      * @param items
      * @param items
      * @param transactionID
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestUpdateItems(ArrayList<InventoryItem> items, UUID transactionID) throws Exception
     {
@@ -2097,13 +2097,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return transactionID;
     }
 
-    /** 
+    /**
      *
      *
      * @param data
      * @param notecardID
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestUpdateNotecardAgentInventory(byte[] data, UUID notecardID, Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
     {
@@ -2123,14 +2123,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Save changes to notecard embedded in object contents
      *
      * @param data Encoded notecard asset data
      * @param notecardID Notecard UUID
      * @param taskID Object's UUID
      * @param callback Called upon finish of the upload with status information
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestUpdateNotecardTaskInventory(byte[] data, UUID notecardID, UUID taskID, Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
     {
@@ -2151,13 +2151,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Upload new gesture asset for an inventory gesture item
      *
      * @param data Encoded gesture asset
      * @param gestureID Gesture inventory UUID
      * @param callback Callback whick will be called when upload is complete
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestUpdateGestureAgentInventory(byte[] data, UUID gestureID, Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
     {
@@ -2177,14 +2177,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Update an existing script in an agents Inventory
      *
      * @param data A byte[] array containing the encoded scripts contents
      * @param itemID the itemID of the script
      * @param mono if true, sets the script content to run on the mono interpreter
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestUpdateScriptAgent(byte[] data, UUID itemID, boolean mono, Callback<ScriptUpdatedCallbackArgs> callback) throws Exception
     {
@@ -2204,7 +2204,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Update an existing script in an task Inventory
      *
      * @param data A byte[] array containing the encoded scripts contents
@@ -2213,7 +2213,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param mono if true, sets the script content to run on the mono interpreter
      * @param running if true, sets the script to running
      * @param callback
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestUpdateScriptTask(byte[] data, UUID itemID, UUID taskID, boolean mono, boolean running, Callback<ScriptUpdatedCallbackArgs> callback) throws Exception
     {
@@ -2238,21 +2238,21 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Rez/Give
 
-    /** 
+    /**
      * Rez an object from inventory
      *
      * @param simulator Simulator to place object in
      * @param rotation Rotation of the object when rezzed
      * @param position Vector of where to place object
      * @param item InventoryItem object containing item details
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestRezFromInventory(Simulator simulator, Quaternion rotation, Vector3 position, InventoryItem item) throws Exception
     {
         return RequestRezFromInventory(simulator, rotation, position, item, _Client.Self.getActiveGroup(), new UUID(), true);
     }
 
-    /** 
+    /**
      * Rez an object from inventory
      *
      * @param simulator Simulator to place object in
@@ -2260,24 +2260,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param position Vector of where to place object
      * @param item InventoryItem object containing item details
      * @param groupOwner UUID of group to own the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestRezFromInventory(Simulator simulator, Quaternion rotation, Vector3 position, InventoryItem item, UUID groupOwner) throws Exception
     {
         return RequestRezFromInventory(simulator, rotation, position, item, groupOwner, new UUID(), true);
     }
 
-    /** 
+    /**
      * Rez an object from inventory
      *
      * @param simulator Simulator to place object in
      * @param rotation Rotation of the object when rezzed
      * @param position Vector of where to place object
      * @param item InventoryItem object containing item details
-     * @param groupOwner UUID of group to own the object        
+     * @param groupOwner UUID of group to own the object
      * @param queryID User defined queryID to correlate replies
-     * @param rezSelected If set to true, the CreateSelected flag will be set on the rezzed object        
-     * @throws Exception 
+     * @param rezSelected If set to true, the CreateSelected flag will be set on the rezzed object
+     * @throws Exception
      */
     public final UUID RequestRezFromInventory(Simulator simulator, Quaternion rotation, Vector3 position, InventoryItem item, UUID groupOwner, UUID queryID, boolean rezSelected) throws Exception
     {
@@ -2326,28 +2326,28 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return queryID;
     }
 
-    /** 
+    /**
      * DeRez an object from the simulator to the agents Objects folder in the agents Inventory
      *
      * @param objectLocalID The simulator Local ID of the object
      * If objectLocalID is a child primitive in a linkset, the entire linkset will be derezzed
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestDeRezToInventory(int objectLocalID) throws Exception
     {
         RequestDeRezToInventory(objectLocalID, DeRezDestination.AgentInventoryTake, FindFolderForType(AssetType.Object), new UUID());
     }
 
-    /** 
+    /**
      * DeRez an object from the simulator and return to inventory
      *
      * @param objectLocalID The simulator Local ID of the object
      * @param destType The type of destination from the {@link DeRezDestination} enum
-     * @param destFolder The destination inventory folders {@link UUID} -or- 
+     * @param destFolder The destination inventory folders {@link UUID} -or-
                          if DeRezzing object to a tasks Inventory, the Tasks {@link UUID}
-     * @param transactionID The transaction ID for this request which can be used to correlate this request with 
+     * @param transactionID The transaction ID for this request which can be used to correlate this request with
      *                   other packets. If objectLocalID is a child primitive in a linkset, the entire linkset will be derezzed
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestDeRezToInventory(int objectLocalID, DeRezDestination destType, UUID destFolder, UUID transactionID) throws Exception
     {
@@ -2370,14 +2370,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(take);
     }
 
-    /** 
+    /**
      * Rez an item from inventory to its previous simulator location
      *
      * @param simulator
      * @param item
      * @param queryID
-     * @return 
-     * @throws Exception 
+     * @return
+     * @throws Exception
      */
     public final UUID RequestRestoreRezFromInventory(Simulator simulator, InventoryItem item, UUID queryID) throws Exception
     {
@@ -2412,7 +2412,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return queryID;
     }
 
-    /** 
+    /**
      * Give an inventory item to another avatar
      *
      * @param itemID The {@link UUID} of the item to give
@@ -2420,7 +2420,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param assetType The type of the item from the {@link AssetType} enum
      * @param recipient The {@link UUID} of the recipient
      * @param doEffect true to generate a beameffect during transfer
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveItem(UUID itemID, String itemName, AssetType assetType, UUID recipient, boolean doEffect) throws Exception
     {
@@ -2439,7 +2439,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Give an inventory Folder with contents to another avatar
      *
      * @param folderID The {@link UUID} of the Folder to give
@@ -2447,7 +2447,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param assetType The type of the item from the {@link AssetType} enum
      * @param recipient The {@link UUID} of the recipient
      * @param doEffect true to generate a beameffect during transfer
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveFolder(UUID folderID, String folderName, AssetType assetType, UUID recipient, boolean doEffect) throws Exception
     {
@@ -2482,16 +2482,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
      ///#region Task
 
-    /** 
+    /**
      * Copy or move an <see cref="InventoryItem"/> from agent inventory to a task (primitive) inventory
      *
      * @param objectLocalID The target object
      * @param item The item to copy or move from inventory
-     * @return 
+     * @return
      * For items with copy permissions a copy of the item is placed in the tasks inventory,
      * for no-copy items the object is moved to the tasks inventory
      * TODO: what does the return UUID correlate to if anything?
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID UpdateTaskInventory(int objectLocalID, InventoryItem item) throws Exception
     {
@@ -2530,23 +2530,23 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return transactionID;
     }
 
-    /** 
+    /**
      * Retrieve a listing of the items contained in a task (Primitive)
      * This request blocks until the response from the simulator arrives or timeoutMS is exceeded
-     * 
+     *
      * NOTE: This requires the asset manager to be instantiated in order for this function to succeed
-     * 
+     *
      * @param objectID The tasks {@link UUID}
      * @param objectLocalID The tasks simulator local ID
      * @param timeout milliseconds to wait for reply from simulator
      * @return A list containing the inventory items inside the task or null if a timeout occurs
-     * @throws Exception 
+     * @throws Exception
      */
     public final ArrayList<InventoryBase> GetTaskInventory(final UUID objectID, int objectLocalID, int timeout) throws Exception
     {
     	if (_Client.Assets == null)
     		throw new RuntimeException("Can't get task inventory without the asset manager being instantiated.");
-    	
+
         final TimeoutEvent<String> taskReplyEvent = new TimeoutEvent<String>();
         Callback<TaskInventoryReplyCallbackArgs> callback = new Callback<TaskInventoryReplyCallbackArgs>()
         {
@@ -2610,26 +2610,26 @@ public class InventoryManager implements PacketCallback, CapsCallback
         Logger.Log("Timed out waiting for task inventory reply for " + objectLocalID, LogLevel.Warning, _Client);
         return null;
     }
-    
-    /** 
+
+    /**
      * Request the contents of a tasks (primitives) inventory from the current simulator
      * {@link TaskInventoryReply}
      *
      * @param objectLocalID The LocalID of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestTaskInventory(int objectLocalID) throws Exception
     {
         RequestTaskInventory(objectLocalID, null);
     }
 
-    /** 
+    /**
      * Request the contents of a tasks (primitives) inventory
      * {@link TaskInventoryReply}
      *
      * @param objectLocalID The simulator Local ID of the object
      * @param simulator A reference to the simulator object that contains the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestTaskInventory(int objectLocalID, Simulator simulator) throws Exception
     {
@@ -2641,7 +2641,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Move an item from a tasks (Primitive) inventory to the specified folder in the avatars inventory
      * Raises the <see cref="OnTaskItemReceived"/> event
      *
@@ -2649,7 +2649,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param taskItemID UUID of the task item to move
      * @param inventoryFolderID The ID of the destination folder in this agents inventory
      * @param simulator Simulator Object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void MoveTaskInventory(int objectLocalID, UUID taskItemID, UUID inventoryFolderID, Simulator simulator) throws Exception
     {
@@ -2665,7 +2665,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Remove an item from an objects (Prim) Inventory
      * You can confirm the removal by comparing the tasks inventory serial before and after the request
      * with the <see cref="RequestTaskInventory"/> request combined with the {@link TaskInventoryReply} event
@@ -2673,7 +2673,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param objectLocalID LocalID of the object in the simulator
      * @param taskItemID UUID of the task item to remove
      * @param simulator Simulator Object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RemoveTaskInventory(int objectLocalID, UUID taskItemID, Simulator simulator) throws Exception
     {
@@ -2687,7 +2687,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         simulator.SendPacket(remove);
     }
 
-    /** 
+    /**
      * Copy an InventoryScript item from the Agents Inventory into a primitives task inventory
      *
      * @param objectLocalID An unsigned integer representing a primitive being simulated
@@ -2700,15 +2700,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * <code>
      *    int primID = 95899503; // Fake prim ID
      *    UUID scriptID = UUID.Parse("92a7fe8a-e949-dd39-a8d8-1681d8673232"); // Fake Script UUID in Inventory
-     * 
-     *    _Client.Inventory.FolderContents(_Client.Inventory.FindFolderForType(AssetType.LSLText), _Client.Self.AgentID, 
+     *
+     *    _Client.Inventory.FolderContents(_Client.Inventory.FindFolderForType(AssetType.LSLText), _Client.Self.AgentID,
      *        false, true, InventorySortOrder.ByName, 10000);
-     * 
+     *
      *    _Client.Inventory.RezScript(primID, (InventoryItem)_Client.Inventory.getStore().get(scriptID));
      * </code>
      * </example>
      * TODO: what does the return UUID correlate to if anything?
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID CopyScriptToTask(int objectLocalID, InventoryItem item, boolean enableScript) throws Exception
     {
@@ -2749,14 +2749,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
     }
 
 
-    /** 
+    /**
      * Request the running status of a script contained in a task (primitive) inventory
      * The <see cref="ScriptRunningReply"/> event can be used to obtain the results of the request
      * {@link ScriptRunningReply}
      *
      * @param objectID The ID of the primitive containing the script
      * @param scriptID The ID of the script
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGetScriptRunning(UUID objectID, UUID scriptID) throws Exception
     {
@@ -2767,15 +2767,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(request);
     }
 
-    /** 
+    /**
      * Send a request to set the running state of a script contained in a task (primitive) inventory
      * To verify the change you can use the <see cref="RequestGetScriptRunning"/> method combined
      * with the <see cref="ScriptRunningReply"/> event
-     * 
+     *
      * @param objectID The ID of the primitive containing the script
      * @param scriptID The ID of the script
      * @param running true to set the script running, false to stop a running script
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestSetScriptRunning(UUID objectID, UUID scriptID, boolean running) throws Exception
     {
@@ -2847,7 +2847,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Create a CRC from an InventoryItem
      *
      * @param iitem The source InventoryItem
@@ -2884,7 +2884,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return CRC;
     }
 
-    /** 
+    /**
      * Reverses a cheesy XORing with a fixed UUID to convert a shadow_id to an asset_id
      *
      * @param shadowID Obfuscated shadow_id value
@@ -2897,9 +2897,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return uuid;
     }
 
-    /** 
+    /**
      * Does a cheesy XORing with a fixed UUID to convert an asset_id to a shadow_id
-     * 
+     *
      * @param assetID asset_id value to obfuscate
      * @return Obfuscated shadow_id value
      */
@@ -2910,7 +2910,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         return uuid;
     }
 
-    /** 
+    /**
      * Wrapper for creating a new {@link InventoryItem} object
      *
      * @param type The type of item from the {@link InventoryType} enum
@@ -2978,7 +2978,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
     	return new InventoryFolder(folderID);
     }
-    
+
     private static boolean ParseLine(String line, RefObject<String> key, RefObject<String> value)
     {
         // Clean up and convert tabs to spaces
@@ -3015,7 +3015,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     }
 
     /** Parse the results of a RequestTaskInventory() response
-     * 
+     *
      * @param taskData A string which contains the data from the task reply
      * @return A List containing the items contained within the tasks inventory
      */
@@ -3027,7 +3027,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         String key = Helpers.EmptyString;
         String val = Helpers.EmptyString;
         RefObject<String> keyref = new RefObject<String>(key), valref = new RefObject<String>(val);
-        
+
         while (lineNum < lines.length)
         {
             if (ParseLine(lines[lineNum++], keyref, valref))
@@ -3437,7 +3437,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     	private final byte[] itemData;
     	private final long timeout;
     	private final OSDMap request;
-    	
+
     	public CreateItemFromAssetResponse(Callback<ItemCreatedFromAssetCallbackArgs> callback, byte[] data, long timeout, OSDMap query)
     	{
     		this.callback = callback;
@@ -3445,7 +3445,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.timeout = timeout;
     		this.request = query;
     	}
-    	
+
         @Override
 		public void completed(OSD result)
         {
@@ -3501,7 +3501,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     callback.callback(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
             }
         }
-        
+
 		@Override
 		public void failed(Exception ex)
 		{
@@ -3548,7 +3548,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Reply received when uploading an inventory asset
      *
      * @param success Has upload been successful
@@ -3562,7 +3562,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     	public String status;
     	public UUID itemID;
     	public UUID assetID;
-    	
+
     	public InventoryUploadedAssetCallbackArgs(boolean success, String status, UUID itemID, UUID assetID)
     	{
     		this.success = success;
@@ -3570,15 +3570,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.itemID = itemID;
     		this.assetID = assetID;
     	}
-    	
+
     }
-    
+
     public class UploadInventoryAssetComplete implements FutureCallback<OSD>
     {
     	private final Callback<InventoryUploadedAssetCallbackArgs> callback;
     	private final byte[] itemData;
     	private final UUID assetID;
-    	
+
     	public UploadInventoryAssetComplete(Callback<InventoryUploadedAssetCallbackArgs> callback, byte[] itemData, UUID assetID)
     	{
     		this.callback = callback;
@@ -3656,10 +3656,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			{
                 String message;
     			if (ex instanceof HttpResponseException)
-    				message = String.format("HTTP Status: %d, %s", ((HttpResponseException)ex).getStatusCode(), ex.getMessage()); 
+    				message = String.format("HTTP Status: %d, %s", ((HttpResponseException)ex).getStatusCode(), ex.getMessage());
     			else
     				message = ex.getMessage();
-    				
+
                 callback.callback(new InventoryUploadedAssetCallbackArgs(false, message, UUID.Zero, UUID.Zero));
 			}
 		}
@@ -3680,7 +3680,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     	public ArrayList<String> errors;
     	public UUID itemID;
     	public UUID assetID;
-    	
+
 		public ScriptUpdatedCallbackArgs(boolean success, String message, boolean compiled,  ArrayList<String> errors, UUID itemID, UUID assetID)
 		{
     		this.success = success;
@@ -3691,20 +3691,20 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.assetID = assetID;
 		}
     }
-    
+
     public class UpdateScriptAgentInventoryResponse implements FutureCallback<OSD>
     {
     	private final Callback<ScriptUpdatedCallbackArgs> callback;
     	private final byte[] itemData;
     	private final UUID scriptID;
-    	
+
     	public UpdateScriptAgentInventoryResponse(Callback<ScriptUpdatedCallbackArgs> callback, byte[] itemData, UUID scriptID)
     	{
     		this.callback = callback;
     		this.itemData = itemData;
     		this.scriptID = scriptID;
     	}
-    	
+
         @Override
 		public void completed(OSD result)
         {
@@ -3785,7 +3785,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     protected final void InventoryDescendentsHandler(Packet packet, Simulator simulator) throws Exception
     {
         InventoryDescendentsPacket reply = (InventoryDescendentsPacket)packet;
-        
+
        	synchronized (_Store)
     	{
             if (reply.AgentData.Descendents > 0)
@@ -3820,14 +3820,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     {
                     	break;
                     }
-                    
+
                     InventoryItem item;
-                    /* 
-                     * Objects that have been attached in-world prior to being stored on the 
-                     * asset server are stored with the InventoryType of 0 (Texture) 
-                     * instead of 17 (Attachment) 
-                     * 
-                     * This corrects that behavior by forcing Object Asset types that have an 
+                    /*
+                     * Objects that have been attached in-world prior to being stored on the
+                     * asset server are stored with the InventoryType of 0 (Texture)
+                     * instead of 17 (Attachment)
+                     *
+                     * This corrects that behavior by forcing Object Asset types that have an
                      * invalid InventoryType with the proper InventoryType of Attachment.
                      */
                     if (AssetType.Object.equals(AssetType.setValue(reply.ItemData[i].Type)) && InventoryType.Texture.equals(InventoryType.setValue(reply.ItemData[i].InvType)))
@@ -3866,7 +3866,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     parentFolder = (InventoryFolder)base;
             	}
             }
-            
+
             if (parentFolder == null)
             {
                 Logger.Log("Don't have a reference to FolderID " + reply.AgentData.FolderID.toString() + " or it is not a folder", LogLevel.Error, _Client);
@@ -3899,7 +3899,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                         InventorySearch search = _Searches.get(i);
                         ArrayList<InventoryBase> folderContents;
                         folderContents = _Store.getContents(search.Folder);
-                        
+
                         // Iterate over all of the inventory objects in the base search folder
                         for (int j = 0; j < folderContents.size(); j++)
                         {
@@ -3913,7 +3913,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                             		string.concat(search.Path[k] + "/");
                             	}
                             	string.concat(search.Path[k]);
-                                
+
                             	if (search.Level  == search.Path.length - 1)
                                 {
                                     Logger.DebugLog("Finished path search of " + string, _Client);
@@ -3944,12 +3944,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
-     * UpdateCreateInventoryItem packets are received when a new inventory item 
+    /**
+     * UpdateCreateInventoryItem packets are received when a new inventory item
      * is created. This may occur when an object that's rezzed in world is
      * taken into inventory, when an item is created using the CreateInventoryItem
      * packet, or when an object is purchased
-     * 
+     *
      * @param sender The sender
      * @param e The CallbackArgs object containing the packet data
      */
@@ -3981,7 +3981,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
             item.SalePrice = dataBlock.SalePrice;
             item.saleType = SaleType.setValue(dataBlock.SaleType);
 
-            /* 
+            /*
              * When attaching new objects, an UpdateCreateInventoryItem packet will be
              * returned by the server that has a FolderID/ParentUUID of zero. It is up
              * to the client to make sure that the item gets a good folder, otherwise
@@ -4003,9 +4003,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
                 // Update the local copy
                 _Store.setItem(item.UUID, item);
             }
-            
+
             // Look for an "item created" callback
-            
+
             if (_ItemCreatedCallbacks.containsKey(dataBlock.CallbackID))
             {
             	Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
@@ -4022,7 +4022,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
             // TODO: Is this callback even triggered when items are copied?
             // Look for an "item copied" callback
-            
+
             if (_ItemCopiedCallbacks.containsKey(dataBlock.CallbackID))
             {
             	Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
@@ -4084,7 +4084,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     folder.ParentUUID = dataBlock.ParentID;
                     _Store.setItem(folder.UUID, folder);
                 }
-            } 
+            }
         }
 
         if (update.ItemData.length > 0 && !update.ItemData[0].ItemID.equals(UUID.Zero))

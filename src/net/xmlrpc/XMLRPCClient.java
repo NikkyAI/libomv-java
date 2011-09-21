@@ -29,12 +29,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
  * XMLRPCClient allows to call remote XMLRPC method.
- * 
+ *
  * <p>
  * The following table shows how XML-RPC types are mapped to java call
  * parameters/response values.
  * </p>
- * 
+ *
  * <p>
  * <table border="2" align="center" cellpadding="5">
  * <thead>
@@ -44,7 +44,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * <th>Call Response</th>
  * </tr>
  * </thead>
- * 
+ *
  * <tbody>
  * <td>int, i4</td>
  * <td>byte<br />
@@ -124,7 +124,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * XMLRPCClient constructor. Creates new instance based on server URI
-	 * 
+	 *
 	 * @param XMLRPC
 	 *            server URI
 	 */
@@ -144,7 +144,7 @@ public class XMLRPCClient extends XMLRPCCommon
 	/**
 	 * Convenience constructor. Creates new instance based on server String
 	 * address
-	 * 
+	 *
 	 * @param XMLRPC
 	 *            server address
 	 */
@@ -156,7 +156,7 @@ public class XMLRPCClient extends XMLRPCCommon
 	/**
 	 * Convenience XMLRPCClient constructor. Creates new instance based on
 	 * server URL
-	 * 
+	 *
 	 * @param XMLRPC
 	 *            server URL
 	 */
@@ -167,7 +167,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Sets basic authentication on web request using plain credentials
-	 * 
+	 *
 	 * @param username
 	 *            The plain text username
 	 * @param password
@@ -184,7 +184,7 @@ public class XMLRPCClient extends XMLRPCCommon
 	 * Registers a new scheme for this client. Useful to provide a scheme with
 	 * custom security provider such as for certificate verification for the
 	 * HTTPS scheme
-	 * 
+	 *
 	 * @param scheme
 	 *            The scheme to add to the connection manager for this
 	 *            connection
@@ -198,12 +198,12 @@ public class XMLRPCClient extends XMLRPCCommon
 	{
 		postMethod.abort();
 	}
-	
+
 	/**
 	 * Call method with optional parameters. This is general method. If you want
 	 * to call your method with 0-8 parameters, you can use more convenience
 	 * call() methods
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param params
@@ -349,7 +349,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with no parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @return deserialized method return value
@@ -362,7 +362,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with one parameter
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -378,7 +378,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with two parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -396,7 +396,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with three parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -416,7 +416,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with four parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -438,7 +438,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with five parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -462,7 +462,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with six parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -489,7 +489,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with seven parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0
@@ -518,7 +518,7 @@ public class XMLRPCClient extends XMLRPCCommon
 
 	/**
 	 * Convenience method call with eight parameters
-	 * 
+	 *
 	 * @param method
 	 *            name of method to call
 	 * @param p0

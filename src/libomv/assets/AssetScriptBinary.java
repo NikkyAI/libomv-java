@@ -45,7 +45,7 @@ public class AssetScriptBinary extends AssetItem
 
     /**
      * Initializes a new instance of an AssetScriptBinary object with parameters
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -63,9 +63,9 @@ public class AssetScriptBinary extends AssetItem
     {
     }
 
-    /** 
+    /**
      * TODO: Decode LSO Bytecode into a string
-     * 
+     *
      * @return true
      */
 	@Override

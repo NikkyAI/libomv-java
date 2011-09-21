@@ -26,7 +26,7 @@ public final class NameValue
         Asset(6),
 
         U64(7);
-        
+
         public int val;
         private ValueType(int val)
         {
@@ -40,7 +40,7 @@ public final class NameValue
         ReadOnly(0),
         ReadWrite(1),
         Callback(2);
- 
+
         public int val;
         private ClassType(int val)
         {
@@ -93,7 +93,7 @@ public final class NameValue
     }
 
     /** Constructor that takes a single line from a NameValue field
-     * 
+     *
      * @param data
      */
     public NameValue(String data)
@@ -230,7 +230,7 @@ public final class NameValue
         {
             type = ValueType.String;
         }
-    	
+
     	return type;
     }
 
@@ -250,7 +250,7 @@ public final class NameValue
         {
             type = ClassType.ReadOnly;
         }
-    	
+
     	return type;
     }
 
@@ -270,7 +270,7 @@ public final class NameValue
         {
             type = SendtoType.Sim;
         }
-    	
+
     	return type;
     }
 }

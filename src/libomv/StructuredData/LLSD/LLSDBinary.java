@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2007-2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,20 +23,20 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData.LLSD;
 
-// 
-// * 
+//
+// *
 // * This implementation is based upon the description at
-// * 
+// *
 // * http://wiki.secondlife.com/wiki/LLSD
-// * 
+// *
 // * and (partially) tested against the (supposed) reference implementation at
-// * 
+// *
 // * http://svn.secondlife.com/svn/linden/release/indra/lib/python/indra/base/osd.py
-// * 
-// 
+// *
+//
 
 
 import java.io.IOException;
@@ -74,12 +74,12 @@ public final class LLSDBinary
 	private static final byte mapBeginBinaryMarker = (byte)'{';
 	private static final byte mapEndBinaryMarker = (byte)'}';
 	private static final byte keyBinaryMarker = (byte)'k';
-	
-	/** Creates an OSD (object structured data) object from a binary data stream 
+
+	/** Creates an OSD (object structured data) object from a binary data stream
 
 	    @param stream The byte stream to read from
 	    @return and OSD object
-	 *  @throws IOException, OSDException 
+	 *  @throws IOException, OSDException
 	 */
 	public static OSD parse(InputStream instr) throws IOException, ParseException
 	{
@@ -103,11 +103,11 @@ public final class LLSDBinary
 		stream.write(llsdBinaryHead);
 		serializeLLSDBinaryElement(stream, osd);
 	}
-	
+
 	private static void serializeLLSDBinaryElement(OutputStream stream, OSD osd) throws IOException
 	{
 		byte[] rawBinary;
-		
+
 		switch (osd.getType())
 		{
 			case Unknown:
@@ -186,7 +186,7 @@ public final class LLSDBinary
 			serializeLLSDBinaryElement(stream, kvp.getValue());
 		}
 		stream.write(mapEndBinaryMarker);
-	}	
+	}
 
 	private static OSD parseElement(LLSDInputStream stream) throws IOException, ParseException
 	{
@@ -299,15 +299,15 @@ public final class LLSDBinary
 		return osdMap;
 	}
 
-	/** 
+	/**
 
 	 @param stream
-	 * @throws IOException 
+	 * @throws IOException
 	*/
 	private static void skipWhiteSpace(LLSDInputStream stream) throws IOException
 	{
 		int bt;
-		while (((bt = stream.read()) > 0) && 
+		while (((bt = stream.read()) > 0) &&
 			   ((byte)bt == ' ' || (byte)bt == '\t' || (byte)bt == '\n' || (byte)bt == '\r'));
 		stream.unread(bt);
 	}

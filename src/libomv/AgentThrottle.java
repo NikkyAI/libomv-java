@@ -3,26 +3,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import libomv.packets.AgentThrottlePacket;
@@ -209,7 +209,7 @@ public class AgentThrottle
 
     /**
      * Constructor that decodes an existing AgentThrottle packet in to individual values
-     * 
+     *
      * @param data Reference to the throttle data in an AgentThrottle packet
      * @param pos Offset position to start reading at in the throttle data
      * This is generally not needed in clients as the server will never send a throttle packet to the client
@@ -234,7 +234,7 @@ public class AgentThrottle
     /**
      * Send an AgentThrottle packet to the current server using the  current values
 
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Set() throws Exception
     {
@@ -243,9 +243,9 @@ public class AgentThrottle
 
     /**
      * Send an AgentThrottle packet to the specified server using the current values
-     * 
+     *
      * @param simulator the simulator to which to send the packet
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Set(Simulator simulator) throws Exception
     {
@@ -261,7 +261,7 @@ public class AgentThrottle
 
     /**
      * Convert the current throttle values to a byte array that can be put in an AgentThrottle packet
-     * 
+     *
      * @return Byte array containing all the throttle values
      */
     public final byte[] ToBytes()

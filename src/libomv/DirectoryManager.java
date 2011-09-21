@@ -3,26 +3,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.UnsupportedEncodingException;
@@ -71,28 +71,28 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         Any,
         // Classified is shopping related
         Shopping,
-        // Classified is 
+        // Classified is
         LandRental,
-        // 
+        //
         PropertyRental,
-        // 
+        //
         SpecialAttraction,
-        // 
+        //
         NewProducts,
-        // 
+        //
         Employment,
-        // 
+        //
         Wanted,
-        // 
+        //
         Service,
-        // 
+        //
         Personal;
-        
+
         public static ClassifiedCategories setValue(int value)
         {
         	return values()[value];
         }
-        
+
         public static byte getValue(ClassifiedCategories value)
         {
         	return (byte)value.ordinal();
@@ -107,29 +107,29 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     // Event Categories
     public enum EventCategories
     {
-        // 
+        //
         All(0),
-        // 
+        //
         Discussion(18),
-        // 
+        //
         Sports(19),
-        // 
+        //
         LiveMusic(20),
-        // 
+        //
         Commercial(22),
-        // 
+        //
         Nightlife(23),
-        // 
+        //
         Games(24),
-        // 
+        //
         Pageants(25),
-        // 
+        //
         Education(26),
-        // 
+        //
         Arts(27),
-        // 
+        //
         Charity(28),
-        // 
+        //
         Miscellaneous(29);
 
 		public int value;
@@ -141,18 +141,18 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
     /* Query Flags used in many of the DirectoryManager methods to specify which query to execute and
      * how to return the results.
-     * 
+     *
      * Flags can be combined using the | (pipe) character, not all flags are available in all queries
      */
     public static class DirFindFlags
     {
         // Query the People database
         public static final int People = 1 << 0;
-        // 
+        //
         public static final int Online = 1 << 1;
         // [Obsolete]
         //public static final int Places = 1 << 2;
-        // 
+        //
         public static final int Events = 1 << 3;
         // Query the Groups database
         public static final int Groups = 1 << 4;
@@ -169,27 +169,27 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         // Specifies the query should pre sort the results based upon traffic
         // when searching the Places database
         public static final int DwellSort = 1 << 10;
-        // 
+        //
         public static final int PgSimsOnly = 1 << 11;
-        // 
+        //
         public static final int PicturesOnly = 1 << 12;
-        // 
+        //
         public static final int PgEventsOnly = 1 << 13;
-        // 
+        //
         public static final int MatureSimsOnly = 1 << 14;
-        // Specifies the query should pre sort the results in an ascending order when searching the land sales database. 
+        // Specifies the query should pre sort the results in an ascending order when searching the land sales database.
         // This flag is only used when searching the land sales database
         public static final int SortAsc = 1 << 15;
-        // Specifies the query should pre sort the results using the SalePrice field when searching the land sales database. 
+        // Specifies the query should pre sort the results using the SalePrice field when searching the land sales database.
         //  This flag is only used when searching the land sales database
         public static final int PricesSort = 1 << 16;
-        // Specifies the query should pre sort the results by calculating the average price/sq.m (SalePrice / Area) when searching the land sales database. 
+        // Specifies the query should pre sort the results by calculating the average price/sq.m (SalePrice / Area) when searching the land sales database.
         // This flag is only used when searching the land sales database
         public static final int PerMeterSort = 1 << 17;
-        // Specifies the query should pre sort the results using the ParcelSize field when searching the land sales database. 
+        // Specifies the query should pre sort the results using the ParcelSize field when searching the land sales database.
         // This flag is only used when searching the land sales database
         public static final int AreaSort = 1 << 18;
-        // Specifies the query should pre sort the results using the Name field when searching the land sales database. 
+        // Specifies the query should pre sort the results using the Name field when searching the land sales database.
         // This flag is only used when searching the land sales database
         public static final int NameSort = 1 << 19;
         // When set, only parcels less than the specified Price will be included when searching the land sales database.
@@ -198,9 +198,9 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         // When set, only parcels greater than the specified Size will be included when searching the land sales database.
         // This flag is only used when searching the land sales database
         public static final int LimitByArea = 1 << 21;
-        // 
+        //
         public static final int FilterMature = 1 << 22;
-        // 
+        //
         public static final int PGOnly = 1 << 23;
         // Include PG land in results. This flag is used when searching both the Groups, Events and Land sales databases
         public static final int IncludePG = 1 << 24;
@@ -208,19 +208,19 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public static final int IncludeMature = 1 << 25;
         // Include Adult land in results. This flag is used when searching both the Groups, Events and Land sales databases
         public static final int IncludeAdult = 1 << 26;
-        // 
+        //
         public static final int AdultOnly = 1 << 27;
-        
+
         public static final int setValue(int value)
         {
         	return (value & _mask);
         }
-        
+
         public static final int getValue(int value)
         {
         	return (value & _mask);
         }
-        
+
 		private static final int _mask = 0x0FFFFFDB;
     }
 
@@ -243,12 +243,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         {
         	return (byte)(value & _mask);
         }
-        
+
         public static final int getValue(byte value)
         {
         	return (value & _mask);
         }
-        
+
 		private static final byte _mask = 0x1B;
     }
 
@@ -261,17 +261,17 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     	Mature,
         // Event is Adult
     	Adult;
-    	
+
     	public static EventFlags setValue(int value)
     	{
     		return values()[value];
     	}
-    	
+
     	public static byte getValue(EventFlags value)
     	{
     		return (byte)value.ordinal();
     	}
-    	
+
     	public byte getValue()
     	{
     		return (byte)ordinal();
@@ -279,25 +279,25 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /* Classified Ad Options
-     * 
+     *
      * There appear to be two formats the flags are packed in.
      *  This set of flags is for the newer style
      */
-    public static class ClassifiedFlags 
+    public static class ClassifiedFlags
     {
-        // 
+        //
         public static final byte None = 1 << 0;
-        // 
+        //
         public static final byte Mature = 1 << 1;
-        // 
+        //
         public static final byte Enabled = 1 << 2;
         // Deprecated
         // public static final byte HasPrice = 1 << 3;
-        // 
+        //
         public static final byte UpdateTime = 1 << 4;
-        // 
+        //
         public static final byte AutoRenew = 1 << 5;
-        
+
         public static byte setValue(int value)
         {
         	return (byte)(value & _mask);
@@ -337,7 +337,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /* The For Sale flag in PlacesReplyData */
-    public enum PlacesFlags 
+    public enum PlacesFlags
     {
         // Parcel is not listed for sale
         NotForSale(0),
@@ -384,7 +384,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public int Price;
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -422,7 +422,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public float Dwell;
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -447,7 +447,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public UUID AgentID;
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -468,7 +468,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public int Members;
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -479,15 +479,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Parcel information returned from a <see cref="StartPlacesSearch"/> request
-     * 
+     *
      *  Represents one of the following:
-     *  
+     *
      *  A parcel of land on the grid that has its Show In Search flag set
      *  A parcel of land owned by the agent making the request
      *  A parcel of land owned by a group the agent making the request is a member of
-     *  
+     *
      *  In a request for Group Land, the First record will contain an empty record
-     *  
+     *
      *  Note: This is not the same as searching the land for sale data source
      */
     public final class PlacesSearchData
@@ -520,7 +520,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         /** The calculated visitor traffic */
         public float Dwell;
         /** The billing product SKU
-         * 
+         *
          *  Known values are:
          *  <list>
          *  <item><term>023</term><description>Mainland / Full Region</description></item>
@@ -535,18 +535,18 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public int Price;
 
         /** Get a SL URL for the parcel
-         * 
+         *
          *  @return A string, containing a standard SLURL
          */
         public String toSLurl()
         {
-            float[] values = new float[2]; 
+            float[] values = new float[2];
             Helpers.GlobalPosToRegionHandle(this.GlobalX, this.GlobalY, values);
             return "secondlife://" + this.SimName + "/" + values[0] + "/" + values[1] + "/" + this.GlobalZ;
         }
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -573,7 +573,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         public EventFlags Flags;
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -625,7 +625,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         }
 
         /** Print the struct data as a string
-         * 
+         *
          *  @return A string containing the field name, and field value
          */
         @Override
@@ -652,7 +652,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     ///#region Constructors
 
     /** Constructs a new instance of the DirectoryManager class
-     * 
+     *
      *  @param client An instance of GridClient
      */
     public DirectoryManager(GridClient client)
@@ -706,7 +706,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     	    	break;
     	}
     }
-	
+
 	@Override
 	public void capsCallback(IMessage message, Simulator simulator) throws Exception
 	{
@@ -720,7 +720,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			    break;
 		}
 	}
-	
+
     ///#region Public Methods
     /** Obsoleted due to new Adult search option */
     @Deprecated
@@ -730,18 +730,18 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Query the data server for a list of classified ads containing the specified string.
-     *  Defaults to searching for classified placed in any category, and includes PG, Adult and Mature 
+     *  Defaults to searching for classified placed in any category, and includes PG, Adult and Mature
      *  results.
-     *  
+     *
      *  Responses are sent 16 per response packet, there is no way to know how many results a query reply
      *  will contain however assuming the reply packets arrived ordered, a response with less than 16 entries
      *  would indicate all results have been received
-     *  
+     *
      *  The <see cref="OnClassifiedReply"/> event is raised when a response is received from the simulator
-     *  
+     *
      *  @param searchText A string containing a list of keywords to search for
      *  @return A UUID to correlate the results when the <see cref="OnClassifiedReply"/> event is raised
-     *  @throws Exception 
+     *  @throws Exception
      */
     public final UUID StartClassifiedSearch(String searchText) throws Exception
     {
@@ -749,15 +749,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Query the data server for a list of classified ads which contain specified keywords (Overload)
-     * 
+     *
      *  The <see cref="OnClassifiedReply"/> event is raised when a response is received from the simulator
-     *  
+     *
      *  @param searchText A string containing a list of keywords to search for
      *  @param category The category to search
      *  @param queryFlags A set of flags which can be ORed to modify query options such as classified
      *                    maturity rating.
      *  @return A UUID to correlate the results when the <see cref="OnClassifiedReply"/> event is raised
-     *  @throws Exception 
+     *  @throws Exception
      *
      *  <example>
      *  Search classified ads containing the key words "foo" and "bar" in the "Any" category that are either PG or Mature
@@ -765,8 +765,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
      *  UUID searchID = StartClassifiedSearch("foo bar", ClassifiedCategories.Any, ClassifiedQueryFlags.PG | ClassifiedQueryFlags.Mature);
      *  </code>
      *  </example>
-     *  
-     *  Responses are sent 16 at a time, there is no way to know how many results a query reply will 
+     *
+     *  Responses are sent 16 at a time, there is no way to know how many results a query reply will
      *  contain however assuming the reply packets arrived ordered, a response with less than 16 entries
      *  would indicate all results have been received
      */
@@ -789,12 +789,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Starts search for places (Overloaded)
-     * 
+     *
      *  The <see cref="OnDirPlacesReply"/> event is raised when a response is received from the simulator
-     *  
+     *
      *  @param searchText Search text
      *  @param queryStart Each request is limited to 100 places being returned. To get the first 100 result
-     *                    entries of a request use 0, from 100-199 use 1, 200-299 use 2, etc. 
+     *                    entries of a request use 0, from 100-199 use 1, 200-299 use 2, etc.
      *  @return A UUID to correlate the results when the <see cref="OnDirPlacesReply"/> event is raised
      *  @throws Exception
      */
@@ -806,27 +806,27 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Queries the dataserver for parcels of land which are flagged to be shown in search
-     * 
+     *
      *  The <see cref="OnDirPlacesReply"/> event is raised when a response is received from the simulator
-     *  
+     *
      *  @param searchText A string containing a list of keywords to search for separated by a space character
      *  @param queryFlags A set of flags which can be ORed to modify query options such as classified maturity rating.
-     *  @param category The category to search       
+     *  @param category The category to search
      *  @param queryStart Each request is limited to 100 places being returned. To get the first 100 result entries
-     *                    of a request use 0, from 100-199 use 1, 200-299 use 2, etc.       
+     *                    of a request use 0, from 100-199 use 1, 200-299 use 2, etc.
      *  @return A UUID to correlate the results when the <see cref="OnDirPlacesReply"/> event is raised
      *  @throws Exception
-     *  
+     *
      *  <example>
      *  Search places containing the key words "foo" and "bar" in the "Any" category that are either PG or Adult
      *  <code>
      *  UUID searchID = StartDirPlacesSearch("foo bar", DirFindFlags.DwellSort | DirFindFlags.IncludePG | DirFindFlags.IncludeAdult, ParcelCategory.Any, 0);
      *  </code>
      *  </example>
-     *         
+     *
      *  Additional information on the results can be obtained by using the ParcelManager.InfoRequest method
      */
-    public final UUID StartDirPlacesSearch(String searchText, int queryFlags, ParcelCategory category, int queryStart) throws Exception 
+    public final UUID StartDirPlacesSearch(String searchText, int queryFlags, ParcelCategory category, int queryStart) throws Exception
     {
         DirPlacesQueryPacket query = new DirPlacesQueryPacket();
 
@@ -848,12 +848,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Starts a search for land sales using the directory
-     * 
+     *
      *  The <see cref="OnDirLandReply"/> event is raised when a response is received from the simulator
-     * 
+     *
      *  @param typeFlags What type of land to search for. Auction, estate, mainland, "first land", etc
-     *  @throws Exception 
-     *        
+     *  @throws Exception
+     *
      *  The OnDirLandReply event handler must be registered before calling this function. There
      *  is no way to determine how many results will be returned, or how many times the callback
      *  will be fired other than you won't get more than 100 total parcels from each query.
@@ -865,14 +865,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Starts a search for land sales using the directory
-     * 
+     *
      *  The {@link OnDirLandReply} event is raised when a response is received from the simulator
-     * 
+     *
      *  @param typeFlags What type of land to search for. Auction, estate, mainland, "first land", etc
      *  @param priceLimit Maximum price to search for
      *  @param areaLimit Maximum area to search for
      *  @param queryStart Each request is limited to 100 parcels being returned. To get the first
-     *                    100 parcels of a request use 0, from 100-199 use 1, 200-299 use 2, etc.        
+     *                    100 parcels of a request use 0, from 100-199 use 1, 200-299 use 2, etc.
      *                    The OnDirLandReply event handler must be registered before calling this
      *                    function. There is no way to determine how many results will be returned,
      *                    or how many times the callback will be fired other than you won't get more
@@ -886,13 +886,13 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Send a request to the data server for land sales listings
-     * 
+     *
      *  @param findFlags Flags sent to specify query options
-     *  
+     *
      *  Available flags:
      *  Specify the parcel rating with one or more of the following:
      *      IncludePG IncludeMature IncludeAdult
-     *  
+     *
      *  Specify the field to pre sort the results with ONLY ONE of the following:
      *      PerMeterSort NameSort AreaSort PricesSort
      *
@@ -904,9 +904,9 @@ public class DirectoryManager implements PacketCallback, CapsCallback
      *      LimitByPrice LimitByArea
      *
      *  Flags can be combined by separating them with the or (|) operator
-     *  
+     *
      *  Additional details can be found in <see cref="DirFindFlags"/>
-     *  
+     *
      *  @param typeFlags  What type of land to search for. Auction, Estate or Mainland
      *  @param priceLimit Maximum price to search for when the DirFindFlags.LimitByPrice
      *                    flag is specified in findFlags
@@ -917,16 +917,16 @@ public class DirectoryManager implements PacketCallback, CapsCallback
      *  @throws Exception
      *
      *  The {@link OnDirLandReply} event will be raised with the response from the simulator
-     *  
+     *
      *  There is no way to determine how many results will be returned, or how many times the
      *  callback will be fired other than you won't get more than 100 total parcels from each reply.
-     *  
+     *
      *  Any land set for sale to either anybody or specific to the connected agent will be included
      *  in the results if the land is included in the query.
      *  <example>
      *  <code>
      *  // request all mainland, any maturity rating that is larger than 512 sq.m
-     *  int flags = DirFindFlags.SortAsc.ordinal() | DirFindFlags.PerMeterSort.ordinal() | 
+     *  int flags = DirFindFlags.SortAsc.ordinal() | DirFindFlags.PerMeterSort.ordinal() |
      *              DirFindFlags.LimitByArea.ordinal() | DirFindFlags.IncludePG.ordinal() |
      *              DirFindFlags.IncludeMature.ordinal() | DirFindFlags.IncludeAdult.ordinal();
      *  StartLandSearch(DirFindFlags.convert(flags), SearchTypeFlags.Mainland, 0, 512, 0);
@@ -948,10 +948,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search for Groups
-     * 
+     *
      *  @param searchText The name or portion of the name of the group you wish to search for
      *  @param queryStart Start from the match number
-     *  @return 
+     *  @return
      *  @throws Exception
      */
     public final UUID StartGroupSearch(String searchText, int queryStart) throws Exception
@@ -961,11 +961,11 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search for Groups
-     * 
+     *
      *  @param searchText The name or portion of the name of the group you wish to search for
      *  @param queryStart Start from the match number
      *  @param flags Search flags
-     *  @return 
+     *  @return
      *  @throws Exception
      */
     public final UUID StartGroupSearch(String searchText, int queryStart, int flags) throws Exception
@@ -984,7 +984,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search the People directory for other avatars
-     * 
+     *
      *  @param searchText The name or portion of the name of the avatar you wish to search for
      *  @param queryStart
      *  @return
@@ -996,9 +996,9 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         StartPeopleSearch(searchText, queryStart, uuid);
     	return uuid;
     }
-    
+
     /** Search the People directory for other avatars
-     * 
+     *
      *  @param searchText The name or portion of the name of the avatar you wish to search for
      *  @param queryStart
      *  @return
@@ -1018,7 +1018,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
    }
 
     /** Search Places for parcels of land you personally own
-     * 
+     *
      *  @return
      *  @throws Exception
      */
@@ -1028,7 +1028,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Searches Places for land owned by the specified group
-     * 
+     *
      *  @param groupID ID of the group you want to recieve land list for (You must be a member of the group)
      *  @return Transaction (Query) ID which can be associated with results from your request.
      *  @throws Exception
@@ -1039,7 +1039,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search the Places directory for parcels that are listed in search and contain the specified keywords
-     * 
+     *
      *  @param searchText A string containing the keywords to search for
      *  @return Transaction (Query) ID which can be associated with results from your request.
      *  @throws Exception
@@ -1051,7 +1051,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search Places - All Options
-     * 
+     *
      *  @param findFlags One of the Values from the DirFindFlags struct, ie: AgentOwned, GroupOwned, etc.
      *  @param searchCategory One of the values from the SearchCategory Struct, ie: Any, Linden, Newcomer
      *  @param searchText A string containing a list of keywords to search for separated by a space character
@@ -1080,7 +1080,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search All Events with specifid searchText in all categories, includes PG, Mature and Adult
-     * 
+     *
      *  @param searchText A string containing a list of keywords to search for separated by a space character
      *  @param queryStart Each request is limited to 100 entries being returned. To get the first group
      *  of entries of a request use 0, from 100-199 use 100, 200-299 use 200, etc.
@@ -1095,7 +1095,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Search Events
-     * 
+     *
      *  @param searchText A string containing a list of keywords to search for separated by a space character
      *  @param queryFlags One or more of the following flags: DateEvents, IncludePG, IncludeMature, IncludeAdult
      *                    from the <see cref="DirFindFlags"/> Enum
@@ -1106,7 +1106,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
      *                    entries of a request use 0, from 100-199 use 100, 200-299 use 200, etc.
      *  @param category   EventCategory event is listed under.
      *  @return UUID of query to correlate results in callback.
-     *  @throws Exception 
+     *  @throws Exception
      */
     // TODO ORIGINAL LINE: public UUID StartEventsSearch(string searchText, DirFindFlags queryFlags, string eventDay, uint queryStart, EventCategories category)
     public final UUID StartEventsSearch(String searchText, int queryFlags, String eventDay, int queryStart, EventCategories category) throws Exception, Exception
@@ -1125,11 +1125,11 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Requests Event Details
-     * 
+     *
      *  @param eventID ID of Event returned from the <see cref="StartEventsSearch"/> method
      *  @throws Exception
      */
-    // TODO ORIGINAL LINE: public void EventInfoRequest(uint eventID) 
+    // TODO ORIGINAL LINE: public void EventInfoRequest(uint eventID)
     public final void EventInfoRequest(int eventID) throws Exception
     {
         EventInfoRequestPacket find = new EventInfoRequestPacket();
@@ -1150,7 +1150,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         {
             private ArrayList<AgentSearchData> people = null;
             private UUID uuid;
-            
+
             public ArrayList<AgentSearchData> getPeople()
             {
             	return people;
@@ -1163,7 +1163,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
                 {
                     people = e.getMatchedPeople();
                 }
-       		
+
         	}
             public DirPeopleCallbackHandler(UUID uuid)
             {
@@ -1184,10 +1184,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     ///#region Packet Handlers
 
     /** Process an incoming packet and raise the appropriate events
-     *  
+     *
      *  @param packet The packet data
      *  @param simulator The simulator from which this packet originates
-     *  @throws UnsupportedEncodingException 
+     *  @throws UnsupportedEncodingException
      */
     protected final void DirClassifiedReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1214,10 +1214,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The data packet
      *  @param simulator The simulator from which the packet originates
-     *  @throws UnsupportedEncodingException 
+     *  @throws UnsupportedEncodingException
      */
     protected final void DirLandReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1244,7 +1244,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming <see cref="DirLandReplyMessage"/> event message
-     * 
+     *
      *  @param message The <see cref="DirLandReplyMessage"/> event message containing the data
      *  @param simulator The simulator the message originated from
      */
@@ -1272,10 +1272,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The data packet
      *  @param simulator The simulator from which the packet originates
-     *  @throws Exception 
+     *  @throws Exception
      */
     protected final void DirPeopleReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -1298,10 +1298,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The data packet
      *  @param simulator The simulator from which the packet originates
-     *  @throws Exception 
+     *  @throws Exception
      */
     protected final void DirGroupsReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -1322,7 +1322,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming <see cref="PlacesReplyMessage"/> event message
-     * 
+     *
      *  @param message The <see cref="PlacesReplyMessage"/> event message containing the data
      *  @param simulator The simulator the message originated from
      */
@@ -1356,10 +1356,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The data packet
      *  @param simulator The simulator from which the packet originates
-     *  @throws Exception 
+     *  @throws Exception
      */
     protected final void PlacesReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -1392,10 +1392,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The data packet
      *  @param simulator The simulator from which the packet originates
-     *  @throws Exception 
+     *  @throws Exception
      */
     protected final void EventsReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -1420,10 +1420,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The data packet
      *  @param simulator The simulator from which the packet originates
-     *  @throws Exception 
+     *  @throws Exception
      */
     protected final void EventInfoReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -1450,7 +1450,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *   @param sender The sender
      *   @param e The EventArgs object containing the packet data
      */
@@ -1460,7 +1460,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         {
             DirPlacesReplyPacket reply = (DirPlacesReplyPacket)packet;
             ArrayList<DirectoryParcel> result = new ArrayList<DirectoryParcel>();
-            
+
             for (QueryRepliesBlock block : reply.QueryReplies)
             {
                 DirectoryParcel p = new DirectoryParcel();
@@ -1477,7 +1477,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
             OnDirPlaces.dispatch(new DirPlacesReplyEventArgs(reply.QueryData[0].QueryID, result));
         }
     }
-    
+
     ///#region DirectoryManager EventArgs Classes
 
     /** Contains the Event data returned from the data server from an EventInfoRequest */
@@ -1520,7 +1520,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
         /** Construct a new instance of the DirEventsReplyEventArgs class
          *
-         *  @param queryID The ID of the query returned by the data server. 
+         *  @param queryID The ID of the query returned by the data server.
          *    This will correlate to the ID returned by the <see cref="StartEventsSearch"/> method
          *  @param matchedEvents A list containing the "Events" returned by the search query
          */
@@ -1550,8 +1550,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         }
 
         /** Construct a new instance of PlacesReplyEventArgs class
-         * 
-         *  @param  queryID The ID of the query returned by the data server. 
+         *
+         *  @param  queryID The ID of the query returned by the data server.
          *          This will correlate to the ID returned by the <see cref="StartPlacesSearch"/> method
          *  @param matchedPlaces A list containing the "Places" returned by the data server query
          */
@@ -1581,8 +1581,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         }
 
         /** Construct a new instance of the DirPlacesReplyEventArgs class
-         * 
-         *  @param queryID The ID of the query returned by the data server. 
+         *
+         *  @param queryID The ID of the query returned by the data server.
          *                 This will correlate to the ID returned by the <see cref="StartDirPlacesSearch"/> method
          *  @param matchedParcels A list containing land data returned by the data server
          */
@@ -1604,7 +1604,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         }
 
         /** Construct a new instance of the DirClassifiedsReplyEventArgs class
-         * 
+         *
          *  @param classifieds A list of classified ad data returned from the data server
          */
         public DirClassifiedsReplyEventArgs(ArrayList<DirectoryManager.Classified> classifieds)
@@ -1632,8 +1632,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         }
 
         /** Construct a new instance of the DirGroupsReplyEventArgs class
-         * 
-         *  @param queryID The ID of the query returned by the data server. 
+         *
+         *  @param queryID The ID of the query returned by the data server.
          *                 This will correlate to the ID returned by the <see cref="StartGroupSearch"/> method
          *  @param matchedGroups A list of groups data returned by the data server
          */
@@ -1662,8 +1662,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
         }
 
         /** Construct a new instance of the DirPeopleReplyEventArgs class
-         * 
-         *  @param queryID The ID of the query returned by the data server. 
+         *
+         *  @param queryID The ID of the query returned by the data server.
          *                 This will correlate to the ID returned by the <see cref="StartPeopleSearch"/> method
          *  @param matchedPeople A list of people data returned by the data server
          */

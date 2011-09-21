@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2007-2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData.LLSD;
 
 import java.io.IOException;
@@ -114,10 +114,10 @@ public final class LLSDNotation
 
 	/**
 	 * Read the next LLSD data element in and return the OSD structure for it
-	 * 
+	 *
 	 * @param reader a pushback reader to read in data from
 	 * @return the OSD data corresponding to the LLSD data element
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private static OSD parseElement(LLSDReader reader) throws ParseException, IOException
 	{

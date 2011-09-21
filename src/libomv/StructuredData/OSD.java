@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData;
 
 import java.io.ByteArrayInputStream;
@@ -195,7 +195,7 @@ public class OSD
 	}
 	public static OSD FromInteger(short value)
 	{
-		return new OSDInteger((int)value);
+		return new OSDInteger(value);
 	}
 	public static OSD FromInteger(int value)
 	{
@@ -219,7 +219,7 @@ public class OSD
 	}
 	public static OSD FromReal(float value)
 	{
-		return new OSDReal((double)value);
+		return new OSDReal(value);
 	}
 	public static OSD FromString(String value)
 	{
@@ -474,7 +474,7 @@ public class OSD
 			return null;
 		}
 	}
-	
+
 	public void serialize(Writer writer, OSDFormat type) throws IOException
 	{
 		switch (type)
@@ -490,7 +490,7 @@ public class OSD
 			    break;
 		    case Json:
 //		    	Json.serialize(writer, this);
-			    break;		
+			    break;
 		}
 	}
 
@@ -509,8 +509,8 @@ public class OSD
 			    break;
 		    case Json:
 //		    	Json.serialize(new OutputStreamWriter(stream), this);
-			    break;	
-		}		
+			    break;
+		}
 	}
 
 	public String serializeToString(OSDFormat type) throws IOException
@@ -535,7 +535,7 @@ public class OSD
 
 	public byte[] serializeToBytes(OSDFormat type) throws IOException
 	{
-		ByteArrayOutputStream stream;		
+		ByteArrayOutputStream stream;
 		switch (type)
 		{
 		    case Binary:
@@ -563,7 +563,7 @@ public class OSD
 		int num = reader.read(head, 0, 15);
 		reader.unread(head, 0, num);
 		String string = new String(head, 0, num);
-		
+
 		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
 		{
 			return LLSDBinary.parse(new ReaderInputStream(reader, Helpers.ASCII_ENCODING));
@@ -584,7 +584,7 @@ public class OSD
 		int num = stream.read(head, 0, 15);
 		String string = new String(head, 0, num, encoding);
 		stream.unread(head, 0, num);
-		
+
 		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
 		{
 			return LLSDBinary.parse(stream);
@@ -630,14 +630,14 @@ public class OSD
        return null;
 	}
 
-	/** 
+	/**
 	 * Uses reflection to create an SDMap from all of the SD
 	 * serializable types in an object
 	 *
 	 * @param obj Class or struct containing serializable types
 	 * @return An SDMap holding the serialized values from the container object
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	public static OSDMap serializeMembers(Object obj) throws IllegalArgumentException, IllegalAccessException
 	{
@@ -658,13 +658,13 @@ public class OSD
 		return map;
 	}
 
-	/** 
+	/**
 	 * Uses reflection to deserialize member variables in an object from an SDMap
 	 *
 	 * @param obj Reference to an object to fill with deserialized values
 	 * @param serialized Serialized values to put in the target object
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	public static Object deserializeMembers(Object obj, OSDMap serialized) throws IllegalArgumentException, IllegalAccessException
 	{
@@ -680,5 +680,5 @@ public class OSD
 			}
 		}
 		return obj;
-	}	
+	}
 }

@@ -22,12 +22,12 @@ public class LLSDInputStream extends FilterInputStream
 	 * The number of bytes read so far
 	 */
 	private int bytes;
-	
+
 	public int getBytePosition()
 	{
 		return bytes;
 	}
-	
+
 	public LLSDInputStream(InputStream in, int size)
 	{
 		super(in);
@@ -39,14 +39,14 @@ public class LLSDInputStream extends FilterInputStream
         this.pos = size;
 		this.bytes = 0;
 	}
-	
+
 	public LLSDInputStream(InputStream in)
 	{
 		this(in, 1);
 	}
 
 	@Override
-	public int available() throws IOException 
+	public int available() throws IOException
 	{
 		if (buf == null)
 		    throw new IOException("Stream closed");
@@ -73,7 +73,7 @@ public class LLSDInputStream extends FilterInputStream
      * Indicates whether this reader supports the {@code mark(int)} and
      * {@code reset()} methods. {@code PushbackReader} does not support them, so
      * it returns {@code false}.
-     * 
+     *
      * @return always {@code false}.
      * @see #mark(int)
      * @see #reset()
@@ -88,7 +88,7 @@ public class LLSDInputStream extends FilterInputStream
      * Marks the current position in this stream. Setting a mark is not
      * supported in this class; this implementation always throws an
      * {@code IOException}.
-     * 
+     *
      * @param readLimit
      *            the number of character that can be read from this reader
      *            before the mark is invalidated; this parameter is ignored.
@@ -100,13 +100,13 @@ public class LLSDInputStream extends FilterInputStream
 
     /**
      * Reads a single byte from this stream and returns it as an integer.
-     * Returns -1 if the end of the reader has been reached. If the pushback buffer does 
+     * Returns -1 if the end of the reader has been reached. If the pushback buffer does
      * not contain any available characters then a character from the source reader is
      * returned. Blocks until one character has been read, the end of the source reader
      * is detected or an exception is thrown.
      *
      * @return the byte read or -1 if the end of the source reader has been reached.
-     *        
+     *
      * @throws IOException
      *            if this stream is closed or an I/O error occurs while reading
      *            from this stream.
@@ -127,14 +127,14 @@ public class LLSDInputStream extends FilterInputStream
         	bytes++;
         return read;
 	}
-	
+
     /**
      * Reads at most {@code length} bytes from this stream and stores them in the
      * byte array {@code buffer} starting at {@code offset}. Characters are read
-     * from the pushback buffer first, then from the source reader if more bytes 
+     * from the pushback buffer first, then from the source reader if more bytes
      * are required. Blocks until {@code count} characters have been read, the end
      * of the source reader is detected or an exception is thrown.
-     * 
+     *
      * @param buffer
      *            the array in which to store the characters read from this
      *            reader.
@@ -200,12 +200,12 @@ public class LLSDInputStream extends FilterInputStream
 		}
 		return avail;
 	}
-	
+
     /**
      * Resets this stream to the last marked position. Resetting the stream is
      * not supported in this class; this implementation always throws an
      * {@code IOException}.
-     * 
+     *
      * @throws IOException
      *             if this method is called.
      */
@@ -280,12 +280,12 @@ public class LLSDInputStream extends FilterInputStream
         {
             throw new ArrayIndexOutOfBoundsException("Offset out of bounds");
         }
-        
+
         if (length < 0)
         {
             throw new ArrayIndexOutOfBoundsException("Length out of bounds");
         }
-        
+
 		if (length > pos)
 		{
 		    throw new IOException("Push back buffer is full");
@@ -320,7 +320,7 @@ public class LLSDInputStream extends FilterInputStream
     /**
      * Skips {@code count} bytes in this stream. This implementation skips bytes
      * in the pushback buffer first and then in the source reader if necessary.
-     * 
+     *
      * @param count
      *            the number of characters to skip.
      * @return the number of characters actually skipped.

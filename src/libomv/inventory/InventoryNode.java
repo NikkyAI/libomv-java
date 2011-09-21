@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.inventory;
 //
 
@@ -116,10 +116,10 @@ public class InventoryNode implements Serializable
 
     /**
      * Initializes an InventoryItem object from a serialization stream
-     * 
+     *
      * @param info serialization stream
-     * @throws ClassNotFoundException 
-     * @throws IOException 
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     private void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
     {
@@ -134,12 +134,12 @@ public class InventoryNode implements Serializable
         else
         	throw new InvalidObjectException("");
     }
-    
+
     /**
      * Write Serilization data for this InventoryFolder object to the stream
-     * 
+     *
      * @param info serialization stream
-     * @throws IOException 
+     * @throws IOException
      */
     private void writeObject(ObjectOutputStream info) throws IOException
     {
@@ -149,7 +149,7 @@ public class InventoryNode implements Serializable
 		info.writeBoolean(needsUpdate);
 		info.writeObject(nodes);
     }
-    
+
     @Override
     public String toString()
     {

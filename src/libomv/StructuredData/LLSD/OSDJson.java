@@ -1,18 +1,5 @@
 ﻿package libomv.StructuredData.LLSD;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.Map.Entry;
-
-import org.json.JSONObject;
-
-import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDArray;
-import libomv.StructuredData.OSDMap;
-import libomv.types.UUID;
-import libomv.utils.Helpers;
-
 public final class OSDJson
 {
 /*	public static OSD parse(InputStream json)
@@ -33,7 +20,7 @@ public final class OSDJson
 	{
 
 	}
-	
+
 	public static OSD parse(String json)
 	{
 		return parse(JsonMapper.ToObject(json));

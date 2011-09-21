@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class AssetGesture extends AssetItem
     public class GestureStepAnimation extends GestureStep
     {
         /* Returns what kind of gesture step this is */
-    	@Override 
+    	@Override
         public GestureStepType getGestureStepType()
         {
             return GestureStepType.Animation;
@@ -73,7 +73,7 @@ public class AssetGesture extends AssetItem
         /* Animation inventory name */
         public String Name;
 
-    	@Override 
+    	@Override
         public String toString()
         {
             if (AnimationStart)
@@ -88,7 +88,7 @@ public class AssetGesture extends AssetItem
     public class GestureStepSound extends GestureStep
     {
         /* Returns what kind of gesture step this is */
-    	@Override 
+    	@Override
         public GestureStepType getGestureStepType()
         {
             return GestureStepType.Sound;
@@ -100,7 +100,7 @@ public class AssetGesture extends AssetItem
         /* Sound inventory name */
         public String Name;
 
-    	@Override 
+    	@Override
         public String toString()
         {
             return "Sound: " + Name;
@@ -112,7 +112,7 @@ public class AssetGesture extends AssetItem
     public class GestureStepChat extends GestureStep
     {
         /* Returns what kind of gesture step this is */
-    	@Override 
+    	@Override
         public GestureStepType getGestureStepType()
         {
             return GestureStepType.Chat;
@@ -121,7 +121,7 @@ public class AssetGesture extends AssetItem
         /* Text to output in chat */
         public String Text;
 
-    	@Override 
+    	@Override
         public String toString()
         {
             return "Chat: " + Text;
@@ -132,7 +132,7 @@ public class AssetGesture extends AssetItem
     public class GestureStepWait extends GestureStep
     {
         /* Returns what kind of gesture step this is */
-    	@Override 
+    	@Override
         public GestureStepType getGestureStepType()
         {
             return GestureStepType.Wait;
@@ -147,7 +147,7 @@ public class AssetGesture extends AssetItem
         /* Time in seconds to wait if WaitForAnimation is false */
         public float WaitTime;
 
-    	@Override 
+    	@Override
         public String toString()
         {
             StringBuilder ret = new StringBuilder("-- Wait for: ");
@@ -170,13 +170,13 @@ public class AssetGesture extends AssetItem
     public class GestureStepEOF extends GestureStep
     {
         /* Returns what kind of gesture step this is */
-    	@Override 
+    	@Override
         public GestureStepType getGestureStepType()
         {
             return GestureStepType.EOF;
         }
 
-    	@Override 
+    	@Override
         public String toString()
         {
             return "End of guesture sequence";
@@ -211,7 +211,7 @@ public class AssetGesture extends AssetItem
     }
 
     /** Constructs gesture asset
-     * 
+     *
      *  @param assetID A unique <see cref="UUID"/> specific to this asset
      *  @param assetData A byte array containing the raw asset data
      */
@@ -302,7 +302,7 @@ public class AssetGesture extends AssetItem
     }
 
     /** Decodes gesture asset into play sequence
-     * 
+     *
      *  @return true if the asset data was decoded successfully
      */
     @Override

@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.net.ConnectException;
@@ -132,13 +132,13 @@ public class NetworkManager implements PacketCallback
             Buffer = buffer;
         }
     }
-    	
+
 	/** Callback arguments classes */
 	public class SimConnectingCallbackArgs implements CallbackArgs
 	{
 		private InetSocketAddress endPoint;
 		private boolean cancel = false;
-		
+
 		public InetSocketAddress getEndPoint()
 		{
 			return endPoint;
@@ -146,14 +146,14 @@ public class NetworkManager implements PacketCallback
 
 		public void setCancel(boolean cancel)
 		{
-		    this.cancel = cancel;	
+		    this.cancel = cancel;
 		}
-		
+
 		public boolean getCancel()
 		{
 			return cancel;
 		}
-		
+
 		public SimConnectingCallbackArgs(InetSocketAddress endPoint)
 		{
 			this.endPoint = endPoint;
@@ -166,12 +166,12 @@ public class NetworkManager implements PacketCallback
 	public class SimConnectedCallbackArgs implements CallbackArgs
 	{
 		private final Simulator simulator;
-		
+
 		public Simulator getSimulator()
 		{
 			return simulator;
 		}
-		
+
 		public SimConnectedCallbackArgs(Simulator simulator)
 		{
 			this.simulator = simulator;
@@ -182,7 +182,7 @@ public class NetworkManager implements PacketCallback
 
     /**
      * Fire an event when an event queue connects for capabilities
-     * 
+     *
      * @param simulator Simulator the event queue is attached to
      */
     public void RaiseSimConnectedEvent(Simulator simulator)
@@ -192,18 +192,18 @@ public class NetworkManager implements PacketCallback
 
 	public CallbackHandler<SimChangedCallbackArgs> OnSimChanged = new CallbackHandler<SimChangedCallbackArgs>();
 
-	
+
 	// An event for the connection to a simulator other than the currently occupied one disconnecting
 	public class SimDisconnectedCallbackArgs implements CallbackArgs
 	{
 		private final Simulator simulator;
 		private final DisconnectType type;
-		
+
 		public Simulator getSimulator()
 		{
 			return simulator;
 		}
-		
+
 		public DisconnectType getDisconnectType()
 		{
 			return type;
@@ -217,24 +217,24 @@ public class NetworkManager implements PacketCallback
 	}
 
 	public CallbackHandler<SimDisconnectedCallbackArgs> OnSimDisconnected = new CallbackHandler<SimDisconnectedCallbackArgs>();
-	
+
 
 	// An event for being logged out either through client request, server forced, or network error
 	public class DisconnectedCallbackArgs  implements CallbackArgs
 	{
 		private final DisconnectType type;
 		private final String message;
-		
+
 		public DisconnectType getDisconnectType()
 		{
-			return type;	
+			return type;
 		}
-		
+
 		public String getMessage()
 		{
 			return message;
 		}
-		
+
 		public DisconnectedCallbackArgs(DisconnectType type, String message)
 		{
 		    this.type = type;
@@ -279,7 +279,7 @@ public class NetworkManager implements PacketCallback
     	_Client.Network.OnPacketSent.dispatch(new NetworkManager.PacketSentCallbackArgs(data, bytes, sim));
     }
 
-    
+
     public class EventQueueRunningCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
@@ -296,23 +296,23 @@ public class NetworkManager implements PacketCallback
     }
 
     public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
-	
+
     public final void RaiseConnectedEvent(Simulator simulator)
     {
         OnEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
     }
 
-    
+
 	// An event triggered when the logout is confirmed
 	public class LoggedOutCallbackArgs  implements CallbackArgs
 	{
 		private final Vector<UUID> itemIDs;
-	
+
 		public Vector<UUID> getItemIDs()
 		{
 			return itemIDs;
 		}
-		
+
 		public LoggedOutCallbackArgs(Vector<UUID> itemIDs)
 		{
 			this.itemIDs = itemIDs;
@@ -322,12 +322,12 @@ public class NetworkManager implements PacketCallback
 	public class SimChangedCallbackArgs implements CallbackArgs
 	{
 		private final Simulator simulator;
-		
+
 		public Simulator getSimulator()
 		{
 			return simulator;
 		}
-		
+
 		public SimChangedCallbackArgs(Simulator simulator)
 		{
 			this.simulator = simulator;
@@ -335,7 +335,7 @@ public class NetworkManager implements PacketCallback
 	}
 
 	public CallbackHandler<LoggedOutCallbackArgs> OnLoggedOut = new CallbackHandler<LoggedOutCallbackArgs>();
-     
+
 	private HashMap<PacketType, ArrayList<PacketCallback>> simCallbacks;
 	private HashMap<CapsEventType, ArrayList<CapsCallback>> capCallbacks;
 
@@ -355,7 +355,7 @@ public class NetworkManager implements PacketCallback
 	{
 		_CircuitCode = code;
 	}
-	
+
     /**
      * A list of packets obtained during the login process which NetworkManager will log but not process
      */
@@ -369,20 +369,20 @@ public class NetworkManager implements PacketCallback
         		_UDPBlacklist.add(PacketType.valueOf(s));
         }
 	}
-	
+
 	private ArrayList<Simulator> _Simulators;
 
 	/**
 	 * Get the array with all currently known simulators. This list must be protected with a synchronization
 	 * lock on itself if you do anything with it.
-	 * 
+	 *
 	 * @return array of simulator objects known to this client
 	 */
 	public ArrayList<Simulator> getSimulators()
 	{
 		return _Simulators;
 	}
-	
+
     /** Incoming packets that are awaiting handling */
     private BlockingQueue<IncomingPacket> _PacketInbox = new LinkedBlockingQueue<IncomingPacket>(Settings.PACKET_INBOX_SIZE);
     /** Outgoing packets that are awaiting handling */
@@ -399,9 +399,9 @@ public class NetworkManager implements PacketCallback
     {
         return _PacketOutbox.size();
     }
-    
+
     private IncomingPacketHandler _PacketHandlerThread;
-    
+
     private class OutgoingPacketHandler implements Runnable
     {
     	@Override
@@ -420,7 +420,7 @@ public class NetworkManager implements PacketCallback
 	                	long newTime = System.currentTimeMillis();
 	                	long remains = 10 + lastTime - newTime;
 	                	lastTime = newTime;
-	                	
+
 	                    if (remains > 0)
 	                    {
 	                        Logger.DebugLog(String.format("Rate limiting, last packet was %d ms ago", remains), _Client);
@@ -474,7 +474,7 @@ public class NetworkManager implements PacketCallback
              	}
             	}
     	}
-    	
+
         if (!specialHandler && packet.getType() != PacketType.Default && packet.getType() != PacketType.PacketAck)
         {
             Logger.Log("No handler registered for packet event " + packet.getType(), LogLevel.Warning, _Client);
@@ -484,7 +484,7 @@ public class NetworkManager implements PacketCallback
     private void FireCapsCallbacks(IMessage message, Simulator simulator)
     {
         boolean specialHandler = false;
-        
+
 		synchronized (capCallbacks)
 		{
 	        // Fire any default callbacks
@@ -526,35 +526,35 @@ public class NetworkManager implements PacketCallback
             Logger.Log("Unhandled CAPS event " + message.getType(), LogLevel.Warning, _Client);
         }
     }
-    
+
     private class PacketCallbackExecutor implements Runnable
     {
     	private final IncomingPacket packet;
-    	
+
     	public PacketCallbackExecutor(IncomingPacket packet)
     	{
     		this.packet = packet;
     	}
-    	
+
 		@Override
 		public void run()
 		{
 			if (packet.Packet != null)
 				FirePacketCallbacks(packet.Packet, packet.Simulator);
 			else
-				FireCapsCallbacks(packet.Message, packet.Simulator);			
+				FireCapsCallbacks(packet.Message, packet.Simulator);
 		}
     }
-    
+
     private class IncomingPacketHandler implements Runnable
     {
     	ExecutorService threadPool = Executors.newCachedThreadPool();
-    	
+
     	public void shutdown()
     	{
     		threadPool.shutdown();
     	}
-    	
+
     	@Override
     	public void run()
         {
@@ -589,7 +589,7 @@ public class NetworkManager implements PacketCallback
 		        	        }
 		                	else
 		                	{
-    	        	        	threadPool.submit(new PacketCallbackExecutor(incomingPacket));		                		
+    	        	        	threadPool.submit(new PacketCallbackExecutor(incomingPacket));
 		        			}
 		                }
 	                }
@@ -598,14 +598,14 @@ public class NetworkManager implements PacketCallback
             }
         }
     }
-    
-    
+
+
 	private Timer _DisconnectTimer;
 
 	// The simulator that the logged in avatar is currently occupying
 	private Simulator _CurrentSim;
 	public Simulator getCurrentSim()
-	{	
+	{
 		return _CurrentSim;
 	}
     public final void setCurrentSim(Simulator value)
@@ -652,7 +652,7 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	// 
+	//
 	// <param name="client"></param>
 	public NetworkManager(GridClient client) throws Exception
 	{
@@ -661,7 +661,7 @@ public class NetworkManager implements PacketCallback
 		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
 		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
 		_CurrentSim = null;
-		
+
 		// Register the internal callbacks
 		RegisterCallback(PacketType.RegionHandshake, this);
 		RegisterCallback(PacketType.StartPingCheck, this);
@@ -704,7 +704,7 @@ public class NetworkManager implements PacketCallback
 	    	return (_CurrentSim != null && _CurrentSim.getIsEventQueueRunning());
 	    }
 	}
-	
+
 	public void RegisterCallback(CapsEventType capability, CapsCallback callback)
 	{
 		/* Don't accept null callbacks */
@@ -720,7 +720,7 @@ public class NetworkManager implements PacketCallback
 			capCallbacks.get(capability).add(callback);
 		}
     }
-	
+
 	public void UnregisterCallback(CapsEventType capability, CapsCallback callback)
 	{
 		synchronized (capCallbacks)
@@ -794,7 +794,7 @@ public class NetworkManager implements PacketCallback
 
 	/**
 	 * Send an UDP packet to the current simulator
-	 * 
+	 *
 	 * @param packet The packet to send
 	 * @throws Exception
 	 */
@@ -844,7 +844,7 @@ public class NetworkManager implements PacketCallback
 	    return Connect(new InetSocketAddress(ip, port), handle, setDefault, seedcaps);
 	}
     /** Connect to a simulator
-     * 
+     *
      *  @param endPoint IP address and port to connect to
      *  @param handle Handle for this simulator, to identify its location in the grid
      *  @param setDefault Whether to set CurrentSim to this new
@@ -886,7 +886,7 @@ public class NetworkManager implements PacketCallback
                 sendThread.setName("Outgoing UDP packet dispatcher");
                 sendThread.start();
             }
-            
+
             if (OnSimConnecting.count() > 0)
             {
             	SimConnectingCallbackArgs args = new SimConnectingCallbackArgs(endPoint);
@@ -901,7 +901,7 @@ public class NetworkManager implements PacketCallback
                     return null;
             	}
 		    }
-            
+
             // Attempt to establish a connection to the simulator
             if (simulator.Connect(setDefault))
             {
@@ -1026,7 +1026,7 @@ public class NetworkManager implements PacketCallback
         }
         else
         {
-        	Logger.Log("DisconnectSim() called with a null Simulator reference", LogLevel.Warning);        
+        	Logger.Log("DisconnectSim() called with a null Simulator reference", LogLevel.Warning);
         }
 	}
 
@@ -1034,7 +1034,7 @@ public class NetworkManager implements PacketCallback
      *  first, and then kill the connection to CurrentSim. This should only
      *  be called if the logout process times out on <code>RequestLogout</code>
      *
-     *  @param type Type of shutdown 
+     *  @param type Type of shutdown
      *  @throws Exception
      */
     public final void Shutdown(DisconnectType type) throws Exception
@@ -1135,7 +1135,7 @@ public class NetworkManager implements PacketCallback
 							disconnectedSims = new ArrayList<Simulator>();
 						}
 						disconnectedSims.add(simulator);
-					} 
+					}
 					else
 					{
 						simulator.setDisconnectCandidate(true);
@@ -1164,7 +1164,7 @@ public class NetworkManager implements PacketCallback
 
     /** Searches through the list of currently connected simulators to find
      *  one attached to the given IPEndPoint
-     *  
+     *
      *  @param endPoint InetSocketAddress of the Simulator to search for
      *  @return A Simulator reference on success, otherwise null
      */
@@ -1172,7 +1172,7 @@ public class NetworkManager implements PacketCallback
     {
         synchronized (_Simulators)
         {
-            for (Simulator simulator : _Simulators) 
+            for (Simulator simulator : _Simulators)
             {
                 if (simulator.getIPEndPoint().equals(endPoint))
                 {
@@ -1208,7 +1208,7 @@ public class NetworkManager implements PacketCallback
 		simulator.TerrainStartHeight01 = handshake.RegionInfo.TerrainStartHeight01;
 		simulator.TerrainStartHeight10 = handshake.RegionInfo.TerrainStartHeight10;
 		simulator.TerrainStartHeight11 = handshake.RegionInfo.TerrainStartHeight11;
-        
+
         simulator.WaterHeight = handshake.RegionInfo.WaterHeight;
         simulator.Flags = RegionFlags.setValue(handshake.RegionInfo.RegionFlags);
         simulator.BillableFactor = handshake.RegionInfo.BillableFactor;
@@ -1230,15 +1230,15 @@ public class NetworkManager implements PacketCallback
 
         // We're officially connected to this sim
         simulator.handshakeComplete = true;
- 
+
         Logger.Log("Received a region handshake for " + simulator.Name, LogLevel.Info, _Client);
 	}
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The packet data
      *  @param simulator The sender
-     *  @throws Exception 
+     *  @throws Exception
      */
     private void HandleStartPingCheck(Packet packet, Simulator simulator) throws Exception
     {
@@ -1272,7 +1272,7 @@ public class NetworkManager implements PacketCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The packet data
      *  @param simulator The sender
      */
@@ -1391,10 +1391,10 @@ public class NetworkManager implements PacketCallback
 	}
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param simulator The sender
      *  @param packet The packet data
-     *  @throws Exception 
+     *  @throws Exception
      */
     private final void HandleDisableSimulator(Packet packet, Simulator simulator) throws Exception
     {
@@ -1402,16 +1402,16 @@ public class NetworkManager implements PacketCallback
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param packet The packet data
      *  @param simulator The sender
-     *  @throws Exception 
+     *  @throws Exception
      */
     private void HandleLogoutReply(Packet packet, Simulator simulator) throws Exception
     {
         LogoutReplyPacket logout = (LogoutReplyPacket)packet;
 
-        if ((logout.AgentData.SessionID == _Client.Self.getSessionID()) && 
+        if ((logout.AgentData.SessionID == _Client.Self.getSessionID()) &&
             (logout.AgentData.AgentID == _Client.Self.getAgentID()))
         {
         	Logger.DebugLog("Logout reply received", _Client);
@@ -1439,7 +1439,7 @@ public class NetworkManager implements PacketCallback
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param simulator The sender
      * @param packet The packet data
      */

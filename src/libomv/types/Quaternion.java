@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.types;
 
 import java.nio.ByteBuffer;
@@ -148,7 +148,7 @@ public class Quaternion {
 	 *
 	 *  @return A 12 byte array containing normalized X, Y, and Z floating
 	 *          point values in order using little endian byte ordering
-	 *  @throws Exception 
+	 *  @throws Exception
 	 */
 	public byte[] GetBytes() throws Exception
 	{
@@ -160,7 +160,7 @@ public class Quaternion {
 	/** Returns a ByteBuffer for this vector
 	 *
 	 *  @param byteArray buffer to copye the 12 bytes for X, Y, and Z
-	 *  @throws Exception 
+	 *  @throws Exception
 	 */
 	public void GetBytes(ByteBuffer bytes) throws Exception {
 		float norm = (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
@@ -224,7 +224,7 @@ public class Quaternion {
 			if (!normalized)
 			{
 				W = Helpers.BytesToFloatL(bytes, pos + 12);
-			}	
+			}
 		}
 		else
 		{
@@ -234,7 +234,7 @@ public class Quaternion {
 			if (!normalized)
 			{
 				W = Helpers.BytesToFloatB(bytes, pos + 12);
-			}	
+			}
 		}
 		if (normalized)
 		{
@@ -248,7 +248,7 @@ public class Quaternion {
 	 *  @param dest Destination byte array
 	 *  @param pos Position in the destination array to start
 	 *         writing. Must be at least 12 bytes before the end of the array
-	 *  @throws Exception 
+	 *  @throws Exception
 	 */
 	public void ToBytes(byte[] dest, int pos, boolean le) throws Exception
 	{
@@ -273,7 +273,7 @@ public class Quaternion {
 			}
 
 			if (le)
-			{	
+			{
 				Helpers.FloatToBytesL(norm * x, dest, pos + 0);
 				Helpers.FloatToBytesL(norm * y, dest, pos + 4);
 				Helpers.FloatToBytesL(norm * z, dest, pos + 8);
@@ -290,7 +290,7 @@ public class Quaternion {
 			throw new Exception(String.format("Quaternion %s normalized to zero", toString()));
 		}
 	}
-	
+
 	/** Convert this quaternion to euler angles
 	 *
 	 *  @param roll X euler angle
@@ -390,7 +390,7 @@ public class Quaternion {
 	 *
 	 *  @param eulers Vector representation of the euler angles in radians
 	 *  @return Quaternion representation of the euler angles
-	 *  @throws Exception 
+	 *  @throws Exception
 	 */
 	public static Quaternion CreateFromEulers(Vector3 eulers) throws Exception
 	{
@@ -403,7 +403,7 @@ public class Quaternion {
 	 *  @param pitch Y angle in radians
 	 *  @param yaw Z angle in radians
 	 *  @return Quaternion representation of the euler angles
-	 *  @throws Exception 
+	 *  @throws Exception
 	 */
 	public static Quaternion CreateFromEulers(float roll, float pitch, float yaw) throws Exception
 	{
@@ -477,9 +477,9 @@ public class Quaternion {
 		return (q1.X * q2.X) + (q1.Y * q2.Y) + (q1.Z * q2.Z) + (q1.W * q2.W);
 	}
 
-	/** 
+	/**
 	 Conjugates and renormalizes a vector
-	 
+
 	*/
 	public static Quaternion Inverse(Quaternion quaternion)
 	{
@@ -627,7 +627,7 @@ public class Quaternion {
 	{
 		return new Quaternion(X - q.X, Y - q.Y, Z - q.Z, W - q.W);
 	}
-	
+
 	public static Quaternion add(Quaternion quaternion1, Quaternion quaternion2)
 	{
 		quaternion1.X += quaternion2.X;
@@ -636,7 +636,7 @@ public class Quaternion {
 		quaternion1.W += quaternion2.W;
 		return quaternion1;
 	}
-	
+
 	public static Quaternion subtract(Quaternion quaternion1, Quaternion quaternion2)
 	{
 		quaternion1.X -= quaternion2.X;
@@ -688,5 +688,5 @@ public class Quaternion {
 
 	/** A quaternion with a value of 0,0,0,1 */
 	public final static Quaternion Identity = new Quaternion(0f, 0f, 0f, 1f);
-	
+
 }

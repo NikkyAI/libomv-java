@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.IOException;
@@ -127,7 +127,7 @@ import org.apache.http.nio.reactor.IOReactorException;
 public class AgentManager implements PacketCallback, CapsCallback
 {
 	/** Permission request flags, asked when a script wants to control an Avatar */
-    public static class ScriptPermission 
+    public static class ScriptPermission
     {
         /* Placeholder for empty values, shouldn't ever see this */
         public static final int None = 0;
@@ -158,12 +158,12 @@ public class AgentManager implements PacketCallback, CapsCallback
         public static final int TrackCamera = 1 << 10;
         /* Script wants to control your camera */
         public static final int ControlCamera = 1 << 11;
-        
+
         public static int setValue(int value)
         {
         	return (value & _mask);
         }
-        
+
         public static int getValue(int value)
         {
         	return (value & _mask);
@@ -173,7 +173,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /** Special commands used in Instant Messages */
-    public enum InstantMessageDialog 
+    public enum InstantMessageDialog
     {
         /* Indicates a regular IM from another agent */
         MessageFromAgent,			// 0
@@ -261,12 +261,12 @@ public class AgentManager implements PacketCallback, CapsCallback
         StartTyping,				// 41
         /* Indicates that a user has stopped typing */
         StopTyping;					// 42
-        
+
         public static InstantMessageDialog setValue(int value)
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -286,7 +286,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -294,7 +294,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /* Conversion type to denote Chat Packet types in an easier-to-understand format */
-    public enum ChatType 
+    public enum ChatType
     {
         /* Whisper (5m radius) */
         Whisper(0),
@@ -326,12 +326,12 @@ public class AgentManager implements PacketCallback, CapsCallback
         	}
         	return Normal;
         }
- 
+
         public int getValue()
         {
         	return val;
         }
-        
+
         private int val;
         private ChatType(int value)
         {
@@ -340,7 +340,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /* Identifies the source of a chat message */
-    public enum ChatSourceType 
+    public enum ChatSourceType
     {
         /* Chat from the grid or simulator */
         System,
@@ -353,7 +353,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -361,7 +361,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /*  */
-    public enum ChatAudibleLevel 
+    public enum ChatAudibleLevel
     {
         /*  */
         Not(-1),
@@ -391,7 +391,7 @@ public class AgentManager implements PacketCallback, CapsCallback
    }
 
     /* Effect type used in ViewerEffect packets */
-    public enum EffectType 
+    public enum EffectType
     {
         /* */
         Text,				// 0
@@ -431,16 +431,16 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
         }
      }
 
-    /* The action an avatar is doing when looking at something, used in 
+    /* The action an avatar is doing when looking at something, used in
      * ViewerEffect packets for the LookAt effect */
-    public enum LookAtType 
+    public enum LookAtType
     {
         /* */
         None,
@@ -469,7 +469,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -478,7 +478,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /* The action an avatar is doing when pointing at something, used in
      * ViewerEffect packets for the PointAt effect */
-    public enum PointAtType 
+    public enum PointAtType
     {
         /* */
         None,
@@ -493,7 +493,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -501,7 +501,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     // Money transaction types
-    public enum MoneyTransactionType 
+    public enum MoneyTransactionType
     {
         /* */
         None(0),
@@ -617,14 +617,14 @@ public class AgentManager implements PacketCallback, CapsCallback
         public int getValue() {
         	return val;
         }
-        
+
         private int val;
         private MoneyTransactionType(int val) {
             this.val = val;
         }
     }
     /*  */
-    public static class TransactionFlags 
+    public static class TransactionFlags
     {
         /* */
         public static final byte None = 0x0;
@@ -643,7 +643,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return (byte)(value & _mask);
         }
-        
+
         public static byte getValue(byte value)
         {
         	return (byte)(value & _mask);
@@ -652,7 +652,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         private static final byte _mask = 0x1F;
     }
 
-    public enum MeanCollisionType 
+    public enum MeanCollisionType
     {
         /* */
         None,
@@ -671,7 +671,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -679,10 +679,10 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /* Flags sent when a script takes or releases a control
-     * 
+     *
      * NOTE: (need to verify) These might be a subset of the ControlFlags enum in Movement,
      */
-    public static class ScriptControlChange 
+    public static class ScriptControlChange
     {
         /* No Flags set */
         public static final int None = 0;
@@ -711,16 +711,16 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return value & _mask;
         }
-        
+
         public static int getValue(int value) {
            	return value & _mask;
         }
-        
+
         private static final int _mask = 0x5000033F;
     }
 
     /* Currently only used to hide your group title */
-    public enum AgentFlags 
+    public enum AgentFlags
     {
         /* No flags set */
         None,
@@ -731,7 +731,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -747,7 +747,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         public static final byte Typing = 0x04;
         /* */
         public static final byte Editing = 0x10;
-        
+
         public static byte setValue(int value) {
         	return (byte)(value & _mask);
         }
@@ -755,7 +755,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         public static byte getValue(byte value) {
         	return (byte)(value & _mask);
         }
-        
+
         private static final byte _mask = 0x14;
     }
 
@@ -779,7 +779,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -829,7 +829,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     	public static final int FinishedViaNewSim = 1 << 28;
         /* Finished, Same Sim */
     	public static final int FinishedViaSameSim = 1 << 29;
-    	
+
 		public static int setValue(int value) {
 			return (value & _mask);
 		}
@@ -855,7 +855,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
- 
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -881,7 +881,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         public static byte getValue(byte value) {
         	return (byte)(value & _mask);
         }
-        
+
         private static final byte _mask = 0xF;
 }
 
@@ -917,7 +917,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         public byte[] BinaryBucket;
 
         /* Print the struct data as a string
-         * 
+         *
          * @return A string containing the field name, and field value */
         @Override
 		public String toString()
@@ -952,17 +952,17 @@ public class AgentManager implements PacketCallback, CapsCallback
         private final UUID m_AgentID;
         private final boolean m_added;
 
-        // Get the ID of the chat session 
+        // Get the ID of the chat session
         public UUID getSessionID()
         {
         	return m_SessionID;
         }
-        // Get the ID of the agent that joined 
+        // Get the ID of the agent that joined
         public UUID getAgentID()
         {
         	return m_AgentID;
         }
-        
+
         public boolean getAdded()
         {
         	return m_added;
@@ -977,7 +977,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 	public CallbackHandler<ChatSessionMemberCallbackArgs> OnChatSessionMember = new CallbackHandler<ChatSessionMemberCallbackArgs>();
 
-    
+
     public class ChatCallbackArgs implements CallbackArgs
 	{
 		private String message, fromName;
@@ -1002,7 +1002,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		public UUID getID() {
 			return id;
 		}
-		
+
 		public ChatCallbackArgs(String message, byte audible, byte type, byte sourcetype, String fromName, UUID id)
 		{
 			this.message = message;
@@ -1015,7 +1015,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 	public CallbackHandler<ChatCallbackArgs> OnChat = new CallbackHandler<ChatCallbackArgs>();
 
-	
+
     /* The date received from an ImprovedInstantMessage */
 	public class InstantMessageCallbackArgs
 	{
@@ -1027,7 +1027,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	    {
 	        return m_IM;
 	    }
-	    
+
 	    /* Get the simulator where the InstantMessage origniated */
 	    public final Simulator getSimulator()
 	    {
@@ -1035,7 +1035,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	    }
 
 	    /** Construct a new instance of the InstantMessageEventArgs object
-	     * 
+	     *
 	     *  @param im the InstantMessage object
 	     *  @param simulator the simulator where the InstantMessage origniated
 	     */
@@ -1047,20 +1047,20 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 	public CallbackHandler<InstantMessageCallbackArgs> OnInstantMessage = new CallbackHandler<InstantMessageCallbackArgs>();
 
-	
+
 	public class TeleportCallbackArgs implements CallbackArgs
 	{
 		String message;
 		TeleportStatus status;
 		int flags;
-		
+
 		public String getMessage() {
 			return message;
 		}
 		public TeleportStatus getStatus() {
 			return status;
 		}
-		
+
 		public TeleportCallbackArgs(String message, TeleportStatus status, int flags) {
 			this.message = message;
 			this.status = status;
@@ -1069,7 +1069,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 	public CallbackHandler<TeleportCallbackArgs> OnTeleport = new CallbackHandler<TeleportCallbackArgs>();
 
-	
+
 	/* The date received from an ImprovedInstantMessage */
 	public class BalanceCallbackArgs
 	{
@@ -1080,9 +1080,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 	    {
 	        return balance;
 	    }
-	    
+
 	    /** Construct a new instance of the BalanceCallbackArgs object
-	     * 
+	     *
 	     *  @param balance the InstantMessage object
 	     */
 	    public BalanceCallbackArgs(int balance)
@@ -1097,7 +1097,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		AttachmentResourcesMessage info;
 		boolean success;
-		
+
 		public AttachmentResourcesCallbackArgs(boolean success, AttachmentResourcesMessage info)
 		{
 			this.info = info;
@@ -1105,7 +1105,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	
+
 	// Event arguments with the result of setting display name operation</summary>
     public class SetDisplayNameReplyCallbackArgs implements CallbackArgs
     {
@@ -1139,8 +1139,8 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
     }
 	public CallbackHandler<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandler<SetDisplayNameReplyCallbackArgs>();
-	
-	
+
+
     // Contains the transaction summary when an item is purchased, money is given, or land is purchased
     public class MoneyBalanceReplyCallbackArgs implements CallbackArgs
     {
@@ -1187,9 +1187,9 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return m_TransactionInfo;
         }
-        /** 
+        /**
          * Construct a new instance of the MoneyBalanceReplyEventArgs object
-         * 
+         *
          * @param transactionID">The ID of the transaction
          * @param transactionSuccess">True of the transaction was successful
          * @param balance">The current currency balance
@@ -1257,7 +1257,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     {
         agentID = uuid;
     }
-    /* Temporary {@link UUID} assigned to this session, used for 
+    /* Temporary {@link UUID} assigned to this session, used for
        verifying our identity in packets */
     public final UUID getSessionID()
     {
@@ -1281,7 +1281,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     {
         localID = id;
     }
-    /* Where the avatar started at login. Can be "last", "home" 
+    /* Where the avatar started at login. Can be "last", "home"
        or a login {@link T:OpenMetaverse.URI} */
     public final String getStartLocation()
     {
@@ -1307,7 +1307,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         return velocity;
     }
 	public void setVelocity(Vector3 val) {
-		velocity = val;	
+		velocity = val;
 	}
     /* An {@link Vector3} representing the acceleration of our agent */
     public final Vector3 getAcceleration()
@@ -1461,7 +1461,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         Logger.Log("Failed to determine agents sim position", LogLevel.Warning, _Client);
         return relativePosition;
     }
-    /** 
+    /**
      * A {@link Quaternion} representing the agents current rotation
      */
     public final Quaternion getSimRotation()
@@ -1683,7 +1683,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Send a text message from the Agent to the Simulator
-     * 
+     *
      * @param message A <see cref="string"/> containing the message
      * @param channel The channel to send the message on, 0 is the public channel. Channels above 0
      *                can be used however only scripts listening on the specified channel will see the message
@@ -1700,10 +1700,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		_Client.Network.SendPacket(chat);
 	}
-	
+
 	/**
      * Request any instant messages sent while the client was offline to be resent.
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RetrieveInstantMessages() throws Exception
     {
@@ -1715,7 +1715,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Send an Instant Message to another Avatar
-     * 
+     *
      * @param target The recipients <see cref="UUID"/>
      * @param message A <see cref="string"/> containing the message to send
      */
@@ -1727,7 +1727,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Send an Instant Message to an existing group chat or conference chat
-     * 
+     *
      * @param target The recipients <see cref="UUID"/>
      * @param message A <see cref="string"/> containing the message to send
      * @param imSessionID IM session ID (to differentiate between IM windows)
@@ -1737,10 +1737,10 @@ public class AgentManager implements PacketCallback, CapsCallback
         InstantMessage(getName(), target, message, imSessionID, InstantMessageDialog.MessageFromAgent,
         		       InstantMessageOnline.Offline, null, null, null);
 	}
-        
+
     /**
      * Send an Instant Message
-     * 
+     *
      * @param fromName The name this IM will show up as being from
      * @param target Key of Avatar
      * @param message Text message being sent
@@ -1750,7 +1750,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public void InstantMessage(String fromName, UUID target, String message, UUID imSessionID, UUID[] conferenceIDs) throws Exception
 	{
 		byte[] binaryBucket = null;
-		
+
 		if (conferenceIDs != null && conferenceIDs.length > 0)
 		{
 			binaryBucket = new byte[16 * conferenceIDs.length];
@@ -1766,9 +1766,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 				       InstantMessageOnline.Offline, null, null, binaryBucket);
 	}
 
-    /** 
+    /**
      * Send an Instant Message
-     * 
+     *
      * @param fromName The name this IM will show up as being from
      * @param target Key of Avatar
      * @param message Text message being sent
@@ -1778,9 +1778,9 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param position Senders Position
      * @param regionID RegionID Sender is In
      * @param binaryBucket Packed binary data that is specific to the dialog type
-     * 
-     * @throws Exception 
-     * @throws UnsupportedEncodingException 
+     *
+     * @throws Exception
+     * @throws UnsupportedEncodingException
      */
     public final void InstantMessage(String fromName, UUID target, String message, UUID imSessionID,
     		                         InstantMessageDialog dialog, InstantMessageOnline offline, Vector3 position,
@@ -1834,13 +1834,13 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
     }
 
-    /** 
+    /**
      * Send an Instant Message to a group
-     * 
+     *
      * @param groupID {@link UUID} of the group to send message to
      * @param message Text Message being sent.
-     * @throws Exception 
-     * @throws UnsupportedEncodingException 
+     * @throws Exception
+     * @throws UnsupportedEncodingException
      */
     public final void InstantMessageGroup(UUID groupID, String message) throws UnsupportedEncodingException, Exception
     {
@@ -1849,11 +1849,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Send an Instant Message to a group the agent is a member of
-     * 
+     *
      * @param fromName The name this IM will show up as being from
      * @param groupID {@link UUID} of the group to send message to
      * @param message Text message being sent
-     * @throws Exception 
+     * @throws Exception
      */
     public final void InstantMessageGroup(String fromName, UUID groupID, String message) throws Exception
     {
@@ -1873,7 +1873,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Send a request to join a group chat session
-     * 
+     *
      * @param groupID {@link UUID} of Group to leave
      */
     public final void RequestJoinGroupChat(UUID groupID) throws Exception
@@ -1885,9 +1885,9 @@ public class AgentManager implements PacketCallback, CapsCallback
     /**
      * Exit a group chat session. This will stop further Group chat messages
      * from being sent until session is rejoined.
-     * 
+     *
      * @param groupID {@link UUID} of Group chat session to leave
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestLeaveGroupChat(UUID groupID) throws Exception
     {
@@ -1905,14 +1905,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Reply to script dialog questions.
-     * 
+     *
      * @param channel Channel initial request came on
 	 * @param buttonIndex Index of button you're "clicking"
      * @param buttonlabel Label of button you're "clicking"
      * @param objectID {@link UUID} of Object that sent the dialog request
      * {@link OnScriptDialog}
-     * 
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     public final void ReplyToScriptDialog(int channel, int buttonIndex, String buttonlabel, UUID objectID) throws Exception
     {
@@ -1931,9 +1931,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Accept invite for to a chatterbox session
-     * 
+     *
      * @param session_id {@link UUID} of session to accept invite to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ChatterBoxAcceptInvite(UUID session_id) throws Exception
     {
@@ -1941,7 +1941,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         if (uri != null)
         {
             ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
- 
+
             acceptInvite.SessionID = session_id;
 
             CapsClient request = new CapsClient(uri);
@@ -1964,10 +1964,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Start a friends conference
-     * 
+     *
      * @param participants {@link UUID} List of UUIDs to start a conference with
      * @param tmp_session_id the temportary session ID returned in the <see cref="OnJoinedGroupChat"/> callback>
-     * @throws Exception 
+     * @throws Exception
      */
     public final void StartIMConference(UUID[] participants, UUID tmp_session_id) throws Exception
     {
@@ -1975,7 +1975,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         if (url != null)
         {
             ChatSessionRequestStartConference startConference = _Client.Messages.new ChatSessionRequestStartConference();
-            
+
             startConference.AgentsBlock = new UUID[participants.length];
             for (int i = 0; i < participants.length; i++)
             {
@@ -1992,18 +1992,18 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
     }
     // #endregion
-    
+
     ///#region Viewer Effects
 
-    /** 
+    /**
      * Start a particle stream between an agent and an object
-     * 
+     *
      * @param sourceAvatar {@link UUID} Key of the source agent
      * @param targetObject {@link UUID} Key of the target object
      * @param globalOffset
      * @param type The type from the {@link T:PointAtType} enum
      * @param effectID A unique {@link UUID} for this effect
-     * @throws Exception 
+     * @throws Exception
 */
     public final void PointAtEffect(UUID sourceAvatar, UUID targetObject, Vector3d globalOffset, PointAtType type, UUID effectID) throws Exception
     {
@@ -2037,15 +2037,15 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(effect);
     }
 
-    /** 
+    /**
      * Start a particle stream between an agent and an object
-     * 
+     *
      * @param sourceAvatar {@link UUID} Key of the source agent
      * @param targetObject {@link UUID} Key of the target object
      * @param globalOffset A {@link Vector3d} representing the beams offset from the source
      * @param type A {@link T:PointAtType} which sets the avatars lookat animation
      * @param effectID {@link UUID} of the Effect
-     * @throws Exception 
+     * @throws Exception
      */
     public final void LookAtEffect(UUID sourceAvatar, UUID targetObject, Vector3d globalOffset, LookAtType type, UUID effectID) throws Exception
     {
@@ -2105,17 +2105,17 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /**
-     * Create a particle beam between an avatar and an primitive 
-     * 
+     * Create a particle beam between an avatar and an primitive
+     *
      * @param sourceAvatar The ID of source avatar
      * @param targetObject The ID of the target primitive
      * @param globalOffset global offset
-     * @param color A <see cref="Color4"/> object containing the combined red, green, blue and alpha 
+     * @param color A <see cref="Color4"/> object containing the combined red, green, blue and alpha
      * color values of particle beam
      * @param duration a float representing the duration the parcicle beam will last
      * @param effectID A Unique ID for the beam
      * {@link ViewerEffectPacket}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void BeamEffect(UUID sourceAvatar, UUID targetObject, Vector3d globalOffset, Color4 color, float duration, UUID effectID) throws Exception
     {
@@ -2142,15 +2142,15 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(effect);
     }
 
-    /** 
+    /**
      * Create a particle swirl around a target position using a {@link ViewerEffectPacket} packet
-     * 
+     *
      * @param globalOffset global offset
-     * @param color A <see cref="Color4"/> object containing the combined red, green, blue and alpha 
+     * @param color A <see cref="Color4"/> object containing the combined red, green, blue and alpha
      * color values of particle beam
      * @param duration a float representing the duration the parcicle beam will last
      * @param effectID A Unique ID for the beam
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SphereEffect(Vector3d globalOffset, Color4 color, float duration, UUID effectID) throws Exception
     {
@@ -2177,11 +2177,11 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(effect);
     }
     ///#endregion Viewer Effects
-    
+
 
     /**
      * Set the height and the width of your avatar. This is used to scale
-     * 
+     *
      * @param height New height of the avatar
      * @param width >New width of the avatar
      * @throws Exception
@@ -2199,100 +2199,100 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.SendPacket(heightwidth);
 	}
 
-    /** 
+    /**
      * Give Money to destination Avatar
-     * 
+     *
      * @param target UUID of the Target Avatar
      * @param amount Amount in L$
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveAvatarMoney(UUID target, int amount) throws Exception
     {
         GiveMoney(target, amount, Helpers.EmptyString, MoneyTransactionType.Gift, TransactionFlags.None);
     }
 
-    /** 
+    /**
      * Give Money to destination Avatar
-     * 
+     *
      * @param target UUID of the Target Avatar
      * @param amount Amount in L$
      * @param description Description that will show up in the recipients transaction history
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveAvatarMoney(UUID target, int amount, String description) throws Exception
     {
         GiveMoney(target, amount, description, MoneyTransactionType.Gift, TransactionFlags.None);
     }
 
-    /** 
+    /**
      * Give L$ to an object
-     * 
+     *
      * @param target object {@link UUID} to give money to
      * @param amount amount of L$ to give
      * @param objectName name of object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveObjectMoney(UUID target, int amount, String objectName) throws Exception
     {
         GiveMoney(target, amount, objectName, MoneyTransactionType.PayObject, TransactionFlags.None);
     }
 
-    /** 
+    /**
      * Give L$ to a group
-     * 
+     *
      * @param target group {@link UUID} to give money to
      * @param amount amount of L$ to give
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveGroupMoney(UUID target, int amount) throws Exception
     {
         GiveMoney(target, amount, Helpers.EmptyString, MoneyTransactionType.Gift, TransactionFlags.DestGroup);
     }
 
-    /** 
+    /**
      * Give L$ to a group
-     * 
+     *
      * @param target group {@link UUID} to give money to
      * @param amount amount of L$ to give
      * @param description description of transaction
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GiveGroupMoney(UUID target, int amount, String description) throws Exception
     {
         GiveMoney(target, amount, description, MoneyTransactionType.Gift, TransactionFlags.DestGroup);
     }
 
-    /** 
+    /**
      * Pay texture/animation upload fee
-     * @throws Exception 
-     * 
+     * @throws Exception
+     *
      */
     public final void PayUploadFee() throws Exception
     {
         GiveMoney(UUID.Zero, _Client.Settings.getUPLOAD_COST(), Helpers.EmptyString, MoneyTransactionType.UploadCharge, TransactionFlags.None);
     }
 
-    /** 
+    /**
      * Pay texture/animation upload fee
-     * 
+     *
      * @param description description of the transaction
-     * @throws Exception 
+     * @throws Exception
      */
     public final void PayUploadFee(String description) throws Exception
     {
         GiveMoney(UUID.Zero, _Client.Settings.getUPLOAD_COST(), description, MoneyTransactionType.UploadCharge, TransactionFlags.None);
     }
 
-    /** 
+    /**
      * Give Money to destination Object or Avatar
-     * 
+     *
      * @param target UUID of the Target Object/Avatar
      * @param amount Amount in L$
      * @param description Reason (Optional normally)
      * @param type The type of transaction
      * @param flags Transaction flags, mostly for identifying group
      * transactions
-     * @throws Exception 
+     * @throws Exception
 */
     public final void GiveMoney(UUID target, int amount, String description, MoneyTransactionType type, byte flags) throws Exception
     {
@@ -2310,11 +2310,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 
         _Client.Network.SendPacket(money);
     }
-	
+
     // #region Gestures
-    /** 
+    /**
      * Plays a gesture
-     * 
+     *
      * @param gestureID Asset {@link UUID} of the gesture
      */
     public final void PlayGesture(final UUID gestureID)
@@ -2337,7 +2337,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                         gesture = gestureCache.get(gestureID);
                     }
                 }
-                
+
                 if (gesture == null)
                 {
                     final TimeoutEvent<AssetGesture> gotAsset = new TimeoutEvent<AssetGesture>();
@@ -2348,7 +2348,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                     	{
                     		_Client.Assets.super();
                     	}
-                    	
+
 						@Override
 						public void callback(AssetDownload transfer, AssetItem asset)
 						{
@@ -2362,7 +2362,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                         	}
                         }
                     }
-                    
+
                     try
 					{
 						_Client.Assets.RequestAsset(gestureID, AssetType.Gesture, true, new AssetDownloadCallback());
@@ -2421,14 +2421,14 @@ public class AgentManager implements PacketCallback, CapsCallback
                                     }
                                     if (wait.WaitForAnimation)
                                     {
-                                    	
+
                                     }
                                     break;
                             }
                         }
                         catch (Exception ex)
                         {
-                        	
+
                         }
                     }
                 }
@@ -2440,9 +2440,9 @@ public class AgentManager implements PacketCallback, CapsCallback
         thread.start();
     }
 
-    /* 
+    /*
      * Mark gesture active
-     * 
+     *
      * @param invID Inventory {@link UUID} of the gesture
      * @param assetID Asset {@link UUID} of the gesture
 */
@@ -2466,9 +2466,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     }
 
-    /** 
+    /**
      * Mark gesture inactive
-     * 
+     *
      * @param invID Inventory {@link UUID} of the gesture
      */
     public final void DeactivateGesture(UUID invID) throws Exception
@@ -2489,15 +2489,15 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(p);
     }
     // #endregion
-    
+
     // #region Animations
 
-    /** 
+    /**
      * Send an AgentAnimation packet that toggles a single animation on
-     * 
+     *
      * @param animation The {@link UUID} of the animation to start playing
      * @param reliable Whether to ensure delivery of this packet or not
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AnimationStart(UUID animation, boolean reliable) throws Exception
     {
@@ -2507,12 +2507,12 @@ public class AgentManager implements PacketCallback, CapsCallback
         Animate(animations, reliable);
     }
 
-    /** 
+    /**
      * Send an AgentAnimation packet that toggles a single animation off
-     * 
+     *
      * @param animation The {@link UUID} of a  currently playing animation to stop playing
      * @param reliable Whether to ensure delivery of this packet or not
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AnimationStop(UUID animation, boolean reliable) throws Exception
     {
@@ -2522,12 +2522,12 @@ public class AgentManager implements PacketCallback, CapsCallback
         Animate(animations, reliable);
     }
 
-    /** 
+    /**
      * Send an AgentAnimation packet that will toggle animations on or off
-     * 
+     *
      * @param animations A list of animation {@link UUID} s, and whether to turn that animation on or off
      * @param reliable Whether to ensure delivery of this packet or not
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Animate(HashMap<UUID, Boolean> animations, boolean reliable) throws Exception
     {
@@ -2562,9 +2562,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Teleports agent to their stored home location
-     * 
+     *
      * @return true on successful teleport to home location
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean GoHome() throws Exception
     {
@@ -2573,16 +2573,16 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Teleport agent to a landmark
-     * 
+     *
      * @param landmark {@link UUID} of the landmark to teleport agent to
      * @return true on success, false on failure
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Teleport(UUID landmark) throws Exception
     {
         return Teleport(landmark, _Client.Settings.TELEPORT_TIMEOUT);
     }
-    
+
     public final boolean Teleport(UUID landmark, long timeout) throws Exception
     {
  		// Start the timeout check
@@ -2599,9 +2599,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Teleport agent to a landmark
-     * 
+     *
      * @param landmark {@link UUID} of the landmark to teleport agent to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestTeleport(UUID landmark) throws Exception
     {
@@ -2623,11 +2623,11 @@ public class AgentManager implements PacketCallback, CapsCallback
             OnTeleport.dispatch(new TeleportCallbackArgs("CAPS event queue is not running", teleportStat, 0));
         }
     }
-    
+
     /**
      * Start a Teleport request asynchronously. You can either use the callback handler to wait for any message or
      * the returned timeoutEvent to abort the request prematurely if desired.
-     * 
+     *
      * <example>
      *      // Using a callback handler
      *      final CallbackHandler<TeleportCallbackArgs> handler = new CallbackHandler<TeleportCallbackArgs>()
@@ -2648,7 +2648,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      *          }
      *      }
      *      BeginTeleport(handle, pos, handler);
-     *      
+     *
      *      // Using the timeout event
      *      TimeoutEvent<TeleportStatus> timo = BeginTeleport(handle, pos, null);
      *      TeleportStatus stat = timo.waitms(timeout);
@@ -2657,11 +2657,11 @@ public class AgentManager implements PacketCallback, CapsCallback
      *      	// The timeout occured
      *      }
      * </example>
-     * 
+     *
      * @param regionHandle The region handle of the region to teleport to
      * @param position The position inside the region to teleport to
      * @param tc The callback handler that will be invoked with progress and final status information
-     * @return A timout event that can be used to wait for the 
+     * @return A timout event that can be used to wait for the
      * @throws Exception
      */
     public TimeoutEvent<TeleportStatus> BeginTeleport(long regionHandle, Vector3 position, Callback<TeleportCallbackArgs> tc) throws Exception
@@ -2672,12 +2672,12 @@ public class AgentManager implements PacketCallback, CapsCallback
     /**
      * Start a Teleport request asynchronously. You can either use the callback handler to wait for any message or
      * the returned timeoutEvent to abort the request prematurely if desired.
-     * 
+     *
      * @param regionHandle The region handle of the region to teleport to
      * @param position The position inside the region to teleport to
      * @param lookAt The direction in which to look at when arriving
      * @param tc The callback handler that will be invoked with progress and final status information
-     * @return A timout event that can be used to wait for the 
+     * @return A timout event that can be used to wait for the
      * @throws Exception
      */
 	public TimeoutEvent<TeleportStatus> BeginTeleport(long regionHandle, Vector3 position, Vector3 lookAt, Callback<TeleportCallbackArgs> tc) throws Exception
@@ -2690,13 +2690,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 		RequestTeleport(regionHandle, position, lookAt);
 		return teleportTimeout;
 	}
-	
+
     /**
      * Request teleport to a another simulator
-     * 
+     *
      * @param regionHandle handle of region to teleport agent to
      * @param position {@link Vector3} position in destination sim to teleport to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestTeleport(long regionHandle, Vector3 position) throws Exception
     {
@@ -2704,11 +2704,11 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /** Request teleport to a another simulator
-     * 
+     *
      *  @param regionHandle handle of region to teleport agent to
      *  @param position {@link Vector3} position in destination sim to teleport to
      *  @param lookAt {@link Vector3} direction in destination sim agent will look at
-     *  @throws Exception 
+     *  @throws Exception
      */
     public final void RequestTeleport(long regionHandle, Vector3 position, Vector3 lookAt) throws Exception
     {
@@ -2734,7 +2734,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /** Teleport agent to another region
-     * 
+     *
      *  @param regionHandle handle of region to teleport agent to
      *  @param position {@link Vector3} position in destination sim to teleport to
      *  @return true on success, false on failure
@@ -2745,10 +2745,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
     /** Teleport agent to another region
-     * 
+     *
      *  @param regionHandle handle of region to teleport agent to
      *  @param position {@link Vector3} position in destination sim to teleport to
-     *  @param lookAt 
+     *  @param lookAt
      *  @return true on success, false on failure
      */
 	public boolean Teleport(long regionHandle, Vector3 position, Vector3 lookAt) throws Exception {
@@ -2767,7 +2767,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Attempt to look up a simulator name and teleport to the discovered destination
-     * 
+     *
      * @param simName Region name to look up
      * @param position Position to teleport to
      * @return True if the lookup and teleport were successful, otherwise
@@ -2778,7 +2778,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Attempt to look up a simulator name and teleport to the discovered destination
-     * 
+     *
      * @param simName Region name to look up
      * @param position Position to teleport to
      * @param lookAt Target to look at
@@ -2811,10 +2811,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Send a teleport lure to another avatar with custom invitation message
-     * 
+     *
      * @param targetID target avatars {@link UUID} to lure
      * @param message custom message to send with invitation
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SendTeleportLure(UUID targetID, String message) throws Exception
     {
@@ -2828,11 +2828,11 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(p);
     }
 
-    /** 
+    /**
      * Acknowledge agent movement complete
-     * 
+     *
      * @param simulator {@link T:OpenMetaverse.Simulator} Object
-     * @throws Exception 
+     * @throws Exception
      */
 	public void CompleteAgentMovement(Simulator simulator) throws Exception
 	{
@@ -2849,15 +2849,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		_Movement.SendUpdate(reliable, simulator);
 	}
-	
-    /** 
+
+    /**
      * Reply to script permissions request
-     * 
+     *
      * @param simulator {@link T:OpenMetaverse.Simulator} Object
      * @param itemID {@link UUID} of the itemID requesting permissions
      * @param taskID {@link UUID} of the taskID requesting permissions
      * @param permissions {@link OpenMetaverse.ScriptPermission} list of permissions to allow
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ScriptQuestionReply(Simulator simulator, UUID itemID, UUID taskID, int permissions) throws Exception
     {
@@ -2871,22 +2871,22 @@ public class AgentManager implements PacketCallback, CapsCallback
         simulator.SendPacket(yes);
     }
 
-    /** 
+    /**
      * Respond to a group invitation by either accepting or denying it
-     * 
+     *
      * @param groupID UUID of the group (sent in the AgentID field of the invite message)
      * @param imSessionID IM Session ID from the group invitation message
      * @param accept Accept the group invitation or deny it
-     * @throws Exception 
+     * @throws Exception
      */
     public final void GroupInviteRespond(UUID groupID, UUID imSessionID, boolean accept) throws Exception
     {
         InstantMessage(getName(), groupID, Helpers.EmptyString, imSessionID, accept ? InstantMessageDialog.GroupInvitationAccept : InstantMessageDialog.GroupInvitationDecline, InstantMessageOnline.Offline, Vector3.Zero, UUID.Zero, Helpers.EmptyBytes);
     }
 
-    /** 
+    /**
      * Requests script detection of objects and avatars
-     * 
+     *
      * @param name name of the object/avatar to search for
      * @param searchID UUID of the object or avatar to search for
      * @param type Type of search from ScriptSensorTypeFlags
@@ -2894,7 +2894,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param arc the arc in radians to search within
      * @param requestID an user generated ID to correlate replies with
      * @param sim Simulator to perform search in
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestScriptSensor(String name, UUID searchID, byte type, float range, float arc, UUID requestID, Simulator simulator) throws Exception
     {
@@ -2914,9 +2914,9 @@ public class AgentManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Create or update profile pick
-     * 
+     *
      * @param pickID UUID of the pick to update, or random UUID to create a new pick
      * @param topPick Is this a top pick? (typically false)
      * @param parcelID UUID of the parcel (UUID.Zero for the current parcel)
@@ -2924,7 +2924,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param globalPosition Global position of the pick landmark
      * @param textureID UUID of the image displayed with the pick
      * @param description Long description of the pick
-     * @throws Exception 
+     * @throws Exception
      */
     public final void PickInfoUpdate(UUID pickID, boolean topPick, UUID parcelID, String name, Vector3d globalPosition, UUID textureID, String description) throws Exception
     {
@@ -2945,9 +2945,9 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(pick);
     }
 
-    /** 
+    /**
      * Delete profile pick
-     * 
+     *
      * @param pickID UUID of the pick to delete
      */
     public final void PickDelete(UUID pickID) throws Exception
@@ -2962,7 +2962,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     /**
      * Create or update profile Classified
-     * 
+     *
      * @param classifiedID UUID of the classified to update, or random UUID to create a new classified
      * @param category Defines what catagory the classified is in
      * @param snapshotID UUID of the image displayed with the classified
@@ -2971,7 +2971,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param name Name of the classified
      * @param desc Long description of the classified
      * @param autoRenew if true, auto renew classified after expiration
-     * @throws Exception 
+     * @throws Exception
      */
     public final void UpdateClassifiedInfo(UUID classifiedID, ClassifiedCategories category, UUID snapshotID, int price, Vector3d position, String name, String desc, boolean autoRenew) throws Exception
     {
@@ -2999,9 +2999,9 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(classified);
     }
 
-    /** 
+    /**
      * Create or update profile Classified
-     * 
+     *
      * @param classifiedID UUID of the classified to update, or random UUID to create a new classified
      * @param category Defines what catagory the classified is in
      * @param snapshotID UUID of the image displayed with the classified
@@ -3009,18 +3009,18 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param name Name of the classified
      * @param desc Long description of the classified
      * @param autoRenew if true, auto renew classified after expiration
-     * @throws Exception 
+     * @throws Exception
      */
     public final void UpdateClassifiedInfo(UUID classifiedID, ClassifiedCategories category, UUID snapshotID, int price, String name, String desc, boolean autoRenew) throws Exception
     {
         UpdateClassifiedInfo(classifiedID, category, snapshotID, price, _Client.Self.getGlobalPosition(), name, desc, autoRenew);
     }
 
-    /** 
+    /**
      * Delete a classified ad
-     * 
+     *
      * @param classifiedID The classified ads ID
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeleteClassfied(UUID classifiedID) throws Exception
     {
@@ -3032,20 +3032,20 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(classified);
     }
 
-    /** 
+    /**
      * Fetches resource usage by agents attachmetns
-     * 
+     *
      * @param callback Called when the requested information is collected
      */
     private class AttachmentResourceReplyHandler implements FutureCallback<OSD>
     {
     	private final Callback<AttachmentResourcesCallbackArgs> callback;
-    	
+
     	public AttachmentResourceReplyHandler(Callback<AttachmentResourcesCallbackArgs> callback)
     	{
     		this.callback = callback;
     	}
-    	
+
     	@Override
 		public void completed(OSD result)
     	{
@@ -3069,7 +3069,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             callback.callback(new AttachmentResourcesCallbackArgs(false, null));
 		}
     }
-    
+
     public final void GetAttachmentResources(final Callback<AttachmentResourcesCallbackArgs> callback) throws IOReactorException
     {
         URI url = _Client.Network.getCapabilityURI("AttachmentResources");
@@ -3085,7 +3085,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      *
      * @param oldName Previous display name</param>
      * @param  newName Desired new display name
-     * @throws IOException 
+     * @throws IOException
      */
     public void SetDisplayName(String oldName, String newName) throws IOException
     {
@@ -3128,7 +3128,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
     }
     // #endregion Misc
-	
+
 	public void UpdateCamera(boolean reliable) throws Exception
 	{
 		AgentUpdatePacket update = new AgentUpdatePacket();
@@ -3174,7 +3174,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			ImprovedInstantMessagePacket im = (ImprovedInstantMessagePacket) packet;
 
 			InstantMessage mess = new InstantMessage();
-			
+
 			mess.FromAgentID = im.AgentData.AgentID;
             mess.FromAgentName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
             mess.ToAgentID = im.MessageBlock.ToAgentID;
@@ -3222,7 +3222,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private void HandleTeleport(Packet packet, Simulator simulator) throws Exception
 	{
 		int flags = 0;
-		TeleportStatus teleportStatus =  TeleportStatus.None; 
+		TeleportStatus teleportStatus =  TeleportStatus.None;
         String teleportMessage = Helpers.EmptyString;
         boolean finished = false;
 
@@ -3247,7 +3247,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             Logger.DebugLog("TeleportProgress received, Message: " + teleportMessage + ", Flags: " + flags, _Client);
 		}
         else if (packet.getType() == PacketType.TeleportFailed)
-        { 
+        {
             TeleportFailedPacket failed = (TeleportFailedPacket)packet;
 
             teleportMessage = Helpers.BytesToString(failed.Info.getReason());
@@ -3317,8 +3317,8 @@ public class AgentManager implements PacketCallback, CapsCallback
             teleportTimeout.set(teleportStatus);
         }
 	}
-	
-    /** 
+
+    /**
      * Process TeleportFailed message sent via EventQueue, informs agent its last teleport has failed and why.
      */
 	private void HandleTeleportFailed(IMessage message, Simulator simulator)
@@ -3330,7 +3330,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	private void HandleTeleportFinish(IMessage message, Simulator simulator) throws Exception
 	{
-		TeleportStatus teleportStatus =  TeleportStatus.None; 
+		TeleportStatus teleportStatus =  TeleportStatus.None;
         String teleportMessage = Helpers.EmptyString;
 		TeleportFinishMessage msg = (TeleportFinishMessage)message;
 
@@ -3356,10 +3356,10 @@ public class AgentManager implements PacketCallback, CapsCallback
         OnTeleport.dispatch(new TeleportCallbackArgs(teleportMessage, teleportStatus, msg.Flags));
         teleportTimeout.set(teleportStatus);
 	}
-	
+
     /**
      * Process an incoming packet and raise the appropriate events
-     * @throws Exception 
+     * @throws Exception
      */
     private void HandleMoneyBalanceReply(Packet packet, Simulator simulator) throws Exception
     {
@@ -3492,7 +3492,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         public static final int AGENT_CONTROL_TURN_LEFT = 0x1 << CONTROL_TURN_LEFT_INDEX;
         //
         public static final int AGENT_CONTROL_TURN_RIGHT = 0x1 << CONTROL_TURN_RIGHT_INDEX;
-        // Set when the avatar is idled or set to away. Note that the away animation is 
+        // Set when the avatar is idled or set to away. Note that the away animation is
         // activated separately from setting this flag
         public static final int AGENT_CONTROL_AWAY = 0x1 << CONTROL_AWAY_INDEX;
         //
@@ -3503,12 +3503,12 @@ public class AgentManager implements PacketCallback, CapsCallback
         public static final int AGENT_CONTROL_ML_LBUTTON_DOWN = 0x1 << CONTROL_ML_LBUTTON_DOWN_INDEX;
         //
         public static final int AGENT_CONTROL_ML_LBUTTON_UP = 0x1 << CONTROL_ML_LBUTTON_UP_INDEX;
-        
+
         public static int setValue(int value)
         {
         	return value;
         }
-        
+
         public static int getValue(int value)
         {
         	return value;
@@ -3516,11 +3516,11 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /* Agent movement and camera control
-     * 
+     *
      * Agent movement is controlled by setting specific {@link T:AgentManager.ControlFlags}
      * After the control flags are set, An AgentUpdate is required to update the simulator of the specified flags
      * This is most easily accomplished by setting one or more of the AgentMovement properties
-     * 
+     *
      * Movement of an avatar is always based on a compass direction, for example AtPos will move the
      * agent from West to East or forward on the X Axis, AtNeg will of course move agent from
      * East to West or backward on the X Axis, LeftPos will be South to North or forward on the Y Axis
@@ -3952,7 +3952,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                 }
             }
         }
-        
+
         public void ResetTimer()
         {
             CleanupTimer();
@@ -3963,10 +3963,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
         /**
          * Send an AgentUpdate with the camera set at the current agent
-         * 
+         *
          * @param heading Camera rotation in radians
          * @param reliable Whether to send the AgentUpdate reliable or not
-         * @throws Exception 
+         * @throws Exception
          */
         public final void UpdateFromHeading(double heading, boolean reliable) throws Exception
         {
@@ -3983,9 +3983,9 @@ public class AgentManager implements PacketCallback, CapsCallback
         /**
          * Rotates the avatar body and camera toward a target position.
          * This will also anchor the camera position on the avatar
-         *  
+         *
          * @param target Region coordinates to turn toward
-         * @throws Exception 
+         * @throws Exception
          */
         public final boolean TurnToward(Vector3 target) throws Exception
         {
@@ -4024,10 +4024,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
         /**
          * Send new AgentUpdate packet to update our current camera position and rotation
-         * 
+         *
          * @param reliable Whether to require server acknowledgement of this packet
          * @param simulator Simulator to send the update to
-         * @throws Exception 
+         * @throws Exception
          */
         private boolean disableUpdate = true;
         public final void SendUpdate(boolean reliable, Simulator simulator) throws Exception
@@ -4110,7 +4110,7 @@ public class AgentManager implements PacketCallback, CapsCallback
          * @param flags
          * @param state
          * @param reliable
-         * @throws Exception 
+         * @throws Exception
          */
         public final void SendManualUpdate(int controlFlags, Vector3 position, Vector3 forwardAxis, Vector3 leftAxis, Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags, byte state, boolean reliable) throws Exception
         {
@@ -4168,7 +4168,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      	/* Camera controls for the agent, mostly a thin wrapper around
     	 * CoordinateFrame. This class is only responsible for state
     	 * tracking and math, it does not send any packets
-    	 */ 
+    	 */
     	public class AgentCamera
     	{
     		public float Far;

@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.primitives;
 
 import java.io.ByteArrayOutputStream;
@@ -61,12 +61,12 @@ public class TextureEntry
         Stucco,
         Suction,
         Weave;
-        
+
         public static Bumpiness setValue(int value)
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -90,12 +90,12 @@ public class TextureEntry
         	}
         	return None;
         }
-        
+
         public byte getValue()
         {
         	return _value;
         }
-        
+
         private final byte _value;
         private Shininess(int value) {
             this._value = (byte)value;
@@ -122,7 +122,7 @@ public class TextureEntry
         {
         	return _value;
         }
-        
+
         private final byte _value;
         private MappingType(int value) {
             this._value = (byte)value;
@@ -150,12 +150,12 @@ public class TextureEntry
         {
         	return value & _mask;
         }
- 
+
         public static int getValue(int value)
         {
         	return value & _mask;
         }
-        
+
         private static int _mask = All;
     }
 
@@ -189,7 +189,7 @@ public class TextureEntry
         {
         	return (byte)(value & _mask);
         }
-        
+
         private static byte _mask = 0x7F;
     }
     // #endregion Enums
@@ -234,7 +234,7 @@ public class TextureEntry
                 return material;
             return defaultTexture.material;
         }
-       
+
         public void setMaterial(byte value)
         {
                 material = value;
@@ -454,7 +454,7 @@ public class TextureEntry
         	this(defaultText);
         	fromOSD(osd, faceNumber);
         }
-        
+
         public OSD Serialize(int faceNumber)
         {
             OSDMap tex = new OSDMap(10);
@@ -508,7 +508,7 @@ public class TextureEntry
         public int hashCode()
         {
             return getRGBA().hashCode() ^ (int)getRepeatU() ^ (int)getRepeatV() ^ (int)getOffsetU() ^ (int)getOffsetV() ^ (int)getRotation() ^
-                   (int)getGlow() ^ getBump().getValue() ^ getShiny().getValue() ^ (getFullbright() ? 1 : 0) ^ (getMediaFlags() ?  1 : 0) ^ 
+                   (int)getGlow() ^ getBump().getValue() ^ getShiny().getValue() ^ (getFullbright() ? 1 : 0) ^ (getMediaFlags() ?  1 : 0) ^
                    getTexMapType().getValue() ^ getTextureID().hashCode();
         }
 
@@ -620,7 +620,7 @@ public class TextureEntry
             if (osd instanceof OSDMap)
             {
             	OSDMap map = (OSDMap)osd;
-            	
+
                 Face = map.get("face").AsUInteger();
                 Flags = TextureAnimMode.setValue(map.get("flags").AsUInteger());
                 Length = (float)map.get("length").AsReal();
@@ -638,7 +638,7 @@ public class TextureEntry
 
     /**
      * Represents all of the texturable faces for an object
-     * 
+     *
      * Grid objects have infinite faces, with each face using the properties of the default face unless
      * set otherwise. So if you have a TextureEntry with a default texture uuid of X, and face 18 has
      * a texture UUID of Y, every face would be textured with X except for face 18 that uses Y. In
@@ -652,7 +652,7 @@ public class TextureEntry
 
     /**
      * Constructor that takes a default texture UUID
-     * 
+     *
      * @param defaultTextureID Texture UUID to use as the default texture
      */
     public TextureEntry(UUID defaultTextureID)
@@ -663,7 +663,7 @@ public class TextureEntry
 
     /**
      * Constructor that takes a <code>TextureEntryFace</code> for the default face
-     * 
+     *
      * @param defaultFace Face to use as the default face
      */
     public TextureEntry(TextureEntryFace defaultFace)
@@ -686,7 +686,7 @@ public class TextureEntry
 
     /**
      * Constructor that takes a <code>TextureEntry</code> for the default face
-     * 
+     *
      * @param texture Texture to copy
      */
     public TextureEntry(TextureEntry texture)
@@ -721,8 +721,8 @@ public class TextureEntry
      * @param data Byte array containing the TextureEntry field
      * @param pos Starting position of the TextureEntry field in the byte array
      * @param length Length of the TextureEntry field, in bytes
-     * @throws Exception 
-     */  
+     * @throws Exception
+     */
     public TextureEntry(byte[] data, int pos, int length)
     {
     	FromBytes(data, pos, length);
@@ -736,10 +736,10 @@ public class TextureEntry
     /**
      * This will either create a new face if a custom face for the given index is not defined,
      * or return the custom face for that index if it already exists
-     * 
+     *
      * @param index The index number of the face to create or retrieve
      * @return A TextureEntryFace containing all the properties for that
-     * @throws Exception 
+     * @throws Exception
      */
     public TextureEntryFace CreateFace(int index)
     {
@@ -793,7 +793,7 @@ public class TextureEntry
                 RefObject<Integer> numref = new RefObject<Integer>(0);
                 OSDMap faceSD = (OSDMap)array.get(0);
                 defaultTexture = new TextureEntryFace(faceSD, null, numref);
- 
+
                 for (int i = 1; i < array.size(); i++)
                 {
                     TextureEntryFace tex = new TextureEntryFace(array.get(i), defaultTexture, numref);
@@ -807,7 +807,7 @@ public class TextureEntry
     private void FromBytes(byte[] data, int pos, int length)
     {
     	Values off = new Values();
-    	
+
         if (length < 16 + pos)
         {
             // No TextureEntry to process
@@ -975,7 +975,7 @@ public class TextureEntry
             return Helpers.EmptyBytes;
 
         ByteArrayOutputStream memStream = new ByteArrayOutputStream();
-        
+
         // #region Bitfield Setup
 
         int[] textures = new int[faceTextures.length];

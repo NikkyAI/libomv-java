@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.lang.reflect.Field;
@@ -97,7 +97,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	// [Flags]
     public static class ObjectReturnType
     {
-        // 
+        //
         public static final byte None = 0;
         // Return objects owned by parcel owner
         public static final byte Owner = 1 << 1;
@@ -109,33 +109,33 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public static final byte List = 1 << 4;
         // Return objects that are marked for-sale
         public static final byte Sell = 1 << 5;
-        
+
         public static byte setValue(int value)
         {
         	return (byte)(value & _mask);
         }
- 
+
         public static int getValue(byte value)
         {
         	return value & _mask;
         }
-        
+
         private static final byte _mask = 0x1F;
     }
 
     /** Blacklist/Whitelist flags used in parcels Access List */
-    public enum ParcelAccessFlags 
+    public enum ParcelAccessFlags
     {
         // Agent is denied access
         NoAccess,
         // Agent is granted access
         Access;
- 
+
         public static ParcelAccessFlags setValue(int value)
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -143,7 +143,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     }
 
     /** The result of a request for parcel properties */
-    public enum ParcelResult 
+    public enum ParcelResult
     {
         // No matches were found for the request
         NoData(-1),
@@ -161,12 +161,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         	}
         	return NoData;
         }
-        
+
         public byte getValue()
         {
         	return _value;
         }
-        
+
 		private byte _value;
         private ParcelResult(int value)
         {
@@ -192,17 +192,17 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
         	return (byte)(value & _mask);
         }
- 
+
         public static int getValue(byte value)
         {
         	return value & _mask;
         }
-        
+
         private static final byte _mask = 0x3;
     }
 
     /** Sequence ID in ParcelPropertiesReply packets (sent when avatar tries to cross a parcel border) */
-    public enum ParcelPropertiesStatus 
+    public enum ParcelPropertiesStatus
     {
     	None(0),
         // Parcel is currently selected
@@ -225,12 +225,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         	}
         	return None;
         }
-        
+
         public int getValue()
         {
         	return _value;
         }
-        
+
 		private int _value;
         ParcelPropertiesStatus(int value)
         {
@@ -239,7 +239,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     }
 
     /** The tool to use when modifying terrain levels */
-    public enum TerraformAction 
+    public enum TerraformAction
     {
         // Level the terrain
         Level,
@@ -258,7 +258,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -280,17 +280,17 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
         	return (byte)(value & _mask);
         }
- 
+
         public static int getValue(byte value)
         {
         	return value & _mask;
         }
-        
+
         private static final byte _mask = 0x7;
     }
 
     /** Reasons agent is denied access to a parcel on the simulator */
-    public enum AccessDeniedReason 
+    public enum AccessDeniedReason
     {
         // Agent is not denied, access is granted
         NotDenied,
@@ -309,7 +309,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -317,16 +317,16 @@ public class ParcelManager implements PacketCallback, CapsCallback
     }
 
     /**
-     * Parcel overlay type. This is used primarily for highlighting and coloring 
+     * Parcel overlay type. This is used primarily for highlighting and coloring
      * which is why it is a single integer instead of a set of flags
-     *  
+     *
      * These values seem to be poorly thought out. The first three bits represent
      * a single value, not flags. For example Auction (0x05) is not a combination
      * of OwnedByOther (0x01) and ForSale(0x04). However, the BorderWest and BorderSouth
      * values are bit flags that get attached to the value stored in the first three
      * bits. Bits four, five, and six are unused
      */
-    public enum ParcelOverlayType 
+    public enum ParcelOverlayType
     {
         // Public land
         Public(0),
@@ -354,12 +354,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         	}
         	return Public;
         }
-        
+
         public byte getValue()
         {
         	return _value;
         }
-        
+
 		private byte _value;
         private ParcelOverlayType(int value)
         {
@@ -403,7 +403,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public static final int AllowDeedToGroup = 1 << 13;
         // If Deeded, owner contributes required tier to group parcel is deeded to
         public static final int ContributeWithDeed = 1 << 14;
-        // Restrict sounds originating on this parcel to the 
+        // Restrict sounds originating on this parcel to the
         // parcel boundaries
         public static final int SoundLocal = 1 << 15;
         // Objects on this parcel are sold when the land is purchsaed
@@ -451,12 +451,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
         	return value & _mask;
         }
-        
+
 		private static final int _mask = 0xFFFFFFFF;
     }
 
     /** Parcel ownership status */
-    public enum ParcelStatus 
+    public enum ParcelStatus
     {
         // Placeholder
         None(-1),
@@ -476,12 +476,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         	}
         	return None;
         }
-        
+
         public byte getValue()
         {
         	return _value;
         }
-        
+
 		private byte _value;
         private ParcelStatus(int value)
         {
@@ -490,7 +490,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     }
 
     /** Category parcel is listed in under search */
-    public enum ParcelCategory 
+    public enum ParcelCategory
     {
         // No assigned category
         None(0),
@@ -532,12 +532,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         	}
         	return None;
         }
-        
+
         public byte getValue()
         {
         	return _value;
         }
-        
+
 		private byte _value;
         private ParcelCategory(int value)
         {
@@ -546,7 +546,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     }
 
     /** Type of teleport landing for a parcel */
-    public enum LandingTypeEnum 
+    public enum LandingTypeEnum
     {
         // Unset, simulator default
         None,
@@ -554,12 +554,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         LandingPoint,
         // No landing point set, direct teleports enabled for this parcel
         Direct;
- 
+
         public static LandingTypeEnum setValue(int value)
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -567,7 +567,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     }
 
     /** Parcel Media Command used in ParcelMediaCommandMessage */
-    public enum ParcelMediaCommand 
+    public enum ParcelMediaCommand
     {
         // Stop the media stream and go back to the first frame
         Stop,
@@ -595,7 +595,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         // (NOT to be confused with the "align" function in the textures view of the editor!)
         // Takes TRUE or FALSE as parameter.
         AutoAlign,
-        // Allows a Web page or image to be placed on a prim (1.19.1 RC0 and later only). 
+        // Allows a Web page or image to be placed on a prim (1.19.1 RC0 and later only).
         // Use "text/html" for HTML.
         Type,
         // Resizes a Web page to fit on x, y pixels (1.19.1 RC0 and later only).
@@ -608,7 +608,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -620,7 +620,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
  // Parcel information retrieved from a simulator
     public class Parcel
     {
-        // The total number of contiguous 4x4 meter blocks your agent owns within this parcel        
+        // The total number of contiguous 4x4 meter blocks your agent owns within this parcel
         public int SelfCount;
         // The total number of contiguous 4x4 meter blocks contained in this parcel owned by a group or agent other than your own
         public int OtherCount;
@@ -632,7 +632,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public UUID OwnerID;
         // Whether the land is deeded to a group or not
         public boolean IsGroupOwned;
-        // 
+        //
         public int AuctionID;
         // Date land was claimed
         public Date ClaimDate;
@@ -646,12 +646,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         // Maximum corner of the axis-aligned bounding box for this
         //Tangible_doc_comment_body parcel
         public Vector3 AABBMax;
-        // Bitmap describing land layout in 4x4m squares across the 
+        // Bitmap describing land layout in 4x4m squares across the
         //Tangible_doc_comment_body entire region
         public byte[] Bitmap;
         // Total parcel land area
         public int Area;
-        // 
+        //
         public ParcelStatus Status;
         // Maximum primitives across the entire simulator owned by the same agent or group that owns this parcel that can be used
         public int SimWideMaxPrims;
@@ -665,7 +665,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         // For group-owned parcels this indicates the total number of prims deeded to the group,
         // for parcels owned by an individual this inicates the number of prims owned by the individual
         public int OwnerPrims;
-        // Total number of primitives owned by the parcel group on this parcel, 
+        // Total number of primitives owned by the parcel group on this parcel,
         // or for parcels owned by an individual with a group set the total number of prims set to that group.
         public int GroupPrims;
         // Total number of prims owned by other avatars that are not set to group, or not the parcel owner
@@ -675,7 +675,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public float ParcelPrimBonus;
         // Autoreturn value in minutes for others' objects
         public int OtherCleanTime;
-        // 
+        //
         public int Flags;
         // Sale price of the parcel, only useful if ForSale is set
         // The SalePrice will remain the same after an ownership transfer (sale), so it can be used to
@@ -687,13 +687,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public String Desc;
         // URL For Music Stream
         public String MusicURL;
-        // 
+        //
         public UUID GroupID;
         // Price for a temporary pass
         public int PassPrice;
         // How long is pass valid for
         public float PassHours;
-        // 
+        //
         public ParcelCategory Category;
         // Key of authorized buyer
         public UUID AuthBuyerID;
@@ -705,11 +705,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         public Vector3 UserLookAt;
         // The type of landing enforced from the <see cref="LandingType"/> enum
         public LandingTypeEnum Landing;
-        // 
+        //
         public float Dwell;
-        // 
+        //
         public boolean RegionDenyAnonymous;
-        // 
+        //
         public boolean RegionPushOverride;
         // Access list of who is whitelisted on this
         //Tangible_doc_comment_body parcel
@@ -747,7 +747,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             }
             return result;
         }
-        
+
         /**
          * Default constructor
          *
@@ -766,13 +766,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
             Media = new ParcelMedia();
         }
 
-        /** 
+        /**
          * Update the simulator with any local changes to this Parcel object
-         * 
+         *
          * @param simulator Simulator to send updates to
          * @param wantReply Whether we want the simulator to confirm
          * the update with a reply packet or not
-         * @throws Exception 
+         * @throws Exception
          */
         public final void Update(Simulator simulator, boolean wantReply) throws Exception
         {
@@ -849,9 +849,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
         /**
          * Set Autoreturn time
-         * 
+         *
          * @param simulator Simulator to send the update to
-         * @throws Exception 
+         * @throws Exception
          */
         public final void UpdateOtherCleanTime(Simulator simulator) throws Exception
         {
@@ -864,7 +864,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
             simulator.SendPacket(request);
         }
     }
-    
+
     // Some information about a parcel of land returned from a DirectoryManager search
     public final class ParcelInfo
     {
@@ -972,7 +972,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
         /**
          * Construct a new instance of the ParcelDwellReplyCallbackArgs class
-         * 
+         *
          * @param parcelID The global ID of the parcel
          * @param localID The simulator specific ID of the parcel
          * @param dwell The calculated dwell for the parcel
@@ -984,10 +984,10 @@ public class ParcelManager implements PacketCallback, CapsCallback
             this.m_Dwell = dwell;
         }
     }
-    
+
     public CallbackHandler<ParcelDwellReplyCallbackArgs> OnParcelDwellReply = new CallbackHandler<ParcelDwellReplyCallbackArgs>();
 
-    
+
     // Contains basic parcel information data returned from the simulator in response to an <see cref="RequestParcelInfo"/> request
     public class ParcelInfoReplyCallbackArgs implements CallbackArgs
     {
@@ -999,9 +999,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
             return m_Parcel;
         }
 
-        /** 
+        /**
          * Construct a new instance of the ParcelInfoReplyCallbackArgs class
-         * 
+         *
          * @param parcel The <see cref="ParcelInfo"/> object containing basic parcel info
          */
         public ParcelInfoReplyCallbackArgs(ParcelInfo parcel)
@@ -1012,7 +1012,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ParcelInfoReplyCallbackArgs> OnParcelInfoReply = new CallbackHandler<ParcelInfoReplyCallbackArgs>();
 
-    
+
     // Contains basic parcel information data returned from the simulator in response to an <see cref="RequestParcelInfo"/> request
     public class ParcelPropertiesCallbackArgs implements CallbackArgs
     {
@@ -1054,13 +1054,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
             return m_SnapSelection;
         }
 
-        /** 
+        /**
          * Construct a new instance of the ParcelPropertiesCallbackArgs class
-         * 
+         *
          * @param simulator The <see cref="Parcel"/> object containing the details
          * @param parcel The <see cref="Parcel"/> object containing the details
          * @param result The result of the request
-         * @param selectedPrims The number of primitieves your agent is 
+         * @param selectedPrims The number of primitieves your agent is
          * currently selecting and or sitting on in this parcel
          * @param sequenceID The user assigned ID used to correlate a request with
          * these results
@@ -1079,7 +1079,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ParcelPropertiesCallbackArgs> OnParcelProperties = new CallbackHandler<ParcelPropertiesCallbackArgs>();
 
-    
+
     // Contains blacklist and whitelist data returned from the simulator in response to an <see cref="RequestParcelAccesslist"/> request
     public class ParcelAccessListReplyCallbackArgs implements CallbackArgs
     {
@@ -1115,9 +1115,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
             return m_AccessList;
         }
 
-        /** 
+        /**
          * Construct a new instance of the ParcelAccessListReplyCallbackArgs class
-         * 
+         *
          * @param simulator The simulator the parcel is located in
          * @param sequenceID The user assigned ID used to correlate a request with
          * these results
@@ -1137,7 +1137,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ParcelAccessListReplyCallbackArgs> OnParcelAccessListReply = new CallbackHandler<ParcelAccessListReplyCallbackArgs>();
 
-    
+
     // Contains blacklist and whitelist data returned from the simulator in response to an <see cref="RequestParcelAccesslist"/> request
     public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs
     {
@@ -1155,9 +1155,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
             return m_Owners;
         }
 
-        /** 
+        /**
          * Construct a new instance of the ParcelObjectOwnersReplyCallbackArgs class
-         * 
+         *
          * @param simulator The simulator the parcel is located in
          * @param primOwners The list containing prim ownership counts
          */
@@ -1170,7 +1170,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ParcelObjectOwnersReplyCallbackArgs> OnParcelObjectOwnersReply = new CallbackHandler<ParcelObjectOwnersReplyCallbackArgs>();
 
-    
+
     // Contains the data returned when all parcel data has been retrieved from a simulator
     public class SimParcelsDownloadedCallbackArgs implements CallbackArgs
     {
@@ -1194,9 +1194,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
             return m_ParcelMap;
         }
 
-        /** 
+        /**
          * Construct a new instance of the SimParcelsDownloadedCallbackArgs class
-         * 
+         *
          * @param simulator The simulator the parcel data was retrieved from
          * @param simParcels The dictionary containing the parcel data
          * @param is The multidimensional array containing a x,y grid mapped to each 64x64 parcel's LocalID.
@@ -1211,7 +1211,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<SimParcelsDownloadedCallbackArgs> OnSimParcelsDownloaded = new CallbackHandler<SimParcelsDownloadedCallbackArgs>();
 
-    
+
     // Contains the data returned when a <see cref="RequestForceSelectObjects"/> request
     public class ForceSelectObjectsReplyCallbackArgs implements CallbackArgs
     {
@@ -1237,7 +1237,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
         /**
          * Construct a new instance of the ForceSelectObjectsReplyCallbackArgs class
-         * 
+         *
          * @param simulator The simulator the parcel data was retrieved from
          * @param objectIDs The list of primitive IDs
          * @param resetList true if the list is clean and contains the information
@@ -1253,7 +1253,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ForceSelectObjectsReplyCallbackArgs> OnForceSelectObjectsReply = new CallbackHandler<ForceSelectObjectsReplyCallbackArgs>();
 
-    
+
     // Contains data when the media data for a parcel the avatar is on changes
     public class ParcelMediaUpdateReplyCallbackArgs implements CallbackArgs
     {
@@ -1273,7 +1273,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
         /**
          * Construct a new instance of the ParcelMediaUpdateReplyCallbackArgs class
-         * 
+         *
          * @param simulator the simulator the parcel media data was updated in
          * @param media The updated media information
          */
@@ -1286,7 +1286,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     public CallbackHandler<ParcelMediaUpdateReplyCallbackArgs> OnParcelMediaUpdateReply = new CallbackHandler<ParcelMediaUpdateReplyCallbackArgs>();
 
-    
+
     // Contains the media command for a parcel the agent is currently on
     public class ParcelMediaCommandCallbackArgs implements CallbackArgs
     {
@@ -1324,7 +1324,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
         /**
          * Construct a new instance of the ParcelMediaCommandCallbackArgs class
-         * 
+         *
          * @param simulator The simulator the parcel media command was issued in
          * @param sequence
          * @param flags
@@ -1409,11 +1409,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     // #region Public Methods
 
-    /** 
+    /**
      * Request basic information for a single parcel
-     * 
+     *
      * @param parcelID Simulator-local ID of the parcel
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestParcelInfo(UUID parcelID) throws Exception
     {
@@ -1425,14 +1425,14 @@ public class ParcelManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(request);
     }
 
-    /** 
+    /**
      * Request properties of a single parcel
-     * 
+     *
      * @param simulator Simulator containing the parcel
      * @param localID Simulator-local ID of the parcel
-     * @param sequenceID An arbitrary integer that will be returned with the ParcelProperties reply, useful for distinguishing 
+     * @param sequenceID An arbitrary integer that will be returned with the ParcelProperties reply, useful for distinguishing
      * 				between multiple simultaneous requests
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestParcelProperties(Simulator simulator, int localID, int sequenceID) throws Exception
     {
@@ -1447,15 +1447,15 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Request the access list for a single parcel
-     * 
+     *
      * @param simulator Simulator containing the parcel
      * @param localID Simulator-local ID of the parcel
-     * @param sequenceID An arbitrary integer that will be returned with the ParcelAccessList reply, useful for distinguishing 
+     * @param sequenceID An arbitrary integer that will be returned with the ParcelAccessList reply, useful for distinguishing
      * 				between multiple simultaneous requests
      * @param flags
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestParcelAccessList(Simulator simulator, int localID, byte flags, int sequenceID) throws Exception
     {
@@ -1470,18 +1470,18 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Request properties of parcels using a bounding box selection
-     * 
+     *
      * @param simulator Simulator containing the parcel
      * @param north Northern boundary of the parcel selection
      * @param east Eastern boundary of the parcel selection
      * @param south Southern boundary of the parcel selection
      * @param west Western boundary of the parcel selection
-     * @param sequenceID An arbitrary integer that will be returned with the ParcelProperties reply, useful for distinguishing 
+     * @param sequenceID An arbitrary integer that will be returned with the ParcelProperties reply, useful for distinguishing
      * 				between different types of parcel property requests
      * @param snapSelection A boolean that is returned with the ParcelProperties reply, useful for snapping focus to a single parcel
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestParcelProperties(Simulator simulator, float north, float east, float south, float west, int sequenceID, boolean snapSelection) throws Exception
     {
@@ -1499,26 +1499,26 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
-     * Request all simulator parcel properties (used for populating the <code>Simulator.Parcels</code> 
+    /**
+     * Request all simulator parcel properties (used for populating the <code>Simulator.Parcels</code>
      * dictionary)
-     * 
+     *
      * @param simulator Simulator to request parcels from (must be connected)
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestAllSimParcels(Simulator simulator) throws Exception
     {
         RequestAllSimParcels(simulator, false, 750);
     }
 
-    /** 
-     * Request all simulator parcel properties (used for populating the <code>Simulator.Parcels</code> 
+    /**
+     * Request all simulator parcel properties (used for populating the <code>Simulator.Parcels</code>
      * dictionary)
-     * 
+     *
      * @param simulator Simulator to request parcels from (must be connected)
      * @param refresh If TRUE, will force a full refresh
      * @param msDelay Number of milliseconds to pause in between each request
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestAllSimParcels(final Simulator simulator, boolean refresh, final int msDelay) throws Exception
     {
@@ -1575,12 +1575,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         thread.start();
     }
 
-    /** 
+    /**
      * Request the dwell value for a parcel
-     * 
+     *
      * @param simulator Simulator containing the parcel
      * @param localID Simulator-local ID of the parcel
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestDwell(Simulator simulator, int localID) throws Exception
     {
@@ -1593,9 +1593,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Send a request to Purchase a parcel of land
-     * 
+     *
      * @param simulator The Simulator the parcel is located in
      * @param localID The parcels region specific local ID
      * @param forGroup true if this parcel is being purchased by a group
@@ -1603,7 +1603,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
      * @param removeContribution true to remove tier contribution if purchase is successful
      * @param parcelArea The parcels size
      * @param parcelPrice The purchase price of the parcel
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Buy(Simulator simulator, int localID, boolean forGroup, UUID groupID, boolean removeContribution,
     		              int parcelArea, int parcelPrice) throws Exception
@@ -1625,12 +1625,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Reclaim a parcel of land
-     * 
+     *
      * @param simulator The simulator the parcel is in
      * @param localID The parcels region specific local ID
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Reclaim(Simulator simulator, int localID) throws Exception
     {
@@ -1643,13 +1643,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Deed a parcel to a group
-     * 
+     *
      * @param simulator The simulator the parcel is in
      * @param localID The parcels region specific local ID
      * @param groupID The groups {@link T:OpenMetaverse.UUID}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeedToGroup(Simulator simulator, int localID, UUID groupID) throws Exception
     {
@@ -1663,12 +1663,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Request prim owners of a parcel of land.
-     * 
+     *
      * @param simulator Simulator parcel is in
      * @param localID The parcels region specific local ID
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestObjectOwners(Simulator simulator, int localID) throws Exception
     {
@@ -1681,14 +1681,14 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Return objects from a parcel
-     * 
+     *
      * @param simulator Simulator parcel is in
      * @param localID The parcels region specific local ID
      * @param type the type of objects to return, {@link T:OpenMetaverse.ObjectReturnType}
      * @param ownerIDs A list containing object owners {@link OpenMetaverse.UUID} s to return
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ReturnObjects(Simulator simulator, int localID, byte type, UUID[] ownerIDs) throws Exception
     {
@@ -1723,15 +1723,15 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(request);
     }
 
-    /** 
+    /**
      * Subdivide (split) a parcel
-     * 
+     *
      * @param simulator
      * @param west
      * @param south
      * @param east
      * @param north
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ParcelSubdivide(Simulator simulator, float west, float south, float east, float north) throws Exception
     {
@@ -1746,15 +1746,15 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(divide);
     }
 
-    /** 
+    /**
      * Join two parcels of land creating a single parcel
-     * 
+     *
      * @param simulator
      * @param west
      * @param south
      * @param east
      * @param north
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ParcelJoin(Simulator simulator, float west, float south, float east, float north) throws Exception
     {
@@ -1769,9 +1769,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(join);
     }
 
-    /** 
+    /**
      * Get a parcels LocalID
-     * 
+     *
      * @param simulator Simulator parcel is in
      * @param position Vector3 position in simulator (Z not used)
      * @return 0 on failure, or parcel LocalID on success.
@@ -1790,26 +1790,26 @@ public class ParcelManager implements PacketCallback, CapsCallback
         return 0;
     }
 
-    /** 
+    /**
      * Terraform (raise, lower, etc) an area or whole parcel of land
-     * 
+     *
      * @param simulator Simulator land area is in.
      * @param localID LocalID of parcel, or -1 if using bounding box
      * @param action From Enum, Raise, Lower, Level, Smooth, Etc.
      * @param brushSize Size of area to modify
      * @return true on successful request sent.
-     * Settings.STORE_LAND_PATCHES must be true, 
+     * Settings.STORE_LAND_PATCHES must be true,
      * Parcel information must be downloaded using <code>RequestAllSimParcels()</code>
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Terraform(Simulator simulator, int localID, TerraformAction action, byte brushSize) throws Exception
     {
         return Terraform(simulator, localID, 0f, 0f, 0f, 0f, action, brushSize, 1);
     }
 
-    /** 
+    /**
      * Terraform (raise, lower, etc) an area or whole parcel of land
-     * 
+     *
      * @param simulator Simulator land area is in.
      * @param west west border of area to modify
      * @param south south border of area to modify
@@ -1818,18 +1818,18 @@ public class ParcelManager implements PacketCallback, CapsCallback
      * @param action From Enum, Raise, Lower, Level, Smooth, Etc.
      * @param brushSize Size of area to modify
      * @return true on successful request sent.
-     * Settings.STORE_LAND_PATCHES must be true, 
+     * Settings.STORE_LAND_PATCHES must be true,
      * Parcel information must be downloaded using <code>RequestAllSimParcels()</code>
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Terraform(Simulator simulator, float west, float south, float east, float north, TerraformAction action, byte brushSize) throws Exception
     {
         return Terraform(simulator, -1, west, south, east, north, action, brushSize, 1);
     }
 
-    /** 
+    /**
      * Terraform (raise, lower, etc) an area or whole parcel of land
-     * 
+     *
      * @param simulator Simulator land area is in.
      * @param localID LocalID of parcel, or -1 if using bounding box
      * @param west west border of area to modify
@@ -1840,9 +1840,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
      * @param brushSize Size of area to modify
      * @param seconds How many meters + or - to lower, 1 = 1 meter
      * @return true on successful request sent.
-     * Settings.STORE_LAND_PATCHES must be true, 
+     * Settings.STORE_LAND_PATCHES must be true,
      * Parcel information must be downloaded using <code>RequestAllSimParcels()</code>
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Terraform(Simulator simulator, int localID, float west, float south, float east, float north, TerraformAction action, byte brushSize, int seconds) throws Exception
     {
@@ -1876,9 +1876,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         return true;
     }
 
-    /** 
+    /**
      * Terraform (raise, lower, etc) an area or whole parcel of land
-     * 
+     *
      * @param simulator Simulator land area is in.
      * @param localID LocalID of parcel, or -1 if using bounding box
      * @param west west border of area to modify
@@ -1889,7 +1889,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
      * @param brushSize Size of area to modify
      * @param seconds How many meters + or - to lower, 1 = 1 meter
      * @param height Height at which the terraform operation is acting at
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Terraform(Simulator simulator, int localID, float west, float south, float east, float north, TerraformAction action, byte brushSize, int seconds, float height) throws Exception
     {
@@ -1917,12 +1917,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(land);
     }
 
-    /** 
+    /**
      * Sends a request to the simulator to return a list of objects owned by specific owners
-     * 
+     *
      * @param localID Simulator local ID of parcel
      * @param selectType Owners, Others, Etc
-     * @param ownerID List containing keys of avatars objects to select; 
+     * @param ownerID List containing keys of avatars objects to select;
      * if List is null will return Objects of type <c>selectType</c>
      * Response data is returned in the event {@link E:OnParcelSelectedObjects}
      */
@@ -1942,9 +1942,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(select);
     }
 
-    /** 
+    /**
      * Eject and optionally ban a user from a parcel
-     * 
+     *
      * @param targetID target key of avatar to eject
      * @param ban true to also ban target
      */
@@ -1965,9 +1965,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(eject);
     }
 
-    /** 
+    /**
      * Freeze or unfreeze an avatar over your land
-     * 
+     *
      * @param targetID target key to freeze
      * @param freeze true to freeze, false to unfreeze
      */
@@ -1989,9 +1989,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(frz);
     }
 
-    /** 
+    /**
      * Abandon a parcel of land
-     * 
+     *
      * @param simulator Simulator parcel is in
      * @param localID Simulator local ID of parcel
      */
@@ -2005,9 +2005,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
         simulator.SendPacket(abandon);
     }
 
-    /** 
+    /**
      * Requests the UUID of the parcel in a remote region at a specified location
-     * 
+     *
      * @param location Location of the parcel in the remote region
      * @param regionHandle Remote region handle
      * @param regionID Remote region UUID
@@ -2044,10 +2044,10 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
     	public void callback(boolean success, LandResourcesInfo info);
     }
-    
-    /** 
+
+    /**
      * Retrieves information on resources used by the parcel
-     * 
+     *
      * @param parcelID UUID of the parcel
      * @param getDetails Should per object resource usage be requested
      * @param callback Callback invoked when the request failed or is complete
@@ -2075,13 +2075,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
     {
     	private final LandResourcesInfoCallback callback;
     	private final boolean getDetails;
-    	
+
     	public LandResourcesMessageHandler(boolean getDetails, LandResourcesInfoCallback callback)
     	{
     		this.getDetails = getDetails;
     		this.callback = callback;
     	}
-    	
+
 		@Override
 		public void completed(OSD result)
 		{
@@ -2125,9 +2125,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
             Logger.Log("Failed fetching land resources", LogLevel.Error, _Client, ex);
             callback.callback(false, null);
 		}
-    	
+
     }
-    
+
 	private void ParcelDwellReplyHandler(Packet packet, Simulator simulator)
 	{
 		ParcelDwellReplyPacket dwell = (ParcelDwellReplyPacket) packet;
@@ -2294,7 +2294,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * Raises the <see cref="ParcelAccessListReply"/> event
      */
     protected final void ParcelAccessListReplyHandler(Packet packet, Simulator simulator)
@@ -2361,7 +2361,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * Raises the <see cref="ForceSelectObjectsReply"/> event
      */
     protected final void SelectParcelObjectsReplyHandler(Packet packet, Simulator simulator)
@@ -2381,9 +2381,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * Raises the <see cref="ParcelMediaUpdateReply"/> event
-     * @throws Exception 
+     * @throws Exception
      */
     protected final void ParcelMediaUpdateHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -2431,7 +2431,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * Raises the <see cref="ParcelMediaCommand"/> event
      */
     protected final void ParcelMediaCommandMessagePacketHandler(Packet packet, Simulator simulator)

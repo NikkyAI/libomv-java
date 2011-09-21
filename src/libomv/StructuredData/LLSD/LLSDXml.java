@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2007-2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData.LLSD;
 
 import java.io.ByteArrayInputStream;
@@ -69,7 +69,7 @@ public final class LLSDXml
 	private static final String MAP_TAG = "map";
 	private static final String KEY_TAG = "key";
 	private static final String ARRAY_TAG = "array";
-	
+
 /*	private static String LastXmlErrors = Helpers.EmptyString;
  *	private static Object XmlValidationLock = new Object();
  *
@@ -177,12 +177,12 @@ public final class LLSDXml
 
 	/**
 	 * Parse an OSD XML string and convert it into an hierarchical OSD object
-	 *  
+	 *
 	 * @param string the OSD XML string to parse
 	 * @return hierarchical OSD object
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws OSDException 
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 * @throws OSDException
 	 */
 	public static OSD parse(String string) throws IOException, ParseException
 	{
@@ -200,13 +200,13 @@ public final class LLSDXml
 
 	/**
 	 * Parse an OSD XML byte array and convert it into an hierarchical OSD object
-	 *  
+	 *
 	 * @param data the OSD XML byte array to parse
 	 * @param encoding the text encoding to use when converting the stream to text
 	 * @return hierarchical OSD object
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws OSDException 
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 * @throws OSDException
 	 */
 	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
 	{
@@ -224,12 +224,12 @@ public final class LLSDXml
 
 	/**
 	 * Parse an OSD XML reader and convert it into an hierarchical OSD object
-	 *  
+	 *
 	 * @param reader the OSD XML reader to parse
 	 * @return hierarchical OSD object
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws OSDException 
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 * @throws OSDException
 	 */
 	public static OSD parse(Reader reader) throws IOException, ParseException
 	{
@@ -246,13 +246,13 @@ public final class LLSDXml
 	}
 
 	/** Parse an OSD XML byte stream and convert it into an hierarchical OSD object
-	 *  
+	 *
 	 * @param stream the OSD XML byte stream to parse
 	 * @param encoding the text encoding to use when converting the stream to text
 	 * @return hierarchical OSD object
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws OSDException 
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 * @throws OSDException
 	 */
 	public static OSD parse(InputStream stream, String encoding) throws IOException, ParseException
 	{
@@ -269,10 +269,10 @@ public final class LLSDXml
 	}
 
 	/** Serialize an hierarchical OSD object into an OSD XML string
-	 *  
+	 *
 	 * @param data The hierarchical OSD object
 	 * @return an OSD XML formatted string
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws OSDException
 	 */
 	public static String serializeToString(OSD data) throws IOException
@@ -290,11 +290,11 @@ public final class LLSDXml
 	}
 
 	/** Serialize an hierarchical OSD object into an OSD XML byte array
-	 *  
+	 *
 	 * @param data The hierarchical OSD object
 	 * @param encoding The text encoding to use when converting the text into a byte array
 	 * @return an OSD XML formatted byte array
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws OSDException
 	 */
 	public static byte[] serializeToBytes(OSD data, String encoding) throws IOException
@@ -313,14 +313,14 @@ public final class LLSDXml
 	}
 
 	/** Serialize an hierarchical OSD object into an OSD XML writer
-	 * 
+	 *
 	 * @param writer The writer to format the serialized data into
 	 * @param data The hierarchical OSD object
 	 * @return an OSD XML formatted string
-	 * @throws XmlPullParserException 
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 */
 	public static void serialize(Writer writer, OSD data) throws IOException
 	{
@@ -336,12 +336,12 @@ public final class LLSDXml
 	}
 
 	/** Serialize an hierarchical OSD object into an OSD XML string
-	 *  
+	 *
 	 * @param stream The hierarchical OSD object byte stream
 	 * @param encoding the text encoding to use when converting the text into a byte stream
 	 * @return an OSD XML formatted string
-	 * @throws IOException 
-	 * @throws OSDException 
+	 * @throws IOException
+	 * @throws OSDException
 	 */
 	public static void serialize(OutputStream stream, OSD data, String encoding) throws IOException
 	{
@@ -461,7 +461,7 @@ public final class LLSDXml
 		String s = null, name = parser.getName();
 		boolean notEmpty = !parser.isEmptyElementTag();
 		OSD ret = null;
-		
+
 		if (name.equals(BOOLEAN_TAG))
 		{
 			boolean bool = false;
@@ -640,5 +640,5 @@ public final class LLSDXml
 				return false;
 			}
 		}
-	}	
+	}
 */

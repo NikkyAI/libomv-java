@@ -118,6 +118,7 @@ class XMLRPCSerializer implements IXMLRPCSerializer
 		}
 	}
 
+	@Override
 	public Object deserialize(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, TAG_VALUE);

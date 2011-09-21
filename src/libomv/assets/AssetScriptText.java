@@ -49,9 +49,9 @@ public class AssetScriptText extends AssetItem
     {
     }
 
-    /** 
+    /**
      * Initializes a new AssetScriptText object with parameters
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -60,9 +60,9 @@ public class AssetScriptText extends AssetItem
         super(assetID, assetData);
     }
 
-    /** 
+    /**
      * Initializes a new AssetScriptText object with parameters
-     * 
+     *
      * @param source A string containing the scripts contents
      */
     public AssetScriptText(String source)
@@ -70,9 +70,9 @@ public class AssetScriptText extends AssetItem
         Source = source;
     }
 
-    /** 
+    /**
      * Encode a string containing the scripts contents into byte encoded AssetData
-     * 
+     *
      */
 	@Override
     public void Encode()
@@ -80,9 +80,9 @@ public class AssetScriptText extends AssetItem
         AssetData = Helpers.StringToBytes(Source);
     }
 
-    /** 
+    /**
      * Decode a byte array containing the scripts contents into a string
-     * 
+     *
      * @return true if decoding is successful
      */
 	@Override

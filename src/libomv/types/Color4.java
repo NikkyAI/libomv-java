@@ -25,7 +25,7 @@ package libomv.types;
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 import java.lang.IllegalArgumentException;
 
@@ -66,7 +66,7 @@ import libomv.utils.Helpers;
 		 *  @param g
 		 *  @param b
 		 *  @param a
-		 * 
+		 *
 		 *  @throws IllegalArgumentException if one of the values is outside 0 .. 1.0
 		 */
 		public Color4(float r, float g, float b, float a)
@@ -383,7 +383,7 @@ import libomv.utils.Helpers;
 				fractionalSector = sectorPos - sectorNumber;
 
 				// Calculate values for the three axes
-				// of the color. 
+				// of the color.
 				p = value * (1d - saturation);
 				q = value * (1d - (saturation * fractionalSector));
 				t = value * (1d - (saturation * (1d - fractionalSector)));

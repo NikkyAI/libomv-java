@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData;
 
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	{
 		return value.size();
 	}
-	
+
 	@Override
 	public boolean isEmpty() {
 		return value.size() == 0;
@@ -100,16 +100,18 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	{
 		return false;
 	}
-	
+
+	@Override
 	public final Set<String> keySet()
 	{
 		return value.keySet();
 	}
-	
+
+	@Override
 	public final Collection<OSD> values()
 	{
 		return value.values();
-	}	
+	}
 
 	@Override
 	public boolean containsKey(Object key) {
@@ -121,21 +123,24 @@ public class OSDMap extends OSD implements Map<String, OSD>
 		return value.containsKey(key);
 	}
 
+	@Override
 	public final boolean containsValue(Object osd)
 	{
 		return value.containsValue(osd);
 	}
 
+	@Override
 	public final OSD get(Object key)
 	{
 		return value.get(key);
 	}
-	
+
 	public final OSD get(String key)
 	{
 		return value.get(key);
 	}
-	
+
+	@Override
 	public final OSD put(String key, OSD osd)
 	{
 		return value.put(key, osd);
@@ -146,6 +151,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 		value.put(kvp.getKey(), kvp.getValue());
 	}
 
+	@Override
 	public final OSD remove(Object key)
 	{
 		return value.remove(key);
@@ -156,6 +162,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 		return value.remove(key);
 	}
 
+	@Override
 	public final void clear()
 	{
 		value.clear();
@@ -172,12 +179,12 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	{
 		value.putAll(m);
 	}
-	/** 
+	/**
 	 * Uses reflection to deserialize member variables in an object from this OSDMap
 	 *
 	 * @param obj Reference to an object to fill with deserialized values
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	public Object deserializeMembers(Object obj) throws IllegalArgumentException, IllegalAccessException
 	{
@@ -195,5 +202,5 @@ public class OSDMap extends OSD implements Map<String, OSD>
 			}
 		}
 		return obj;
-	}	
+	}
 }

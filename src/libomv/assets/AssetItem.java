@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import libomv.types.UUID;
@@ -32,7 +32,7 @@ import libomv.types.UUID;
 public abstract class AssetItem
 {
 	/** The different types of grid assets */
-	public enum AssetType 
+	public enum AssetType
 	{
 		/** Unknown asset type */
 		Unknown(-1),
@@ -126,7 +126,7 @@ public abstract class AssetItem
 			}
 			return Unknown;
 		}
-		
+
 		public static AssetType setValue(int value)
 		{
 			for (AssetType e : values())
@@ -136,7 +136,7 @@ public abstract class AssetItem
 			}
 			return Unknown;
 		}
-		
+
 		public byte getValue()
 		{
 			return _value;
@@ -150,7 +150,7 @@ public abstract class AssetItem
 			    return _AssetTypeNames[i];
 			return "unknown";
 		}
-		
+
 		private final byte _value;
         private AssetType(int value) {
             this._value = (byte)value;
@@ -168,7 +168,7 @@ public abstract class AssetItem
     {
         return AssetID;
     }
-    
+
     public void setAssetID(UUID value)
     {
         AssetID = value;
@@ -186,7 +186,7 @@ public abstract class AssetItem
 
     /**
      * Construct a new Asset object
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -197,7 +197,7 @@ public abstract class AssetItem
     }
 
     /**
-     * Regenerates the <code>AssetData</code> byte array from the properties 
+     * Regenerates the <code>AssetData</code> byte array from the properties
      * of the derived class.
      */
     public abstract void Encode();

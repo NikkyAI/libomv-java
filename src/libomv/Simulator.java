@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.IOException;
@@ -138,12 +138,12 @@ public class Simulator extends Thread
         public static final int BlockParcelSearch = 1 << 29;
         /* Deny agents who have not been age verified from entering the region. */
         public static final int DenyAgeUnverified = 1 << 30;
-        
+
         public static int setValue(int value)
         {
         	return value & _mask;
         }
-        
+
         public static int getValue(int value)
         {
         	return value;
@@ -152,7 +152,7 @@ public class Simulator extends Thread
     }
 
     /* Access level for a simulator */
-    public static enum SimAccess 
+    public static enum SimAccess
     {
         /* Minimum access level, no additional checks */
         Min(0),
@@ -168,7 +168,7 @@ public class Simulator extends Thread
         Down(0xFE),
         /* Simulator does not exist */
         NonExistent(0xFF);
-        
+
         public static SimAccess setValue(int value)
         {
         	for (SimAccess e : values())
@@ -178,7 +178,7 @@ public class Simulator extends Thread
         	}
        		return Min;
        	}
-        
+
         public byte getValue()
         {
         	return _value;
@@ -212,12 +212,12 @@ public class Simulator extends Thread
         /* Total number of ping replies sent to this agent by this simulator */
         public long ReceivedPongs;
         /* Incoming bytes per second
-         * 
+         *
          * It would be nice to have this calculated on the fly, but this is far, far easier
          */
         public int IncomingBPS;
         /* Outgoing bytes per second
-         * 
+         *
          * It would be nice to have this claculated on the fly, but this is far, far easier
          */
         public int OutgoingBPS;
@@ -279,12 +279,12 @@ public class Simulator extends Thread
         public int PendingLocalUploads;
         /* Unacknowledged bytes in queue */
         public int UnackedBytes;
-        
+
         public SimStats()
         {
         }
     }
-    
+
     public final class IncomingPacketIDCollection
     {
         private final int[] Items;
@@ -319,19 +319,19 @@ public class Simulator extends Thread
             return false;
         }
     }
-    
+
     private class BoundedLongArray
     {
     	private long[] array;
     	private int index;
     	private int size;
-    	
+
     	public BoundedLongArray(int capacity)
     	{
     		array = new long[capacity];
     		index = size = 0;
     	}
-    	
+
     	public int size()
     	{
     		return size;
@@ -341,7 +341,7 @@ public class Simulator extends Thread
     	{
     		return size >= array.length;
     	}
-    	
+
 /*
      	public long poll()
     	{
@@ -351,10 +351,10 @@ public class Simulator extends Thread
     		}
     		return 0;
     	}
-*/    	
+*/
     	/**
     	 * Offer a new value to put in the queue
-    	 * 
+    	 *
     	 * @param value The value to put in the queue
     	 * @return The previous value that was in the queue at that position
     	 */
@@ -381,7 +381,7 @@ public class Simulator extends Thread
 
     /* The capabilities for this simulator */
     private CapsManager _Caps = null;
-    
+
     private long _Handle;
     public long getHandle() {
 		return _Handle;
@@ -410,7 +410,7 @@ public class Simulator extends Thread
     public final TerrainPatch[] Terrain;
 
     public final Vector2[] WindSpeeds;
-    
+
     // Provides access to an internal thread-safe dictionary containing parcel information found in this simulator
     public HashMap<Integer, Parcel> Parcels = new HashMap<Integer, Parcel>();
 
@@ -454,7 +454,7 @@ public class Simulator extends Thread
 
     /**
      * Checks simulator parcel map to make sure it has downloaded all data successfully
-     * 
+     *
      * @return true if map is full (contains no 0's)
      */
     public final boolean IsParcelMapFull()
@@ -483,7 +483,7 @@ public class Simulator extends Thread
     /*  */
     public String Name = "";
 
-    /* A 64x64 grid of parcel coloring values. The values stored 
+    /* A 64x64 grid of parcel coloring values. The values stored
      * in this array are of the {@link ParcelArrayType} type
      */
     public byte[] ParcelOverlay = new byte[4096];
@@ -536,8 +536,8 @@ public class Simulator extends Thread
     /* The regions Unique ID */
     public UUID RegionID = UUID.Zero;
 
-    
-    
+
+
     /* The physical data center the simulator is located Known values are: Dallas, SF */
     public String ColoLocation;
     /* The CPU Class of the simulator
@@ -584,7 +584,7 @@ public class Simulator extends Thread
     {
     	return ObjectsPrimitives;
     }
-    
+
 	/* Coarse locations of avatars in this simulator */
     private Hashtable<UUID, Vector3> avatarPositions = new Hashtable<UUID, Vector3>();
     public void setAvatarPositions(Hashtable<UUID, Vector3> avatarPositions) {
@@ -653,14 +653,14 @@ public class Simulator extends Thread
 		_DisconnectCandidate = false;
 
         _Handle = handle;
-        
+
 		_Sequence = new AtomicInteger();
         _PauseSerial = new AtomicInteger();
 
         Statistics = new SimStats();
         _InBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
         _OutBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
-        
+
 		// Initialize the dictionary for reliable packets waiting on ACKs from the server
 		_NeedAck = new HashMap<Integer, NetworkManager.OutgoingPacket>();
 
@@ -676,16 +676,16 @@ public class Simulator extends Thread
         else
         {
             Terrain = null;
-            WindSpeeds = null;        
+            WindSpeeds = null;
         }
 	}
 
     /**
      * Attempt to connect to this simulator
-     * 
+     *
      * @param moveToSim Whether to move our agent in to this sim or not
      * @return True if the connection succeeded or connection status is unknown, false if there was a failure
-     * @throws Exception 
+     * @throws Exception
      */
     public final boolean Connect(boolean moveToSim) throws Exception
     {
@@ -820,7 +820,7 @@ public class Simulator extends Thread
         if (_Connected)
         {
             _Connected = false;
-            
+
             // Destroy the timers
             if (_AckTimer != null)
             {
@@ -845,7 +845,7 @@ public class Simulator extends Thread
                 _Caps.Disconnect(true);
                 _Caps = null;
             }
-            
+
 		    if (sendCloseCircuit)
 		    {
 			    // Send the CloseCircuit notice
@@ -897,9 +897,9 @@ public class Simulator extends Thread
         SendPacket(resume);
     }
 
-    /** 
+    /**
      * Retrieve the terrain height at a given coordinate
-     * 
+     *
      * @param x Sim X coordinate, valid range is from 0 to 255
      * @param y Sim Y coordinate, valid range is from 0 to 255
      * @param height The terrain height at the given point if the lookup was successful, otherwise 0.0f
@@ -949,7 +949,7 @@ public class Simulator extends Thread
         SendPacket(ping);
         Statistics.LastPingSent = System.currentTimeMillis();
     }
-    
+
     public URI getCapabilityURI(String capability)
     {
     	if (_Caps != null)
@@ -963,7 +963,7 @@ public class Simulator extends Thread
     	    return _Caps.getIsEventQueueRunning();
     	return false;
     }
-   
+
     private void DebugDumpBuffer(byte[] byteBuffer, int numBytes, String head)
     {
 		Logger.Log(head + numBytes, Logger.LogLevel.Debug, _Client);
@@ -975,9 +975,9 @@ public class Simulator extends Thread
 			dump.append(" ");
 		}
 		Logger.Log(dump, Logger.LogLevel.Debug, _Client);
-	
+
     }
-    
+
 	@Override
 	public void run()
 	{
@@ -1017,7 +1017,7 @@ public class Simulator extends Thread
 						{
 							DebugDumpBuffer(byteBuffer, numBytes, "<=============== Received packet length = ");
 						}
-						
+
 						if ((byteBuffer[0] & Helpers.MSG_ZEROCODED) != 0)
 						{
 							int bodylen = numBytes;
@@ -1049,12 +1049,12 @@ public class Simulator extends Thread
 					}
 					catch (BufferUnderflowException ex)
 					{
-						DebugDumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet length = "); 						
+						DebugDumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet length = ");
 					}
 				}
 	            Statistics.RecvBytes += numBytes;
 	            Statistics.RecvPackets++;
-	            
+
 	            if (packet == null)
 	            	return;
 
@@ -1209,10 +1209,10 @@ public class Simulator extends Thread
 		   // Stats tracking
 		   Statistics.SentBytes += data.capacity();
 		   Statistics.SentPackets++;
-		   
+
 //         _Client.Statistics.Update(type.ToString(), OpenMetaverse.Statistics.Type.Packet, data.capacity(), 0);
         }
-    }	
+    }
 
 	/* Sends out pending acknowledgements */
     private void SendPendingAcks()
@@ -1317,7 +1317,7 @@ public class Simulator extends Thread
         int dataLength = buffer.limit();
 
         // Keep appending ACKs until there is no room left in the packet or there are no more ACKs to append
-        int ackCount = 0; 
+        int ackCount = 0;
         while (dataLength + 5 < buffer.capacity() && !_PendingAcks.isEmpty())
         {
         	dataLength += Helpers.UInt32ToBytesB(_PendingAcks.poll(), bytes, dataLength);
@@ -1395,7 +1395,7 @@ public class Simulator extends Thread
                 Statistics.IncomingBPS = (int)(recv - old_in) / _InBytes.size();
                 Statistics.OutgoingBPS = (int)(sent - old_out) / _OutBytes.size();
                 Logger.Log("Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS + " bps, Lag: " + Statistics.LastLag +
-                           " ms, Pings: " + Statistics.ReceivedPongs + "/" + Statistics.SentPings, LogLevel.Debug, _Client); 
+                           " ms, Pings: " + Statistics.ReceivedPongs + "/" + Statistics.SentPings, LogLevel.Debug, _Client);
             }
     	}
     }
@@ -1416,13 +1416,13 @@ public class Simulator extends Thread
             Statistics.SentPings++;
     	}
     }
-    
+
 	/**
 	 * Decode a zerocoded byte array, used to decompress packets marked with the zerocoded flag
 	 * Any time a zero is encountered, the next byte is a count of how many zeroes to expand.
 	 * One zero is encoded with 0x00 0x01, two zeroes is 0x00 0x02, three zeroes is 0x00 0x03,
 	 * etc. The first six bytes puls and extra bytes are copied directly to the output buffer.
-	 * 
+	 *
 	 * @param src The byte array to decode
 	 * @param srclen The length of the byte array to decode
 	 * @param dest The output byte array to decode to
@@ -1432,7 +1432,7 @@ public class Simulator extends Thread
 	private static int ZeroDecode(byte[] src, int srclen, int bodylen, byte[] dest) throws Exception
 	{
 		int i, zerolen = 6 + src[5];
-		
+
 		/* Copy the first 6 + extra header bytes as they are never compressed */
 		System.arraycopy(src, 0, dest, 0, zerolen);
 		for (i = zerolen; i < bodylen; i++)

@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import libomv.types.UUID;
@@ -47,7 +47,7 @@ public class AssetClothing extends AssetWearable
 
     /**
      * Initializes a new instance of an AssetScriptBinary object with parameters
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -58,7 +58,7 @@ public class AssetClothing extends AssetWearable
 
     /**
      * Initializes a new instance of an AssetScriptBinary object with parameters
-     * 
+     *
      * @param source A string containing the Clothings data
      */
     public AssetClothing(String source)

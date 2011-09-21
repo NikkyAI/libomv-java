@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ import libomv.utils.TimeoutEvent;
 
 public class TexturePipeline implements PacketCallback
 {
-    // The current status of a texture request as it moves through the pipeline or final result of a texture request. 
+    // The current status of a texture request as it moves through the pipeline or final result of a texture request.
     public enum TextureRequestState
     {
         // The initial state given to a request. Requests in this state are waiting for an available slot in the pipeline
@@ -85,9 +85,9 @@ public class TexturePipeline implements PacketCallback
     }
 
     /**
-     * A callback fired to indicate the status or final state of the requested texture. For progressive 
+     * A callback fired to indicate the status or final state of the requested texture. For progressive
      * downloads this will fire each time new asset data is returned from the simulator.
-     * 
+     *
      * @param state The <see cref="TextureRequestState"/> indicating either Progress for textures not fully downloaded,
      * or the final result of the request after it has been processed through the TexturePipeline
      * @param assetTexture The <see cref="AssetTexture"/> object containing the Assets ID, raw data
@@ -99,16 +99,16 @@ public class TexturePipeline implements PacketCallback
     {
     	public void callback(TextureRequestState state, AssetTexture assetTexture);
     }
-    
-    /** 
+
+    /**
      * Texture request download handler, allows a configurable number of download slots which manage multiple
      * concurrent texture downloads from the {@link Simulator}
-     * 
+     *
      * This class makes full use of the internal {@link TextureCache} system for full texture downloads.
      */
 
 // #if DEBUG_TIMING // Timing globals
-    // The combined time it has taken for all textures requested sofar. This includes the amount of time the 
+    // The combined time it has taken for all textures requested sofar. This includes the amount of time the
     // texture spent waiting for a download slot, and the time spent retrieving the actual texture from the Grid
     public static long TotalTime;
     // The amount of time the request spent in the <see cref="TextureRequestState.Progress"/> state
@@ -116,7 +116,7 @@ public class TexturePipeline implements PacketCallback
     // The total number of bytes transferred since the TexturePipeline was started
     public static int TotalBytes;
 // #endif
-    
+
     // A request task containing information and status of a request as it is processed through the <see cref="TexturePipeline"/>
     private class TaskInfo
     {
@@ -129,8 +129,8 @@ public class TexturePipeline implements PacketCallback
         // The ImageType of the request.
         public ImageType Type;
 
-        // The callback to fire when the request is complete, will include 
-        // the {@link TextureRequestState} and the <see cref="AssetTexture"/> 
+        // The callback to fire when the request is complete, will include
+        // the {@link TextureRequestState} and the <see cref="AssetTexture"/>
         // object containing the result data
         public ArrayList<TextureDownloadCallback> Callbacks;
         // If true, indicates the callback will be fired whenever new data is returned from the simulator.
@@ -162,9 +162,9 @@ public class TexturePipeline implements PacketCallback
     private final HashMap<UUID, TaskInfo> _Transfers;
     // Holds the reference to the <see cref="GridClient"/> client object
     private final GridClient _Client;
-    
+
     private final AssetCache _Cache;
-    
+
     private final ExecutorService _ThreadPool;
     // An array of worker slots which shows the availablity status of the slot
     private final Future<?>[] _ThreadRequests;
@@ -184,14 +184,14 @@ public class TexturePipeline implements PacketCallback
 
     /**
      * Default constructor, Instantiates a new copy of the TexturePipeline class
-     * 
+     *
      * @param client Reference to the instantiated <see cref="GridClient"/> object
      */
 	public TexturePipeline(GridClient client, AssetCache cache)
     {
         _Client = client;
         _Cache = cache;
-        
+
         int maxDownloads = _Client.Settings.MAX_CONCURRENT_TEXTURE_DOWNLOADS;
 
         _ThreadPool = Executors.newFixedThreadPool(maxDownloads);
@@ -203,7 +203,7 @@ public class TexturePipeline implements PacketCallback
         client.Login.OnLoginProgress.add(new Network_LoginProgress());
         client.Network.OnDisconnected.add(new Network_Disconnected());
     }
-    
+
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
@@ -232,7 +232,7 @@ public class TexturePipeline implements PacketCallback
     		}
     	}
     }
-    
+
     private class Network_Disconnected implements Callback<DisconnectedCallbackArgs>
     {
         @Override
@@ -241,10 +241,10 @@ public class TexturePipeline implements PacketCallback
             Shutdown();
         }
     }
-    
+
     /**
      * Initialize callbacks required for the TexturePipeline to operate
-     * 
+     *
      */
     public final void Startup()
     {
@@ -304,7 +304,7 @@ public class TexturePipeline implements PacketCallback
 
         synchronized (_Transfers)
         {
-        	
+
             _Transfers.clear();
         }
 
@@ -324,7 +324,7 @@ public class TexturePipeline implements PacketCallback
     private class RefreshDownloadsTimer_Elapsed extends TimerTask
     {
     	@Override
-		public void run()    
+		public void run()
         {
             synchronized (_Transfers)
             {
@@ -355,7 +355,7 @@ public class TexturePipeline implements PacketCallback
 							}
 							catch (Exception e)	{ }
                         }
-                        
+
                         if (download.TimeSinceLastPacket > _Client.Settings.PIPELINE_REQUEST_TIMEOUT)
                         {
                             transfer.TimeoutEvent.set(true);
@@ -367,11 +367,11 @@ public class TexturePipeline implements PacketCallback
     }
 
     /**
-     * Request a texture asset from the simulator using the <see cref="TexturePipeline"/> system to 
+     * Request a texture asset from the simulator using the <see cref="TexturePipeline"/> system to
      * manage the requests and re-assemble the image from the packets received from the simulator
-     * 
+     *
      * @param textureID The <see cref="UUID"/> of the texture asset to download
-     * @param imageType The <see cref="ImageType"/> of the texture asset. 
+     * @param imageType The <see cref="ImageType"/> of the texture asset.
      * Use <see cref="ImageType.Normal"/> for most textures, or <see cref="ImageType.Baked"/> for baked layer texture assets
      * @param priority A float indicating the requested priority for the transfer. Higher priority values tell the simulator
      * to prioritize the request before lower valued requests. An image already being transferred using the <see cref="TexturePipeline"/> can have
@@ -382,8 +382,8 @@ public class TexturePipeline implements PacketCallback
      * from the start of the asset texture
      * @param callback The <see cref="TextureDownloadCallback"/> callback to fire when the image is retrieved. The callback
      * will contain the result of the request and the texture asset data
-     * @param progressive If true, the callback will be fired for each chunk of the downloaded image. 
-     * The callback asset parameter will contain all previously received chunks of the texture asset starting 
+     * @param progressive If true, the callback will be fired for each chunk of the downloaded image.
+     * The callback asset parameter will contain all previously received chunks of the texture asset starting
      * from the beginning of the request
      */
     public final void RequestTexture(UUID textureID, ImageType imageType, float priority, int discardLevel, int packetStart, TextureDownloadCallback callback, boolean progressive)
@@ -443,14 +443,14 @@ public class TexturePipeline implements PacketCallback
 
     /**
      * Sends the actual request packet to the simulator
-     * 
+     *
      * @param imageID The image to download
      * @param type Type of the image to download, either a baked avatar texture or a normal texture
      * @param priority Priority level of the download. Default is <c>1,013,000.0f</c>
      * @param discardLevel Number of quality layers to discard. This controls the end marker of the data sent
      * @param packetNum Packet number to start the download at. This controls the start marker of the data sent
      * 				Sending a priority of 0 and a discardlevel of -1 aborts download
-     * @throws Exception 
+     * @throws Exception
      */
     private void RequestImage(UUID imageID, ImageType type, float priority, int discardLevel, int packetNum) throws Exception
     {
@@ -507,9 +507,9 @@ public class TexturePipeline implements PacketCallback
 
     /**
      * Cancel a pending or in process texture request
-     * 
+     *
      * @param textureID The texture assets unique ID
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AbortTextureRequest(UUID textureID) throws Exception
     {
@@ -626,13 +626,13 @@ public class TexturePipeline implements PacketCallback
 
     /**
      * The worker thread that sends the request and handles timeouts
-     * 
+     *
      * @param threadContext A <see cref="TaskInfo"/> object containing the request details
      */
     private class TextureRequestDoWork implements Runnable
     {
     	private final TaskInfo task;
-    	
+
     	public TextureRequestDoWork(TaskInfo task)
     	{
     		this.task = task;
@@ -735,7 +735,7 @@ public class TexturePipeline implements PacketCallback
     /**
      * Handle responses from the simulator that tell us a texture we have requested is unable to be located
      * or no longer exists. This will remove the request from the pipeline and free up a slot if one is in use
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -753,7 +753,7 @@ public class TexturePipeline implements PacketCallback
 
             RemoveTransfer(imageNotFoundData.ImageID.ID);
 
-            // fire callback to inform the caller 
+            // fire callback to inform the caller
             task.CallCallback(TextureRequestState.NotFound, new AssetTexture(imageNotFoundData.ImageID.ID, Helpers.EmptyBytes));
             task.TimeoutEvent.set(true);
         }
@@ -765,10 +765,10 @@ public class TexturePipeline implements PacketCallback
 
     /**
      * Handles the remaining Image data that did not fit in the initial ImageData packet
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     protected final void ImagePacketHandler(Packet packet, Simulator simulator) throws InterruptedException
     {
@@ -840,7 +840,7 @@ public class TexturePipeline implements PacketCallback
 
     /**
      * Handle the initial ImageDataPacket sent from the simulator
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */

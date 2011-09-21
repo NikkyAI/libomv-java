@@ -4,29 +4,27 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.test;
-
-import java.util.logging.Logger;
 
 import libomv.GridClient;
 import libomv.LoginManager.LoginParams;
@@ -43,7 +41,7 @@ import libomv.utils.Callback;
 public class sldump implements PacketCallback
 {
 	private boolean disconnected = false;
-	
+
 	// The main entry point for the application.
 	static public void main(String[] args)
 	{
@@ -81,26 +79,26 @@ public class sldump implements PacketCallback
 		}
 		new sldump(args);
 	}
-	
+
 	public sldump(String[] args)
 	{
 		Callback<LoginResponseCallbackArgs> loginResp = new LoginResponseHandler();
 		Callback<DisconnectedCallbackArgs> disconnect = new DisconnectedHandler();
 		GridClient client = null;
-		
+
 		try
 		{
 			client = new GridClient();
 			client.setDefaultGrid("secondlife");
 			LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
-			
+
 			// Setup the Login Response handler to print out the result of the login
 			client.Login.RegisterLoginResponseCallback(loginResp, loginParams.Options, false);
 
 			// Setup the packet callback and disconnect event handler
 			client.Network.RegisterCallback(PacketType.Default, this);
 			client.Network.OnDisconnected.add(disconnect, true);
-			
+
 
 			// An example of how to pass additional options to the login server
 			// loginParams.ID0 = "65e142a8d3c1ee6632259f111cb168c9";
@@ -122,7 +120,7 @@ public class sldump implements PacketCallback
 		{
 			ex.printStackTrace();
 		}
-		
+
 		if (client != null)
 		{
 			client.Network.UnregisterCallback(PacketType.Default, this);
@@ -155,11 +153,11 @@ public class sldump implements PacketCallback
 			}
 			else
 			{
-				System.out.println("sldump: Error logging in: " + e.getReason());			
+				System.out.println("sldump: Error logging in: " + e.getReason());
 			}
 		}
 	}
-	
+
 	public class DisconnectedHandler implements Callback<DisconnectedCallbackArgs>
 	{
 		@Override

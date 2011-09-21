@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.net.URI;
@@ -65,7 +65,7 @@ import libomv.utils.Logger.LogLevel;
 // Manages grid-wide tasks such as the world map
 public class GridManager implements PacketCallback {
     /* Map layer request type */
-    public enum GridLayerType 
+    public enum GridLayerType
     {
         /* Objects and terrain are shown */
         Objects,
@@ -76,7 +76,7 @@ public class GridManager implements PacketCallback {
     }
 
     /* Type of grid item, such as telehub, event, populator location, etc. */
-    public enum GridItemType 
+    public enum GridItemType
     {
         Nothing,
         Telehub,
@@ -88,11 +88,11 @@ public class GridManager implements PacketCallback {
         Classified,
         AdultEvent,
         AdultLandForSale;
-        
+
         public static GridItemType convert(int value)
         {
         	GridItemType values[] = GridItemType.values();
-        	
+
         	for (int i = 0; i < values.length; i++)
         	    if ( values[i].ordinal() == value )
           	        return values[i];
@@ -113,7 +113,7 @@ public class GridManager implements PacketCallback {
             return (x >= Left && x <= Right && y >= Bottom && y <= Top);
         }
     }
-    
+
     /* Class for regions on the world map */
     public class GridRegion
     {
@@ -123,13 +123,13 @@ public class GridManager implements PacketCallback {
     	public int Y;
     	// Sim Name (NOTE: In lowercase!)
     	public String Name;
-    	//  
+    	//
     	public byte Access;
     	// Various flags for the region (presumably things like PG/Mature)
     	public int RegionFlags;
     	// Sim's defined Water Height
     	public byte WaterHeight;
-    	// 
+    	//
     	public byte Agents;
     	// UUID of the World Map image
     	public UUID MapImageID;
@@ -143,7 +143,7 @@ public class GridManager implements PacketCallback {
     	{
     		Name = name;
     	}
-    	
+
     	@Override
         public String toString()
         {
@@ -290,7 +290,7 @@ public class GridManager implements PacketCallback {
 	public CallbackHandler<GridRegionEventArgs> OnGridRegion = new CallbackHandler<GridRegionEventArgs>();
 	public CallbackHandler<RegionHandleReplyEventArgs> OnRegionHandleReply = new CallbackHandler<RegionHandleReplyEventArgs>();
 	public CallbackHandler<CoarseLocationUpdateEventArgs> OnCoarseLocationUpdate = new CallbackHandler<CoarseLocationUpdateEventArgs>();
-	
+
 	// Constructor
 	// <param name="client">Instance of ClientManager to associate with this
 	// GridManager instance</param>
@@ -375,7 +375,7 @@ public class GridManager implements PacketCallback {
 			{
 			}
         }
-	    
+
         URI url = Client.Network.getCapabilityURI("MapLayer");
         if (url != null)
         {
@@ -393,10 +393,10 @@ public class GridManager implements PacketCallback {
 
     /** If the client does not have data on this region already, request the
 	 *  region data for it
-     * 
+     *
      *  @param regionName The name of the region
      *  @param layer The type of layer
-     *  @throws Exception 
+     *  @throws Exception
      */
     public final void RequestMapRegion(String regionName, GridLayerType layer) throws Exception
     {
@@ -413,14 +413,14 @@ public class GridManager implements PacketCallback {
     }
 
     /** Request a map block
-     *  
+     *
      *  @param layer
      *  @param minX
      *  @param minY
      *  @param maxX
      *  @param maxY
      *  @param returnNonExistent
-     *  @throws Exception 
+     *  @throws Exception
      */
     public final void RequestMapBlocks(GridLayerType layer, int minX, int minY, int maxX, int maxY, boolean returnNonExistent) throws Exception
     {
@@ -440,7 +440,7 @@ public class GridManager implements PacketCallback {
 
         Client.Network.SendPacket(request);
     }
-    
+
 	// Fire off packet for Estate/Island sim data request.
 	public void RequestMapLayerOld() throws Exception {
 		MapLayerRequestPacket request = new MapLayerRequestPacket();
@@ -455,12 +455,12 @@ public class GridManager implements PacketCallback {
 	}
 
     /**
-     * 
+     *
      *  @param regionHandle
      *  @param regionHandle
      *  @param item
      *  @param layer
-     *  @throws Exception 
+     *  @throws Exception
      */
     public final void RequestMapItems(long regionHandle, GridItemType item, GridLayerType layer) throws Exception
     {
@@ -486,7 +486,7 @@ public class GridManager implements PacketCallback {
     /** Request the region handle for the specified region UUID
      *
      *  @param regionID UUID of the region to look up
-     *  @throws Exception 
+     *  @throws Exception
      */
     public final void RequestRegionHandle(UUID regionID) throws Exception
     {
@@ -499,12 +499,12 @@ public class GridManager implements PacketCallback {
     /** Get grid region information using the region name, this function
      *  will block until it can find the region or gives up
      *  Example: regiondata = GetGridRegion("Ahern");
-     *  
+     *
      *  @param name Name of sim you're looking for
      *  @param layer Layer that you are requesting
      *  @return A GridRegion for the sim you're looking for if successful,
      *          otherwise null
-     * @throws Exception 
+     * @throws Exception
      */
     public final GridRegion GetGridRegion(String name, GridLayerType type) throws Exception
     {
@@ -569,7 +569,7 @@ public class GridManager implements PacketCallback {
 	}
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param simulator The simulator from which this was received
      *  @param packet The packet data
      */
@@ -593,7 +593,7 @@ public class GridManager implements PacketCallback {
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param simulator The simulator from which this was received
      *  @param packet The packet data
      */
@@ -630,10 +630,10 @@ public class GridManager implements PacketCallback {
 	}
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param simulator The simulator from which this was received
      *  @param packet The packet data
-     *  @throws Exception 
+     *  @throws Exception
      */
     private void MapItemReplyHandler(Packet packet, Simulator simulator) throws Exception
     {
@@ -725,7 +725,7 @@ public class GridManager implements PacketCallback {
     }
 
 	/** Get sim time from the appropriate packet
-	 * 
+	 *
 	 * @param packet
 	 * @param simulator
 	 */
@@ -744,7 +744,7 @@ public class GridManager implements PacketCallback {
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param simulator The simulator from which this was received
      *  @param packet The packet data
      */
@@ -780,7 +780,7 @@ public class GridManager implements PacketCallback {
         	    if 	(!coarseEntries.containsKey(findID))
         		    removedEntries.add(findID);
             }
- 
+
             // remove stale entries
             for(UUID trackedID : removedEntries)
             {
@@ -805,7 +805,7 @@ public class GridManager implements PacketCallback {
     }
 
     /** Process an incoming packet and raise the appropriate events
-     * 
+     *
      *  @param simulator The simulator from which this was received
      *  @param packet The packet data
      */

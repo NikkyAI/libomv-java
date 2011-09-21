@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.primitives;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class Avatar extends Primitive
 
     // Avatar profile flags
     // [Flags]
-    public static class ProfileFlags 
+    public static class ProfileFlags
     {
         public static final byte None = 0;
         public static final byte AllowPublish = 1;
@@ -51,7 +51,7 @@ public class Avatar extends Primitive
         public static final byte Identified = 4;
         public static final byte Transacted = 8;
         public static final byte Online = 16;
-        
+
         public static byte setValue(int value)
         {
         	return (byte)(value & _mask);
@@ -61,7 +61,7 @@ public class Avatar extends Primitive
         {
         	return (byte)(value & _mask);
         }
-        
+
         private static final byte _mask = 0x1F;
     }
     // #endregion Enums
@@ -101,7 +101,7 @@ public class Avatar extends Primitive
             GivenPositive = tex.get("given_positive").AsInteger();
             GivenNegative = tex.get("given_negative").AsInteger();
         }
-        
+
         public OSD Serialize()
         {
             OSDMap tex = new OSDMap(8);
@@ -129,13 +129,13 @@ public class Avatar extends Primitive
         public String FirstLifeText;
         // First Life image ID
         public UUID FirstLifeImage;
-        // 
+        //
         public UUID Partner;
-        // 
+        //
         public String AboutText;
-        // 
+        //
         public String BornOn;
-        // 
+        //
         public String CharterMember;
         // Profile image ID
         public UUID ProfileImage;
@@ -194,7 +194,7 @@ public class Avatar extends Primitive
                 Flags &= ~ProfileFlags.MaturePublish;
             }
         }
-        // 
+        //
         public boolean getIdentified()
         {
             return ((Flags & ProfileFlags.Identified) != 0);
@@ -210,7 +210,7 @@ public class Avatar extends Primitive
                 Flags &= ~ProfileFlags.Identified;
             }
         }
-        // 
+        //
         public boolean getTransacted()
         {
             return ((Flags & ProfileFlags.Transacted) != 0);
@@ -317,7 +317,7 @@ public class Avatar extends Primitive
 
     protected String name;
     protected String groupName;
-	
+
     ///#region Properties
 
     // First name
@@ -411,7 +411,7 @@ public class Avatar extends Primitive
             }
         }
     }
-    
+
     // Active group
     public final String getGroupName()
     {
@@ -419,7 +419,7 @@ public class Avatar extends Primitive
         {
             return groupName;
         }
-        
+
         if (NameValues != null || NameValues.length > 0)
         {
             synchronized (NameValues)
@@ -477,7 +477,7 @@ public class Avatar extends Primitive
     public Avatar()
     {
     }
-    
+
     public Avatar(UUID ID)
 	{
 		this.ID = ID;

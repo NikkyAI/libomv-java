@@ -15,7 +15,7 @@ public class PhysicsProperties
         None,
         // Use convex hull represantion of this prim
         ConvexHull;
-        
+
         public static PhysicsShapeType setValue(int value)
         {
         	if (value <= ConvexHull.getValue())
@@ -40,14 +40,14 @@ public class PhysicsProperties
     public float Density;
     // Friction
     public float Friction;
-    // Gravity multiplier (1 for normal gravity) 
+    // Gravity multiplier (1 for normal gravity)
     public float GravityMultiplier;
     // Type of physics representation of this primitive in the simulator
     public PhysicsShapeType ShapeType;
     // Restitution
     public float Restitution;
 
-    /** 
+    /**
      * Creates PhysicsProperties from OSD
      *
      * @param name OSDMap with incoming data</param>

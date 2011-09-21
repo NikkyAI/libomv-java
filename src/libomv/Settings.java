@@ -3,26 +3,26 @@
  * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.net.InetSocketAddress;
@@ -35,12 +35,12 @@ import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.utils.Logger.LogLevel;
 
-/* 
+/*
  * Class for controlling various system settings.
- * 
+ *
  * Some values are readonly because they affect things that
- * happen when the GridClient object is initialized, so changing them at 
- * runtime won't do any good. Non-readonly values may affect things that 
+ * happen when the GridClient object is initialized, so changing them at
+ * runtime won't do any good. Non-readonly values may affect things that
  * happen at login or dynamically
  */
 public class Settings implements PacketCallback
@@ -58,7 +58,7 @@ public class Settings implements PacketCallback
 
     /* Initialize Inventory Manager */
     public boolean ENABLE_INVENTORY_MANAGER = false;
-    
+
     /* Initialize Asset Manager */
     public boolean ENABLE_ASSET_MANAGER = false;
 
@@ -103,7 +103,7 @@ public class Settings implements PacketCallback
     /* Milliseconds before a packet is assumed lost and resent */
     public int RESEND_TIMEOUT = 4000;
 
-    /* Milliseconds without receiving a packet before the 
+    /* Milliseconds without receiving a packet before the
      * connection to a simulator is assumed lost */
     public int SIMULATOR_TIMEOUT = 30 * 1000;
 
@@ -122,7 +122,7 @@ public class Settings implements PacketCallback
      */
     public static final int INTERPOLATION_INTERVAL = 250;
 
-    /* Millisecond interval between ticks, where all ACKs are 
+    /* Millisecond interval between ticks, where all ACKs are
      * sent out and the age of unACKed packets is checked
      */
     public static final int NETWORK_TICK_INTERVAL = 500;
@@ -158,7 +158,7 @@ public class Settings implements PacketCallback
      * long time and would need to be rewritten as asynchronous code before this is feasible
      */
     public boolean SYNC_PACKETCALLBACKS = false;
-    
+
     public boolean LOG_RAW_PACKET_BYTES = false;
 
     /* Enable/disable storing terrain heightmaps in the TerrainManager */
@@ -231,7 +231,7 @@ public class Settings implements PacketCallback
      */
     public boolean OBJECT_TRACKING = true;
 
-    /* If true, position and velocity will periodically be interpolated (extrapolated, technically) for objects and 
+    /* If true, position and velocity will periodically be interpolated (extrapolated, technically) for objects and
      * avatars that are being tracked by the library. This is necessary to increase the accuracy of speed and position
      * estimates for simulated objects
      */
@@ -296,7 +296,7 @@ public class Settings implements PacketCallback
     public int MAX_CONCURRENT_TEXTURE_DOWNLOADS = 4;
 
     /* The Refresh timer inteval is used to set the delay between checks for stalled texture downloads
-     * 
+     *
      * This is a static variable which applies to all instances
      */
     public static long PIPELINE_REFRESH_INTERVAL = 500;
@@ -306,7 +306,7 @@ public class Settings implements PacketCallback
     ///#region Logging Configuration
 
     /* Get or set the minimum log level to output to the console by default
-     * 
+     *
      * If the library is not compiled with DEBUG defined and this level is set to DEBUG
      * You will get no output on the console. This behavior can be overriden by creating
      * a logger configuration file for log4net
@@ -323,9 +323,9 @@ public class Settings implements PacketCallback
 
     private int priceUpload = 0;
 
-    /** 
+    /**
      * Starts the settings update
-     * 
+     *
      * @param client Reference to a GridClient object
      */
     public void Startup(GridClient client)

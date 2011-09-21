@@ -3,26 +3,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.capabilities;
 
 import java.io.IOException;
@@ -96,12 +96,12 @@ public class CapsClient
     		}
     	}
 	}
-    
+
     public CapsClient(URI address) throws IOReactorException
     {
     	this(address, null);
     }
-    
+
     public CapsClient(URI address, X509Certificate cert) throws IOReactorException
     {
     	Address = address;
@@ -118,11 +118,11 @@ public class CapsClient
     {
         return Client.getConnectionManager().getSchemeRegistry().register(scheme);
     }
-    
+
     /**
      * Synchronous HTTP Get request from a capability that requires no further request entity
      * This function returns either after the server responded with any data or when the timeout expired
-     * 
+     *
      * @param timeout
      *				The timeout in ms to wait for a request
      * @return Returns the response parsed into OSD data
@@ -150,8 +150,8 @@ public class CapsClient
     }
 
     /**
-     * Request a response from the 
-     * 
+     * Request a response from the
+     *
      * @param timeout
      * @return
      * @throws ClientProtocolException
@@ -170,7 +170,7 @@ public class CapsClient
     {
     	return BeginGetResponse(message.Serialize(), OSD.OSDFormat.Xml, timeout, null);
     }
-    
+
     public Future<OSD> BeginGetResponse(IMessage message, long timeout, FutureCallback<OSD> callback) throws IOException
     {
     	return BeginGetResponse(message.Serialize(), OSD.OSDFormat.Xml, timeout, callback);
@@ -180,12 +180,12 @@ public class CapsClient
     {
         return BeginGetResponse(data, format, timeout, null);
     }
-    
+
     public Future<OSD> BeginGetResponse(OSD data, OSD.OSDFormat format, long timeout, FutureCallback<OSD> callback) throws IOException
     {
         byte[] postData = null;
         String contentType;
-       
+
         if (data != null)
         	postData = data.serializeToBytes(format);
 
@@ -218,7 +218,7 @@ public class CapsClient
     	request.setEntity(new StringEntity(data));
     	return GetResponseAsync(request, timeout, callback);
     }
-    
+
     public Future<OSD> BeginGetResponse(byte[] data, String contentType, long timeout, FutureCallback<OSD> callback)
     {
      	// Create the request
@@ -253,13 +253,13 @@ public class CapsClient
     {
     	synchronized (Timeout)
     	{
-    		if (Timeout != null)    
+    		if (Timeout != null)
     		{
     			Logger.Log("This Capability Client is already waiting for a response", Logger.LogLevel.Error);
     			return null;
     		}
     	}
-    	
+
     	try {
     		final Future <OSD> result = Client.execute(new CapsHttpAsyncRequestProducer(determineTarget(Address), request),
                     new CapsHttpAsyncResponseConsumer(), new CapsHttpAsyncCallback(callback));
@@ -287,17 +287,17 @@ public class CapsClient
         	failed.failed(ex);
             return failed;
         }
-    }    
-    
+    }
+
     private class CapsHttpAsyncCallback implements FutureCallback<OSD>
     {
     	private final FutureCallback<OSD> callback;
-    	
+
     	public CapsHttpAsyncCallback(FutureCallback<OSD> callback)
     	{
     		this.callback = callback;
     	}
-    	
+
 		@Override
 		public void completed(OSD result)
 		{
@@ -322,7 +322,7 @@ public class CapsClient
 			cancel();
 		}
     }
-    
+
     class CapsHttpAsyncRequestProducer implements HttpAsyncRequestProducer
     {
         private final HttpHost target;
@@ -411,17 +411,17 @@ public class CapsClient
 		public synchronized void responseReceived(final HttpResponse response) throws IOException
         {
             Logger.Log("HTTP response: " + response.getStatusLine(), LogLevel.Info);
-            
+
             StatusLine status = response.getStatusLine();
             if (status.getStatusCode() != HttpStatus.SC_OK)
             {
             	throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
             }
-            
+
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 String charset = null;
-                if (entity.getContentType() != null) { 
+                if (entity.getContentType() != null) {
                     HeaderElement values[] = entity.getContentType().getElements();
                     if (values.length  > 0) {
                         NameValuePair param = values[0].getParameterByName("charset");
@@ -511,13 +511,13 @@ public class CapsClient
         {
             private final ContentDecoder decoder;
             private final ByteBuffer buffer;
-        	
+
         	public ContentDecoderStream(ContentDecoder decoder)
         	{
         		this.decoder = decoder;
                 this.buffer = ByteBuffer.allocate(1024);
         	}
-        
+
     		@Override
     		public int read() throws IOException
     		{
@@ -525,18 +525,18 @@ public class CapsClient
     			int toread = this.buffer.remaining();
     			if (toread == 0)
     			{
-    				// is decoder stream complete? 
+    				// is decoder stream complete?
     				if (this.decoder.isCompleted())
     					return -1;
-    				
+
     				// Fill in the intermediate buffer again from the stream
-    				this.buffer.clear();     
+    				this.buffer.clear();
     				this.decoder.read(this.buffer);
     				this.buffer.flip();
     			}
     			return this.buffer.get();
     		}
-    		
+
     		@Override
 			public int read(byte[] b) throws IOException
     		{
@@ -547,8 +547,8 @@ public class CapsClient
     		 * Reads up to len bytes of data from the input stream into an array of bytes. An attempt is
     		 * made to read as many as len bytes, but a smaller number may be read, possibly zero. The
     		 * number of bytes actually read is returned as an integer.
-    	     * This method blocks until input data is available, end of file is detected, or an exception is thrown. 
-    	     * 
+    	     * This method blocks until input data is available, end of file is detected, or an exception is thrown.
+    	     *
     	     * If b is null, a NullPointerException is thrown.
              *
     		 * If off is negative, or len is negative, or off+len is greater than the length of the array b, then an
@@ -563,13 +563,13 @@ public class CapsClient
              * through b[off+k-1], leaving elements b[off+k] through b[off+len-1] unaffected.
     		 *
              * In every case, elements b[0] through b[off] and elements b[off+len] through b[b.length-1] are unaffected.
-             * 
+             *
              * If the first byte cannot be read for any reason other than end of file, then an IOException is thrown. In particular,
              * an IOException is thrown if the input stream has been closed.
     	     *
     	     * @param b - the buffer into which the data is read.
     	     * @param off - the start offset in array b at which the data is written.
-    	     * @param len - the maximum number of bytes to read. 
+    	     * @param len - the maximum number of bytes to read.
              * @return the total number of bytes read into the buffer, or -1 if there is no more data because the end of the stream
              *         has been reached.
              * @throws IOException
@@ -578,13 +578,13 @@ public class CapsClient
 			public int read(byte[] b, int offset, int length) throws IOException
     		{
     			int toread, bytes = 0;
-    			
+
     			if (b == null)
     				throw new NullPointerException();
-    			
+
     			if (offset < 0 || length < 0 || offset + length > b.length)
     				throw new IndexOutOfBoundsException();
-    			
+
     			while (length > 0)
     			{
     				// Find out how many bytes we can read from the intermediate buffer
@@ -600,15 +600,15 @@ public class CapsClient
     			        offset += toread;
     			        bytes += toread;
     				}
-    				
-    				// is decoder stream complete or have we copied all requested bytes 
+
+    				// is decoder stream complete or have we copied all requested bytes
     				if (this.decoder.isCompleted() || length == 0)
     				{
     					return bytes == 0 ? -1 : bytes;
     				}
-    				
+
     				// Fill in the intermediate buffer again from the stream
-    				this.buffer.clear();     
+    				this.buffer.clear();
     				this.decoder.read(this.buffer);
     				this.buffer.flip();
     			}

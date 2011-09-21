@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.mapgenerator;
 
 import java.io.BufferedReader;
@@ -149,44 +149,44 @@ public class mapgenerator
 			break;
 		case FieldType.IPADDR:
 		case FieldType.U32:
-			writer.println("            " + field.Name + " = bytes.getInt(); ");
+			writer.println("            " + field.Name + " = bytes.getInt();");
 			break;
 		case FieldType.IPPORT:
 			// IPPORT is big endian while U16/S16 are little endian. Go figure
 			writer.println("            " + field.Name + " = (short)((bytes.get() << 8) + bytes.get());");
 			break;
 		case FieldType.U16:
-			writer.println("            " + field.Name + " = bytes.getShort(); ");
+			writer.println("            " + field.Name + " = bytes.getShort();");
 			break;
 		case FieldType.Quaternion:
-			writer.println("            " + field.Name + " = new Quaternion(bytes, true); ");
+			writer.println("            " + field.Name + " = new Quaternion(bytes, true);");
 			break;
 		case FieldType.UUID:
 			writer.println("            " + field.Name + " = new UUID(bytes);");
 			break;
 		case FieldType.Vector3:
-			writer.println("            " + field.Name + " = new Vector3(bytes); ");
+			writer.println("            " + field.Name + " = new Vector3(bytes);");
 			break;
 		case FieldType.Vector3d:
-			writer.println("            " + field.Name + " = new Vector3d(bytes); ");
+			writer.println("            " + field.Name + " = new Vector3d(bytes);");
 			break;
 		case FieldType.Vector4:
-			writer.println("            " + field.Name + " = new Vector4(bytes); ");
+			writer.println("            " + field.Name + " = new Vector4(bytes);");
 			break;
 		case FieldType.S16:
-			writer.println("            " + field.Name + " = bytes.getShort(); ");
+			writer.println("            " + field.Name + " = bytes.getShort();");
 			break;
 		case FieldType.S32:
-			writer.println("            " + field.Name + " = bytes.getInt(); ");
+			writer.println("            " + field.Name + " = bytes.getInt();");
 			break;
 		case FieldType.S8:
-			writer.println("            " + field.Name + " = bytes.get(); ");
+			writer.println("            " + field.Name + " = bytes.get();");
 			break;
 		case FieldType.U64:
-			writer.println("            " + field.Name + " = bytes.getLong(); ");
+			writer.println("            " + field.Name + " = bytes.getLong();");
 			break;
 		case FieldType.U8:
-			writer.println("            " + field.Name + " = bytes.get(); ");
+			writer.println("            " + field.Name + " = bytes.get();");
 			break;
 		case FieldType.Variable:
 			if (field.Count == 1) {
@@ -195,7 +195,7 @@ public class mapgenerator
 				writer.println("            length = bytes.getShort() & 0xFFFF;");
 			}
 			writer.println("            _" + field.Name.toLowerCase() + " = new byte[length];");
-			writer.println("            bytes.get(_" + field.Name.toLowerCase() + "); ");
+			writer.println("            bytes.get(_" + field.Name.toLowerCase() + ");");
 			break;
 		default:
 			writer.println("!!! ERROR: Unhandled FieldType: " + field.Type + " !!!");
@@ -309,7 +309,7 @@ public class mapgenerator
 			}
 		}
 		reader.close();
-        return writer;		
+        return writer;
 	}
 
 	static void WriteBlockClass(PrintWriter writer, MapBlock block)
@@ -441,7 +441,7 @@ public class mapgenerator
 			MapBlock block = packet.Blocks.get(i);
 			for (int k = 0; k < block.Fields.size(); k++) {
 				MapField field = block.Fields.elementAt(k);
-				
+
 				if (field.Type == FieldType.Variable || field.Type == FieldType.Fixed)
 			    {
 					writer.println("import libomv.utils.Helpers;");
@@ -494,7 +494,7 @@ public class mapgenerator
 				}
 			}
 		}
-		
+
 		writer.println("\npublic class " + packet.Name + "Packet extends Packet\n{");
 
 		// Write out each block class
@@ -519,7 +519,7 @@ public class mapgenerator
 			MapBlock block = packet.Blocks.get(k);
 
 			// TODO: More thorough name blacklisting
-			
+
 			if (block.Name.equals("Header")) {
 				sanitizedName = "_" + block.Name;
 			} else {
@@ -804,7 +804,7 @@ public class mapgenerator
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
-			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) 
+			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
 				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
 				if (packet != null)
@@ -815,7 +815,7 @@ public class mapgenerator
 			}
 			packettype_writer.println("}\n");
 			packettype_writer.close();
-			
+
 			// Write the base Packet class
 			writer.println("import libomv.StructuredData.OSDMap;\n"
 	                     + "import libomv.capabilities.CapsMessage.CapsEventType;\n"

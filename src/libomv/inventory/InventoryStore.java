@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.inventory;
 
 import java.io.FileInputStream;
@@ -125,7 +125,7 @@ public class InventoryStore
     {
         return _LibraryRootNode;
     }
-    
+
     // The root folder of this avatars inventory
     public final InventoryFolder getRootFolder()
     {
@@ -189,7 +189,7 @@ public class InventoryStore
 
     /**
      * Returns the contents of the specified folder
-     * 
+     *
      * @param folder A folder's UUID
      * @return The contents of the folder corresponding to <code>folder</code>
      * @exception InventoryException When <code>folder</code> does not exist in the inventory
@@ -216,12 +216,12 @@ public class InventoryStore
     /**
      * Updates the state of the InventoryNode and inventory data structure that
      * is responsible for the InventoryObject. If the item was previously not added to inventory,
-     * it adds the item, and updates structure accordingly. If it was, it updates the 
-     * InventoryNode, changing the parent node if <code>item.parentUUID</code> does 
+     * it adds the item, and updates structure accordingly. If it was, it updates the
+     * InventoryNode, changing the parent node if <code>item.parentUUID</code> does
      * not match <code>node.Parent.Data.UUID</code>.
-     * 
+     *
      * You can not set the inventory root folder using this method
-     * 
+     *
      * @param item The InventoryObject to store
      */
     public final void updateNodeFor(InventoryBase item)
@@ -249,12 +249,12 @@ public class InventoryStore
                     // Fetch the parent
                     ArrayList<UUID> fetchreq = new ArrayList<UUID>(1);
                     fetchreq.add(item.ParentUUID);
-                    
+
                     // TODO: Do something with these requests
                 }
             }
         }
-        
+
         if (Items.containsKey(item.UUID)) // We're updating.
         {
         	InventoryNode itemNode = Items.get(item.UUID);
@@ -291,7 +291,7 @@ public class InventoryStore
 
     /**
      * Removes the InventoryObject and all related node data from Inventory.
-     * 
+     *
      * @param item The InventoryObject to remove.
      */
     public final void removeNodeFor(InventoryBase item)
@@ -308,7 +308,7 @@ public class InventoryStore
         }
 
         // In case there's a new parent:
-        
+
         if (Items.containsKey(item.ParentUUID))
         {
         	InventoryNode newParent = Items.get(item.ParentUUID);
@@ -319,7 +319,7 @@ public class InventoryStore
     /**
      * Used to find out if Inventory contains the InventoryObject
      * specified by <code>uuid</code>.
-     * 
+     *
      * @param uuid The UUID to check.
      * @return true if inventory contains uuid, false otherwise
      */
@@ -335,7 +335,7 @@ public class InventoryStore
 
     /*
      * Saves the current inventory structure to a cache file
-     * 
+     *
      * @param filename Name of the cache file to save to
      */
     public final void saveToDisk(String filename) throws IOException
@@ -369,7 +369,7 @@ public class InventoryStore
 
     /*
      * Loads in inventory cache file into the inventory structure. Note only valid to call after login has been successful.
-     * 
+     *
      * @param filename Name of the cache file to load
      * @return The number of inventory items sucessfully reconstructed into the inventory node tree
      */
@@ -448,7 +448,7 @@ public class InventoryStore
                 	InventoryNode pnode = Items.get(node.getData().ParentUUID);
                 	if (node.getData() != null)
                     {
-                        // If node is folder, and it does not exist in skeleton, mark it as 
+                        // If node is folder, and it does not exist in skeleton, mark it as
                         // dirty and don't process nodes that belong to it
                         if (node.getData() instanceof InventoryFolder && !(Items.containsKey(node.getData().UUID)))
                         {
@@ -493,11 +493,11 @@ public class InventoryStore
 
     /**
      * By using the bracket operator on this class, the program can get the InventoryObject
-     * designated by the specified uuid. If the value for the corresponding UUID is null, 
+     * designated by the specified uuid. If the value for the corresponding UUID is null,
      * the call is equivalent to a call to <code>RemoveNodeFor(this[uuid])</code>.
      * If the value is non-null, it is equivalent to a call to <code>UpdateNodeFor(value)</code>,
      * the uuid parameter is ignored.
-     * 
+     *
      * @param uuid The UUID of the InventoryObject to get or set, ignored if set to non-null value.
      * @return The InventoryObject corresponding to <code>uuid</code>.
      */

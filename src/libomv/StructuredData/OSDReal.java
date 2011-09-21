@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2008, openmetaverse.org
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.StructuredData;
 
 import libomv.utils.Helpers;
@@ -53,11 +53,11 @@ public class OSDReal extends OSD {
 		{
 			return 0;
 		}
-		if (value > (double)Integer.MAX_VALUE)
+		if (value > Integer.MAX_VALUE)
 		{
 			return Integer.MAX_VALUE;
 		}
-		if (value < (double)Integer.MIN_VALUE)
+		if (value < Integer.MIN_VALUE)
 		{
 			return Integer.MIN_VALUE;
 		}
@@ -72,7 +72,7 @@ public class OSDReal extends OSD {
 		}
 		if (value > (2 * (double)Integer.MAX_VALUE + 1))
 		{
-			return (int)(0xffffffff);
+			return (0xffffffff);
 		}
 		if (value < 0.0f)
 		{
@@ -87,15 +87,15 @@ public class OSDReal extends OSD {
 		{
 			return 0;
 		}
-		if (value > (double)Long.MAX_VALUE)
+		if (value > Long.MAX_VALUE)
 		{
 			return Long.MAX_VALUE;
 		}
-		if (value < (double)Long.MIN_VALUE)
+		if (value < Long.MIN_VALUE)
 		{
 			return Long.MIN_VALUE;
 		}
-		return (long)Math.round(value);
+		return Math.round(value);
 	}
 	@Override
 	public long AsULong()
@@ -106,13 +106,13 @@ public class OSDReal extends OSD {
 		}
 		if (value > (2 * (double)Long.MAX_VALUE + 1))
 		{
-			return (long)0xffffffffffl;
+			return 0xffffffffffl;
 		}
 		if (value < 0.0d)
 		{
 			return 0;
 		}
-		return (long)Math.round(value);
+		return Math.round(value);
 	}
 	@Override
 	public double AsReal()

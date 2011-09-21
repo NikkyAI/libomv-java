@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.inventory;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public abstract class InventoryBase implements Serializable
 
     /**
      * Constructor, takes an itemID as a parameter
-     * 
+     *
      * @param itemID The {@link OpenMetaverse.UUID} of the item
      */
     public InventoryBase(UUID itemID)
@@ -72,7 +72,7 @@ public abstract class InventoryBase implements Serializable
     {
     	fromOSD(osd);
     }
-    
+
     public OSD toOSD()
     {
         OSDMap map = new OSDMap();
@@ -87,7 +87,7 @@ public abstract class InventoryBase implements Serializable
     {
     	if (osd instanceof OSDMap)
     	{
-    	   OSDMap map = (OSDMap)osd; 
+    	   OSDMap map = (OSDMap)osd;
            UUID = map.get("UUID").AsUUID();
            ParentUUID =  map.get("ParentUUID").AsUUID();
            Name =  map.get("Name").AsString();
@@ -113,10 +113,10 @@ public abstract class InventoryBase implements Serializable
     	info.writeUTF(Name);
     	info.writeObject(OwnerID);
     }
-    
+
     /** Generates a number corresponding to the value of the object to support the use of a hash table,
      *  suitable for use in hashing algorithms and data structures such as a hash table
-     *  
+     *
      *  @return A Hashcode of all the combined InventoryBase fields
      */
     @Override
@@ -126,7 +126,7 @@ public abstract class InventoryBase implements Serializable
     }
 
     /** Determine whether the specified {@link OpenMetaverse.InventoryBase} object is equal to the current object
-     * 
+     *
      *  @param o InventoryBase object to compare against
      *  @return true if objects are the same
      */
@@ -138,7 +138,7 @@ public abstract class InventoryBase implements Serializable
     }
 
     /** Determine whether the specified {@link OpenMetaverse.InventoryBase} object is equal to the current object
-     * 
+     *
      *  @param o InventoryBase object to compare against
      *  @return true if objects are the same
      */

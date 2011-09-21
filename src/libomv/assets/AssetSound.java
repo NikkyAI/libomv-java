@@ -27,7 +27,7 @@
 package libomv.assets;
 
 import libomv.types.UUID;
-    
+
 // Represents a Sound Asset
 public class AssetSound extends AssetItem
 {
@@ -47,7 +47,7 @@ public class AssetSound extends AssetItem
 
     /**
      * Initializes a new instance of an AssetSound object with parameters
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -67,7 +67,7 @@ public class AssetSound extends AssetItem
 
     /**
      * TODO: Decode a sound file
-     * 
+     *
      * @return true
      */
 	@Override

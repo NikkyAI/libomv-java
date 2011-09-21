@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.util.Date;
@@ -75,7 +75,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         {
         	return String.format("%s %s", LegacyFirstName, LegacyLastName);
         }
-        
+
         /**
          * Creates AgentDisplayName object from OSD
          *
@@ -106,7 +106,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         public OSD GetOSD()
         {
             OSDMap map = new OSDMap();
-            
+
             map.put("id", OSD.FromUUID(ID));
             map.put("username", OSD.FromString(UserName));
             map.put("display_name", OSD.FromString(DisplayName));
@@ -114,7 +114,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
             map.put("legacy_last_name", OSD.FromString(LegacyLastName));
             map.put("is_display_name_default", OSD.FromBoolean(IsDefaultDisplayName));
             map.put("display_name_next_update", OSD.FromDate(NextUpdate));
-            
+
             return map;
         }
 
@@ -135,7 +135,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         // A number to indicate start order of currently playing animations
         // On Linden Grids this number is unique per region, with OpenSim it is per client</remarks>
         public int AnimationSequence;
-        // 
+        //
         public UUID AnimationSourceObjectID;
     }
 
@@ -172,7 +172,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         public String Name;
         public String Desc;
     }
-	
+
     /**
      * Holds group information for Avatars such as those you might find in a profile
      */
@@ -194,7 +194,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	    public boolean ListInProfile;
 	}
 
-	
+
 	private GridClient Client;
 
 	private Hashtable<UUID, Avatar> Avatars;
@@ -202,18 +202,18 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	public class AgentNamesCallbackArgs implements CallbackArgs
 	{
 		private Hashtable<UUID, String> names;
-		
+
 		public Hashtable<UUID, String> getNames()
 		{
 			return names;
 		}
-		
+
 		public AgentNamesCallbackArgs(Hashtable<UUID, String> names)
 		{
 			this.names = names;
 		}
 	}
-	
+
 	public CallbackHandler<AgentNamesCallbackArgs> OnAgentNames = new CallbackHandler<AgentNamesCallbackArgs>();
 
     /**
@@ -229,7 +229,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         	return oldDisplayName;
         }
         public AgentDisplayName getDisplayName()
-        { 
+        {
         	return displayName;
         }
 
@@ -323,7 +323,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
             	break;
 		}
 	}
-	
+
 	@Override
 	public void capsCallback(IMessage message, Simulator simulator)
 	{
@@ -333,9 +333,9 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				DisplayNameUpdateMessageHandler(message, simulator);
 				break;
 		}
-	}	
-	
-	
+	}
+
+
 	// Add an Avatar into the Avatars Dictionary
 	// <param name="avatar">Filled-out Avatar class to insert</param>
 	public void AddAvatar(Avatar avatar) {
@@ -365,7 +365,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		return name;
 	}
 
-	// 
+	//
 	// <param name="id"></param>
 	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception {
 		// TODO: BeginGetAvatarNames is pretty bulky, rewrite a simple version
@@ -377,7 +377,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		RequestAvatarNames(ids, anc);
 	}
 
-	// 
+	//
 	// <param name="ids"></param>
 	public void RequestAvatarNames(Vector<UUID> ids,Callback<AgentNamesCallbackArgs> anc)
 			throws Exception {
@@ -424,7 +424,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	}
 
 	/** Process an incoming UUIDNameReply Packet and insert Full Names into the
-	 * 
+	 *
 	 * @param packet Incoming Packet to process
 	 * @param simulator Unused
 	 * @throws Exception
@@ -449,7 +449,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
 		}
 	}
-	
+
     /**
      * EQ Message fired when someone nearby changes their display name
      */

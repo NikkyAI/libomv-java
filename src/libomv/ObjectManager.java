@@ -4,26 +4,26 @@
  * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.IOException;
@@ -116,7 +116,7 @@ import libomv.utils.Logger.LogLevel;
 // movement.
 public class ObjectManager implements PacketCallback, CapsCallback {
 	/** Item Sale Status */
-	public enum SaleType 
+	public enum SaleType
 	{
 		/** Not for sale */
 		Not,
@@ -146,19 +146,19 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			}
 			return Not;
 		}
-		
+
 		public static SaleType setValue(int value)
 		{
 			if (value >= 0 && value < values().length)
 			    return values()[value];
 			return null;
 		}
-		
+
 		public byte getValue()
 		{
 			return (byte)ordinal();
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -166,7 +166,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	public enum ReportType 
+	public enum ReportType
     {
         // No report
         None,
@@ -191,7 +191,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		}
     }
 
-    // Bitflag field for ObjectUpdateCompressed data blocks, describing 
+    // Bitflag field for ObjectUpdateCompressed data blocks, describing
     // which options are present for each object
     public static class CompressedFlags
     {
@@ -216,7 +216,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         public static final short HasNameValues = 0x100;
         // Whether the object has a Media URL set
         public static final short MediaURL = 0x200;
-        
+
         public static short setValue(short value)
         {
         	return (short)(value & _mask);
@@ -225,12 +225,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         {
         	return (short)(value & _mask);
         }
-        
+
         private static final short _mask = 0x3FF;
     }
 
     // Specific Flags for MultipleObjectUpdate requests
-    public static class UpdateType 
+    public static class UpdateType
     {
         // None
         public static final byte None = 0x00;
@@ -254,13 +254,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         {
         	return (byte)(value & _mask);
         }
-        
+
         private static final short _mask = 0x1F;
     }
 
     // Special values in PayPriceReply. If the price is not one of these
     // literal value of the price should be use
-    public enum PayPriceType 
+    public enum PayPriceType
     {
         // Indicates that this pay option should be hidden
         Hide(-1),
@@ -285,7 +285,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     }
 
     /**
-     * Contains the variables sent in an object update packet for objects. 
+     * Contains the variables sent in an object update packet for objects.
      * Used to track position and movement of prims and avatars
      */
     public final class ObjectMovementUpdate
@@ -301,19 +301,19 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         public Vector3 AngularVelocity;
         public TextureEntry Textures;
     }
-	
+
     public static final float HAVOK_TIMESTEP = 1.0f / 45.0f;
-	
+
     /**
      * Provides data for the <see cref="ObjectManager.ObjectUpdate"/> event
      *
      * <p>The <see cref="ObjectManager.ObjectUpdate"/> event occurs when the simulator sends
      * an <see cref="ObjectUpdatePacket"/> containing a Primitive, Foliage or Attachment data</p>
      * <p>Note 1: The <see cref="ObjectManager.ObjectUpdate"/> event will not be raised when the object is an Avatar</p>
-     * <p>Note 2: It is possible for the <see cref="ObjectManager.ObjectUpdate"/> to be 
+     * <p>Note 2: It is possible for the <see cref="ObjectManager.ObjectUpdate"/> to be
      * raised twice for the same object if for example the primitive moved to a new simulator, then returned to the current simulator or
      * if an Avatar crosses the border into a new simulator and returns to the current simulator</p>
-     * 
+     *
      * <example>
      * The following code example uses the <see cref="PrimCallbackArgs.Prim"/>,
      * <see cref="PrimCallbackArgs.Simulator"/>, and <see cref="PrimCallbackArgs.IsAttachment"/>
@@ -321,7 +321,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * <code>
      *     // Subscribe to the event that gives us prim and foliage information
      *     Client.Objects.OnObjectUpdate.add(new Objects_ObjectUpdate());
-     *     
+     *
      *
      *     private Objects_ObjectUpdate implements CallbackHandler<PrimCallbackArgs>
      *     {
@@ -372,7 +372,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the PrimEventArgs class
-         * 
+         *
          * @param simulator The simulator the object originated from
          * @param prim The Primitive
          * @param timeDilation The simulator time dilation
@@ -404,21 +404,21 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * an <see cref="ObjectPropertiesPacket"/> containing additional details for a Primitive, Foliage data or Attachment data</p>
      * <p>The <see cref="ObjectManager.ObjectProperties"/> event is also raised when a <see cref="ObjectManager.SelectObject"/> request is
      * made.</p>
-     * 
+     *
      * <example>
      * The following code example uses the <see cref="PrimEventArgs.Prim"/>, <see cref="PrimEventArgs.Simulator"/> and
      * <see cref="ObjectPropertiesEventArgs.Properties"/>
      * properties to display new attachments and send a request for additional properties containing the name of the
      * attachment then display it on the <see cref="Console"/> window.
-     * <code>    
+     * <code>
      *     // Subscribe to the event that provides additional primitive details
      *     Client.Objects.ObjectProperties += Objects_ObjectProperties;
-     *      
+     *
      *     // handle the properties data that arrives
      *     private void Objects_ObjectProperties(object sender, ObjectPropertiesEventArgs e)
      *     {
      *         Console.WriteLine("Primitive Properties: %s, Name is %s", e.Properties.ObjectID, e.Properties.Name);
-     *     }   
+     *     }
      * </code>
      * </example>
      */
@@ -437,9 +437,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
             return m_Properties;
         }
 
-        /** 
+        /**
          * Construct a new instance of the ObjectPropertiesEventArgs class
-         * 
+         *
          * @param simulator The simulator the object is located
          * @param props The primitive Properties
          */
@@ -462,7 +462,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * an <see cref="ObjectPropertiesPacket"/> containing additional details for a Primitive or Foliage data that is currently
      * being tracked in the <see cref="Simulator.ObjectsPrimitives"/> dictionary</p>
      * <p>The <see cref="ObjectManager.ObjectPropertiesUpdated"/> event is also raised when a <see cref="ObjectManager.SelectObject"/> request is
-     * made and <see cref="Settings.OBJECT_TRACKING"/> is enabled</p>    
+     * made and <see cref="Settings.OBJECT_TRACKING"/> is enabled</p>
      */
 	public class ObjectPropertiesUpdatedCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
@@ -485,9 +485,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
             return m_Properties;
         }
 
-        /** 
+        /**
          * Construct a new instance of the ObjectPropertiesUpdatedEvenrArgs class
-         *                 
+         *
          * @param simulator The simulator the object is located
          * @param prim The Primitive
          * @param props The primitive Properties
@@ -511,7 +511,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * Permissions, Sale info, and other basic details on an object</p>
      * <p>The <see cref="ObjectManager.ObjectProperties"/> event is also raised when a <see cref="ObjectManager.RequestObjectPropertiesFamily"/> request is
      * made, the viewer equivalent is hovering the mouse cursor over an object</p>
-     *     
+     *
      */
 	public class ObjectPropertiesFamilyCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
@@ -523,12 +523,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         {
             return m_Simulator;
         }
-        // 
+        //
         public final ObjectProperties getProperties()
         {
             return m_Properties;
         }
-        // 
+        //
         public final ReportType getType()
         {
             return m_Type;
@@ -550,30 +550,30 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     /**
      * Provides data for the <see cref="ObjectManager.AvatarUpdate"/> event
      * <p>The <see cref="ObjectManager.AvatarUpdate"/> event occurs when the simulator sends
-     * an <see cref="ObjectUpdatePacket"/> containing Avatar data</p>    
+     * an <see cref="ObjectUpdatePacket"/> containing Avatar data</p>
      * <p>Note 1: The <see cref="ObjectManager.AvatarUpdate"/> event will not be raised when the object is an Avatar</p>
-     * <p>Note 2: It is possible for the <see cref="ObjectManager.AvatarUpdate"/> to be 
+     * <p>Note 2: It is possible for the <see cref="ObjectManager.AvatarUpdate"/> to be
      * raised twice for the same avatar if for example the avatar moved to a new simulator, then returned to the current simulator</p>
-     * 
+     *
      * <example>
      * The following code example uses the <see cref="AvatarUpdateCallbackArgs.Avatar"/> property to make a request for the top picks
      * using the <see cref="AvatarManager.RequestAvatarPicks"/> method in the <see cref="AvatarManager"/> class to display the names
      * of our own agents picks listings on the <see cref="Console"/> window.
      * <code>
      *     // subscribe to the AvatarUpdate event to get our information
-     *     
+     *
      *     CallbackHandler<AvatarUpdateCallbackArgs> cbu = new Objects_AvatarUpdate();
      *     CallbackHandler<AvatarPicksReplyCallbackArgs> cba = new Objects_AvatarPicksReply();
      *     Client.Objects.OnAvatarUpdate.add(cbu, false);
      *     Client.Avatars.OnAvatarPicksReply.add(cba, true);
-     *     
+     *
      *     private class Objects_AvatarUpdate implements CallbackHandler<AvatarUpdateCallbackArgs>
      *     {
      *     	   public void callback(AvatarUpdateCallbackArgs e)
      *         {
      *             // we only want our own data
      *             if (e.Avatar.LocalID == Client.Self.LocalID)
-     *             {    
+     *             {
      *                 // Unsubscribe from the avatar update event to prevent a loop
      *                 // where we continually request the picks every time we get an update for ourselves
      *                 Client.Objects.OnAvatarUpdate.remove(cbu);
@@ -587,7 +587,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     {
      *         public void callback(AvatarPicksReplyCallbackArgs e)
      *         {
-     *             // we'll unsubscribe from the AvatarPicksReply event since we now have the data 
+     *             // we'll unsubscribe from the AvatarPicksReply event since we now have the data
      *             // we were looking for
      *             Client.Avatars.AvatarPicksReply.remove(cba);
      *             // loop through the dictionary and extract the names of the top picks from our profile
@@ -632,7 +632,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the AvatarUpdateEventArgs class
-         * 
+         *
          * @param simulator The simulator the packet originated from
          * @param avatar The <see cref="Avatar"/> data
          * @param timeDilation The simulator time dilation
@@ -652,7 +652,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     /**
      * Provides primitive data containing updated location, velocity, rotation, textures for the <see cref="ObjectManager.TerseObjectUpdate"/> event
-     * <p>The <see cref="ObjectManager.TerseObjectUpdate"/> event occurs when the simulator sends updated location, velocity, rotation, etc</p>        
+     * <p>The <see cref="ObjectManager.TerseObjectUpdate"/> event occurs when the simulator sends updated location, velocity, rotation, etc</p>
      */
 	public class TerseObjectUpdateCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
@@ -713,12 +713,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         {
             return m_Prim;
         }
-        // 
+        //
         public final Primitive.ConstructionData getConstructionData()
         {
             return m_ConstructionData;
         }
-        // 
+        //
         public final ObjectUpdatePacket.ObjectDataBlock getBlock()
         {
             return m_Block;
@@ -748,7 +748,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     // Raised when the simulator sends us data containing updates to an Objects DataBlock
 	public CallbackHandler<ObjectDataBlockUpdateCallbackArgs> OnObjectDataBlockUpdate = new CallbackHandler<ObjectDataBlockUpdateCallbackArgs>();
 
-    // Provides notification when an Avatar, Object or Attachment is DeRezzed or moves out of the avatars view for the 
+    // Provides notification when an Avatar, Object or Attachment is DeRezzed or moves out of the avatars view for the
     // <see cref="ObjectManager.KillObject"/> event
 	public class KillObjectCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
@@ -906,9 +906,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	public class PhysicsPropertiesCallbackArgs implements CallbackArgs
     {
-        // Simulator where the message originated 
+        // Simulator where the message originated
         public Simulator Simulator;
-        // Updated physical properties 
+        // Updated physical properties
         public PhysicsProperties PhysicsProperties;
 
         /**
@@ -923,7 +923,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
             PhysicsProperties = props;
         }
     }
-    
+
     ///#region Internal event handlers
 
     private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
@@ -953,7 +953,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
             }
         }
     }
-	
+
     private class InterpolationTimer_Elapsed extends TimerTask
     {
 		@Override
@@ -994,7 +994,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		                // Iterate through all of this sims primitives
 	                    // #region Angular Velocity
-		                
+
 		                // #endregion Angular Velocity
 
 		                // #region Linear Motion
@@ -1051,7 +1051,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	        }
 		}
     }
-	
+
 	private GridClient Client;
     // Does periodic dead reckoning calculation to convert
     // velocity and acceleration to new positions for objects
@@ -1061,7 +1061,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	public ObjectManager(GridClient client) {
 		Client = client;
-		
+
 		Client.Login.OnLoginProgress.add(new Network_OnLoginProgress());
 		Client.Network.OnDisconnected.add(new Network_OnDisconnected());
 
@@ -1116,12 +1116,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
     /**
-     * Request information for a single object from a <see cref="Simulator"/> 
+     * Request information for a single object from a <see cref="Simulator"/>
      * you are currently connected to
-     * 
+     *
      * @param simulator The <see cref="Simulator"/> the object is located
      * @param localID The Local ID of the object
-     * @throws Exception 
+     * @throws Exception
      */
 	public void RequestObject(Simulator simulator, int localID) throws Exception {
 		RequestMultipleObjectsPacket request = new RequestMultipleObjectsPacket();
@@ -1136,10 +1136,10 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     /**
      * Request information for multiple objects contained in the same simulator
-     * 
+     *
      * @param simulator The <see cref="Simulator"/> the objects are located
      * @param localIDs An array containing the Local IDs of the objects
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestObjects(Simulator simulator, int[] localIDs) throws Exception
     {
@@ -1159,23 +1159,23 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     /**
      * Attempt to purchase an original object, a copy, or the contents of an object
-     * 
-     * @param simulator The <see cref="Simulator"/> the object is located        
+     *
+     * @param simulator The <see cref="Simulator"/> the object is located
      * @param localID The Local ID of the object
      * @param saleType Whether the original, a copy, or the object
      *                 contents are on sale. This is used for verification, if the this
      *                 sale type is not valid for the object the purchase will fail
-     * @param price Price of the object. This is used for verification, 
+     * @param price Price of the object. This is used for verification,
      *              if it does not match the actual price the purchase will fail
      * @param groupID Group ID that will be associated with the new purchase
      * @param categoryID Inventory folder UUID where the object or objects purchased should be placed
      * <example>
      *  <code>
-     *     BuyObject(Client.Network.CurrentSim, 500, SaleType.Copy, 
+     *     BuyObject(Client.Network.CurrentSim, 500, SaleType.Copy,
      *         100, UUID.Zero, Client.Self.InventoryRootFolderUUID);
-     *  </code> 
+     *  </code>
      * </example>
-     * @throws Exception 
+     * @throws Exception
      */
     public final void BuyObject(Simulator simulator, int localID, SaleType saleType, int price, UUID groupID, UUID categoryID) throws Exception
     {
@@ -1197,10 +1197,10 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     /**
      * Request prices that should be displayed in pay dialog. This will trigger the simulator
      * to send us back a PayPriceReply which can be handled by OnPayPriceReply event
-     * 
+     *
      * @param simulator The <see cref="Simulator"/> the object is located
      * @param objectID The ID of the object
-     * 
+     *
      * The result is raised in the <see cref="OnPayPriceReply"/> event
      */
     public final void RequestPayPrice(Simulator simulator, UUID objectID) throws Exception
@@ -1213,30 +1213,30 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(payPriceRequest);
     }
 
-    /** 
-     * Select a single object. This will cause the <see cref="Simulator"/> to send us 
+    /**
+     * Select a single object. This will cause the <see cref="Simulator"/> to send us
      * an <see cref="ObjectPropertiesPacket"/> which will raise the <see cref="OnObjectProperties"/> event
-     * 
-     * @param simulator The <see cref="Simulator"/> the object is located        
-     * @param localID The Local ID of the object        
+     *
+     * @param simulator The <see cref="Simulator"/> the object is located
+     * @param localID The Local ID of the object
      * {@link ObjectPropertiesFamilyCallbackArgs}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SelectObject(Simulator simulator, int localID) throws Exception
     {
         SelectObject(simulator, localID, true);
     }
 
-    /** 
-     * Select a single object. This will cause the <see cref="Simulator"/> to send us 
+    /**
+     * Select a single object. This will cause the <see cref="Simulator"/> to send us
      * an <see cref="ObjectPropertiesPacket"/> which will raise the <see cref="OnObjectProperties"/> event
-     * 
+     *
      * @param simulator The <see cref="Simulator"/> the object is located
      * @param localID The Local ID of the object
      * @param automaticDeselect if true, a call to <see cref="DeselectObject"/> is
      *                          made immediately following the request
      * {@link ObjectPropertiesFamilyCallbackArgs}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SelectObject(Simulator simulator, int localID, boolean automaticDeselect) throws Exception
     {
@@ -1257,13 +1257,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     }
 
     /**
-     * Select multiple objects. This will cause the <see cref="Simulator"/> to send us 
+     * Select multiple objects. This will cause the <see cref="Simulator"/> to send us
      * an <see cref="ObjectPropertiesPacket"/> which will raise the <see cref="OnObjectProperties"/> event
-     * 
-     * @param simulator The <see cref="Simulator"/> the objects are located 
+     *
+     * @param simulator The <see cref="Simulator"/> the objects are located
      * @param localIDs An array containing the Local IDs of the objects
      * {@link ObjectPropertiesFamilyCallbackArgs}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SelectObjects(Simulator simulator, int[] localIDs) throws Exception
     {
@@ -1271,14 +1271,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     }
 
     /**
-     * Select multiple objects. This will cause the <see cref="Simulator"/> to send us 
+     * Select multiple objects. This will cause the <see cref="Simulator"/> to send us
      * an <see cref="ObjectPropertiesPacket"/> which will raise the <see cref="OnObjectProperties"/> event
-     * 
-     * @param simulator The <see cref="Simulator"/> the objects are located 
+     *
+     * @param simulator The <see cref="Simulator"/> the objects are located
      * @param localIDs An array containing the Local IDs of the objects
      * @param automaticDeselect Should objects be deselected immediately after selection
      * {@link ObjectPropertiesFamilyCallbackArgs}
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SelectObjects(Simulator simulator, int[] localIDs, boolean automaticDeselect) throws Exception
     {
@@ -1303,14 +1303,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         }
     }
 
-    /** 
+    /**
      * Sets the sale properties of a single object
-     * 
-     * @param simulator The <see cref="Simulator"/> the object is located        
-     * @param localID The Local ID of the object        
+     *
+     * @param simulator The <see cref="Simulator"/> the object is located
+     * @param localID The Local ID of the object
      * @param saleType One of the options from the <see cref="SaleType"/> enum
      * @param price The price of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetSaleInfo(Simulator simulator, int localID, SaleType saleType, int price) throws Exception
     {
@@ -1326,14 +1326,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(sale);
     }
 
-    /** 
+    /**
      * Sets the sale properties of multiple objects
-     *         
-     * @param simulator The <see cref="Simulator"/> the objects are located 
+     *
+     * @param simulator The <see cref="Simulator"/> the objects are located
      * @param localIDs An array containing the Local IDs of the objects
      * @param saleType One of the options from the <see cref="SaleType"/> enum
      * @param price The price of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetSaleInfo(Simulator simulator, int[] localIDs, SaleType saleType, int price) throws Exception
     {
@@ -1353,12 +1353,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(sale);
     }
 
-    /** 
+    /**
      * Deselect a single object
-     * 
-     * @param simulator The <see cref="Simulator"/> the object is located        
+     *
+     * @param simulator The <see cref="Simulator"/> the object is located
      * @param localID The Local ID of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeselectObject(Simulator simulator, int localID) throws Exception
     {
@@ -1374,12 +1374,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(deselect);
     }
 
-    /** 
+    /**
      * Deselect multiple objects.
-     * 
-     * @param simulator The <see cref="Simulator"/> the objects are located 
+     *
+     * @param simulator The <see cref="Simulator"/> the objects are located
      * @param localIDs An array containing the Local IDs of the objects
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeselectObjects(Simulator simulator, int[] localIDs) throws Exception
     {
@@ -1399,22 +1399,22 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(deselect);
     }
 
-    /** 
+    /**
      * Perform a click action on an object
-     * 
-     * @param simulator The <see cref="Simulator"/> the object is located        
+     *
+     * @param simulator The <see cref="Simulator"/> the object is located
      * @param localID The Local ID of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ClickObject(Simulator simulator, int localID) throws Exception
     {
         ClickObject(simulator, localID, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
     }
 
-    /** 
+    /**
      * Perform a click action (Grab) on a single object
-     * 
-     * @param simulator The <see cref="Simulator"/> the object is located        
+     *
+     * @param simulator The <see cref="Simulator"/> the object is located
      * @param localID The Local ID of the object
      * @param uvCoord The texture coordinates to touch
      * @param stCoord The surface coordinates to touch
@@ -1423,7 +1423,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * @param normal The surface normal of the position to touch (A normal is a vector perpindicular to the surface)
      * @param binormal The surface binormal of the position to touch (A binormal is a vector tangen to the surface
      * pointing along the U direction of the tangent space
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ClickObject(Simulator simulator, int localID, Vector3 uvCoord, Vector3 stCoord, int faceIndex, Vector3 position, Vector3 normal, Vector3 binormal) throws Exception
     {
@@ -1443,7 +1443,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
         simulator.SendPacket(grab);
 
-        // TODO: If these hit the server out of order the click will fail 
+        // TODO: If these hit the server out of order the click will fail
         // and we'll be grabbing the object
         Thread.sleep(50);
 
@@ -1463,9 +1463,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(degrab);
     }
 
-    /** 
+    /**
      * Create (rez) a new prim object in a simulator
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object to place the object in
      * @param prim Data describing the prim object to rez
      * @param groupID Group ID that this prim will be set to, or UUID.Zero if you
@@ -1475,20 +1475,20 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * @param rotation Rotation quaternion to rotate this prim
      * Due to the way client prim rezzing is done on the server,
      * the requested position for an object is only close to where the prim
-     * actually ends up. If you desire exact placement you'll need to 
+     * actually ends up. If you desire exact placement you'll need to
      * follow up by moving the object after it has been created. This
-     * function will not set textures, light and flexible data, or other 
+     * function will not set textures, light and flexible data, or other
      * extended primitive properties
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AddPrim(Simulator simulator, Primitive.ConstructionData prim, UUID groupID, Vector3 position, Vector3 scale, Quaternion rotation) throws Exception
     {
         AddPrim(simulator, prim, groupID, position, scale, rotation, PrimFlags.CreateSelected);
     }
 
-    /** 
+    /**
      * Create (rez) a new prim object in a simulator
-     * 
+     *
      * @param simulator A reference to the {@link Simulator} object to place the object in
      * @param prim Data describing the prim object to rez
      * @param groupID Group ID that this prim will be set to, or UUID.Zero if you
@@ -1499,11 +1499,11 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * @param createFlags Specify the {@link PrimFlags}
      * Due to the way client prim rezzing is done on the server,
      * the requested position for an object is only close to where the prim
-     * actually ends up. If you desire exact placement you'll need to 
+     * actually ends up. If you desire exact placement you'll need to
      * follow up by moving the object after it has been created. This
-     * function will not set textures, light and flexible data, or other 
+     * function will not set textures, light and flexible data, or other
      * extended primitive properties
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AddPrim(Simulator simulator, ConstructionData prim, UUID groupID, Vector3 position, Vector3 scale, Quaternion rotation, int createFlags) throws Exception
     {
@@ -1550,18 +1550,18 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(packet);
     }
 
-    /** 
+    /**
      * Rez a Linden tree
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param scale The size of the tree
      * @param rotation The rotation of the tree
      * @param position The position of the tree
      * @param treeType The Type of tree
-     * @param groupOwner The {@link UUID} of the group to set the tree to, 
+     * @param groupOwner The {@link UUID} of the group to set the tree to,
      * or UUID.Zero if no group is to be set
      * @param newTree true to use the "new" Linden trees, false to use the old
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AddTree(Simulator simulator, Vector3 scale, Quaternion rotation, Vector3 position, Tree treeType, UUID groupOwner, boolean newTree) throws Exception
     {
@@ -1584,17 +1584,17 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(add);
     }
 
-    /** 
+    /**
      * Rez grass and ground cover
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param scale The size of the grass
      * @param rotation The rotation of the grass
      * @param position The position of the grass
      * @param grassType The type of grass from the {@link Grass} enum
-     * @param groupOwner The {@link UUID} of the group to set the tree to, 
+     * @param groupOwner The {@link UUID} of the group to set the tree to,
      * or UUID.Zero if no group is to be set
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AddGrass(Simulator simulator, Vector3 scale, Quaternion rotation, Vector3 position, Grass grassType, UUID groupOwner) throws Exception
     {
@@ -1617,28 +1617,28 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(add);
     }
 
-    /** 
+    /**
      * Set the textures to apply to the faces of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param textures The texture data to apply
-     * @throws Exception 
-     * @throws IOException 
+     * @throws Exception
+     * @throws IOException
      */
     public final void SetTextures(Simulator simulator, int localID, TextureEntry textures) throws IOException, Exception
     {
         SetTextures(simulator, localID, textures, Helpers.EmptyString);
     }
 
-    /** 
+    /**
      * Set the textures to apply to the faces of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param textures The texture data to apply
      * @param mediaUrl A media URL (not used)
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetTextures(Simulator simulator, int localID, TextureEntry textures, String mediaUrl) throws Exception
     {
@@ -1655,13 +1655,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(image);
     }
 
-    /** 
+    /**
      * Set the Light data on an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param light A {@link Primitive.LightData} object containing the data to set
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetLight(Simulator simulator, int localID, LightData light) throws Exception
     {
@@ -1688,13 +1688,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(extra);
     }
 
-    /** 
+    /**
      * Set the flexible data on an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param flexible A {@link Primitive.FlexibleData} object containing the data to set
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetFlexible(Simulator simulator, int localID, FlexibleData flexible) throws Exception
     {
@@ -1713,13 +1713,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(extra);
     }
 
-    /** 
+    /**
      * Set the sculptie texture and data on an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param sculpt A {@link Primitive.SculptData} object containing the data to set
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetSculpt(Simulator simulator, int localID, SculptData sculpt) throws Exception
     {
@@ -1754,13 +1754,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(shape);
     }
 
-    /** 
+    /**
      * Unset additional primitive parameters on an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param type The extra parameters to set
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetExtraParamOff(Simulator simulator, int localID, ExtraParamType type) throws Exception
     {
@@ -1779,13 +1779,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(extra);
     }
 
-    /** 
+    /**
      * Link multiple prims into a linkset
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the objects reside
      * @param localIDs An array which contains the IDs of the objects to link
      * The last object in the array will be the root object of the linkset TODO: Is this true?
-     * @throws Exception 
+     * @throws Exception
      */
     public final void LinkPrims(Simulator simulator, int[] localIDs) throws Exception
     {
@@ -1805,12 +1805,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(packet);
     }
 
-    /** 
+    /**
      * Delink/Unlink multiple prims from a linkset
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the objects reside
      * @param localIDs An array which contains the IDs of the objects to delink
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DelinkPrims(Simulator simulator, int[] localIDs) throws Exception
     {
@@ -1830,13 +1830,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(packet);
     }
 
-    /** 
+    /**
      * Change the rotation of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param rotation The new rotation of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetRotation(Simulator simulator, int localID, Quaternion rotation) throws Exception
     {
@@ -1852,26 +1852,26 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(objRotPacket);
     }
 
-    /** 
+    /**
      * Set the name of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param name A string containing the new name of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetName(Simulator simulator, int localID, String name) throws Exception
     {
         SetNames(simulator, new int[] { localID }, new String[] { name });
     }
 
-    /** 
+    /**
      * Set the name of multiple objects
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the objects reside
      * @param localIDs An array which contains the IDs of the objects to change the name of
      * @param names An array which contains the new names of the objects
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetNames(Simulator simulator, int[] localIDs, String[] names) throws Exception
     {
@@ -1891,26 +1891,26 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(namePacket);
     }
 
-    /** 
+    /**
      * Set the description of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param description A string containing the new description of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetDescription(Simulator simulator, int localID, String description) throws Exception
     {
         SetDescriptions(simulator, new int[] { localID }, new String[] { description });
     }
 
-    /** 
+    /**
      * Set the descriptions of multiple objects
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the objects reside
      * @param localIDs An array which contains the IDs of the objects to change the description of
      * @param descriptions An array which contains the new descriptions of the objects
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetDescriptions(Simulator simulator, int[] localIDs, String[] descriptions) throws Exception
     {
@@ -1930,14 +1930,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(descPacket);
     }
 
-    /** 
+    /**
      * Attach an object to this avatar
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param attachPoint The point on the avatar the object will be attached
      * @param rotation The rotation of the attached object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AttachObject(Simulator simulator, int localID, Primitive.AttachmentPoint attachPoint, Quaternion rotation) throws Exception
     {
@@ -1954,14 +1954,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(attach);
     }
 
-    /** 
+    /**
      * Drop an attached object from this avatar
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator}
      * object where the objects reside. This will always be the simulator the avatar is currently in
-     * 
+     *
      * @param localID The object's ID which is local to the simulator the object is in
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DropObject(Simulator simulator, int localID) throws Exception
     {
@@ -1975,16 +1975,16 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(dropit);
     }
 
-    /** 
+    /**
      * Detach an object from yourself
-     * 
-     * @param simulator A reference to the {@link OpenMetaverse.Simulator} 
+     *
+     * @param simulator A reference to the {@link OpenMetaverse.Simulator}
      * object where the objects reside
-     * 
+     *
      * This will always be the simulator the avatar is currently in
-     * 
+     *
      * @param localIDs An array which contains the IDs of the objects to detach
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DetachObjects(Simulator simulator, int[] localIDs) throws Exception
     {
@@ -2002,13 +2002,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(detach);
     }
 
-    /** 
+    /**
      * Change the position of an object, Will change position of entire linkset
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param position The new position of the object
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetPosition(Simulator simulator, int localID, Vector3 position) throws Exception
     {
@@ -2016,14 +2016,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         UpdateObject(simulator, localID, position, type);
     }
 
-    /** 
+    /**
      * Change the position of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param position The new position of the object
      * @param childOnly if true, will change position of (this) child prim only, not entire linkset
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetPosition(Simulator simulator, int localID, Vector3 position, boolean childOnly) throws Exception
     {
@@ -2037,15 +2037,15 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         UpdateObject(simulator, localID, position, type);
     }
 
-    /** 
+    /**
      * Change the Scale (size) of an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param scale The new scale of the object
      * @param childOnly If true, will change scale of this prim only, not entire linkset
      * @param uniform True to resize prims uniformly
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetScale(Simulator simulator, int localID, Vector3 scale, boolean childOnly, boolean uniform) throws Exception
     {
@@ -2064,14 +2064,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         UpdateObject(simulator, localID, scale, type);
     }
 
-    /** 
+    /**
      * Change the Rotation of an object that is either a child or a whole linkset
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param quat The new scale of the object
      * @param childOnly If true, will change rotation of this prim only, not entire linkset
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetRotation(Simulator simulator, int localID, Quaternion quat, boolean childOnly) throws Exception
     {
@@ -2096,14 +2096,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(multiObjectUpdate);
     }
 
-    /** 
+    /**
      * Send a Multiple Object Update packet to change the size, scale or rotation of a primitive
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param data The new rotation, size, or position of the target object
      * @param type The flags from the {@link UpdateType} Enum
-     * @throws Exception 
+     * @throws Exception
      */
     public final void UpdateObject(Simulator simulator, int localID, Vector3 data, byte type) throws Exception
     {
@@ -2121,14 +2121,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(multiObjectUpdate);
     }
 
-    /** 
+    /**
      * Deed an object (prim) to a group, Object must be shared with group which
      * can be accomplished with SetPermissions()
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localID The objects ID which is local to the simulator the object is in
      * @param groupOwner The {@link UUID} of the group to deed the object to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeedObject(Simulator simulator, int localID, UUID groupOwner) throws Exception
     {
@@ -2149,14 +2149,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(objDeedPacket);
     }
 
-    /** 
+    /**
      * Deed multiple objects (prims) to a group, Objects must be shared with group which
      * can be accomplished with SetPermissions()
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param localIDs An array which contains the IDs of the objects to deed
      * @param groupOwner The {@link UUID} of the group to deed the object to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeedObjects(Simulator simulator, int[] localIDs, UUID groupOwner) throws Exception
     {
@@ -2179,15 +2179,15 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(packet);
     }
 
-    /** 
+    /**
      * Set the permissions on multiple objects
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the objects reside
      * @param localIDs An array which contains the IDs of the objects to set the permissions on
      * @param who The new Who mask to set
      * @param permissions The new Permissions mark to set
      * @param set TODO: What does this do?
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetPermissions(Simulator simulator, int[] localIDs, byte who,
     		                         int permissions, boolean set) throws Exception
@@ -2209,31 +2209,31 @@ public class ObjectManager implements PacketCallback, CapsCallback {
             packet.ObjectData[i].ObjectLocalID = localIDs[i];
             packet.ObjectData[i].Field = who;
             packet.ObjectData[i].Mask = permissions;
-            packet.ObjectData[i].Set = (byte)(set ? 1 : 0);   
+            packet.ObjectData[i].Set = (byte)(set ? 1 : 0);
         }
 
         simulator.SendPacket(packet);
     }
 
-    /** 
+    /**
      * Request additional properties for an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param objectID
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestObjectPropertiesFamily(Simulator simulator, UUID objectID) throws Exception
     {
         RequestObjectPropertiesFamily(simulator, objectID, true);
     }
 
-    /** 
+    /**
      * Request additional properties for an object
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the object resides
      * @param objectID Absolute UUID of the object
      * @param reliable Whether to require server acknowledgement of this request
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestObjectPropertiesFamily(Simulator simulator, UUID objectID, boolean reliable) throws Exception
     {
@@ -2250,13 +2250,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         simulator.SendPacket(properties);
     }
 
-    /** 
+    /**
      * Set the ownership of a list of objects to the specified group
-     * 
+     *
      * @param simulator A reference to the {@link OpenMetaverse.Simulator} object where the objects reside
      * @param localIds An array which contains the IDs of the objects to set the group id on
      * @param groupID The Groups ID
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetObjectsGroup(Simulator simulator, int[] localIds, UUID groupID) throws Exception
     {
@@ -2274,7 +2274,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
         simulator.SendPacket(packet);
     }
- 
+
     protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
     {
         if (Client.Settings.OBJECT_TRACKING)
@@ -2286,7 +2286,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
                 {
                     return prim;
                 }
-                
+
                 prim = new Primitive();
                 prim.LocalID = localID;
                 prim.ID = fullID;
@@ -2901,7 +2901,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      *
      */
     protected final void ObjectUpdateCompressedHandler(Packet packet, Simulator simulator)
@@ -3215,7 +3215,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
                     }
                 }
             }
-    
+
             if (Client.Settings.AVATAR_TRACKING)
             {
                 int localID;

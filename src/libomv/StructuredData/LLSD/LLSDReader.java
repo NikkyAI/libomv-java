@@ -40,7 +40,7 @@ public class LLSDReader extends FilterReader
      * the buffer is full.
      */
     int pos;
-    
+
     int bytes;
 
 	public int getBytePosition()
@@ -52,7 +52,7 @@ public class LLSDReader extends FilterReader
      * Constructs a new {@code PushbackReader} with the specified reader as
      * source. The size of the pushback buffer is set to the default value of 1
      * character.
-     * 
+     *
      * @param in
      *            the source reader.
      */
@@ -66,7 +66,7 @@ public class LLSDReader extends FilterReader
     /**
      * Constructs a new {@code PushbackReader} with {@code in} as source reader.
      * The size of the pushback buffer is set to {@code size}.
-     * 
+     *
      * @param in
      *            the source reader.
      * @param size
@@ -87,7 +87,7 @@ public class LLSDReader extends FilterReader
     /**
      * Closes this reader. This implementation closes the source reader
      * and releases the pushback buffer.
-     * 
+     *
      * @throws IOException
      *             if an error occurs while closing this reader.
      */
@@ -104,7 +104,7 @@ public class LLSDReader extends FilterReader
      * Marks the current position in this stream. Setting a mark is not
      * supported in this class; this implementation always throws an
      * {@code IOException}.
-     * 
+     *
      * @param readAheadLimit
      *            the number of character that can be read from this reader
      *            before the mark is invalidated; this parameter is ignored.
@@ -121,7 +121,7 @@ public class LLSDReader extends FilterReader
      * Indicates whether this reader supports the {@code mark(int)} and
      * {@code reset()} methods. {@code PushbackReader} does not support them, so
      * it returns {@code false}.
-     * 
+     *
      * @return always {@code false}.
      * @see #mark(int)
      * @see #reset()
@@ -178,7 +178,7 @@ public class LLSDReader extends FilterReader
      * read from the pushback buffer first, then from the source reader if more
      * bytes are required. Blocks until {@code count} characters have been read,
      * the end of the source reader is detected or an exception is thrown.
-     * 
+     *
      * @param buffer
      *            the array in which to store the characters read from this
      *            reader.
@@ -206,7 +206,7 @@ public class LLSDReader extends FilterReader
             {
                 throw new IOException("Reader closed");
             }
-            
+
             // avoid int overflow
             if (offset < 0 || count < 0 || offset > buffer.length - count)
             {
@@ -250,7 +250,7 @@ public class LLSDReader extends FilterReader
      * Indicates whether this reader is ready to be read without blocking.
      * Returns {@code true} if this reader will not block when {@code read} is
      * called, {@code false} if unknown or blocking will occur.
-     * 
+     *
      * @return {@code true} if the receiver will not block when
      *         {@code read()} is called, {@code false} if unknown
      *         or blocking will occur.
@@ -276,7 +276,7 @@ public class LLSDReader extends FilterReader
      * Resets this reader to the last marked position. Resetting the reader is
      * not supported in this class; this implementation always throws an
      * {@code IOException}.
-     * 
+     *
      * @throws IOException
      *             if this method is called.
      */
@@ -340,12 +340,12 @@ public class LLSDReader extends FilterReader
             {
     		    throw new IOException("Stream closed");
             }
-            
+
             if (length > pos)
             {
     		    throw new IOException("Push back buffer is full");
             }
-            
+
             // Force buffer null check first!
             if (offset > buffer.length - length || offset < 0)
             {
@@ -361,7 +361,7 @@ public class LLSDReader extends FilterReader
     		{
     		    throw new IOException("Push back buffer is full");
     		}
-    		
+
             for (int i = offset + length - 1; i >= offset; i--) {
             	buf[--pos] = buffer[i];
             }
@@ -392,12 +392,12 @@ public class LLSDReader extends FilterReader
             {
     		    throw new IOException("Stream closed");
             }
-            
+
     		if (pos == 0)
     		{
     		    throw new IOException("Push back buffer is full");
     		}
-    		
+
             buf[--pos] = (char) oneChar;
             bytes--;
         }
@@ -407,7 +407,7 @@ public class LLSDReader extends FilterReader
      * Skips {@code count} characters in this reader. This implementation skips
      * characters in the pushback buffer first and then in the source reader if
      * necessary.
-     * 
+     *
      * @param count
      *            the number of characters to skip.
      * @return the number of characters actually skipped.
@@ -422,7 +422,7 @@ public class LLSDReader extends FilterReader
         {
             throw new IllegalArgumentException();
         }
-        
+
         synchronized (lock)
         {
             if (buf == null)
@@ -433,7 +433,7 @@ public class LLSDReader extends FilterReader
             {
                 return 0;
             }
-            
+
     		long pskip = buf.length - pos;
     		if (pskip > 0)
     		{

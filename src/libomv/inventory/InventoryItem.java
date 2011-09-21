@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.inventory;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class InventoryItem extends InventoryBase
 	private static final long serialVersionUID = 1L;
 
 	/** Inventory Item Types, eg Script, Notecard, Folder, etc */
-	public enum InventoryType 
+	public enum InventoryType
 	{
 		/** Unknown */
 		Unknown(-1),
@@ -119,7 +119,7 @@ public class InventoryItem extends InventoryBase
 			}
 			return null;
 		}
-		
+
 		public byte getValue()
 		{
 			return _value;
@@ -141,7 +141,7 @@ public class InventoryItem extends InventoryBase
     }
 
 	/** Types of wearable assets */
-	public enum WearableType 
+	public enum WearableType
 	{
 		/** Invalid wearable asset */
 		Invalid(-1),
@@ -175,7 +175,7 @@ public class InventoryItem extends InventoryBase
 		Alpha(13),
 		/** Tattoo */
 		Tattoo(14);
-		
+
 		public static WearableType setValue(int value)
 		{
 			for (WearableType e : values())
@@ -185,7 +185,7 @@ public class InventoryItem extends InventoryBase
 			}
 			return Invalid;
 		}
-		
+
 		public byte getValue()
 		{
 			return _value;
@@ -198,7 +198,7 @@ public class InventoryItem extends InventoryBase
 	}
 
 	/* Possible destinations for DeRezObject request */
-    public enum DeRezDestination 
+    public enum DeRezDestination
     {
         /* */
         AgentInventorySave,
@@ -227,7 +227,7 @@ public class InventoryItem extends InventoryBase
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -259,12 +259,12 @@ public class InventoryItem extends InventoryBase
         /* Indicates that the asset is only referenced by this inventory item. If this item is deleted
          * or updated to reference a new assetID, the asset can be deleted */
         public static final int SharedSingleReference = 0x40000000;
-        
+
         public static int setValue(int value)
         {
         	return value & _mask;
         }
-        
+
         public static int getValue(int value)
         {
         	return value;
@@ -307,7 +307,7 @@ public class InventoryItem extends InventoryBase
     public UUID LastOwnerID;
 
     /** Construct a new InventoryItem object
-     * 
+     *
      *  @param itemID The {@link OpenMetaverse.UUID} of the item
      */
     public InventoryItem(UUID itemID)
@@ -315,9 +315,9 @@ public class InventoryItem extends InventoryBase
         super(itemID);
     }
 
-    /** 
+    /**
      * Construct a new InventoryItem object of a specific Type
-     * 
+     *
      * @param type The type of item from {@link OpenMetaverse.InventoryType}
      * @param itemID {@link OpenMetaverse.UUID} of the item
      */
@@ -327,9 +327,9 @@ public class InventoryItem extends InventoryBase
         inventoryType = type;
     }
 
-    /** 
+    /**
      * Indicates inventory item is a link
-     * 
+     *
      * @return True if inventory item is a link to another inventory item
      */
     public final boolean IsLink()
@@ -362,7 +362,7 @@ public class InventoryItem extends InventoryBase
     	super.fromOSD(osd);
     	if (osd instanceof OSDMap)
     	{
-    	   OSDMap map = (OSDMap)osd; 
+    	   OSDMap map = (OSDMap)osd;
 
            AssetID = map.get("AssetUUID").AsUUID();
            Permissions = new Permissions(map.get("Permissions"));
@@ -382,10 +382,10 @@ public class InventoryItem extends InventoryBase
 
     /**
      * Initializes an InventoryItem object from a serialization stream
-     * 
+     *
      * @param info serialization stream
-     * @throws ClassNotFoundException 
-     * @throws IOException 
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     @Override
     protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -410,9 +410,9 @@ public class InventoryItem extends InventoryBase
 
     /**
      * Write Serilization data for this InventoryFolder object to the stream
-     * 
+     *
      * @param info serialization stream
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void writeObject(ObjectOutputStream info) throws IOException
@@ -434,10 +434,10 @@ public class InventoryItem extends InventoryBase
         info.writeObject(LastOwnerID);
     }
 
-    /** 
+    /**
      * Generates a number corresponding to the value of the object to support the use of a hash table.
      * Suitable for use in hashing algorithms and data structures such as a hash table
-     * 
+     *
      * @return A Hashcode of all the combined InventoryItem fields
      */
     @Override
@@ -448,9 +448,9 @@ public class InventoryItem extends InventoryBase
                saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode() ^ LastOwnerID.hashCode();
     }
 
-    /** 
+    /**
      * Compares an object
-     * 
+     *
      * @param o The object to compare
      * @return true if comparison object matches
      */
@@ -463,7 +463,7 @@ public class InventoryItem extends InventoryBase
 
     /**
      * Determine whether the specified {@link OpenMetaverse.InventoryBase} object is equal to the current object
-     * 
+     *
      * @param o The {@link OpenMetaverse.InventoryBase} object to compare against
      * @return true if objects are the same
      */
@@ -474,9 +474,9 @@ public class InventoryItem extends InventoryBase
         return item != null && equals(item);
     }
 
-    /** 
+    /**
      * Determine whether the specified {@link OpenMetaverse.InventoryItem} object is equal to the current object
-     * 
+     *
      * @param o The {@link OpenMetaverse.InventoryItem} object to compare against
      * @return true if objects are the same
      */

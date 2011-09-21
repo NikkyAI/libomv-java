@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import java.util.HashMap;
@@ -41,7 +41,7 @@ import libomv.utils.Logger.LogLevel;
 public abstract class AssetWearable extends AssetItem
 {
 	/** Types of wearable assets */
-	public enum WearableType 
+	public enum WearableType
 	{
 		/** Invalid wearable asset */
 		Invalid(-1),
@@ -75,7 +75,7 @@ public abstract class AssetWearable extends AssetItem
 		Alpha(13),
 		/** Tattoo */
 		Tattoo(14);
-		
+
 
 		public static WearableType setValue(int value)
 		{
@@ -86,7 +86,7 @@ public abstract class AssetWearable extends AssetItem
 			}
 			return Invalid;
 		}
-		
+
 		public byte getValue(WearableType value)
 		{
 			return value._value;
@@ -96,7 +96,7 @@ public abstract class AssetWearable extends AssetItem
 		{
 			return _value;
 		}
-		
+
 		private final byte _value;
 		private WearableType(int value)
 		{
@@ -138,7 +138,7 @@ public abstract class AssetWearable extends AssetItem
 
     /**
      * Initializes a new instance of an AssetWearable object with parameters
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -149,7 +149,7 @@ public abstract class AssetWearable extends AssetItem
 
     /**
      * Initializes a new instance of an AssetWearable object with parameters
-     * 
+     *
      * @param source A string containing the asset parameters
      */
     public AssetWearable(String source)
@@ -159,7 +159,7 @@ public abstract class AssetWearable extends AssetItem
 
     /**
      * Decode an assets byte encoded data to a string
-     * 
+     *
      * @return true if the asset data was decoded successfully
      */
     @Override
@@ -305,7 +305,7 @@ public abstract class AssetWearable extends AssetItem
                         {
                             // Container for sale_type and sale_price, ignore
                         }
-                        else 
+                        else
                             return false;
                     }
                 }

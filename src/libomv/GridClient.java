@@ -2,26 +2,26 @@
  * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.IOException;
@@ -57,10 +57,10 @@ import libomv.capabilities.CapsMessage;
 import libomv.inventory.InventoryManager;
 import libomv.utils.Helpers;
 
- 
+
 /* Main class to expose the functionality of a particular grid to clients. All
  * of the classes needed for sending and receiving data are accessible through
- * this class. */ 
+ * this class. */
 public class GridClient
 {
 	// #region gridlist definitions
@@ -77,14 +77,14 @@ public class GridClient
 		public String register;    // register, account
 		public String password;    // password
 		public int version;
-		
+
 		@Override
 		public String toString()
 		{
 			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n", gridnick, gridname, platform, version);
 		}
 	}
-	
+
 	private static final String listUri = "http://libomv-java.sourceforge.net/grids/default_grids.xml";
 	private static HashMap<String, GridInfo> gridlist = new HashMap<String, GridInfo>();
 	private static int listversion = 0;
@@ -100,12 +100,12 @@ public class GridClient
 	private static final String DEFAULT_GRIDS_VERSION = "default_grids_version";
 	private static final String DEFAULT_GRIDS_LIST = "/res/default_grids.xml";
 	// #endregion
-	
+
 	// Networking Subsystem
 	public NetworkManager Network;
 	// Login Subsystem of Network handler
     public LoginManager Login;
-    // Caps Messages 
+    // Caps Messages
     public CapsMessage Messages;
     // AgentThrottle
     public AgentThrottle Throttle;
@@ -142,14 +142,14 @@ public class GridClient
 	// Debug flag
 	public boolean Debug;
 
-	// 
+	//
 	// Constructor.
-	// 
+	//
 	public GridClient() throws Exception
 	{
 		this(new Settings());
 	}
-	
+
 	public GridClient(Settings settings) throws Exception
 	{
 		initializeGridList();
@@ -184,7 +184,7 @@ public class GridClient
 	{
 		return gridlist.keySet();
 	}
-	
+
 	public GridInfo getGrid(String grid)
 	{
 		return gridlist.get(grid);
@@ -224,14 +224,14 @@ public class GridClient
 	{
 		return gridlist.put(info.gridnick, info);
 	}
-	
+
 	/**
 	 * Retrieves the GridInfo settings from the grid user server, when the server supports
 	 * the GridInfo protocol.
-	 *  
+	 *
 	 * @param loginuri The HTTP address of the user server
 	 * @return a filled in GridInfo if the call was successful, null otherwise
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public GridInfo queryGridInfo(String loginuri) throws Exception
 	{
@@ -257,7 +257,7 @@ public class GridClient
 		}
 		finally
 		{
-			getMethod.abort();			
+			getMethod.abort();
 		}
 		return info;
 	}
@@ -276,46 +276,46 @@ public class GridClient
 		    else
 		    {
 		        String name = parser.getName();
-		
+
 		        if (name.equals("gridnick"))
 	     	    {
 				    info.gridnick = parser.nextText().trim();
 		        }
 		        else if (name.equals("gridname"))
 		        {
-			        info.gridname = parser.nextText().trim();		    	
+			        info.gridname = parser.nextText().trim();
 		        }
 		        else if (name.equals("platform"))
 		        {
-			        info.platform = parser.nextText().trim();		    	
+			        info.platform = parser.nextText().trim();
 		        }
 		        else if (name.equals("login") || name.equals("loginuri"))
 		        {
-			        info.loginuri = parser.nextText().trim();		    	
+			        info.loginuri = parser.nextText().trim();
 		        }
 		        else if (name.equals("welcome") || name.equals("loginpage"))
 		        {
-			        info.loginpage = parser.nextText().trim();		    	
+			        info.loginpage = parser.nextText().trim();
 		        }
 		        else if (name.equals("economy") || name.equals("helperuri"))
 		        {
-			        info.helperuri = parser.nextText().trim();		    	
+			        info.helperuri = parser.nextText().trim();
 		        }
 		        else if (name.equals("about") || name.equals("website"))
 		        {
-			        info.website = parser.nextText().trim();		    	
+			        info.website = parser.nextText().trim();
 		        }
 		        else if (name.equals("help") || name.equals("support"))
 		        {
-			        info.support = parser.nextText().trim();		    	
+			        info.support = parser.nextText().trim();
 		        }
 		        else if (name.equals("register") || name.equals("account"))
 		        {
-			        info.register = parser.nextText().trim();		    	
+			        info.register = parser.nextText().trim();
 		        }
 		        else if (name.equals("password"))
 		        {
-			        info.password = parser.nextText().trim();		    	
+			        info.password = parser.nextText().trim();
 		        }
 		        else
 		        {
@@ -326,7 +326,7 @@ public class GridClient
 		} while (parser.nextTag() == XmlPullParser.START_TAG);
 		return info;
 	}
-	
+
 	public GridInfo deleteGrid(String grid)
 	{
 		GridInfo info = gridlist.remove(grid);
@@ -336,7 +336,7 @@ public class GridClient
 			{
 				// sets first grid if map is not empty
 				setDefaultGrid(Helpers.EmptyString);
-			}	
+			}
 		}
 		return info;
 	}
@@ -349,18 +349,18 @@ public class GridClient
 		if (modified)
 			saveList();
 	}
-		
+
 	private boolean setList(OSD list, boolean merge) throws IllegalArgumentException, IllegalAccessException
 	{
 		if (list == null || list.getType() != OSDType.Array)
 			return false;
-		
+
 		if (!merge)
 		{
 			gridlist.clear();
 			listversion = 0;
 		}
-		
+
 		boolean modified = false;
 		int version = 0;
 		OSDArray array = (OSDArray)list;
@@ -391,14 +391,14 @@ public class GridClient
 		}
 		return modified;
 	}
-	
+
 	private void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
 	{
 		OSDArray array = new OSDArray();
 		OSDMap map = new OSDMap();
 		map.put(DEFAULT_GRIDS_VERSION, OSD.FromInteger(listversion));
 		array.add(map);
-		
+
 	    for (GridInfo info : gridlist.values())
 	    {
 		    array.add(OSD.serializeMembers(info));
@@ -407,12 +407,12 @@ public class GridClient
 		prefs.put(GRID_LIST, array.serializeToString(OSDFormat.Xml));
 		prefs.put(DEFAULT_GRID, defaultGrid);
 	}
-	
+
 	private OSD loadDefaults() throws IOException, ParseException
 	{
 		OSD osd = null;
 		InputStream stream = getClass().getResourceAsStream(DEFAULT_GRIDS_LIST);
-		if (stream != null) 
+		if (stream != null)
 		{
 			try
 			{
@@ -451,7 +451,7 @@ public class GridClient
             {
 				InputStream stream = entity.getContent();
                 String charset = null;
-                if (entity.getContentType() != null) { 
+                if (entity.getContentType() != null) {
                     HeaderElement values[] = entity.getContentType().getElements();
                     if (values.length  > 0) {
                         NameValuePair param = values[0].getParameterByName("charset");
@@ -473,7 +473,7 @@ public class GridClient
 		}
 		return osd;
 	}
-	
+
 	public String dumpGridlist()
 	{
 		return String.format("Version: %d, Default: %s\n%s", listversion, defaultGrid, gridlist);

@@ -9,7 +9,7 @@ public class ManagedImage
         public static final byte Color = 2;
         public static final byte Alpha = 4;
         public static final byte Bump = 8;
-        
+
         public void setValue(int value)
         {
         	_value = (byte)value;
@@ -51,9 +51,9 @@ public class ManagedImage
     // Bump channel data
     public byte[] Bump;
 
-    /** 
+    /**
      * Create a new blank image
-     * 
+     *
      * @param width width
      * @param height height
      * @param channels channel flags

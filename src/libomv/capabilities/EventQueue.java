@@ -22,7 +22,7 @@
 // * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // * POSSIBILITY OF SUCH DAMAGE.
-// 
+//
 
 package libomv.capabilities;
 
@@ -54,7 +54,7 @@ public class EventQueue extends CapsClient
     private boolean Done;
 
     private Future<OSD> Request;
-    
+
     public boolean getRunning()
     {
         synchronized (random)
@@ -102,7 +102,7 @@ public class EventQueue extends CapsClient
         OSDMap osdRequest = new OSDMap();
         osdRequest.put("ack", (ack != 0) ? OSD.FromInteger(ack) : new OSD());
         osdRequest.put("done", OSD.FromBoolean(Done));
-        
+
 		try
 		{
 			byte[] postData = osdRequest.serializeToBytes(OSD.OSDFormat.Xml);
@@ -153,7 +153,7 @@ public class EventQueue extends CapsClient
                             /* TODO add Stats support to Client manager */
                     	    //Simulator.getClient().Stats.Update(eventName, libomv.Stats.Type.Message, 0, body.ToString().Length);
                         }
-                    }    
+                    }
                     else
                     {
                     	Logger.Log("No Message handler exists for event " + name + ". Unable to decode. Will try Generic Handler next", LogLevel.Warning);
@@ -178,11 +178,11 @@ public class EventQueue extends CapsClient
             }
         }
 	}
-	
+
     public class EventClientCallback implements FutureCallback<OSD>
 	{
     	private final boolean first;
-    	
+
     	public EventClientCallback(boolean first)
     	{
     		this.first = first;
@@ -193,7 +193,7 @@ public class EventQueue extends CapsClient
 		{
 			if (first)
 	            Simulator.getClient().Network.RaiseConnectedEvent(Simulator);
-				
+
 	        if (result != null && result instanceof OSDMap)
 	        {
 				errorCount = 0;

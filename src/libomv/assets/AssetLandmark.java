@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import java.io.UnsupportedEncodingException;
@@ -43,7 +43,7 @@ public class AssetLandmark extends AssetItem
 
     // UUID of the Landmark target region
     public UUID RegionID = UUID.Zero;
-    // Local position of the target 
+    // Local position of the target
     public Vector3 Position = Vector3.Zero;
 
     // Construct an Asset of type Landmark
@@ -63,9 +63,9 @@ public class AssetLandmark extends AssetItem
         Decode();
     }
 
-    /** 
+    /**
      * Constuct an asset of type Landmark
-     * 
+     *
      * @param regionID UUID of the target region
      * @param pos Local position of landmark
      */
@@ -76,9 +76,9 @@ public class AssetLandmark extends AssetItem
         Encode();
     }
 
-    /** 
+    /**
      * Encode the raw contents of a string with the specific Landmark format
-     * 
+     *
      */
     @Override
 	public void Encode()
@@ -89,9 +89,9 @@ public class AssetLandmark extends AssetItem
         AssetData = Helpers.StringToBytes(temp);
     }
 
-    /** 
+    /**
      * Decode the raw asset data, populating the RegionID and Position
-     * 
+     *
      * @return true if the AssetData was successfully decoded to a UUID and Vector
      */
     @Override

@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class AssetNotecard extends AssetItem
     }
 
     /** Construct an Asset object of type Notecard
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -76,7 +76,7 @@ public class AssetNotecard extends AssetItem
     }
 
     /** Construct an Asset object of type Notecard
-     * 
+     *
      * @param text A text string containing the main body text of the notecard
      */
     public AssetNotecard(String text)
@@ -180,7 +180,7 @@ public class AssetNotecard extends AssetItem
 
     /**
      * Decode the raw asset data including the Linden Text properties
-     * 
+     *
      * @return true if the AssetData was successfully decoded
      */
 

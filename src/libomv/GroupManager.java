@@ -3,26 +3,26 @@
  * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv;
 
 import java.io.IOException;
@@ -196,17 +196,17 @@ public class GroupManager implements PacketCallback, CapsCallback {
         public boolean ShowInList;
         // GroupPowers flags
         public long Powers;
-        // 
+        //
         public boolean AcceptNotices;
-        // 
+        //
         public boolean AllowPublish;
         // Is the group Mature
         public boolean MaturePublish;
         // Cost of group membership
         public int MembershipFee;
-        // 
+        //
         public int Money;
-        // 
+        //
         public int Contribution;
         // The total number of current members this group has
         public int GroupMembershipCount;
@@ -221,7 +221,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
         {
             return Name;
         }
- 
+
         public Group(UUID id)
         {
     		ID = id;
@@ -277,43 +277,43 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     public final class GroupAccountSummary
     {
-        // 
+        //
         public int IntervalDays;
-        // 
+        //
         public int CurrentInterval;
-        // 
+        //
         public String StartDate;
-        // 
+        //
         public int Balance;
-        // 
+        //
         public int TotalCredits;
-        // 
+        //
         public int TotalDebits;
-        // 
+        //
         public int ObjectTaxCurrent;
-        // 
+        //
         public int LightTaxCurrent;
-        // 
+        //
         public int LandTaxCurrent;
-        // 
+        //
         public int GroupTaxCurrent;
-        // 
+        //
         public int ParcelDirFeeCurrent;
-        // 
+        //
         public int ObjectTaxEstimate;
-        // 
+        //
         public int LightTaxEstimate;
-        // 
+        //
         public int LandTaxEstimate;
-        // 
+        //
         public int GroupTaxEstimate;
-        // 
+        //
         public int ParcelDirFeeEstimate;
-        // 
+        //
         public int NonExemptMembers;
-        // 
+        //
         public String LastTaxDate;
-        // 
+        //
         public String TaxDate;
     }
 
@@ -334,13 +334,13 @@ public class GroupManager implements PacketCallback, CapsCallback {
     // Struct representing a group notice
     public final class GroupNotice
     {
-        // 
+        //
         public String Subject;
-        // 
+        //
         public String Message;
-        // 
+        //
         public UUID AttachmentID;
-        // 
+        //
         public UUID OwnerID;
 
         public byte[] SerializeAttachment() throws IOException
@@ -413,26 +413,26 @@ public class GroupManager implements PacketCallback, CapsCallback {
     // #region Enums
 
     // Role update flags
-    public enum GroupRoleUpdate 
+    public enum GroupRoleUpdate
     {
-        // 
+        //
         NoUpdate,
-        // 
+        //
         UpdateData,
-        // 
+        //
         UpdatePowers,
-        // 
+        //
         UpdateAll,
-        // 
+        //
         Create,
-        // 
+        //
         Delete;
-        
+
         public GroupRoleUpdate setValue(byte value)
         {
         	return values()[value];
         }
-        
+
         public byte getValue()
         {
         	return (byte)ordinal();
@@ -442,7 +442,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     // [Flags]
     public static class GroupPowers
     {
-        // 
+        //
         public static final long None = 0;
 
         // Membership
@@ -575,7 +575,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
         {
         	return value & _mask;
         }
-        
+
         private static final long _mask = 0x3FFFFFFFFFFFL;
     }
     // #endregion Enums
@@ -599,40 +599,40 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     public CallbackHandler<CurrentGroupsCallbackArgs> OnCurrentGroups = new CallbackHandler<CurrentGroupsCallbackArgs>();
 
-    public CallbackHandler<GroupNamesCallbackArgs> OnGroupNamesReply = new CallbackHandler<GroupNamesCallbackArgs>(); 
+    public CallbackHandler<GroupNamesCallbackArgs> OnGroupNamesReply = new CallbackHandler<GroupNamesCallbackArgs>();
 
     public CallbackHandler<GroupProfileCallbackArgs> OnGroupProfile = new CallbackHandler<GroupProfileCallbackArgs>();
 
     public CallbackHandler<GroupMembersReplyCallbackArgs> OnGroupMembersReply = new CallbackHandler<GroupMembersReplyCallbackArgs>();
-    
+
     public CallbackHandler<GroupRolesDataReplyCallbackArgs> OnGroupRoleDataReply = new CallbackHandler<GroupRolesDataReplyCallbackArgs>();
-    
+
     public CallbackHandler<GroupRolesMembersReplyCallbackArgs> OnGroupRoleMembers = new CallbackHandler<GroupRolesMembersReplyCallbackArgs>();
 
     public CallbackHandler<GroupTitlesReplyCallbackArgs> OnGroupTitles = new CallbackHandler<GroupTitlesReplyCallbackArgs>();
 
     public CallbackHandler<GroupAccountSummaryReplyCallbackArgs>  OnGroupAccountSummaryReply = new CallbackHandler<GroupAccountSummaryReplyCallbackArgs>();
-    
+
     public CallbackHandler<GroupCreatedReplyCallbackArgs> OnGroupCreatedReply = new CallbackHandler<GroupCreatedReplyCallbackArgs>();
-    
+
     public CallbackHandler<GroupOperationCallbackArgs> OnGroupJoinedReply = new CallbackHandler<GroupOperationCallbackArgs>();
-    
+
     public CallbackHandler<GroupOperationCallbackArgs> OnGroupLeaveReply = new CallbackHandler<GroupOperationCallbackArgs>();
-    
+
     public CallbackHandler<GroupDroppedCallbackArgs> OnGroupDropped = new CallbackHandler<GroupDroppedCallbackArgs>();
-    
+
     public CallbackHandler<GroupOperationCallbackArgs> OnGroupMemberEjected = new CallbackHandler<GroupOperationCallbackArgs>();
-    
+
     public CallbackHandler<GroupNoticesListReplyCallbackArgs> OnGroupNoticesListReply = new CallbackHandler<GroupNoticesListReplyCallbackArgs>();
-    
+
     public CallbackHandler<GroupInvitationCallbackArgs> OnGroupInvitation = new CallbackHandler<GroupInvitationCallbackArgs>();
-    
-    
+
+
     public Hashtable<UUID, Callback<GroupAccountDetails>> OnGroupAccountDetailsCallbacks = new Hashtable<UUID, Callback<GroupAccountDetails>>();
 
     public Hashtable<UUID, Callback<GroupAccountTransactions>> OnGroupAccountTransactionsCallbacks = new Hashtable<UUID, Callback<GroupAccountTransactions>>();
 
-    
+
     private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
@@ -773,9 +773,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Request a current list of groups the avatar is a member of.
-     * 
+     *
      * CAPS Event Queue must be running for this to work since the results come across CAPS.
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCurrentGroups() throws Exception
     {
@@ -789,9 +789,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Lookup name of group based on groupID
-     *  
+     *
      * @param groupID groupID of group to lookup name for.
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupName(UUID groupID) throws Exception
     {
@@ -820,9 +820,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Request lookup of multiple group names
-     * 
+     *
      * @param groupIDs List of group IDs to request.
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupNames(ArrayList<UUID> groupIDs) throws Exception
     {
@@ -860,9 +860,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Lookup group profile data such as name, enrollment, founder, logo, etc
      * Subscribe to <code>OnGroupProfile</code> event to receive the results.
-     * 
+     *
      * @param group @param group group ID (UUID)
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupProfile(UUID group) throws Exception
     {
@@ -878,10 +878,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Request a list of group members.
      * Subscribe to <code>OnGroupMembers</code> event to receive the results.
-     * 
+     *
      * @param group group ID (UUID)
      * @return UUID of the request, use to index into cache
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestGroupMembers(UUID group) throws Exception
     {
@@ -905,10 +905,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Request group roles
      * Subscribe to <code>OnGroupRoles</code> event to receive the results.
-     * 
+     *
      * @param group group ID (UUID)
      * @return UUID of the request, use to index into cache
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestGroupRoles(UUID group) throws Exception
     {
@@ -932,10 +932,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Request members (members,role) role mapping for a group.
      * Subscribe to <code>OnGroupRolesMembers</code> event to receive the results.
-     * 
+     *
      * @param group group ID (UUID)
      * @return UUID of the request, use to index into cache
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestGroupRolesMembers(UUID group) throws Exception
     {
@@ -957,10 +957,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Request a groups Titles
      * Subscribe to <code>OnGroupTitles</code> event to receive the results.
-     * 
+     *
      * @param group group ID (UUID)
      * @return UUID of the request, use to index into cache
-     * @throws Exception 
+     * @throws Exception
      */
     public final UUID RequestGroupTitles(UUID group) throws Exception
     {
@@ -980,11 +980,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Begin to get the group account summary
      * Subscribe to the <code>OnGroupAccountSummary</code> event to receive the results.
-     * 
+     *
      * @param group group ID (UUID)
      * @param intervalDays How long of an interval
      * @param currentInterval Which interval (0 for current, 1 for last)
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupAccountSummary(UUID group, int intervalDays, int currentInterval) throws Exception
     {
@@ -1002,11 +1002,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
     /**
      * Begin to get the group account details
      * Subscribe to the <code>OnGroupAccountDetails</code> event to receive the results.
-     * 
+     *
      * @param group group ID (UUID)
      * @param intervalDays How long of an interval
      * @param currentInterval Which interval (0 for current, 1 for last)
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupAccountDetails(UUID group, int intervalDays, int currentInterval) throws Exception
     {
@@ -1020,14 +1020,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
         p.MoneyData.IntervalDays = intervalDays;
         Client.Network.SendPacket(p);
     }
-    
+
     /**
      * Invites a user to a group
-     * 
+     *
      * @param group The group to invite to
      * @param roles A list of roles to invite a person to
      * @param personkey Key of person to invite
-     * @throws Exception 
+     * @throws Exception
      */
     public final void Invite(UUID group, ArrayList<UUID> roles, UUID personkey) throws Exception
     {
@@ -1054,9 +1054,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Set a group as the current active group
-     * 
+     *
      * @param id group ID (UUID)
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ActivateGroup(UUID id) throws Exception
     {
@@ -1072,7 +1072,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
      * Change the role that determines your active title
      * @param group Group ID to use
      * @param role Role ID to change to
-     * @throws Exception 
+     * @throws Exception
      */
     public final void ActivateTitle(UUID group, UUID role) throws Exception
     {
@@ -1087,10 +1087,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Set this avatar's tier contribution
-     * 
+     *
      * @param group Group ID to change tier in
      * @param contribution amount of tier to donate
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetGroupContribution(UUID group, int contribution) throws Exception
     {
@@ -1103,13 +1103,13 @@ public class GroupManager implements PacketCallback, CapsCallback {
         Client.Network.SendPacket(sgp);
     }
 
-    /** 
+    /**
      * Save wheather agent wants to accept group notices and list this group in their profile
-     * 
+     *
      * @param groupID Group <see cref="UUID"/>
      * @param acceptNotices Accept notices from this group
      * @param listInProfile List this group in the profile
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SetGroupAcceptNotices(UUID groupID, boolean acceptNotices, boolean listInProfile) throws Exception
     {
@@ -1125,9 +1125,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Request to join a group
-     * 
+     *
      * @param id group ID (UUID) to join.
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestJoinGroup(UUID id) throws Exception
     {
@@ -1140,13 +1140,13 @@ public class GroupManager implements PacketCallback, CapsCallback {
         Client.Network.SendPacket(join);
     }
 
-    /** 
+    /**
      * Request to create a new group. If the group is successfully
      * created, L$100 will automatically be deducted
-     * 
+     *
      * Subscribe to <code>OnGroupCreated</code> event to receive confirmation.
      * @param group Group struct containing the new group info
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestCreateGroup(Group group) throws Exception
     {
@@ -1170,11 +1170,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Update a group's profile and other information
-     * 
+     *
      * @param id Groups ID (UUID) to update.
      * @param group Group struct to update.
-     * @throws Exception 
-     * @throws UnsupportedEncodingException 
+     * @throws Exception
+     * @throws UnsupportedEncodingException
      */
     public final void UpdateGroup(UUID id, Group group) throws Exception
     {
@@ -1198,10 +1198,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Eject a user from a group
-     * 
+     *
      * @param group Group ID to eject the user from
      * @param member Avatar's key to eject
-     * @throws Exception 
+     * @throws Exception
      */
     public final void EjectUser(UUID group, UUID member) throws Exception
     {
@@ -1222,9 +1222,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Update role information
-     * 
+     *
      * @param role Modified role to be updated
-     * @throws Exception 
+     * @throws Exception
      */
     public final void UpdateRole(GroupRole role) throws Exception
     {
@@ -1245,10 +1245,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Create a new group role
-     * 
+     *
      * @param group Group ID to update
      * @param role Role to create
-     * @throws Exception 
+     * @throws Exception
      */
     public final void CreateRole(UUID group, GroupRole role) throws Exception
     {
@@ -1269,10 +1269,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Delete a group role
-     * 
+     *
      * @param group Group ID to update
      * @param roleID Role to delete
-     * @throws Exception 
+     * @throws Exception
      */
     public final void DeleteRole(UUID group, UUID roleID) throws Exception
     {
@@ -1293,11 +1293,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Remove an avatar from a role
-     *  
+     *
      * @param group Group ID to update
      * @param role Role ID to be removed from
      * @param member Avatar's Key to remove
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RemoveFromRole(UUID group, UUID role, UUID member) throws Exception
     {
@@ -1317,11 +1317,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Assign an avatar to a role
-     * 
+     *
      * @param group Group ID to update
      * @param role Role ID to assign to
      * @param member Avatar's ID to assign to role
-     * @throws Exception 
+     * @throws Exception
      */
     public final void AddToRole(UUID group, UUID role, UUID member) throws Exception
     {
@@ -1341,9 +1341,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Request the group notices list
-     * 
+     *
      * @param group Group ID to fetch notices for
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupNoticesList(UUID group) throws Exception
     {
@@ -1356,9 +1356,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Request a group notice by key
-     * 
+     *
      * @param noticeID ID of group notice
-     * @throws Exception 
+     * @throws Exception
      */
     public final void RequestGroupNotice(UUID noticeID) throws Exception
     {
@@ -1371,10 +1371,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Send out a group notice
-     * 
+     *
      * @param group Group ID to update
      * @param notice <code>GroupNotice</code> structure containing notice data
-     * @throws Exception 
+     * @throws Exception
      */
     public final void SendGroupNotice(UUID group, GroupNotice notice) throws Exception
     {
@@ -1384,10 +1384,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Start a group proposal (vote)
-     * 
+     *
      * @param group The Group ID to send proposal to
      * @param prop <code>GroupProposal</code> structure containing the proposal
-     * @throws Exception 
+     * @throws Exception
      */
     public final void StartProposal(UUID group, GroupProposal prop) throws Exception
     {
@@ -1404,9 +1404,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Request to leave a group
-     *  
+     *
      * @param groupID The group to leave
-     * @throws Exception 
+     * @throws Exception
      */
     public final void LeaveGroup(UUID groupID) throws Exception
     {
@@ -1477,7 +1477,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -1503,10 +1503,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupProfileReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1537,10 +1537,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupNoticesListReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1566,12 +1566,12 @@ public class GroupManager implements PacketCallback, CapsCallback {
         }
     }
 
-    /** 
+    /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupTitlesReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1597,10 +1597,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupMembersHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1654,10 +1654,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupRoleDataReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1713,7 +1713,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -1763,10 +1763,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupActiveProposalItemHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1789,7 +1789,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		    p.Majority = block.Majority;
 		    p.Quorum = block.Quorum;
 		    p.ProposalText = Helpers.BytesToString(block.getProposalText());
-		    
+
 		    array.add(p);
         }
         // TODO: Create transactionID hashed event queue and dispatch the event there
@@ -1797,7 +1797,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -1805,7 +1805,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     {
         @SuppressWarnings("unused")
 		GroupVoteHistoryItemReplyPacket history = (GroupVoteHistoryItemReplyPacket)packet;
-        
+
         // TODO: This was broken in the official viewer when I was last trying to work  on it
 /*
         GroupProposalItem proposal = new GroupProposalItem();
@@ -1813,7 +1813,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
         proposal.Quorum = history.HistoryItemData.Quorum;
         proposal.Duration = history.TransactionData.TotalNumItems;
         proposal.ProposalText = ;
-        proposal.TerseDateID = 
+        proposal.TerseDateID =
         proposal.VoteID = history.HistoryItemData.VoteID;
         proposal.VoteInitiator	= history.HistoryItemData.VoteInitiator;
         for (int i = 0; i < history.VoteItem.length; i++)
@@ -1826,10 +1826,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void GroupAccountSummaryReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1864,10 +1864,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     protected final void CreateGroupReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1880,7 +1880,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -1893,7 +1893,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -1906,10 +1906,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     private void UUIDGroupNameReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
@@ -1932,7 +1932,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
     /**
      * Process an incoming packet and raise the appropriate events
-     * 
+     *
      * @param sender The sender
      * @param e The EventArgs object containing the packet data
      */
@@ -1945,21 +1945,21 @@ public class GroupManager implements PacketCallback, CapsCallback {
         OnGroupMemberEjected.dispatch(new GroupOperationCallbackArgs(reply.GroupData.GroupID, reply.EjectData.Success));
     }
     // #endregion Packet Handlers
-    
+
 	private final void GroupAccountDetailsHandler(Packet packet, Simulator simulator) throws Exception {
 		GroupAccountDetailsReplyPacket details = (GroupAccountDetailsReplyPacket) packet;
-		
+
 		if (OnGroupAccountDetailsCallbacks.containsKey(details.AgentData.GroupID)) {
 		    GroupAccountDetails account = new GroupAccountDetails();
-		
+
 		    account.CurrentInterval = details.MoneyData.CurrentInterval;
 		    account.IntervalDays = details.MoneyData.IntervalDays;
 		    account.StartDate = Helpers.BytesToString(details.MoneyData.getStartDate());
 
 		    account.HistoryItems = new HashMapInt();
-		    
+
 		    for (int i=0;i < details.HistoryData.length; i++) {
-		        GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i]; 
+		        GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i];
 		        account.HistoryItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
 		    }
 		    OnGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).callback(account);
@@ -1972,8 +1972,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		if (OnGroupAccountTransactionsCallbacks.containsKey(transactions.AgentData.GroupID))
 		{
 		    GroupAccountTransactions account = new GroupAccountTransactions();
-		    
-		    account.CurrentInterval = transactions.MoneyData.CurrentInterval; 
+
+		    account.CurrentInterval = transactions.MoneyData.CurrentInterval;
 		    account.IntervalDays = transactions.MoneyData.IntervalDays;
 		    account.StartDate = Helpers.BytesToString(transactions.MoneyData.getStartDate());
 
@@ -1981,7 +1981,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		    for (int i=0; i < transactions.HistoryData.length; i++) {
 		    	TransactionEntry entry = account.new TransactionEntry();
 		    	GroupAccountTransactionsReplyPacket.HistoryDataBlock block = transactions.HistoryData[i];
-		    	
+
 		    	entry.Type = block.Type;
 		    	entry.Amount = block.Amount;
 		    	entry.Item = Helpers.BytesToString(block.getItem());
@@ -2008,7 +2008,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the CurrentGroupsCallbackArgs class
-         * 
+         *
          * @param groups The current groups your agent is a member of
          */
         public CurrentGroupsCallbackArgs(java.util.Hashtable<UUID, Group> groups)
@@ -2030,7 +2030,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupNamesCallbackArgs class
-         * 
+         *
          * @param groupNames The Group names dictionary
          */
         public GroupNamesCallbackArgs(Hashtable<UUID, String> groupNames)
@@ -2062,9 +2062,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
             return m_Members;
         }
 
-        /** 
+        /**
          * Construct a new instance of the GroupMembersReplyCallbackArgs class
-         * 
+         *
          * @param requestID The ID of the request
          * @param groupID The ID of the group
          * @param members The membership list of the group
@@ -2102,7 +2102,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupRolesDataReplyCallbackArgs class
-         * 
+         *
          * @param requestID The ID as returned by the request to correlate this result set and the request
          * @param groupID The ID of the group
          * @param roles The dictionary containing the roles
@@ -2140,7 +2140,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupRolesMembersReplyCallbackArgs class
-         * 
+         *
          * @param requestID The ID as returned by the request to correlate this result set and the request
          * @param groupID The ID of the group
          * @param rolesMembers The member to roles map
@@ -2178,7 +2178,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupTitlesReplyCallbackArgs class
-         * 
+         *
          * @param requestID The ID as returned by the request to correlate this result set and the request
          * @param groupID The ID of the group
          * @param titles The titles
@@ -2210,7 +2210,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupAccountSummaryReplyCallbackArgs class
-         * 
+         *
          * @param groupID The ID of the group
          * @param summary The summary data
          */
@@ -2246,7 +2246,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupCreatedReplyCallbackArgs class
-         * 
+         *
          * @param groupID The ID of the group
          * @param success the success or failure of the request
          * @param messsage A string containing additional information
@@ -2278,7 +2278,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupOperationCallbackArgs class
-         * 
+         *
          * @param groupID The ID of the group
          * @param success true of the request was successful
          */
@@ -2301,7 +2301,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupDroppedCallbackArgs class
-         * 
+         *
          * @param groupID The ID of the group
          */
         public GroupDroppedCallbackArgs(UUID groupID)
@@ -2329,7 +2329,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupNoticesListReplyCallbackArgs class
-         * 
+         *
          * @param groupID The ID of the group
          * @param notices The list containing active notices
          */
@@ -2353,7 +2353,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
         /**
          * Construct a new instance of the GroupProfileCallbackArgs class
-         * 
+         *
          * @param group The group profile
          */
         public GroupProfileCallbackArgs(Group group)
@@ -2362,9 +2362,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
         }
     }
 
-    /** 
+    /**
      * Provides notification of a group invitation request sent by another Avatar
-     * 
+     *
      *  The <see cref="GroupInvitation"/> invitation is raised when another avatar makes an offer for our avatar to join a group.
      */
     public class GroupInvitationCallbackArgs implements CallbackArgs

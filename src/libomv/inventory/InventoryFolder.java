@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.inventory;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class InventoryFolder extends InventoryBase
     // Number of child items this folder contains.
     public int descendentCount;
 
-    /** 
+    /**
      * Constructor
      *
      * @param itemID UUID of the folder
@@ -61,10 +61,10 @@ public class InventoryFolder extends InventoryBase
 
     /**
      * Initializes an InventoryFolder object from a serialization stream
-     * 
+     *
      * @param info serialization stream
-     * @throws ClassNotFoundException 
-     * @throws IOException 
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     @Override
 	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
@@ -79,9 +79,9 @@ public class InventoryFolder extends InventoryBase
 
     /**
      * Write Serilization data for this InventoryFolder object to the stream
-     * 
+     *
      * @param info serialization stream
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void writeObject(ObjectOutputStream info) throws IOException

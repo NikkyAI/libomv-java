@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.types;
 
 import libomv.utils.Helpers;
@@ -320,9 +320,9 @@ public final class Matrix4
 			return matrix;
 		}
 
-		/** 
+		/**
 		 Construct a matrix from euler rotation values in radians
-		 
+
 		 @param roll X euler angle in radians
 		 @param pitch Y euler angle in radians
 		 @param yaw Z euler angle in radians

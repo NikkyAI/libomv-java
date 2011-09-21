@@ -5,7 +5,7 @@
 
  - Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  - Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
@@ -13,7 +13,7 @@
  nor the names
  of its contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -102,7 +102,7 @@ public class Helpers
 	public static final String NewLine = "\n";
 	/** UNIX epoch in DateTime format */
 	public static final Date Epoch = new Date(0);
-	
+
     protected static final String FRACT_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss.SS'Z'";
     protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";;
 
@@ -150,7 +150,7 @@ public class Helpers
 	}
 
 	/** Clamp a given value between a range
-	 * 
+	 *
 	 *  @param value Value to clamp
 	 *  @param min Minimum allowable value
 	 *  @param max Maximum allowable value
@@ -209,8 +209,8 @@ public class Helpers
 		return !(Double.isNaN(value) || Double.isInfinite(value));
 	}
 
-	/** Get the distance between two floating-point values 
-	 * 
+	/** Get the distance between two floating-point values
+	 *
 	 *  @param value1 First value
 	 *  @param value2 Second value
 	 *  @return The distance between the two values
@@ -311,7 +311,7 @@ public class Helpers
 	}
 
 	// Packs to 32-bit unsigned integers in to a 64-bit unsigned integer
-	// 
+	//
 	// <param name="a">The left-hand (or X) value</param>
 	// <param name="b">The right-hand (or Y) value</param>
 	// <returns>A 64-bit integer containing the two 32-bit input
@@ -324,17 +324,17 @@ public class Helpers
 	// // <param name="a">The 64-bit input integer</param>// <param name="b">The
 	// left-hand (or X) output value</param>// <param name="c">The right-hand
 	// (or Y) output value</param>
-	public static void LongToUInts(long a, int[] b) 
-	{ 
+	public static void LongToUInts(long a, int[] b)
+	{
 		b[0] = (int)(a >> 32);
 	    b[1] = (int)(a & 0x00000000FFFFFFFF);
 	}
 
 
-    /** 
+    /**
      * Converts a floating point number to a terse string format used for
      * transmitting numbers in wearable asset files
-     * 
+     *
      * @param val Floating point number to convert to a string
      * @return A terse string representation of the input number
      */
@@ -370,7 +370,7 @@ public class Helpers
     }
 
     // Convert a variable length field (byte array) to a String.
-	// 
+	//
 	// <remarks>If the byte array has unprintable characters in it, a
 	// hex dump will be put in the String instead</remarks>
 	// <param name="bytes">The byte array to convert to a String</param>
@@ -381,7 +381,7 @@ public class Helpers
 
 	// Convert a variable length field (byte array) to a String, with a
 	// field name prepended to each line of the output.
-	// 
+	//
 	// <remarks>If the byte array has unprintable characters in it, a
 	// hex dump will be put in the String instead</remarks>
 	// <param name="bytes">The byte array to convert to a String</param>
@@ -447,7 +447,7 @@ public class Helpers
 	}
 
 	// Convert a UTF8 String to a byte array
-	// 
+	//
 	// <param name="str">The String to convert to a byte array</param>
 	// <returns>A null-terminated byte array</returns>
 	public static byte[] StringToField(String str) throws Exception {
@@ -459,14 +459,14 @@ public class Helpers
 	}
 
     /** Converts a struct or class object containing fields only into a key value separated string
-     * 
+     *
      *  @param t The struct object
      *  @return A string containing the struct fields as the keys, and the field value as the value separated
      *  <example>
      *  <code>
-     *  // Add the following code to any struct or class containing only fields to override the toString() 
+     *  // Add the following code to any struct or class containing only fields to override the toString()
      *  // method to display the values of the passed object
-     *  
+     *
      *  /** Print the struct data as a string
      *   *  @return A string containing the field names, and field values
      *   * /
@@ -496,7 +496,7 @@ public class Helpers
         result.append("\n");
         return result.toString().trim();
     }
-    
+
 	public static double GetUnixTime() {
 		return Epoch.getTime() / 1000.0;
 	}
@@ -537,7 +537,7 @@ public class Helpers
 	 * out. A single zero becomes 0x00 0x01, two zeroes becomes 0x00 0x02,
 	 * three zeroes becomes 0x00 0x03, etc. The first four bytes are copied
 	 * directly to the output buffer.
-	 * 
+	 *
 	 * @param src The byte buffer to encode
 	 * @param dest The output byte array to encode to
 	 * @return The length of the output buffer
@@ -595,7 +595,7 @@ public class Helpers
 
     /** Given an X/Y location in absolute (grid-relative) terms, a region handle
      *  is returned along with the local X/Y location in that region
-     *  
+     *
      *  @param globalX The absolute X location, a number such as 255360.35
      *  @param globalY The absolute Y location, a number such as 255360.35
      *  @param locals[0] The returened sim-local X position of the global X
@@ -612,7 +612,7 @@ public class Helpers
     }
 
 	// Calculates the CRC (cyclic redundancy check) needed to upload inventory.
-	// 
+	//
 	// <param name="creationDate">Creation date</param>
 	// <param name="saleType">Sale type</param>
 	// <param name="invType">Inventory type</param>
@@ -664,7 +664,7 @@ public class Helpers
 
 		return CRC;
 	}
-	
+
 	public static String toHexText(byte[] raw_digest) {
 		// and convert it to hex-text
 		StringBuffer checksum = new StringBuffer(raw_digest.length * 2);
@@ -714,7 +714,7 @@ public class Helpers
 	}
 	/** Convert the first two bytes starting in the byte array in
 	 *  little endian ordering to a signed short integer
-	 * 
+	 *
 	 *  @param bytes An array two bytes or longer
 	 *  @return A signed short integer, will be zero if a short can't be
 	 *  read at the given position
@@ -757,7 +757,7 @@ public class Helpers
 
 	/** Convert the first four bytes of the given array in little endian
 	 *  ordering to a signed integer
-	 * 
+	 *
 	 *  @param bytes An array four bytes or longer
 	 *  @return A signed integer, will be zero if the array contains
 	 *          less than four bytes
@@ -852,7 +852,7 @@ public class Helpers
 	}
 
 	/** Convert two bytes in little endian ordering to an int
-	 * 
+	 *
 	 *  @param bytes Byte array containing the ushort
 	 *  @return An int, will be zero if a ushort can't be read
 	 */
@@ -917,7 +917,7 @@ public class Helpers
 		}
         long low = (((bytes[pos + 0 ] & 0xff) << 0) + ((bytes[pos + 1 ] & 0xff) << 8) + ((bytes[pos + 2 ] & 0xff) << 16) );
         long high = bytes[pos + 3 ] & 0xff;
-        return (high << 24) + (0xffffffffL & low); 
+        return (high << 24) + (0xffffffffL & low);
 	}
 
 	public static long BytesToUInt32B(byte[] bytes)
@@ -933,7 +933,7 @@ public class Helpers
 		}
         long low = (((bytes[pos + 3 ] & 0xff) << 0) + ((bytes[pos + 2 ] & 0xff) << 8) + ((bytes[pos + 1 ] & 0xff) << 16) );
         long high = bytes[pos + 0 ] & 0xff;
-        return (high << 24) + (0xffffffffL & low); 
+        return (high << 24) + (0xffffffffL & low);
 	}
 
 	/** Convert the first eight bytes of the given array in little endian ordering to a constrained long
@@ -944,7 +944,7 @@ public class Helpers
 	 */
 	public static long BytesToUInt64L(byte[] bytes)
 	{
-		return BytesToUInt64L(bytes, 0);			
+		return BytesToUInt64L(bytes, 0);
 	}
 
 	/** Convert the first eight bytes starting at the given position in little endian ordering to a constrained long
@@ -959,7 +959,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		
+
 		if ((bytes[pos + 7] & 0xff) < 0)
 		{
 			return 0x7fffffff;
@@ -973,7 +973,7 @@ public class Helpers
 
 	public static long BytesToUInt64B(byte[] bytes)
 	{
-		return BytesToUInt64B(bytes, 0);			
+		return BytesToUInt64B(bytes, 0);
 	}
 
 	public static long BytesToUInt64B(byte[] bytes, int pos)
@@ -982,7 +982,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		
+
 		if ((bytes[pos + 0] & 0xff) < 0)
 		{
 			return 0x7fffffff;
@@ -1023,7 +1023,7 @@ public class Helpers
 	{
 		return Double.longBitsToDouble(BytesToInt64B(bytes, pos));
 	}
-	
+
 	private static float FixedToFloat(float fixedVal, boolean signed, int intBits, int fracBits)
 	{
         int minVal;
@@ -1405,7 +1405,7 @@ public class Helpers
         {
             totalBits++;
         }
-        
+
         if (totalBits <= 8)
         {
             dest[pos] = (byte)FloatToFixed(data, isSigned, intBits, fracBits);
@@ -1435,7 +1435,7 @@ public class Helpers
         {
             totalBits++;
         }
-        
+
         if (totalBits <= 8)
         {
             dest[pos] = (byte)FloatToFixed(data, isSigned, intBits, fracBits);
@@ -1457,7 +1457,7 @@ public class Helpers
             return 8;
         }
     }
-    
+
     /**
 	 * Packs two 32-bit unsigned integers in to a 64-bit unsigned integer
 	 *
@@ -1483,7 +1483,7 @@ public class Helpers
 		c.argvalue = (int)(a & 0x00000000FFFFFFFF);
 	}
 
-	/** 
+	/**
 	 * Swaps the high and low nibbles in a byte. Converts aaaabbbb to bbbbaaaa
 	 *
 	 * @param value Byte to swap the nibbles in
@@ -1511,7 +1511,7 @@ public class Helpers
 	 *
 	 * @param bytes The UTF8 encoded byte array to convert
 	 * @return The decoded string
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	public static String BytesToString(byte[] bytes) throws UnsupportedEncodingException
 	{
@@ -1525,7 +1525,7 @@ public class Helpers
 	 * @param offset The offset into the byte array from which to start
 	 * @param length The number of bytes to consume
 	 * @return The decoded string
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
@@ -1599,7 +1599,7 @@ public class Helpers
 		{
 			return Helpers.EmptyBytes;
 		}
-		
+
 		try
 		{
 			return str.getBytes(UTF8_ENCODING);
@@ -1617,7 +1617,7 @@ public class Helpers
 	 * @param handleDirty If true, gracefully handles null, empty and
 	 *        uneven strings as well as stripping unconvertable characters
 	 * @return The converted byte array
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static byte[] HexStringToBytes(String hexString, boolean handleDirty) throws Exception
 	{
@@ -1678,7 +1678,7 @@ public class Helpers
 	 *
 	 * @param hex 1 or 2 character string
 	 * @return byte
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static byte HexToByte(String hex) throws Exception
 	{
@@ -1910,7 +1910,7 @@ public class Helpers
 		}
 	}
 
-	/** 
+	/**
 	 * Returns text specified in EnumInfo attribute of the enumerator
 	 * To add the text use [EnumInfo(Text = "Some nice text here")] before declaration of enum values
 	 *
@@ -1927,7 +1927,7 @@ public class Helpers
 		}
 		return value.toString();
 	}
-	
+
 	/**
 	 * <p>Find the first index of any of a set of potential substrings.</p>
 	 *
@@ -1962,7 +1962,7 @@ public class Helpers
 
 	    return (ret == Integer.MAX_VALUE) ? -1 : ret;
 	}
-	
+
 	/**
 	 * <p>Find the first index of any of a set of potential chars.</p>
 	 *
@@ -2016,10 +2016,10 @@ public class Helpers
 	public static boolean isEmpty(String str) {
 	    return str == null || str.length() == 0;
 	}
-	
+
     /**
      * Get current OS
-     * 
+     *
      * @return Either "Win" or "Linux"
      */
     public static String GetPlatform()
@@ -2029,9 +2029,9 @@ public class Helpers
 
     /**
      * Get clients default Mac Address
-     * 
+     *
      * @return A string containing the first found Mac Address
-     * @throws SocketException 
+     * @throws SocketException
      */
     public static String GetMAC()
     {
@@ -2065,15 +2065,15 @@ public class Helpers
     		return EmptyString;
     	}
     }
-    
+
     /**
      * Retrieves the default keystore and appends the Linden Lab public certificate to it
-     * 
+     *
      * @param cert The certificate to add to the key store. If this is null, the default LindenLab certificate will be added.
-     * @throws IOException 
-     * @throws KeyStoreException 
-     * @throws CertificateException 
-     * @throws NoSuchAlgorithmException 
+     * @throws IOException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
      */
     public static KeyStore GetExtendedKeyStore(X509Certificate cert) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException
     {
@@ -2088,7 +2088,7 @@ public class Helpers
 				file = new File(dir, "cacerts");
 			}
 		}
-		
+
 		ks = KeyStore.getInstance(KeyStore.getDefaultType());
 	    InputStream in = new FileInputStream(file);
 		try

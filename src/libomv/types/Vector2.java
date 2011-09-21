@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.types;
 
 import java.nio.ByteBuffer;
@@ -137,7 +137,7 @@ public final class Vector2
 	{
 		return ((Float)X).hashCode() ^ ((Float)Y).hashCode();
 	}
-	
+
 	/** Builds a vector from a byte array
 	 *
 	 *  @param byteArray Byte array containing a 12 byte vector
@@ -158,7 +158,7 @@ public final class Vector2
 			Y = Helpers.BytesToFloatB(bytes, pos + 4);
 		}
 	}
-	
+
 	/** Writes the raw bytes for this vector to a byte array
 	 *
 	 *  @param dest Destination byte array
@@ -195,7 +195,7 @@ public final class Vector2
 		X = val.X;
 		Y = val.Y;
 	}
-	
+
 	/** Test if this vector is equal to another vector, within a given tolerance range
 	 *
 	 *  @param vec Vector to test against
@@ -277,7 +277,7 @@ public final class Vector2
 	{
 		return new Vector2(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y, amount));
 	}
-	
+
 	public static Vector2 Transform(Vector2 position, Matrix4 matrix)
 	{
 		position.X = (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41;
@@ -293,8 +293,8 @@ public final class Vector2
 	}
 
 	/** Parse a vector from a string
-	 * 
-	 *  @param val A string representation of a 2D vector, enclosed 
+	 *
+	 *  @param val A string representation of a 2D vector, enclosed
 	 *             in arrow brackets and separated by commas
 	 */
 	public static Vector2 Parse(String val)

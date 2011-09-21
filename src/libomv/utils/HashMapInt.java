@@ -2,13 +2,13 @@ package libomv.utils;
 
 /*
  * Copyright 2002-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,7 @@ package libomv.utils;
  */
 
 /*
- * Note: originally released under the GNU LGPL v2.1, 
+ * Note: originally released under the GNU LGPL v2.1,
  * but rereleased by the original author under the ASF license (above).
  */
 //package org.apache.commons.lang;
@@ -26,13 +26,13 @@ package libomv.utils;
  * <p>
  * A hash map that uses primitive ints for the key rather than objects.
  * </p>
- * 
+ *
  * <p>
  * Note that this class is for internal optimization purposes only, and may not
  * be supported in future releases of Jakarta Commons Lang. Utilities of this
  * sort may be included in future releases of Jakarta Commons Collections.
  * </p>
- * 
+ *
  * @author Justin Couch
  * @author Alex Chaffee (alex@apache.org)
  * @author Stephen Colebourne
@@ -55,14 +55,14 @@ public class HashMapInt {
 	/**
 	 * The table is rehashed when its size exceeds this threshold. (The value of
 	 * this field is (int)(capacity * loadFactor).)
-	 * 
+	 *
 	 * @serial
 	 */
 	private int threshold;
 
 	/**
 	 * The load factor for the hashtable.
-	 * 
+	 *
 	 * @serial
 	 */
 	private float loadFactor;
@@ -86,7 +86,7 @@ public class HashMapInt {
 		 * <p>
 		 * Create a new entry with the given values.
 		 * </p>
-		 * 
+		 *
 		 * @param hash
 		 *            The code used to hash the object with
 		 * @param key
@@ -119,7 +119,7 @@ public class HashMapInt {
 	 * Constructs a new, empty hashtable with the specified initial capacity and
 	 * default load factor, which is <code>0.75</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            the initial capacity of the hashtable.
 	 * @throws IllegalArgumentException
@@ -134,7 +134,7 @@ public class HashMapInt {
 	 * Constructs a new, empty hashtable with the specified initial capacity and
 	 * the specified load factor.
 	 * </p>
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            the initial capacity of the hashtable.
 	 * @param loadFactor
@@ -164,7 +164,7 @@ public class HashMapInt {
 	 * <p>
 	 * Returns the number of keys in this hashtable.
 	 * </p>
-	 * 
+	 *
 	 * @return the number of keys in this hashtable.
 	 */
 	public int size() {
@@ -175,7 +175,7 @@ public class HashMapInt {
 	 * <p>
 	 * Tests if this hashtable maps no keys to values.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if this hashtable maps no keys to values;
 	 *         <code>false</code> otherwise.
 	 */
@@ -188,12 +188,12 @@ public class HashMapInt {
 	 * Tests if some key maps into the specified value in this hashtable. This
 	 * operation is more expensive than the <code>containsKey</code> method.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note that this method is identical in functionality to containsValue,
 	 * (which is part of the Map interface in the collections framework).
 	 * </p>
-	 * 
+	 *
 	 * @param value
 	 *            a value to search for.
 	 * @return <code>true</code> if and only if some key maps to the
@@ -222,12 +222,12 @@ public class HashMapInt {
 	 * Returns <code>true</code> if this HashMap maps one or more keys to this
 	 * value.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note that this method is identical in functionality to contains (which
 	 * predates the Map interface).
 	 * </p>
-	 * 
+	 *
 	 * @param value
 	 *            value whose presence in this HashMap is to be tested.
 	 * @see java.util.Map
@@ -241,7 +241,7 @@ public class HashMapInt {
 	 * <p>
 	 * Tests if the specified object is a key in this hashtable.
 	 * </p>
-	 * 
+	 *
 	 * @param key
 	 *            possible key.
 	 * @return <code>true</code> if and only if the specified object is a key
@@ -265,7 +265,7 @@ public class HashMapInt {
 	 * <p>
 	 * Returns the value to which the specified key is mapped in this map.
 	 * </p>
-	 * 
+	 *
 	 * @param key
 	 *            a key in the hashtable.
 	 * @return the value to which the key is mapped in this hashtable;
@@ -290,7 +290,7 @@ public class HashMapInt {
 	 * Increases the capacity of and internally reorganizes this hashtable, in
 	 * order to accommodate and access its entries more efficiently.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method is called automatically when the number of keys in the
 	 * hashtable exceeds this hashtable's capacity and load factor.
@@ -323,12 +323,12 @@ public class HashMapInt {
 	 * Maps the specified <code>key</code> to the specified <code>value</code>
 	 * in this hashtable. The key cannot be <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The value can be retrieved by calling the <code>get</code> method with
 	 * a key that is equal to the original key.
 	 * </p>
-	 * 
+	 *
 	 * @param key
 	 *            the hashtable key.
 	 * @param value
@@ -371,11 +371,11 @@ public class HashMapInt {
 	 * <p>
 	 * Removes the key (and its corresponding value) from this hashtable.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method does nothing if the key is not present in the hashtable.
 	 * </p>
-	 * 
+	 *
 	 * @param key
 	 *            the key that needs to be removed.
 	 * @return the value to which the key had been mapped in this hashtable, or

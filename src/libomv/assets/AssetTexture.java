@@ -26,9 +26,9 @@ public class AssetTexture extends AssetItem
     {
     }
 
-    /** 
+    /**
      * Initializes a new instance of an AssetTexture object
-     * 
+     *
      * @param assetID A unique <see cref="UUID"/> specific to this asset
      * @param assetData A byte array containing the raw asset data
      */
@@ -39,7 +39,7 @@ public class AssetTexture extends AssetItem
 
     /**
      * Initializes a new instance of an AssetTexture object
-     * 
+     *
      * @param image A {@link ManagedImage} object containing texture data
      */
     public AssetTexture(ManagedImage image)
@@ -69,7 +69,7 @@ public class AssetTexture extends AssetItem
     /**
      * Decodes the JPEG2000 data in <code>AssetData</code> to the
      * {@link ManagedImage} object {@link Image}
-     * 
+     *
      * @return True if the decoding was successful, otherwise false
      */
     @Override
@@ -97,8 +97,8 @@ public class AssetTexture extends AssetItem
     /**
      * Decodes the begin and end byte positions for each quality layer in
      * the image
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean DecodeLayerBoundaries()
     {

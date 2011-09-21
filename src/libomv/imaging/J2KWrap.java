@@ -4,9 +4,9 @@ public class J2KWrap
 {
 	public class J2KLayerInfo
 	{
-		
+
 	}
-	
+
 	public static byte[] Encode(ManagedImage image)
 	{
 		return null;

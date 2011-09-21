@@ -10,7 +10,7 @@ class XMLRPCCommon {
 
 	protected XmlSerializer serializer;
 	protected IXMLRPCSerializer iXMLRPCSerializer;
-	
+
 	XMLRPCCommon() throws XmlPullParserException {
 	    serializer = XmlPullParserFactory.newInstance().newSerializer();
         iXMLRPCSerializer = new XMLRPCSerializer();
@@ -19,13 +19,13 @@ class XMLRPCCommon {
 	/**
 	 * Sets custom IXMLRPCSerializer serializer (in case when server doesn't support
 	 * standard XMLRPC protocol)
-	 * 
+	 *
 	 * @param serializer custom serializer
 	 */
 	public void setSerializer(IXMLRPCSerializer serializer) {
 		iXMLRPCSerializer = serializer;
 	}
-			
+
 	protected void serializeParams(Object[] params) throws IllegalArgumentException, IllegalStateException, IOException {
 		if (params != null && params.length != 0)
 		{

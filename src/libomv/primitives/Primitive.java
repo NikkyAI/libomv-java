@@ -4,26 +4,26 @@
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
- * - Redistribution and use in source and binary forms, with or without 
+ * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Neither the name of the openmetaverse.org nor the names 
+ * - Neither the name of the openmetaverse.org nor the names
  *   of its contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.primitives;
 
 import libomv.StructuredData.OSD;
@@ -49,7 +49,7 @@ public class Primitive
     protected static float HOLLOW_QUANTA = 0.00002f;
 
 	/** Identifier code for primitive types */
-	public enum PCode 
+	public enum PCode
 	{
 		/** None */
 		None(0),
@@ -65,7 +65,7 @@ public class Primitive
 		ParticleSystem(143),
 		/** A Linden tree */
 		Tree(255);
-		
+
 		public static PCode setValue(int value)
 		{
 			for (PCode e : values())
@@ -120,7 +120,7 @@ public class Primitive
 		public static final int AnimSource = 0x00200000;
 		public static final int CameraSource = 0x00400000;
 		public static final int CastShadows = 0x00800000;
-		// Server flag, will not be sent to clients. Specifies that the object is 
+		// Server flag, will not be sent to clients. Specifies that the object is
 		// destroyed when it touches a simulator edge
 		public static final int DieAtEdge = 0x01000000;
 		// Server flag, will not be sent to clients. Specifies that the object will
@@ -134,7 +134,7 @@ public class Primitive
 		public static final int TemporaryOnRez = 0x20000000;
 		public static final int Temporary = 0x40000000;
 		public static final int ZlibCompressed = 0x80000000;
-		
+
 		public static int setValue(int value) {
 			return value & _mask;
 		}
@@ -156,7 +156,7 @@ public class Primitive
 		public static final byte SyncPending = 0x08;
 		public static final byte LinkedList = 0x10;
 		public static final byte Stop = 0x20;
-		
+
 		public static byte setValue(int value)
 		{
 			return (byte)(value & _mask);
@@ -169,7 +169,7 @@ public class Primitive
 		private static byte _mask = 0xFFFFFFFF;
 	}
 
-	public enum ProfileCurve 
+	public enum ProfileCurve
 	{
 		Circle,
 		Square,
@@ -190,7 +190,7 @@ public class Primitive
 			return (byte)ordinal();
 		}
 	}
-	
+
 	public enum HoleType
 	{
 		Same(0x00),
@@ -212,14 +212,14 @@ public class Primitive
 		{
 			return _value;
 		}
-		
+
 		private byte _value;
 		private HoleType(int value) {
 			_value = (byte)value;
 		}
 	}
 
-	public enum  PathCurve 
+	public enum  PathCurve
 	{
 		Line(0x10),
 		Circle(0x20),
@@ -241,7 +241,7 @@ public class Primitive
 		{
 			return _value;
 		}
-		
+
 		private byte _value;
 		private PathCurve(int value) {
 			_value = (byte)value;
@@ -249,7 +249,7 @@ public class Primitive
 	}
 
 	// Material type for a primitive
-	public enum Material 
+	public enum Material
 	{
 		Stone,
 		Metal,
@@ -299,7 +299,7 @@ public class Primitive
 
 	// Extra parameters for primitives, these flags are for features that have been
 	// added after the original ObjectFlags that has all eight bits reserved already
-	public enum ExtraParamType 
+	public enum ExtraParamType
 	{
 		// Whether this object has flexible parameters
 		Flexible(0x10),
@@ -321,14 +321,14 @@ public class Primitive
 		{
 			return _value;
 		}
-		
+
 		private byte _value;
 		private ExtraParamType(int value) {
 			_value = (byte)value;
 		}
 	}
 
-	public enum JointType 
+	public enum JointType
 	{
 		Invalid,
 		Hinge,
@@ -338,7 +338,7 @@ public class Primitive
 		//[Obsolete]
 		//Wheel
 		;
-		
+
 		public static JointType setValue(int value)
 		{
         	if (value >= 0 && value < values().length)
@@ -351,7 +351,7 @@ public class Primitive
 		}
 	}
 
-	public enum SculptType 
+	public enum SculptType
 	{
 		None(0),
 		Sphere(1),
@@ -360,7 +360,7 @@ public class Primitive
 		Cylinder(4),
 		Invert(64),
 		Mirror(128);
-		
+
 		public static SculptType setValues(int value)
 		{
 			for (SculptType e : values())
@@ -382,7 +382,7 @@ public class Primitive
 		}
 	}
 
-	public enum FaceType 
+	public enum FaceType
 	{
 	    PathBegin,
 		PathEnd,
@@ -438,18 +438,18 @@ public class Primitive
 	}
 
 	/** Attachment points for objects on avatar bodies
-	 *	 
+	 *
 	 * Both InventoryObject and InventoryAttachment types can be attached
 	 *
 	 */
-	public enum AttachmentPoint 
+	public enum AttachmentPoint
 	{
 		/** Right hand if object was not previously attached */
 		Default,
 		/** Chest */
 		Chest,
 		/** Skull */
-		Skull, 
+		Skull,
 		/** Left shoulder */
 		LeftShoulder,
 		/** Right shoulder */
@@ -522,8 +522,8 @@ public class Primitive
 		HUDBottom,
 		/** HUD Bottom-right */
 		HUDBottomRight;
-		
-		private static String[] strings = {"Default", "Chest", "Head", "Left Shoulder", "Right Shoulder", "Left Hand", "Right Hand", 
+
+		private static String[] strings = {"Default", "Chest", "Head", "Left Shoulder", "Right Shoulder", "Left Hand", "Right Hand",
             "Left Foot", "Right Foot", "Back", "Pelvis", "Mouth", "Chin", "Left Ear", "Right Ear",
             "Left Eye", "Right Eye", "Nose", "Right Upper Arm", "Right Lower Arm", "Left Upper Arm",
             "Left Lower Arm", "Right Hip", "Right Upper Leg", "Right Lower Leg", "Left Hip", "Left Hip",
@@ -538,7 +538,7 @@ public class Primitive
         		{
         			return values()[i];
         		}
-        	} 
+        	}
         	return Default;
 		}
 
@@ -553,7 +553,7 @@ public class Primitive
 		{
 			return (byte)ordinal();
 		}
-	
+
 		@Override
 		public String toString()
 		{
@@ -566,7 +566,7 @@ public class Primitive
 	}
 
 	/** Tree foliage types */
-	public enum Tree 
+	public enum Tree
 	{
 		// Pine1 tree
 		Pine1,
@@ -610,7 +610,7 @@ public class Primitive
 		BeachGrass1,
 		// Kelp2 plant
 		Kelp2;
-		
+
 		public static Tree setValue(byte value)
 		{
         	if (value >= 0 && value < values().length)
@@ -624,7 +624,7 @@ public class Primitive
 	}
 
 	/** Grass foliage types */
-	public enum Grass 
+	public enum Grass
 	{
 		Grass0,
 		Grass1,
@@ -639,7 +639,7 @@ public class Primitive
         	    return values()[value];
         	return null;
 		}
-		
+
 		public byte getValue()
 		{
 			return (byte)ordinal();
@@ -648,7 +648,7 @@ public class Primitive
 	}
 
 	/** Action associated with clicking on an object */
-	public enum ClickAction 
+	public enum ClickAction
 	{
 		/** Touch object */
 		Touch,
@@ -671,14 +671,14 @@ public class Primitive
         	    return values()[value];
         	return null;
 		}
-	
+
 		public byte getValue()
 		{
 			return (byte)ordinal();
 		}
 
 	}
-	
+
 	// #region Subclasses
 
 	// Parameters used to construct a visual representation of a primitive
@@ -710,9 +710,9 @@ public class Primitive
 
         public ConstructionData()
         {
-        	
+
         }
-        
+
         public ConstructionData(OSD osd)
         {
         	fromOSD(osd);
@@ -834,10 +834,10 @@ public class Primitive
             OSDMap volume = new OSDMap(2);
             volume.put("path", path);
             volume.put("profile", profile);
-            
+
         	return volume;
         }
-        
+
         public void fromOSD(OSD osd)
         {
         	if (osd instanceof OSDMap)
@@ -875,7 +875,7 @@ public class Primitive
 
         	}
         }
-        
+
         @Override
 		public int hashCode()
         {
@@ -1009,7 +1009,7 @@ public class Primitive
             }
         }
 
-        @Override 
+        @Override
         public int hashCode()
         {
             return Softness ^ (int)Gravity ^ (int)Drag ^ (int)Wind ^ (int)Tension ^ Force.hashCode();
@@ -1132,7 +1132,7 @@ public class Primitive
         {
             return SculptType.values()[type & 7];
         }
-        
+
         public void setType(SculptType value)
         {
             type = value.getValue();
@@ -1647,7 +1647,7 @@ public class Primitive
         return Position.hashCode() ^ Velocity.hashCode() ^ Acceleration.hashCode() ^ Rotation.hashCode() ^
                AngularVelocity.hashCode() ^ clickAction.hashCode() ^ (Flexible != null ? Flexible.hashCode() : 0) ^
                (Light != null ? Light.hashCode() : 0) ^ (Sculpt != null ? Sculpt.hashCode() : 0) ^ Flags  ^
-               MediaURL.hashCode() ^ (Properties != null ? Properties.OwnerID.hashCode() : 0) ^ ParentID ^ 
+               MediaURL.hashCode() ^ (Properties != null ? Properties.OwnerID.hashCode() : 0) ^ ParentID ^
                PrimData.hashCode() ^ ParticleSys.hashCode() ^ TextColor.hashCode() ^
                TextureAnim.hashCode() ^ (Textures != null ? Textures.hashCode() : 0) ^ (int)SoundRadius ^ Scale.hashCode() ^
                SoundID.hashCode() ^ Text.hashCode() ^ TreeSpecies.hashCode();
@@ -1679,7 +1679,7 @@ public class Primitive
     /**
      * Packs PathTwist, PathTwistBegin, PathRadiusOffset, and PathSkew
      * parameters in to signed eight bit values
-     * 
+     *
      * @param pathTwist Floating point parameter to pack
      * @return Signed eight bit value containing the packed parameter
      */
@@ -1730,7 +1730,7 @@ public class Primitive
     /**
      * Unpacks PathTwist, PathTwistBegin, PathRadiusOffset, and PathSkew
      * parameters from signed eight bit integers to floating point values
-     * 
+     *
      * @param pathTwist Signed eight bit value to unpack
      * @return Unpacked floating point value
      */

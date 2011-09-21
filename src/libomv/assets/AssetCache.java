@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 package libomv.assets;
 
 import java.io.File;
@@ -83,7 +83,7 @@ public class AssetCache
         return autoPruneEnabled;
     }
 
-    // How long (in ms) between cache checks (default is 5 min.) 
+    // How long (in ms) between cache checks (default is 5 min.)
     public final void setAutoPruneInterval(long value)
     {
         pruneInterval = value;
@@ -107,7 +107,7 @@ public class AssetCache
         Client.Login.OnLoginProgress.add(new Network_LoginProgress(), false);
         Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
     }
-    
+
     private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs>
     {
         @Override
@@ -119,7 +119,7 @@ public class AssetCache
             }
         }
     }
-    
+
     private class Network_Disconnected implements Callback<DisconnectedCallbackArgs>
     {
     	@Override
@@ -159,7 +159,7 @@ public class AssetCache
 
     /**
      * Return bytes read from the local asset cache, null if it does not exist
-     * 
+     *
      * @param assetID UUID of the asset we want to get
      * @return Raw bytes of the asset, or null on failure
      */
@@ -195,7 +195,7 @@ public class AssetCache
 
     /**
      * Returns ImageDownload object of the image from the local image cache, null if it does not exist
-     * 
+     *
      * @param imageID UUID of the image we want to get
      * @return ImageDownload object containing the image, or null on failure
      */
@@ -224,7 +224,7 @@ public class AssetCache
 
     /**
      * Constructs a file name of the cached asset
-     * 
+     *
      * @param assetID UUID of the asset
      * @return String with the file name of the cahced asset
      */
@@ -239,7 +239,7 @@ public class AssetCache
 
     /**
      * Saves an asset to the local cache
-     * 
+     *
      * @param assetID UUID of the asset
      * @param assetData Raw bytes the asset consists of
      * @return Weather the operation was successfull
@@ -280,7 +280,7 @@ public class AssetCache
 
     /**
      * Get the file name of the asset stored with gived UUID
-     * 
+     *
      * @param assetID UUID of the asset
      * @return Null if we don't have that UUID cached on disk, file name if found in the cache folder
      */
@@ -302,7 +302,7 @@ public class AssetCache
 
     /**
      * Checks if the asset exists in the local cache
-     * 
+     *
      * @param assetID UUID of the asset
      * @return True is the asset is stored in the cache, otherwise false
      */
@@ -319,7 +319,7 @@ public class AssetCache
         {
             return null;
         }
-        
+
         class CacheNameFilter implements FilenameFilter
         {
             @Override
@@ -328,14 +328,14 @@ public class AssetCache
                 return name.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
             }
         }
-        
+
         // We save file with UUID as file name, only count those
         return di.listFiles(new CacheNameFilter());
     }
 
     /**
      * Wipes out entire cache
-     * 
+     *
      */
     public final void Clear()
     {
@@ -352,7 +352,7 @@ public class AssetCache
 
     /**
      * Brings cache size to the 90% of the max size
-     * 
+     *
      */
     public final void Prune()
     {
@@ -385,7 +385,7 @@ public class AssetCache
 
     /**
      * Asynchronously brings cache size to the 90% of the max size
-     * 
+     *
      */
     public final void BeginPrune()
     {
@@ -425,7 +425,7 @@ public class AssetCache
 
     /**
      * Checks whether caching is enabled
-     * 
+     *
      */
     private boolean Operational()
     {
@@ -434,7 +434,7 @@ public class AssetCache
 
     /**
      * Nicely formats file sizes
-     * 
+     *
      * @param byteCount Byte size we want to output
      * @return String with humanly readable file size
      */
@@ -463,7 +463,7 @@ public class AssetCache
 
     /**
      * Helper class for sorting files by their last accessed time
-     * 
+     *
      */
     private class SortFilesByModTimeHelper implements Comparator<File>
     {

@@ -2,27 +2,27 @@
 // * Copyright (c) 2009, openmetaverse.org
 // * All rights reserved.
 // *
-// * - Redistribution and use in source and binary forms, with or without 
+// * - Redistribution and use in source and binary forms, with or without
 // *   modification, are permitted provided that the following conditions are met:
 // *
 // * - Redistributions of source code must retain the above copyright notice, this
 // *   list of conditions and the following disclaimer.
-// * - Neither the name of the openmetaverse.org nor the names 
+// * - Neither the name of the openmetaverse.org nor the names
 // *   of its contributors may be used to endorse or promote products derived from
 // *   this software without specific prior written permission.
 // *
-// * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-// * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-// * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-// * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-// * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-// * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-// * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-// * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+// * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // * POSSIBILITY OF SUCH DAMAGE.
-// 
+//
 
 package libomv.capabilities;
 
@@ -147,7 +147,7 @@ public class CapsMessage implements IMessage
     {
     	return CapsEventType.Default;
     }
-    
+
     // #region Teleport/Region/Movement Messages
 
     /* Sent to the client to indicate a teleport request has completed */
@@ -155,7 +155,7 @@ public class CapsMessage implements IMessage
     {
         // The <see cref="UUID"/> of the agent
         public UUID AgentID;
-        // 
+        //
         public int LocationID;
         // The simulators handle the agent teleported to
         public long RegionHandle;
@@ -169,16 +169,16 @@ public class CapsMessage implements IMessage
         public int Port;
         // Status flags indicating the state of the Agent upon arrival, Flying, etc.
         public int Flags;
-        
+
         @Override
         public CapsEventType getType()
         {
         	return CapsEventType.TeleportFinish;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -205,9 +205,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -244,9 +244,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.EstablishAgentCommunication;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -259,9 +259,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -312,9 +312,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.CrossedRegion;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -348,9 +348,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -392,9 +392,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.EnableSimulator;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -418,9 +418,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -446,14 +446,14 @@ public class CapsMessage implements IMessage
     // and contains some information on why it failed
     public class TeleportFailedMessage implements IMessage
     {
-        // 
+        //
         public String ExtraParams;
         // A string key of the reason the teleport failed e.g. CouldntTPCloser
         // Which could be used to look up a value in a dictionary or enum
         public String MessageKey;
         // The <see cref="UUID"/> of the Agent
         public UUID AgentID;
-        // A string human readable message containing the reason 
+        // A string human readable message containing the reason
         // An example: Could not teleport closer to destination
         public String Reason;
 
@@ -466,9 +466,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.TeleportFailed;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -494,9 +494,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -545,9 +545,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.LandStatReply;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -591,9 +591,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -651,14 +651,14 @@ public class CapsMessage implements IMessage
         // Prim ownership information for a specified owner on a single parcel
         public class PrimOwner
         {
-            // The <see cref="UUID"/> of the prim owner, 
+            // The <see cref="UUID"/> of the prim owner,
             // UUID.Zero if agent has no permission to view prim owner information
             public UUID OwnerID;
             // The total number of prims
             public int Count;
             // True if the OwnerID is a <see cref="Group"/>
             public boolean IsGroupOwned;
-            // True if the owner is online 
+            // True if the owner is online
             // This is no longer used by the LL Simulators
             public boolean OnlineStatus;
             // The date the most recent prim was rezzed
@@ -677,9 +677,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ParcelObjectOwnersReply;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -710,9 +710,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -743,7 +743,7 @@ public class CapsMessage implements IMessage
                 block.OnlineStatus = dataMap.get("OnlineStatus").AsBoolean(); // deprecated
 
                 // if the agent has no permissions, or there are no prims, the counts
-                // should not match up, so we don't decode the DataExtended map 
+                // should not match up, so we don't decode the DataExtended map
                 if (dataExtendedArray.size() == dataArray.size())
                 {
                     OSDMap dataExtendedMap = (OSDMap)dataExtendedArray.get(i);
@@ -765,13 +765,13 @@ public class CapsMessage implements IMessage
         public Vector3 AABBMin;
         // Total parcel land area
         public int Area;
-        // 
+        //
         public int AuctionID;
         // Key of authorized buyer
         public UUID AuthBuyerID;
         // Bitmap describing land layout in 4x4m squares across the entire region
         public byte[] Bitmap;
-        // 
+        //
         public ParcelCategory Category;
         // Date land was claimed
         public Date ClaimDate;
@@ -779,15 +779,15 @@ public class CapsMessage implements IMessage
         public int ClaimPrice;
         // Parcel Description
         public String Desc;
-        // 
+        //
         public int ParcelFlags;
-        // 
+        //
         public UUID GroupID;
         // Total number of primitives owned by the parcel group on this parcel
         public int GroupPrims;
         // Whether the land is deeded to a group or not
         public boolean IsGroupOwned;
-        // 
+        //
         public LandingTypeEnum LandingType;
         // Maximum number of primitives this parcel supports
         public int MaxPrims;
@@ -803,7 +803,7 @@ public class CapsMessage implements IMessage
         public String Name;
         // Autoreturn value in minutes for others' objects
         public int OtherCleanTime;
-        // 
+        //
         public int OtherCount;
         // Total number of other primitives on this parcel
         public int OtherPrims;
@@ -811,17 +811,17 @@ public class CapsMessage implements IMessage
         public UUID OwnerID;
         // Total number of primitives owned by the parcel owner on this parcel
         public int OwnerPrims;
-        // 
+        //
         public float ParcelPrimBonus;
         // How long is pass valid for
         public float PassHours;
         // Price for a temporary pass
         public int PassPrice;
-        // 
+        //
         public int PublicCount;
-        // 
+        //
         public boolean RegionDenyAnonymous;
-        // 
+        //
         public boolean RegionPushOverride;
         // This field is no longer used
         public int RentPrice;
@@ -833,17 +833,17 @@ public class CapsMessage implements IMessage
         public int SalePrice;
         // Number of primitives your avatar is currently selecting and sitting on in this parcel
         public int SelectedPrims;
-        // 
+        //
         public int SelfCount;
-        // A number which increments by 1, starting at 0 for each ParcelProperties request. 
-        // Can be overriden by specifying the sequenceID with the ParcelPropertiesRequest being sent. 
-        // a Negative number indicates the action in {@link ParcelPropertiesStatus} has occurred. 
+        // A number which increments by 1, starting at 0 for each ParcelProperties request.
+        // Can be overriden by specifying the sequenceID with the ParcelPropertiesRequest being sent.
+        // a Negative number indicates the action in {@link ParcelPropertiesStatus} has occurred.
         public int SequenceID;
         // Maximum primitives across the entire simulator
         public int SimWideMaxPrims;
         // Total primitives across the entire simulator
         public int SimWideTotalPrims;
-        // 
+        //
         public boolean SnapSelection;
         // Key of parcel snapshot
         public UUID SnapshotID;
@@ -851,9 +851,9 @@ public class CapsMessage implements IMessage
         public ParcelManager.ParcelStatus Status;
         // Total number of primitives on this parcel
         public int TotalPrims;
-        // 
+        //
          public Vector3 UserLocation;
-        // 
+        //
         public Vector3 UserLookAt;
         // TRUE of region denies access to age unverified users
         public boolean RegionDenyAgeUnverified;
@@ -881,9 +881,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ParcelProperties;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -964,9 +964,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1068,39 +1068,39 @@ public class CapsMessage implements IMessage
         public int LocalID;
         // A string containing the description of the media which can be played to visitors
         public String MediaDesc;
-        // 
+        //
         public int MediaHeight;
-        // 
+        //
         public boolean MediaLoop;
-        // 
+        //
         public UUID MediaID;
-        // 
+        //
         public String MediaType;
-        // 
+        //
         public String MediaURL;
-        // 
+        //
         public int MediaWidth;
-        // 
+        //
         public String MusicURL;
-        // 
+        //
         public String Name;
-        // 
+        //
         public boolean ObscureMedia;
-        // 
+        //
         public boolean ObscureMusic;
-        // 
+        //
         public int ParcelFlags;
-        // 
+        //
         public float PassHours;
-        // 
+        //
         public int PassPrice;
-        // 
+        //
         public int SalePrice;
-        // 
+        //
         public UUID SnapshotID;
-        // 
+        //
         public Vector3 UserLocation;
-        // 
+        //
         public Vector3 UserLookAt;
 
         /**
@@ -1112,9 +1112,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ParcelPropertiesUpdate;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1151,9 +1151,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1204,9 +1204,9 @@ public class CapsMessage implements IMessage
         // Region <see cref="UUID"/> of the parcel we are looking up
         public UUID RegionID;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */@Override
         public OSDMap Serialize()
@@ -1218,9 +1218,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-         /** 
+         /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
          @Override
@@ -1232,15 +1232,15 @@ public class CapsMessage implements IMessage
         }
     }
 
-    // A message sent from the simulator to the viewer in response to a <see cref="RemoteParcelRequestRequest"/> 
+    // A message sent from the simulator to the viewer in response to a <see cref="RemoteParcelRequestRequest"/>
     public class RemoteParcelRequestReply extends RemoteParcelRequestBlock
     {
         // The grid-wide unique parcel ID
         public UUID ParcelID;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1251,9 +1251,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1281,9 +1281,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.RemoteParcelRequest;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1292,9 +1292,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1335,9 +1335,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.NewFileAgentInventory;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1353,9 +1353,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1455,9 +1455,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.AgentGroupDataUpdate;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1503,9 +1503,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1564,7 +1564,7 @@ public class CapsMessage implements IMessage
         }
     }
 
-    // A message sent from the viewer to the simulator which 
+    // A message sent from the viewer to the simulator which
     // specifies the language and permissions for others to detect the language specified
     public class UpdateAgentLanguageMessage implements IMessage
     {
@@ -1582,9 +1582,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UpdateAgentLanguage;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1598,9 +1598,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1636,9 +1636,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.AgentDropGroup;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1660,9 +1660,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1691,9 +1691,9 @@ public class CapsMessage implements IMessage
         // The request state
         public String State;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         public abstract OSDMap Serialize();
@@ -1775,9 +1775,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UploadBakedTexture;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1786,9 +1786,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1835,9 +1835,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.RequiredVoiceVersion;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1851,9 +1851,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1884,9 +1884,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ParcelVoiceInfoRequest;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1904,9 +1904,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1922,9 +1922,9 @@ public class CapsMessage implements IMessage
 
     public class ProvisionVoiceAccountRequestMessage implements IMessage
     {
-        // 
+        //
         public String Password;
-        // 
+        //
         public String Username;
 
         /**
@@ -1936,9 +1936,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ProvisionVoiceAccountRequest;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -1952,9 +1952,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -1984,9 +1984,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UploadScriptTask;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2005,9 +2005,9 @@ public class CapsMessage implements IMessage
                 Logger.Log("Unable to deserialize UploadScriptTask: No message handler exists for state " + value, LogLevel.Warning);
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2037,7 +2037,7 @@ public class CapsMessage implements IMessage
     {
         // The Asset ID of the script
         public UUID ItemID;
-        // True of the script is compiled/ran using the mono interpreter, false indicates it 
+        // True of the script is compiled/ran using the mono interpreter, false indicates it
         // uses the older less efficient lsl2 interprter
         public boolean Mono;
         // The Task containing the scripts {@link UUID}
@@ -2054,9 +2054,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ScriptRunningReply;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2078,9 +2078,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2112,9 +2112,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UpdateGestureAgentInventory;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2123,9 +2123,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2174,9 +2174,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UpdateNotecardTaskInventory;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2189,9 +2189,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2203,7 +2203,7 @@ public class CapsMessage implements IMessage
     }
 
     // TODO: Add Test
-    // 
+    //
     // A reusable class containing a message sent from the viewer to the simulator to request a temporary uploader capability
     // which is used to update an asset in an agents inventory
     public class UpdateAgentInventoryRequestMessage extends AssetUploaderBlock
@@ -2211,9 +2211,9 @@ public class CapsMessage implements IMessage
         // The Notecard AssetID to replace
         public UUID ItemID;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2225,9 +2225,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2252,9 +2252,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UpdateNotecardAgentInventory;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2263,9 +2263,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2314,9 +2314,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.CopyInventoryFromNotecard;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2332,9 +2332,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2372,7 +2372,7 @@ public class CapsMessage implements IMessage
             map.put("errors", errorsArray);
             return map;
         }
-        
+
         @Override
 		public void Deserialize(OSDMap map)
         {
@@ -2399,9 +2399,9 @@ public class CapsMessage implements IMessage
         // The tasks <see cref="UUID"/> which contains the script to update
         public UUID TaskID;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2416,9 +2416,9 @@ public class CapsMessage implements IMessage
         }
 
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2446,9 +2446,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UpdateScriptTask;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2479,10 +2479,10 @@ public class CapsMessage implements IMessage
             else
                 Logger.Log("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state " + value, LogLevel.Warning);
         }
-        
-        /** 
+
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2559,9 +2559,9 @@ public class CapsMessage implements IMessage
         // Defaults to lsl version 2, "mono" might be another possible option
         public String Target = "lsl2"; // lsl2
 
-		/** 
+		/**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2573,9 +2573,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2601,9 +2601,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.UpdateScriptAgent;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2612,9 +2612,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2670,9 +2670,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.SendPostcard;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2688,9 +2688,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2712,12 +2712,12 @@ public class CapsMessage implements IMessage
     // Base class for Map Layers via Capabilities
     public abstract class MapLayerMessageBase
     {
-        // 
+        //
         public int Flags;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         public abstract OSDMap Serialize();
@@ -2763,9 +2763,9 @@ public class CapsMessage implements IMessage
         // An array containing LayerData items
         public LayerData[] LayerDataBlocks;
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2795,9 +2795,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2840,9 +2840,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.MapLayer;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2851,9 +2851,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2890,9 +2890,9 @@ public class CapsMessage implements IMessage
         	return CapsEventType.ProductInfoRequest;
         }
 
-        /** 
+        /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2901,9 +2901,9 @@ public class CapsMessage implements IMessage
             throw new UnsupportedOperationException();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2912,7 +2912,7 @@ public class CapsMessage implements IMessage
             throw new UnsupportedOperationException();
         }
     }
-    
+
     // #region ChatSessionRequestMessage
 
     public abstract class SearchStatRequestBlock
@@ -2928,7 +2928,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2941,7 +2941,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -2962,7 +2962,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -2980,7 +2980,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3010,7 +3010,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3021,7 +3021,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3067,7 +3067,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3088,7 +3088,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3118,7 +3118,7 @@ public class CapsMessage implements IMessage
         /* A list containing Key/Value pairs, known valid values:
            key: text value: true/false - allow/disallow specified agents ability to use text in session
            key: voice value: true/false - allow/disallow specified agents ability to use voice in session
-     
+
             "text" or "voice" */
         public String RequestKey;
         public boolean RequestValue;
@@ -3130,7 +3130,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3152,9 +3152,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3190,7 +3190,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3201,10 +3201,10 @@ public class CapsMessage implements IMessage
             map.put("session-id", OSD.FromUUID(SessionID));
             return map;
         }
-        
-        /** 
+
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3230,7 +3230,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3239,9 +3239,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3290,7 +3290,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3303,9 +3303,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3328,7 +3328,7 @@ public class CapsMessage implements IMessage
         public boolean VoiceEnabled;
         public boolean ModeratedVoice;
 
-        // Is Text moderation possible? 
+        // Is Text moderation possible?
 
         /**
          * @return the type of message
@@ -3341,7 +3341,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3365,9 +3365,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3432,7 +3432,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3466,9 +3466,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3523,7 +3523,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3538,9 +3538,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3554,11 +3554,11 @@ public class CapsMessage implements IMessage
     }
 
     // Sent from the simulator to the viewer.
-    // 
+    //
     // When an agent initially joins a session the AgentUpdatesBlock object will contain a list of session members including
-    // a boolean indicating they can use voice chat in this session, a boolean indicating they are allowed to moderate 
+    // a boolean indicating they can use voice chat in this session, a boolean indicating they are allowed to moderate
     // this session, and lastly a string which indicates another agent is entering the session with the Transition set to "ENTER"
-    // 
+    //
     // During the session lifetime updates on individuals are sent. During the update the booleans sent during the initial join are
     // excluded with the exception of the Transition field. This indicates a new user entering or exiting the session with
     // the string "ENTER" or "LEAVE" respectively.
@@ -3598,7 +3598,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3630,9 +3630,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3651,15 +3651,15 @@ public class CapsMessage implements IMessage
                 {
                     // This appears to be redundant and duplicated by the info block, more dumps will confirm this
 //                     <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
-//                            <string>ENTER</string> 
+//                            <string>ENTER</string>
                 }
                 else if (kvp.getKey().equals("session_id"))
                 {
-                    // I am making the assumption that each osdmap will contain the information for a 
+                    // I am making the assumption that each osdmap will contain the information for a
                     // single session. This is how the map appears to read however more dumps should be taken
                     // to confirm this.
 //                     <key>session_id</key>
-//                            <string>984f6a1e-4ceb-6366-8d5e-a18c6819c6f7</string> 
+//                            <string>984f6a1e-4ceb-6366-8d5e-a18c6819c6f7</string>
 
                 }
                 else // key is an agent uuid (we hope!)
@@ -3734,7 +3734,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3747,9 +3747,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3777,7 +3777,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3789,9 +3789,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3815,7 +3815,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3839,9 +3839,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3879,7 +3879,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -3888,9 +3888,9 @@ public class CapsMessage implements IMessage
             return Messages.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -3977,7 +3977,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4063,9 +4063,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4134,7 +4134,7 @@ public class CapsMessage implements IMessage
         }
     }
 
-    // 
+    //
     public class PlacesReplyMessage implements IMessage
     {
         public UUID AgentID;
@@ -4172,7 +4172,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4224,9 +4224,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4283,7 +4283,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4296,9 +4296,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4338,7 +4338,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4377,9 +4377,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4489,7 +4489,7 @@ public class CapsMessage implements IMessage
                     ExtraParamData = map.get("param_data").AsBinary();
                 }
             }
-            
+
             public Face[] Faces;
             public ExtraParam[] ExtraParams;
             public UUID GroupID;
@@ -4529,7 +4529,7 @@ public class CapsMessage implements IMessage
                 map.put("pos", OSD.FromVector3(Position));
                 map.put("rotation", OSD.FromQuaternion(Rotation));
                 map.put("scale", OSD.FromVector3(Scale));
-                
+
                 // Extra params
                 OSDArray extraParams = new OSDArray();
                 if (ExtraParams != null)
@@ -4740,7 +4740,7 @@ public class CapsMessage implements IMessage
         {
             OSDMap ret = new OSDMap(1);
             OSDArray array = new OSDArray(ObjectPhysicsProperties.length);
-            
+
             for (int i = 0; i < ObjectPhysicsProperties.length; i++)
             {
                 array.add(ObjectPhysicsProperties[i].GetOSD());
@@ -4762,7 +4762,7 @@ public class CapsMessage implements IMessage
             if (array != null)
             {
                 ObjectPhysicsProperties = new PhysicsProperties[array.size()];
-            
+
                 for (int i = 0; i < array.size(); i++)
                 {
                     ObjectPhysicsProperties[i] = new PhysicsProperties(array.get(i));
@@ -4801,7 +4801,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4816,9 +4816,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4844,13 +4844,13 @@ public class CapsMessage implements IMessage
         // Prim UUID
         public UUID PrimID;
 
-        // 
+        //
         // Requested operation, either GET or UPDATE
         public String Verb = "GET"; // "GET" or "UPDATE"
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4862,9 +4862,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4890,7 +4890,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4922,9 +4922,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -4966,7 +4966,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -4998,9 +4998,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5044,7 +5044,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -5053,9 +5053,9 @@ public class CapsMessage implements IMessage
             return Request.Serialize();
         }
 
-        /** 
+        /**
          * Deserialize the message
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5105,7 +5105,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         public OSDMap Serialize()
@@ -5113,9 +5113,9 @@ public class CapsMessage implements IMessage
             throw new UnsupportedOperationException();
         }
 
-        /** 
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param obj An <see cref="OSDMap"/> containing the data
          */
         public void Deserialize(OSDMap obj)
@@ -5133,7 +5133,7 @@ public class CapsMessage implements IMessage
             }
         }
     }
-    
+
     // Details about parcel resource usage
     public class ParcelResourcesDetail
     {
@@ -5152,7 +5152,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         public OSDMap Serialize()
@@ -5160,9 +5160,9 @@ public class CapsMessage implements IMessage
             throw new UnsupportedOperationException();
         }
 
-        /** 
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         public void Deserialize(OSDMap map)
@@ -5197,10 +5197,10 @@ public class CapsMessage implements IMessage
         {
         	throw new UnsupportedOperationException();
         }
-        
-        /** 
+
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5239,23 +5239,23 @@ public class CapsMessage implements IMessage
 		{
 			return CapsEventType.AttachmentResources;
 		}
-         
+
     	/**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
 		@Override
 		public OSDMap Serialize()
 		{
 			OSDMap map = super.Serialize();
-			
+
 			return map;
 		}
 
-        /** 
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param osd An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5304,7 +5304,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -5315,9 +5315,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5345,7 +5345,7 @@ public class CapsMessage implements IMessage
 
         /**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
         @Override
@@ -5364,9 +5364,9 @@ public class CapsMessage implements IMessage
             return map;
         }
 
-        /** 
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param map An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5402,7 +5402,7 @@ public class CapsMessage implements IMessage
 
 		/**
          * Serialize the object
-         * 
+         *
          * @return  An <see cref="OSDMap"/> containing the objects data
          */
 		@Override
@@ -5421,9 +5421,9 @@ public class CapsMessage implements IMessage
 			return map;
 		}
 
-        /** 
+        /**
          * Deserializes object from OSD
-         * 
+         *
          * @param osd An <see cref="OSDMap"/> containing the data
          */
         @Override
@@ -5448,7 +5448,7 @@ public class CapsMessage implements IMessage
     // #endregion Resource usage
 
     // #region Display names
-    
+
     // Reply to request for bunch if display names
     public class GetDisplayNamesMessage implements IMessage
     {
@@ -5473,7 +5473,7 @@ public class CapsMessage implements IMessage
 		public OSDMap Serialize()
         {
             OSDArray agents = new OSDArray();
-            
+
             if (Agents != null && Agents.length > 0)
             {
                 for (int i=0; i<Agents.length; i++)
@@ -5653,10 +5653,10 @@ public class CapsMessage implements IMessage
         }
     }
     // #endregion Display names
-    
+
     /**
      * Return a decoded capabilities message as a strongly typed object
-     * 
+     *
      * @param eventName A string containing the name of the capabilities message key
      * @param map An <see cref="OSDMap"/> to decode
      * @return A strongly typed object containing the decoded information from the capabilities message, or null
@@ -5889,7 +5889,7 @@ public class CapsMessage implements IMessage
             	message = new DisplayNameUpdateMessage();
                 message.Deserialize(map);
                 break;
-                
+
             // Capabilities TODO:
             case DispatchRegionInfo:
             case EstateChangeInfo:
@@ -5912,13 +5912,13 @@ public class CapsMessage implements IMessage
         Logger.Log("Unimplemented event " + eventType.toString(), LogLevel.Error);
         return message ;
     }
-   
+
     @Override
 	public OSDMap Serialize()
 	{
 		return null;
 	}
-	
+
 	@Override
 	public void Deserialize(OSDMap map)
 	{
