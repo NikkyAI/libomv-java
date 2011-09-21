@@ -61,7 +61,7 @@ import libomv.packets.StartPingCheckPacket;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.utils.CallbackArgs;
-import libomv.utils.CallbackHandlerQueue;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -134,7 +134,7 @@ public class NetworkManager implements PacketCallback
     }
     	
 	/** Callback arguments classes */
-	public class SimConnectingCallbackArgs extends CallbackArgs
+	public class SimConnectingCallbackArgs implements CallbackArgs
 	{
 		private InetSocketAddress endPoint;
 		private boolean cancel = false;
@@ -160,10 +160,10 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	public CallbackHandlerQueue<SimConnectingCallbackArgs> OnSimConnecting = new CallbackHandlerQueue<SimConnectingCallbackArgs>();
+	public CallbackHandler<SimConnectingCallbackArgs> OnSimConnecting = new CallbackHandler<SimConnectingCallbackArgs>();
 
 
-	public class SimConnectedCallbackArgs extends CallbackArgs
+	public class SimConnectedCallbackArgs implements CallbackArgs
 	{
 		private final Simulator simulator;
 		
@@ -178,7 +178,7 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	public CallbackHandlerQueue<SimConnectedCallbackArgs> OnSimConnected = new CallbackHandlerQueue<SimConnectedCallbackArgs>();
+	public CallbackHandler<SimConnectedCallbackArgs> OnSimConnected = new CallbackHandler<SimConnectedCallbackArgs>();
 
     /**
      * Fire an event when an event queue connects for capabilities
@@ -190,11 +190,11 @@ public class NetworkManager implements PacketCallback
 		OnSimConnected.dispatch(new SimConnectedCallbackArgs(simulator));
 	}
 
-	public CallbackHandlerQueue<SimChangedCallbackArgs> OnSimChanged = new CallbackHandlerQueue<SimChangedCallbackArgs>();
+	public CallbackHandler<SimChangedCallbackArgs> OnSimChanged = new CallbackHandler<SimChangedCallbackArgs>();
 
 	
 	// An event for the connection to a simulator other than the currently occupied one disconnecting
-	public class SimDisconnectedCallbackArgs extends CallbackArgs
+	public class SimDisconnectedCallbackArgs implements CallbackArgs
 	{
 		private final Simulator simulator;
 		private final DisconnectType type;
@@ -216,11 +216,11 @@ public class NetworkManager implements PacketCallback
 	    }
 	}
 
-	public CallbackHandlerQueue<SimDisconnectedCallbackArgs> OnSimDisconnected = new CallbackHandlerQueue<SimDisconnectedCallbackArgs>();
+	public CallbackHandler<SimDisconnectedCallbackArgs> OnSimDisconnected = new CallbackHandler<SimDisconnectedCallbackArgs>();
 	
 
 	// An event for being logged out either through client request, server forced, or network error
-	public class DisconnectedCallbackArgs  extends CallbackArgs
+	public class DisconnectedCallbackArgs  implements CallbackArgs
 	{
 		private final DisconnectType type;
 		private final String message;
@@ -242,10 +242,10 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	public CallbackHandlerQueue<DisconnectedCallbackArgs> OnDisconnected = new CallbackHandlerQueue<DisconnectedCallbackArgs>();
+	public CallbackHandler<DisconnectedCallbackArgs> OnDisconnected = new CallbackHandler<DisconnectedCallbackArgs>();
 
 
-    public class PacketSentCallbackArgs extends CallbackArgs
+    public class PacketSentCallbackArgs implements CallbackArgs
     {
         private final byte[] m_Data;
         private final int m_SentBytes;
@@ -272,7 +272,7 @@ public class NetworkManager implements PacketCallback
         }
     }
 
-    public CallbackHandlerQueue<PacketSentCallbackArgs> OnPacketSent = new CallbackHandlerQueue<PacketSentCallbackArgs>();
+    public CallbackHandler<PacketSentCallbackArgs> OnPacketSent = new CallbackHandler<PacketSentCallbackArgs>();
 
     public void RaisePacketSentCallback(byte[] data, int bytes, Simulator sim)
     {
@@ -280,7 +280,7 @@ public class NetworkManager implements PacketCallback
     }
 
     
-    public class EventQueueRunningCallbackArgs extends CallbackArgs
+    public class EventQueueRunningCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
 
@@ -295,7 +295,7 @@ public class NetworkManager implements PacketCallback
         }
     }
 
-    public CallbackHandlerQueue<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandlerQueue<EventQueueRunningCallbackArgs>();
+    public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
 	
     public final void RaiseConnectedEvent(Simulator simulator)
     {
@@ -304,7 +304,7 @@ public class NetworkManager implements PacketCallback
 
     
 	// An event triggered when the logout is confirmed
-	public class LoggedOutCallbackArgs  extends CallbackArgs
+	public class LoggedOutCallbackArgs  implements CallbackArgs
 	{
 		private final Vector<UUID> itemIDs;
 	
@@ -319,7 +319,7 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	public class SimChangedCallbackArgs extends CallbackArgs
+	public class SimChangedCallbackArgs implements CallbackArgs
 	{
 		private final Simulator simulator;
 		
@@ -334,7 +334,7 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	public CallbackHandlerQueue<LoggedOutCallbackArgs> OnLoggedOut = new CallbackHandlerQueue<LoggedOutCallbackArgs>();
+	public CallbackHandler<LoggedOutCallbackArgs> OnLoggedOut = new CallbackHandler<LoggedOutCallbackArgs>();
      
 	private HashMap<PacketType, ArrayList<PacketCallback>> simCallbacks;
 	private HashMap<CapsEventType, ArrayList<CapsCallback>> capCallbacks;
@@ -368,7 +368,6 @@ public class NetworkManager implements PacketCallback
         	for (String s : blacklist.split(","))
         		_UDPBlacklist.add(PacketType.valueOf(s));
         }
-		
 	}
 	
 	private ArrayList<Simulator> _Simulators;
@@ -442,7 +441,7 @@ public class NetworkManager implements PacketCallback
         synchronized (simCallbacks)
     	{
     		// Fire any default callbacks
-            ArrayList<PacketCallback> callbackArray = simCallbacks.get(CapsEventType.Default);
+            ArrayList<PacketCallback> callbackArray = simCallbacks.get(PacketType.Default);
             if (callbackArray != null)
             {
             	for (PacketCallback callback : callbackArray)
@@ -755,7 +754,7 @@ public class NetworkManager implements PacketCallback
 		/* Don't accept null callbacks */
 		if (callback == null)
 			return;
-		
+
 		synchronized (simCallbacks)
 		{
 			if (!simCallbacks.containsKey(type))
@@ -788,7 +787,7 @@ public class NetworkManager implements PacketCallback
 			}
 			else
 			{
-				Logger.Log("Trying to unregister a non-existant callback for packet " + type, LogLevel.Info);
+				Logger.Log("Trying to unregister a non-existant callback for packet " + type, LogLevel.Info, _Client);
 			}
 		}
 	}
@@ -819,8 +818,9 @@ public class NetworkManager implements PacketCallback
         }
         else
         {
-            Logger.Log("Packet received before simulator packet processing threads running, make certain you are completely logged in.", LogLevel.Error);
-            throw new ConnectException("Packet received before simulator packet processing threads running, make certain you are completely logged in");
+        	ConnectException ex = new ConnectException("Packet received before simulator packet processing threads running, make certain you are completely logged in");
+            Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+            throw ex;
         }
 	}
 

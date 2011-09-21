@@ -26,6 +26,8 @@
  */ 
 package libomv.test;
 
+import java.util.logging.Logger;
+
 import libomv.GridClient;
 import libomv.LoginManager.LoginParams;
 import libomv.LoginManager.LoginResponseCallbackArgs;
@@ -36,15 +38,14 @@ import libomv.mapgenerator.ProtocolManager;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
-import libomv.utils.CallbackHandler;
+import libomv.utils.Callback;
 
-public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements PacketCallback 
+public class sldump implements PacketCallback
 {
 	private boolean disconnected = false;
-	private GridClient client;
 	
 	// The main entry point for the application.
-	public void main(String[] args)
+	static public void main(String[] args)
 	{
 		if (args.length == 0 || (args.length < 3 && !args[0].equals("--printmap")))
 		{
@@ -78,19 +79,28 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 			protocol.PrintMap();
 			return;
 		}
-
+		new sldump(args);
+	}
+	
+	public sldump(String[] args)
+	{
+		Callback<LoginResponseCallbackArgs> loginResp = new LoginResponseHandler();
+		Callback<DisconnectedCallbackArgs> disconnect = new DisconnectedHandler();
+		GridClient client = null;
+		
 		try
 		{
 			client = new GridClient();
 			client.setDefaultGrid("secondlife");
 			LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
 			
+			// Setup the Login Response handler to print out the result of the login
+			client.Login.RegisterLoginResponseCallback(loginResp, loginParams.Options, false);
+
 			// Setup the packet callback and disconnect event handler
 			client.Network.RegisterCallback(PacketType.Default, this);
-			client.Network.OnDisconnected.add(this);
+			client.Network.OnDisconnected.add(disconnect, true);
 			
-			// Setup the Login Response handler to print out the result of the login
-			client.Login.RegisterLoginResponseCallback(new Network_OnLogin(), loginParams.Options, false);
 
 			// An example of how to pass additional options to the login server
 			// loginParams.ID0 = "65e142a8d3c1ee6632259f111cb168c9";
@@ -112,15 +122,23 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 		{
 			ex.printStackTrace();
 		}
-		client.Network.UnregisterCallback(PacketType.Default, this);
-		client.Network.OnDisconnected.remove(this);
+		
+		if (client != null)
+		{
+			client.Network.UnregisterCallback(PacketType.Default, this);
+			client.Login.UnregisterLoginResponseCallback(loginResp);
+			client.Network.OnDisconnected.remove(disconnect);
+			client = null;
+		}
 	}
 
-	public sldump(String[] args) throws Exception
+	@Override
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
+		System.out.println("sldump: Packet received " + packet.toString());
 	}
 
-	public class Network_OnLogin extends CallbackHandler<LoginResponseCallbackArgs>
+	public class LoginResponseHandler implements Callback<LoginResponseCallbackArgs>
 	{
 		@Override
 		public void callback(LoginResponseCallbackArgs e)
@@ -140,27 +158,23 @@ public class sldump extends CallbackHandler<DisconnectedCallbackArgs> implements
 				System.out.println("sldump: Error logging in: " + e.getReason());			
 			}
 		}
-		
 	}
 	
-	@Override
-	public void packetCallback(Packet packet, Simulator simulator) throws Exception
+	public class DisconnectedHandler implements Callback<DisconnectedCallbackArgs>
 	{
-		System.out.println(packet.toString());
-	}
-
-	@Override
-	public void callback(DisconnectedCallbackArgs args)
-	{
-		DisconnectType type = args.getDisconnectType();
-		if (type == DisconnectType.NetworkTimeout)
+		@Override
+		public void callback(DisconnectedCallbackArgs e)
 		{
-			System.out.println("sldump: Network connection timed out, disconnected");
+			DisconnectType type = e.getDisconnectType();
+			if (type == DisconnectType.NetworkTimeout)
+			{
+				System.out.println("sldump: Network connection timed out, disconnected");
+			}
+			else if (type == DisconnectType.ServerInitiated)
+			{
+				System.out.println("sldump: Server disconnected us: " + e.getMessage());
+			}
+			disconnected = true;
 		}
-		else if (type == DisconnectType.ServerInitiated)
-		{
-			System.out.println("sldump: Server disconnected us: " + args.getMessage());
-		}
-		disconnected = true;
 	}
 }
