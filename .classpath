@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-sample"/>
-	<classpathentry kind="src" path="src-install"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.0.1.jar"/>

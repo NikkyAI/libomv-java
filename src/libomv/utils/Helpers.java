@@ -1515,6 +1515,8 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes) throws UnsupportedEncodingException
 	{
+		if (bytes[bytes.length - 1] == 0)
+		    return new String(bytes, 0, bytes.length - 1, UTF8_ENCODING);			
 	    return new String(bytes, UTF8_ENCODING);
 	}
 
@@ -1529,6 +1531,7 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
+		if (bytes[length - 1] == 0) length--;
 	    return new String(bytes, offset, length, UTF8_ENCODING);
 	}
 
