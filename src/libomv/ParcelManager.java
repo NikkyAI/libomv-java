@@ -82,7 +82,7 @@ import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
-import libomv.utils.CallbackHandlerQueue;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -948,7 +948,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
     // #endregion Structs
 
     // Contains a parcels dwell data returned from the simulator in response to an <see cref="RequestParcelDwell"/>
-    public class ParcelDwellReplyCallbackArgs extends CallbackArgs
+    public class ParcelDwellReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_ParcelID;
         private final int m_LocalID;
@@ -985,11 +985,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
     
-    public CallbackHandlerQueue<ParcelDwellReplyCallbackArgs> OnParcelDwellReply = new CallbackHandlerQueue<ParcelDwellReplyCallbackArgs>();
+    public CallbackHandler<ParcelDwellReplyCallbackArgs> OnParcelDwellReply = new CallbackHandler<ParcelDwellReplyCallbackArgs>();
 
     
     // Contains basic parcel information data returned from the simulator in response to an <see cref="RequestParcelInfo"/> request
-    public class ParcelInfoReplyCallbackArgs extends CallbackArgs
+    public class ParcelInfoReplyCallbackArgs implements CallbackArgs
     {
         private final ParcelInfo m_Parcel;
 
@@ -1010,11 +1010,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ParcelInfoReplyCallbackArgs> OnParcelInfoReply = new CallbackHandlerQueue<ParcelInfoReplyCallbackArgs>();
+    public CallbackHandler<ParcelInfoReplyCallbackArgs> OnParcelInfoReply = new CallbackHandler<ParcelInfoReplyCallbackArgs>();
 
     
     // Contains basic parcel information data returned from the simulator in response to an <see cref="RequestParcelInfo"/> request
-    public class ParcelPropertiesCallbackArgs extends CallbackArgs
+    public class ParcelPropertiesCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private Parcel m_Parcel;
@@ -1077,11 +1077,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ParcelPropertiesCallbackArgs> OnParcelProperties = new CallbackHandlerQueue<ParcelPropertiesCallbackArgs>();
+    public CallbackHandler<ParcelPropertiesCallbackArgs> OnParcelProperties = new CallbackHandler<ParcelPropertiesCallbackArgs>();
 
     
     // Contains blacklist and whitelist data returned from the simulator in response to an <see cref="RequestParcelAccesslist"/> request
-    public class ParcelAccessListReplyCallbackArgs extends CallbackArgs
+    public class ParcelAccessListReplyCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final int m_SequenceID;
@@ -1135,11 +1135,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ParcelAccessListReplyCallbackArgs> OnParcelAccessListReply = new CallbackHandlerQueue<ParcelAccessListReplyCallbackArgs>();
+    public CallbackHandler<ParcelAccessListReplyCallbackArgs> OnParcelAccessListReply = new CallbackHandler<ParcelAccessListReplyCallbackArgs>();
 
     
     // Contains blacklist and whitelist data returned from the simulator in response to an <see cref="RequestParcelAccesslist"/> request
-    public class ParcelObjectOwnersReplyCallbackArgs extends CallbackArgs
+    public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final java.util.ArrayList<ParcelManager.ParcelPrimOwners> m_Owners;
@@ -1168,11 +1168,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ParcelObjectOwnersReplyCallbackArgs> OnParcelObjectOwnersReply = new CallbackHandlerQueue<ParcelObjectOwnersReplyCallbackArgs>();
+    public CallbackHandler<ParcelObjectOwnersReplyCallbackArgs> OnParcelObjectOwnersReply = new CallbackHandler<ParcelObjectOwnersReplyCallbackArgs>();
 
     
     // Contains the data returned when all parcel data has been retrieved from a simulator
-    public class SimParcelsDownloadedCallbackArgs extends CallbackArgs
+    public class SimParcelsDownloadedCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final HashMap<Integer, Parcel> m_Parcels;
@@ -1209,11 +1209,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<SimParcelsDownloadedCallbackArgs> OnSimParcelsDownloaded = new CallbackHandlerQueue<SimParcelsDownloadedCallbackArgs>();
+    public CallbackHandler<SimParcelsDownloadedCallbackArgs> OnSimParcelsDownloaded = new CallbackHandler<SimParcelsDownloadedCallbackArgs>();
 
     
     // Contains the data returned when a <see cref="RequestForceSelectObjects"/> request
-    public class ForceSelectObjectsReplyCallbackArgs extends CallbackArgs
+    public class ForceSelectObjectsReplyCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final int[] m_ObjectIDs;
@@ -1251,11 +1251,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ForceSelectObjectsReplyCallbackArgs> OnForceSelectObjectsReply = new CallbackHandlerQueue<ForceSelectObjectsReplyCallbackArgs>();
+    public CallbackHandler<ForceSelectObjectsReplyCallbackArgs> OnForceSelectObjectsReply = new CallbackHandler<ForceSelectObjectsReplyCallbackArgs>();
 
     
     // Contains data when the media data for a parcel the avatar is on changes
-    public class ParcelMediaUpdateReplyCallbackArgs extends CallbackArgs
+    public class ParcelMediaUpdateReplyCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final ParcelMedia m_ParcelMedia;
@@ -1284,11 +1284,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ParcelMediaUpdateReplyCallbackArgs> OnParcelMediaUpdateReply = new CallbackHandlerQueue<ParcelMediaUpdateReplyCallbackArgs>();
+    public CallbackHandler<ParcelMediaUpdateReplyCallbackArgs> OnParcelMediaUpdateReply = new CallbackHandler<ParcelMediaUpdateReplyCallbackArgs>();
 
     
     // Contains the media command for a parcel the agent is currently on
-    public class ParcelMediaCommandCallbackArgs extends CallbackArgs
+    public class ParcelMediaCommandCallbackArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final int m_Sequence;
@@ -1341,7 +1341,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<ParcelMediaCommandCallbackArgs> OnParcelMediaCommand = new CallbackHandlerQueue<ParcelMediaCommandCallbackArgs>();
+    public CallbackHandler<ParcelMediaCommandCallbackArgs> OnParcelMediaCommand = new CallbackHandler<ParcelMediaCommandCallbackArgs>();
     // #endregion
 
     private GridClient _Client;

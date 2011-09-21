@@ -29,6 +29,7 @@ package libomv.types;
 import libomv.Simulator;
 import libomv.packets.Packet;
 
-public interface PacketCallback {
+public interface PacketCallback
+{
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception;
 }

@@ -42,7 +42,7 @@ import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.ImageDownload;
 import libomv.types.UUID;
-import libomv.utils.CallbackHandler;
+import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -108,7 +108,7 @@ public class AssetCache
         Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
     }
     
-    private class Network_LoginProgress extends CallbackHandler<LoginProgressCallbackArgs>
+    private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs>
     {
         @Override
 		public void callback(LoginProgressCallbackArgs e)
@@ -120,7 +120,7 @@ public class AssetCache
         }
     }
     
-    private class Network_Disconnected extends CallbackHandler<DisconnectedCallbackArgs>
+    private class Network_Disconnected implements Callback<DisconnectedCallbackArgs>
     {
     	@Override
 		public void callback(DisconnectedCallbackArgs e)

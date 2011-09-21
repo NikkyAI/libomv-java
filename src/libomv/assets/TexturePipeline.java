@@ -56,7 +56,7 @@ import libomv.packets.PacketType;
 import libomv.packets.RequestImagePacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
-import libomv.utils.CallbackHandler;
+import libomv.utils.Callback;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -221,7 +221,7 @@ public class TexturePipeline implements PacketCallback
         }
 	}
 
-    private class Network_LoginProgress extends CallbackHandler<LoginProgressCallbackArgs>
+    private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs>
     {
     	@Override
 		public void callback(LoginProgressCallbackArgs e)
@@ -233,7 +233,7 @@ public class TexturePipeline implements PacketCallback
     	}
     }
     
-    private class Network_Disconnected extends CallbackHandler<DisconnectedCallbackArgs>
+    private class Network_Disconnected implements Callback<DisconnectedCallbackArgs>
     {
         @Override
 		public void callback(DisconnectedCallbackArgs e)

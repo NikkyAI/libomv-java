@@ -68,8 +68,8 @@ import libomv.packets.TransferRequestPacket;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -452,7 +452,7 @@ public class AssetManager implements PacketCallback
     // #region Callback
 
     // Provides data for XferReceived event
-    public class XferReceivedCallbackArgs extends CallbackArgs
+    public class XferReceivedCallbackArgs implements CallbackArgs
     {
         private final XferDownload m_Xfer;
 
@@ -468,10 +468,10 @@ public class AssetManager implements PacketCallback
         }
     }
 
-    public CallbackHandlerQueue<XferReceivedCallbackArgs> OnXferReceived = new CallbackHandlerQueue<XferReceivedCallbackArgs>();
+    public CallbackHandler<XferReceivedCallbackArgs> OnXferReceived = new CallbackHandler<XferReceivedCallbackArgs>();
 
     // Provides data for AssetUploaded event
-    public class AssetUploadCallbackArgs extends CallbackArgs
+    public class AssetUploadCallbackArgs implements CallbackArgs
     {
         private final AssetUpload m_Upload;
 
@@ -487,11 +487,11 @@ public class AssetManager implements PacketCallback
         }
     }
     
-    private CallbackHandlerQueue<AssetUploadCallbackArgs> OnAssetUploaded = new CallbackHandlerQueue<AssetUploadCallbackArgs>();
-    private CallbackHandlerQueue<AssetUploadCallbackArgs> OnUploadProgress = new CallbackHandlerQueue<AssetUploadCallbackArgs>();
+    private CallbackHandler<AssetUploadCallbackArgs> OnAssetUploaded = new CallbackHandler<AssetUploadCallbackArgs>();
+    private CallbackHandler<AssetUploadCallbackArgs> OnUploadProgress = new CallbackHandler<AssetUploadCallbackArgs>();
 
     // Provides data for InitiateDownloaded event
-    public class InitiateDownloadCallbackArgs extends CallbackArgs
+    public class InitiateDownloadCallbackArgs implements CallbackArgs
     {
         private final String m_SimFileName;
         private final String m_ViewerFileName;
@@ -515,10 +515,10 @@ public class AssetManager implements PacketCallback
         }
     }
 
-    private CallbackHandlerQueue<InitiateDownloadCallbackArgs> OnInitiateDownload = new CallbackHandlerQueue<InitiateDownloadCallbackArgs>();
+    private CallbackHandler<InitiateDownloadCallbackArgs> OnInitiateDownload = new CallbackHandler<InitiateDownloadCallbackArgs>();
 
     // Provides data for ImageReceiveProgress event
-    public class ImageReceiveProgressCallbackArgs extends CallbackArgs
+    public class ImageReceiveProgressCallbackArgs implements CallbackArgs
     {
         private final UUID m_ImageID;
         private final int m_Received;
@@ -550,7 +550,7 @@ public class AssetManager implements PacketCallback
         }
     }
 
-    private CallbackHandlerQueue<ImageReceiveProgressCallbackArgs> OnImageReceiveProgress = new CallbackHandlerQueue<ImageReceiveProgressCallbackArgs>();
+    private CallbackHandler<ImageReceiveProgressCallbackArgs> OnImageReceiveProgress = new CallbackHandler<ImageReceiveProgressCallbackArgs>();
 
     // #endregion Events
 
@@ -1098,7 +1098,7 @@ public class AssetManager implements PacketCallback
                     final UUID transactionID = new UUID();
                     final TimeoutEvent<Boolean> uploadEvent = new TimeoutEvent<Boolean>();
                     
-                    CallbackHandler<AssetUploadCallbackArgs> udpCallback = new CallbackHandler<AssetUploadCallbackArgs>()
+                    Callback<AssetUploadCallbackArgs> udpCallback = new Callback<AssetUploadCallbackArgs>()
                     {
                     	@Override
 						public void callback(AssetUploadCallbackArgs e)

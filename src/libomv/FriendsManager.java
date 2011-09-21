@@ -55,8 +55,8 @@ import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 
 /** This class is used to add and remove avatars from your friends list and to
@@ -232,7 +232,7 @@ public class FriendsManager implements PacketCallback
 	// #region callback handlers
 	
 	// Triggered whenever a friend comes online or goes offline
-	public class FriendNotificationCallbackArgs extends CallbackArgs
+	public class FriendNotificationCallbackArgs implements CallbackArgs
 	{
 		private final UUID agentID;
 		private final boolean online;
@@ -254,17 +254,17 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	public abstract class FriendNotificationCallback extends CallbackHandler<FriendNotificationCallbackArgs>
+	public abstract class FriendNotificationCallback implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendNotificationCallbackArgs params);
 	}
 	
-	public final CallbackHandlerQueue<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandlerQueue<FriendNotificationCallbackArgs>();
+	public final CallbackHandler<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandler<FriendNotificationCallbackArgs>();
 	
 
 	// Triggered when a friends rights changed
-	public class FriendRightsCallbackArgs extends CallbackArgs
+	public class FriendRightsCallbackArgs implements CallbackArgs
 	{
 		private final FriendInfo friendInfo;
 		
@@ -279,17 +279,17 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 	
-	public abstract class FriendRightCallback extends CallbackHandler<FriendRightsCallbackArgs>
+	public abstract class FriendRightCallback implements Callback<FriendRightsCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendRightsCallbackArgs params);
 	}
 
-	public final CallbackHandlerQueue<FriendRightsCallbackArgs> OnFriendRights = new CallbackHandlerQueue<FriendRightsCallbackArgs>();
+	public final CallbackHandler<FriendRightsCallbackArgs> OnFriendRights = new CallbackHandler<FriendRightsCallbackArgs>();
 
 
 	// Triggered when a map request for a friend is answered
-	public class FriendFoundReplyCallbackArgs extends CallbackArgs
+	public class FriendFoundReplyCallbackArgs implements CallbackArgs
 	{
 		private final UUID preyID;
 		private final long regionHandle;
@@ -318,17 +318,17 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	public abstract class FriendFoundReplyCallback extends CallbackHandler<FriendFoundReplyCallbackArgs>
+	public abstract class FriendFoundReplyCallback implements Callback<FriendFoundReplyCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendFoundReplyCallbackArgs params);
 	}
 
-	public CallbackHandlerQueue<FriendFoundReplyCallbackArgs> OnFriendFoundReply = new CallbackHandlerQueue<FriendFoundReplyCallbackArgs>();
+	public CallbackHandler<FriendFoundReplyCallbackArgs> OnFriendFoundReply = new CallbackHandler<FriendFoundReplyCallbackArgs>();
 
 
 	/* Triggered when friend rights packet is received */
-	public class FriendshipOfferedCallbackArgs extends CallbackArgs
+	public class FriendshipOfferedCallbackArgs implements CallbackArgs
 	{
 		private final UUID friendID;
 		private final String name;
@@ -357,17 +357,17 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	public abstract class FriendshipOfferedCallback extends CallbackHandler<FriendshipOfferedCallbackArgs>
+	public abstract class FriendshipOfferedCallback implements Callback<FriendshipOfferedCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendshipOfferedCallbackArgs params);
 	}
 
-	public CallbackHandlerQueue<FriendshipOfferedCallbackArgs> OnFriendshipOffered = new CallbackHandlerQueue<FriendshipOfferedCallbackArgs>();
+	public CallbackHandler<FriendshipOfferedCallbackArgs> OnFriendshipOffered = new CallbackHandler<FriendshipOfferedCallbackArgs>();
 
 	
 	/* Triggered when friend rights packet is received */
-	public class FriendshipResponseCallbackArgs extends CallbackArgs
+	public class FriendshipResponseCallbackArgs implements CallbackArgs
 	{
 		private final UUID agentID;
 		private final String name;
@@ -396,17 +396,17 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	public abstract class FriendshipResponseCallback extends CallbackHandler<FriendshipResponseCallbackArgs>
+	public abstract class FriendshipResponseCallback implements Callback<FriendshipResponseCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendshipResponseCallbackArgs params);
 	}
 
-	public CallbackHandlerQueue<FriendshipResponseCallbackArgs> OnFriendshipResponse = new CallbackHandlerQueue<FriendshipResponseCallbackArgs>();
+	public CallbackHandler<FriendshipResponseCallbackArgs> OnFriendshipResponse = new CallbackHandler<FriendshipResponseCallbackArgs>();
 
 	
 	/* Triggered when friend rights packet is received */
-	public class FriendshipTerminatedCallbackArgs extends CallbackArgs
+	public class FriendshipTerminatedCallbackArgs implements CallbackArgs
 	{
 		private final UUID otherID;
 		private final String name;
@@ -428,13 +428,13 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	public abstract class FriendshipTerminatedCallback extends CallbackHandler<FriendshipTerminatedCallbackArgs>
+	public abstract class FriendshipTerminatedCallback implements Callback<FriendshipTerminatedCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendshipTerminatedCallbackArgs params);
 	}
 
-	public CallbackHandlerQueue<FriendshipTerminatedCallbackArgs> OnFriendshipTerminated = new CallbackHandlerQueue<FriendshipTerminatedCallbackArgs>();
+	public CallbackHandler<FriendshipTerminatedCallbackArgs> OnFriendshipTerminated = new CallbackHandler<FriendshipTerminatedCallbackArgs>();
 	// #endregion callback handlers
 
 	private GridClient Client;
@@ -862,7 +862,7 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	private class Self_OnInstantMessage extends CallbackHandler<InstantMessageCallbackArgs>
+	private class Self_OnInstantMessage implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
 		public void callback(InstantMessageCallbackArgs e)
@@ -916,7 +916,7 @@ public class FriendsManager implements PacketCallback
      * @param sender
      * @param e
      */
-    private class Network_OnConnect extends CallbackHandler<LoginProgressCallbackArgs>
+    private class Network_OnConnect implements Callback<LoginProgressCallbackArgs>
     {		
         @Override
 		public void callback(LoginProgressCallbackArgs e)
@@ -955,7 +955,7 @@ public class FriendsManager implements PacketCallback
      * @param reason A {@link LoginResponseData} object containing the decoded
      * @param replyData reply from the login server
      */
-    private class Network_OnLoginResponse extends CallbackHandler<LoginResponseCallbackArgs>
+    private class Network_OnLoginResponse implements Callback<LoginResponseCallbackArgs>
     {		
         @Override
 		public void callback(LoginResponseCallbackArgs e) 

@@ -55,8 +55,8 @@ import libomv.packets.SimulatorViewerTimeMessagePacket;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.PacketCallback;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.CallbackArgs;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
@@ -285,11 +285,11 @@ public class GridManager implements PacketCallback {
 
 	private GridClient Client;
 
-    public CallbackHandlerQueue<GridLayerEventArgs> OnGridLayer = new CallbackHandlerQueue<GridLayerEventArgs>();
-	public CallbackHandlerQueue<GridItemsEventArgs> OnGridItems = new CallbackHandlerQueue<GridItemsEventArgs>();
-	public CallbackHandlerQueue<GridRegionEventArgs> OnGridRegion = new CallbackHandlerQueue<GridRegionEventArgs>();
-	public CallbackHandlerQueue<RegionHandleReplyEventArgs> OnRegionHandleReply = new CallbackHandlerQueue<RegionHandleReplyEventArgs>();
-	public CallbackHandlerQueue<CoarseLocationUpdateEventArgs> OnCoarseLocationUpdate = new CallbackHandlerQueue<CoarseLocationUpdateEventArgs>();
+    public CallbackHandler<GridLayerEventArgs> OnGridLayer = new CallbackHandler<GridLayerEventArgs>();
+	public CallbackHandler<GridItemsEventArgs> OnGridItems = new CallbackHandler<GridItemsEventArgs>();
+	public CallbackHandler<GridRegionEventArgs> OnGridRegion = new CallbackHandler<GridRegionEventArgs>();
+	public CallbackHandler<RegionHandleReplyEventArgs> OnRegionHandleReply = new CallbackHandler<RegionHandleReplyEventArgs>();
+	public CallbackHandler<CoarseLocationUpdateEventArgs> OnCoarseLocationUpdate = new CallbackHandler<CoarseLocationUpdateEventArgs>();
 	
 	// Constructor
 	// <param name="client">Instance of ClientManager to associate with this
@@ -519,7 +519,7 @@ public class GridManager implements PacketCallback {
             return region;
 		}
 
-		final class OnGridRegionCallback extends CallbackHandler<GridRegionEventArgs>
+		final class OnGridRegionCallback implements Callback<GridRegionEventArgs>
         {
         	private String Name;
         	@Override
@@ -535,7 +535,7 @@ public class GridManager implements PacketCallback {
         	}
         }
 
-		CallbackHandler<GridRegionEventArgs> callback = new OnGridRegionCallback(name);
+		Callback<GridRegionEventArgs> callback = new OnGridRegionCallback(name);
 		OnGridRegion.add(callback);
         RequestMapRegion(name, type);
         name.wait(Client.Settings.MAP_REQUEST_TIMEOUT);
@@ -549,12 +549,12 @@ public class GridManager implements PacketCallback {
 		return region;
     }
 
-	public void BeginGetGridRegion(String name, GridLayerType type, CallbackHandler<GridRegionEventArgs> grc) throws Exception
+	public void BeginGetGridRegion(String name, GridLayerType type, Callback<GridRegionEventArgs> grc) throws Exception
 	{
 		GridRegion region = Regions.get(name);
 		if (region != null)
 		{
-			grc.dispatch(new GridRegionEventArgs(region));
+			grc.callback(new GridRegionEventArgs(region));
 		}
 		else
 		{
@@ -563,7 +563,7 @@ public class GridManager implements PacketCallback {
 		}
 	}
 
-	public void RemoveGridRegionCallback(CallbackHandler<GridRegionEventArgs> grc)
+	public void RemoveGridRegionCallback(Callback<GridRegionEventArgs> grc)
 	{
 		OnGridRegion.remove(grc);
 	}
@@ -820,7 +820,7 @@ public class GridManager implements PacketCallback {
 
     ///#region EventArgs classes
 
-    public class CoarseLocationUpdateEventArgs extends CallbackArgs
+    public class CoarseLocationUpdateEventArgs implements CallbackArgs
     {
         private final Simulator m_Simulator;
         private final ArrayList<UUID> m_NewEntries;
@@ -847,7 +847,7 @@ public class GridManager implements PacketCallback {
         }
     }
 
-    public class GridRegionEventArgs extends CallbackArgs
+    public class GridRegionEventArgs implements CallbackArgs
     {
         private final GridRegion m_Region;
         public final GridRegion getRegion()
@@ -861,7 +861,7 @@ public class GridManager implements PacketCallback {
         }
     }
 
-    public class GridLayerEventArgs extends CallbackArgs
+    public class GridLayerEventArgs implements CallbackArgs
     {
         private final GridLayer m_Layer;
 
@@ -876,7 +876,7 @@ public class GridManager implements PacketCallback {
         }
     }
 
-    public class GridItemsEventArgs extends CallbackArgs
+    public class GridItemsEventArgs implements CallbackArgs
     {
         private final GridItemType m_Type;
         private final java.util.ArrayList<MapItem> m_Items;
@@ -897,7 +897,7 @@ public class GridManager implements PacketCallback {
         }
     }
 
-    public class RegionHandleReplyEventArgs extends CallbackArgs
+    public class RegionHandleReplyEventArgs implements CallbackArgs
     {
         private final UUID m_RegionID;
         //TODO was: private readonly ulong m_RegionHandle;

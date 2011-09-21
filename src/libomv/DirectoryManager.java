@@ -55,8 +55,8 @@ import libomv.packets.PlacesReplyPacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3d;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.CallbackArgs;
 import libomv.utils.Helpers;
 
@@ -636,14 +636,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     ///#region callback handlers
-    public CallbackHandlerQueue<EventInfoReplyEventArgs> OnEventInfo;
-    public CallbackHandlerQueue<DirEventsReplyEventArgs> OnDirEvents;
-    public CallbackHandlerQueue<PlacesReplyEventArgs> OnPlaces;
-    public CallbackHandlerQueue<DirPlacesReplyEventArgs> OnDirPlaces;
-    public CallbackHandlerQueue<DirClassifiedsReplyEventArgs> OnDirClassifieds;
-    public CallbackHandlerQueue<DirGroupsReplyEventArgs> OnDirGroups;
-    public CallbackHandlerQueue<DirPeopleReplyEventArgs> OnDirPeople;
-    public CallbackHandlerQueue<DirLandReplyEventArgs> OnDirLand;
+    public CallbackHandler<EventInfoReplyEventArgs> OnEventInfo;
+    public CallbackHandler<DirEventsReplyEventArgs> OnDirEvents;
+    public CallbackHandler<PlacesReplyEventArgs> OnPlaces;
+    public CallbackHandler<DirPlacesReplyEventArgs> OnDirPlaces;
+    public CallbackHandler<DirClassifiedsReplyEventArgs> OnDirClassifieds;
+    public CallbackHandler<DirGroupsReplyEventArgs> OnDirGroups;
+    public CallbackHandler<DirPeopleReplyEventArgs> OnDirPeople;
+    public CallbackHandler<DirLandReplyEventArgs> OnDirLand;
 
 
     ///#region Private Members
@@ -1146,7 +1146,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     @Deprecated
     public final ArrayList<AgentSearchData> PeopleSearch(DirFindFlags findFlags, String searchText, int queryStart, int timeoutMS) throws Exception
     {
-        class DirPeopleCallbackHandler extends CallbackHandler<DirPeopleReplyEventArgs>
+        class DirPeopleCallbackHandler implements Callback<DirPeopleReplyEventArgs>
         {
             private ArrayList<AgentSearchData> people = null;
             private UUID uuid;
@@ -1175,7 +1175,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
         OnDirPeople.add(callback);
         StartPeopleSearch(searchText, queryStart);
-        callback.waitms(timeoutMS);
+        callback.wait(timeoutMS);
         OnDirPeople.remove(callback);
 
         return callback.getPeople();
@@ -1481,7 +1481,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     ///#region DirectoryManager EventArgs Classes
 
     /** Contains the Event data returned from the data server from an EventInfoRequest */
-    public class EventInfoReplyEventArgs extends CallbackArgs
+    public class EventInfoReplyEventArgs implements CallbackArgs
     {
         private final DirectoryManager.EventInfo m_MatchedEvent;
 
@@ -1501,7 +1501,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     /** Contains the "Event" detail data returned from the data server */
-    public class DirEventsReplyEventArgs extends CallbackArgs
+    public class DirEventsReplyEventArgs implements CallbackArgs
     {
         private final UUID m_QueryID;
         /** The ID returned by <see cref="DirectoryManager.StartEventsSearch"/> */
@@ -1532,7 +1532,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     // Contains the "Event" list data returned from the data server
-    public class PlacesReplyEventArgs extends CallbackArgs
+    public class PlacesReplyEventArgs implements CallbackArgs
     {
         private final UUID m_QueryID;
         // The ID returned by <see cref="DirectoryManager.StartPlacesSearch"/>
@@ -1563,7 +1563,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     // Contains the places data returned from the data server
-    public class DirPlacesReplyEventArgs extends CallbackArgs
+    public class DirPlacesReplyEventArgs implements CallbackArgs
     {
         private final UUID m_QueryID;
         // The ID returned by <see cref="DirectoryManager.StartDirPlacesSearch"/>
@@ -1594,7 +1594,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     // Contains the classified data returned from the data server
-    public class DirClassifiedsReplyEventArgs extends CallbackArgs
+    public class DirClassifiedsReplyEventArgs implements CallbackArgs
     {
         private final ArrayList<DirectoryManager.Classified> m_Classifieds;
         // A list containing Classified Ads returned by the data server
@@ -1614,7 +1614,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     // Contains the group data returned from the data server
-    public class DirGroupsReplyEventArgs extends CallbackArgs
+    public class DirGroupsReplyEventArgs implements CallbackArgs
     {
         private final UUID m_QueryID;
         // The ID returned by <see cref="DirectoryManager.StartGroupSearch"/>
@@ -1645,7 +1645,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     // Contains the people data returned from the data server
-    public class DirPeopleReplyEventArgs extends CallbackArgs
+    public class DirPeopleReplyEventArgs implements CallbackArgs
     {
         private final UUID m_QueryID;
         // The ID returned by <see cref="DirectoryManager.StartPeopleSearch"/>
@@ -1675,7 +1675,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
     }
 
     // Contains the land sales data returned from the data server
-    public class DirLandReplyEventArgs extends CallbackArgs
+    public class DirLandReplyEventArgs implements CallbackArgs
     {
         private final ArrayList<DirectoryManager.DirectoryParcel> m_DirParcels;
 

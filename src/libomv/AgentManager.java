@@ -113,8 +113,8 @@ import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.types.Vector4;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -946,7 +946,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     // Data sent when an agent joins or leaves a chat session your agent is currently participating in
-    public class ChatSessionMemberCallbackArgs extends CallbackArgs
+    public class ChatSessionMemberCallbackArgs implements CallbackArgs
     {
         private final UUID m_SessionID;
         private final UUID m_AgentID;
@@ -975,10 +975,10 @@ public class AgentManager implements PacketCallback, CapsCallback
             this.m_added = added;
         }
     }
-	public CallbackHandlerQueue<ChatSessionMemberCallbackArgs> OnChatSessionMember = new CallbackHandlerQueue<ChatSessionMemberCallbackArgs>();
+	public CallbackHandler<ChatSessionMemberCallbackArgs> OnChatSessionMember = new CallbackHandler<ChatSessionMemberCallbackArgs>();
 
     
-    public class ChatCallbackArgs extends CallbackArgs
+    public class ChatCallbackArgs implements CallbackArgs
 	{
 		private String message, fromName;
 		private byte audible, type, sourcetype;
@@ -1013,7 +1013,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			this.id = id;
 		}
 	}
-	public CallbackHandlerQueue<ChatCallbackArgs> OnChat = new CallbackHandlerQueue<ChatCallbackArgs>();
+	public CallbackHandler<ChatCallbackArgs> OnChat = new CallbackHandler<ChatCallbackArgs>();
 
 	
     /* The date received from an ImprovedInstantMessage */
@@ -1045,10 +1045,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 	        this.m_Simulator = simulator;
 	    }
 	}
-	public CallbackHandlerQueue<InstantMessageCallbackArgs> OnInstantMessage = new CallbackHandlerQueue<InstantMessageCallbackArgs>();
+	public CallbackHandler<InstantMessageCallbackArgs> OnInstantMessage = new CallbackHandler<InstantMessageCallbackArgs>();
 
 	
-	public class TeleportCallbackArgs extends CallbackArgs
+	public class TeleportCallbackArgs implements CallbackArgs
 	{
 		String message;
 		TeleportStatus status;
@@ -1067,7 +1067,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			this.flags = flags;
 		}
 	}
-	public CallbackHandlerQueue<TeleportCallbackArgs> OnTeleport = new CallbackHandlerQueue<TeleportCallbackArgs>();
+	public CallbackHandler<TeleportCallbackArgs> OnTeleport = new CallbackHandler<TeleportCallbackArgs>();
 
 	
 	/* The date received from an ImprovedInstantMessage */
@@ -1090,7 +1090,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	        this.balance = balance;
 	    }
 	}
-	public CallbackHandlerQueue<BalanceCallbackArgs> OnBalanceUpdated = new CallbackHandlerQueue<BalanceCallbackArgs>();
+	public CallbackHandler<BalanceCallbackArgs> OnBalanceUpdated = new CallbackHandler<BalanceCallbackArgs>();
 
 
 	public class AttachmentResourcesCallbackArgs
@@ -1107,7 +1107,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	
 	// Event arguments with the result of setting display name operation</summary>
-    public class SetDisplayNameReplyCallbackArgs extends CallbackArgs
+    public class SetDisplayNameReplyCallbackArgs implements CallbackArgs
     {
         private final int m_Status;
         private final String m_Reason;
@@ -1138,11 +1138,11 @@ public class AgentManager implements PacketCallback, CapsCallback
             m_DisplayName = displayName;
         }
     }
-	public CallbackHandlerQueue<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandlerQueue<SetDisplayNameReplyCallbackArgs>();
+	public CallbackHandler<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandler<SetDisplayNameReplyCallbackArgs>();
 	
 	
     // Contains the transaction summary when an item is purchased, money is given, or land is purchased
-    public class MoneyBalanceReplyCallbackArgs extends CallbackArgs
+    public class MoneyBalanceReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_TransactionID;
         private final boolean m_Success;
@@ -1209,7 +1209,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             this.m_TransactionInfo = transactionInfo;
         }
     }
-    public CallbackHandlerQueue<MoneyBalanceReplyCallbackArgs> OnMoneyBalanceReply = new CallbackHandlerQueue<MoneyBalanceReplyCallbackArgs>();
+    public CallbackHandler<MoneyBalanceReplyCallbackArgs> OnMoneyBalanceReply = new CallbackHandler<MoneyBalanceReplyCallbackArgs>();
 
     private UUID agentID;
     // A temporary UUID assigned to this session, used for secure transactions
@@ -1510,7 +1510,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     private int HeightWidthGenCounter;
 
-    private class Network_OnLoginResponse extends CallbackHandler<LoginResponseCallbackArgs>
+    private class Network_OnLoginResponse implements Callback<LoginResponseCallbackArgs>
     {
     	@Override
 		public void callback(LoginResponseCallbackArgs e)
@@ -1534,7 +1534,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
     }
 
-    private class Network_OnDisconnected extends CallbackHandler<DisconnectedCallbackArgs>
+    private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
     {
     	@Override
 		public void callback(DisconnectedCallbackArgs e)
@@ -2664,7 +2664,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @return A timout event that can be used to wait for the 
      * @throws Exception
      */
-    public TimeoutEvent<TeleportStatus> BeginTeleport(long regionHandle, Vector3 position, CallbackHandler<TeleportCallbackArgs> tc) throws Exception
+    public TimeoutEvent<TeleportStatus> BeginTeleport(long regionHandle, Vector3 position, Callback<TeleportCallbackArgs> tc) throws Exception
 	{
 		return BeginTeleport(regionHandle, position, new Vector3(position.X + 1.0f, position.Y, position.Z), tc);
 	}
@@ -2680,7 +2680,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @return A timout event that can be used to wait for the 
      * @throws Exception
      */
-	public TimeoutEvent<TeleportStatus> BeginTeleport(long regionHandle, Vector3 position, Vector3 lookAt, CallbackHandler<TeleportCallbackArgs> tc) throws Exception
+	public TimeoutEvent<TeleportStatus> BeginTeleport(long regionHandle, Vector3 position, Vector3 lookAt, Callback<TeleportCallbackArgs> tc) throws Exception
 	{
 		if (tc != null)
 			OnTeleport.add(tc, true);
@@ -3039,9 +3039,9 @@ public class AgentManager implements PacketCallback, CapsCallback
      */
     private class AttachmentResourceReplyHandler implements FutureCallback<OSD>
     {
-    	private final CallbackHandler<AttachmentResourcesCallbackArgs> callback;
+    	private final Callback<AttachmentResourcesCallbackArgs> callback;
     	
-    	public AttachmentResourceReplyHandler(CallbackHandler<AttachmentResourcesCallbackArgs> callback)
+    	public AttachmentResourceReplyHandler(Callback<AttachmentResourcesCallbackArgs> callback)
     	{
     		this.callback = callback;
     	}
@@ -3051,26 +3051,26 @@ public class AgentManager implements PacketCallback, CapsCallback
     	{
             if (result == null)
             {
-                callback.dispatch(new AttachmentResourcesCallbackArgs(false, null));
+                callback.callback(new AttachmentResourcesCallbackArgs(false, null));
             }
             AttachmentResourcesMessage info = (AttachmentResourcesMessage)_Client.Messages.DecodeEvent(CapsEventType.AttachmentResources, (OSDMap)result);
-            callback.dispatch(new AttachmentResourcesCallbackArgs(true, info));
+            callback.callback(new AttachmentResourcesCallbackArgs(true, info));
         }
 
 		@Override
 		public void failed(Exception ex)
 		{
-            callback.dispatch(new AttachmentResourcesCallbackArgs(false, null));
+            callback.callback(new AttachmentResourcesCallbackArgs(false, null));
 		}
 
 		@Override
 		public void cancelled()
 		{
-            callback.dispatch(new AttachmentResourcesCallbackArgs(false, null));
+            callback.callback(new AttachmentResourcesCallbackArgs(false, null));
 		}
     }
     
-    public final void GetAttachmentResources(final CallbackHandler<AttachmentResourcesCallbackArgs> callback) throws IOReactorException
+    public final void GetAttachmentResources(final Callback<AttachmentResourcesCallbackArgs> callback) throws IOReactorException
     {
         URI url = _Client.Network.getCapabilityURI("AttachmentResources");
         if (url != null)
@@ -3928,7 +3928,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             }
         }
 
-        private class Network_OnDisconnected extends CallbackHandler<DisconnectedCallbackArgs>
+        private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
         {
         	@Override
 			public void callback(DisconnectedCallbackArgs e)

@@ -109,8 +109,8 @@ import libomv.types.PacketCallback;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.RefObject;
@@ -612,21 +612,21 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Delegates
 
-    public CallbackHandlerQueue<ItemReceivedCallbackArgs> OnItemReceived = new CallbackHandlerQueue<ItemReceivedCallbackArgs>();
+    public CallbackHandler<ItemReceivedCallbackArgs> OnItemReceived = new CallbackHandler<ItemReceivedCallbackArgs>();
 
-    public CallbackHandlerQueue<FolderUpdatedCallbackArgs> OnFolderUpdated = new CallbackHandlerQueue<FolderUpdatedCallbackArgs>();
+    public CallbackHandler<FolderUpdatedCallbackArgs> OnFolderUpdated = new CallbackHandler<FolderUpdatedCallbackArgs>();
 
-    public CallbackHandlerQueue<InventoryObjectOfferedCallbackArgs> OnInventoryObjectOffered = new CallbackHandlerQueue<InventoryObjectOfferedCallbackArgs>();
+    public CallbackHandler<InventoryObjectOfferedCallbackArgs> OnInventoryObjectOffered = new CallbackHandler<InventoryObjectOfferedCallbackArgs>();
 
-    public CallbackHandlerQueue<TaskItemReceivedCallbackArgs> OnTaskItemReceived = new CallbackHandlerQueue<TaskItemReceivedCallbackArgs>();
+    public CallbackHandler<TaskItemReceivedCallbackArgs> OnTaskItemReceived = new CallbackHandler<TaskItemReceivedCallbackArgs>();
 
-    public CallbackHandlerQueue<FindObjectByPathReplyCallbackArgs> OnFindObjectByPathReply = new CallbackHandlerQueue<FindObjectByPathReplyCallbackArgs>();
+    public CallbackHandler<FindObjectByPathReplyCallbackArgs> OnFindObjectByPathReply = new CallbackHandler<FindObjectByPathReplyCallbackArgs>();
 
-    public CallbackHandlerQueue<TaskInventoryReplyCallbackArgs> OnTaskInventoryReply = new CallbackHandlerQueue<TaskInventoryReplyCallbackArgs>();
+    public CallbackHandler<TaskInventoryReplyCallbackArgs> OnTaskInventoryReply = new CallbackHandler<TaskInventoryReplyCallbackArgs>();
 
-    public CallbackHandlerQueue<SaveAssetToInventoryCallbackArgs> OnSaveAssetToInventory = new CallbackHandlerQueue<SaveAssetToInventoryCallbackArgs>();
+    public CallbackHandler<SaveAssetToInventoryCallbackArgs> OnSaveAssetToInventory = new CallbackHandler<SaveAssetToInventoryCallbackArgs>();
 
-    public CallbackHandlerQueue<ScriptRunningReplyCallbackArgs> OnScriptRunningReply = new CallbackHandlerQueue<ScriptRunningReplyCallbackArgs>();
+    public CallbackHandler<ScriptRunningReplyCallbackArgs> OnScriptRunningReply = new CallbackHandler<ScriptRunningReplyCallbackArgs>();
 
     /** 
      * Callback for inventory item creation finishing
@@ -634,9 +634,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param success Whether the request to create an inventory item succeeded or not
      * @param item Inventory item being created. If success is false this will be null
      */
-    public CallbackHandlerQueue<ItemCreatedCallbackArgs> OnItemCreatedCallback = new CallbackHandlerQueue<ItemCreatedCallbackArgs>();
+    public CallbackHandler<ItemCreatedCallbackArgs> OnItemCreatedCallback = new CallbackHandler<ItemCreatedCallbackArgs>();
     
-    public class ItemCreatedCallbackArgs extends CallbackArgs
+    public class ItemCreatedCallbackArgs implements CallbackArgs
     {
     	boolean success;
     	InventoryItem item;
@@ -657,7 +657,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		this.item = item;
     	}
     }
-    private Hashtable<Integer, CallbackHandler<ItemCreatedCallbackArgs>> _ItemCreatedCallbacks = new Hashtable<Integer, CallbackHandler<ItemCreatedCallbackArgs>>();
+    private Hashtable<Integer, Callback<ItemCreatedCallbackArgs>> _ItemCreatedCallbacks = new Hashtable<Integer, Callback<ItemCreatedCallbackArgs>>();
 
     /** 
      * Callback for an inventory item being create from an uploaded asset
@@ -667,9 +667,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param itemID
      * @param assetID
      */
-    public CallbackHandlerQueue<ItemCreatedFromAssetCallbackArgs> OnItemCreatedFromAssetCallback = new CallbackHandlerQueue<ItemCreatedFromAssetCallbackArgs>();
+    public CallbackHandler<ItemCreatedFromAssetCallbackArgs> OnItemCreatedFromAssetCallback = new CallbackHandler<ItemCreatedFromAssetCallbackArgs>();
     
-    public class ItemCreatedFromAssetCallbackArgs extends CallbackArgs
+    public class ItemCreatedFromAssetCallbackArgs implements CallbackArgs
     {
     	boolean success;
     	String status;
@@ -710,9 +710,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
      *
      * @param item InventoryItem being copied
      */
-    public CallbackHandlerQueue<ItemCopiedCallbackArgs> OnItemCopiedCallback = new CallbackHandlerQueue<ItemCopiedCallbackArgs>();
+    public CallbackHandler<ItemCopiedCallbackArgs> OnItemCopiedCallback = new CallbackHandler<ItemCopiedCallbackArgs>();
     
-    public class ItemCopiedCallbackArgs extends CallbackArgs
+    public class ItemCopiedCallbackArgs implements CallbackArgs
     {
     	InventoryItem item;
     	
@@ -726,7 +726,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         	this.item = item;
         }
     }
-    private Hashtable<Integer, CallbackHandler<ItemCopiedCallbackArgs>> _ItemCopiedCallbacks = new Hashtable<Integer, CallbackHandler<ItemCopiedCallbackArgs>>();
+    private Hashtable<Integer, Callback<ItemCopiedCallbackArgs>> _ItemCopiedCallbacks = new Hashtable<Integer, Callback<ItemCopiedCallbackArgs>>();
 
     private Object _CallbacksLock = new Object();
     private int _CallbackPos;
@@ -757,8 +757,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #endregion Properties
 
-    private CallbackHandler<InstantMessageCallbackArgs> instantMessageCallback;
-    private CallbackHandler<LoginResponseCallbackArgs> loginResponseCallback;
+    private Callback<InstantMessageCallbackArgs> instantMessageCallback;
+    private Callback<LoginResponseCallbackArgs> loginResponseCallback;
     /** 
      * Default constructor
      *
@@ -850,7 +850,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         final TimeoutEvent<InventoryItem> fetchEvent = new TimeoutEvent<InventoryItem>();
 
-        final class FetchedItemsCallback extends CallbackHandler<ItemReceivedCallbackArgs>
+        final class FetchedItemsCallback implements Callback<ItemReceivedCallbackArgs>
         {
 			@Override
         	public void callback(ItemReceivedCallbackArgs e)
@@ -862,7 +862,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         	}
         }
         
-        CallbackHandler<ItemReceivedCallbackArgs> callback = new FetchedItemsCallback();
+        Callback<ItemReceivedCallbackArgs> callback = new FetchedItemsCallback();
 
         OnItemReceived.add(callback, true);
         RequestFetchInventory(itemID, ownerID);
@@ -943,7 +943,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         final TimeoutEvent<ArrayList<InventoryBase>> fetchEvent = new TimeoutEvent<ArrayList<InventoryBase>>();
 
-        CallbackHandler<FolderUpdatedCallbackArgs> callback = new CallbackHandler<FolderUpdatedCallbackArgs>()
+        Callback<FolderUpdatedCallbackArgs> callback = new Callback<FolderUpdatedCallbackArgs>()
         {
 		    @Override
             public void callback(FolderUpdatedCallbackArgs e)
@@ -1069,7 +1069,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     {
         final TimeoutEvent<UUID> findEvent = new TimeoutEvent<UUID>();
 
-        CallbackHandler<FindObjectByPathReplyCallbackArgs> callback = new CallbackHandler<FindObjectByPathReplyCallbackArgs>()
+        Callback<FindObjectByPathReplyCallbackArgs> callback = new Callback<FindObjectByPathReplyCallbackArgs>()
         {
 		    @Override
             public void callback(FindObjectByPathReplyCallbackArgs e)
@@ -1635,7 +1635,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCreateItem(UUID parentFolder, String name, String description, AssetType type, UUID assetTransactionID, InventoryType invType,
-    		                            int nextOwnerMask, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    		                            int nextOwnerMask, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         // Even though WearableType.Shape, in this context it is treated as NOT_WEARABLE
         RequestCreateItem(parentFolder, name, description, type, assetTransactionID, invType, WearableType.Shape, nextOwnerMask, callback);
@@ -1656,7 +1656,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCreateItem(UUID parentFolder, String name, String description, AssetType type, UUID assetTransactionID, InventoryType invType,
-    		                            WearableType wearableType, int nextOwnerMask, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    		                            WearableType wearableType, int nextOwnerMask, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         CreateInventoryItemPacket create = new CreateInventoryItemPacket();
         create.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1758,7 +1758,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCreateItemFromAsset(byte[] data, String name, String description, AssetType assetType, InventoryType invType,
-    		                                     UUID folderID, CallbackHandler<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
+    		                                     UUID folderID, Callback<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
     {
         Permissions permissions = new Permissions();
         permissions.EveryoneMask = PermissionMask.None;
@@ -1783,7 +1783,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCreateItemFromAsset(byte[] data, String name, String description, AssetType assetType, InventoryType invType,
-    		                                     UUID folderID, Permissions permissions, CallbackHandler<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
+    		                                     UUID folderID, Permissions permissions, Callback<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("NewFileAgentInventory");
         if (url != null)
@@ -1817,7 +1817,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback Method to call upon creation of the link
      * @throws Exception 
      */
-    public final void CreateLink(UUID folderID, InventoryBase bse, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    public final void CreateLink(UUID folderID, InventoryBase bse, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         if (bse instanceof InventoryFolder)
         {
@@ -1839,7 +1839,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback Method to call upon creation of the link
      * @throws Exception 
      */
-    public final void CreateLink(UUID folderID, InventoryItem item, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    public final void CreateLink(UUID folderID, InventoryItem item, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.inventoryType, new UUID(), callback);
     }
@@ -1852,7 +1852,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback Method to call upon creation of the link
      * @throws Exception 
      */
-    public final void CreateLink(UUID folderID, InventoryFolder folder, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    public final void CreateLink(UUID folderID, InventoryFolder folder, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         CreateLink(folderID, folder.UUID, folder.Name, "", AssetType.LinkFolder, InventoryType.Folder, new UUID(), callback);
     }
@@ -1871,7 +1871,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void CreateLink(UUID folderID, UUID itemID, String name, String description, AssetType assetType, InventoryType invType,
-    		                     UUID transactionID, CallbackHandler<ItemCreatedCallbackArgs> callback) throws Exception
+    		                     UUID transactionID, Callback<ItemCreatedCallbackArgs> callback) throws Exception
     {
         LinkInventoryItemPacket create = new LinkInventoryItemPacket();
         create.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1901,7 +1901,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback
      * @throws Exception 
      */
-    public final void RequestCopyItem(UUID item, UUID newParent, String newName, CallbackHandler<ItemCopiedCallbackArgs> callback) throws Exception
+    public final void RequestCopyItem(UUID item, UUID newParent, String newName, Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
         RequestCopyItem(item, newParent, newName, _Client.Self.getAgentID(), callback);
     }
@@ -1916,7 +1916,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback
      * @throws Exception 
      */
-    public final void RequestCopyItem(UUID item, UUID newParent, String newName, UUID oldOwnerID, CallbackHandler<ItemCopiedCallbackArgs> callback) throws Exception
+    public final void RequestCopyItem(UUID item, UUID newParent, String newName, UUID oldOwnerID, Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
         ArrayList<UUID> items = new ArrayList<UUID>(1);
         items.add(item);
@@ -1941,7 +1941,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @throws Exception 
      */
     public final void RequestCopyItems(ArrayList<UUID> items, ArrayList<UUID> targetFolders, ArrayList<String> newNames, UUID oldOwnerID,
-    		                           CallbackHandler<ItemCopiedCallbackArgs> callback) throws Exception
+    		                           Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
         if (items.size() != targetFolders.size() || (newNames != null && items.size() != newNames.size()))
         {
@@ -1985,7 +1985,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback callback to run when item is copied to inventory
      * @throws Exception 
      */
-    public final void RequestCopyItemFromNotecard(UUID objectID, UUID notecardID, UUID folderID, UUID itemID, CallbackHandler<ItemCopiedCallbackArgs> callback) throws Exception
+    public final void RequestCopyItemFromNotecard(UUID objectID, UUID notecardID, UUID folderID, UUID itemID, Callback<ItemCopiedCallbackArgs> callback) throws Exception
     {
         _ItemCopiedCallbacks.put(0, callback); //Notecards always use callback ID 0
 
@@ -2105,7 +2105,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback
      * @throws Exception 
      */
-    public final void RequestUpdateNotecardAgentInventory(byte[] data, UUID notecardID, CallbackHandler<InventoryUploadedAssetCallbackArgs> callback) throws Exception
+    public final void RequestUpdateNotecardAgentInventory(byte[] data, UUID notecardID, Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("UpdateNotecardAgentInventory");
         if (url != null)
@@ -2132,7 +2132,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback Called upon finish of the upload with status information
      * @throws Exception 
      */
-    public final void RequestUpdateNotecardTaskInventory(byte[] data, UUID notecardID, UUID taskID, CallbackHandler<InventoryUploadedAssetCallbackArgs> callback) throws Exception
+    public final void RequestUpdateNotecardTaskInventory(byte[] data, UUID notecardID, UUID taskID, Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("UpdateNotecardTaskInventory");
         if (url != null)
@@ -2159,7 +2159,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback Callback whick will be called when upload is complete
      * @throws Exception 
      */
-    public final void RequestUpdateGestureAgentInventory(byte[] data, UUID gestureID, CallbackHandler<InventoryUploadedAssetCallbackArgs> callback) throws Exception
+    public final void RequestUpdateGestureAgentInventory(byte[] data, UUID gestureID, Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("UpdateGestureAgentInventory");
         if (url != null)
@@ -2186,7 +2186,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback
      * @throws Exception 
      */
-    public final void RequestUpdateScriptAgent(byte[] data, UUID itemID, boolean mono, CallbackHandler<ScriptUpdatedCallbackArgs> callback) throws Exception
+    public final void RequestUpdateScriptAgent(byte[] data, UUID itemID, boolean mono, Callback<ScriptUpdatedCallbackArgs> callback) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("UpdateScriptAgent");
         if (url != null)
@@ -2215,7 +2215,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param callback
      * @throws Exception 
      */
-    public final void RequestUpdateScriptTask(byte[] data, UUID itemID, UUID taskID, boolean mono, boolean running, CallbackHandler<ScriptUpdatedCallbackArgs> callback) throws Exception
+    public final void RequestUpdateScriptTask(byte[] data, UUID itemID, UUID taskID, boolean mono, boolean running, Callback<ScriptUpdatedCallbackArgs> callback) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("UpdateScriptTask");
         if (url != null)
@@ -2548,7 +2548,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     		throw new RuntimeException("Can't get task inventory without the asset manager being instantiated.");
     	
         final TimeoutEvent<String> taskReplyEvent = new TimeoutEvent<String>();
-        CallbackHandler<TaskInventoryReplyCallbackArgs> callback = new CallbackHandler<TaskInventoryReplyCallbackArgs>()
+        Callback<TaskInventoryReplyCallbackArgs> callback = new Callback<TaskInventoryReplyCallbackArgs>()
         {
             @Override
 			public void callback(TaskInventoryReplyCallbackArgs e)
@@ -2571,7 +2571,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                 final TimeoutEvent<String> taskDownloadEvent = new TimeoutEvent<String>();
                 final long xferID = 0;
 
-                CallbackHandler<XferReceivedCallbackArgs> xferCallback = new CallbackHandler<XferReceivedCallbackArgs>()
+                Callback<XferReceivedCallbackArgs> xferCallback = new Callback<XferReceivedCallbackArgs>()
                 {
                     @Override
 					public void callback(XferReceivedCallbackArgs e)
@@ -2792,12 +2792,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region Helper Functions
 
-    private int RegisterItemCreatedCallback(CallbackHandler<ItemCreatedCallbackArgs> callback)
+    private int RegisterItemCreatedCallback(Callback<ItemCreatedCallbackArgs> callback)
     {
     	return RegisterItemCreatedCallback(callback, -1);
     }
 
-    private int RegisterItemCreatedCallback(CallbackHandler<ItemCreatedCallbackArgs> callback, int id)
+    private int RegisterItemCreatedCallback(Callback<ItemCreatedCallbackArgs> callback, int id)
     {
         synchronized (_CallbacksLock)
         {
@@ -2819,12 +2819,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    private int RegisterItemsCopiedCallback(CallbackHandler<ItemCopiedCallbackArgs> callback)
+    private int RegisterItemsCopiedCallback(Callback<ItemCopiedCallbackArgs> callback)
     {
     	return RegisterItemsCopiedCallback(callback, -1);
     }
 
-    private int RegisterItemsCopiedCallback(CallbackHandler<ItemCopiedCallbackArgs> callback, int id)
+    private int RegisterItemsCopiedCallback(Callback<ItemCopiedCallbackArgs> callback, int id)
     {
         synchronized (_CallbacksLock)
         {
@@ -3319,7 +3319,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     ///#region Internal Callbacks
 
-	private class Self_InstantMessage extends CallbackHandler<InstantMessageCallbackArgs>
+	private class Self_InstantMessage implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
 		public void callback(InstantMessageCallbackArgs e)
@@ -3433,12 +3433,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     private class CreateItemFromAssetResponse implements FutureCallback<OSD>
     {
-    	private final CallbackHandler<ItemCreatedFromAssetCallbackArgs> callback;
+    	private final Callback<ItemCreatedFromAssetCallbackArgs> callback;
     	private final byte[] itemData;
     	private final long timeout;
     	private final OSDMap request;
     	
-    	public CreateItemFromAssetResponse(CallbackHandler<ItemCreatedFromAssetCallbackArgs> callback, byte[] data, long timeout, OSDMap query)
+    	public CreateItemFromAssetResponse(Callback<ItemCreatedFromAssetCallbackArgs> callback, byte[] data, long timeout, OSDMap query)
     	{
     		this.callback = callback;
     		this.itemData = data;
@@ -3486,19 +3486,19 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					catch (Exception ex) { }
 
                     if (callback != null)
-                        callback.dispatch(new ItemCreatedFromAssetCallbackArgs(true, Helpers.EmptyString, item, asset));
+                        callback.callback(new ItemCreatedFromAssetCallbackArgs(true, Helpers.EmptyString, item, asset));
                 }
                 else
                 {
                     if (callback != null)
-                        callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
+                        callback.callback(new ItemCreatedFromAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
                 }
             }
             else
             {
                 // Failure
             	if (callback != null)
-                    callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
+                    callback.callback(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
             }
         }
         
@@ -3506,19 +3506,19 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		public void failed(Exception ex)
 		{
 			if (callback != null)
-                callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, ex.getMessage(), UUID.Zero, UUID.Zero));
+                callback.callback(new ItemCreatedFromAssetCallbackArgs(false, ex.getMessage(), UUID.Zero, UUID.Zero));
 		}
 
 		@Override
 		public void cancelled()
 		{
 			if (callback != null)
-                callback.dispatch(new ItemCreatedFromAssetCallbackArgs(false, "Operation canceled", UUID.Zero, UUID.Zero));
+                callback.callback(new ItemCreatedFromAssetCallbackArgs(false, "Operation canceled", UUID.Zero, UUID.Zero));
 		}
     }
 
 
-    private class Network_OnLoginResponse extends CallbackHandler<LoginResponseCallbackArgs>
+    private class Network_OnLoginResponse implements Callback<LoginResponseCallbackArgs>
     {
 		@Override
 		public void callback(LoginResponseCallbackArgs e)
@@ -3556,7 +3556,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * @param itemID Inventory asset UUID
      * @param assetID New asset UUID
      */
-    public class InventoryUploadedAssetCallbackArgs
+    public class InventoryUploadedAssetCallbackArgs implements CallbackArgs
     {
     	public boolean success;
     	public String status;
@@ -3575,11 +3575,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
     
     public class UploadInventoryAssetComplete implements FutureCallback<OSD>
     {
-    	private final CallbackHandler<InventoryUploadedAssetCallbackArgs> callback;
+    	private final Callback<InventoryUploadedAssetCallbackArgs> callback;
     	private final byte[] itemData;
     	private final UUID assetID;
     	
-    	public UploadInventoryAssetComplete(CallbackHandler<InventoryUploadedAssetCallbackArgs> callback, byte[] itemData, UUID assetID)
+    	public UploadInventoryAssetComplete(Callback<InventoryUploadedAssetCallbackArgs> callback, byte[] itemData, UUID assetID)
     	{
     		this.callback = callback;
     		this.itemData = itemData;
@@ -3612,7 +3612,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     else
                     {
                     	if (callback != null)
-                            callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Missing uploader URL", UUID.Zero, UUID.Zero));
+                            callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Missing uploader URL", UUID.Zero, UUID.Zero));
                     }
                 }
                 else if (status.equals("complete"))
@@ -3628,24 +3628,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						catch (Exception ex) { }
 
                         if (callback != null)
-                            callback.dispatch(new InventoryUploadedAssetCallbackArgs(true, Helpers.EmptyString, assetID, new_asset));
+                            callback.callback(new InventoryUploadedAssetCallbackArgs(true, Helpers.EmptyString, assetID, new_asset));
                     }
                     else
                     {
                     	if (callback != null)
-                            callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
+                            callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
                     }
                 }
                 else
                 {
                 	if (callback != null)
-                        callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
+                        callback.callback(new InventoryUploadedAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
                 }
             }
             else
             {
             	if (callback != null)
-                    callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Unrecognized or empty response", UUID.Zero, UUID.Zero));
+                    callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Unrecognized or empty response", UUID.Zero, UUID.Zero));
             }
     	}
 
@@ -3660,7 +3660,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     			else
     				message = ex.getMessage();
     				
-                callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, message, UUID.Zero, UUID.Zero));
+                callback.callback(new InventoryUploadedAssetCallbackArgs(false, message, UUID.Zero, UUID.Zero));
 			}
 		}
 
@@ -3668,11 +3668,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		public void cancelled()
 		{
 			if (callback != null)
-				callback.dispatch(new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.Zero, UUID.Zero));
+				callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.Zero, UUID.Zero));
 		}
     }
 
-    public class ScriptUpdatedCallbackArgs
+    public class ScriptUpdatedCallbackArgs implements CallbackArgs
     {
     	public boolean success;
     	public String message;
@@ -3694,11 +3694,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
     
     public class UpdateScriptAgentInventoryResponse implements FutureCallback<OSD>
     {
-    	private final CallbackHandler<ScriptUpdatedCallbackArgs> callback;
+    	private final Callback<ScriptUpdatedCallbackArgs> callback;
     	private final byte[] itemData;
     	private final UUID scriptID;
     	
-    	public UpdateScriptAgentInventoryResponse(CallbackHandler<ScriptUpdatedCallbackArgs> callback, byte[] itemData, UUID scriptID)
+    	public UpdateScriptAgentInventoryResponse(Callback<ScriptUpdatedCallbackArgs> callback, byte[] itemData, UUID scriptID)
     	{
     		this.callback = callback;
     		this.itemData = itemData;
@@ -3749,12 +3749,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
                         }
                     }
                     if (callback != null)
-                   	    callback.dispatch(new ScriptUpdatedCallbackArgs(true, status, contents.get("compiled").AsBoolean(), compileErrors, scriptID, new_asset));
+                   	    callback.callback(new ScriptUpdatedCallbackArgs(true, status, contents.get("compiled").AsBoolean(), compileErrors, scriptID, new_asset));
                 }
                 else
                 {
                     if (callback != null)
-                        callback.dispatch(new ScriptUpdatedCallbackArgs(false, "Failed to parse asset UUID", false, null, UUID.Zero, UUID.Zero));
+                        callback.callback(new ScriptUpdatedCallbackArgs(false, "Failed to parse asset UUID", false, null, UUID.Zero, UUID.Zero));
                 }
             }
         }
@@ -3763,14 +3763,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		public void failed(Exception ex)
 		{
             if (callback != null)
-                callback.dispatch(new ScriptUpdatedCallbackArgs(false, ex.getMessage(), false, null, UUID.Zero, UUID.Zero));
+                callback.callback(new ScriptUpdatedCallbackArgs(false, ex.getMessage(), false, null, UUID.Zero, UUID.Zero));
 		}
 
 		@Override
 		public void cancelled()
 		{
             if (callback != null)
-                callback.dispatch(new ScriptUpdatedCallbackArgs(false, "Operation cancelled", false, null, UUID.Zero, UUID.Zero));
+                callback.callback(new ScriptUpdatedCallbackArgs(false, "Operation cancelled", false, null, UUID.Zero, UUID.Zero));
 		}
     }
     // #endregion Internal Handlers
@@ -4008,11 +4008,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
             
             if (_ItemCreatedCallbacks.containsKey(dataBlock.CallbackID))
             {
-            	CallbackHandler<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
+            	Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
 
                 try
                 {
-                    callback.dispatch(new ItemCreatedCallbackArgs(true, item));
+                    callback.callback(new ItemCreatedCallbackArgs(true, item));
                 }
                 catch (Throwable ex)
                 {
@@ -4025,11 +4025,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
             
             if (_ItemCopiedCallbacks.containsKey(dataBlock.CallbackID))
             {
-            	CallbackHandler<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
+            	Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
 
                 try
                 {
-                    callback.dispatch(new ItemCopiedCallbackArgs(item));
+                    callback.callback(new ItemCopiedCallbackArgs(item));
                 }
                 catch (Throwable ex)
                 {
@@ -4127,11 +4127,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     // Look for an "item created" callback
                     if (_ItemCreatedCallbacks.containsKey(dataBlock.CallbackID))
                     {
-                    	CallbackHandler<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
+                    	Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
 
                         try
                         {
-                            callback.dispatch(new ItemCreatedCallbackArgs(true, item));
+                            callback.callback(new ItemCreatedCallbackArgs(true, item));
                         }
                         catch (Throwable ex)
                         {
@@ -4142,11 +4142,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     // Look for an "item copied" callback
                     if (_ItemCopiedCallbacks.containsKey(dataBlock.CallbackID))
                     {
-                    	CallbackHandler<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
+                    	Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
 
                         try
                         {
-                            callback.dispatch(new ItemCopiedCallbackArgs(item));
+                            callback.callback(new ItemCopiedCallbackArgs(item));
                         }
                         catch (Throwable ex)
                         {
@@ -4218,7 +4218,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
     // #region CallbackArgs
 
-    public class InventoryObjectOfferedCallbackArgs extends CallbackArgs
+    public class InventoryObjectOfferedCallbackArgs implements CallbackArgs
     {
         private final InstantMessage m_Offer;
         private final AssetType m_AssetType;
@@ -4276,7 +4276,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    public class FolderUpdatedCallbackArgs extends CallbackArgs
+    public class FolderUpdatedCallbackArgs implements CallbackArgs
     {
         private final UUID m_FolderID;
         public final UUID getFolderID()
@@ -4289,7 +4289,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    public class ItemReceivedCallbackArgs extends CallbackArgs
+    public class ItemReceivedCallbackArgs implements CallbackArgs
     {
         private final InventoryItem m_Item;
 
@@ -4304,7 +4304,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    public class FindObjectByPathReplyCallbackArgs extends CallbackArgs
+    public class FindObjectByPathReplyCallbackArgs implements CallbackArgs
     {
         private final String m_Path;
         private final UUID m_InventoryObjectID;
@@ -4329,7 +4329,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
      *  inventory. This is the callback in which you actually get the ItemID,
      *  as in ObjectOfferedCallback it is null when received from a task.
      */
-    public class TaskItemReceivedCallbackArgs extends CallbackArgs
+    public class TaskItemReceivedCallbackArgs implements CallbackArgs
     {
         private final UUID m_ItemID;
         private final UUID m_FolderID;
@@ -4368,7 +4368,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    public class TaskInventoryReplyCallbackArgs extends CallbackArgs
+    public class TaskInventoryReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_ItemID;
         private final short m_Serial;
@@ -4395,7 +4395,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    public class SaveAssetToInventoryCallbackArgs extends CallbackArgs
+    public class SaveAssetToInventoryCallbackArgs implements CallbackArgs
     {
         private final UUID m_ItemID;
         private final UUID m_NewAssetID;
@@ -4416,7 +4416,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
     }
 
-    public class ScriptRunningReplyCallbackArgs extends CallbackArgs
+    public class ScriptRunningReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_ObjectID;
         private final UUID m_ScriptID;

@@ -94,8 +94,8 @@ import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.HashMapInt;
 import libomv.utils.Helpers;
 
@@ -597,43 +597,43 @@ public class GroupManager implements PacketCallback, CapsCallback {
     // Caches group name lookups
     public Hashtable<UUID, String> GroupName2KeyCache;
 
-    public CallbackHandlerQueue<CurrentGroupsCallbackArgs> OnCurrentGroups = new CallbackHandlerQueue<CurrentGroupsCallbackArgs>();
+    public CallbackHandler<CurrentGroupsCallbackArgs> OnCurrentGroups = new CallbackHandler<CurrentGroupsCallbackArgs>();
 
-    public CallbackHandlerQueue<GroupNamesCallbackArgs> OnGroupNamesReply = new CallbackHandlerQueue<GroupNamesCallbackArgs>(); 
+    public CallbackHandler<GroupNamesCallbackArgs> OnGroupNamesReply = new CallbackHandler<GroupNamesCallbackArgs>(); 
 
-    public CallbackHandlerQueue<GroupProfileCallbackArgs> OnGroupProfile = new CallbackHandlerQueue<GroupProfileCallbackArgs>();
+    public CallbackHandler<GroupProfileCallbackArgs> OnGroupProfile = new CallbackHandler<GroupProfileCallbackArgs>();
 
-    public CallbackHandlerQueue<GroupMembersReplyCallbackArgs> OnGroupMembersReply = new CallbackHandlerQueue<GroupMembersReplyCallbackArgs>();
+    public CallbackHandler<GroupMembersReplyCallbackArgs> OnGroupMembersReply = new CallbackHandler<GroupMembersReplyCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupRolesDataReplyCallbackArgs> OnGroupRoleDataReply = new CallbackHandlerQueue<GroupRolesDataReplyCallbackArgs>();
+    public CallbackHandler<GroupRolesDataReplyCallbackArgs> OnGroupRoleDataReply = new CallbackHandler<GroupRolesDataReplyCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupRolesMembersReplyCallbackArgs> OnGroupRoleMembers = new CallbackHandlerQueue<GroupRolesMembersReplyCallbackArgs>();
+    public CallbackHandler<GroupRolesMembersReplyCallbackArgs> OnGroupRoleMembers = new CallbackHandler<GroupRolesMembersReplyCallbackArgs>();
 
-    public CallbackHandlerQueue<GroupTitlesReplyCallbackArgs> OnGroupTitles = new CallbackHandlerQueue<GroupTitlesReplyCallbackArgs>();
+    public CallbackHandler<GroupTitlesReplyCallbackArgs> OnGroupTitles = new CallbackHandler<GroupTitlesReplyCallbackArgs>();
 
-    public CallbackHandlerQueue<GroupAccountSummaryReplyCallbackArgs>  OnGroupAccountSummaryReply = new CallbackHandlerQueue<GroupAccountSummaryReplyCallbackArgs>();
+    public CallbackHandler<GroupAccountSummaryReplyCallbackArgs>  OnGroupAccountSummaryReply = new CallbackHandler<GroupAccountSummaryReplyCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupCreatedReplyCallbackArgs> OnGroupCreatedReply = new CallbackHandlerQueue<GroupCreatedReplyCallbackArgs>();
+    public CallbackHandler<GroupCreatedReplyCallbackArgs> OnGroupCreatedReply = new CallbackHandler<GroupCreatedReplyCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupOperationCallbackArgs> OnGroupJoinedReply = new CallbackHandlerQueue<GroupOperationCallbackArgs>();
+    public CallbackHandler<GroupOperationCallbackArgs> OnGroupJoinedReply = new CallbackHandler<GroupOperationCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupOperationCallbackArgs> OnGroupLeaveReply = new CallbackHandlerQueue<GroupOperationCallbackArgs>();
+    public CallbackHandler<GroupOperationCallbackArgs> OnGroupLeaveReply = new CallbackHandler<GroupOperationCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupDroppedCallbackArgs> OnGroupDropped = new CallbackHandlerQueue<GroupDroppedCallbackArgs>();
+    public CallbackHandler<GroupDroppedCallbackArgs> OnGroupDropped = new CallbackHandler<GroupDroppedCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupOperationCallbackArgs> OnGroupMemberEjected = new CallbackHandlerQueue<GroupOperationCallbackArgs>();
+    public CallbackHandler<GroupOperationCallbackArgs> OnGroupMemberEjected = new CallbackHandler<GroupOperationCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupNoticesListReplyCallbackArgs> OnGroupNoticesListReply = new CallbackHandlerQueue<GroupNoticesListReplyCallbackArgs>();
+    public CallbackHandler<GroupNoticesListReplyCallbackArgs> OnGroupNoticesListReply = new CallbackHandler<GroupNoticesListReplyCallbackArgs>();
     
-    public CallbackHandlerQueue<GroupInvitationCallbackArgs> OnGroupInvitation = new CallbackHandlerQueue<GroupInvitationCallbackArgs>();
+    public CallbackHandler<GroupInvitationCallbackArgs> OnGroupInvitation = new CallbackHandler<GroupInvitationCallbackArgs>();
     
     
-    public Hashtable<UUID, CallbackHandler<GroupAccountDetails>> OnGroupAccountDetailsCallbacks = new Hashtable<UUID, CallbackHandler<GroupAccountDetails>>();
+    public Hashtable<UUID, Callback<GroupAccountDetails>> OnGroupAccountDetailsCallbacks = new Hashtable<UUID, Callback<GroupAccountDetails>>();
 
-    public Hashtable<UUID, CallbackHandler<GroupAccountTransactions>> OnGroupAccountTransactionsCallbacks = new Hashtable<UUID, CallbackHandler<GroupAccountTransactions>>();
+    public Hashtable<UUID, Callback<GroupAccountTransactions>> OnGroupAccountTransactionsCallbacks = new Hashtable<UUID, Callback<GroupAccountTransactions>>();
 
     
-    private class InstantMessageCallback extends CallbackHandler<InstantMessageCallbackArgs>
+    private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
 		public void callback(InstantMessageCallbackArgs e)
@@ -1962,7 +1962,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		        GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i]; 
 		        account.HistoryItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
 		    }
-		    OnGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).dispatch(account);
+		    OnGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).callback(account);
 		}
 	}
 
@@ -1989,14 +1989,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		    	entry.Time = Helpers.BytesToString(block.getTime());
 		    	account.Transactions[i] = entry;
 		    }
-		    OnGroupAccountTransactionsCallbacks.get(transactions.AgentData.GroupID).dispatch(account);
+		    OnGroupAccountTransactionsCallbacks.get(transactions.AgentData.GroupID).callback(account);
 		}
 	}
 
     // #region CallbackArgs
 
     // Contains the current groups your agent is a member of
-    public class CurrentGroupsCallbackArgs extends CallbackArgs
+    public class CurrentGroupsCallbackArgs implements CallbackArgs
     {
         private final java.util.Hashtable<UUID, Group> m_Groups;
 
@@ -2018,7 +2018,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // A Dictionary of group names, where the Key is the groups ID and the value is the groups name
-    public class GroupNamesCallbackArgs extends CallbackArgs
+    public class GroupNamesCallbackArgs implements CallbackArgs
     {
         private final Hashtable<UUID, String> m_GroupNames;
 
@@ -2040,7 +2040,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents the members of a group
-    public class GroupMembersReplyCallbackArgs extends CallbackArgs
+    public class GroupMembersReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_RequestID;
         private final UUID m_GroupID;
@@ -2078,7 +2078,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents the roles associated with a group
-    public class GroupRolesDataReplyCallbackArgs extends CallbackArgs
+    public class GroupRolesDataReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_RequestID;
         private final UUID m_GroupID;
@@ -2116,7 +2116,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents the Role to Member mappings for a group
-    public class GroupRolesMembersReplyCallbackArgs extends CallbackArgs
+    public class GroupRolesMembersReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_RequestID;
         private final UUID m_GroupID;
@@ -2154,7 +2154,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents the titles for a group
-    public class GroupTitlesReplyCallbackArgs extends CallbackArgs
+    public class GroupTitlesReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_RequestID;
         private final UUID m_GroupID;
@@ -2192,7 +2192,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents the summary data for a group
-    public class GroupAccountSummaryReplyCallbackArgs extends CallbackArgs
+    public class GroupAccountSummaryReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_GroupID;
         private final GroupAccountSummary m_Summary;
@@ -2222,7 +2222,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // A response to a group create request
-    public class GroupCreatedReplyCallbackArgs extends CallbackArgs
+    public class GroupCreatedReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_GroupID;
         private final boolean m_Success;
@@ -2260,7 +2260,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents a response to a request
-    public class GroupOperationCallbackArgs extends CallbackArgs
+    public class GroupOperationCallbackArgs implements CallbackArgs
     {
         private final UUID m_GroupID;
         private final boolean m_Success;
@@ -2290,7 +2290,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents your agent leaving a group
-    public class GroupDroppedCallbackArgs extends CallbackArgs
+    public class GroupDroppedCallbackArgs implements CallbackArgs
     {
         private final UUID m_GroupID;
         // Get the ID of the group
@@ -2311,7 +2311,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents a list of active group notices
-    public class GroupNoticesListReplyCallbackArgs extends CallbackArgs
+    public class GroupNoticesListReplyCallbackArgs implements CallbackArgs
     {
         private final UUID m_GroupID;
         private final ArrayList<GroupNoticesListEntry> m_Notices;
@@ -2341,7 +2341,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
     }
 
     // Represents the profile of a group
-    public class GroupProfileCallbackArgs extends CallbackArgs
+    public class GroupProfileCallbackArgs implements CallbackArgs
     {
         private final Group m_Group;
 
@@ -2367,7 +2367,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
      * 
      *  The <see cref="GroupInvitation"/> invitation is raised when another avatar makes an offer for our avatar to join a group.
      */
-    public class GroupInvitationCallbackArgs extends CallbackArgs
+    public class GroupInvitationCallbackArgs implements CallbackArgs
     {
         private final UUID m_FromAgentID;
         private final String m_FromAgentName;

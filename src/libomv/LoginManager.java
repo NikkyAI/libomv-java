@@ -55,8 +55,8 @@ import libomv.packets.EconomyDataRequestPacket;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -584,7 +584,7 @@ public class LoginManager
     // #region Callback handlers
 
     // An event for being logged out either through client request, server forced, or network error
-	public class LoginProgressCallbackArgs  extends CallbackArgs
+	public class LoginProgressCallbackArgs implements CallbackArgs
 	{
         private final LoginStatus m_Status;
         private final String m_Message;
@@ -611,7 +611,7 @@ public class LoginManager
         }
 	}
 
-	public CallbackHandlerQueue<LoginProgressCallbackArgs> OnLoginProgress = new CallbackHandlerQueue<LoginProgressCallbackArgs>();
+	public CallbackHandler<LoginProgressCallbackArgs> OnLoginProgress = new CallbackHandler<LoginProgressCallbackArgs>();
 
     private void LoginProgressCallback(LoginStatus status, String message, String InternalErrorKey)
 	{
@@ -620,7 +620,7 @@ public class LoginManager
 
 
 	// Called when a reply is received from the login server, the login sequence will block until this event returns
-    public class LoginResponseCallbackArgs extends CallbackArgs
+    public class LoginResponseCallbackArgs implements CallbackArgs
     {
     	private boolean success;
     	private boolean redirect;
@@ -664,22 +664,22 @@ public class LoginManager
 
     }
 
-    private CallbackHandlerQueue<LoginResponseCallbackArgs> OnLoginResponse = new CallbackHandlerQueue<LoginResponseCallbackArgs>();
+    private CallbackHandler<LoginResponseCallbackArgs> OnLoginResponse = new CallbackHandler<LoginResponseCallbackArgs>();
 
-    private HashMap<CallbackHandler<LoginResponseCallbackArgs>, String[]> CallbackOptions = new HashMap<CallbackHandler<LoginResponseCallbackArgs>, String[]>();
+    private HashMap<Callback<LoginResponseCallbackArgs>, String[]> CallbackOptions = new HashMap<Callback<LoginResponseCallbackArgs>, String[]>();
 
 	private void LoginResponseCallback(boolean loginSuccess, boolean redirect, String message, String reason, LoginResponseData replyData)
 	{
 		OnLoginResponse.dispatch(new LoginResponseCallbackArgs(loginSuccess, redirect, message, reason, replyData));
 	}
 
-	public final void RegisterLoginResponseCallback(CallbackHandler<LoginResponseCallbackArgs> callback, String[] options, boolean autoremove)
+	public final void RegisterLoginResponseCallback(Callback<LoginResponseCallbackArgs> callback, String[] options, boolean autoremove)
     {
         CallbackOptions.put(callback, options);
         OnLoginResponse.add(callback, autoremove);
     }
     
-    public final void UnregisterLoginResponseCallback(CallbackHandler<LoginResponseCallbackArgs> callback)
+    public final void UnregisterLoginResponseCallback(Callback<LoginResponseCallbackArgs> callback)
     {
         CallbackOptions.remove(callback);
         OnLoginResponse.remove(callback);

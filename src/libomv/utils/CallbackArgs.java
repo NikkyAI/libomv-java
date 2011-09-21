@@ -1,5 +1,6 @@
 package libomv.utils;
 
-public class CallbackArgs {
+public interface CallbackArgs
+{
 
 }

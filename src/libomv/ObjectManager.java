@@ -106,8 +106,8 @@ import libomv.types.Vector4;
 import libomv.types.NameValue;
 import libomv.types.PacketCallback;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -323,7 +323,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     Client.Objects.OnObjectUpdate.add(new Objects_ObjectUpdate());
      *     
      *
-     *     private Objects_ObjectUpdate extends CallbackHandler<PrimCallbackArgs>
+     *     private Objects_ObjectUpdate implements CallbackHandler<PrimCallbackArgs>
      *     {
      *         void callback(PrimCallbackArgs e)
      *         {
@@ -336,7 +336,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * {@link ObjectManager.AvatarUpdate}
      * {@link AvatarUpdateCallbackArgs}
      */
-    public class PrimCallbackArgs extends CallbackArgs
+    public class PrimCallbackArgs implements CallbackArgs
 	{
         private final Simulator m_Simulator;
         private final boolean m_IsNew;
@@ -396,7 +396,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * {@link RequestObject}
      * {@link RequestObjects}
      */
-	public CallbackHandlerQueue<PrimCallbackArgs> OnObjectUpdate = new CallbackHandlerQueue<PrimCallbackArgs>();
+	public CallbackHandler<PrimCallbackArgs> OnObjectUpdate = new CallbackHandler<PrimCallbackArgs>();
 
     /**
      * Provides additional primitive data for the <see cref="ObjectManager.ObjectProperties"/> event
@@ -422,7 +422,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * </code>
      * </example>
      */
-	public class ObjectPropertiesCallbackArgs extends CallbackArgs{
+	public class ObjectPropertiesCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final ObjectProperties m_Properties;
 
@@ -454,7 +454,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     // additional <seea cref="Primitive"/> information
     // {@link SelectObject}
     // {@link SelectObjects}
-	public CallbackHandlerQueue<ObjectPropertiesCallbackArgs> OnObjectProperties = new CallbackHandlerQueue<ObjectPropertiesCallbackArgs>();
+	public CallbackHandler<ObjectPropertiesCallbackArgs> OnObjectProperties = new CallbackHandler<ObjectPropertiesCallbackArgs>();
 
     /**
      * Provides additional primitive data for the <see cref="ObjectManager.ObjectPropertiesUpdated"/> event
@@ -464,7 +464,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * <p>The <see cref="ObjectManager.ObjectPropertiesUpdated"/> event is also raised when a <see cref="ObjectManager.SelectObject"/> request is
      * made and <see cref="Settings.OBJECT_TRACKING"/> is enabled</p>    
      */
-	public class ObjectPropertiesUpdatedCallbackArgs extends CallbackArgs{
+	public class ObjectPropertiesUpdatedCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final Primitive m_Prim;
         private final ObjectProperties m_Properties;
@@ -502,7 +502,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     // Raised when the simulator sends us data containing
     // Primitive.ObjectProperties for an object we are currently tracking
-	public CallbackHandlerQueue<ObjectPropertiesUpdatedCallbackArgs> OnObjectPropertiesUpdated =  new CallbackHandlerQueue<ObjectPropertiesUpdatedCallbackArgs>();
+	public CallbackHandler<ObjectPropertiesUpdatedCallbackArgs> OnObjectPropertiesUpdated =  new CallbackHandler<ObjectPropertiesUpdatedCallbackArgs>();
 
     /**
      * Provides additional primitive data, permissions and sale info for the <see cref="ObjectManager.ObjectPropertiesFamily"/> event
@@ -513,7 +513,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * made, the viewer equivalent is hovering the mouse cursor over an object</p>
      *     
      */
-	public class ObjectPropertiesFamilyCallbackArgs extends CallbackArgs{
+	public class ObjectPropertiesFamilyCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final ObjectProperties m_Properties;
         private final ReportType m_Type;
@@ -545,7 +545,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	// Raised when the simulator sends us data containing
     // additional <seea cref="Primitive"/> and <see cref="Avatar"/> details
     // {@link RequestObjectPropertiesFamily}
-	public CallbackHandlerQueue<ObjectPropertiesFamilyCallbackArgs> OnObjectPropertiesFamily = new CallbackHandlerQueue<ObjectPropertiesFamilyCallbackArgs>();
+	public CallbackHandler<ObjectPropertiesFamilyCallbackArgs> OnObjectPropertiesFamily = new CallbackHandler<ObjectPropertiesFamilyCallbackArgs>();
 
     /**
      * Provides data for the <see cref="ObjectManager.AvatarUpdate"/> event
@@ -567,7 +567,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     Client.Objects.OnAvatarUpdate.add(cbu, false);
      *     Client.Avatars.OnAvatarPicksReply.add(cba, true);
      *     
-     *     private class Objects_AvatarUpdate extends CallbackHandler<AvatarUpdateCallbackArgs>
+     *     private class Objects_AvatarUpdate implements CallbackHandler<AvatarUpdateCallbackArgs>
      *     {
      *     	   public void callback(AvatarUpdateCallbackArgs e)
      *         {
@@ -583,7 +583,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *         }
      *     }
      *
-     *     private class Avatars_AvatarPicksReply extends CallbackHandler<AvatarPicksReplyCallbackArgs>
+     *     private class Avatars_AvatarPicksReply implements CallbackHandler<AvatarPicksReplyCallbackArgs>
      *     {
      *         public void callback(AvatarPicksReplyCallbackArgs e)
      *         {
@@ -602,7 +602,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * {@link ObjectManager.ObjectUpdate}
      * {@link PrimEventArgs}
      */
-	public class AvatarUpdateCallbackArgs extends CallbackArgs{
+	public class AvatarUpdateCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final Avatar m_Avatar;
         private final short m_TimeDilation;
@@ -648,13 +648,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
 	// Raised when the simulator sends us data containing updated information for an <see cref="Avatar"/>
-	public CallbackHandlerQueue<AvatarUpdateCallbackArgs> OnAvatarUpdate = new CallbackHandlerQueue<AvatarUpdateCallbackArgs>();
+	public CallbackHandler<AvatarUpdateCallbackArgs> OnAvatarUpdate = new CallbackHandler<AvatarUpdateCallbackArgs>();
 
     /**
      * Provides primitive data containing updated location, velocity, rotation, textures for the <see cref="ObjectManager.TerseObjectUpdate"/> event
      * <p>The <see cref="ObjectManager.TerseObjectUpdate"/> event occurs when the simulator sends updated location, velocity, rotation, etc</p>        
      */
-	public class TerseObjectUpdateCallbackArgs extends CallbackArgs{
+	public class TerseObjectUpdateCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final Primitive m_Prim;
         private final ObjectMovementUpdate m_Update;
@@ -693,9 +693,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
     // Raised when the simulator sends us data containing
     // <see cref="Primitive"/> and <see cref="Avatar"/> movement changes
-	public CallbackHandlerQueue<TerseObjectUpdateCallbackArgs> OnTerseObjectUpdate = new CallbackHandlerQueue<TerseObjectUpdateCallbackArgs>();
+	public CallbackHandler<TerseObjectUpdateCallbackArgs> OnTerseObjectUpdate = new CallbackHandler<TerseObjectUpdateCallbackArgs>();
 
-	public class ObjectDataBlockUpdateCallbackArgs extends CallbackArgs{
+	public class ObjectDataBlockUpdateCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final Primitive m_Prim;
         private final Primitive.ConstructionData m_ConstructionData;
@@ -746,11 +746,11 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
     // Raised when the simulator sends us data containing updates to an Objects DataBlock
-	public CallbackHandlerQueue<ObjectDataBlockUpdateCallbackArgs> OnObjectDataBlockUpdate = new CallbackHandlerQueue<ObjectDataBlockUpdateCallbackArgs>();
+	public CallbackHandler<ObjectDataBlockUpdateCallbackArgs> OnObjectDataBlockUpdate = new CallbackHandler<ObjectDataBlockUpdateCallbackArgs>();
 
     // Provides notification when an Avatar, Object or Attachment is DeRezzed or moves out of the avatars view for the 
     // <see cref="ObjectManager.KillObject"/> event
-	public class KillObjectCallbackArgs extends CallbackArgs{
+	public class KillObjectCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
 
         private final int m_ObjectLocalID;
@@ -774,10 +774,10 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
     // Raised when the simulator informs us an <see cref="Primitive"/> or <see cref="Avatar"/> is no longer within view
-	public CallbackHandlerQueue<KillObjectCallbackArgs> OnKillObject = new CallbackHandlerQueue<KillObjectCallbackArgs>();
+	public CallbackHandler<KillObjectCallbackArgs> OnKillObject = new CallbackHandler<KillObjectCallbackArgs>();
 
     // Provides updates sit position data
-	public class AvatarSitChangedCallbackArgs extends CallbackArgs{
+	public class AvatarSitChangedCallbackArgs implements CallbackArgs{
         private final Simulator m_Simulator;
         private final Avatar m_Avatar;
 
@@ -816,9 +816,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
     // Raised when the simulator sends us data containing updated sit information for our <see cref="Avatar"/>
-	public CallbackHandlerQueue<AvatarSitChangedCallbackArgs> OnAvatarSitChanged = new CallbackHandlerQueue<AvatarSitChangedCallbackArgs>();
+	public CallbackHandler<AvatarSitChangedCallbackArgs> OnAvatarSitChanged = new CallbackHandler<AvatarSitChangedCallbackArgs>();
 
-	public class PayPriceReplyCallbackArgs extends CallbackArgs {
+	public class PayPriceReplyCallbackArgs implements CallbackArgs {
         private final Simulator m_Simulator;
         private final UUID m_ObjectID;
         private final int m_DefaultPrice;
@@ -855,9 +855,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
     // Raised when the simulator sends us data containing purchase price information for a <see cref="Primitive"/>
-	public CallbackHandlerQueue<PayPriceReplyCallbackArgs> OnPayPriceReply = new CallbackHandlerQueue<PayPriceReplyCallbackArgs>();
+	public CallbackHandler<PayPriceReplyCallbackArgs> OnPayPriceReply = new CallbackHandler<PayPriceReplyCallbackArgs>();
 
-    public class ObjectMediaCallbackArgs extends CallbackArgs
+    public class ObjectMediaCallbackArgs implements CallbackArgs
     {
         private boolean m_Success;
         private String m_Version;
@@ -902,9 +902,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     }
 
     // Set when simulator sends us infomation on primitive's physical properties
-	public CallbackHandlerQueue<PhysicsPropertiesCallbackArgs> OnPhysicsProperties = new CallbackHandlerQueue<PhysicsPropertiesCallbackArgs>();
+	public CallbackHandler<PhysicsPropertiesCallbackArgs> OnPhysicsProperties = new CallbackHandler<PhysicsPropertiesCallbackArgs>();
 
-	public class PhysicsPropertiesCallbackArgs extends CallbackArgs
+	public class PhysicsPropertiesCallbackArgs implements CallbackArgs
     {
         // Simulator where the message originated 
         public Simulator Simulator;
@@ -926,7 +926,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
     
     ///#region Internal event handlers
 
-    private class Network_OnDisconnected extends CallbackHandler<DisconnectedCallbackArgs>
+    private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
     {
         @Override
 		public void callback(DisconnectedCallbackArgs args)
@@ -940,7 +940,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
         }
     }
 
-    private class Network_OnLoginProgress extends CallbackHandler<LoginProgressCallbackArgs>
+    private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
     {
         @Override
 		public void callback(LoginProgressCallbackArgs args)

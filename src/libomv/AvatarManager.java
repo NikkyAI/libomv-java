@@ -45,8 +45,8 @@ import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.types.Vector3d;
 import libomv.utils.CallbackArgs;
+import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
-import libomv.utils.CallbackHandlerQueue;
 import libomv.utils.Helpers;
 
 public class AvatarManager implements PacketCallback, CapsCallback
@@ -199,7 +199,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	private Hashtable<UUID, Avatar> Avatars;
 
-	public class AgentNamesCallbackArgs extends CallbackArgs
+	public class AgentNamesCallbackArgs implements CallbackArgs
 	{
 		private Hashtable<UUID, String> names;
 		
@@ -214,12 +214,12 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		}
 	}
 	
-	public CallbackHandlerQueue<AgentNamesCallbackArgs> OnAgentNames = new CallbackHandlerQueue<AgentNamesCallbackArgs>();
+	public CallbackHandler<AgentNamesCallbackArgs> OnAgentNames = new CallbackHandler<AgentNamesCallbackArgs>();
 
     /**
      * Event args class for display name notification messages
      */
-    public class DisplayNameUpdateCallbackArgs extends CallbackArgs
+    public class DisplayNameUpdateCallbackArgs implements CallbackArgs
     {
         private String oldDisplayName;
         private AgentDisplayName displayName;
@@ -240,7 +240,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         }
     }
 
-    public CallbackHandlerQueue<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandlerQueue<DisplayNameUpdateCallbackArgs>();
+    public CallbackHandler<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandler<DisplayNameUpdateCallbackArgs>();
 
 
     public AvatarManager(GridClient client)
@@ -367,7 +367,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	// 
 	// <param name="id"></param>
-	public void RequestAvatarName(UUID id, CallbackHandler<AgentNamesCallbackArgs> anc) throws Exception {
+	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception {
 		// TODO: BeginGetAvatarNames is pretty bulky, rewrite a simple version
 		// here
 
@@ -379,7 +379,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	// 
 	// <param name="ids"></param>
-	public void RequestAvatarNames(Vector<UUID> ids,CallbackHandler<AgentNamesCallbackArgs> anc)
+	public void RequestAvatarNames(Vector<UUID> ids,Callback<AgentNamesCallbackArgs> anc)
 			throws Exception {
 		if (anc != null) {
 			OnAgentNames.add(anc);

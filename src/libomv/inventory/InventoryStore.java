@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 import libomv.GridClient;
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
-import libomv.utils.CallbackHandlerQueue;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -53,7 +53,7 @@ import libomv.utils.Logger.LogLevel;
 public class InventoryStore
 {
     // #region CallbackArgs classes
-	public class InventoryObjectUpdatedCallbackArgs extends CallbackArgs
+	public class InventoryObjectUpdatedCallbackArgs implements CallbackArgs
 	{
 	    private final InventoryBase m_OldObject;
 	    private final InventoryBase m_NewObject;
@@ -74,7 +74,7 @@ public class InventoryStore
 	    }
 	}
 
-	public class InventoryObjectRemovedCallbackArgs extends CallbackArgs
+	public class InventoryObjectRemovedCallbackArgs implements CallbackArgs
 	{
 	    private final InventoryBase m_Obj;
 
@@ -88,7 +88,7 @@ public class InventoryStore
 	    }
 	}
 
-	public class InventoryObjectAddedCallbackArgs extends CallbackArgs
+	public class InventoryObjectAddedCallbackArgs implements CallbackArgs
 	{
 	    private final InventoryBase m_Obj;
 
@@ -104,11 +104,11 @@ public class InventoryStore
 	}
 	// #endregion CallbackArgs classes
 
-	public CallbackHandlerQueue<InventoryObjectUpdatedCallbackArgs> OnInventoryObjectUpdated = new CallbackHandlerQueue<InventoryObjectUpdatedCallbackArgs>();
+	public CallbackHandler<InventoryObjectUpdatedCallbackArgs> OnInventoryObjectUpdated = new CallbackHandler<InventoryObjectUpdatedCallbackArgs>();
 
-    public CallbackHandlerQueue<InventoryObjectRemovedCallbackArgs> OnInventoryObjectRemoved = new CallbackHandlerQueue<InventoryObjectRemovedCallbackArgs>();
+    public CallbackHandler<InventoryObjectRemovedCallbackArgs> OnInventoryObjectRemoved = new CallbackHandler<InventoryObjectRemovedCallbackArgs>();
 
-    public CallbackHandlerQueue<InventoryObjectAddedCallbackArgs> OnInventoryObjectAdded = new CallbackHandlerQueue<InventoryObjectAddedCallbackArgs>();
+    public CallbackHandler<InventoryObjectAddedCallbackArgs> OnInventoryObjectAdded = new CallbackHandler<InventoryObjectAddedCallbackArgs>();
 
 
     private InventoryNode _RootNode;
