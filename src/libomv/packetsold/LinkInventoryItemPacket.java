@@ -162,8 +162,7 @@ public class LinkInventoryItemPacket extends Packet
 
     public LinkInventoryItemPacket(ByteBuffer bytes) throws Exception
     {
-        int [] a_packetEnd = new int[] { bytes.position()-1 };
-        header = new PacketHeader(bytes, a_packetEnd, PacketFrequency.Low);
+        header = new PacketHeader(bytes, PacketFrequency.Low);
         AgentData = new AgentDataBlock(bytes);
         InventoryBlock = new InventoryBlockBlock(bytes);
     }
@@ -195,9 +194,6 @@ public class LinkInventoryItemPacket extends Packet
         bytes.order(ByteOrder.LITTLE_ENDIAN);
         AgentData.ToBytes(bytes);
         InventoryBlock.ToBytes(bytes);
-        if (header.AckList.length > 0) {
-            header.AcksToBytes(bytes);
-        }
         return bytes;
     }
 
