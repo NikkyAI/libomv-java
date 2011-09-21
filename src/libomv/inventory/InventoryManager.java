@@ -65,7 +65,6 @@ import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
 import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
 import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryFolder;
-import libomv.inventory.InventoryItem.DeRezDestination;
 import libomv.inventory.InventoryItem.InventoryType;
 import libomv.inventory.InventoryItem.WearableType;
 import libomv.packets.BulkUpdateInventoryPacket;
@@ -599,7 +598,44 @@ public class InventoryManager implements PacketCallback, CapsCallback
         private static final byte _mask = 0x7;
     }
 
-	/* Used for converting shadow_id to asset_id */
+	/* Possible destinations for DeRezObject request */
+    public enum DeRezDestination
+    {
+        /* */
+        AgentInventorySave,
+        /* Copy from in-world to agent inventory */
+        AgentInventoryCopy,
+        /* Derez to TaskInventory */
+        TaskInventory,
+        /* */
+        Attachment,
+        /* Take Object */
+        AgentInventoryTake,
+        /* */
+        ForceToGodInventory,
+        /* Delete Object */
+        TrashFolder,
+        /* Put an avatar attachment into agent inventory */
+        AttachmentToInventory,
+        /* */
+        AttachmentExists,
+        /* Return an object back to the owner's inventory */
+        ReturnToOwner,
+        /* Return a deeded object back to the last owner's inventory */
+        ReturnToLastOwner;
+
+        public static DeRezDestination setValue(int value)
+        {
+        	return values()[value];
+        }
+
+        public byte getValue()
+        {
+        	return (byte)ordinal();
+        }
+    }
+
+    /* Used for converting shadow_id to asset_id */
     public static final UUID MAGIC_ID = new UUID("3c115e51-04f4-523c-9fa6-98aff1034730");
 
     protected final class InventorySearch
