@@ -42,6 +42,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.packets.Packet;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -137,15 +138,7 @@ public class EventQueue extends CapsClient
                 	IMessage message = Simulator.getClient().Messages.DecodeEvent(capsKey, body);
                 	if (message != null)
                 	{
-                        if (Simulator.getClient().Settings.SYNC_PACKETCALLBACKS)
-                        {
-                	        Simulator.getClient().Network.DistributeCaps(Simulator, message);
-                        }
-                        else
-                        {
-                        	// TODO: Implement asynchronous package distribution
-                            // Simulator.Client.Network.BeginDistributeCaps(capsKey, message, Simulator);
-                        }
+               	        Simulator.getClient().Network.DistributeCaps(Simulator, message);
 
                         // #region Stats Tracking
                         if (Simulator.getClient().Settings.TRACK_UTILIZATION)
@@ -156,23 +149,21 @@ public class EventQueue extends CapsClient
                     }
                     else
                     {
-                    	Logger.Log("No Message handler exists for event " + name + ". Unable to decode. Will try Generic Handler next", LogLevel.Warning);
-                    	Logger.Log("Please report this information to http://jira.openmv.org/: \n" + body, LogLevel.Debug);
+                    	Logger.Log("No Message handler exists for event " + name + ". Unable to decode. Will try Generic Handler next", LogLevel.Warning, Simulator.getClient());
+                    	Logger.Log("Please report this information to http://jira.openmv.org/: \n" + body, LogLevel.Debug, Simulator.getClient());
 
                         // try generic decoder next which takes a caps event and tries to match it to an existing packet
 
-                    	/* TODO: Implement Package decoding from OSD
-                        Packet packet = Packet.BuildPacket(name, body);
+                        Packet packet = CapsToPacket.BuildPacket(name, body);
                         if (packet != null)
                         {
-                            Logger.DebugLog("Serializing " + packet.getType() + " capability with generic handler");
+                            Logger.DebugLog("Serializing " + packet.getType() + " capability with generic handler", Simulator.getClient());
                             Simulator.getClient().Network.DistributePacket(Simulator, packet);
                         }
                         else
                         {
-                            Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning);
+                            Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning, Simulator.getClient());
                         }
-                        */
                     }
             	}
             }
@@ -205,7 +196,7 @@ public class EventQueue extends CapsClient
 	        else
 	        {
 	            ++errorCount;
-	            Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning);
+	            Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning, Simulator.getClient());
 	            resume(false, 0, null);
 	        }
 		}
@@ -222,7 +213,7 @@ public class EventQueue extends CapsClient
 	    	        {
 	    			    Request = null;
 	    	        }
-	                Logger.Log(String.format("Closing event queue at %s due to missing caps URI", Address.toString()), LogLevel.Info);
+	                Logger.Log(String.format("Closing event queue at %s due to missing caps URI", Address.toString()), LogLevel.Info, Simulator.getClient());
 	                return;
 	            }
 	            else if (status == HttpStatus.SC_BAD_GATEWAY)
@@ -240,15 +231,15 @@ public class EventQueue extends CapsClient
 	                // Try to log a meaningful error message
 	                if (status != HttpStatus.SC_OK)
 	                {
-	                    Logger.Log(String.format("Unrecognized caps connection problem from %s: %d", Address.toString(), status), LogLevel.Warning);
+	                    Logger.Log(String.format("Unrecognized caps connection problem from %s: %d", Address.toString(), status), LogLevel.Warning, Simulator.getClient());
 	                }
 	                else if (ex.getCause() != null)
 	                {
-	                    Logger.Log(String.format("Unrecognized internal caps exception from %s: %s", Address.toString(), ex.getCause().getMessage()), LogLevel.Warning);
+	                    Logger.Log(String.format("Unrecognized internal caps exception from %s: %s", Address.toString(), ex.getCause().getMessage()), LogLevel.Warning, Simulator.getClient());
 	                }
 	                else
 	                {
-	                    Logger.Log(String.format("Unrecognized caps exception from %s: %s", Address.toString(), ex.getMessage()), LogLevel.Warning);
+	                    Logger.Log(String.format("Unrecognized caps exception from %s: %s", Address.toString(), ex.getMessage()), LogLevel.Warning, Simulator.getClient());
 	                }
 	            }
 	        }
@@ -256,7 +247,7 @@ public class EventQueue extends CapsClient
 	        {
 	            ++errorCount;
 
-	            Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning);
+	            Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning, Simulator.getClient());
 	        }
 	        resume(false, 0, null);
 		}
