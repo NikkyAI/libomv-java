@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006, Second Life Reverse Engineering Team
+  * Copyright (c) 2006, Second Life Reverse Engineering Team
  * Portions Copyright (c) 2006, Lateral Arts Limited
  * Portions Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
@@ -234,15 +234,15 @@ public class PacketHeader {
 		if (getAppendedAcks())
 		{
 			int packetEnd = bytes.limit() - 1;
+			AckList = new int[bytes.get(packetEnd)];
 			byte[] array = bytes.array();
-			int count = bytes.get(packetEnd);
-			AckList = new int[count];
 
-			for (int i = 0; i < count; i++)
+			for (int i = AckList.length; i > 0;)
 			{
-				AckList[i] = Helpers.BytesToInt32B(array, packetEnd - i * 4);
+				packetEnd -= 4;
+				AckList[--i] = (int)Helpers.BytesToUInt32B(array, packetEnd);
 			}
-			bytes.limit(packetEnd - count * 4);
+			bytes.limit(packetEnd);
 		}
 	}
 }
