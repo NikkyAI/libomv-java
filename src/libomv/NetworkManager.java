@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import libomv.Simulator.RegionFlags;
 import libomv.Simulator.SimAccess;
+import libomv.Simulator.SimStatType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.IMessage;
@@ -1286,83 +1287,91 @@ public class NetworkManager implements PacketCallback
         for (int i = 0; i < stats.Stat.length; i++)
         {
             SimStatsPacket.StatBlock s = stats.Stat[i];
-            switch (s.StatID)
+            
+            switch (SimStatType.setValue(s.StatID))
             {
-                case 0:
+                case TimeDilation:
                     simulator.Statistics.Dilation = s.StatValue;
                     break;
-                case 1:
+                case SimFPS:
                     simulator.Statistics.FPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 2:
+                case PhysicsFPS:
                     simulator.Statistics.PhysicsFPS = s.StatValue;
                     break;
-                case 3:
+                case AgentUpdates:
                     simulator.Statistics.AgentUpdates = s.StatValue;
                     break;
-                case 4:
+                case FrameMS:
                     simulator.Statistics.FrameTime = s.StatValue;
                     break;
-                case 5:
+                case NetMS:
                     simulator.Statistics.NetTime = s.StatValue;
                     break;
-                case 6:
+                case OtherMS:
                     simulator.Statistics.OtherTime = s.StatValue;
                     break;
-                case 7:
+                case PhysicsMS:
                     simulator.Statistics.PhysicsTime = s.StatValue;
                     break;
-                case 8:
+                case AgentMS:
                     simulator.Statistics.AgentTime = s.StatValue;
                     break;
-                case 9:
+                case ImageMS:
                     simulator.Statistics.ImageTime = s.StatValue;
                     break;
-                case 10:
+                case ScriptMS:
                     simulator.Statistics.ScriptTime = s.StatValue;
                     break;
-                case 11:
+                case TotalPrim:
                     simulator.Statistics.Objects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 12:
+                case ActivePrim:
                     simulator.Statistics.ScriptedObjects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 13:
+                case Agents:
                     simulator.Statistics.Agents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 14:
+                case ChildAgents:
                     simulator.Statistics.ChildAgents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 15:
+                case ActiveScripts:
                     simulator.Statistics.ActiveScripts = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 16:
+                case ScriptInstructionsPerSecond:
                     simulator.Statistics.LSLIPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 17:
+                case InPacketsPerSecond:
                     simulator.Statistics.INPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 18:
+                case OutPacketsPerSecond:
                     simulator.Statistics.OUTPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 19:
+                case PendingDownloads:
                     simulator.Statistics.PendingDownloads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 20:
+                case PendingUploads:
                     simulator.Statistics.PendingUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 21:
+                case VirtualSizeKB:
                     simulator.Statistics.VirtualSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 22:
+                case ResidentSizeKB:
                     simulator.Statistics.ResidentSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 23:
+                case PendingLocalUploads:
                     simulator.Statistics.PendingLocalUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
-                case 24:
+                case UnAckedBytes:
                     simulator.Statistics.UnackedBytes = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
                     break;
+                case PhysicsPinnedTasks:
+                case PhysicsLODTasks:
+                case PhysicsStepMS:
+                case PhysicsShapeMS:
+                case PhysicsOtherMS:
+                case PhysicsMemory:
+                	break;
             }
         }
     }

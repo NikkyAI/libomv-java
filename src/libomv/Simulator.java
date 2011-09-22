@@ -190,6 +190,51 @@ public class Simulator extends Thread
         }
     }
 
+    public static enum SimStatType
+    {
+        TimeDilation,
+        SimFPS,
+        PhysicsFPS,
+        AgentUpdates,
+        FrameMS,
+        NetMS,
+        OtherMS,
+        PhysicsMS,
+        AgentMS,
+        ImageMS,
+        ScriptMS,
+        TotalPrim,
+        ActivePrim,
+        Agents,
+        ChildAgents,
+        ActiveScripts,
+        ScriptInstructionsPerSecond,
+        InPacketsPerSecond,
+        OutPacketsPerSecond,
+        PendingDownloads,
+        PendingUploads,
+        VirtualSizeKB,
+        ResidentSizeKB,
+        PendingLocalUploads,
+        UnAckedBytes,
+        PhysicsPinnedTasks,
+        PhysicsLODTasks,
+        PhysicsStepMS,
+        PhysicsShapeMS,
+        PhysicsOtherMS,
+        PhysicsMemory;
+
+        public static SimStatType setValue(int value)
+        {
+        	return values()[value];
+       	}
+
+        public static int getValue(SimStatType type)
+        {
+        	return type.ordinal();
+        }
+    }
+
     /* Simulator Statistics */
     public final class SimStats
     {
