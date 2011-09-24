@@ -75,6 +75,8 @@ import libomv.packets.ActivateGesturesPacket;
 import libomv.packets.AgentAnimationPacket;
 import libomv.packets.AgentHeightWidthPacket;
 import libomv.packets.AgentMovementCompletePacket;
+import libomv.packets.AgentRequestSitPacket;
+import libomv.packets.AgentSitPacket;
 import libomv.packets.AgentUpdatePacket;
 import libomv.packets.ChatFromSimulatorPacket;
 import libomv.packets.ChatFromViewerPacket;
@@ -82,6 +84,7 @@ import libomv.packets.ClassifiedDeletePacket;
 import libomv.packets.ClassifiedInfoUpdatePacket;
 import libomv.packets.CompleteAgentMovementPacket;
 import libomv.packets.DeactivateGesturesPacket;
+import libomv.packets.GenericMessagePacket;
 import libomv.packets.HealthMessagePacket;
 import libomv.packets.ImprovedInstantMessagePacket;
 import libomv.packets.MoneyBalanceReplyPacket;
@@ -101,6 +104,7 @@ import libomv.packets.TeleportFinishPacket;
 import libomv.packets.TeleportLandmarkRequestPacket;
 import libomv.packets.TeleportLocalPacket;
 import libomv.packets.TeleportLocationRequestPacket;
+import libomv.packets.TeleportLureRequestPacket;
 import libomv.packets.TeleportProgressPacket;
 import libomv.packets.TeleportStartPacket;
 import libomv.packets.ViewerEffectPacket;
@@ -2176,8 +2180,209 @@ public class AgentManager implements PacketCallback, CapsCallback
 
         _Client.Network.SendPacket(effect);
     }
-    ///#endregion Viewer Effects
+    // #endregion Viewer Effects
 
+    // #region Movement Actions
+
+    /**
+     * Sends a request to sit on the specified object
+     * 
+     * @param targetID {@link UUID} of the object to sit on
+     * @param offset Sit at offset
+     * @throws Exception 
+     */
+    public final void RequestSit(UUID targetID, Vector3 offset) throws Exception
+    {
+        AgentRequestSitPacket requestSit = new AgentRequestSitPacket();
+        requestSit.AgentData.AgentID = _Client.Self.getAgentID();
+        requestSit.AgentData.SessionID = _Client.Self.getSessionID();
+        requestSit.TargetObject.TargetID = targetID;
+        requestSit.TargetObject.Offset = offset;
+        _Client.Network.SendPacket(requestSit);
+    }
+
+    /** 
+     * Follows a call to {@link RequestSit} to actually sit on the object
+     * @throws Exception 
+     * 
+     */
+    public final void Sit() throws Exception
+    {
+        AgentSitPacket sit = new AgentSitPacket();
+        sit.AgentData.AgentID = _Client.Self.getAgentID();
+        sit.AgentData.SessionID = _Client.Self.getSessionID();
+        _Client.Network.SendPacket(sit);
+    }
+
+    /**
+     * Stands up from sitting on a prim or the ground
+     * 
+     * @return true of AgentUpdate was sent
+     * @throws Exception 
+     */
+    public final boolean Stand() throws Exception
+    {
+        if (_Client.Settings.SEND_AGENT_UPDATES)
+        {
+            _Movement.setSitOnGround(false);
+            _Movement.setStandUp(true);
+            _Movement.SendUpdate();
+            _Movement.setStandUp(false);
+            _Movement.SendUpdate();
+            return true;
+        }
+        Logger.Log("Attempted to Stand() but agent updates are disabled", LogLevel.Warning, _Client);
+        return false;
+    }
+
+    /** 
+     * Does a "ground sit" at the avatar's current position
+	 *
+     * @throws Exception 
+     */
+    public final void SitOnGround() throws Exception
+    {
+        _Movement.setSitOnGround(true);
+        _Movement.SendUpdate(true);
+    }
+
+    /** 
+     * Starts or stops flying
+     * 
+     * @param start True to start flying, false to stop flying
+     * @throws Exception 
+     */
+    public final void Fly(boolean start) throws Exception
+    {
+        if (start)
+        {
+            _Movement.setFly(true);
+        }
+        else
+        {
+            _Movement.setFly(false);
+        }
+        _Movement.SendUpdate(true);
+    }
+
+    /** 
+     * Starts or stops crouching
+     * 
+     * @param crouching True to start crouching, false to stop crouching
+     * @throws Exception 
+     */
+    public final void Crouch(boolean crouching) throws Exception
+    {
+        _Movement.setUpNeg(crouching);
+        _Movement.SendUpdate(true);
+    }
+
+    /* 
+     * Starts a jump (begin holding the jump key)
+     * 
+*/
+    public final void Jump(boolean jumping) throws Exception
+    {
+        _Movement.setUpPos(jumping);
+        _Movement.setFastUp(jumping);
+        _Movement.SendUpdate(true);
+    }
+
+    /** 
+     * Use the autopilot sim function to move the avatar to a new
+     * position. Uses double precision to get precise movements
+     * 
+     * The z value is currently not handled properly by the simulator
+     * @param globalX Global X coordinate to move to
+     * @param globalY Global Y coordinate to move to
+     * @param z Z coordinate to move to
+     * @throws Exception 
+     */
+    public final void AutoPilot(double globalX, double globalY, double z) throws Exception
+    {
+        GenericMessagePacket autopilot = new GenericMessagePacket();
+
+        autopilot.AgentData.AgentID = _Client.Self.getAgentID();
+        autopilot.AgentData.SessionID = _Client.Self.getSessionID();
+        autopilot.AgentData.TransactionID = UUID.Zero;
+        autopilot.MethodData.Invoice = UUID.Zero;
+        autopilot.MethodData.setMethod(Helpers.StringToBytes("autopilot"));
+        autopilot.ParamList = new GenericMessagePacket.ParamListBlock[3];
+        autopilot.ParamList[0] = autopilot.new ParamListBlock();
+        autopilot.ParamList[0].setParameter(Helpers.StringToBytes(((Double)globalX).toString()));
+        autopilot.ParamList[1] = autopilot.new ParamListBlock();
+        autopilot.ParamList[1].setParameter(Helpers.StringToBytes(((Double)globalY).toString()));
+        autopilot.ParamList[2] = autopilot.new ParamListBlock();
+        autopilot.ParamList[2].setParameter(Helpers.StringToBytes(((Double)z).toString()));
+
+        _Client.Network.SendPacket(autopilot);
+    }
+
+    /** 
+     * Use the autopilot sim function to move the avatar to a new position
+     * 
+     * The z value is currently not handled properly by the simulator
+     * @param globalX Integer value for the global X coordinate to move to
+     * @param globalY Integer value for the global Y coordinate to move to
+     * @param z Floating-point value for the Z coordinate to move to
+     * @throws Exception 
+     */
+    public final void AutoPilot(long globalX, long globalY, float z) throws Exception
+    {
+        GenericMessagePacket autopilot = new GenericMessagePacket();
+
+        autopilot.AgentData.AgentID = _Client.Self.getAgentID();
+        autopilot.AgentData.SessionID = _Client.Self.getSessionID();
+        autopilot.AgentData.TransactionID = UUID.Zero;
+        autopilot.MethodData.Invoice = UUID.Zero;
+        autopilot.MethodData.setMethod(Helpers.StringToBytes("autopilot"));
+        autopilot.ParamList = new GenericMessagePacket.ParamListBlock[3];
+        autopilot.ParamList[0] = autopilot.new ParamListBlock();
+        autopilot.ParamList[0].setParameter(Helpers.StringToBytes(((Long)globalX).toString()));
+        autopilot.ParamList[1] = autopilot.new ParamListBlock();
+        autopilot.ParamList[1].setParameter(Helpers.StringToBytes(((Long)globalY).toString()));
+        autopilot.ParamList[2] = autopilot.new ParamListBlock();
+        autopilot.ParamList[2].setParameter(Helpers.StringToBytes(((Float)z).toString()));
+
+        _Client.Network.SendPacket(autopilot);
+    }
+
+    /** 
+     * Use the autopilot sim function to move the avatar to a new position
+     * 
+     * The z value is currently not handled properly by the simulator
+     * @param localX Integer value for the local X coordinate to move to
+     * @param localY Integer value for the local Y coordinate to move to
+     * @param z Floating-point value for the Z coordinate to move to
+     * @throws Exception 
+     */
+    public final void AutoPilotLocal(int localX, int localY, float z) throws Exception
+    {
+        int[] coord = new int[2];
+        Helpers.LongToUInts(_Client.Network.getCurrentSim().getHandle(), coord);
+        AutoPilot((coord[0] + localX), (coord[1] + localY), z);
+    }
+
+    /**
+     * Macro to cancel autopilot sim function
+     * Not certain if this is how it is really done
+     * @return true if control flags were set and AgentUpdate was sent to the simulator
+     * @throws Exception 
+     */
+    public final boolean AutoPilotCancel() throws Exception
+    {
+        if (_Client.Settings.SEND_AGENT_UPDATES)
+        {
+            _Movement.setAtPos(true);
+            _Movement.SendUpdate();
+            _Movement.setAtPos(false);
+            _Movement.SendUpdate();
+            return true;
+        }
+        Logger.Log("Attempted to AutoPilotCancel() but agent updates are disabled", LogLevel.Warning, _Client);
+        return false;
+    }
+    // #endregion Movement actions
 
     /**
      * Set the height and the width of your avatar. This is used to scale
@@ -2819,8 +3024,8 @@ public class AgentManager implements PacketCallback, CapsCallback
     public final void SendTeleportLure(UUID targetID, String message) throws Exception
     {
         StartLurePacket p = new StartLurePacket();
-        p.AgentData.AgentID = _Client.Self.agentID;
-        p.AgentData.SessionID = _Client.Self.sessionID;
+        p.AgentData.AgentID = _Client.Self.getAgentID();
+        p.AgentData.SessionID = _Client.Self.getSessionID();
         p.Info.LureType = 0;
         p.Info.setMessage(Helpers.StringToBytes(message));
         p.TargetData = new StartLurePacket.TargetDataBlock[1];
@@ -2828,6 +3033,32 @@ public class AgentManager implements PacketCallback, CapsCallback
         _Client.Network.SendPacket(p);
     }
 
+    /**
+     * Respond to a teleport lure by either accepting it and initiating the teleport, or denying it
+     * 
+     * @param requesterID {@link UUID} of the avatar sending the lure
+     * @param accept true to accept the lure, false to decline it
+     * @throws Exception 
+     */
+    public final void TeleportLureRespond(UUID requesterID, boolean accept) throws Exception
+    {
+        InstantMessage(getName(), requesterID, Helpers.EmptyString, new UUID(),
+        		       accept ? InstantMessageDialog.AcceptTeleport : InstantMessageDialog.DenyTeleport,
+        		       InstantMessageOnline.Offline, this.getSimPosition(), UUID.Zero, Helpers.EmptyBytes);
+
+        if (accept)
+        {
+            TeleportLureRequestPacket lure = new TeleportLureRequestPacket();
+
+            lure.Info.AgentID = getAgentID();
+            lure.Info.SessionID = getSessionID();
+            lure.Info.LureID = getAgentID();
+            lure.Info.TeleportFlags = TeleportFlags.ViaLure;
+
+            _Client.Network.SendPacket(lure);
+        }
+    }
+    
     /**
      * Acknowledge agent movement complete
      *
@@ -4020,6 +4251,27 @@ public class AgentManager implements PacketCallback, CapsCallback
 
             Logger.Log("Attempted TurnToward but agent updates are disabled", LogLevel.Warning, Client);
             return false;
+        }
+
+        /**
+         * Send new AgentUpdate packet to update our current camera position and rotation
+         * 
+         * @throws Exception 
+         */
+        public final void SendUpdate() throws Exception
+        {
+            SendUpdate(false, Client.Network.getCurrentSim());
+        }
+
+        /** 
+         * Send new AgentUpdate packet to update our current camera position and rotation
+         * 
+         * @param reliable Whether to require server acknowledgement of this packet
+         * @throws Exception 
+         */
+        public final void SendUpdate(boolean reliable) throws Exception
+        {
+            SendUpdate(reliable, Client.Network.getCurrentSim());
         }
 
         /**

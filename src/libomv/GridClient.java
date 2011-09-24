@@ -118,6 +118,8 @@ public class GridClient
 	public AvatarManager Avatars;
 	// Friend Avatars Subsystem
 	public FriendsManager Friends;
+	// Group Subsystem
+	public GroupManager Groups;
 	// Grid (aka simulator group) Subsystem
 	public GridManager Grid;
     /* Asset subsystem */
@@ -128,8 +130,6 @@ public class GridClient
 //	public ParcelManager Parcels;
 	// Object Subsystem
 //	public ObjectManager Objects;
-	// Group Subsystem
-//	public GroupManager Groups;
     /* Directory searches including classifieds, people, land sales, etc */
 //    public DirectoryManager Directory;
     /* Appearance subsystem */
@@ -156,11 +156,12 @@ public class GridClient
 
 		Login = new LoginManager(this);
 		Network = new NetworkManager(this);
+		Messages = new CapsMessage();
 		Settings = settings;
 		Settings.Startup(this);
 		Self = new AgentManager(this);
 		Friends = new FriendsManager(this);
-		Messages = new CapsMessage();
+		Groups = new GroupManager(this);
 
 		if (Settings.SEND_AGENT_THROTTLE)
 		    Throttle = new AgentThrottle(this);
@@ -175,7 +176,6 @@ public class GridClient
  //		Parcels = new ParcelManager(this);
 //		Avatars = new AvatarManager(this);
 //		Objects = new ObjectManager(this);
-//		Groups = new GroupManager(this);
 //		Directory = new DirectoryManager(this);
 		Debug = true;
 	}

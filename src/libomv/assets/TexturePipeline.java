@@ -856,17 +856,17 @@ public class TexturePipeline implements PacketCallback
             synchronized (task.Transfer)
             {
                 if (task.Transfer.Size == 0)
-            {
-                task.Transfer.Codec = ImageCodec.setValue(data.ImageID.Codec);
-                task.Transfer.PacketCount = data.ImageID.Packets;
-                task.Transfer.Size = data.ImageID.Size;
-                task.Transfer.AssetData = new byte[task.Transfer.Size];
-                task.Transfer.AssetType = AssetType.Texture;
-                task.Transfer.PacketsSeen = new TreeMap<Short, Short>();
-                System.arraycopy(data.ImageData.getData(), 0, task.Transfer.AssetData, 0, data.ImageData.getData().length);
-                task.Transfer.InitialDataSize = data.ImageData.getData().length;
-                task.Transfer.Transferred += data.ImageData.getData().length;
-            }
+                {
+                    task.Transfer.Codec = ImageCodec.setValue(data.ImageID.Codec);
+                    task.Transfer.PacketCount = data.ImageID.Packets;
+                    task.Transfer.Size = data.ImageID.Size;
+                    task.Transfer.AssetData = new byte[task.Transfer.Size];
+                    task.Transfer.AssetType = AssetType.Texture;
+                    task.Transfer.PacketsSeen = new TreeMap<Short, Short>();
+                    System.arraycopy(data.ImageData.getData(), 0, task.Transfer.AssetData, 0, data.ImageData.getData().length);
+                    task.Transfer.InitialDataSize = data.ImageData.getData().length;
+                    task.Transfer.Transferred += data.ImageData.getData().length;
+                }
             }
 
             task.Transfer.HeaderReceivedEvent.set(true);
@@ -895,21 +895,15 @@ public class TexturePipeline implements PacketCallback
                 {
                     callback.callback(TextureRequestState.Finished, new AssetTexture(task.RequestID, task.Transfer.AssetData));
                 }
-
-                _Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
             }
-            else
+            else if (task.ReportProgress)
             {
-                if (task.ReportProgress)
+                for (TextureDownloadCallback callback : task.Callbacks)
                 {
-                    for (TextureDownloadCallback callback : task.Callbacks)
-                    {
-                        callback.callback(TextureRequestState.Progress, new AssetTexture(task.RequestID, task.Transfer.AssetData));
-                    }
+                    callback.callback(TextureRequestState.Progress, new AssetTexture(task.RequestID, task.Transfer.AssetData));
                 }
-
-                _Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
             }
+            _Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
         }
     }
 

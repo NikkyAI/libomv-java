@@ -1201,8 +1201,6 @@ public class AssetManager implements PacketCallback
      * </code>
      * </example>
      */
-//VB & C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
-//ORIGINAL LINE: public void RequestImage(UUID textureID, ImageType imageType, float priority, int discardLevel, uint packetStart, TextureDownloadCallback callback, bool progress)
     public final void RequestImage(UUID textureID, ImageType imageType, float priority, int discardLevel, int packetStart, TextureDownloadCallback callback, boolean progress)
     {
         _Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
@@ -1218,7 +1216,7 @@ public class AssetManager implements PacketCallback
      */
     public final void RequestImage(UUID textureID, TextureDownloadCallback callback)
     {
-        RequestImage(textureID, ImageType.Normal, 101300.0f, 0, 0, callback, false);
+    	_Texture.RequestTexture(textureID, ImageType.Normal, 101300.0f, 0, 0, callback, false);
     }
 
     /**
@@ -1233,7 +1231,7 @@ public class AssetManager implements PacketCallback
      */
     public final void RequestImage(UUID textureID, ImageType imageType, TextureDownloadCallback callback)
     {
-        RequestImage(textureID, imageType, 101300.0f, 0, 0, callback, false);
+    	_Texture.RequestTexture(textureID, imageType, 101300.0f, 0, 0, callback, false);
     }
 
     /**
@@ -1251,7 +1249,7 @@ public class AssetManager implements PacketCallback
      */
     public final void RequestImage(UUID textureID, ImageType imageType, TextureDownloadCallback callback, boolean progress)
     {
-        RequestImage(textureID, imageType, 101300.0f, 0, 0, callback, progress);
+    	_Texture.RequestTexture(textureID, imageType, 101300.0f, 0, 0, callback, progress);
     }
 
     /**
