@@ -34,7 +34,6 @@ import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.LoginManager.BuddyListEntry;
 import libomv.LoginManager.LoginProgressCallbackArgs;
-import libomv.LoginManager.LoginResponseCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.assets.AssetItem.AssetType;
 import libomv.inventory.InventoryException;
@@ -466,8 +465,7 @@ public class FriendsManager implements PacketCallback
 
         Client.Self.OnInstantMessage.add(new Self_OnInstantMessage());
 
-        Client.Login.OnLoginProgress.add(new Network_OnConnect(), false);
-        Client.Login.RegisterLoginResponseCallback(new Network_OnLoginResponse(), new String[] { "buddy-list" }, false);
+        Client.Login.RegisterLoginProgressCallback(new Network_OnConnect(), new String[] { "buddy-list" }, false);
 
         Client.Network.RegisterCallback(PacketType.OnlineNotification, this);
         Client.Network.RegisterCallback(PacketType.OfflineNotification, this);
@@ -911,10 +909,7 @@ public class FriendsManager implements PacketCallback
 	}
 
     /**
-     * Raised after login
-     *
-     * @param sender
-     * @param e
+     * Populate FriendList {@link InternalDictionary} with data from the login reply
      */
     private class Network_OnConnect implements Callback<LoginProgressCallbackArgs>
     {
@@ -923,7 +918,21 @@ public class FriendsManager implements PacketCallback
         {
             if (e.getStatus() == LoginStatus.Success)
             {
-                Vector<UUID> names = new Vector<UUID>();
+                if (e.getReply().BuddyList != null)
+                {
+                    for (BuddyListEntry buddy : e.getReply().BuddyList)
+                    {
+                        UUID bubid = UUID.Parse(buddy.buddy_id);
+                        synchronized (FriendList)
+                        {
+                            if (!FriendList.containsKey(bubid))
+                            {
+                                FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));
+                            }
+                        }
+                    }
+                }
+                Vector<UUID> request = new Vector<UUID>();
 
                 if (FriendList.size() > 0)
                 {
@@ -931,48 +940,14 @@ public class FriendsManager implements PacketCallback
                     {
                         if (kvp.getName().isEmpty())
                         {
-                            names.add(kvp.getUUID());
+                            request.add(kvp.getUUID());
                         }
                     }
                     try
                     {
-						Client.Avatars.RequestAvatarNames(names, null);
+						Client.Avatars.RequestAvatarNames(request, null);
 					}
-                    catch (Exception e1)
-					{
-					}
-                }
-            }
-        }
-    }
-
-    /**
-     * Populate FriendList {@link InternalDictionary} with data from the login reply
-     *
-     * @param loginSuccess true if login was successful
-     * @param redirect true if login request is requiring a redirect
-     * @param message A string containing the response to the login request
-     * @param reason A {@link LoginResponseData} object containing the decoded
-     * @param replyData reply from the login server
-     */
-    private class Network_OnLoginResponse implements Callback<LoginResponseCallbackArgs>
-    {
-        @Override
-		public void callback(LoginResponseCallbackArgs e)
-        // Network_OnLoginResponse(boolean loginSuccess, boolean redirect, String message, String reason, LoginResponseData replyData)
-        {
-            if (e.getSuccess() && e.getReply().BuddyList != null)
-            {
-                for (BuddyListEntry buddy : e.getReply().BuddyList)
-                {
-                    UUID bubid = UUID.Parse(buddy.buddy_id);
-                    synchronized (FriendList)
-                    {
-                        if (!FriendList.containsKey(bubid))
-                        {
-                            FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));
-                        }
-                    }
+                    catch (Exception e1) { }
                 }
             }
         }

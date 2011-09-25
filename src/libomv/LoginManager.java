@@ -124,6 +124,9 @@ public class LoginManager
         public boolean ReadCritical;
         /** An array of string sent to the login server to enable various options */
         public String[] Options;
+        /** A randomly generated ID to distinguish between login attempts. This value is only used
+            internally in the library and is never sent over the wire */
+        private UUID LoginID;
 
         /**
          * Default constructor, initializes sane default values
@@ -142,7 +145,9 @@ public class LoginManager
             this.ID0 = Helpers.GetMAC();
             this.AgreeToTos = true;
             this.ReadCritical = true;
-        }
+            this.Channel = Settings.APPLICATION_NAME;
+            this.Version = Settings.APPLICATION_VERSION;
+       }
 
         /**
          * Instantiates new LoginParams object and fills in the values
@@ -151,10 +156,9 @@ public class LoginManager
          * @param firstName Login first name
          * @param lastName Login last name
          * @param password Password
-         * @param channel Login channnel (application name)
-         * @param version Client version, should be application name + version number
+         * @param startLocation location to start in, if null, "last" is used
          */
-        public LoginParams(GridClient client, String firstName, String lastName, String password, String channel, String version)
+        public LoginParams(GridClient client, String firstName, String lastName, String password, String startLocation)
         {
             this();
             this.URI = client.getDefaultGrid().loginuri;
@@ -162,8 +166,8 @@ public class LoginManager
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Password = password;
-            this.Channel = channel;
-            this.Version = version;
+            if (startLocation != null)
+            	this.Start = startLocation;
         }
     }
 
@@ -588,7 +592,8 @@ public class LoginManager
 	{
         private final LoginStatus m_Status;
         private final String m_Message;
-        private final String m_FailReason;
+        private final String m_Reason;
+    	private LoginResponseData m_Reply;
 
         public final LoginStatus getStatus()
         {
@@ -598,91 +603,39 @@ public class LoginManager
         {
             return m_Message;
         }
-        public final String getFailReason()
+        public final String getReason()
         {
-            return m_FailReason;
+            return m_Reason;
         }
 
-        public LoginProgressCallbackArgs(LoginStatus login, String message, String failReason)
+    	public LoginResponseData getReply()
+    	{
+    		return m_Reply;
+    	}
+
+    	public LoginProgressCallbackArgs(LoginStatus login, String message, String reason, LoginResponseData reply)
         {
+    		this.m_Reply = reply;
             this.m_Status = login;
             this.m_Message = message;
-            this.m_FailReason = failReason;
+            this.m_Reason = reason;
         }
 	}
 
 	public CallbackHandler<LoginProgressCallbackArgs> OnLoginProgress = new CallbackHandler<LoginProgressCallbackArgs>();
 
-    private void LoginProgressCallback(LoginStatus status, String message, String InternalErrorKey)
-	{
-		OnLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, InternalErrorKey));
-	}
-
-
-	// Called when a reply is received from the login server, the login sequence will block until this event returns
-    public class LoginResponseCallbackArgs implements CallbackArgs
-    {
-    	private boolean success;
-    	private boolean redirect;
-    	private String message;
-    	private String reason;
-    	private LoginResponseData reply;
-
-    	public boolean getSuccess()
-    	{
-    		return success;
-    	}
-
-    	public boolean getRedirect()
-    	{
-    		return redirect;
-    	}
-
-    	public String getMessage()
-    	{
-    		return message;
-    	}
-
-    	public String getReason()
-    	{
-    		return reason;
-    	}
-
-    	public LoginResponseData getReply()
-    	{
-    		return reply;
-    	}
-
-		public LoginResponseCallbackArgs(boolean success, boolean redirect,
-				String message, String reason, LoginResponseData reply) {
-			this.success = success;
-			this.redirect = redirect;
-			this.message = message;
-			this.reason = reason;
-			this.reply = reply;
-		}
-
-    }
-
-    private CallbackHandler<LoginResponseCallbackArgs> OnLoginResponse = new CallbackHandler<LoginResponseCallbackArgs>();
-
-    private HashMap<Callback<LoginResponseCallbackArgs>, String[]> CallbackOptions = new HashMap<Callback<LoginResponseCallbackArgs>, String[]>();
-
-	private void LoginResponseCallback(boolean loginSuccess, boolean redirect, String message, String reason, LoginResponseData replyData)
-	{
-		OnLoginResponse.dispatch(new LoginResponseCallbackArgs(loginSuccess, redirect, message, reason, replyData));
-	}
-
-	public final void RegisterLoginResponseCallback(Callback<LoginResponseCallbackArgs> callback, String[] options, boolean autoremove)
+    private HashMap<Callback<LoginProgressCallbackArgs>, String[]> CallbackOptions;
+    
+	public final void RegisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback, String[] options, boolean autoremove)
     {
         CallbackOptions.put(callback, options);
-        OnLoginResponse.add(callback, autoremove);
+        OnLoginProgress.add(callback, autoremove);
     }
 
-    public final void UnregisterLoginResponseCallback(Callback<LoginResponseCallbackArgs> callback)
+    public final void UnregisterLoginResponseCallback(Callback<LoginProgressCallbackArgs> callback)
     {
         CallbackOptions.remove(callback);
-        OnLoginResponse.remove(callback);
+        OnLoginProgress.remove(callback);
     }
     // #endregion Callback handlers
 
@@ -707,14 +660,23 @@ public class LoginManager
 
     // #region Public Methods
 
-    /** Login Routines */
-
-	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password) throws Exception
-	{
-		return new LoginParams(_Client, firstName, lastName, password, Settings.APPLICATION_NAME, Settings.APPLICATION_VERSION);
-	}
-
+    // #region Login Routines
+	
 	/**
+     * Generate sane default values for a login request
+     *
+     * @param firstName Account first name
+     * @param lastName Account last name
+     * @param password Account password
+     * @param startLocation Location where to start such as "home", "last", or an explicit start location
+     * @return A populated {@link LoginParams} struct containing sane defaults
+     */
+    public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String startLocation)
+    {
+    	return new LoginParams(_Client, firstName, lastName, password, startLocation);
+    }
+
+    /**
      * Generate sane default values for a login request
      *
      * @param firstName Account first name
@@ -726,10 +688,45 @@ public class LoginManager
      */
     public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String userAgent, String userVersion)
     {
-        return new LoginParams(_Client, firstName, lastName, password, userAgent, userVersion);
+    	LoginParams params = new LoginParams(_Client, firstName, lastName, password, null);
+    	params.Channel = userAgent;
+    	params.Version = userVersion;
+    	return params;
     }
 
     /**
+     * Simplified login that takes the most common and required fields to receive
+     * Logs in to the last known position the avatar was in
+     *
+     * @param firstName Account first name
+     * @param lastName Account last name
+     * @param password Account password
+     * @return Whether the login was successful or not. Register to the OnLoginResponse callback to receive more
+     * 				detailed information about the errors that have occurred
+     * @throws Exception
+     */
+	public final boolean Login(String firstName, String lastName, String password) throws Exception
+	{
+        return Login(new LoginParams(_Client, firstName, lastName, password, null));
+	}
+
+    /**
+     * Simplified login that takes the most common and required fields to receive
+     *
+     * @param firstName Account first name
+     * @param lastName Account last name
+     * @param password Account password
+     * @param startLocation The location to login too, such as "last", "home", or an explicit start location
+     * @return Whether the login was successful or not. Register to the OnLoginResponse callback to receive more
+     * 				detailed information about the errors that have occurred
+     * @throws Exception
+     */
+	public final boolean Login(String firstName, String lastName, String password, String startLocation) throws Exception
+	{
+        return Login(new LoginParams(_Client, firstName, lastName, password, startLocation));
+	}
+
+	/**
      * Simplified login that takes the most common and required fields
      * To receive
      *
@@ -738,15 +735,13 @@ public class LoginManager
      * @param password Account password
      * @param userAgent Client application name
      * @param userVersion Client application version
-     * @return Whether the login was successful or not. On failure the
-     *           LoginErrorKey string will contain the error code and LoginMessage
-     *           will contain a description of the error
+     * @return Whether the login was successful or not. Register to the OnLoginResponse callback to receive more
+     * 				detailed information about the errors that have occurred
      * @throws Exception
      */
     public final boolean Login(String firstName, String lastName, String password, String userAgent, String userVersion) throws Exception
     {
-        LoginParams loginParams = new LoginParams(_Client, firstName, lastName, password, userAgent, userVersion);
-        return Login(loginParams);
+        return Login(DefaultLoginParams(firstName, lastName, password, userAgent, userVersion));
     }
 
     /**
@@ -757,17 +752,16 @@ public class LoginManager
      * @param lastName Account last name
      * @param password Account password or MD5 hash of the password
      *          such as $1$1682a1e45e9f957dcdf0bb56eb43319c
-     * @param userAgent Client application name
      * @param start Starting location URI that can be built with StartLocation()
+     * @param userAgent Client application name
      * @param userVersion Client application version
-     * @return Whether the login was successful or not. On failure the
-     *           LoginErrorKey string will contain the error code and LoginMessage
-     *           will contain a description of the error
+     * @return Whether the login was successful or not. Register to the OnLoginResponse callback to receive more
+     * 				detailed information about the errors that have occurred
      * @throws Exception
      */
-    public final boolean Login(String firstName, String lastName, String password, String userAgent, String start, String userVersion) throws Exception
+    public final boolean Login(String firstName, String lastName, String password, String start, String userAgent, String userVersion) throws Exception
     {
-        LoginParams loginParams = new LoginParams(_Client, firstName, lastName, password, userAgent, userVersion);
+        LoginParams loginParams = DefaultLoginParams(firstName, lastName, password, userAgent, userVersion);
         loginParams.Start = start;
 
         return Login(loginParams);
@@ -778,10 +772,9 @@ public class LoginManager
      *
      * @param loginParams The values that will be passed to the login
      *          server, all fields must be set even if they are ""
-     * @return Whether the login was successful or not. On failure the
-     *           LoginErrorKey string will contain the error code and LoginMessage
-     *           will contain a description of the error
-     * @throws Throwable
+     * @return Whether the login was successful or not. Register to the OnLoginResponse callback to receive more
+     * 				detailed information about the errors that have occurred
+     * @throws Exception
      */
     public final boolean Login(LoginParams loginParams) throws Exception
     {
@@ -792,12 +785,12 @@ public class LoginManager
         }
 
         TimeoutEvent<LoginStatus> loginEvent = LoginEvents.create();
-        RequestLogin(loginParams);
+        RequestLogin(loginParams, null);
         LoginStatus status = loginEvent.waitOne(loginParams.Timeout);
         LoginEvents.cancel(loginEvent);
         if (status == null)
         {
-            UpdateLoginStatus(LoginStatus.Failed, "Timed out", null);
+            UpdateLoginStatus(LoginStatus.Failed, "Logon timed out", "timeout", null);
             return false;
         }
         return (status == LoginStatus.Success);
@@ -817,10 +810,12 @@ public class LoginManager
         return String.format("uri:%s&%d&%d&%d", sim, x, y, z);
     }
 
-    public void RequestLogin(final LoginParams loginParams) throws Exception
+    public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
     {
-        // #region Sanity Check loginParams
+        // Generate a random ID to identify this login attempt
+        loginParams.LoginID = new UUID();
 
+        // #region Sanity Check loginParams
         if (loginParams.Options == null)
         {
             loginParams.Options = new String[] {};
@@ -868,11 +863,10 @@ public class LoginManager
         }
         // #endregion
 
-        // TODO: Allow a user callback to be defined for handling the cert
-        // ServicePointManager.CertificatePolicy = new TrustAllCertificatePolicy();
-        // Even though this will compile on Mono 2.4, it throws a runtime exception
-        //ServicePointManager.ServerCertificateValidationCallback = TrustAllCertificatePolicy.TrustAllCertificateHandler;
+        if (callback != null)
+			RegisterLoginProgressCallback(callback, loginParams.Options, true);
 
+        
         URI loginUri;
         try
         {
@@ -928,7 +922,7 @@ public class LoginManager
             // Make the CAPS POST for login
 
             CapsClient loginRequest = new CapsClient(loginUri);
-            UpdateLoginStatus(LoginStatus.ConnectingToLogin, "Logging in as " + loginParams.FirstName + " " + loginParams.LastName + " ...", null);
+            UpdateLoginStatus(LoginStatus.ConnectingToLogin, "Logging in as " + loginParams.FirstName + " " + loginParams.LastName + " ...", null, null);
             loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout, new LoginReplyLLSDHandler(loginParams));
             // #endregion
         }
@@ -1002,7 +996,7 @@ public class LoginManager
                         }
 						catch (Exception ex)
 						{
-                            UpdateLoginStatus(LoginStatus.Failed, "Error opening the login server connection", ex.getMessage());
+                            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 						}
                     }
                 };
@@ -1011,7 +1005,7 @@ public class LoginManager
             }
             catch (Exception ex)
             {
-                UpdateLoginStatus(LoginStatus.Failed, "Error connecting to the login server", ex.getMessage());
+                UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
                 throw ex;
             }
             // #endregion
@@ -1021,7 +1015,7 @@ public class LoginManager
 
     // #region Private Methods
 
-    private void UpdateLoginStatus(LoginStatus status, String message, String reason)
+    private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply)
     {
         Logger.DebugLog("Login status: " + status.toString() + ", Message: " + message + (reason != null ? " Reason: " + reason : ""), _Client);
 
@@ -1031,7 +1025,7 @@ public class LoginManager
             LoginEvents.set(status);
         }
         // Fire the login status callback
-        LoginProgressCallback(status, message, reason);
+        OnLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, reason, reply));
     }
 
 
@@ -1049,7 +1043,7 @@ public class LoginManager
         // Fetch the login response
         if (response == null || !(response instanceof HashMap))
         {
-            UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", null);
+            UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", "bad response", null);
         }
 
         @SuppressWarnings("unchecked")
@@ -1074,7 +1068,7 @@ public class LoginManager
 		}
 		catch (Exception ex)
 		{
-            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getStackTrace().toString());
+            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 		}
     }
 
@@ -1110,13 +1104,13 @@ public class LoginManager
 			    }
 			    catch (Exception ex)
 			    {
-		            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getStackTrace().toString());
+		            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 			    }
             }
             else
             {
                 // No LLSD response
-                 UpdateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response");
+                 UpdateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response", null);
             }
 		}
 
@@ -1124,28 +1118,26 @@ public class LoginManager
 		public void failed(Exception ex)
 		{
             // Connection error
-            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getStackTrace().toString());
+            UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 		}
 
 		@Override
 		public void cancelled()
 		{
             // Connection canceled
-            UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "connection canceled");
+            UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "canceled", null);
 		}
     }
 
     private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception
     {
         boolean redirect = reply.Login.equals("indeterminate");
-        LoginResponseCallback(reply.Success, redirect, reply.Message, reply.Reason, reply);
-
         if (redirect)
         {
             // Login redirected
 
             // Make the next login URL jump
-            UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, null);
+            UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, reply.Reason, null);
             loginParams.URI = reply.NextUrl;
             loginParams.MethodName = reply.NextMethod;
             loginParams.Options = reply.NextOptions;
@@ -1159,7 +1151,7 @@ public class LoginManager
 			}
 			catch (InterruptedException ex) { }
 
-            RequestLogin(loginParams);
+            RequestLogin(loginParams, null);
         }
         else if (reply.Success)
         {
@@ -1168,7 +1160,7 @@ public class LoginManager
             _Client.Network.setUDPBlackList(reply.UDPBlacklist);
             LoginSeedCapability = reply.SeedCapability;
 
-            UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", null);
+            UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", null);
 
             if (reply.SimIP != null && reply.SimPort != 0)
             {
@@ -1179,28 +1171,26 @@ public class LoginManager
 					_Client.Network.SendPacket(new EconomyDataRequestPacket());
 
 					// Update the login message with the MOTD returned from the server
-					UpdateLoginStatus(LoginStatus.Success, reply.Message, null);
+					UpdateLoginStatus(LoginStatus.Success, reply.Message, reply.Reason, null);
 				}
 				else
 				{
-					UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", null);
+					UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator", "connection failed", null);
 				}
             }
             else
             {
-                UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", null);
+                UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", "no sim", null);
             }
         }
         else
         {
-            // Login failed
-
-        	// Make sure a usable error key is set
+            // Login failed, make sure a usable error key is set
             if (Helpers.isEmpty(reply.Reason))
             {
             	reply.Reason = "unknown";
             }
-            UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason);
+            UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason, reply);
         }
     }
     // #endregion

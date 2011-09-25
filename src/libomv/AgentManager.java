@@ -44,8 +44,9 @@ import libomv.GridManager.GridLayerType;
 import libomv.GridManager.GridRegion;
 import libomv.GroupManager.ChatSessionMember;
 import libomv.GroupManager.GroupPowers;
-import libomv.LoginManager.LoginResponseCallbackArgs;
+import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginResponseData;
+import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
@@ -1514,12 +1515,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     private int HeightWidthGenCounter;
 
-    private class Network_OnLoginResponse implements Callback<LoginResponseCallbackArgs>
+    private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
     {
     	@Override
-		public void callback(LoginResponseCallbackArgs e)
+		public void callback(LoginProgressCallbackArgs e)
         {
-            if (e.getSuccess())
+            if (e.getStatus() == LoginStatus.Success)
             {
                 _Movement.ResetTimer();
 
@@ -1560,7 +1561,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
         _Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
         // Login
-        _Client.Login.RegisterLoginResponseCallback(new Network_OnLoginResponse(), null, false);
+        _Client.Login.RegisterLoginProgressCallback(new Network_OnLoginProgress(), null, false);
 
         // Coarse location callback
 		_Client.Network.RegisterCallback(PacketType.CoarseLocationUpdate, this);

@@ -26,9 +26,9 @@ a server having "lindenlab" in its URI.
 Running examples
 ----------------
 
-You can run examples directlry from within Eclipse.
+You can run examples directly from within Eclipse.
 
-For example to run the "sldump" test application select the src-smapl/libomv.test/sldump entry and select
+For example to run the "sldump" test application select the src-sample/libomv.test/sldump entry and select
 Run as Java Application from the context menu.
 
 Rebuilding packet classes

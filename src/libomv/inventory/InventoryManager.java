@@ -47,8 +47,9 @@ import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.GridClient;
-import libomv.LoginManager.LoginResponseCallbackArgs;
+import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginResponseData;
+import libomv.LoginManager.LoginStatus;
 import libomv.ObjectManager.SaleType;
 import libomv.Simulator;
 import libomv.StructuredData.OSD;
@@ -794,7 +795,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
     // #endregion Properties
 
     private Callback<InstantMessageCallbackArgs> instantMessageCallback;
-    private Callback<LoginResponseCallbackArgs> loginResponseCallback;
+    private Callback<LoginProgressCallbackArgs> loginProgressCallback;
     /**
      * Default constructor
      *
@@ -809,8 +810,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
         _Client.Self.OnInstantMessage.add(instantMessageCallback, false);
 
         // Register extra parameters with login and parse the inventory data that comes back
-        loginResponseCallback = new Network_OnLoginResponse();
-        _Client.Login.RegisterLoginResponseCallback(loginResponseCallback, new String[] { "inventory-root", "inventory-skeleton", "inventory-lib-root", "inventory-lib-owner", "inventory-skel-lib"}, false);
+        loginProgressCallback = new Network_OnLoginProgress();
+        _Client.Login.RegisterLoginProgressCallback(loginProgressCallback, new String[] { "inventory-root", "inventory-skeleton", "inventory-lib-root", "inventory-lib-owner", "inventory-skel-lib"}, false);
 
         _Client.Network.RegisterCallback(PacketType.UpdateCreateInventoryItem, this);
         _Client.Network.RegisterCallback(PacketType.SaveAssetIntoInventory, this);
@@ -827,7 +828,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	protected void finalize() throws Throwable
     {
     	_Client.Self.OnInstantMessage.remove(instantMessageCallback);
-    	_Client.Login.UnregisterLoginResponseCallback(loginResponseCallback);
+    	_Client.Login.UnregisterLoginResponseCallback(loginProgressCallback);
     	super.finalize();
     }
 
@@ -3554,12 +3555,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
     }
 
 
-    private class Network_OnLoginResponse implements Callback<LoginResponseCallbackArgs>
+    private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
     {
 		@Override
-		public void callback(LoginResponseCallbackArgs e)
+		public void callback(LoginProgressCallbackArgs e)
     	{
-            if (e.getSuccess())
+            if (e.getStatus() == LoginStatus.Success)
             {
             	LoginResponseData replyData = e.getReply();
                 // Initialize the store here so we know who owns it:

@@ -60,6 +60,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
@@ -106,11 +107,15 @@ public class CapsClient
     {
     	Address = address;
         Client = new DefaultHttpAsyncClient();
-		try
-		{
-			register(new Scheme("https", 443, new SSLLayeringStrategy(Helpers.GetExtendedKeyStore(cert))));
-		}
-		catch (Exception ex) { }
+
+        if (address.getScheme().equals("https") && address.getHost().contains("linden"))
+        {
+        	try
+        	{
+        		register(new Scheme("https", 443, new SSLLayeringStrategy(Helpers.GetExtendedKeyStore(cert))));
+        	}
+    		catch (Exception ex) { }
+        }
         Client.start();
     }
 

@@ -52,31 +52,50 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
+import libomv.StructuredData.OSDString;
 import libomv.assets.AssetManager;
 import libomv.capabilities.CapsMessage;
 import libomv.inventory.InventoryManager;
 import libomv.utils.Helpers;
 
-
-/* Main class to expose the functionality of a particular grid to clients. All
- * of the classes needed for sending and receiving data are accessible through
- * this class. */
+/* Main class to expose the functionality of a particular grid to clients. All of the
+ * classes needed for sending and receiving data are accessible throug this class.
+ */
 public class GridClient
 {
 	// #region gridlist definitions
 	public class GridInfo
 	{
-		public String gridnick;    // gridnick
-		public String gridname;    // gridname
-		public String platform;    // platform
-		public String loginuri;    // login, loginuri
-		public String loginpage;   // welcome, loginpage
-		public String helperuri;   // economy, helperuri
-		public String website;     // about, website
-		public String support;     // help, support
-		public String register;    // register, account
-		public String password;    // password
+		public String gridnick; // gridnick
+		public String gridname; // gridname
+		public String platform; // platform
+		public String loginuri; // login, loginuri
+		public String loginpage; // welcome, loginpage
+		public String helperuri; // economy, helperuri
+		public String website; // about, website
+		public String support; // help, support
+		public String register; // register, account
 		public int version;
+		
+		public transient boolean saveSettings;
+		public transient boolean savePassword;
+		public transient String firstname; // firstname
+		public transient String lastname; // lastname
+		public transient String startLocation;
+
+		private transient String password; // password
+		public String getPassword()
+		{
+			return password;
+		}
+		public void setPassword(String password)
+		{
+			if (password.length() != 35 && !password.startsWith("$1$"))
+			{
+				password = Helpers.MD5Password(password);
+			}
+			this.password = password;
+		}
 
 		@Override
 		public String toString()
@@ -104,14 +123,16 @@ public class GridClient
 	// Networking Subsystem
 	public NetworkManager Network;
 	// Login Subsystem of Network handler
-    public LoginManager Login;
-    // Caps Messages
-    public CapsMessage Messages;
-    // AgentThrottle
-    public AgentThrottle Throttle;
-    /* Settings class including constant values and changeable
-       parameters for everything */
-    public Settings Settings;
+	public LoginManager Login;
+	// Caps Messages
+	public CapsMessage Messages;
+	// AgentThrottle
+	public AgentThrottle Throttle;
+	/*
+	 * Settings class including constant values and changeable parameters for
+	 * everything
+	 */
+	public Settings Settings;
 	// 'Client's Avatar' Subsystem
 	public AgentManager Self;
 	// Other Avatars Subsystem
@@ -122,22 +143,22 @@ public class GridClient
 	public GroupManager Groups;
 	// Grid (aka simulator group) Subsystem
 	public GridManager Grid;
-    /* Asset subsystem */
-    public AssetManager Assets;
-    /* Inventory subsystem */
-    public InventoryManager Inventory;
+	/* Asset subsystem */
+	public AssetManager Assets;
+	/* Inventory subsystem */
+	public InventoryManager Inventory;
 	// Parcel (subdivided simulator lots) Subsystem
-//	public ParcelManager Parcels;
+	// public ParcelManager Parcels;
 	// Object Subsystem
-//	public ObjectManager Objects;
-    /* Directory searches including classifieds, people, land sales, etc */
-//    public DirectoryManager Directory;
-    /* Appearance subsystem */
-//  public AppearanceManager Appearance;
-    /* Handles land, wind, and cloud heightmaps */
-//    public TerrainManager Terrain;
-    /* Handles sound-related networking */
-//    public SoundManager Sound;
+	// public ObjectManager Objects;
+	/* Directory searches including classifieds, people, land sales, etc */
+	// public DirectoryManager Directory;
+	/* Appearance subsystem */
+	// public AppearanceManager Appearance;
+	/* Handles land, wind, and cloud heightmaps */
+	// public TerrainManager Terrain;
+	/* Handles sound-related networking */
+	// public SoundManager Sound;
 
 	// Debug flag
 	public boolean Debug;
@@ -164,23 +185,23 @@ public class GridClient
 		Groups = new GroupManager(this);
 
 		if (Settings.SEND_AGENT_THROTTLE)
-		    Throttle = new AgentThrottle(this);
+			Throttle = new AgentThrottle(this);
 
 		if (Settings.ENABLE_ASSET_MANAGER)
 			Assets = new AssetManager(this);
 
 		if (Settings.ENABLE_INVENTORY_MANAGER)
 			Inventory = new InventoryManager(this);
- 		Grid = new GridManager(this);
+		Grid = new GridManager(this);
 
- //		Parcels = new ParcelManager(this);
-//		Avatars = new AvatarManager(this);
-//		Objects = new ObjectManager(this);
-//		Directory = new DirectoryManager(this);
+		// Parcels = new ParcelManager(this);
+		// Avatars = new AvatarManager(this);
+		// Objects = new ObjectManager(this);
+		// Directory = new DirectoryManager(this);
 		Debug = true;
 	}
 
-	public Set<String> getNames()
+	public Set<String> getGridNames()
 	{
 		return gridlist.keySet();
 	}
@@ -196,6 +217,7 @@ public class GridClient
 			setDefaultGrid(null);
 		return gridlist.get(defaultGrid);
 	}
+
 	public void setDefaultGrid(String name)
 	{
 		if (name != null && gridlist.containsKey(name))
@@ -226,10 +248,11 @@ public class GridClient
 	}
 
 	/**
-	 * Retrieves the GridInfo settings from the grid user server, when the server supports
-	 * the GridInfo protocol.
-	 *
-	 * @param loginuri The HTTP address of the user server
+	 * Retrieves the GridInfo settings from the grid user server, when the
+	 * server supports the GridInfo protocol.
+	 * 
+	 * @param loginuri
+	 *            The HTTP address of the user server
 	 * @return a filled in GridInfo if the call was successful, null otherwise
 	 * @throws Exception
 	 */
@@ -240,7 +263,7 @@ public class GridClient
 		HttpGet getMethod = new HttpGet(new URI(loginuri + GRID_INFO_PROTOCOL));
 		try
 		{
-		    HttpResponse response = client.execute(getMethod);
+			HttpResponse response = client.execute(getMethod);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
 			{
 				HttpEntity entity = response.getEntity();
@@ -250,8 +273,8 @@ public class GridClient
 				parser.require(XmlPullParser.START_TAG, null, GRIDINFO);
 				if (!parser.isEmptyElementTag())
 				{
-				   parser.nextTag();
-			       info = parseRecord(parser);
+					parser.nextTag();
+					info = parseRecord(parser);
 				}
 			}
 		}
@@ -266,63 +289,79 @@ public class GridClient
 	{
 		GridInfo info = new GridInfo();
 		info.version = -1;
-	    parser.require(XmlPullParser.START_TAG, null, null);
-		do {
-		    if (parser.isEmptyElementTag())
-		    {
-		    	/* forward to end_tag */
-		    	parser.nextTag();
-		    }
-		    else
-		    {
-		        String name = parser.getName();
+		parser.require(XmlPullParser.START_TAG, null, null);
+		do
+		{
+			if (parser.isEmptyElementTag())
+			{
+				/* forward to end_tag */
+				parser.nextTag();
+			}
+			else
+			{
+				String name = parser.getName();
 
-		        if (name.equals("gridnick"))
-	     	    {
-				    info.gridnick = parser.nextText().trim();
-		        }
-		        else if (name.equals("gridname"))
-		        {
-			        info.gridname = parser.nextText().trim();
-		        }
-		        else if (name.equals("platform"))
-		        {
-			        info.platform = parser.nextText().trim();
-		        }
-		        else if (name.equals("login") || name.equals("loginuri"))
-		        {
-			        info.loginuri = parser.nextText().trim();
-		        }
-		        else if (name.equals("welcome") || name.equals("loginpage"))
-		        {
-			        info.loginpage = parser.nextText().trim();
-		        }
-		        else if (name.equals("economy") || name.equals("helperuri"))
-		        {
-			        info.helperuri = parser.nextText().trim();
-		        }
-		        else if (name.equals("about") || name.equals("website"))
-		        {
-			        info.website = parser.nextText().trim();
-		        }
-		        else if (name.equals("help") || name.equals("support"))
-		        {
-			        info.support = parser.nextText().trim();
-		        }
-		        else if (name.equals("register") || name.equals("account"))
-		        {
-			        info.register = parser.nextText().trim();
-		        }
-		        else if (name.equals("password"))
-		        {
-			        info.password = parser.nextText().trim();
-		        }
-		        else
-		        {
-			    	/* forward to end_tag */
-			    	parser.nextTag();
-		        }
-		    }
+				if (name.equals("gridnick"))
+				{
+					info.gridnick = parser.nextText().trim();
+				}
+				else if (name.equals("gridname"))
+				{
+					info.gridname = parser.nextText().trim();
+				}
+				else if (name.equals("platform"))
+				{
+					info.platform = parser.nextText().trim();
+				}
+				else if (name.equals("login") || name.equals("loginuri"))
+				{
+					info.loginuri = parser.nextText().trim();
+				}
+				else if (name.equals("welcome") || name.equals("loginpage"))
+				{
+					info.loginpage = parser.nextText().trim();
+				}
+				else if (name.equals("economy") || name.equals("helperuri"))
+				{
+					info.helperuri = parser.nextText().trim();
+				}
+				else if (name.equals("about") || name.equals("website"))
+				{
+					info.website = parser.nextText().trim();
+				}
+				else if (name.equals("help") || name.equals("support"))
+				{
+					info.support = parser.nextText().trim();
+				}
+				else if (name.equals("register") || name.equals("account"))
+				{
+					info.register = parser.nextText().trim();
+				}
+				else if (name.equals("firstname"))
+				{
+					info.firstname = parser.nextText().trim();
+					info.saveSettings = true;
+				}
+				else if (name.equals("lastname"))
+				{
+					info.lastname = parser.nextText().trim();
+					info.saveSettings = true;
+				}
+				else if (name.equals("startLocation"))
+				{
+					info.startLocation = parser.nextText().trim();
+				}
+				else if (name.equals("password"))
+				{
+					info.password = parser.nextText().trim();
+					info.savePassword = true;
+				}
+				else
+				{
+					/* forward to end_tag */
+					parser.nextTag();
+				}
+			}
 		} while (parser.nextTag() == XmlPullParser.START_TAG);
 		return info;
 	}
@@ -341,7 +380,8 @@ public class GridClient
 		return info;
 	}
 
-	private void initializeGridList() throws IOException, ParseException, IllegalStateException, URISyntaxException, IllegalArgumentException, IllegalAccessException
+	private void initializeGridList() throws IOException, ParseException, IllegalStateException, URISyntaxException,
+			IllegalArgumentException, IllegalAccessException
 	{
 		boolean modified = setList(loadSettings(), false);
 		modified |= setList(loadDefaults(), true);
@@ -363,10 +403,10 @@ public class GridClient
 
 		boolean modified = false;
 		int version = 0;
-		OSDArray array = (OSDArray)list;
+		OSDArray array = (OSDArray) list;
 		for (int i = 0; i < array.size(); i++)
 		{
-			OSDMap map = (OSDMap)array.get(i);
+			OSDMap map = (OSDMap) array.get(i);
 			if (map.containsKey(DEFAULT_GRIDS_VERSION))
 			{
 				version = map.get(DEFAULT_GRIDS_VERSION).AsInteger();
@@ -377,8 +417,8 @@ public class GridClient
 			}
 			else
 			{
-		    	GridInfo newinfo = new GridInfo();
-		    	map.deserializeMembers(newinfo);
+				GridInfo newinfo = new GridInfo();
+				map.deserializeMembers(newinfo);
 				GridInfo oldinfo = gridlist.get(newinfo.gridname);
 				if (!merge || oldinfo == null || oldinfo.version < newinfo.version)
 				{
@@ -399,11 +439,23 @@ public class GridClient
 		map.put(DEFAULT_GRIDS_VERSION, OSD.FromInteger(listversion));
 		array.add(map);
 
-	    for (GridInfo info : gridlist.values())
-	    {
-		    array.add(OSD.serializeMembers(info));
-	    }
-	    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+		for (GridInfo info : gridlist.values())
+		{
+			// This doesn't save the transient fields
+			OSDMap members = OSD.serializeMembers(info);
+			if (info.saveSettings)
+			{
+				members.put("firstname", OSDString.FromString(info.firstname));
+				members.put("lastname", OSDString.FromString(info.lastname));
+				members.put("startLocation", OSDString.FromString(info.startLocation));
+				if (info.savePassword)
+				{
+					members.put("password", OSDString.FromString(info.password));
+				}
+			}
+			array.add(members);
+		}
+		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 		prefs.put(GRID_LIST, array.serializeToString(OSDFormat.Xml));
 		prefs.put(DEFAULT_GRID, defaultGrid);
 	}
@@ -440,32 +492,35 @@ public class GridClient
 		HttpGet getMethod = new HttpGet(new URI(listUri));
 		try
 		{
-		    HttpResponse response = client.execute(getMethod);
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-            {
-            	throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-            }
+			HttpResponse response = client.execute(getMethod);
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+			{
+				throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+			}
 
-            HttpEntity entity = response.getEntity();
-            if (entity != null)
-            {
+			HttpEntity entity = response.getEntity();
+			if (entity != null)
+			{
 				InputStream stream = entity.getContent();
-                String charset = null;
-                if (entity.getContentType() != null) {
-                    HeaderElement values[] = entity.getContentType().getElements();
-                    if (values.length  > 0) {
-                        NameValuePair param = values[0].getParameterByName("charset");
-                        if (param != null) {
-                            charset = param.getValue();
-                        }
-                    }
-                }
-                if (charset == null)
-                {
-                    charset = HTTP.DEFAULT_CONTENT_CHARSET;
-                }
+				String charset = null;
+				if (entity.getContentType() != null)
+				{
+					HeaderElement values[] = entity.getContentType().getElements();
+					if (values.length > 0)
+					{
+						NameValuePair param = values[0].getParameterByName("charset");
+						if (param != null)
+						{
+							charset = param.getValue();
+						}
+					}
+				}
+				if (charset == null)
+				{
+					charset = HTTP.DEFAULT_CONTENT_CHARSET;
+				}
 				osd = OSD.parse(stream, charset);
-            }
+			}
 		}
 		finally
 		{

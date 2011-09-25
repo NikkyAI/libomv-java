@@ -28,7 +28,8 @@ package libomv.test;
 
 import libomv.GridClient;
 import libomv.LoginManager.LoginParams;
-import libomv.LoginManager.LoginResponseCallbackArgs;
+import libomv.LoginManager.LoginProgressCallbackArgs;
+import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectType;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.Simulator;
@@ -82,7 +83,7 @@ public class sldump implements PacketCallback
 
 	public sldump(String[] args)
 	{
-		Callback<LoginResponseCallbackArgs> loginResp = new LoginResponseHandler();
+		Callback<LoginProgressCallbackArgs> loginResp = new LoginProgressHandler();
 		Callback<DisconnectedCallbackArgs> disconnect = new DisconnectedHandler();
 		GridClient client = null;
 
@@ -90,10 +91,10 @@ public class sldump implements PacketCallback
 		{
 			client = new GridClient();
 			client.setDefaultGrid("secondlife");
-			LoginParams loginParams = client.Login.DefaultLoginParams(args[0], args[1], args[2]);
+			LoginParams loginParams = client.Login.new LoginParams(client, args[0], args[1], args[2], "last");
 
 			// Setup the Login Response handler to print out the result of the login
-			client.Login.RegisterLoginResponseCallback(loginResp, loginParams.Options, false);
+			client.Login.RegisterLoginProgressCallback(loginResp, loginParams.Options, false);
 
 			// Setup the packet callback and disconnect event handler
 			client.Network.RegisterCallback(PacketType.Default, this);
@@ -136,17 +137,17 @@ public class sldump implements PacketCallback
 		System.out.println("sldump: Packet received " + packet.toString());
 	}
 
-	public class LoginResponseHandler implements Callback<LoginResponseCallbackArgs>
+	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginResponseCallbackArgs e)
+		public void callback(LoginProgressCallbackArgs e)
 		{
-			if (e.getSuccess())
+			if (e.getStatus() == LoginStatus.Success)
 			{
 				// Login was successful
 				System.out.println("sldump: Message of the day: " + e.getMessage());
 			}
-			else if (e.getRedirect())
+			else if (e.getStatus() == LoginStatus.Redirecting)
 			{
 				// Server requested redirection
 				System.out.println("sldump: Server requested redirection: " + e.getReason());
