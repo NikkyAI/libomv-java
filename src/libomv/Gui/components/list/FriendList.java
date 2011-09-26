@@ -1,7 +1,33 @@
+/**
+ * Copyright (c) 2009-2011, Frederick Martian
+ * All rights reserved.
+ *
+ * - Redistribution and use in source and binary forms, with or without
+ *   modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * - Neither the name of the openmetaverse.org nor the names
+ *   of its contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package libomv.Gui.components.list;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -21,6 +47,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -28,83 +55,99 @@ import javax.swing.SwingUtilities;
 import libomv.FriendsManager.FriendInfo;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendRightsCallbackArgs;
+import libomv.FriendsManager.FriendshipResponseCallbackArgs;
+import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.GridClient;
 import libomv.Gui.components.list.SortedListModel.SortOrder;
+import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
 // List to display the friends
-public class FriendList extends JList
+public class FriendList extends JScrollPane
 {
 	private static final long serialVersionUID = 1L;
 
 	private static ImageIcon offline = null;
 	private static ImageIcon online = null;
-	private static ImageIcon typing = null;
-	private static ImageIcon message = null;
 
 	private GridClient _Client;
+
+	private JList jLFriendsList;
 
 	/**
 	 * Constructs a list to display
 	 */
 	public FriendList(GridClient client)
 	{
-		super(new SortedListModel(new DefaultListModel(), SortOrder.ASCENDING, FriendComparator));
+		super();
 		this._Client = client;
-		// install a mouse handler
-		addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mouseClicked(MouseEvent e)
-			{
-				// Select the item first.
-				setSelectedIndex(locationToIndex(e.getPoint()));
-
-				// If an index is selected...
-				if (getSelectedIndex() >= 0)
-				{
-					// If the left mouse button was pressed
-					if (SwingUtilities.isLeftMouseButton(e))
-					{
-						// Look for a double click.
-						if (e.getClickCount() >= 2)
-						{
-							// Get the associated agent.
-							FriendInfo friend = (FriendInfo) getSelectedValue();
-							// Only allow creation of a chat window if the
-							// avatar name is resolved.
-							if (friend.getName() != null && !friend.getName().isEmpty())
-							{
-								// TODO: Create a private chat
-							}
-						}
-					}
-					// If the right mouse button was pressed...
-					else if (SwingUtilities.isRightMouseButton(e))
-					{
-						FriendPopupMenu fpm = new FriendPopupMenu(_Client, (FriendInfo) (getSelectedValue()));
-						fpm.show(getJList(), e.getX(), e.getY());
-					}
-				}
-			}
-		});
 
 		// install friend change event handlers
 		_Client.Friends.OnFriendRights.add(new FriendRightsChanged());
 		_Client.Friends.OnFriendNotification.add(new FriendNotification());
+		_Client.Friends.OnFriendshipResponse.add(new FriendshipResponse());
+		_Client.Friends.OnFriendshipTerminated.add(new FriendshipTerminated());
 
-		// create Renderer and display
-		setCellRenderer(new FriendListRow());
-		// only allow single selections.
-		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// Choose a sensible minimum size.
+		setPreferredSize(new Dimension(200, 0));
+		// Add the friends list to the viewport.
+		getViewport().add(getJFriendsList());
 	}
 
-	private final JList getJList()
+	private final JList getJFriendsList()
 	{
-		return this;
+		if (jLFriendsList == null)
+		{
+			jLFriendsList = new JList(new SortedListModel(new DefaultListModel(), SortOrder.ASCENDING, FriendComparator));
+			// install a mouse handler
+			jLFriendsList.addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mouseClicked(MouseEvent e)
+				{
+					// Select the item first.
+					jLFriendsList.setSelectedIndex(jLFriendsList.locationToIndex(e.getPoint()));
+
+					// If an index is selected...
+					if (jLFriendsList.getSelectedIndex() >= 0)
+					{
+						// If the left mouse button was pressed
+						if (SwingUtilities.isLeftMouseButton(e))
+						{
+							// Look for a double click.
+							if (e.getClickCount() >= 2)
+							{
+								// Get the associated agent.
+								FriendInfo friend = (FriendInfo) jLFriendsList.getSelectedValue();
+								// Only allow creation of a chat window if the avatar name is resolved.
+								if (friend.getName() != null && !friend.getName().isEmpty())
+								{
+									// TODO: Create a private chat
+								}
+							}
+						}
+						// If the right mouse button was pressed...
+						else if (SwingUtilities.isRightMouseButton(e))
+						{
+							FriendPopupMenu fpm = new FriendPopupMenu(_Client, (FriendInfo) (jLFriendsList.getSelectedValue()));
+							fpm.show(jLFriendsList, e.getX(), e.getY());
+						}
+					}
+				}
+			});
+			
+			// Initialize the list with the values from the friends manager
+			DefaultListModel model = (DefaultListModel) ((SortedListModel) jLFriendsList.getModel()).getUnsortedModel();
+			model.copyInto(_Client.Friends.FriendList.values().toArray());
+			// create Renderer and display
+			jLFriendsList.setCellRenderer(new FriendListRow());
+			// only allow single selections.
+			jLFriendsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		}
+		return jLFriendsList;
 	}
 
 	private final static Comparator<Object> FriendComparator = new Comparator<Object>()
@@ -131,35 +174,127 @@ public class FriendList extends JList
 	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs>
 	{
 		@Override
-		public void callback(FriendRightsCallbackArgs a)
+		public void callback(FriendRightsCallbackArgs e)
 		{
-			DefaultListModel list = (DefaultListModel) ((SortedListModel) getModel()).getUnsortedModel();
-			int idx = list.indexOf(a.getFriendInfo());
-			if (idx >= 0)
-				list.setElementAt(a.getFriendInfo(), idx);
+			changeFriend(e.getFriendInfo());
 		}
 	}
 
 	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
-		public void callback(FriendNotificationCallbackArgs a)
+		public void callback(FriendNotificationCallbackArgs e)
 		{
-			DefaultListModel list = (DefaultListModel) ((SortedListModel) getModel()).getUnsortedModel();
-			for (Enumeration<?> e = list.elements(); e.hasMoreElements();)
+			FriendInfo info = _Client.Friends.FriendList.get(e.getAgentID());
+			if (info != null)
 			{
-				FriendInfo info = (FriendInfo) e.nextElement();
-				if (info.getUUID().equals(a.getAgentID()))
+				addFriend(info);
+			}
+		}
+	}
+
+	private class FriendshipResponse implements Callback<FriendshipResponseCallbackArgs>
+	{
+		@Override
+		public void callback(FriendshipResponseCallbackArgs e)
+		{
+			FriendInfo info =  _Client.Friends.FriendList.get(e.getAgentID());
+			if (info != null)
+			{
+				if (e.getAccepted())
 				{
-					info.setIsOnline(a.getOnline());
-					list.setElementAt(info, list.indexOf(info));
-					return;
+					addFriend(info);
+				}
+				else
+				{
+					removeFriend(info);
 				}
 			}
 		}
 	}
 
-	public class FriendListRow extends JPanel implements ListCellRenderer
+	private class FriendshipTerminated implements Callback<FriendshipTerminatedCallbackArgs>
+	{
+		@Override
+		public void callback(FriendshipTerminatedCallbackArgs e)
+		{
+			FriendInfo info = findFriend(e.getOtherID());
+			if (info != null)
+			{
+				removeFriend(info);
+			}
+		}
+	}
+	
+	/**
+	 * Find the entry based on the friends UUID
+	 * 
+	 * @param id The UUID of the friend
+	 * @return returns the FriendInfo if found, null otherwise
+	 */
+	public FriendInfo findFriend(UUID id)
+	{
+		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
+		for (Enumeration<?> e = model.elements(); e.hasMoreElements();)
+		{
+			FriendInfo info = (FriendInfo) e.nextElement();
+			if (info.getID().equals(id))
+			{
+				return info;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Add a friend to the list
+	 * 
+	 * @param info The friend info to add to the list
+	 * @return true if te friend was added, false if it was replaced
+	 */
+	public boolean addFriend(FriendInfo info)
+	{
+		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
+		int idx = model.indexOf(info);
+		if (idx < 0)
+			model.add(model.size(), info);
+		else
+			model.set(idx, info);
+		return idx < 0;
+	}
+
+	/**
+	 * Remove a friend from the list
+	 * 
+	 * @param info The friend info to remove from the list
+	 * @return true if the friend info was successful removed, false if the friend could not be found, 
+	 */
+	public boolean removeFriend(FriendInfo info)
+	{
+		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
+		int idx = model.indexOf(info);
+		if (idx < 0)
+			return false;
+		model.remove(idx);
+		return true;
+	}
+	
+	/**
+	 * Change friend info in the list
+	 * 
+	 * @param info The friend info to change
+	 * @return true if the friend info was successfull changed, false otherwise
+	 */
+	public boolean changeFriend(FriendInfo info)
+	{
+		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
+		int idx = model.indexOf(info);
+		if (idx >= 0)
+			model.set(idx, info);
+		return idx >= 0;
+	}
+
+	private class FriendListRow extends JPanel implements ListCellRenderer
 	{
 		private static final long serialVersionUID = 1L;
 
@@ -245,7 +380,10 @@ public class FriendList extends JList
 		{
 			FriendInfo info = (FriendInfo) value;
 
-			jlblName.setText(info.getName());
+			String name = info.getName();
+			if (name == null || name.isEmpty())
+				name = "loading...";
+			jlblName.setText(name);
 			jlblName.setIcon(info.getIsOnline() ? online : offline);
 			jckCanSeeMe.setSelected(info.getCanSeeMeOnline());
 			jckCanMapMe.setSelected(info.getCanSeeMeOnMap());
@@ -285,7 +423,7 @@ public class FriendList extends JList
 		}
 	}
 
-	public class FriendPopupMenu extends JPopupMenu
+	private class FriendPopupMenu extends JPopupMenu
 	{
 		private static final long serialVersionUID = 1L;
 		// The friend associated with the menu
@@ -322,9 +460,9 @@ public class FriendList extends JList
 			this._Info = info;
 			this._Client = client;
 
-			// Send message.
+			// Send message
 			add(getJmiSendMessage());
-			// Add the profile menu item.
+			// Add the profile menu item
 			add(getJmiProfile());
 			// Send money transfer
 			add(getJmiMoneyTransfer());
@@ -332,18 +470,18 @@ public class FriendList extends JList
 			{
 				// Offer teleport.
 				add(getJmiOfferTeleport());
-				if (_Client.Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getUUID()))
+				if (_Client.Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID()))
 				{
 					add(new JPopupMenu.Separator());
-					// Allow teleporting to the agent.
+					// Allow teleporting to the agent
 					add(getJmiTeleportTo());
-					// Allow autopiloting to the agent.
+					// Allow autopiloting to the agent
 					add(getJmiAutopilotTo());
 					add(new JPopupMenu.Separator());
 				}
 
 			}
-			// Allow removing as a friend.
+			// Allow removing as a friend
 			add(getJmiRemoveAsFriend());
 		}
 
@@ -357,7 +495,7 @@ public class FriendList extends JList
 			if (jmiSendMessage == null)
 			{
 				jmiSendMessage = new JMenuItem("Send message");
-				// Add an ActionListener.
+				// Add an ActionListener
 				jmiSendMessage.addActionListener(new ActionListener()
 				{
 					/**
@@ -381,7 +519,7 @@ public class FriendList extends JList
 		/**
 		 * Get the profile menu item
 		 * 
-		 * @return The "autopilot to" menu item
+		 * @return The "profile" menu item
 		 */
 		private JMenuItem getJmiProfile()
 		{
@@ -400,9 +538,7 @@ public class FriendList extends JList
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						// TODO: request avatar profile
-						// _Client.Avatars.RequestAvatarProfile(_Info.getUUID(),
-						// _Info.getName());
+						// TODO: open avatar profile dialog
 					}
 				});
 			}
@@ -412,7 +548,7 @@ public class FriendList extends JList
 		/**
 		 * Get the money transfer menu item
 		 * 
-		 * @return The "autopilot to" menu item
+		 * @return The "pay" menu item
 		 */
 		private JMenuItem getJmiMoneyTransfer()
 		{
@@ -464,7 +600,7 @@ public class FriendList extends JList
 						// Offer teleportation.
 						try
 						{
-							_Client.Self.SendTeleportLure(_Info.getUUID());
+							_Client.Self.SendTeleportLure(_Info.getID());
 						}
 						catch (Exception ex)
 						{
@@ -501,7 +637,8 @@ public class FriendList extends JList
 						// Terminate the friendship
 						try
 						{
-							_Client.Friends.TerminateFriendship(_Info.getUUID());
+							_Client.Friends.TerminateFriendship(_Info.getID());
+							removeFriend(_Info);
 						}
 						catch (Exception ex)
 						{
@@ -538,7 +675,7 @@ public class FriendList extends JList
 						// Teleport
 						try
 						{
-							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getUUID());
+							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getID());
 							_Client.Self.Teleport(_Client.Network.getCurrentSim().Name, pos);
 						}
 						catch (Exception ex)
@@ -577,7 +714,7 @@ public class FriendList extends JList
 						// Autopilot
 						try
 						{
-							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getUUID());
+							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getID());
 							_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
 						}
 						catch (Exception ex)
