@@ -2013,7 +2013,6 @@ public class GroupManager implements PacketCallback, CapsCallback
 			throws UnsupportedEncodingException
 	{
 		CreateGroupReplyPacket reply = (CreateGroupReplyPacket) packet;
-
 		String message = Helpers.BytesToString(reply.ReplyData.getMessage());
 
 		OnGroupCreatedReply.dispatch(new GroupCreatedReplyCallbackArgs(reply.ReplyData.GroupID,

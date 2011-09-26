@@ -477,10 +477,10 @@ public class FriendList extends JScrollPane
 					add(getJmiTeleportTo());
 					// Allow autopiloting to the agent
 					add(getJmiAutopilotTo());
-					add(new JPopupMenu.Separator());
 				}
 
 			}
+			add(new JPopupMenu.Separator());
 			// Allow removing as a friend
 			add(getJmiRemoveAsFriend());
 		}

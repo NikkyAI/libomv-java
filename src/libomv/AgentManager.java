@@ -1850,6 +1850,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 			case AgentMovementComplete:
 				HandleMovementComplete(packet, simulator);
 				break;
+			case AgentDataUpdate:
+			    HandleAgentDataUpdate(packet, simulator);
+				break;
 			case HealthMessage:
 				HandleHealthMessage(packet, simulator);
 				break;
@@ -2578,9 +2581,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * The z value is currently not handled properly by the simulator
 	 * 
 	 * @param globalX
-	 *            Integer value for the global X coordinate to move to
+	 *            Long integer value for the global X coordinate to move to
 	 * @param globalY
-	 *            Integer value for the global Y coordinate to move to
+	 *            Long integer value for the global Y coordinate to move to
 	 * @param z
 	 *            Floating-point value for the Z coordinate to move to
 	 * @throws Exception
@@ -4006,7 +4009,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * 
      * @throws UnsupportedEncodingException 
      */
-    protected final void AgentDataUpdateHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    private final void HandleAgentDataUpdate(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
         AgentDataUpdatePacket p = (AgentDataUpdatePacket)packet;
 
