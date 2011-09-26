@@ -25,7 +25,6 @@
  */
 package libomv;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -57,6 +56,8 @@ import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 /** This class is used to add and remove avatars from your friends list and to
  *  manage their permission. */
@@ -217,9 +218,27 @@ public class FriendsManager implements PacketCallback
 	        this.myRights = (byte)buddy_rights_has;
 	    }
 
-	    /** FriendInfo represented as a string
+	    public boolean equals(FriendInfo o)
+	    {
+	    	return ID.equals(o.getUUID());
+	    }
+
+	    @Override
+	    public boolean equals(Object o)
+	    {
+	    	return (o != null && o instanceof FriendInfo) ? equals((FriendInfo)o) : false;
+	    }
+	    
+		@Override
+		public int hashCode()
+		{
+			return ID.hashCode();
+		}
+
+		/**
+	     * FriendInfo represented as a string
 	     *
-	     *  @return A string reprentation of both my rights and my friends rights
+	     * @return A string reprentation of both my rights and my friends rights
 	     */
 	    @Override
 		public String toString()
@@ -278,7 +297,7 @@ public class FriendsManager implements PacketCallback
 		}
 	}
 
-	public abstract class FriendRightCallback implements Callback<FriendRightsCallbackArgs>
+	public abstract class FriendRightsCallback implements Callback<FriendRightsCallbackArgs>
 	{
 		@Override
 		public abstract void callback(FriendRightsCallbackArgs params);
@@ -436,12 +455,12 @@ public class FriendsManager implements PacketCallback
 	public CallbackHandler<FriendshipTerminatedCallbackArgs> OnFriendshipTerminated = new CallbackHandler<FriendshipTerminatedCallbackArgs>();
 	// #endregion callback handlers
 
-	private GridClient Client;
+	private GridClient _Client;
 
 	/**
 	 * A dictionary of key/value pairs containing known friends of this avatar.
      *
-     * he Key is the {@link UUID} of the friend, the value is a {@link FriendInfo} object
+     * The Key is the {@link UUID} of the friend, the value is a {@link FriendInfo} object
      * that contains detailed information including permissions you have and have given to the friend
      */
     public Hashtable<UUID, FriendInfo> FriendList = new Hashtable<UUID, FriendInfo>();
@@ -461,18 +480,18 @@ public class FriendsManager implements PacketCallback
      */
     public FriendsManager(GridClient client)
     {
-        Client = client;
+        _Client = client;
 
-        Client.Self.OnInstantMessage.add(new Self_OnInstantMessage());
+        _Client.Self.OnInstantMessage.add(new Self_OnInstantMessage());
 
-        Client.Login.RegisterLoginProgressCallback(new Network_OnConnect(), new String[] { "buddy-list" }, false);
+        _Client.Login.RegisterLoginProgressCallback(new Network_OnConnect(), new String[] { "buddy-list" }, false);
 
-        Client.Network.RegisterCallback(PacketType.OnlineNotification, this);
-        Client.Network.RegisterCallback(PacketType.OfflineNotification, this);
-        Client.Network.RegisterCallback(PacketType.ChangeUserRights, this);
-        Client.Network.RegisterCallback(PacketType.TerminateFriendship, this);
-        Client.Network.RegisterCallback(PacketType.FindAgent, this);
-        Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
+        _Client.Network.RegisterCallback(PacketType.OnlineNotification, this);
+        _Client.Network.RegisterCallback(PacketType.OfflineNotification, this);
+        _Client.Network.RegisterCallback(PacketType.ChangeUserRights, this);
+        _Client.Network.RegisterCallback(PacketType.TerminateFriendship, this);
+        _Client.Network.RegisterCallback(PacketType.FindAgent, this);
+        _Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
 
     }
 
@@ -509,20 +528,20 @@ public class FriendsManager implements PacketCallback
      */
     public final void AcceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception, InventoryException
     {
-    	if (Client.Inventory == null)
+    	if (_Client.Inventory == null)
     		throw new InventoryException("Inventory not instantiated. Need to lookup CallingCard folder in oreder to accept a friendship request.");
 
-    	UUID callingCardFolder = Client.Inventory.FindFolderForType(AssetType.CallingCard);
+    	UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard);
 
         AcceptFriendshipPacket request = new AcceptFriendshipPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.TransactionBlock.TransactionID = imSessionID;
         request.FolderData = new AcceptFriendshipPacket.FolderDataBlock[1];
         request.FolderData[0] = request.new FolderDataBlock();
         request.FolderData[0].FolderID = callingCardFolder;
 
-        Client.Network.SendPacket(request);
+        _Client.Network.SendPacket(request);
 
         FriendInfo friend = new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 
@@ -535,7 +554,7 @@ public class FriendsManager implements PacketCallback
         {
             FriendRequests.remove(fromAgentID);
         }
-        Client.Avatars.RequestAvatarName(fromAgentID, null);
+        _Client.Avatars.RequestAvatarName(fromAgentID, null);
     }
 
     /**
@@ -548,10 +567,10 @@ public class FriendsManager implements PacketCallback
     public final void DeclineFriendship(UUID fromAgentID, UUID imSessionID) throws Exception
     {
         DeclineFriendshipPacket request = new DeclineFriendshipPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.TransactionBlock.TransactionID = imSessionID;
-        Client.Network.SendPacket(request);
+        _Client.Network.SendPacket(request);
 
         if (FriendRequests.containsKey(fromAgentID))
         {
@@ -579,9 +598,9 @@ public class FriendsManager implements PacketCallback
      */
     public final void OfferFriendship(UUID agentID, String message) throws Exception
     {
-        Client.Self.InstantMessage(Client.Self.getName(), agentID, message, UUID.GenerateUUID(),
+        _Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, UUID.GenerateUUID(),
         		InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Offline,
-        		Client.Self.getSimPosition(), Client.Network.getCurrentSim().ID, null);
+        		_Client.Self.getSimPosition(), _Client.Network.getCurrentSim().ID, null);
     }
 
     /**
@@ -595,11 +614,11 @@ public class FriendsManager implements PacketCallback
         if (FriendList.containsKey(agentID))
         {
             TerminateFriendshipPacket request = new TerminateFriendshipPacket();
-            request.AgentData.AgentID = Client.Self.getAgentID();
-            request.AgentData.SessionID = Client.Self.getSessionID();
+            request.AgentData.AgentID = _Client.Self.getAgentID();
+            request.AgentData.SessionID = _Client.Self.getSessionID();
             request.ExBlock.OtherID = agentID;
 
-            Client.Network.SendPacket(request);
+            _Client.Network.SendPacket(request);
 
             FriendList.remove(agentID);
         }
@@ -631,14 +650,14 @@ public class FriendsManager implements PacketCallback
     public final void GrantRights(UUID friendID, byte rights) throws Exception
     {
         GrantUserRightsPacket request = new GrantUserRightsPacket();
-        request.AgentData.AgentID = Client.Self.getAgentID();
-        request.AgentData.SessionID = Client.Self.getSessionID();
+        request.AgentData.AgentID = _Client.Self.getAgentID();
+        request.AgentData.SessionID = _Client.Self.getSessionID();
         request.Rights = new GrantUserRightsPacket.RightsBlock[1];
         request.Rights[0] = request.new RightsBlock();
         request.Rights[0].AgentRelated = friendID;
         request.Rights[0].RelatedRights = rights;
 
-        Client.Network.SendPacket(request);
+        _Client.Network.SendPacket(request);
     }
 
     /**
@@ -652,7 +671,7 @@ public class FriendsManager implements PacketCallback
     public final void MapFriend(UUID friendID) throws Exception
     {
         FindAgentPacket stalk = new FindAgentPacket();
-        stalk.AgentBlock.Hunter = Client.Self.getAgentID();
+        stalk.AgentBlock.Hunter = _Client.Self.getAgentID();
         stalk.AgentBlock.Prey = friendID;
         stalk.AgentBlock.SpaceIP = 0; // Will be filled in by the simulator
         stalk.LocationBlock = new FindAgentPacket.LocationBlockBlock[1];
@@ -660,7 +679,7 @@ public class FriendsManager implements PacketCallback
         stalk.LocationBlock[0].GlobalX = 0.0; // Filled in by the simulator
         stalk.LocationBlock[0].GlobalY = 0.0;
 
-        Client.Network.SendPacket(stalk);
+        _Client.Network.SendPacket(stalk);
     }
 
     /**
@@ -672,11 +691,11 @@ public class FriendsManager implements PacketCallback
     public final void TrackFriend(UUID friendID) throws Exception
     {
         TrackAgentPacket stalk = new TrackAgentPacket();
-        stalk.AgentData.AgentID = Client.Self.getAgentID();
-        stalk.AgentData.SessionID = Client.Self.getSessionID();
+        stalk.AgentData.AgentID = _Client.Self.getAgentID();
+        stalk.AgentData.SessionID = _Client.Self.getSessionID();
         stalk.TargetData.PreyID = friendID;
 
-        Client.Network.SendPacket(stalk);
+        _Client.Network.SendPacket(stalk);
     }
 
     /**
@@ -688,8 +707,8 @@ public class FriendsManager implements PacketCallback
     public final void RequestOnlineNotification(UUID friendID) throws Exception
     {
         GenericMessagePacket gmp = new GenericMessagePacket();
-        gmp.AgentData.AgentID = Client.Self.getAgentID();
-        gmp.AgentData.SessionID = Client.Self.getSessionID();
+        gmp.AgentData.AgentID = _Client.Self.getAgentID();
+        gmp.AgentData.SessionID = _Client.Self.getSessionID();
         gmp.AgentData.TransactionID = UUID.Zero;
 
         gmp.MethodData.setMethod(Helpers.StringToBytes("requestonlinenotification"));
@@ -698,7 +717,7 @@ public class FriendsManager implements PacketCallback
         gmp.ParamList[0] = gmp.new ParamListBlock();
         gmp.ParamList[0].setParameter(Helpers.StringToBytes(friendID.toString()));
 
-        Client.Network.SendPacket(gmp);
+        _Client.Network.SendPacket(gmp);
     }
 
     /**
@@ -770,7 +789,7 @@ public class FriendsManager implements PacketCallback
 
         if (requestids.size() > 0)
         {
-        	Client.Avatars.RequestAvatarNames(requestids, null);
+        	_Client.Avatars.RequestAvatarNames(requestids, null);
         }
     }
 
@@ -795,7 +814,7 @@ public class FriendsManager implements PacketCallback
 
                     OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
                 }
-                else if (block.AgentRelated.equals(Client.Self.getAgentID()))
+                else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
                 {
                     if (FriendList.containsKey(rights.AgentData.AgentID))
                     {
@@ -871,12 +890,9 @@ public class FriendsManager implements PacketCallback
 	    	switch (e.getIM().Dialog)
 	    	{
 	    	    case FriendshipOffered:
-	                if (OnFriendshipOffered != null)
-	                {
-	                	UUID sessionID = e.getIM().IMSessionID;
-	                    FriendRequests.put(friendID, sessionID);
-	                    OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
-	                }
+                	UUID sessionID = e.getIM().IMSessionID;
+                    FriendRequests.put(friendID, sessionID);
+                    OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
 	                break;
 	    	    case FriendshipAccepted:
 	                FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
@@ -885,25 +901,17 @@ public class FriendsManager implements PacketCallback
 	                {
 	                    FriendList.put(friendID, friend);
 	                }
-	                if (OnFriendshipResponse != null)
-	                {
-	                    OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
-	                }
+                    OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
 					try {
 						RequestOnlineNotification(friendID);
 					}
-					catch (UnsupportedEncodingException ex)
+					catch (Exception ex) 
 					{
-					}
-					catch (Exception ex)
-					{
+						Logger.Log("Error requesting online notification", LogLevel.Error, _Client, ex);
 					}
 	                break;
 	    	    case FriendshipDeclined:
-	                if (OnFriendshipResponse != null)
-	                {
-	                    OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
-	                }
+                    OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
 	        }
 	    }
 	}
@@ -945,7 +953,7 @@ public class FriendsManager implements PacketCallback
                     }
                     try
                     {
-						Client.Avatars.RequestAvatarNames(request, null);
+						_Client.Avatars.RequestAvatarNames(request, null);
 					}
                     catch (Exception e1) { }
                 }
