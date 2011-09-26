@@ -3015,6 +3015,17 @@ public class AgentManager implements PacketCallback, CapsCallback
         return Teleport(_Client.Network.getCurrentSim().getHandle(), position, lookAt);
 	}
 
+    /** 
+     * Send a teleport lure to another avatar with default "Join me in ..." invitation message
+     * 
+     * @param targetID target avatars {@link UUID} to lure
+     * @throws Exception 
+     */
+    public final void SendTeleportLure(UUID targetID) throws Exception
+    {
+        SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().Name + "!");
+    }
+
     /**
      * Send a teleport lure to another avatar with custom invitation message
      *
@@ -3417,7 +3428,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             mess.IMSessionID = im.MessageBlock.ID;
             mess.Timestamp = new Date(im.MessageBlock.Timestamp);
             mess.Message = Helpers.BytesToString(im.MessageBlock.getMessage());
-            mess.Offline = InstantMessageOnline.values()[im.MessageBlock.Offline];
+            mess.Offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
             mess.BinaryBucket = im.MessageBlock.getBinaryBucket();
 
             OnInstantMessage.dispatch(new InstantMessageCallbackArgs(mess, simulator));
