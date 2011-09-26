@@ -123,7 +123,7 @@ public class FriendsManager implements PacketCallback
 		private byte theirRights;
 
 		/* System ID of the avatar */
-		public final UUID getUUID()
+		public final UUID getID()
 		{
 			return ID;
 		}
@@ -239,7 +239,7 @@ public class FriendsManager implements PacketCallback
 
 		public boolean equals(FriendInfo o)
 		{
-			return ID.equals(o.getUUID());
+			return ID.equals(o.getID());
 		}
 
 		@Override
@@ -570,7 +570,7 @@ public class FriendsManager implements PacketCallback
 
 		if (!FriendList.containsKey(fromAgentID))
 		{
-			FriendList.put(friend.getUUID(), friend);
+			FriendList.put(friend.getID(), friend);
 		}
 
 		if (FriendRequests.containsKey(fromAgentID))
@@ -1003,7 +1003,7 @@ public class FriendsManager implements PacketCallback
 					{
 						if (kvp.getName().isEmpty())
 						{
-							request.add(kvp.getUUID());
+							request.add(kvp.getID());
 						}
 					}
 					try

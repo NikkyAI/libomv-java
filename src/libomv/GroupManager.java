@@ -184,7 +184,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	public final class Group
 	{
 		// Key of Group
-		public UUID ID;
+		private UUID ID;
 		// Key of Group Insignia
 		public UUID InsigniaID;
 		// Key of Group Founder
@@ -192,7 +192,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Key of Group Role for Owners
 		public UUID OwnerRole;
 		// Name of Group
-		public String Name;
+		private String Name;
 		// Text of Group Charter
 		public String Charter;
 		// Title of "everyone" role
@@ -222,12 +222,40 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Show this group in agent's profile
 		public boolean ListInProfile;
 
+		public UUID getID()
+		{
+			return ID;
+		}
+		
+		public String getName()
+		{
+			return Name;
+		}
+		
+		@Override
+		public boolean equals(Object o)
+		{
+			return (o != null && o instanceof Group) ? equals((Group)o) : false;
+		}
+
+		public boolean equals(Group o)
+		{
+			return o != null ? ID.equals(o.ID) : false;
+		}
+		
+		@Override
+		public int hashCode()
+		{
+			return ID.hashCode();
+		}
+		
 		// Returns the name of the group
 		@Override
 		public String toString()
 		{
 			return Name;
 		}
+
 
 		public Group(UUID id)
 		{
@@ -580,12 +608,12 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Can vote on group proposals
 		public static final long VoteOnProposal = 1L << 45;
 
-		public long setValue(long value)
+		public static long setValue(long value)
 		{
 			return value & _mask;
 		}
 
-		public long getValue(long value)
+		public static long getValue(long value)
 		{
 			return value & _mask;
 		}
@@ -829,7 +857,6 @@ public class GroupManager implements PacketCallback, CapsCallback
 			{
 				groupNames.put(groupID, GroupName2KeyCache.get(groupID));
 			}
-
 			OnGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNames));
 		}
 
