@@ -244,12 +244,18 @@ public class GroupList extends JScrollPane
 
 		// The menu item used to send the group a message
 		private JMenuItem jmiSendMessage;
-		// The menu item used to request the groups's profile
-		private JMenuItem jmiProfile;
 		// The menu item used to activate the group
 		private JMenuItem jmiActivate;
+		// The menu item to view the group titles
+		private JMenuItem jmiInvite;
+		// The menu item to view the group info
+		private JMenuItem jmiGroupInfo;
+		// The menu item to create a new group
+		private JMenuItem jmiCreateGroup;
+		// The menu item to search for groups
+		private JMenuItem jmiSearchGroup;
 		// The menu item used to remove the group from the list
-		private JMenuItem jmiRemoveFromGroup;
+		private JMenuItem jmiLeaveGroup;
 
 		/**
 		 * Constructor
@@ -267,12 +273,19 @@ public class GroupList extends JScrollPane
 
 			// Send message
 			add(getJmiSendMessage());
-			// Add the profile menu item
-			add(getJmiProfile());
 			// Activate this group
 			add(getJmiActivate(_Client.Self.getActiveGroup().equals(_Info.getID())));
+			// Add the group invitation menu
+			add(getJmiInvite());
+			// Add the group info menu item
+			add(getJmiGroupInfo());
+			// Add the group creation menu item
+			add(getJmiCreateGroup());
+			// Add the search group menu item
+			add(getJmiSearchGroup());
+			add(new JPopupMenu.Separator());
 			// Allow removing as a friend.
-			add(getJmiRemoveFromGroup());
+			add(getJmiLeaveGroup());
 		}
 
 		/**
@@ -305,36 +318,7 @@ public class GroupList extends JScrollPane
 		}
 	
 		/**
-		 * Get the profile menu item
-		 * 
-		 * @return The "profile" menu item
-		 */
-		private JMenuItem getJmiProfile()
-		{
-			if (jmiProfile == null)
-			{
-				jmiProfile = new JMenuItem("Profile ..");
-				// add an ActionListener
-				jmiProfile.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: open group profile dialog
-					}
-				});
-			}
-			return jmiProfile;
-		}
-
-		/**
-		 * Get the money transfer menu item
+		 * Get the activate group menu item
 		 * 
 		 * @return The "activate group" menu item
 		 */
@@ -342,7 +326,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiActivate == null)
 			{
-				jmiActivate = new JMenuItem("Pay ..");
+				jmiActivate = new JMenuItem("Activate");
 				// add an ActionListener
 				jmiActivate.addActionListener(new ActionListener()
 				{
@@ -369,19 +353,134 @@ public class GroupList extends JScrollPane
 			jmiActivate.setEnabled(!disable);
 			return jmiActivate;
 		}
+		
+		/**
+		 * Get the group invite menu item
+		 * 
+		 * @return The "group invite" menu item
+		 */
+		private JMenuItem getJmiInvite()
+		{
+			if (jmiInvite == null)
+			{
+				jmiInvite = new JMenuItem("Invite ..");
+				jmiInvite.addActionListener(new ActionListener()
+				{
+					/**
+					 * Called when an action is performed
+					 * 
+					 * @param e
+					 *            The ActionEvent
+					 */
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						// TODO: Open Group Invitation window
+					}
+				});
+			}
+			return jmiInvite;
+		}
+		
+		/**
+		 * Get the group info menu item
+		 * 
+		 * @return The "group info" menu item
+		 */
+		private JMenuItem getJmiGroupInfo()
+		{
+			if (jmiGroupInfo == null)
+			{
+				jmiGroupInfo = new JMenuItem("Info ..");
+				// add an ActionListener
+				jmiGroupInfo.addActionListener(new ActionListener()
+				{
+					/**
+					 * Called when an action is performed
+					 * 
+					 * @param e
+					 *            The ActionEvent
+					 */
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						// TODO: open group info dialog
+					}
+				});
+			}
+			return jmiGroupInfo;
+		}
+
+		/**
+		 * Get the create group menu item
+		 * 
+		 * @return The "create group" menu item
+		 */
+		private JMenuItem getJmiCreateGroup()
+		{
+			if (jmiCreateGroup == null)
+			{
+				jmiCreateGroup = new JMenuItem("Create ..");
+				// add an ActionListener
+				jmiCreateGroup.addActionListener(new ActionListener()
+				{
+					/**
+					 * Called when an action is performed
+					 * 
+					 * @param e
+					 *            The ActionEvent
+					 */
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						// TODO: open create group dialog
+					}
+				});
+			}
+			return jmiCreateGroup;
+		}
+
+		/**
+		 * Get the search group menu item
+		 * 
+		 * @return The "search group" menu item
+		 */
+		private JMenuItem getJmiSearchGroup()
+		{
+			if (jmiSearchGroup == null)
+			{
+				jmiSearchGroup = new JMenuItem("Search ..");
+				// add an ActionListener
+				jmiSearchGroup.addActionListener(new ActionListener()
+				{
+					/**
+					 * Called when an action is performed
+					 * 
+					 * @param e
+					 *            The ActionEvent
+					 */
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						// TODO: open search group dialog
+					}
+				});
+			}
+			return jmiSearchGroup;
+		}
 
 		/**
 		 * Get the remove as friend menu item
 		 * 
 		 * @return The remove as friend menu item
 		 */
-		private JMenuItem getJmiRemoveFromGroup()
+		private JMenuItem getJmiLeaveGroup()
 		{
-			if (jmiRemoveFromGroup == null)
+			if (jmiLeaveGroup == null)
 			{
-				jmiRemoveFromGroup = new JMenuItem("Remove ..");
+				jmiLeaveGroup = new JMenuItem("Leave ..");
 				// Add an action listener
-				jmiRemoveFromGroup.addActionListener(new ActionListener()
+				jmiLeaveGroup.addActionListener(new ActionListener()
 				{
 					/**
 					 * Called when an action is performed
@@ -404,7 +503,7 @@ public class GroupList extends JScrollPane
 					}
 				});
 			}
-			return jmiRemoveFromGroup;
+			return jmiLeaveGroup;
 		}
 	}
 }
