@@ -332,12 +332,21 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			case DisplayNameUpdate:
 				DisplayNameUpdateMessageHandler(message, simulator);
 				break;
+			case AgentGroupDataUpdate:
+//				AgentGroupDataUpdateHandler(message, simulator);
+				break;
+			case AvatarGroupsReply:
+//				AvatarGroupsReplyHandler(message, simulator);
+				break;
 		}
 	}
 
 
-	// Add an Avatar into the Avatars Dictionary
-	// <param name="avatar">Filled-out Avatar class to insert</param>
+	/**
+	 * Add an Avatar into the Avatars Dictionary
+	 * 
+	 * @param avatar Filled-out Avatar class to insert
+	 */
 	public void AddAvatar(Avatar avatar) {
 		synchronized (Avatars) {
 			Avatars.put(avatar.ID, avatar);
@@ -348,9 +357,13 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		return Avatars.containsKey(id);
 	}
 
-	// This function will only check if the avatar name exists locally,
-	// it will not do any networking calls to fetch the name
-	// <returns>The avatar name, or an empty String if it's not found</returns>
+	/**
+	 * This function will only check if the avatar name exists locally,
+	 * it will not do any networking calls to fetch the name
+	 * 
+	 * @param id The uuid of the avatar to get the name for
+	 * @return The avatar name, or an empty String if it's not found
+	 */
 	public String LocalAvatarNameLookup(UUID id)
 	{
 		String name = Helpers.EmptyString;
@@ -365,12 +378,16 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		return name;
 	}
 
-	//
-	// <param name="id"></param>
-	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception {
-		// TODO: BeginGetAvatarNames is pretty bulky, rewrite a simple version
-		// here
-
+	/**
+	 * Request a name update for an avatar
+	 * 
+	 * @param id The uuid of the avatar to get the name for
+	 * @param anc A callback being called when a name request is answered
+	 * @throws Exception
+	 */
+	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception
+	{
+		// TODO: BeginGetAvatarNames is pretty bulky, rewrite a simple version here
 		Vector<UUID> ids = new Vector<UUID>();
 		ids.addElement(id);
 
@@ -379,9 +396,10 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	//
 	// <param name="ids"></param>
-	public void RequestAvatarNames(Vector<UUID> ids,Callback<AgentNamesCallbackArgs> anc)
-			throws Exception {
-		if (anc != null) {
+	public void RequestAvatarNames(Vector<UUID> ids,Callback<AgentNamesCallbackArgs> anc) throws Exception
+	{
+		if (anc != null)
+		{
 			OnAgentNames.add(anc);
 		}
 
@@ -402,7 +420,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			}
 		}
 
-		if (havenames.size() > 0 && OnAgentNames != null)
+		if (havenames.size() > 0)
 		{
 			OnAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
 		}
@@ -411,8 +429,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		{
 			UUIDNameRequestPacket request = new UUIDNameRequestPacket();
 
-			request.UUIDNameBlock = new UUIDNameRequestPacket.UUIDNameBlockBlock[neednames
-					.size()];
+			request.UUIDNameBlock = new UUIDNameRequestPacket.UUIDNameBlockBlock[neednames.size()];
 
 			for (int i = 0; i < neednames.size(); i++)
 			{
@@ -423,20 +440,24 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	/** Process an incoming UUIDNameReply Packet and insert Full Names into the
+	/**
+	 * Process an incoming UUIDNameReply Packet and insert Full Names into the
 	 *
 	 * @param packet Incoming Packet to process
 	 * @param simulator Unused
 	 * @throws Exception
 	 */
-	private void UUIDNameReplyHandler(Packet packet, Simulator simulator)
-			throws Exception {
+	private void UUIDNameReplyHandler(Packet packet, Simulator simulator) throws Exception
+	{
 		Hashtable<UUID, String> names = new Hashtable<UUID, String>();
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
-		synchronized (Avatars) {
-			for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock) {
-				if (!Avatars.containsKey(block.ID)) {
+		synchronized (Avatars)
+		{
+			for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock)
+			{
+				if (!Avatars.containsKey(block.ID))
+				{
 					Avatars.put(block.ID, new Avatar(block.ID));
 				}
 
@@ -444,10 +465,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				names.put(block.ID, Avatars.get(block.ID).getName());
 			}
 		}
-
-		if (OnAgentNames != null) {
-			OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
-		}
+		OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
 	}
 
     /**
