@@ -150,9 +150,8 @@ public class LoginManager
 		 */
 		public String[] Options;
 		/**
-		 * A randomly generated ID to distinguish between login attempts. This
-		 * value is only used internally in the library and is never sent over
-		 * the wire
+		 * A randomly generated ID to distinguish between login attempts. This value
+		 * value is only used internally in the library and is never sent over the wire
 		 */
 		private UUID LoginID;
 

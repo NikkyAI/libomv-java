@@ -1,7 +1,7 @@
 Copyright (c) 2006, Second Life Reverse Engineering Team
 Copyright (c) 2006, Lateral Arts Limited
 Copyright (c) 2007 - 2009 , openmetaverse.org
-Copyright (c) 2009 - 2011 Rolf Kalbermatter
+Copyright (c) 2009 - 2011 Frederick Martian
 
 All rights reserved.
 
