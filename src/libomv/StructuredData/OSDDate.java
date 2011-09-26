@@ -40,38 +40,43 @@ public class OSDDate extends OSD
 	{
 		return OSDType.Date;
 	}
+
 	public OSDDate(Date value)
 	{
 		this.value = value;
 	}
+
 	@Override
 	public String AsString()
 	{
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
 		return df.format(value);
 	}
+
 	@Override
 	public int AsInteger()
 	{
-		return (int)Helpers.DateTimeToUnixTime(value);
+		return (int) Helpers.DateTimeToUnixTime(value);
 	}
 
 	@Override
 	public int AsUInteger()
 	{
-		return (((int)Helpers.DateTimeToUnixTime(value)) & 0xffffffff);
+		return (((int) Helpers.DateTimeToUnixTime(value)) & 0xffffffff);
 	}
 
 	@Override
 	public long AsLong()
 	{
-		return (long)Helpers.DateTimeToUnixTime(value);
+		return (long) Helpers.DateTimeToUnixTime(value);
 	}
+
 	@Override
 	public long AsULong()
 	{
-		return (((long)Helpers.DateTimeToUnixTime(value)) & 0xffffffffffffffffl);
+		return (((long) Helpers.DateTimeToUnixTime(value)) & 0xffffffffffffffffl);
 	}
+
 	@Override
 	public byte[] AsBinary()
 	{
@@ -83,6 +88,7 @@ public class OSDDate extends OSD
 	{
 		return value;
 	}
+
 	@Override
 	public String toString()
 	{

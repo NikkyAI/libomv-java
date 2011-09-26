@@ -31,49 +31,50 @@ import libomv.types.UUID;
 // Represents a Sound Asset
 public class AssetSound extends AssetItem
 {
-    // Override the base classes AssetType
+	// Override the base classes AssetType
 	@Override
-    public AssetType getAssetType()
-    {
-       return AssetType.Sound;
-    }
+	public AssetType getAssetType()
+	{
+		return AssetType.Sound;
+	}
 
-    /**
-     * Initializes a new instance of an AssetSound object
-     */
-    public AssetSound()
-    {
-    }
+	/**
+	 * Initializes a new instance of an AssetSound object
+	 */
+	public AssetSound()
+	{
+	}
 
-    /**
-     * Initializes a new instance of an AssetSound object with parameters
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetSound(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-        AssetData = assetData;
-    }
+	/**
+	 * Initializes a new instance of an AssetSound object with parameters
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetSound(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+		AssetData = assetData;
+	}
 
-    /**
-     * TODO: Encodes a sound file
-     */
+	/**
+	 * TODO: Encodes a sound file
+	 */
 	@Override
-    public void Encode()
-    {
-    }
+	public void Encode()
+	{
+	}
 
-    /**
-     * TODO: Decode a sound file
-     *
-     * @return true
-     */
+	/**
+	 * TODO: Decode a sound file
+	 * 
+	 * @return true
+	 */
 	@Override
-    public boolean Decode()
-    {
-        return true;
-    }
+	public boolean Decode()
+	{
+		return true;
+	}
 }
-

@@ -43,8 +43,8 @@ public abstract class PopupQuestionDialog extends PopupDialog
 {
 	private static final long serialVersionUID = 1L;
 
-	public PopupQuestionDialog(JFrame parent, String title, String message,
-			                   String buttonAcceptText, String buttonDeclineText)
+	public PopupQuestionDialog(JFrame parent, String title, String message, String buttonAcceptText,
+			String buttonDeclineText)
 	{
 		// Super constructor
 		super(parent, title, true);
@@ -107,16 +107,20 @@ public abstract class PopupQuestionDialog extends PopupDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the accept button is actioned
+	 * Get the {@link ActionListener} to be called when the accept button is
+	 * actioned
 	 * 
-	 * @return The {@link ActionListener} to be called when the accept button is actioned
+	 * @return The {@link ActionListener} to be called when the accept button is
+	 *         actioned
 	 */
 	protected abstract ActionListener getAcceptButtonActionListener();
 
 	/**
-	 * Get the {@link ActionListener} to be called when the decline button is actioned
+	 * Get the {@link ActionListener} to be called when the decline button is
+	 * actioned
 	 * 
-	 * @return The {@link ActionListener} to be called when the decline button is actioned
+	 * @return The {@link ActionListener} to be called when the decline button
+	 *         is actioned
 	 */
 	protected abstract ActionListener getDeclineButtonActionListener();
 }

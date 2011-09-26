@@ -64,22 +64,28 @@ public class OSDBinary extends OSD
 	{
 		this.value = Helpers.Int64ToBytesB(value);
 	}
+
 	@Override
 	public String AsString()
 	{
 		return new String(Base64.encodeBase64(value));
 	}
+
 	@Override
 	public byte[] AsBinary()
 	{
 		return value;
 	}
+
 	@Override
 	public InetAddress AsInetAddress()
 	{
-		try {
+		try
+		{
 			return InetAddress.getByAddress(value);
-		} catch (UnknownHostException e) {
+		}
+		catch (UnknownHostException e)
+		{
 			return null;
 		}
 	}
@@ -87,7 +93,7 @@ public class OSDBinary extends OSD
 	@Override
 	public int AsUInteger()
 	{
-		return (int)Helpers.BytesToUInt32B(value);
+		return (int) Helpers.BytesToUInt32B(value);
 	}
 
 	@Override
@@ -95,6 +101,7 @@ public class OSDBinary extends OSD
 	{
 		return Helpers.BytesToInt64B(value);
 	}
+
 	@Override
 	public long AsULong()
 	{

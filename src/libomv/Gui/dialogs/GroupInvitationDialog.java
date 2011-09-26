@@ -38,7 +38,7 @@ public class GroupInvitationDialog extends PopupQuestionDialog
 	private static final long serialVersionUID = 1L;
 	// The group that we're being invited to
 	private UUID _GroupID;
-	// The session for the friendship  offer
+	// The session for the friendship offer
 	private UUID _SessionID;
 	// Out grid client for the current session
 	private GridClient _Client;
@@ -46,14 +46,21 @@ public class GroupInvitationDialog extends PopupQuestionDialog
 	/**
 	 * Constructor to create the group membership offered dialog
 	 * 
-	 * @param client The GridClient used to answer the result of the user decision
-	 * @param parent The parent object of this dialog
-	 * @param agentName The name of the Avatar offering group membership 
-	 * @param groupName The name of the group for which membership is offered 
-	 * @param groupID The UID of the group for which membership is offered 
-	 * @param sessionID The UID of the session to use when answering the request
+	 * @param client
+	 *            The GridClient used to answer the result of the user decision
+	 * @param parent
+	 *            The parent object of this dialog
+	 * @param agentName
+	 *            The name of the Avatar offering group membership
+	 * @param groupName
+	 *            The name of the group for which membership is offered
+	 * @param groupID
+	 *            The UID of the group for which membership is offered
+	 * @param sessionID
+	 *            The UID of the session to use when answering the request
 	 */
-	public GroupInvitationDialog(GridClient client, JFrame parent, String agentName, String groupName, UUID groupID, UUID sessionID)
+	public GroupInvitationDialog(GridClient client, JFrame parent, String agentName, String groupName, UUID groupID,
+			UUID sessionID)
 	{
 		super(parent, "Group Invitation", agentName + " has invited you to join the group '" + groupName
 				+ "'. Do you accept this offer?", "Accept", "Decline");
@@ -63,9 +70,11 @@ public class GroupInvitationDialog extends PopupQuestionDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the accept button is activated
+	 * Get the {@link ActionListener} to be called when the accept button is
+	 * activated
 	 * 
-	 * @return The {@link ActionListener} to be called when the accept button is activated
+	 * @return The {@link ActionListener} to be called when the accept button is
+	 *         activated
 	 */
 	@Override
 	protected ActionListener getAcceptButtonActionListener()
@@ -83,7 +92,9 @@ public class GroupInvitationDialog extends PopupQuestionDialog
 				{
 					_Client.Self.GroupInviteRespond(_GroupID, _SessionID, true);
 				}
-				catch (Exception ex) { }
+				catch (Exception ex)
+				{
+				}
 				// Destroy the form
 				setVisible(false);
 				dispose();
@@ -92,9 +103,11 @@ public class GroupInvitationDialog extends PopupQuestionDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the decline button is activated
+	 * Get the {@link ActionListener} to be called when the decline button is
+	 * activated
 	 * 
-	 * @return The {@link ActionListener} to be called when the decline button is activated
+	 * @return The {@link ActionListener} to be called when the decline button
+	 *         is activated
 	 */
 	@Override
 	protected ActionListener getDeclineButtonActionListener()
@@ -112,7 +125,9 @@ public class GroupInvitationDialog extends PopupQuestionDialog
 				{
 					_Client.Self.GroupInviteRespond(_GroupID, _SessionID, false);
 				}
-				catch (Exception ex) { }
+				catch (Exception ex)
+				{
+				}
 				// Destroy the form
 				setVisible(false);
 				dispose();

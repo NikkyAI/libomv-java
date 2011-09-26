@@ -31,47 +31,48 @@ import libomv.types.UUID;
 // Represents an AssetScriptBinary object containing the LSO compiled bytecode of an LSL script
 public class AssetScriptBinary extends AssetItem
 {
-    // Override the base classes AssetType
+	// Override the base classes AssetType
 	@Override
-    public AssetType getAssetType()
-    {
-        return AssetType.LSLBytecode;
-    }
+	public AssetType getAssetType()
+	{
+		return AssetType.LSLBytecode;
+	}
 
-    // Initializes a new instance of an AssetScriptBinary object
-    public AssetScriptBinary()
-    {
-    }
+	// Initializes a new instance of an AssetScriptBinary object
+	public AssetScriptBinary()
+	{
+	}
 
-    /**
-     * Initializes a new instance of an AssetScriptBinary object with parameters
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetScriptBinary(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-        AssetData = assetData;
-    }
+	/**
+	 * Initializes a new instance of an AssetScriptBinary object with parameters
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetScriptBinary(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+		AssetData = assetData;
+	}
 
-    /**
-     * TODO: Encodes a scripts contents into a LSO Bytecode file
-     */
+	/**
+	 * TODO: Encodes a scripts contents into a LSO Bytecode file
+	 */
 	@Override
-    public void Encode()
-    {
-    }
+	public void Encode()
+	{
+	}
 
-    /**
-     * TODO: Decode LSO Bytecode into a string
-     *
-     * @return true
-     */
+	/**
+	 * TODO: Decode LSO Bytecode into a string
+	 * 
+	 * @return true
+	 */
 	@Override
-    public boolean Decode()
-    {
-        return true;
-    }
+	public boolean Decode()
+	{
+		return true;
+	}
 }
-

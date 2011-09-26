@@ -42,7 +42,7 @@ import libomv.types.UUID;
 /* An Item in Inventory */
 public class InventoryItem extends InventoryBase
 {
-    //
+	//
 	private static final long serialVersionUID = 1L;
 
 	/** Inventory Item Types, eg Script, Notecard, Folder, etc */
@@ -58,9 +58,9 @@ public class InventoryItem extends InventoryBase
 		CallingCard(2),
 		/** Landmark */
 		Landmark(3),
-		//[Obsolete("See LSL")]
+		// [Obsolete("See LSL")]
 		Script(4),
-		//[Obsolete("See Wearable")]
+		// [Obsolete("See Wearable")]
 		Clothing(5),
 		/** Object */
 		Object(6),
@@ -74,13 +74,13 @@ public class InventoryItem extends InventoryBase
 		RootCategory(9),
 		/** an LSL Script */
 		LSL(10),
-		//[Obsolete("See LSL")] LSLBytecode = 11,
-		//[Obsolete("See Texture")] TextureTGA = 12,
-		//[Obsolete] Bodypart = 13,
-		//[Obsolete] Trash = 14,
+		// [Obsolete("See LSL")] LSLBytecode = 11,
+		// [Obsolete("See Texture")] TextureTGA = 12,
+		// [Obsolete] Bodypart = 13,
+		// [Obsolete] Trash = 14,
 		/** */
 		Snapshot(15),
-        //[Obsolete] LostAndFound = 16,
+		// [Obsolete] LostAndFound = 16,
 		/** */
 		Attachment(17),
 		/** */
@@ -90,13 +90,17 @@ public class InventoryItem extends InventoryBase
 		/**	*/
 		Gesture(20);
 
-		private static final String[] _InventoryTypeNames = new String[] { "texture", "sound", "callcard", "landmark", "script", "clothing", "object", "notecard", "category", "root", "script", "", "", "", "", "snapshot", "", "attach", "wearable", "animation", "gesture" };
+		private static final String[] _InventoryTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
+				"script", "clothing", "object", "notecard", "category", "root", "script", "", "", "", "", "snapshot",
+				"", "attach", "wearable", "animation", "gesture" };
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
-		 *
-		 * @param type A string containing the AssetType name
-		 * @return The AssetType which matches the string name, or AssetType.Unknown if no match was found
+		 * 
+		 * @param type
+		 *            A string containing the AssetType name
+		 * @return The AssetType which matches the string name, or
+		 *         AssetType.Unknown if no match was found
 		 */
 		public static InventoryType setValue(String value)
 		{
@@ -129,16 +133,18 @@ public class InventoryItem extends InventoryBase
 		public String toString()
 		{
 			int i = ordinal() - 1;
-			if (i >= 0 && ordinal() < _InventoryTypeNames.length )
-			    return _InventoryTypeNames[i];
+			if (i >= 0 && ordinal() < _InventoryTypeNames.length)
+				return _InventoryTypeNames[i];
 			return "unknown";
 		}
 
 		private final byte _value;
-        private InventoryType(int value) {
-            this._value = (byte)value;
-        }
-    }
+
+		private InventoryType(int value)
+		{
+			this._value = (byte) value;
+		}
+	}
 
 	/** Types of wearable assets */
 	public enum WearableType
@@ -190,307 +196,347 @@ public class InventoryItem extends InventoryBase
 		{
 			return _value;
 		}
+
 		private final byte _value;
+
 		private WearableType(int value)
 		{
-			_value = (byte)value;
+			_value = (byte) value;
 		}
 	}
 
-    /* Upper half of the Flags field for inventory items */
-    // [Flags]
-    public static class InventoryItemFlags
-    {
-        public static final int None = 0;
-        /* Indicates that the NextOwner permission will be set to the most restrictive set of permissions
-         * found in the object set (including linkset items and object inventory items) on next rez */
-        public static final int ObjectSlamPerm = 0x100;
-        /* Indicates that the object sale information has been changed */
-        public static final int ObjectSlamSale = 0x1000;
-        /* If set, and a slam bit is set, indicates BaseMask will be overwritten on Rez */
-        public static final int ObjectOverwriteBase = 0x010000;
-        /* If set, and a slam bit is set, indicates OwnerMask will be overwritten on Rez */
-        public static final int ObjectOverwriteOwner = 0x020000;
-        /* If set, and a slam bit is set, indicates GroupMask will be overwritten on Rez */
-        public static final int ObjectOverwriteGroup = 0x040000;
-        /* If set, and a slam bit is set, indicates EveryoneMask will be overwritten on Rez */
-        public static final int ObjectOverwriteEveryone = 0x080000;
-        /* If set, and a slam bit is set, indicates NextOwnerMask will be overwritten on Rez */
-        public static final int ObjectOverwriteNextOwner = 0x100000;
-        /* Indicates whether this object is composed of multiple items or not */
-        public static final int ObjectHasMultipleItems = 0x200000;
-        /* Indicates that the asset is only referenced by this inventory item. If this item is deleted
-         * or updated to reference a new assetID, the asset can be deleted */
-        public static final int SharedSingleReference = 0x40000000;
+	/* Upper half of the Flags field for inventory items */
+	// [Flags]
+	public static class InventoryItemFlags
+	{
+		public static final int None = 0;
+		/*
+		 * Indicates that the NextOwner permission will be set to the most
+		 * restrictive set of permissions found in the object set (including
+		 * linkset items and object inventory items) on next rez
+		 */
+		public static final int ObjectSlamPerm = 0x100;
+		/* Indicates that the object sale information has been changed */
+		public static final int ObjectSlamSale = 0x1000;
+		/*
+		 * If set, and a slam bit is set, indicates BaseMask will be overwritten
+		 * on Rez
+		 */
+		public static final int ObjectOverwriteBase = 0x010000;
+		/*
+		 * If set, and a slam bit is set, indicates OwnerMask will be
+		 * overwritten on Rez
+		 */
+		public static final int ObjectOverwriteOwner = 0x020000;
+		/*
+		 * If set, and a slam bit is set, indicates GroupMask will be
+		 * overwritten on Rez
+		 */
+		public static final int ObjectOverwriteGroup = 0x040000;
+		/*
+		 * If set, and a slam bit is set, indicates EveryoneMask will be
+		 * overwritten on Rez
+		 */
+		public static final int ObjectOverwriteEveryone = 0x080000;
+		/*
+		 * If set, and a slam bit is set, indicates NextOwnerMask will be
+		 * overwritten on Rez
+		 */
+		public static final int ObjectOverwriteNextOwner = 0x100000;
+		/* Indicates whether this object is composed of multiple items or not */
+		public static final int ObjectHasMultipleItems = 0x200000;
+		/*
+		 * Indicates that the asset is only referenced by this inventory item.
+		 * If this item is deleted or updated to reference a new assetID, the
+		 * asset can be deleted
+		 */
+		public static final int SharedSingleReference = 0x40000000;
 
-        public static int setValue(int value)
-        {
-        	return value & _mask;
-        }
+		public static int setValue(int value)
+		{
+			return value & _mask;
+		}
 
-        public static int getValue(int value)
-        {
-        	return value;
-        }
+		public static int getValue(int value)
+		{
+			return value;
+		}
 
-        private static final int _mask = 0x7F1100;
-    }
+		private static final int _mask = 0x7F1100;
+	}
 
 	/* The {@link OpenMetaverse.UUID} of this item */
-    public UUID AssetID;
-    /* The combined {@link OpenMetaverse.Permissions} of this item */
-    public Permissions Permissions;
-    /* The type of item from {@link OpenMetaverse.AssetType} */
-    public AssetType assetType;
-    /* The type of item from the {@link OpenMetaverse.InventoryType} enum */
-    public InventoryType inventoryType;
-    /* The {@link OpenMetaverse.UUID} of the creator of this item */
-    public UUID CreatorID;
-    /* A Description of this item */
-    public String Description;
-    /* The {@link OpenMetaverse.Group} s {@link OpenMetaverse.UUID} this item is set to or owned by
-*/
-    public UUID GroupID;
-    /* If true, item is owned by a group
-*/
-    public boolean GroupOwned;
-    /* The price this item can be purchased for */
-    public int SalePrice;
-    /* The type of sale from the {@link OpenMetaverse.SaleType} enum */
-    public SaleType saleType;
-    /* Combined flags from {@link libomv.InventoryItem.InventoryItemFlags}
-       and item specific types */
-    public int ItemFlags;
-    /* Time and date this inventory item was created, stored as
-       UTC (Coordinated Universal Time) */
-    public Date CreationDate;
-    /* Used to update the AssetID in requests sent to the server */
-    // public UUID TransactionID;
-    /* The {@link OpenMetaverse.UUID} of the previous owner of the item */
-    public UUID LastOwnerID;
+	public UUID AssetID;
+	/* The combined {@link OpenMetaverse.Permissions} of this item */
+	public Permissions Permissions;
+	/* The type of item from {@link OpenMetaverse.AssetType} */
+	public AssetType assetType;
+	/* The type of item from the {@link OpenMetaverse.InventoryType} enum */
+	public InventoryType inventoryType;
+	/* The {@link OpenMetaverse.UUID} of the creator of this item */
+	public UUID CreatorID;
+	/* A Description of this item */
+	public String Description;
+	/*
+	 * The {@link OpenMetaverse.Group} s {@link OpenMetaverse.UUID} this item is
+	 * set to or owned by
+	 */
+	public UUID GroupID;
+	/*
+	 * If true, item is owned by a group
+	 */
+	public boolean GroupOwned;
+	/* The price this item can be purchased for */
+	public int SalePrice;
+	/* The type of sale from the {@link OpenMetaverse.SaleType} enum */
+	public SaleType saleType;
+	/*
+	 * Combined flags from {@link libomv.InventoryItem.InventoryItemFlags} and
+	 * item specific types
+	 */
+	public int ItemFlags;
+	/*
+	 * Time and date this inventory item was created, stored as UTC (Coordinated
+	 * Universal Time)
+	 */
+	public Date CreationDate;
+	/* Used to update the AssetID in requests sent to the server */
+	// public UUID TransactionID;
+	/* The {@link OpenMetaverse.UUID} of the previous owner of the item */
+	public UUID LastOwnerID;
 
-    /** Construct a new InventoryItem object
-     *
-     *  @param itemID The {@link OpenMetaverse.UUID} of the item
-     */
-    public InventoryItem(UUID itemID)
-    {
-        super(itemID);
-    }
-
-    /**
-     * Construct a new InventoryItem object of a specific Type
-     *
-     * @param type The type of item from {@link OpenMetaverse.InventoryType}
-     * @param itemID {@link OpenMetaverse.UUID} of the item
-     */
-    public InventoryItem(InventoryType type, UUID itemID)
-    {
-        super(itemID);
-        inventoryType = type;
-    }
-
-    /**
-     * Indicates inventory item is a link
-     *
-     * @return True if inventory item is a link to another inventory item
-     */
-    public final boolean IsLink()
-    {
-        return assetType == AssetType.Link || assetType == AssetType.LinkFolder;
-    }
-
-    public OSD Serialize()
-    {
-        OSDMap map = (OSDMap)super.toOSD();
-        map.put("AssetUUID", OSD.FromUUID(AssetID));
-        map.put("Permissions", Permissions.Serialize());
-        map.put("AssetType", OSD.FromInteger(assetType.getValue()));
-        map.put("InventoryType", OSD.FromInteger(inventoryType.getValue()));
-        map.put("CreatorID", OSD.FromUUID(CreatorID));
-        map.put("Description", OSD.FromString(Description));
-        map.put("GroupID", OSD.FromUUID(GroupID));
-        map.put("GroupOwned", OSD.FromBoolean(GroupOwned));
-        map.put("SalePrice", OSD.FromInteger(SalePrice));
-        map.put("SaleType", OSD.FromInteger(saleType.getValue()));
-        map.put("Flags", OSD.FromInteger(ItemFlags));
-        map.put("CreationDate", OSD.FromDate(CreationDate));
-        map.put("LastOwnerID", OSD.FromUUID(LastOwnerID));
-        return map;
-    }
-
-    @Override
-	public void fromOSD(OSD osd)
-    {
-    	super.fromOSD(osd);
-    	if (osd instanceof OSDMap)
-    	{
-    	   OSDMap map = (OSDMap)osd;
-
-           AssetID = map.get("AssetUUID").AsUUID();
-           Permissions = new Permissions(map.get("Permissions"));
-           assetType = AssetType.setValue(map.get("AssetType").AsInteger());
-           inventoryType = InventoryType.setValue(map.get("InventoryType").AsInteger());
-           CreatorID = map.get("CreatorID").AsUUID();
-           Description = map.get("Description").AsString();
-           GroupID = map.get("GroupID").AsUUID();
-           GroupOwned = map.get("GroupOwned").AsBoolean();
-           SalePrice = map.get("SalePrice").AsInteger();
-           saleType = SaleType.setValue(map.get("SaleType").AsInteger());
-           ItemFlags = map.get("Flags").AsInteger();
-           CreationDate = map.get("CreationDate").AsDate();
-           LastOwnerID = map.get("LastOwnerID").AsUUID();
-    	}
-    }
-
-    /**
-     * Initializes an InventoryItem object from a serialization stream
-     *
-     * @param info serialization stream
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    @Override
-    protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
-    {
-        super.readObject(info);
-        if (serialVersionUID != info.readLong())
-        	throw new InvalidObjectException("InventoryItem serial version mismatch");
-        AssetID = (UUID)info.readObject();
-        Permissions =  (Permissions)info.readObject();
-        assetType = AssetType.setValue(info.readByte());
-        inventoryType = InventoryType.setValue(info.readByte());
-        CreatorID = (UUID)info.readObject();
-        Description = info.readUTF();
-        GroupID = (UUID)info.readObject();
-        GroupOwned = info.readBoolean();
-        SalePrice = info.readInt();
-        saleType = SaleType.setValue(info.readByte());
-        ItemFlags = info.readInt();
-        CreationDate = (Date)info.readObject();
-        LastOwnerID = (UUID)info.readObject();
-    }
-
-    /**
-     * Write Serilization data for this InventoryFolder object to the stream
-     *
-     * @param info serialization stream
-     * @throws IOException
-     */
-    @Override
-    protected void writeObject(ObjectOutputStream info) throws IOException
-    {
-        super.writeObject(info);
-		info.writeLong(serialVersionUID);
-        info.writeObject(AssetID);
-        info.writeObject(Permissions);
-        info.writeByte(assetType.getValue());
-        info.writeByte(inventoryType.getValue());
-        info.writeObject(CreatorID);
-        info.writeUTF(Description);
-        info.writeObject(GroupID);
-        info.writeBoolean(GroupOwned);
-        info.writeInt(SalePrice);
-        info.writeByte(saleType.getValue());
-        info.writeInt(ItemFlags);
-        info.writeObject(CreationDate);
-        info.writeObject(LastOwnerID);
-    }
-
-    /**
-     * Generates a number corresponding to the value of the object to support the use of a hash table.
-     * Suitable for use in hashing algorithms and data structures such as a hash table
-     *
-     * @return A Hashcode of all the combined InventoryItem fields
-     */
-    @Override
-    public int hashCode()
-    {
-        return AssetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ inventoryType.hashCode() ^
-               Description.hashCode() ^ GroupID.hashCode() ^ ((Boolean)GroupOwned).hashCode() ^ SalePrice ^
-               saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode() ^ LastOwnerID.hashCode();
-    }
-
-    /**
-     * Compares an object
-     *
-     * @param o The object to compare
-     * @return true if comparison object matches
-     */
-    @Override
-    public boolean equals(Object o)
-    {
-        InventoryItem item = (InventoryItem)((o instanceof InventoryItem) ? o : null);
-        return item != null && equals(item);
-    }
-
-    /**
-     * Determine whether the specified {@link OpenMetaverse.InventoryBase} object is equal to the current object
-     *
-     * @param o The {@link OpenMetaverse.InventoryBase} object to compare against
-     * @return true if objects are the same
-     */
-    @Override
-    public boolean equals(InventoryBase o)
-    {
-        InventoryItem item = (InventoryItem)((o instanceof InventoryItem) ? o : null);
-        return item != null && equals(item);
-    }
-
-    /**
-     * Determine whether the specified {@link OpenMetaverse.InventoryItem} object is equal to the current object
-     *
-     * @param o The {@link OpenMetaverse.InventoryItem} object to compare against
-     * @return true if objects are the same
-     */
-    public final boolean equals(InventoryItem o)
-    {
-        return o != null && super.equals(o) && o.assetType.equals(assetType) && o.AssetID.equals(AssetID) && o.CreationDate.equals(CreationDate) &&
-                            o.Description.equals(Description) && o.ItemFlags == ItemFlags && o.GroupID.equals(GroupID) &&
-                            o.GroupOwned == GroupOwned && o.inventoryType.equals(inventoryType) && o.Permissions.equals(Permissions) &&
-                            o.SalePrice == SalePrice && o.saleType.equals(saleType) && o.LastOwnerID.equals(LastOwnerID);
-    }
-
-/*
-  	// Output this item as XML
-
-	// <param name="outputAssets">Include an asset data as well,
-	// TRUE/FALSE</param>
-	public String toXML(boolean outputAssets) throws Exception {
-		String output = "<item ";
-
-		output += "name = '" + xmlSafe(name) + "' ";
-		output += "uuid = '" + UUID + "' ";
-		output += "invtype = '" + inventoryType + "' ";
-		output += "type = '" + assetType + "' ";
-
-		output += "description = '" + xmlSafe(description) + "' ";
-		output += "crc = '" + CRC + "' ";
-		output += "debug = '" + InventoryPacketHelper.InventoryUpdateCRC(this)
-				+ "' ";
-		output += "ownerid = '" + ownerID + "' ";
-		output += "creatorid = '" + creatorID + "' ";
-
-		output += "assetid = '" + assetID + "' ";
-		output += "groupid = '" + groupID + "' ";
-
-		output += "groupowned = '" + groupOwned + "' ";
-		output += "creationdate = '" + creationDate + "' ";
-		output += "flags = '" + itemFlags + "' ";
-
-		output += "saletype = '" + saleType + "' ";
-		output += "saleprice = '" + salePrice + "' ";
-		output += "basemask = '" + permissions.BaseMask + "' ";
-		output += "everyonemask = '" + permissions.EveryoneMask + "' ";
-		output += "nextownermask = '" + permissions.NextOwnerMask + "' ";
-		output += "groupmask = '" + permissions.GroupMask + "' ";
-		output += "ownermask = '" + permissions.OwnerMask + "' ";
-
-		output += "/>\n";
-
-		return output;
+	/**
+	 * Construct a new InventoryItem object
+	 * 
+	 * @param itemID
+	 *            The {@link OpenMetaverse.UUID} of the item
+	 */
+	public InventoryItem(UUID itemID)
+	{
+		super(itemID);
 	}
-	*/
+
+	/**
+	 * Construct a new InventoryItem object of a specific Type
+	 * 
+	 * @param type
+	 *            The type of item from {@link OpenMetaverse.InventoryType}
+	 * @param itemID
+	 *            {@link OpenMetaverse.UUID} of the item
+	 */
+	public InventoryItem(InventoryType type, UUID itemID)
+	{
+		super(itemID);
+		inventoryType = type;
+	}
+
+	/**
+	 * Indicates inventory item is a link
+	 * 
+	 * @return True if inventory item is a link to another inventory item
+	 */
+	public final boolean IsLink()
+	{
+		return assetType == AssetType.Link || assetType == AssetType.LinkFolder;
+	}
+
+	public OSD Serialize()
+	{
+		OSDMap map = (OSDMap) super.toOSD();
+		map.put("AssetUUID", OSD.FromUUID(AssetID));
+		map.put("Permissions", Permissions.Serialize());
+		map.put("AssetType", OSD.FromInteger(assetType.getValue()));
+		map.put("InventoryType", OSD.FromInteger(inventoryType.getValue()));
+		map.put("CreatorID", OSD.FromUUID(CreatorID));
+		map.put("Description", OSD.FromString(Description));
+		map.put("GroupID", OSD.FromUUID(GroupID));
+		map.put("GroupOwned", OSD.FromBoolean(GroupOwned));
+		map.put("SalePrice", OSD.FromInteger(SalePrice));
+		map.put("SaleType", OSD.FromInteger(saleType.getValue()));
+		map.put("Flags", OSD.FromInteger(ItemFlags));
+		map.put("CreationDate", OSD.FromDate(CreationDate));
+		map.put("LastOwnerID", OSD.FromUUID(LastOwnerID));
+		return map;
+	}
+
+	@Override
+	public void fromOSD(OSD osd)
+	{
+		super.fromOSD(osd);
+		if (osd instanceof OSDMap)
+		{
+			OSDMap map = (OSDMap) osd;
+
+			AssetID = map.get("AssetUUID").AsUUID();
+			Permissions = new Permissions(map.get("Permissions"));
+			assetType = AssetType.setValue(map.get("AssetType").AsInteger());
+			inventoryType = InventoryType.setValue(map.get("InventoryType").AsInteger());
+			CreatorID = map.get("CreatorID").AsUUID();
+			Description = map.get("Description").AsString();
+			GroupID = map.get("GroupID").AsUUID();
+			GroupOwned = map.get("GroupOwned").AsBoolean();
+			SalePrice = map.get("SalePrice").AsInteger();
+			saleType = SaleType.setValue(map.get("SaleType").AsInteger());
+			ItemFlags = map.get("Flags").AsInteger();
+			CreationDate = map.get("CreationDate").AsDate();
+			LastOwnerID = map.get("LastOwnerID").AsUUID();
+		}
+	}
+
+	/**
+	 * Initializes an InventoryItem object from a serialization stream
+	 * 
+	 * @param info
+	 *            serialization stream
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	@Override
+	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+	{
+		super.readObject(info);
+		if (serialVersionUID != info.readLong())
+			throw new InvalidObjectException("InventoryItem serial version mismatch");
+		AssetID = (UUID) info.readObject();
+		Permissions = (Permissions) info.readObject();
+		assetType = AssetType.setValue(info.readByte());
+		inventoryType = InventoryType.setValue(info.readByte());
+		CreatorID = (UUID) info.readObject();
+		Description = info.readUTF();
+		GroupID = (UUID) info.readObject();
+		GroupOwned = info.readBoolean();
+		SalePrice = info.readInt();
+		saleType = SaleType.setValue(info.readByte());
+		ItemFlags = info.readInt();
+		CreationDate = (Date) info.readObject();
+		LastOwnerID = (UUID) info.readObject();
+	}
+
+	/**
+	 * Write Serilization data for this InventoryFolder object to the stream
+	 * 
+	 * @param info
+	 *            serialization stream
+	 * @throws IOException
+	 */
+	@Override
+	protected void writeObject(ObjectOutputStream info) throws IOException
+	{
+		super.writeObject(info);
+		info.writeLong(serialVersionUID);
+		info.writeObject(AssetID);
+		info.writeObject(Permissions);
+		info.writeByte(assetType.getValue());
+		info.writeByte(inventoryType.getValue());
+		info.writeObject(CreatorID);
+		info.writeUTF(Description);
+		info.writeObject(GroupID);
+		info.writeBoolean(GroupOwned);
+		info.writeInt(SalePrice);
+		info.writeByte(saleType.getValue());
+		info.writeInt(ItemFlags);
+		info.writeObject(CreationDate);
+		info.writeObject(LastOwnerID);
+	}
+
+	/**
+	 * Generates a number corresponding to the value of the object to support
+	 * the use of a hash table. Suitable for use in hashing algorithms and data
+	 * structures such as a hash table
+	 * 
+	 * @return A Hashcode of all the combined InventoryItem fields
+	 */
+	@Override
+	public int hashCode()
+	{
+		return AssetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ inventoryType.hashCode()
+				^ Description.hashCode() ^ GroupID.hashCode() ^ ((Boolean) GroupOwned).hashCode() ^ SalePrice
+				^ saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode() ^ LastOwnerID.hashCode();
+	}
+
+	/**
+	 * Compares an object
+	 * 
+	 * @param o
+	 *            The object to compare
+	 * @return true if comparison object matches
+	 */
+	@Override
+	public boolean equals(Object o)
+	{
+		InventoryItem item = (InventoryItem) ((o instanceof InventoryItem) ? o : null);
+		return item != null && equals(item);
+	}
+
+	/**
+	 * Determine whether the specified {@link OpenMetaverse.InventoryBase}
+	 * object is equal to the current object
+	 * 
+	 * @param o
+	 *            The {@link OpenMetaverse.InventoryBase} object to compare
+	 *            against
+	 * @return true if objects are the same
+	 */
+	@Override
+	public boolean equals(InventoryBase o)
+	{
+		InventoryItem item = (InventoryItem) ((o instanceof InventoryItem) ? o : null);
+		return item != null && equals(item);
+	}
+
+	/**
+	 * Determine whether the specified {@link OpenMetaverse.InventoryItem}
+	 * object is equal to the current object
+	 * 
+	 * @param o
+	 *            The {@link OpenMetaverse.InventoryItem} object to compare
+	 *            against
+	 * @return true if objects are the same
+	 */
+	public final boolean equals(InventoryItem o)
+	{
+		return o != null && super.equals(o) && o.assetType.equals(assetType) && o.AssetID.equals(AssetID)
+				&& o.CreationDate.equals(CreationDate) && o.Description.equals(Description) && o.ItemFlags == ItemFlags
+				&& o.GroupID.equals(GroupID) && o.GroupOwned == GroupOwned && o.inventoryType.equals(inventoryType)
+				&& o.Permissions.equals(Permissions) && o.SalePrice == SalePrice && o.saleType.equals(saleType)
+				&& o.LastOwnerID.equals(LastOwnerID);
+	}
+
+	/*
+	 * // Output this item as XML
+	 * 
+	 * // <param name="outputAssets">Include an asset data as well, //
+	 * TRUE/FALSE</param> public String toXML(boolean outputAssets) throws
+	 * Exception { String output = "<item ";
+	 * 
+	 * output += "name = '" + xmlSafe(name) + "' "; output += "uuid = '" + UUID
+	 * + "' "; output += "invtype = '" + inventoryType + "' "; output +=
+	 * "type = '" + assetType + "' ";
+	 * 
+	 * output += "description = '" + xmlSafe(description) + "' "; output +=
+	 * "crc = '" + CRC + "' "; output += "debug = '" +
+	 * InventoryPacketHelper.InventoryUpdateCRC(this) + "' "; output +=
+	 * "ownerid = '" + ownerID + "' "; output += "creatorid = '" + creatorID +
+	 * "' ";
+	 * 
+	 * output += "assetid = '" + assetID + "' "; output += "groupid = '" +
+	 * groupID + "' ";
+	 * 
+	 * output += "groupowned = '" + groupOwned + "' "; output +=
+	 * "creationdate = '" + creationDate + "' "; output += "flags = '" +
+	 * itemFlags + "' ";
+	 * 
+	 * output += "saletype = '" + saleType + "' "; output += "saleprice = '" +
+	 * salePrice + "' "; output += "basemask = '" + permissions.BaseMask + "' ";
+	 * output += "everyonemask = '" + permissions.EveryoneMask + "' "; output +=
+	 * "nextownermask = '" + permissions.NextOwnerMask + "' "; output +=
+	 * "groupmask = '" + permissions.GroupMask + "' "; output += "ownermask = '"
+	 * + permissions.OwnerMask + "' ";
+	 * 
+	 * output += "/>\n";
+	 * 
+	 * return output; }
+	 */
 }
 
 /*

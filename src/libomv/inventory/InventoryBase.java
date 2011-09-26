@@ -39,111 +39,121 @@ import libomv.types.UUID;
 /* Base class for Inventory Items */
 public abstract class InventoryBase implements Serializable
 {
-    //
+	//
 	private static final long serialVersionUID = 1L;
 
 	// {@link OpenMetaverse.UUID} of item/folder
-    public UUID UUID;
-    // {@link OpenMetaverse.UUID} of parent folder
-    public UUID ParentUUID;
-    // Name of item/folder */
-    public String Name;
-    // Item/Folder Owners {@link OpenMetaverse.UUID}
-    public UUID OwnerID;
+	public UUID UUID;
+	// {@link OpenMetaverse.UUID} of parent folder
+	public UUID ParentUUID;
+	// Name of item/folder */
+	public String Name;
+	// Item/Folder Owners {@link OpenMetaverse.UUID}
+	public UUID OwnerID;
 
-    /**
-     * Constructor
-     */
-    public InventoryBase()
-    {
-    }
+	/**
+	 * Constructor
+	 */
+	public InventoryBase()
+	{
+	}
 
-    /**
-     * Constructor, takes an itemID as a parameter
-     *
-     * @param itemID The {@link OpenMetaverse.UUID} of the item
-     */
-    public InventoryBase(UUID itemID)
-    {
-        UUID = itemID;
-    }
+	/**
+	 * Constructor, takes an itemID as a parameter
+	 * 
+	 * @param itemID
+	 *            The {@link OpenMetaverse.UUID} of the item
+	 */
+	public InventoryBase(UUID itemID)
+	{
+		UUID = itemID;
+	}
 
-    public InventoryBase(OSD osd)
-    {
-    	fromOSD(osd);
-    }
+	public InventoryBase(OSD osd)
+	{
+		fromOSD(osd);
+	}
 
-    public OSD toOSD()
-    {
-        OSDMap map = new OSDMap();
-        map.put("UUID", OSD.FromUUID(UUID));
-        map.put("ParentUUID", OSD.FromUUID(ParentUUID));
-        map.put("Name", OSD.FromString(Name));
-        map.put("OwnerID", OSD.FromUUID(OwnerID));
-        return map;
-    }
+	public OSD toOSD()
+	{
+		OSDMap map = new OSDMap();
+		map.put("UUID", OSD.FromUUID(UUID));
+		map.put("ParentUUID", OSD.FromUUID(ParentUUID));
+		map.put("Name", OSD.FromString(Name));
+		map.put("OwnerID", OSD.FromUUID(OwnerID));
+		return map;
+	}
 
-    public void fromOSD(OSD osd)
-    {
-    	if (osd instanceof OSDMap)
-    	{
-    	   OSDMap map = (OSDMap)osd;
-           UUID = map.get("UUID").AsUUID();
-           ParentUUID =  map.get("ParentUUID").AsUUID();
-           Name =  map.get("Name").AsString();
-           OwnerID =  map.get("OwnerID").AsUUID();
-    	}
-    }
+	public void fromOSD(OSD osd)
+	{
+		if (osd instanceof OSDMap)
+		{
+			OSDMap map = (OSDMap) osd;
+			UUID = map.get("UUID").AsUUID();
+			ParentUUID = map.get("ParentUUID").AsUUID();
+			Name = map.get("Name").AsString();
+			OwnerID = map.get("OwnerID").AsUUID();
+		}
+	}
 
-    protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
-    {
-        if (serialVersionUID != info.readLong())
-        	throw new InvalidObjectException("InventoryItem serial version mismatch");
-        UUID = (UUID)info.readObject();
-        ParentUUID = (UUID)info.readObject();
-        Name = info.readUTF();
-        OwnerID = (UUID)info.readObject();
-    }
+	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+	{
+		if (serialVersionUID != info.readLong())
+			throw new InvalidObjectException("InventoryItem serial version mismatch");
+		UUID = (UUID) info.readObject();
+		ParentUUID = (UUID) info.readObject();
+		Name = info.readUTF();
+		OwnerID = (UUID) info.readObject();
+	}
 
 	protected void writeObject(ObjectOutputStream info) throws IOException
-    {
+	{
 		info.writeLong(serialVersionUID);
-    	info.writeObject(UUID);
-    	info.writeObject(ParentUUID);
-    	info.writeUTF(Name);
-    	info.writeObject(OwnerID);
-    }
+		info.writeObject(UUID);
+		info.writeObject(ParentUUID);
+		info.writeUTF(Name);
+		info.writeObject(OwnerID);
+	}
 
-    /** Generates a number corresponding to the value of the object to support the use of a hash table,
-     *  suitable for use in hashing algorithms and data structures such as a hash table
-     *
-     *  @return A Hashcode of all the combined InventoryBase fields
-     */
-    @Override
+	/**
+	 * Generates a number corresponding to the value of the object to support
+	 * the use of a hash table, suitable for use in hashing algorithms and data
+	 * structures such as a hash table
+	 * 
+	 * @return A Hashcode of all the combined InventoryBase fields
+	 */
+	@Override
 	public int hashCode()
-    {
-        return UUID.hashCode() ^ ParentUUID.hashCode() ^ Name.hashCode() ^ OwnerID.hashCode();
-    }
+	{
+		return UUID.hashCode() ^ ParentUUID.hashCode() ^ Name.hashCode() ^ OwnerID.hashCode();
+	}
 
-    /** Determine whether the specified {@link OpenMetaverse.InventoryBase} object is equal to the current object
-     *
-     *  @param o InventoryBase object to compare against
-     *  @return true if objects are the same
-     */
-    @Override
+	/**
+	 * Determine whether the specified {@link OpenMetaverse.InventoryBase}
+	 * object is equal to the current object
+	 * 
+	 * @param o
+	 *            InventoryBase object to compare against
+	 * @return true if objects are the same
+	 */
+	@Override
 	public boolean equals(Object o)
-    {
-        InventoryBase inv = (InventoryBase)((o instanceof InventoryBase) ? o : null);
-        return inv != null && equals(inv);
-    }
+	{
+		InventoryBase inv = (InventoryBase) ((o instanceof InventoryBase) ? o : null);
+		return inv != null && equals(inv);
+	}
 
-    /** Determine whether the specified {@link OpenMetaverse.InventoryBase} object is equal to the current object
-     *
-     *  @param o InventoryBase object to compare against
-     *  @return true if objects are the same
-     */
-    public boolean equals(InventoryBase o)
-    {
-        return o != null && o.UUID.equals(UUID) && o.ParentUUID.equals(ParentUUID) && o.Name.equals(Name) && o.OwnerID.equals(OwnerID);
-    }
+	/**
+	 * Determine whether the specified {@link OpenMetaverse.InventoryBase}
+	 * object is equal to the current object
+	 * 
+	 * @param o
+	 *            InventoryBase object to compare against
+	 * @return true if objects are the same
+	 */
+	public boolean equals(InventoryBase o)
+	{
+		return o != null && o.UUID.equals(UUID) && o.ParentUUID.equals(ParentUUID) && o.Name.equals(Name)
+				&& o.OwnerID.equals(OwnerID);
+	}
 }

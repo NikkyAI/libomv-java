@@ -34,14 +34,16 @@ import libomv.types.Vector3;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
-public class Vector3 {
+public class Vector3
+{
 	public float X;
 
 	public float Y;
 
 	public float Z;
 
-	public Vector3(float val) {
+	public Vector3(float val)
+	{
 		X = Y = Z = val;
 	}
 
@@ -52,13 +54,15 @@ public class Vector3 {
 		Z = v.Z;
 	}
 
-	public Vector3(Vector3d vector) {
+	public Vector3(Vector3d vector)
+	{
 		X = (float) vector.X;
 		Y = (float) vector.Y;
 		Z = (float) vector.Z;
 	}
 
-	public Vector3(ByteBuffer byteArray) {
+	public Vector3(ByteBuffer byteArray)
+	{
 		X = byteArray.getFloat();
 		Y = byteArray.getFloat();
 		Z = byteArray.getFloat();
@@ -66,10 +70,13 @@ public class Vector3 {
 
 	/**
 	 * Constructor, builds a vector from a byte array
-	 *
-	 * @param byteArray Byte array containing three four-byte floats
-	 * @param pos Beginning position in the byte array
-	 * @param le is the byte array in little endian format
+	 * 
+	 * @param byteArray
+	 *            Byte array containing three four-byte floats
+	 * @param pos
+	 *            Beginning position in the byte array
+	 * @param le
+	 *            is the byte array in little endian format
 	 */
 	public Vector3(byte[] byteArray, int pos)
 	{
@@ -83,7 +90,8 @@ public class Vector3 {
 		FromBytes(byteArray, pos, le);
 	}
 
-	public Vector3(float x, float y, float z) {
+	public Vector3(float x, float y, float z)
+	{
 		X = x;
 		Y = y;
 		Z = z;
@@ -94,9 +102,10 @@ public class Vector3 {
 		// TODO Auto-generated constructor stub
 	}
 
-	/** Returns the raw bytes for this vector
-	 *
-	 *  @return An eight-byte array containing X and Y
+	/**
+	 * Returns the raw bytes for this vector
+	 * 
+	 * @return An eight-byte array containing X and Y
 	 */
 	public byte[] GetBytes()
 	{
@@ -105,19 +114,22 @@ public class Vector3 {
 		return byteArray;
 	}
 
-	public void GetBytes(ByteBuffer byteArray) {
+	public void GetBytes(ByteBuffer byteArray)
+	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
 		byteArray.putFloat(Z);
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "" + X + " " + Y + " " + Z;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		int x = (int) X;
 		int y = (int) Y;
 		int z = (int) Z;
@@ -125,11 +137,15 @@ public class Vector3 {
 		return (x ^ y ^ z);
 	}
 
-	/** Builds a vector from a byte array
-	 *
-	 *  @param byteArray Byte array containing a 12 byte vector
-	 *  @param pos Beginning position in the byte array
-	 *  @param le is the byte array in little endian format
+	/**
+	 * Builds a vector from a byte array
+	 * 
+	 * @param byteArray
+	 *            Byte array containing a 12 byte vector
+	 * @param pos
+	 *            Beginning position in the byte array
+	 * @param le
+	 *            is the byte array in little endian format
 	 */
 	public void FromBytes(byte[] bytes, int pos, boolean le)
 	{
@@ -148,11 +164,14 @@ public class Vector3 {
 		}
 	}
 
-	/** Writes the raw bytes for this vector to a byte array
-	 *
-	 *  @param dest Destination byte array
-	 *  @param pos Position in the destination array to start writing.
-	 *         Must be at least 12 bytes before the end of the array
+	/**
+	 * Writes the raw bytes for this vector to a byte array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
+	 *            least 12 bytes before the end of the array
 	 */
 	public void ToBytes(byte[] dest, int pos)
 	{
@@ -177,7 +196,7 @@ public class Vector3 {
 
 	public float Length()
 	{
-		return (float)Math.sqrt(DistanceSquared(this, Zero));
+		return (float) Math.sqrt(DistanceSquared(this, Zero));
 	}
 
 	public float LengthSquared()
@@ -193,12 +212,16 @@ public class Vector3 {
 		Z = val.Z;
 	}
 
-	/** Test if this vector is equal to another vector, within a given tolerance range
-	 *
-	 *  @param vec Vector to test against
-	 *  @param tolerance The acceptable magnitude of difference between the two vectors
-	 *  @return True if the magnitude of difference between the two vectors
-	 *          is less than the given tolerance, otherwise false
+	/**
+	 * Test if this vector is equal to another vector, within a given tolerance
+	 * range
+	 * 
+	 * @param vec
+	 *            Vector to test against
+	 * @param tolerance
+	 *            The acceptable magnitude of difference between the two vectors
+	 * @return True if the magnitude of difference between the two vectors is
+	 *         less than the given tolerance, otherwise false
 	 */
 	public boolean ApproxEquals(Vector3 vec, float tolerance)
 	{
@@ -208,7 +231,7 @@ public class Vector3 {
 
 	public int CompareTo(Vector3 vector)
 	{
-		return ((Float)Length()).compareTo(vector.Length());
+		return ((Float) Length()).compareTo(vector.Length());
 	}
 
 	/** Test if this vector is composed of all finite numbers */
@@ -219,22 +242,25 @@ public class Vector3 {
 
 	public Vector3 Clamp(Vector3 min, Vector3 max)
 	{
-		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z, max.Z));
+		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z,
+				max.Z));
 	}
 
 	public static Vector3 Cross(Vector3 value1, Vector3 value2)
 	{
-		return new Vector3(value1.Y * value2.Z - value2.Y * value1.Z, value1.Z * value2.X - value2.Z * value1.X, value1.X * value2.Y - value2.X * value1.Y);
+		return new Vector3(value1.Y * value2.Z - value2.Y * value1.Z, value1.Z * value2.X - value2.Z * value1.X,
+				value1.X * value2.Y - value2.X * value1.Y);
 	}
 
 	public static float Distance(Vector3 value1, Vector3 value2)
 	{
-		return (float)Math.sqrt(DistanceSquared(value1, value2));
+		return (float) Math.sqrt(DistanceSquared(value1, value2));
 	}
 
 	public static float DistanceSquared(Vector3 value1, Vector3 value2)
 	{
-		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y) + (value1.Z - value2.Z) * (value1.Z - value2.Z);
+		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
+				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
 	}
 
 	public static float Dot(Vector3 value1, Vector3 value2)
@@ -245,12 +271,13 @@ public class Vector3 {
 	public static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount)
 	{
 
-		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount), Helpers.Lerp(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount),
+				Helpers.Lerp(value1.Z, value2.Z, amount));
 	}
 
 	public static float Mag(Vector3 value)
 	{
-		return (float)Math.sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
+		return (float) Math.sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
 	}
 
 	public static Vector3 Max(Vector3 value1, Vector3 value2)
@@ -282,10 +309,14 @@ public class Vector3 {
 		return value;
 	}
 
-	/** Calculate the rotation between two vectors
-	 *
-	 *  @param a Normalized directional vector (such as 1,0,0 for forward facing)
-	 *  @param b Normalized target vector
+	/**
+	 * Calculate the rotation between two vectors
+	 * 
+	 * @param a
+	 *            Normalized directional vector (such as 1,0,0 for forward
+	 *            facing)
+	 * @param b
+	 *            Normalized target vector
 	 */
 	public static Quaternion RotationBetween(Vector3 a, Vector3 b)
 	{
@@ -294,37 +325,46 @@ public class Vector3 {
 		float magProduct = a.Length() * b.Length();
 		double angle = Math.acos(dotProduct / magProduct);
 		Vector3 axis = Normalize(crossProduct);
-		float s = (float)Math.sin(angle / 2d);
+		float s = (float) Math.sin(angle / 2d);
 
-		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float)Math.cos(angle / 2d));
+		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float) Math.cos(angle / 2d));
 	}
 
 	/** Interpolates between two vectors using a cubic equation */
 	public static Vector3 SmoothStep(Vector3 value1, Vector3 value2, float amount)
 	{
-		return new Vector3(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y, amount), Helpers.SmoothStep(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y,
+				amount), Helpers.SmoothStep(value1.Z, value2.Z, amount));
 	}
 
 	public static Vector3 Transform(Vector3 position, Matrix4 matrix)
 	{
-		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31) + matrix.M41, (position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32) + matrix.M42, (position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43);
+		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31)
+				+ matrix.M41, (position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32)
+				+ matrix.M42, (position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33)
+				+ matrix.M43);
 	}
 
 	public static Vector3 TransformNormal(Vector3 position, Matrix4 matrix)
 	{
-		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31), (position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32), (position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33));
+		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31),
+				(position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32),
+				(position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33));
 	}
 
-	/** Parse a vector from a string
-	 *
-	 *  @param val A string representation of a 3D vector, enclosed
-	 *         in arrow brackets and separated by commas
+	/**
+	 * Parse a vector from a string
+	 * 
+	 * @param val
+	 *            A string representation of a 3D vector, enclosed in arrow
+	 *            brackets and separated by commas
 	 */
 	public static Vector3 Parse(String val)
 	{
 		String splitChar = ",";
 		String[] split = val.replace("<", "").replace(">", "").split(splitChar);
-		return new Vector3(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()), Float.parseFloat(split[2].trim()));
+		return new Vector3(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()),
+				Float.parseFloat(split[2].trim()));
 	}
 
 	public static Vector3 TryParse(String val)
@@ -361,7 +401,7 @@ public class Vector3 {
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector3) ? equals((Vector3)obj) : false;
+		return (obj instanceof Vector3) ? equals((Vector3) obj) : false;
 	}
 
 	public static Vector3 negate(Vector3 value)
@@ -417,9 +457,15 @@ public class Vector3 {
 	public static Vector3 multiply(Vector3 vec, Quaternion rot)
 	{
 		Vector3 vec2 = new Vector3(0f);
-		vec2.X = rot.W * rot.W * vec.X + 2f * rot.Y * rot.W * vec.Z - 2f * rot.Z * rot.W * vec.Y + rot.X * rot.X * vec.X + 2f * rot.Y * rot.X * vec.Y + 2f * rot.Z * rot.X * vec.Z - rot.Z * rot.Z * vec.X - rot.Y * rot.Y * vec.X;
-		vec2.Y = 2f * rot.X * rot.Y * vec.X + rot.Y * rot.Y * vec.Y + 2f * rot.Z * rot.Y * vec.Z + 2f * rot.W * rot.Z * vec.X - rot.Z * rot.Z * vec.Y + rot.W * rot.W * vec.Y - 2f * rot.X * rot.W * vec.Z - rot.X * rot.X * vec.Y;
-		vec2.Z = 2f * rot.X * rot.Z * vec.X + 2f * rot.Y * rot.Z * vec.Y + rot.Z * rot.Z * vec.Z - 2f * rot.W * rot.Y * vec.X - rot.Y * rot.Y * vec.Z + 2f * rot.W * rot.X * vec.Y - rot.X * rot.X * vec.Z + rot.W * rot.W * vec.Z;
+		vec2.X = rot.W * rot.W * vec.X + 2f * rot.Y * rot.W * vec.Z - 2f * rot.Z * rot.W * vec.Y + rot.X * rot.X
+				* vec.X + 2f * rot.Y * rot.X * vec.Y + 2f * rot.Z * rot.X * vec.Z - rot.Z * rot.Z * vec.X - rot.Y
+				* rot.Y * vec.X;
+		vec2.Y = 2f * rot.X * rot.Y * vec.X + rot.Y * rot.Y * vec.Y + 2f * rot.Z * rot.Y * vec.Z + 2f * rot.W * rot.Z
+				* vec.X - rot.Z * rot.Z * vec.Y + rot.W * rot.W * vec.Y - 2f * rot.X * rot.W * vec.Z - rot.X * rot.X
+				* vec.Y;
+		vec2.Z = 2f * rot.X * rot.Z * vec.X + 2f * rot.Y * rot.Z * vec.Y + rot.Z * rot.Z * vec.Z - 2f * rot.W * rot.Y
+				* vec.X - rot.Y * rot.Y * vec.Z + 2f * rot.W * rot.X * vec.Y - rot.X * rot.X * vec.Z + rot.W * rot.W
+				* vec.Z;
 		return vec2;
 	}
 
@@ -451,7 +497,7 @@ public class Vector3 {
 	public final static Vector3 One = new Vector3(1f, 1f, 1f);
 	/** A unit vector facing forward (X axis), value 1,0,0 */
 	public final static Vector3 UnitX = new Vector3(1f, 0f, 0f);
-	/** A unit vector facing left (Y axis), value 0,1,0	*/
+	/** A unit vector facing left (Y axis), value 0,1,0 */
 	public final static Vector3 UnitY = new Vector3(0f, 1f, 0f);
 	/** A unit vector facing up (Z axis), value 0,0,1 */
 	public final static Vector3 UnitZ = new Vector3(0f, 0f, 1f);

@@ -32,76 +32,78 @@ import libomv.StructuredData.OSDMap;
 
 public class MediaEntry
 {
-    // #region enums
-    // Permissions for control of object media
-    // [Flags]
-    public static class MediaPermission
-    {
+	// #region enums
+	// Permissions for control of object media
+	// [Flags]
+	public static class MediaPermission
+	{
 		public static final byte None = 0;
-        public static final byte Owner = 1;
-        public static final byte Group = 2;
-        public static final byte Anyone = 4;
-        public static final byte All = Owner | Group | Anyone;
+		public static final byte Owner = 1;
+		public static final byte Group = 2;
+		public static final byte Anyone = 4;
+		public static final byte All = Owner | Group | Anyone;
 
 		public static byte setValue(int value)
 		{
-			return (byte)(value & _mask);
+			return (byte) (value & _mask);
 		}
 
 		public static byte getValue(byte value)
 		{
-			return (byte)(value & _mask);
+			return (byte) (value & _mask);
 		}
 
-        private static final byte _mask = All;
-    }
+		private static final byte _mask = All;
+	}
 
-    // Style of cotrols that shold be displayed to the user
-    public enum MediaControls
-    {
-        Standard,
-        Mini;
+	// Style of cotrols that shold be displayed to the user
+	public enum MediaControls
+	{
+		Standard, Mini;
 
-		public byte getValue() {
-			return (byte)ordinal();
+		public byte getValue()
+		{
+			return (byte) ordinal();
 		}
 
-		public static MediaControls setValue(int value) {
+		public static MediaControls setValue(int value)
+		{
 			if (value > 0 && value < values().length)
-			    return values()[value];
+				return values()[value];
 			return null;
 		}
 
-    }
-    // #endregion enums
+	}
 
-        // Is display of the alternative image enabled
-        public boolean EnableAlterntiveImage;
+	// #endregion enums
 
-        // Should media auto loop
-        public boolean AutoLoop;
+	// Is display of the alternative image enabled
+	public boolean EnableAlterntiveImage;
 
-        // Shoule media be auto played
-        public boolean AutoPlay;
+	// Should media auto loop
+	public boolean AutoLoop;
 
-        // Auto scale media to prim face
-        public boolean AutoScale;
+	// Shoule media be auto played
+	public boolean AutoPlay;
 
-        // Should viewer automatically zoom in on the face when clicked
-        public boolean AutoZoom;
+	// Auto scale media to prim face
+	public boolean AutoScale;
 
-        // Should viewer interpret first click as interaction with the media
-        // or when false should the first click be treated as zoom in command
-        public boolean InteractOnFirstClick;
+	// Should viewer automatically zoom in on the face when clicked
+	public boolean AutoZoom;
 
-        // Style of controls viewer should display when viewer media on this face
-        public MediaControls Controls;
+	// Should viewer interpret first click as interaction with the media
+	// or when false should the first click be treated as zoom in command
+	public boolean InteractOnFirstClick;
 
-        // Starting URL for the media
-        public String HomeURL;
+	// Style of controls viewer should display when viewer media on this face
+	public MediaControls Controls;
 
-        // Currently navigated URL
-        public String CurrentURL;
+	// Starting URL for the media
+	public String HomeURL;
+
+	// Currently navigated URL
+	public String CurrentURL;
 
 	// Media height in pixes
 	public int Height;
@@ -133,7 +135,7 @@ public class MediaEntry
 
 	/**
 	 * Serialize to OSD
-	 *
+	 * 
 	 * @return OSDMap with the serialized data
 	 */
 	public OSDMap Serialize()
@@ -169,7 +171,7 @@ public class MediaEntry
 
 	/**
 	 * Deserialize from OSD data
-	 *
+	 * 
 	 * @param osd
 	 *            Serialized OSD data
 	 * @return Deserialized object

@@ -36,7 +36,7 @@ public final class Vector2
 {
 	/** X value */
 	public float X;
-	/** Y value	*/
+	/** Y value */
 	public float Y;
 
 	/** Simple Constructors */
@@ -63,10 +63,13 @@ public final class Vector2
 		Y = vector.Y;
 	}
 
-	/** Constructor, builds a vector from a byte array
-	 *
-	 *  @param byteArray Byte array containing two four-byte floats
-	 *  @param pos Beginning position in the byte array
+	/**
+	 * Constructor, builds a vector from a byte array
+	 * 
+	 * @param byteArray
+	 *            Byte array containing two four-byte floats
+	 * @param pos
+	 *            Beginning position in the byte array
 	 */
 	public Vector2(byte[] byteArray, int pos)
 	{
@@ -80,9 +83,11 @@ public final class Vector2
 		FromBytes(byteArray, pos, le);
 	}
 
-	/** Constructor, builds a vector from a byte array
-	 *
-	 *  @param byteArray ByteBuffer containing three four-byte floats
+	/**
+	 * Constructor, builds a vector from a byte array
+	 * 
+	 * @param byteArray
+	 *            ByteBuffer containing three four-byte floats
 	 */
 	public Vector2(ByteBuffer byteArray)
 	{
@@ -90,9 +95,10 @@ public final class Vector2
 		Y = byteArray.getFloat();
 	}
 
-	/** Returns the raw bytes for this vector
-	 *
-	 *  @return An eight-byte array containing X and Y
+	/**
+	 * Returns the raw bytes for this vector
+	 * 
+	 * @return An eight-byte array containing X and Y
 	 */
 	public byte[] GetBytes()
 	{
@@ -101,9 +107,11 @@ public final class Vector2
 		return byteArray;
 	}
 
-	/** Returns a ByteBuffer for this vector
-	 *
-	 *  @param byteArray buffer to copye the 8 bytes for X, Y, and Z
+	/**
+	 * Returns a ByteBuffer for this vector
+	 * 
+	 * @param byteArray
+	 *            buffer to copye the 8 bytes for X, Y, and Z
 	 */
 	public void GetBytes(ByteBuffer byteArray)
 	{
@@ -111,9 +119,10 @@ public final class Vector2
 		byteArray.putFloat(Y);
 	}
 
-	/** Get a formatted string representation of the vector
-	 *
-	 *  @return A string representation of the vector
+	/**
+	 * Get a formatted string representation of the vector
+	 * 
+	 * @return A string representation of the vector
 	 */
 	@Override
 	public String toString()
@@ -121,10 +130,11 @@ public final class Vector2
 		return String.format(Helpers.EnUsCulture, "<%f, %f>", X, Y);
 	}
 
-	/** Get a string representation of the vector elements with up to three
-	 *  decimal digits and separated by spaces only
-	 *
-	 *  @return Raw string representation of the vector
+	/**
+	 * Get a string representation of the vector elements with up to three
+	 * decimal digits and separated by spaces only
+	 * 
+	 * @return Raw string representation of the vector
 	 */
 	public String ToRawString()
 	{
@@ -135,14 +145,18 @@ public final class Vector2
 	@Override
 	public int hashCode()
 	{
-		return ((Float)X).hashCode() ^ ((Float)Y).hashCode();
+		return ((Float) X).hashCode() ^ ((Float) Y).hashCode();
 	}
 
-	/** Builds a vector from a byte array
-	 *
-	 *  @param byteArray Byte array containing a 12 byte vector
-	 *  @param pos Beginning position in the byte array
-	 *  @param le is the byte array in little endian format
+	/**
+	 * Builds a vector from a byte array
+	 * 
+	 * @param byteArray
+	 *            Byte array containing a 12 byte vector
+	 * @param pos
+	 *            Beginning position in the byte array
+	 * @param le
+	 *            is the byte array in little endian format
 	 */
 	public void FromBytes(byte[] bytes, int pos, boolean le)
 	{
@@ -159,11 +173,14 @@ public final class Vector2
 		}
 	}
 
-	/** Writes the raw bytes for this vector to a byte array
-	 *
-	 *  @param dest Destination byte array
-	 *  @param pos Position in the destination array to start writing.
-	 *         Must be at least 12 bytes before the end of the array
+	/**
+	 * Writes the raw bytes for this vector to a byte array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
+	 *            least 12 bytes before the end of the array
 	 */
 	public void ToBytes(byte[] dest, int pos, boolean le)
 	{
@@ -181,7 +198,7 @@ public final class Vector2
 
 	public float Length()
 	{
-		return (float)Math.sqrt(DistanceSquared(this, Zero));
+		return (float) Math.sqrt(DistanceSquared(this, Zero));
 	}
 
 	public float LengthSquared()
@@ -196,12 +213,16 @@ public final class Vector2
 		Y = val.Y;
 	}
 
-	/** Test if this vector is equal to another vector, within a given tolerance range
-	 *
-	 *  @param vec Vector to test against
-	 *  @param tolerance The acceptable magnitude of difference between the two vectors
-	 *  @return True if the magnitude of difference between the two vectors
-	 *          is less than the given tolerance, otherwise false
+	/**
+	 * Test if this vector is equal to another vector, within a given tolerance
+	 * range
+	 * 
+	 * @param vec
+	 *            Vector to test against
+	 * @param tolerance
+	 *            The acceptable magnitude of difference between the two vectors
+	 * @return True if the magnitude of difference between the two vectors is
+	 *         less than the given tolerance, otherwise false
 	 */
 	public boolean ApproxEquals(Vector2 vec, float tolerance)
 	{
@@ -211,7 +232,7 @@ public final class Vector2
 
 	public int CompareTo(Vector2 vector)
 	{
-		return ((Float)Length()).compareTo(vector.Length());
+		return ((Float) Length()).compareTo(vector.Length());
 	}
 
 	/** Test if this vector is composed of all finite numbers */
@@ -227,7 +248,7 @@ public final class Vector2
 
 	public static float Distance(Vector2 value1, Vector2 value2)
 	{
-		return (float)Math.sqrt(DistanceSquared(value1, value2));
+		return (float) Math.sqrt(DistanceSquared(value1, value2));
 	}
 
 	public static float DistanceSquared(Vector2 value1, Vector2 value2)
@@ -260,7 +281,7 @@ public final class Vector2
 		float factor = DistanceSquared(value, Zero);
 		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
 		{
-			factor = 1f / (float)Math.sqrt(factor);
+			factor = 1f / (float) Math.sqrt(factor);
 			value.X *= factor;
 			value.Y *= factor;
 		}
@@ -275,7 +296,8 @@ public final class Vector2
 	/** Interpolates between two vectors using a cubic equation */
 	public static Vector2 SmoothStep(Vector2 value1, Vector2 value2, float amount)
 	{
-		return new Vector2(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y, amount));
+		return new Vector2(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y,
+				amount));
 	}
 
 	public static Vector2 Transform(Vector2 position, Matrix4 matrix)
@@ -292,10 +314,12 @@ public final class Vector2
 		return position;
 	}
 
-	/** Parse a vector from a string
-	 *
-	 *  @param val A string representation of a 2D vector, enclosed
-	 *             in arrow brackets and separated by commas
+	/**
+	 * Parse a vector from a string
+	 * 
+	 * @param val
+	 *            A string representation of a 2D vector, enclosed in arrow
+	 *            brackets and separated by commas
 	 */
 	public static Vector2 Parse(String val)
 	{
@@ -326,7 +350,7 @@ public final class Vector2
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector2) ? equals((Vector2)obj) : false;
+		return (obj instanceof Vector2) ? equals((Vector2) obj) : false;
 	}
 
 	public boolean equals(Vector2 o)
@@ -394,16 +418,20 @@ public final class Vector2
 		return value1;
 	}
 
-	/** A vector with a value of 0,0
-	*/
+	/**
+	 * A vector with a value of 0,0
+	 */
 	public final static Vector2 Zero = new Vector2();
-	/** A vector with a value of 1,1
-	*/
+	/**
+	 * A vector with a value of 1,1
+	 */
 	public final static Vector2 One = new Vector2(1f, 1f);
-	/** A vector with a value of 1,0
-	*/
+	/**
+	 * A vector with a value of 1,0
+	 */
 	public final static Vector2 UnitX = new Vector2(1f, 0f);
-	/** A vector with a value of 0,1
-	*/
+	/**
+	 * A vector with a value of 0,1
+	 */
 	public final static Vector2 UnitY = new Vector2(0f, 1f);
 }

@@ -26,7 +26,8 @@
  */
 package libomv.mapgenerator;
 
-public interface FieldType {
+public interface FieldType
+{
 	public static final int U8 = 0;
 
 	public static final int U16 = 1;
@@ -71,8 +72,7 @@ public interface FieldType {
 
 	public static final int Multiple = 21;
 
-	public static String[] TypeNames = { "U8", "U16", "U32", "U64", "S8",
-			"S16", "S32", "S64", "F32", "F64", "LLUUID", "BOOL", "LLVector3",
-			"LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT",
-			"Variable", "Fixed", "Single", "Multiple" };
+	public static String[] TypeNames = { "U8", "U16", "U32", "U64", "S8", "S16", "S32", "S64", "F32", "F64", "LLUUID",
+			"BOOL", "LLVector3", "LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT", "Variable", "Fixed",
+			"Single", "Multiple" };
 }

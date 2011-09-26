@@ -48,213 +48,235 @@ import libomv.utils.Logger.LogLevel;
 
 public class EventQueue extends CapsClient
 {
-    public final int REQUEST_TIMEOUT = 1000 * 120;
+	public final int REQUEST_TIMEOUT = 1000 * 120;
 
-    private static Random random = new Random();
-    private int errorCount;
-    private boolean Done;
+	private static Random random = new Random();
+	private int errorCount;
+	private boolean Done;
 
-    private Future<OSD> Request;
+	private Future<OSD> Request;
 
-    public boolean getRunning()
-    {
-        synchronized (random)
-        {
-        	return Request != null;
-        }
-    }
+	public boolean getRunning()
+	{
+		synchronized (random)
+		{
+			return Request != null;
+		}
+	}
 
-    private Simulator Simulator;
+	private Simulator Simulator;
 
-    public EventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
-    {
-        super(eventQueueLocation, null);
-        this.Simulator = sim;
-    }
+	public EventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
+	{
+		super(eventQueueLocation, null);
+		this.Simulator = sim;
+	}
 
 	public void start()
-    {
-        Done = false;
+	{
+		Done = false;
 		// Startup the event queue for the first time
 		resume(true, 0, null);
-    }
+	}
 
 	public void stop(boolean immediate)
-    {
-        synchronized (random)
-        {
-            Done = true;
-        	if (Request != null)
-        		Request.cancel(immediate);
-        }
-    }
+	{
+		synchronized (random)
+		{
+			Done = true;
+			if (Request != null)
+				Request.cancel(immediate);
+		}
+	}
 
 	private void resume(boolean first, int ack, OSDArray events)
 	{
-        if (errorCount > 0)
-        {
+		if (errorCount > 0)
+		{
 			try
 			{
-				Thread.sleep(random.nextInt(500 + (int)Math.pow(2, errorCount)));
+				Thread.sleep(random.nextInt(500 + (int) Math.pow(2, errorCount)));
 			}
-			catch (InterruptedException e) { }
-        }
+			catch (InterruptedException e)
+			{
+			}
+		}
 
-        OSDMap osdRequest = new OSDMap();
-        osdRequest.put("ack", (ack != 0) ? OSD.FromInteger(ack) : new OSD());
-        osdRequest.put("done", OSD.FromBoolean(Done));
+		OSDMap osdRequest = new OSDMap();
+		osdRequest.put("ack", (ack != 0) ? OSD.FromInteger(ack) : new OSD());
+		osdRequest.put("done", OSD.FromBoolean(Done));
 
 		try
 		{
 			byte[] postData = osdRequest.serializeToBytes(OSD.OSDFormat.Xml);
-	        // Start or resume the connection.
-	        Request = BeginGetResponse(postData, "application/xml", REQUEST_TIMEOUT, new EventClientCallback(first));
+			// Start or resume the connection.
+			Request = BeginGetResponse(postData, "application/xml", REQUEST_TIMEOUT, new EventClientCallback(first));
 		}
-		catch (IOException e) {	}
+		catch (IOException e)
+		{
+		}
 
-      	synchronized(random)
-        {
-    		if (Done)
-            {
-        		Request = null;
-                Logger.DebugLog("Sent event queue shutdown message");
-       	    }
-        }
+		synchronized (random)
+		{
+			if (Done)
+			{
+				Request = null;
+				Logger.DebugLog("Sent event queue shutdown message");
+			}
+		}
 
-        // #region Handle incoming events
-        if (events != null && events.size() > 0)
-        {
-            // Fire callbacks for each event received
-            while (events.listIterator().hasNext())
-            {
-            	OSDMap evt = (OSDMap)events.listIterator().next();
-                OSD osd = evt.get("body");
-            	if (osd.getType().equals(OSDType.Map))
-            	{
-            		OSDMap body = (OSDMap)osd;
-            	    String name = evt.get("message").AsString();
-                    CapsEventType capsKey = CapsEventType.valueOf(name);
+		// #region Handle incoming events
+		if (events != null && events.size() > 0)
+		{
+			// Fire callbacks for each event received
+			while (events.listIterator().hasNext())
+			{
+				OSDMap evt = (OSDMap) events.listIterator().next();
+				OSD osd = evt.get("body");
+				if (osd.getType().equals(OSDType.Map))
+				{
+					OSDMap body = (OSDMap) osd;
+					String name = evt.get("message").AsString();
+					CapsEventType capsKey = CapsEventType.valueOf(name);
 
-                	IMessage message = Simulator.getClient().Messages.DecodeEvent(capsKey, body);
-                	if (message != null)
-                	{
-               	        Simulator.getClient().Network.DistributeCaps(Simulator, message);
+					IMessage message = Simulator.getClient().Messages.DecodeEvent(capsKey, body);
+					if (message != null)
+					{
+						Simulator.getClient().Network.DistributeCaps(Simulator, message);
 
-                        // #region Stats Tracking
-                        if (Simulator.getClient().Settings.TRACK_UTILIZATION)
-                        {
-                            /* TODO add Stats support to Client manager */
-                    	    //Simulator.getClient().Stats.Update(eventName, libomv.Stats.Type.Message, 0, body.ToString().Length);
-                        }
-                    }
-                    else
-                    {
-                    	Logger.Log("No Message handler exists for event " + name + ". Unable to decode. Will try Generic Handler next", LogLevel.Warning, Simulator.getClient());
-                    	Logger.Log("Please report this information to http://jira.openmv.org/: \n" + body, LogLevel.Debug, Simulator.getClient());
+						// #region Stats Tracking
+						if (Simulator.getClient().Settings.TRACK_UTILIZATION)
+						{
+							/* TODO add Stats support to Client manager */
+							// Simulator.getClient().Stats.Update(eventName,
+							// libomv.Stats.Type.Message, 0,
+							// body.ToString().Length);
+						}
+					}
+					else
+					{
+						Logger.Log("No Message handler exists for event " + name
+								+ ". Unable to decode. Will try Generic Handler next", LogLevel.Warning,
+								Simulator.getClient());
+						Logger.Log("Please report this information to http://jira.openmv.org/: \n" + body,
+								LogLevel.Debug, Simulator.getClient());
 
-                        // try generic decoder next which takes a caps event and tries to match it to an existing packet
-                        Packet packet = CapsToPacket.BuildPacket(name, body);
-                        if (packet != null)
-                        {
-                            Logger.DebugLog("Serializing " + packet.getType() + " capability with generic handler", Simulator.getClient());
-                            Simulator.getClient().Network.DistributePacket(Simulator, packet);
-                        }
-                        else
-                        {
-                            Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning, Simulator.getClient());
-                        }
-                    }
-            	}
-            }
-        }
+						// try generic decoder next which takes a caps event and
+						// tries to match it to an existing packet
+						Packet packet = CapsToPacket.BuildPacket(name, body);
+						if (packet != null)
+						{
+							Logger.DebugLog("Serializing " + packet.getType() + " capability with generic handler",
+									Simulator.getClient());
+							Simulator.getClient().Network.DistributePacket(Simulator, packet);
+						}
+						else
+						{
+							Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning,
+									Simulator.getClient());
+						}
+					}
+				}
+			}
+		}
 	}
 
-    public class EventClientCallback implements FutureCallback<OSD>
+	public class EventClientCallback implements FutureCallback<OSD>
 	{
-    	private final boolean first;
+		private final boolean first;
 
-    	public EventClientCallback(boolean first)
-    	{
-    		this.first = first;
-    	}
+		public EventClientCallback(boolean first)
+		{
+			this.first = first;
+		}
 
 		@Override
 		public void completed(OSD result)
 		{
 			if (first)
-	            Simulator.getClient().Network.RaiseConnectedEvent(Simulator);
+				Simulator.getClient().Network.RaiseConnectedEvent(Simulator);
 
-	        if (result != null && result instanceof OSDMap)
-	        {
+			if (result != null && result instanceof OSDMap)
+			{
 				errorCount = 0;
-	         	OSDMap map = (OSDMap)result;
-	            OSDArray events = (OSDArray)((map.get("events") instanceof OSDArray) ? map.get("events") : null);
-	            int ack = map.get("id").AsInteger();
-	            resume(false, ack, events);
-	        }
-	        else
-	        {
-	            ++errorCount;
-	            Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning, Simulator.getClient());
-	            resume(false, 0, null);
-	        }
+				OSDMap map = (OSDMap) result;
+				OSDArray events = (OSDArray) ((map.get("events") instanceof OSDArray) ? map.get("events") : null);
+				int ack = map.get("id").AsInteger();
+				resume(false, ack, events);
+			}
+			else
+			{
+				++errorCount;
+				Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning, Simulator.getClient());
+				resume(false, 0, null);
+			}
 		}
 
 		@Override
 		public void failed(Exception ex)
 		{
-	        if (ex instanceof HttpResponseException)
+			if (ex instanceof HttpResponseException)
 			{
-				int status = ((HttpResponseException)ex).getStatusCode();
-	            if (status == HttpStatus.SC_NOT_FOUND || status == HttpStatus.SC_GONE)
-	            {
-	    	        synchronized (random)
-	    	        {
-	    			    Request = null;
-	    	        }
-	                Logger.Log(String.format("Closing event queue at %s due to missing caps URI", Address.toString()), LogLevel.Info, Simulator.getClient());
-	                return;
-	            }
-	            else if (status == HttpStatus.SC_BAD_GATEWAY)
-	            {
-	                // This is not good (server) protocol design, but it's normal.
-	                // The EventQueue server is a proxy that connects to a Squid
-	                // cache which will time out periodically. The EventQueue server
-	                // interprets this as a generic error and returns a 502 to us
-	                // that we ignore
-	            }
-	            else
-	            {
-	                ++errorCount;
+				int status = ((HttpResponseException) ex).getStatusCode();
+				if (status == HttpStatus.SC_NOT_FOUND || status == HttpStatus.SC_GONE)
+				{
+					synchronized (random)
+					{
+						Request = null;
+					}
+					Logger.Log(String.format("Closing event queue at %s due to missing caps URI", Address.toString()),
+							LogLevel.Info, Simulator.getClient());
+					return;
+				}
+				else if (status == HttpStatus.SC_BAD_GATEWAY)
+				{
+					// This is not good (server) protocol design, but it's
+					// normal.
+					// The EventQueue server is a proxy that connects to a Squid
+					// cache which will time out periodically. The EventQueue
+					// server
+					// interprets this as a generic error and returns a 502 to
+					// us
+					// that we ignore
+				}
+				else
+				{
+					++errorCount;
 
-	                // Try to log a meaningful error message
-	                if (status != HttpStatus.SC_OK)
-	                {
-	                    Logger.Log(String.format("Unrecognized caps connection problem from %s: %d", Address.toString(), status), LogLevel.Warning, Simulator.getClient());
-	                }
-	                else if (ex.getCause() != null)
-	                {
-	                    Logger.Log(String.format("Unrecognized internal caps exception from %s: %s", Address.toString(), ex.getCause().getMessage()), LogLevel.Warning, Simulator.getClient());
-	                }
-	                else
-	                {
-	                    Logger.Log(String.format("Unrecognized caps exception from %s: %s", Address.toString(), ex.getMessage()), LogLevel.Warning, Simulator.getClient());
-	                }
-	            }
-	        }
-	        else
-	        {
-	            ++errorCount;
+					// Try to log a meaningful error message
+					if (status != HttpStatus.SC_OK)
+					{
+						Logger.Log(String.format("Unrecognized caps connection problem from %s: %d",
+								Address.toString(), status), LogLevel.Warning, Simulator.getClient());
+					}
+					else if (ex.getCause() != null)
+					{
+						Logger.Log(String.format("Unrecognized internal caps exception from %s: %s",
+								Address.toString(), ex.getCause().getMessage()), LogLevel.Warning, Simulator
+								.getClient());
+					}
+					else
+					{
+						Logger.Log(
+								String.format("Unrecognized caps exception from %s: %s", Address.toString(),
+										ex.getMessage()), LogLevel.Warning, Simulator.getClient());
+					}
+				}
+			}
+			else
+			{
+				++errorCount;
 
-	            Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning, Simulator.getClient());
-	        }
-	        resume(false, 0, null);
+				Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning,
+						Simulator.getClient());
+			}
+			resume(false, 0, null);
 		}
 
 		@Override
 		public void cancelled()
 		{
-	        resume(false, 0, null);
+			resume(false, 0, null);
 		}
 	}
 }

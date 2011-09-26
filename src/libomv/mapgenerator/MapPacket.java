@@ -28,8 +28,8 @@ package libomv.mapgenerator;
 
 import java.util.ArrayList;
 
-
-public class MapPacket {
+public class MapPacket
+{
 
 	public int ID;
 

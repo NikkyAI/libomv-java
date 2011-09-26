@@ -39,153 +39,172 @@ import libomv.utils.Helpers;
 
 public class OSDString extends OSD
 {
-    private String value;
+	private String value;
 
-    @Override
-    public OSDType getType()
-    {
-    	return OSDType.String;
-    }
+	@Override
+	public OSDType getType()
+	{
+		return OSDType.String;
+	}
 
-    public OSDString(String value)
-    {
-        // Refuse to hold null pointers
-        if (value != null)
-            this.value = value;
-        else
-            this.value = "";
-    }
-    @Override
-    public boolean AsBoolean()
-    {
-        if (value == null || value.isEmpty())
-            return false;
+	public OSDString(String value)
+	{
+		// Refuse to hold null pointers
+		if (value != null)
+			this.value = value;
+		else
+			this.value = "";
+	}
 
-        if (value == "0" || value.toLowerCase().equals("false"))
-            return false;
+	@Override
+	public boolean AsBoolean()
+	{
+		if (value == null || value.isEmpty())
+			return false;
 
-        return true;
-    }
-    @Override
-    public int AsInteger()
-    {
-        try {
-        	return (int)Math.floor(Double.parseDouble(value));
-        }
-        catch (NumberFormatException ex)
-        {
-            return 0;
-        }
-    }
+		if (value == "0" || value.toLowerCase().equals("false"))
+			return false;
 
-    @Override
-    public int AsUInteger()
-    {
-        try {
-        	return ((int)Math.floor(Double.parseDouble(value)) & 0xffffffff);
-        }
-        catch (NumberFormatException ex)
-        {
-            return 0;
-        }
-    }
-    @Override
-    public long AsLong()
-    {
-        try {
-        	return (long)Math.floor(Double.parseDouble(value));
-        }
-        catch (NumberFormatException ex)
-        {
-            return 0;
-        }
-    }
-    @Override
-    public long AsULong()
-    {
-        try {
-        	return ((long)Math.floor(Double.parseDouble(value)) & 0xffffffffffffffffl);
-        }
-        catch (NumberFormatException ex)
-        {
-            return 0;
-        }
-    }
-    @Override
-    public double AsReal()
-    {
-        try {
-        	return Math.floor(Double.parseDouble(value));
-        }
-        catch (NumberFormatException ex)
-        {
-            return 0;
-        }
-    }
-    @Override
-    public String AsString()
-    {
-    	return value;
-    }
-    @Override
-    public byte[] AsBinary()
-    {
+		return true;
+	}
+
+	@Override
+	public int AsInteger()
+	{
+		try
+		{
+			return (int) Math.floor(Double.parseDouble(value));
+		}
+		catch (NumberFormatException ex)
+		{
+			return 0;
+		}
+	}
+
+	@Override
+	public int AsUInteger()
+	{
+		try
+		{
+			return ((int) Math.floor(Double.parseDouble(value)) & 0xffffffff);
+		}
+		catch (NumberFormatException ex)
+		{
+			return 0;
+		}
+	}
+
+	@Override
+	public long AsLong()
+	{
+		try
+		{
+			return (long) Math.floor(Double.parseDouble(value));
+		}
+		catch (NumberFormatException ex)
+		{
+			return 0;
+		}
+	}
+
+	@Override
+	public long AsULong()
+	{
+		try
+		{
+			return ((long) Math.floor(Double.parseDouble(value)) & 0xffffffffffffffffl);
+		}
+		catch (NumberFormatException ex)
+		{
+			return 0;
+		}
+	}
+
+	@Override
+	public double AsReal()
+	{
+		try
+		{
+			return Math.floor(Double.parseDouble(value));
+		}
+		catch (NumberFormatException ex)
+		{
+			return 0;
+		}
+	}
+
+	@Override
+	public String AsString()
+	{
+		return value;
+	}
+
+	@Override
+	public byte[] AsBinary()
+	{
 		return Helpers.StringToBytes(value);
-    }
+	}
 
-    @Override
-    public InetAddress AsInetAddress()
-    {
-		try {
+	@Override
+	public InetAddress AsInetAddress()
+	{
+		try
+		{
 			int i = value.indexOf(':');
 			if (i < 0)
-			    return InetAddress.getByName(value);
-		    return InetAddress.getByName(value.substring(0, i));
+				return InetAddress.getByName(value);
+			return InetAddress.getByName(value.substring(0, i));
 		}
 		catch (UnknownHostException ex)
 		{
 			return null;
 		}
-    }
-    @Override
-    public UUID AsUUID()
-    {
-        return new UUID(value);
-    }
-    @Override
-    public Date AsDate()
-    {
+	}
+
+	@Override
+	public UUID AsUUID()
+	{
+		return new UUID(value);
+	}
+
+	@Override
+	public Date AsDate()
+	{
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
-		try {
-		    return df.parse(value);
+		try
+		{
+			return df.parse(value);
 		}
 		catch (ParseException ex1)
 		{
 			try
 			{
 				df.applyPattern(WHOLE_DATE_FMT);
-			    return df.parse(value);
+				return df.parse(value);
 			}
 			catch (ParseException ex2)
 			{
-		        return Helpers.Epoch;
+				return Helpers.Epoch;
 			}
 		}
-    }
-    @Override
-    public URI AsUri()
-    {
-        try {
-        	return new URI(value);
-        }
-        catch (URISyntaxException ex)
-        {
-        	return null;
-        }
-    }
-    @Override
-    public String toString()
-    {
-    	return AsString();
-    }
+	}
+
+	@Override
+	public URI AsUri()
+	{
+		try
+		{
+			return new URI(value);
+		}
+		catch (URISyntaxException ex)
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public String toString()
+	{
+		return AsString();
+	}
 }

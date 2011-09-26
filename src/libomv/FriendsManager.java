@@ -59,22 +59,24 @@ import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-/** This class is used to add and remove avatars from your friends list and to
- *  manage their permission. */
+/**
+ * This class is used to add and remove avatars from your friends list and to
+ * manage their permission.
+ */
 public class FriendsManager implements PacketCallback
 {
 	public static class FriendRights
 	{
 		/** The avatar has no rights */
 		public static final byte None = 0;
-        /** The avatar can see the online status of the target avatar */
+		/** The avatar can see the online status of the target avatar */
 		public static final byte CanSeeOnline = 1;
-        /** The avatar can see the location of the target avatar on the map */
+		/** The avatar can see the location of the target avatar on the map */
 		public static final byte CanSeeOnMap = 2;
-        /** The avatar can modify the ojects of the target avatar */
+		/** The avatar can modify the ojects of the target avatar */
 		public static final byte CanModifyObjects = 4;
 
-		private static final String[] _names = new String[] {"None", "SeeOnline", "SeeOnMap", "ModifyObjects"};
+		private static final String[] _names = new String[] { "None", "SeeOnline", "SeeOnMap", "ModifyObjects" };
 
 		public static String toString(byte value)
 		{
@@ -94,141 +96,158 @@ public class FriendsManager implements PacketCallback
 
 		public static byte setValue(int value)
 		{
-			return (byte)(value & _mask);
+			return (byte) (value & _mask);
 		}
+
 		public static int getValue(int value)
 		{
 			return value;
 		}
-		private static final byte _mask = 0x7;
-    }
 
-	/** This class holds information about an avatar in the friends list.  There are two ways
-	 *  to interface to this class.  The first is through the set of boolean properties.  This is the typical
-	 *  way clients of this class will use it.  The second interface is through two bitflag properties,
-	 *  TheirFriendsRights and MyFriendsRights
+		private static final byte _mask = 0x7;
+	}
+
+	/**
+	 * This class holds information about an avatar in the friends list. There
+	 * are two ways to interface to this class. The first is through the set of
+	 * boolean properties. This is the typical way clients of this class will
+	 * use it. The second interface is through two bitflag properties,
+	 * TheirFriendsRights and MyFriendsRights
 	 */
 	public class FriendInfo
 	{
-	    private UUID ID;
-	    private String name;
-	    private boolean isOnline;
-	    private byte myRights;
-	    private byte theirRights;
+		private UUID ID;
+		private String name;
+		private boolean isOnline;
+		private byte myRights;
+		private byte theirRights;
 
-	    /* System ID of the avatar */
-	    public final UUID getUUID()
-	    {
-	        return ID;
-	    }
+		/* System ID of the avatar */
+		public final UUID getUUID()
+		{
+			return ID;
+		}
 
-	    /* full name of the avatar */
-	    public final String getName()
-	    {
-	        return name;
-	    }
-	    public final void setName(String name)
-	    {
-	    	this.name = name;
-	    }
+		/* full name of the avatar */
+		public final String getName()
+		{
+			return name;
+		}
 
-	    /* True if the avatar is online */
-	    public final boolean getIsOnline()
-	    {
-	        return isOnline;
-	    }
-	    public final void setIsOnline(boolean value)
-	    {
-	        isOnline = value;
-	    }
+		public final void setName(String name)
+		{
+			this.name = name;
+		}
 
-	    /* True if the friend can see if I am online */
-	    public final boolean getCanSeeMeOnline()
-	    {
-	        return (myRights & FriendRights.CanSeeOnline) != 0;
-	    }
-	    public final void setCanSeeMeOnline(boolean value)
-	    {
-	        if (value)
-	        {
-	            myRights |= FriendRights.CanSeeOnline;
-	        }
-	        else
-	        {
-	            // if they can't see me online, then they also can't see me on the map
-	            myRights &= ~(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
-	        }
-	    }
+		/* True if the avatar is online */
+		public final boolean getIsOnline()
+		{
+			return isOnline;
+		}
 
-	    /* True if the friend can see me on the map */
-	    public final boolean getCanSeeMeOnMap()
-	    {
-	        return (myRights & FriendRights.CanSeeOnMap) != 0;
-	    }
-	    public final void setCanSeeMeOnMap(boolean value)
-	    {
-	    	if (value)
-	    		myRights |= FriendRights.CanSeeOnMap;
-	    	else
-	    		myRights &= ~FriendRights.CanSeeOnMap;
+		public final void setIsOnline(boolean value)
+		{
+			isOnline = value;
+		}
 
-	    }
+		/* True if the friend can see if I am online */
+		public final boolean getCanSeeMeOnline()
+		{
+			return (myRights & FriendRights.CanSeeOnline) != 0;
+		}
 
-	    /* True if the friend can modify my objects */
-	    public final boolean getCanModifyMyObjects()
-	    {
-	        return (myRights & FriendRights.CanModifyObjects) != 0;
-	    }
-	    public final void setCanModifyMyObjects(boolean value)
-	    {
-	    	if (value)
-	            myRights |= FriendRights.CanModifyObjects;
-	    	else
-	            myRights &= ~FriendRights.CanModifyObjects;
-	    }
+		public final void setCanSeeMeOnline(boolean value)
+		{
+			if (value)
+			{
+				myRights |= FriendRights.CanSeeOnline;
+			}
+			else
+			{
+				// if they can't see me online, then they also can't see me on
+				// the map
+				myRights &= ~(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
+			}
+		}
 
-	    /* True if I can see if my friend is online */
-	    public final boolean getCanSeeThemOnline()
-	    {
-	        return (theirRights & FriendRights.CanSeeOnline) != 0;
-	    }
+		/* True if the friend can see me on the map */
+		public final boolean getCanSeeMeOnMap()
+		{
+			return (myRights & FriendRights.CanSeeOnMap) != 0;
+		}
 
-	    /* True if I can see if my friend is on the map */
-	    public final boolean getCanSeeThemOnMap()
-	    {
-	       	return (theirRights & FriendRights.CanSeeOnMap) != 0;
-	    }
+		public final void setCanSeeMeOnMap(boolean value)
+		{
+			if (value)
+				myRights |= FriendRights.CanSeeOnMap;
+			else
+				myRights &= ~FriendRights.CanSeeOnMap;
 
-	    /* True if I can modify my friend's objects */
-	    public final boolean getCanModifyTheirObjects()
-	    {
-	      	return (theirRights & FriendRights.CanSeeOnline) != 0;
-	    }
+		}
 
-	    /** Used internally when building the initial list of friends at login time
-	     *
-	     *  @param id System ID of the avatar being prepesented
-	     *  @param buddy_rights_given Rights the friend has to see you online and to modify your objects
-	     *  @param buddy_rights_has Rights you have to see your friend online and to modify their objects
-	     */
-	    public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has)
-	    {
-	        ID = id;
-	        this.theirRights = (byte) buddy_rights_given;
-	        this.myRights = (byte)buddy_rights_has;
-	    }
+		/* True if the friend can modify my objects */
+		public final boolean getCanModifyMyObjects()
+		{
+			return (myRights & FriendRights.CanModifyObjects) != 0;
+		}
 
-	    public boolean equals(FriendInfo o)
-	    {
-	    	return ID.equals(o.getUUID());
-	    }
+		public final void setCanModifyMyObjects(boolean value)
+		{
+			if (value)
+				myRights |= FriendRights.CanModifyObjects;
+			else
+				myRights &= ~FriendRights.CanModifyObjects;
+		}
 
-	    @Override
-	    public boolean equals(Object o)
-	    {
-	    	return (o != null && o instanceof FriendInfo) ? equals((FriendInfo)o) : false;
-	    }
-	    
+		/* True if I can see if my friend is online */
+		public final boolean getCanSeeThemOnline()
+		{
+			return (theirRights & FriendRights.CanSeeOnline) != 0;
+		}
+
+		/* True if I can see if my friend is on the map */
+		public final boolean getCanSeeThemOnMap()
+		{
+			return (theirRights & FriendRights.CanSeeOnMap) != 0;
+		}
+
+		/* True if I can modify my friend's objects */
+		public final boolean getCanModifyTheirObjects()
+		{
+			return (theirRights & FriendRights.CanSeeOnline) != 0;
+		}
+
+		/**
+		 * Used internally when building the initial list of friends at login
+		 * time
+		 * 
+		 * @param id
+		 *            System ID of the avatar being prepesented
+		 * @param buddy_rights_given
+		 *            Rights the friend has to see you online and to modify your
+		 *            objects
+		 * @param buddy_rights_has
+		 *            Rights you have to see your friend online and to modify
+		 *            their objects
+		 */
+		public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has)
+		{
+			ID = id;
+			this.theirRights = (byte) buddy_rights_given;
+			this.myRights = (byte) buddy_rights_has;
+		}
+
+		public boolean equals(FriendInfo o)
+		{
+			return ID.equals(o.getUUID());
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			return (o != null && o instanceof FriendInfo) ? equals((FriendInfo) o) : false;
+		}
+
 		@Override
 		public int hashCode()
 		{
@@ -236,15 +255,16 @@ public class FriendsManager implements PacketCallback
 		}
 
 		/**
-	     * FriendInfo represented as a string
-	     *
-	     * @return A string reprentation of both my rights and my friends rights
-	     */
-	    @Override
+		 * FriendInfo represented as a string
+		 * 
+		 * @return A string reprentation of both my rights and my friends rights
+		 */
+		@Override
 		public String toString()
-	    {
-	        return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(), FriendRights.toString(theirRights), FriendRights.toString(myRights));
-	    }
+		{
+			return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(),
+					FriendRights.toString(theirRights), FriendRights.toString(myRights));
+		}
 	}
 
 	// #region callback handlers
@@ -280,7 +300,6 @@ public class FriendsManager implements PacketCallback
 
 	public final CallbackHandler<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandler<FriendNotificationCallbackArgs>();
 
-
 	// Triggered when a friends rights changed
 	public class FriendRightsCallbackArgs implements CallbackArgs
 	{
@@ -304,7 +323,6 @@ public class FriendsManager implements PacketCallback
 	}
 
 	public final CallbackHandler<FriendRightsCallbackArgs> OnFriendRights = new CallbackHandler<FriendRightsCallbackArgs>();
-
 
 	// Triggered when a map request for a friend is answered
 	public class FriendFoundReplyCallbackArgs implements CallbackArgs
@@ -344,7 +362,6 @@ public class FriendsManager implements PacketCallback
 
 	public CallbackHandler<FriendFoundReplyCallbackArgs> OnFriendFoundReply = new CallbackHandler<FriendFoundReplyCallbackArgs>();
 
-
 	/* Triggered when friend rights packet is received */
 	public class FriendshipOfferedCallbackArgs implements CallbackArgs
 	{
@@ -382,7 +399,6 @@ public class FriendsManager implements PacketCallback
 	}
 
 	public CallbackHandler<FriendshipOfferedCallbackArgs> OnFriendshipOffered = new CallbackHandler<FriendshipOfferedCallbackArgs>();
-
 
 	/* Triggered when friend rights packet is received */
 	public class FriendshipResponseCallbackArgs implements CallbackArgs
@@ -422,7 +438,6 @@ public class FriendsManager implements PacketCallback
 
 	public CallbackHandler<FriendshipResponseCallbackArgs> OnFriendshipResponse = new CallbackHandler<FriendshipResponseCallbackArgs>();
 
-
 	/* Triggered when friend rights packet is received */
 	public class FriendshipTerminatedCallbackArgs implements CallbackArgs
 	{
@@ -459,401 +474,437 @@ public class FriendsManager implements PacketCallback
 
 	/**
 	 * A dictionary of key/value pairs containing known friends of this avatar.
-     *
-     * The Key is the {@link UUID} of the friend, the value is a {@link FriendInfo} object
-     * that contains detailed information including permissions you have and have given to the friend
-     */
-    public Hashtable<UUID, FriendInfo> FriendList = new Hashtable<UUID, FriendInfo>();
+	 * 
+	 * The Key is the {@link UUID} of the friend, the value is a
+	 * {@link FriendInfo} object that contains detailed information including
+	 * permissions you have and have given to the friend
+	 */
+	public Hashtable<UUID, FriendInfo> FriendList = new Hashtable<UUID, FriendInfo>();
 
-    /**
-     * A Dictionary of key/value pairs containing current pending friendship offers.
-     *
-     * The key is the {@link UUID} of the avatar making the request,
-     * the value is the {@link UUID} of the request which is used to accept
-     * or decline the friendship offer
-     */
-    public Hashtable<UUID, UUID> FriendRequests = new Hashtable<UUID, UUID>();
+	/**
+	 * A Dictionary of key/value pairs containing current pending friendship
+	 * offers.
+	 * 
+	 * The key is the {@link UUID} of the avatar making the request, the value
+	 * is the {@link UUID} of the request which is used to accept or decline the
+	 * friendship offer
+	 */
+	public Hashtable<UUID, UUID> FriendRequests = new Hashtable<UUID, UUID>();
 
-    /**
-     * Internal constructor
-     * @param client A reference to the ClientManager Object
-     */
-    public FriendsManager(GridClient client)
-    {
-        _Client = client;
+	/**
+	 * Internal constructor
+	 * 
+	 * @param client
+	 *            A reference to the ClientManager Object
+	 */
+	public FriendsManager(GridClient client)
+	{
+		_Client = client;
 
-        _Client.Self.OnInstantMessage.add(new Self_OnInstantMessage());
+		_Client.Self.OnInstantMessage.add(new Self_OnInstantMessage());
 
-        _Client.Login.RegisterLoginProgressCallback(new Network_OnConnect(), new String[] { "buddy-list" }, false);
+		_Client.Login.RegisterLoginProgressCallback(new Network_OnConnect(), new String[] { "buddy-list" }, false);
 
-        _Client.Network.RegisterCallback(PacketType.OnlineNotification, this);
-        _Client.Network.RegisterCallback(PacketType.OfflineNotification, this);
-        _Client.Network.RegisterCallback(PacketType.ChangeUserRights, this);
-        _Client.Network.RegisterCallback(PacketType.TerminateFriendship, this);
-        _Client.Network.RegisterCallback(PacketType.FindAgent, this);
-        _Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
+		_Client.Network.RegisterCallback(PacketType.OnlineNotification, this);
+		_Client.Network.RegisterCallback(PacketType.OfflineNotification, this);
+		_Client.Network.RegisterCallback(PacketType.ChangeUserRights, this);
+		_Client.Network.RegisterCallback(PacketType.TerminateFriendship, this);
+		_Client.Network.RegisterCallback(PacketType.FindAgent, this);
+		_Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
 
-    }
+	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
-        switch (packet.getType()) {
-           case OnlineNotification:
-           case OfflineNotification:
-        	   FriendNotificationHandler(packet, simulator);
-	           break;
-           case ChangeUserRights:
-        	   ChangeUserRightsHandler(packet, simulator);
-        	   break;
-           case TerminateFriendship:
-        	   TerminateFriendshipHandler(packet, simulator);
-        	   break;
-           case FindAgent:
-        	   OnFindAgentReplyHandler(packet, simulator);
-        	   break;
-           case UUIDNameReply:
-	           UUIDNameReplyHandler(packet, simulator);
-	           break;
-        }
-    }
+		switch (packet.getType())
+		{
+			case OnlineNotification:
+			case OfflineNotification:
+				FriendNotificationHandler(packet, simulator);
+				break;
+			case ChangeUserRights:
+				ChangeUserRightsHandler(packet, simulator);
+				break;
+			case TerminateFriendship:
+				TerminateFriendshipHandler(packet, simulator);
+				break;
+			case FindAgent:
+				OnFindAgentReplyHandler(packet, simulator);
+				break;
+			case UUIDNameReply:
+				UUIDNameReplyHandler(packet, simulator);
+				break;
+		}
+	}
 
-    /**
-     * Accept a friendship request
-     *
-     * @param fromAgentID agentID of avatatar to form friendship with
-     * @param imSessionID imSessionID of the friendship request message
-     * @throws Exception
-     * @throws InventoryException
-     */
-    public final void AcceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception, InventoryException
-    {
-    	if (_Client.Inventory == null)
-    		throw new InventoryException("Inventory not instantiated. Need to lookup CallingCard folder in oreder to accept a friendship request.");
+	/**
+	 * Accept a friendship request
+	 * 
+	 * @param fromAgentID
+	 *            agentID of avatatar to form friendship with
+	 * @param imSessionID
+	 *            imSessionID of the friendship request message
+	 * @throws Exception
+	 * @throws InventoryException
+	 */
+	public final void AcceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception, InventoryException
+	{
+		if (_Client.Inventory == null)
+			throw new InventoryException(
+					"Inventory not instantiated. Need to lookup CallingCard folder in oreder to accept a friendship request.");
 
-    	UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard);
+		UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard);
 
-        AcceptFriendshipPacket request = new AcceptFriendshipPacket();
-        request.AgentData.AgentID = _Client.Self.getAgentID();
-        request.AgentData.SessionID = _Client.Self.getSessionID();
-        request.TransactionBlock.TransactionID = imSessionID;
-        request.FolderData = new AcceptFriendshipPacket.FolderDataBlock[1];
-        request.FolderData[0] = request.new FolderDataBlock();
-        request.FolderData[0].FolderID = callingCardFolder;
+		AcceptFriendshipPacket request = new AcceptFriendshipPacket();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.TransactionBlock.TransactionID = imSessionID;
+		request.FolderData = new AcceptFriendshipPacket.FolderDataBlock[1];
+		request.FolderData[0] = request.new FolderDataBlock();
+		request.FolderData[0].FolderID = callingCardFolder;
 
-        _Client.Network.SendPacket(request);
+		_Client.Network.SendPacket(request);
 
-        FriendInfo friend = new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
+		FriendInfo friend = new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 
-        if (!FriendList.containsKey(fromAgentID))
-        {
-            FriendList.put(friend.getUUID(), friend);
-        }
+		if (!FriendList.containsKey(fromAgentID))
+		{
+			FriendList.put(friend.getUUID(), friend);
+		}
 
-        if (FriendRequests.containsKey(fromAgentID))
-        {
-            FriendRequests.remove(fromAgentID);
-        }
-        _Client.Avatars.RequestAvatarName(fromAgentID, null);
-    }
+		if (FriendRequests.containsKey(fromAgentID))
+		{
+			FriendRequests.remove(fromAgentID);
+		}
+		_Client.Avatars.RequestAvatarName(fromAgentID, null);
+	}
 
-    /**
-     * Decline a friendship request
-     *
-     * @param fromAgentID {@link UUID} of friend
-     * @param imSessionID imSessionID of the friendship request message
-     * @throws Exception
-     */
-    public final void DeclineFriendship(UUID fromAgentID, UUID imSessionID) throws Exception
-    {
-        DeclineFriendshipPacket request = new DeclineFriendshipPacket();
-        request.AgentData.AgentID = _Client.Self.getAgentID();
-        request.AgentData.SessionID = _Client.Self.getSessionID();
-        request.TransactionBlock.TransactionID = imSessionID;
-        _Client.Network.SendPacket(request);
+	/**
+	 * Decline a friendship request
+	 * 
+	 * @param fromAgentID
+	 *            {@link UUID} of friend
+	 * @param imSessionID
+	 *            imSessionID of the friendship request message
+	 * @throws Exception
+	 */
+	public final void DeclineFriendship(UUID fromAgentID, UUID imSessionID) throws Exception
+	{
+		DeclineFriendshipPacket request = new DeclineFriendshipPacket();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.TransactionBlock.TransactionID = imSessionID;
+		_Client.Network.SendPacket(request);
 
-        if (FriendRequests.containsKey(fromAgentID))
-        {
-             FriendRequests.remove(fromAgentID);
-        }
-    }
+		if (FriendRequests.containsKey(fromAgentID))
+		{
+			FriendRequests.remove(fromAgentID);
+		}
+	}
 
-    /**
-     * Overload: Offer friendship to an avatar.
-     *
-     * @param agentID System ID of the avatar you are offering friendship to
-     * @throws Exception
-     */
-    public final void OfferFriendship(UUID agentID) throws Exception
-    {
-        OfferFriendship(agentID, "Do you want to be my friend?");
-    }
+	/**
+	 * Overload: Offer friendship to an avatar.
+	 * 
+	 * @param agentID
+	 *            System ID of the avatar you are offering friendship to
+	 * @throws Exception
+	 */
+	public final void OfferFriendship(UUID agentID) throws Exception
+	{
+		OfferFriendship(agentID, "Do you want to be my friend?");
+	}
 
-    /**
-     * Offer friendship to an avatar.
-     *
-     * @param agentID System ID of the avatar you are offering friendship to
-     * @param message A message to send with the request
-     * @throws Exception
-     */
-    public final void OfferFriendship(UUID agentID, String message) throws Exception
-    {
-        _Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, UUID.GenerateUUID(),
-        		InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Offline,
-        		_Client.Self.getSimPosition(), _Client.Network.getCurrentSim().ID, null);
-    }
+	/**
+	 * Offer friendship to an avatar.
+	 * 
+	 * @param agentID
+	 *            System ID of the avatar you are offering friendship to
+	 * @param message
+	 *            A message to send with the request
+	 * @throws Exception
+	 */
+	public final void OfferFriendship(UUID agentID, String message) throws Exception
+	{
+		_Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, UUID.GenerateUUID(),
+				InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Offline, _Client.Self.getSimPosition(),
+				_Client.Network.getCurrentSim().ID, null);
+	}
 
-    /**
-     * Terminate a friendship with an avatar
-     *
-     * @param agentID System ID of the avatar you are terminating the friendship with
-     * @throws Exception
-     */
-    public final void TerminateFriendship(UUID agentID) throws Exception
-    {
-        if (FriendList.containsKey(agentID))
-        {
-            TerminateFriendshipPacket request = new TerminateFriendshipPacket();
-            request.AgentData.AgentID = _Client.Self.getAgentID();
-            request.AgentData.SessionID = _Client.Self.getSessionID();
-            request.ExBlock.OtherID = agentID;
+	/**
+	 * Terminate a friendship with an avatar
+	 * 
+	 * @param agentID
+	 *            System ID of the avatar you are terminating the friendship
+	 *            with
+	 * @throws Exception
+	 */
+	public final void TerminateFriendship(UUID agentID) throws Exception
+	{
+		if (FriendList.containsKey(agentID))
+		{
+			TerminateFriendshipPacket request = new TerminateFriendshipPacket();
+			request.AgentData.AgentID = _Client.Self.getAgentID();
+			request.AgentData.SessionID = _Client.Self.getSessionID();
+			request.ExBlock.OtherID = agentID;
 
-            _Client.Network.SendPacket(request);
+			_Client.Network.SendPacket(request);
 
-            FriendList.remove(agentID);
-        }
-    }
+			FriendList.remove(agentID);
+		}
+	}
 
-    /**
-     * Process an incoming packet and raise the appropriate events
-     *
-     * @param sender The sender
-     * @param e The EventArgs object containing the packet data
-     */
-    private void TerminateFriendshipHandler(Packet packet, Simulator simulator)
-    {
-        TerminateFriendshipPacket itsOver = (TerminateFriendshipPacket)packet;
-        FriendInfo friend = FriendList.remove(itsOver.ExBlock.OtherID);
+	/**
+	 * Process an incoming packet and raise the appropriate events
+	 * 
+	 * @param sender
+	 *            The sender
+	 * @param e
+	 *            The EventArgs object containing the packet data
+	 */
+	private void TerminateFriendshipHandler(Packet packet, Simulator simulator)
+	{
+		TerminateFriendshipPacket itsOver = (TerminateFriendshipPacket) packet;
+		FriendInfo friend = FriendList.remove(itsOver.ExBlock.OtherID);
 
-        OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.ExBlock.OtherID, friend != null ? friend.getName() : null));
-    }
+		OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.ExBlock.OtherID,
+				friend != null ? friend.getName() : null));
+	}
 
-    /**
-     * Change the rights of a friend avatar.
-     *
-     * @param friendID the {@link UUID} of the friend
-     * @param rights the new rights to give the friend
-     * @throws Exception
-     *
-     * This method will implicitly set the rights to those passed in the rights parameter.
-     */
-    public final void GrantRights(UUID friendID, byte rights) throws Exception
-    {
-        GrantUserRightsPacket request = new GrantUserRightsPacket();
-        request.AgentData.AgentID = _Client.Self.getAgentID();
-        request.AgentData.SessionID = _Client.Self.getSessionID();
-        request.Rights = new GrantUserRightsPacket.RightsBlock[1];
-        request.Rights[0] = request.new RightsBlock();
-        request.Rights[0].AgentRelated = friendID;
-        request.Rights[0].RelatedRights = rights;
+	/**
+	 * Change the rights of a friend avatar.
+	 * 
+	 * @param friendID
+	 *            the {@link UUID} of the friend
+	 * @param rights
+	 *            the new rights to give the friend
+	 * @throws Exception
+	 * 
+	 *             This method will implicitly set the rights to those passed in
+	 *             the rights parameter.
+	 */
+	public final void GrantRights(UUID friendID, byte rights) throws Exception
+	{
+		GrantUserRightsPacket request = new GrantUserRightsPacket();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.Rights = new GrantUserRightsPacket.RightsBlock[1];
+		request.Rights[0] = request.new RightsBlock();
+		request.Rights[0].AgentRelated = friendID;
+		request.Rights[0].RelatedRights = rights;
 
-        _Client.Network.SendPacket(request);
-    }
+		_Client.Network.SendPacket(request);
+	}
 
-    /**
-     * Use to map a friends location on the grid.
-     *
-     * @param friendID Friends UUID to find
-     * @throws Exception
-     *
-     * {@link E:OnFriendFound}
-     */
-    public final void MapFriend(UUID friendID) throws Exception
-    {
-        FindAgentPacket stalk = new FindAgentPacket();
-        stalk.AgentBlock.Hunter = _Client.Self.getAgentID();
-        stalk.AgentBlock.Prey = friendID;
-        stalk.AgentBlock.SpaceIP = 0; // Will be filled in by the simulator
-        stalk.LocationBlock = new FindAgentPacket.LocationBlockBlock[1];
-        stalk.LocationBlock[0] = stalk.new LocationBlockBlock();
-        stalk.LocationBlock[0].GlobalX = 0.0; // Filled in by the simulator
-        stalk.LocationBlock[0].GlobalY = 0.0;
+	/**
+	 * Use to map a friends location on the grid.
+	 * 
+	 * @param friendID
+	 *            Friends UUID to find
+	 * @throws Exception
+	 * 
+	 *             {@link E:OnFriendFound}
+	 */
+	public final void MapFriend(UUID friendID) throws Exception
+	{
+		FindAgentPacket stalk = new FindAgentPacket();
+		stalk.AgentBlock.Hunter = _Client.Self.getAgentID();
+		stalk.AgentBlock.Prey = friendID;
+		stalk.AgentBlock.SpaceIP = 0; // Will be filled in by the simulator
+		stalk.LocationBlock = new FindAgentPacket.LocationBlockBlock[1];
+		stalk.LocationBlock[0] = stalk.new LocationBlockBlock();
+		stalk.LocationBlock[0].GlobalX = 0.0; // Filled in by the simulator
+		stalk.LocationBlock[0].GlobalY = 0.0;
 
-        _Client.Network.SendPacket(stalk);
-    }
+		_Client.Network.SendPacket(stalk);
+	}
 
-    /**
-     * Use to track a friends movement on the grid
-     *
-     * @param friendID Friends Key
-     * @throws Exception
-     */
-    public final void TrackFriend(UUID friendID) throws Exception
-    {
-        TrackAgentPacket stalk = new TrackAgentPacket();
-        stalk.AgentData.AgentID = _Client.Self.getAgentID();
-        stalk.AgentData.SessionID = _Client.Self.getSessionID();
-        stalk.TargetData.PreyID = friendID;
+	/**
+	 * Use to track a friends movement on the grid
+	 * 
+	 * @param friendID
+	 *            Friends Key
+	 * @throws Exception
+	 */
+	public final void TrackFriend(UUID friendID) throws Exception
+	{
+		TrackAgentPacket stalk = new TrackAgentPacket();
+		stalk.AgentData.AgentID = _Client.Self.getAgentID();
+		stalk.AgentData.SessionID = _Client.Self.getSessionID();
+		stalk.TargetData.PreyID = friendID;
 
-        _Client.Network.SendPacket(stalk);
-    }
+		_Client.Network.SendPacket(stalk);
+	}
 
-    /**
-     * Ask for a notification of friend's online status
-     *
-     * @param friendID Friend's UUID
-     * @throws Exception
-     */
-    public final void RequestOnlineNotification(UUID friendID) throws Exception
-    {
-        GenericMessagePacket gmp = new GenericMessagePacket();
-        gmp.AgentData.AgentID = _Client.Self.getAgentID();
-        gmp.AgentData.SessionID = _Client.Self.getSessionID();
-        gmp.AgentData.TransactionID = UUID.Zero;
+	/**
+	 * Ask for a notification of friend's online status
+	 * 
+	 * @param friendID
+	 *            Friend's UUID
+	 * @throws Exception
+	 */
+	public final void RequestOnlineNotification(UUID friendID) throws Exception
+	{
+		GenericMessagePacket gmp = new GenericMessagePacket();
+		gmp.AgentData.AgentID = _Client.Self.getAgentID();
+		gmp.AgentData.SessionID = _Client.Self.getSessionID();
+		gmp.AgentData.TransactionID = UUID.Zero;
 
-        gmp.MethodData.setMethod(Helpers.StringToBytes("requestonlinenotification"));
-        gmp.MethodData.Invoice = UUID.Zero;
-        gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
-        gmp.ParamList[0] = gmp.new ParamListBlock();
-        gmp.ParamList[0].setParameter(Helpers.StringToBytes(friendID.toString()));
+		gmp.MethodData.setMethod(Helpers.StringToBytes("requestonlinenotification"));
+		gmp.MethodData.Invoice = UUID.Zero;
+		gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
+		gmp.ParamList[0] = gmp.new ParamListBlock();
+		gmp.ParamList[0].setParameter(Helpers.StringToBytes(friendID.toString()));
 
-        _Client.Network.SendPacket(gmp);
-    }
+		_Client.Network.SendPacket(gmp);
+	}
 
-    /**
-     * Process an incoming packet and raise the appropriate events
-     *
-     * @param packet The received packet data
-     * @param simulator The simulator for which the even the packet data is
-     */
+	/**
+	 * Process an incoming packet and raise the appropriate events
+	 * 
+	 * @param packet
+	 *            The received packet data
+	 * @param simulator
+	 *            The simulator for which the even the packet data is
+	 */
 	private void FriendNotificationHandler(Packet packet, Simulator simulator) throws Exception
 	{
-        Vector<UUID> requestids = new Vector<UUID>();
+		Vector<UUID> requestids = new Vector<UUID>();
 		FriendInfo friend = null;
 		UUID agentID = null;
-        boolean doNotify = false;
+		boolean doNotify = false;
 
-        if (packet.getType() == PacketType.OnlineNotification)
-        {
-        	OnlineNotificationPacket notification = (OnlineNotificationPacket) packet;
-        	for (OnlineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
-	        {
-        		agentID = block.AgentID;
-    			synchronized (FriendList)
-		        {
-			        if (!FriendList.containsKey(agentID))
-			        {
-				        // Mark this friend for a name request
-				        requestids.addElement(agentID);
+		if (packet.getType() == PacketType.OnlineNotification)
+		{
+			OnlineNotificationPacket notification = (OnlineNotificationPacket) packet;
+			for (OnlineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
+			{
+				agentID = block.AgentID;
+				synchronized (FriendList)
+				{
+					if (!FriendList.containsKey(agentID))
+					{
+						// Mark this friend for a name request
+						requestids.addElement(agentID);
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-				        FriendList.put(agentID, friend);
-			        }
-			        else
-			        {
-			            friend = FriendList.get(agentID);
-			        }
-		        }
-    			doNotify |= !friend.getIsOnline();
-                friend.setIsOnline(true);
-	        }
-        }
-        else if (packet.getType() == PacketType.OfflineNotification)
-        {
-        	OfflineNotificationPacket notification = (OfflineNotificationPacket) packet;
-        	for (OfflineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
-	        {
-        		agentID = block.AgentID;
-    			synchronized (FriendList)
-    			{
-		            if (!FriendList.containsKey(agentID))
-		            {
-				        // Mark this friend for a name request
-				        requestids.addElement(agentID);
+						FriendList.put(agentID, friend);
+					}
+					else
+					{
+						friend = FriendList.get(agentID);
+					}
+				}
+				doNotify |= !friend.getIsOnline();
+				friend.setIsOnline(true);
+			}
+		}
+		else if (packet.getType() == PacketType.OfflineNotification)
+		{
+			OfflineNotificationPacket notification = (OfflineNotificationPacket) packet;
+			for (OfflineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
+			{
+				agentID = block.AgentID;
+				synchronized (FriendList)
+				{
+					if (!FriendList.containsKey(agentID))
+					{
+						// Mark this friend for a name request
+						requestids.addElement(agentID);
 
-				        friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-				        FriendList.put(agentID, friend);
-			        }
-		            else
-		            {
-		            	friend = FriendList.get(agentID);
-		            }
-    			}
-    			doNotify |= friend.getIsOnline();
-                friend.setIsOnline(false);
-	        }
-        }
+						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
+						FriendList.put(agentID, friend);
+					}
+					else
+					{
+						friend = FriendList.get(agentID);
+					}
+				}
+				doNotify |= friend.getIsOnline();
+				friend.setIsOnline(false);
+			}
+		}
 
-        // Only notify when there was a change in online status
-        if (doNotify)
-	        OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentID, packet.getType() == PacketType.OnlineNotification));
+		// Only notify when there was a change in online status
+		if (doNotify)
+			OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentID,
+					packet.getType() == PacketType.OnlineNotification));
 
-        if (requestids.size() > 0)
-        {
-        	_Client.Avatars.RequestAvatarNames(requestids, null);
-        }
-    }
+		if (requestids.size() > 0)
+		{
+			_Client.Avatars.RequestAvatarNames(requestids, null);
+		}
+	}
 
-    /** Process an incoming packet and raise the appropriate events
-     *
-     *  @param packet The received packet data
-     *  @param simulator The simulator for which the even the packet data is
-     */
-    private void ChangeUserRightsHandler(Packet packet, Simulator simulator) throws Exception
-    {
-        if (packet.getType() == PacketType.ChangeUserRights)
-        {
-            FriendInfo friend;
-            ChangeUserRightsPacket rights = (ChangeUserRightsPacket)packet;
+	/**
+	 * Process an incoming packet and raise the appropriate events
+	 * 
+	 * @param packet
+	 *            The received packet data
+	 * @param simulator
+	 *            The simulator for which the even the packet data is
+	 */
+	private void ChangeUserRightsHandler(Packet packet, Simulator simulator) throws Exception
+	{
+		if (packet.getType() == PacketType.ChangeUserRights)
+		{
+			FriendInfo friend;
+			ChangeUserRightsPacket rights = (ChangeUserRightsPacket) packet;
 
-            for (ChangeUserRightsPacket.RightsBlock block : rights.Rights)
-            {
-                if (FriendList.containsKey(block.AgentRelated))
-                {
-                    friend = FriendList.get(block.AgentRelated);
-                    friend.theirRights = FriendRights.setValue(block.RelatedRights);
+			for (ChangeUserRightsPacket.RightsBlock block : rights.Rights)
+			{
+				if (FriendList.containsKey(block.AgentRelated))
+				{
+					friend = FriendList.get(block.AgentRelated);
+					friend.theirRights = FriendRights.setValue(block.RelatedRights);
 
-                    OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
-                }
-                else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
-                {
-                    if (FriendList.containsKey(rights.AgentData.AgentID))
-                    {
-                        friend = FriendList.get(rights.AgentData.AgentID);
-                        friend.myRights = FriendRights.setValue(block.RelatedRights);
+					OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
+				}
+				else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
+				{
+					if (FriendList.containsKey(rights.AgentData.AgentID))
+					{
+						friend = FriendList.get(rights.AgentData.AgentID);
+						friend.myRights = FriendRights.setValue(block.RelatedRights);
 
-                        OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
-                    }
-                }
-            }
-        }
-    }
+						OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
+					}
+				}
+			}
+		}
+	}
 
-    /**
-     * Process an incoming packet and raise the appropriate events
-     *
-     * @param packet The received packet data
-     * @param simulator The simulator for which the packet data is
-     */
-    private void OnFindAgentReplyHandler(Packet packet, Simulator simulator) throws Exception
-    {
-        if (OnFriendFoundReply.count() > 0)
-        {
-            FindAgentPacket reply = (FindAgentPacket)packet;
+	/**
+	 * Process an incoming packet and raise the appropriate events
+	 * 
+	 * @param packet
+	 *            The received packet data
+	 * @param simulator
+	 *            The simulator for which the packet data is
+	 */
+	private void OnFindAgentReplyHandler(Packet packet, Simulator simulator) throws Exception
+	{
+		if (OnFriendFoundReply.count() > 0)
+		{
+			FindAgentPacket reply = (FindAgentPacket) packet;
 
-            UUID prey = reply.AgentBlock.Prey;
-            float values[] = new float[2];
-            long regionHandle = Helpers.GlobalPosToRegionHandle((float)reply.LocationBlock[0].GlobalX, (float)reply.LocationBlock[0].GlobalY, values);
+			UUID prey = reply.AgentBlock.Prey;
+			float values[] = new float[2];
+			long regionHandle = Helpers.GlobalPosToRegionHandle((float) reply.LocationBlock[0].GlobalX,
+					(float) reply.LocationBlock[0].GlobalY, values);
 
-            OnFriendFoundReply.dispatch(new FriendFoundReplyCallbackArgs(prey, regionHandle, new Vector3(values[0], values[1], 0f)));
-        }
-    }
+			OnFriendFoundReply.dispatch(new FriendFoundReplyCallbackArgs(prey, regionHandle, new Vector3(values[0],
+					values[1], 0f)));
+		}
+	}
 
 	/**
 	 * Process an incoming UUIDNameReply Packet and insert Full Names into the
 	 * FriendList Dictionary
-	 *
-	 * @param packet Incoming Packet to process</param>
-	 * @param simulator Unused
+	 * 
+	 * @param packet
+	 *            Incoming Packet to process</param>
+	 * @param simulator
+	 *            Unused
 	 */
 	private void UUIDNameReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
@@ -874,7 +925,8 @@ public class FriendsManager implements PacketCallback
 				{
 					friend = FriendList.get(block.ID);
 				}
-				friend.setName(Helpers.BytesToString(block.getFirstName()) + " " + Helpers.BytesToString(block.getLastName()));
+				friend.setName(Helpers.BytesToString(block.getFirstName()) + " "
+						+ Helpers.BytesToString(block.getLastName()));
 			}
 		}
 	}
@@ -884,80 +936,85 @@ public class FriendsManager implements PacketCallback
 		@Override
 		public void callback(InstantMessageCallbackArgs e)
 		{
-	    	UUID friendID = e.getIM().FromAgentID;
-	    	String name = e.getIM().FromAgentName;
+			UUID friendID = e.getIM().FromAgentID;
+			String name = e.getIM().FromAgentName;
 
-	    	switch (e.getIM().Dialog)
-	    	{
-	    	    case FriendshipOffered:
-                	UUID sessionID = e.getIM().IMSessionID;
-                    FriendRequests.put(friendID, sessionID);
-                    OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
-	                break;
-	    	    case FriendshipAccepted:
-	                FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-	                friend.setName(name);
-	                synchronized (FriendList)
-	                {
-	                    FriendList.put(friendID, friend);
-	                }
-                    OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
-					try {
+			switch (e.getIM().Dialog)
+			{
+				case FriendshipOffered:
+					UUID sessionID = e.getIM().IMSessionID;
+					FriendRequests.put(friendID, sessionID);
+					OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
+					break;
+				case FriendshipAccepted:
+					FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
+					friend.setName(name);
+					synchronized (FriendList)
+					{
+						FriendList.put(friendID, friend);
+					}
+					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
+					try
+					{
 						RequestOnlineNotification(friendID);
 					}
-					catch (Exception ex) 
+					catch (Exception ex)
 					{
 						Logger.Log("Error requesting online notification", LogLevel.Error, _Client, ex);
 					}
-	                break;
-	    	    case FriendshipDeclined:
-                    OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
-	        }
-	    }
+					break;
+				case FriendshipDeclined:
+					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
+			}
+		}
 	}
 
-    /**
-     * Populate FriendList {@link InternalDictionary} with data from the login reply
-     */
-    private class Network_OnConnect implements Callback<LoginProgressCallbackArgs>
-    {
-        @Override
+	/**
+	 * Populate FriendList {@link InternalDictionary} with data from the login
+	 * reply
+	 */
+	private class Network_OnConnect implements Callback<LoginProgressCallbackArgs>
+	{
+		@Override
 		public void callback(LoginProgressCallbackArgs e)
-        {
-            if (e.getStatus() == LoginStatus.Success)
-            {
-                if (e.getReply().BuddyList != null)
-                {
-                    for (BuddyListEntry buddy : e.getReply().BuddyList)
-                    {
-                        UUID bubid = UUID.Parse(buddy.buddy_id);
-                        synchronized (FriendList)
-                        {
-                            if (!FriendList.containsKey(bubid))
-                            {
-                                FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));
-                            }
-                        }
-                    }
-                }
-                Vector<UUID> request = new Vector<UUID>();
+		{
+			if (e.getStatus() == LoginStatus.Success)
+			{
+				if (e.getReply().BuddyList != null)
+				{
+					for (BuddyListEntry buddy : e.getReply().BuddyList)
+					{
+						UUID bubid = UUID.Parse(buddy.buddy_id);
+						synchronized (FriendList)
+						{
+							if (!FriendList.containsKey(bubid))
+							{
+								FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given,
+										buddy.buddy_rights_has));
+							}
+						}
+					}
+				}
+				Vector<UUID> request = new Vector<UUID>();
 
-                if (FriendList.size() > 0)
-                {
-                    for (FriendInfo kvp : FriendList.values())
-                    {
-                        if (kvp.getName().isEmpty())
-                        {
-                            request.add(kvp.getUUID());
-                        }
-                    }
-                    try
-                    {
+				if (FriendList.size() > 0)
+				{
+					for (FriendInfo kvp : FriendList.values())
+					{
+						if (kvp.getName().isEmpty())
+						{
+							request.add(kvp.getUUID());
+						}
+					}
+					try
+					{
 						_Client.Avatars.RequestAvatarNames(request, null);
 					}
-                    catch (Exception e1) { }
-                }
-            }
-        }
-    }
+					catch (Exception e1)
+					{
+					}
+				}
+			}
+		}
+	}
 }

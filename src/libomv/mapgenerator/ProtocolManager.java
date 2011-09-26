@@ -97,13 +97,16 @@ public class ProtocolManager
 		// TODO: Get a hashtable in here quick!
 
 		MapPacket map = HighMaps.getMapPacketByName(command);
-		if (map == null) {
+		if (map == null)
+		{
 			map = MediumMaps.getMapPacketByName(command);
-			if (map == null) {
+			if (map == null)
+			{
 				map = LowMaps.getMapPacketByName(command);
-			} else {
-				throw new Exception("Cannot find map for command \"" + command
-						+ "\"");
+			}
+			else
+			{
+				throw new Exception("Cannot find map for command \"" + command + "\"");
 			}
 		}
 		return map;
@@ -117,12 +120,15 @@ public class ProtocolManager
 	{
 		int command;
 
-		if (data.length < 7) {
+		if (data.length < 7)
+		{
 			return null;
 		}
 
-		if (data[6] == (byte) 0xFF) {
-			if (data[7] == (byte) 0xFF) {
+		if (data[6] == (byte) 0xFF)
+		{
+			if (data[7] == (byte) 0xFF)
+			{
 				// Low frequency
 				command = (data[8] * 256 + data[9]);
 				return Command(command, PacketFrequency.Low);
@@ -150,8 +156,7 @@ public class ProtocolManager
 				return LowMaps.getMapPacketByCommand(command);
 		}
 
-		throw new Exception("Cannot find map for command \"" + command
-				+ "\" with frequency \"" + frequency + "\"");
+		throw new Exception("Cannot find map for command \"" + command + "\" with frequency \"" + frequency + "\"");
 	}
 
 	public void PrintMap()
@@ -170,26 +175,26 @@ public class ProtocolManager
 			MapPacket map_packet = map.mapPackets.elementAt(i);
 			if (map_packet != null)
 			{
-				System.out.format("%s %4x - %s - %s - %s\n",
-						frequency, i, map_packet.Name, map_packet.Trusted ? "Trusted" : "Untrusted",
-					    map_packet.Encoded ? "Unencoded" : "Zerocoded");
+				System.out.format("%s %4x - %s - %s - %s\n", frequency, i, map_packet.Name,
+						map_packet.Trusted ? "Trusted" : "Untrusted", map_packet.Encoded ? "Unencoded" : "Zerocoded");
 
 				for (int j = 0; j < map_packet.Blocks.size(); j++)
 				{
 					MapBlock block = map_packet.Blocks.get(j);
 					if (block.Count == -1)
 					{
-						 System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, block.Name);
+						System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, block.Name);
 					}
 					else
 					{
-						 System.out.format("\t4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
+						System.out.format("\t4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
 					}
 
 					for (int k = 0; k < block.Fields.size(); k++)
 					{
 						MapField field = block.Fields.elementAt(k);
-					    System.out.format("\t\t4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type, field.Count);
+						System.out.format("\t\t4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type,
+								field.Count);
 					}
 				}
 			}
@@ -204,20 +209,28 @@ public class ProtocolManager
 		InputStream map;
 		OutputStream output;
 
-		try {
+		try
+		{
 			map = new FileInputStream(mapFile);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			throw new Exception("Map file error", e);
 		}
 
-		try {
+		try
+		{
 			output = new FileOutputStream(outputFile);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			throw new Exception("Map file error", e);
 		}
 
-		while ((nread = map.read(buffer, 0, 2048)) != 0) {
-			for (int i = 0; i < nread; ++i) {
+		while ((nread = map.read(buffer, 0, 2048)) != 0)
+		{
+			for (int i = 0; i < nread; ++i)
+			{
 				buffer[i] ^= magicKey;
 				magicKey += 43;
 			}
@@ -302,16 +315,17 @@ public class ProtocolManager
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
 
-							if (tokens.length > 3) {
-								if (tokens[1].equals("Fixed")) {
+							if (tokens.length > 3)
+							{
+								if (tokens[1].equals("Fixed"))
+								{
 									// Remove the leading "0x"
-									if (tokens[2].substring(0, 2).equals("0x")) {
-										tokens[2] = tokens[2].substring(2,
-												tokens[2].length());
+									if (tokens[2].substring(0, 2).equals("0x"))
+									{
+										tokens[2] = tokens[2].substring(2, tokens[2].length());
 									}
 
-									long l_fixedID = Long.parseLong(tokens[2],
-											16);
+									long l_fixedID = Long.parseLong(tokens[2], 16);
 									// Truncate the id to a short
 									int fixedID = (int) (l_fixedID ^ 0xFFFF0000);
 									currentPacket = new MapPacket();
@@ -320,52 +334,66 @@ public class ProtocolManager
 									currentPacket.Name = tokens[0];
 									currentPacket.Trusted = tokens[3].equals("Trusted");
 									currentPacket.Encoded = tokens[4].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 5 ? tokens[5].contains("Deprecated") : false;
+									currentPacket.Deprecated = tokens.length > 5 ? tokens[5].contains("Deprecated")
+											: false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									LowMaps.addPacket(fixedID, currentPacket);
-								} else if (tokens[1].equals("Low")) {
+								}
+								else if (tokens[1].equals("Low"))
+								{
 									currentPacket = new MapPacket();
 									currentPacket.ID = low;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
 									currentPacket.Trusted = tokens[2].equals("Trusted");
 									currentPacket.Encoded = tokens[3].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated") : false;
+									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
+											: false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									LowMaps.addPacket(low, currentPacket);
 									low++;
-								} else if (tokens[1].equals("Medium")) {
+								}
+								else if (tokens[1].equals("Medium"))
+								{
 									currentPacket = new MapPacket();
 									currentPacket.ID = medium;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
 									currentPacket.Trusted = tokens[2].equals("Trusted");
 									currentPacket.Encoded = tokens[3].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated") : false;
+									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
+											: false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									MediumMaps.addPacket(medium, currentPacket);
 
 									medium++;
-								} else if (tokens[1].equals("High")) {
+								}
+								else if (tokens[1].equals("High"))
+								{
 									currentPacket = new MapPacket();
 									currentPacket.ID = high;
 									currentPacket.Frequency = PacketFrequency.Low;
 									currentPacket.Name = tokens[0];
 									currentPacket.Trusted = tokens[2].equals("Trusted");
 									currentPacket.Encoded = tokens[3].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated") : false;
+									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
+											: false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									HighMaps.addPacket(high, currentPacket);
 
 									high++;
-								} else {
+								}
+								else
+								{
 									Logger.Log("Unknown packet frequency : " + tokens[1], LogLevel.Error);
 								}
 							}
 						}
-					} else {
-						if (trimmedline.length() > 0
-								&& trimmedline.substring(0, 1).equals("{")) {
+					}
+					else
+					{
+						if (trimmedline.length() > 0 && trimmedline.substring(0, 1).equals("{"))
+						{
 							// A field
 							MapField field = new MapField();
 
@@ -409,15 +437,21 @@ public class ProtocolManager
 							currentBlock.Fields = new Vector<MapField>();
 							currentPacket.Blocks.add(currentBlock);
 
-							if (tokens[1].equals("Single")) {
+							if (tokens[1].equals("Single"))
+							{
 								currentBlock.Count = 1;
-							} else if (tokens[1].equals("Multiple")) {
+							}
+							else if (tokens[1].equals("Multiple"))
+							{
 								currentBlock.Count = Integer.parseInt(tokens[2]);
-							} else if (tokens[1].equals("Variable")) {
+							}
+							else if (tokens[1].equals("Variable"))
+							{
 								currentBlock.Count = -1;
-							} else {
-								Logger.Log("Unknown block frequency",
-										LogLevel.Error);
+							}
+							else
+							{
+								Logger.Log("Unknown block frequency", LogLevel.Error);
 							}
 
 							// #endregion
@@ -430,7 +464,9 @@ public class ProtocolManager
 
 			r.close();
 			map.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			throw e;
 		}
 	}
@@ -456,12 +492,11 @@ public class ProtocolManager
 		{
 			hash++;
 			hash &= 0x1FFF;
-			if (hash == startHash) {
+			if (hash == startHash)
+			{
 				// Give up looking, went through all values and they were
 				// all taken.
-				throw new Exception(
-						"All hash values are taken. Failed to add keyword: "
-								+ keyword);
+				throw new Exception("All hash values are taken. Failed to add keyword: " + keyword);
 			}
 		}
 

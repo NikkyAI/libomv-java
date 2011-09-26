@@ -44,21 +44,25 @@ public class OSDUri extends OSD
 	{
 		this.value = value;
 	}
+
 	@Override
 	public String AsString()
 	{
 		return value != null ? value.toString() : Helpers.EmptyString;
 	}
+
 	@Override
 	public URI AsUri()
 	{
 		return value;
 	}
+
 	@Override
 	public byte[] AsBinary()
 	{
 		return AsString().getBytes();
 	}
+
 	@Override
 	public String toString()
 	{

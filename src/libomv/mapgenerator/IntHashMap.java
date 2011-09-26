@@ -25,13 +25,13 @@ package libomv.mapgenerator;
  * <p>
  * A hash map that uses primitive ints for the key rather than objects.
  * </p>
- *
+ * 
  * <p>
  * Note that this class is for internal optimization purposes only, and may not
  * be supported in future releases of Jakarta Commons Lang. Utilities of this
  * sort may be included in future releases of Jakarta Commons Collections.
  * </p>
- *
+ * 
  * @author Justin Couch
  * @author Alex Chaffee (alex@apache.org)
  * @author Stephen Colebourne
@@ -39,7 +39,8 @@ package libomv.mapgenerator;
  * @version $Revision: 1.1 $
  * @see java.util.HashMap
  */
-public class IntHashMap<K, V> {
+public class IntHashMap<K, V>
+{
 
 	/**
 	 * The hash table data.
@@ -54,14 +55,14 @@ public class IntHashMap<K, V> {
 	/**
 	 * The table is rehashed when its size exceeds this threshold. (The value of
 	 * this field is (int)(capacity * loadFactor).)
-	 *
+	 * 
 	 * @serial
 	 */
 	private int threshold;
 
 	/**
 	 * The load factor for the hashtable.
-	 *
+	 * 
 	 * @serial
 	 */
 	private float loadFactor;
@@ -72,7 +73,8 @@ public class IntHashMap<K, V> {
 	 * table.
 	 * </p>
 	 */
-	private static class Entry {
+	private static class Entry
+	{
 		int hash;
 
 		int key;
@@ -85,7 +87,7 @@ public class IntHashMap<K, V> {
 		 * <p>
 		 * Create a new entry with the given values.
 		 * </p>
-		 *
+		 * 
 		 * @param hash
 		 *            The code used to hash the object with
 		 * @param key
@@ -95,7 +97,8 @@ public class IntHashMap<K, V> {
 		 * @param next
 		 *            A reference to the next entry in the table
 		 */
-		protected Entry(int hash, int key, Object value, Entry next) {
+		protected Entry(int hash, int key, Object value, Entry next)
+		{
 			this.hash = hash;
 			this.key = key;
 			this.value = value;
@@ -109,7 +112,8 @@ public class IntHashMap<K, V> {
 	 * factor, which is <code>20</code> and <code>0.75</code> respectively.
 	 * </p>
 	 */
-	public IntHashMap() {
+	public IntHashMap()
+	{
 		this(20, 0.75f);
 	}
 
@@ -118,13 +122,14 @@ public class IntHashMap<K, V> {
 	 * Constructs a new, empty hashtable with the specified initial capacity and
 	 * default load factor, which is <code>0.75</code>.
 	 * </p>
-	 *
+	 * 
 	 * @param initialCapacity
 	 *            the initial capacity of the hashtable.
 	 * @throws IllegalArgumentException
 	 *             if the initial capacity is less than zero.
 	 */
-	public IntHashMap(int initialCapacity) {
+	public IntHashMap(int initialCapacity)
+	{
 		this(initialCapacity, 0.75f);
 	}
 
@@ -133,7 +138,7 @@ public class IntHashMap<K, V> {
 	 * Constructs a new, empty hashtable with the specified initial capacity and
 	 * the specified load factor.
 	 * </p>
-	 *
+	 * 
 	 * @param initialCapacity
 	 *            the initial capacity of the hashtable.
 	 * @param loadFactor
@@ -142,16 +147,19 @@ public class IntHashMap<K, V> {
 	 *             if the initial capacity is less than zero, or if the load
 	 *             factor is nonpositive.
 	 */
-	public IntHashMap(int initialCapacity, float loadFactor) {
+	public IntHashMap(int initialCapacity, float loadFactor)
+	{
 		super();
-		if (initialCapacity < 0) {
-			throw new IllegalArgumentException("Illegal Capacity: "
-					+ initialCapacity);
+		if (initialCapacity < 0)
+		{
+			throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
 		}
-		if (loadFactor <= 0) {
+		if (loadFactor <= 0)
+		{
 			throw new IllegalArgumentException("Illegal Load: " + loadFactor);
 		}
-		if (initialCapacity == 0) {
+		if (initialCapacity == 0)
+		{
 			initialCapacity = 1;
 		}
 
@@ -164,10 +172,11 @@ public class IntHashMap<K, V> {
 	 * <p>
 	 * Returns the number of keys in this hashtable.
 	 * </p>
-	 *
+	 * 
 	 * @return the number of keys in this hashtable.
 	 */
-	public int size() {
+	public int size()
+	{
 		return count;
 	}
 
@@ -175,11 +184,12 @@ public class IntHashMap<K, V> {
 	 * <p>
 	 * Tests if this hashtable maps no keys to values.
 	 * </p>
-	 *
+	 * 
 	 * @return <code>true</code> if this hashtable maps no keys to values;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean isEmpty() {
+	public boolean isEmpty()
+	{
 		return count == 0;
 	}
 
@@ -188,12 +198,12 @@ public class IntHashMap<K, V> {
 	 * Tests if some key maps into the specified value in this hashtable. This
 	 * operation is more expensive than the <code>containsKey</code> method.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * Note that this method is identical in functionality to containsValue,
 	 * (which is part of the Map interface in the collections framework).
 	 * </p>
-	 *
+	 * 
 	 * @param value
 	 *            a value to search for.
 	 * @return <code>true</code> if and only if some key maps to the
@@ -205,19 +215,25 @@ public class IntHashMap<K, V> {
 	 * @see #containsValue(Object)
 	 * @see java.util.Map
 	 */
-	public boolean contains(K value) {
+	public boolean contains(K value)
+	{
 		return containsOV(value);
 	}
 
-	private boolean containsOV(Object value) {
-		if (value == null) {
+	private boolean containsOV(Object value)
+	{
+		if (value == null)
+		{
 			throw new NullPointerException();
 		}
 
 		Entry tab[] = table;
-		for (int i = tab.length; i-- > 0;) {
-			for (Entry e = tab[i]; e != null; e = e.next) {
-				if (e.value.equals(value)) {
+		for (int i = tab.length; i-- > 0;)
+		{
+			for (Entry e = tab[i]; e != null; e = e.next)
+			{
+				if (e.value.equals(value))
+				{
 					return true;
 				}
 			}
@@ -230,18 +246,19 @@ public class IntHashMap<K, V> {
 	 * Returns <code>true</code> if this HashMap maps one or more keys to this
 	 * value.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * Note that this method is identical in functionality to contains (which
 	 * predates the Map interface).
 	 * </p>
-	 *
+	 * 
 	 * @param value
 	 *            value whose presence in this HashMap is to be tested.
 	 * @see java.util.Map
 	 * @since JDK1.2
 	 */
-	public boolean containsValue(V value) {
+	public boolean containsValue(V value)
+	{
 		return containsOV(value);
 	}
 
@@ -249,20 +266,23 @@ public class IntHashMap<K, V> {
 	 * <p>
 	 * Tests if the specified object is a key in this hashtable.
 	 * </p>
-	 *
+	 * 
 	 * @param key
 	 *            possible key.
-	 * @return <code>true</code> if and only if the specified object is a key
-	 *         in this hashtable, as determined by the <tt>equals</tt> method;
+	 * @return <code>true</code> if and only if the specified object is a key in
+	 *         this hashtable, as determined by the <tt>equals</tt> method;
 	 *         <code>false</code> otherwise.
 	 * @see #contains(Object)
 	 */
-	public boolean containsKey(int key) {
+	public boolean containsKey(int key)
+	{
 		Entry tab[] = table;
 		int hash = key;
 		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index]; e != null; e = e.next) {
-			if (e.hash == hash) {
+		for (Entry e = tab[index]; e != null; e = e.next)
+		{
+			if (e.hash == hash)
+			{
 				return true;
 			}
 		}
@@ -273,7 +293,7 @@ public class IntHashMap<K, V> {
 	 * <p>
 	 * Returns the value to which the specified key is mapped in this map.
 	 * </p>
-	 *
+	 * 
 	 * @param key
 	 *            a key in the hashtable.
 	 * @return the value to which the key is mapped in this hashtable;
@@ -282,12 +302,15 @@ public class IntHashMap<K, V> {
 	 * @see #put(int, Object)
 	 */
 	@SuppressWarnings("unchecked")
-	public V get(int key) {
+	public V get(int key)
+	{
 		Entry tab[] = table;
 		int hash = key;
 		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index]; e != null; e = e.next) {
-			if (e.hash == hash) {
+		for (Entry e = tab[index]; e != null; e = e.next)
+		{
+			if (e.hash == hash)
+			{
 				return (V) e.value;
 			}
 		}
@@ -299,13 +322,14 @@ public class IntHashMap<K, V> {
 	 * Increases the capacity of and internally reorganizes this hashtable, in
 	 * order to accommodate and access its entries more efficiently.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * This method is called automatically when the number of keys in the
 	 * hashtable exceeds this hashtable's capacity and load factor.
 	 * </p>
 	 */
-	protected void rehash() {
+	protected void rehash()
+	{
 		int oldCapacity = table.length;
 		Entry oldMap[] = table;
 
@@ -315,8 +339,10 @@ public class IntHashMap<K, V> {
 		threshold = (int) (newCapacity * loadFactor);
 		table = newMap;
 
-		for (int i = oldCapacity; i-- > 0;) {
-			for (Entry old = oldMap[i]; old != null;) {
+		for (int i = oldCapacity; i-- > 0;)
+		{
+			for (Entry old = oldMap[i]; old != null;)
+			{
 				Entry e = old;
 				old = old.next;
 
@@ -332,12 +358,12 @@ public class IntHashMap<K, V> {
 	 * Maps the specified <code>key</code> to the specified <code>value</code>
 	 * in this hashtable. The key cannot be <code>null</code>.
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * The value can be retrieved by calling the <code>get</code> method with
-	 * a key that is equal to the original key.
+	 * The value can be retrieved by calling the <code>get</code> method with a
+	 * key that is equal to the original key.
 	 * </p>
-	 *
+	 * 
 	 * @param key
 	 *            the hashtable key.
 	 * @param value
@@ -348,20 +374,24 @@ public class IntHashMap<K, V> {
 	 *             if the key is <code>null</code>.
 	 * @see #get(int)
 	 */
-	public Object put(int key, V value) {
+	public Object put(int key, V value)
+	{
 		// Makes sure the key is not already in the hashtable.
 		Entry tab[] = table;
 		int hash = key;
 		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index]; e != null; e = e.next) {
-			if (e.hash == hash) {
+		for (Entry e = tab[index]; e != null; e = e.next)
+		{
+			if (e.hash == hash)
+			{
 				Object old = e.value;
 				e.value = value;
 				return old;
 			}
 		}
 
-		if (count >= threshold) {
+		if (count >= threshold)
+		{
 			// Rehash the table if the threshold is exceeded
 			rehash();
 
@@ -380,25 +410,31 @@ public class IntHashMap<K, V> {
 	 * <p>
 	 * Removes the key (and its corresponding value) from this hashtable.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * This method does nothing if the key is not present in the hashtable.
 	 * </p>
-	 *
+	 * 
 	 * @param key
 	 *            the key that needs to be removed.
 	 * @return the value to which the key had been mapped in this hashtable, or
 	 *         <code>null</code> if the key did not have a mapping.
 	 */
-	public Object remove(int key) {
+	public Object remove(int key)
+	{
 		Entry tab[] = table;
 		int hash = key;
 		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next) {
-			if (e.hash == hash) {
-				if (prev != null) {
+		for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next)
+		{
+			if (e.hash == hash)
+			{
+				if (prev != null)
+				{
 					prev.next = e.next;
-				} else {
+				}
+				else
+				{
 					tab[index] = e.next;
 				}
 				count--;
@@ -415,9 +451,11 @@ public class IntHashMap<K, V> {
 	 * Clears this hashtable so that it contains no keys.
 	 * </p>
 	 */
-	public synchronized void clear() {
+	public synchronized void clear()
+	{
 		Entry tab[] = table;
-		for (int index = tab.length; --index >= 0;) {
+		for (int index = tab.length; --index >= 0;)
+		{
 			tab[index] = null;
 		}
 		count = 0;

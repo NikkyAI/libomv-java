@@ -76,7 +76,6 @@ public abstract class AssetWearable extends AssetItem
 		/** Tattoo */
 		Tattoo(14);
 
-
 		public static WearableType setValue(int value)
 		{
 			for (WearableType e : values())
@@ -98,304 +97,310 @@ public abstract class AssetWearable extends AssetItem
 		}
 
 		private final byte _value;
+
 		private WearableType(int value)
 		{
-			_value = (byte)value;
+			_value = (byte) value;
 		}
 	}
 
 	// A string containing the name of the asset
-    public String Name = Helpers.EmptyString;
-    // A string containing a short description of the asset
-    public String Description = Helpers.EmptyString;
-    // The Assets WearableType
-    public WearableType wearableType = WearableType.Shape;
-    // The For-Sale status of the object
-    public SaleType ForSale;
-    // An Integer representing the purchase price of the asset
-    public int SalePrice;
-    // The {@link UUID} of the assets creator
-    public UUID Creator;
-    // The {@link UUID} of the assets current owner
-    public UUID Owner;
-    // The {@link UUID} of the assets prior owner
-    public UUID LastOwner;
-    // The {@link UUID} of the Group this asset is set to
-    public UUID Group;
-    // True if the asset is owned by a {@link Group}
-    public boolean GroupOwned;
-    // The Permissions mask of the asset
-    public Permissions Permissions;
-    // A Dictionary containing Key/Value pairs of the objects parameters
-    public HashMap<Integer, Float> Params = new HashMap<Integer, Float>();
-    // A Dictionary containing Key/Value pairs where the Key is the textures Index and the Value is the Textures {@link UUID}
-    public HashMap<AvatarTextureIndex, UUID> Textures = new HashMap<AvatarTextureIndex, UUID>();
+	public String Name = Helpers.EmptyString;
+	// A string containing a short description of the asset
+	public String Description = Helpers.EmptyString;
+	// The Assets WearableType
+	public WearableType wearableType = WearableType.Shape;
+	// The For-Sale status of the object
+	public SaleType ForSale;
+	// An Integer representing the purchase price of the asset
+	public int SalePrice;
+	// The {@link UUID} of the assets creator
+	public UUID Creator;
+	// The {@link UUID} of the assets current owner
+	public UUID Owner;
+	// The {@link UUID} of the assets prior owner
+	public UUID LastOwner;
+	// The {@link UUID} of the Group this asset is set to
+	public UUID Group;
+	// True if the asset is owned by a {@link Group}
+	public boolean GroupOwned;
+	// The Permissions mask of the asset
+	public Permissions Permissions;
+	// A Dictionary containing Key/Value pairs of the objects parameters
+	public HashMap<Integer, Float> Params = new HashMap<Integer, Float>();
+	// A Dictionary containing Key/Value pairs where the Key is the textures
+	// Index and the Value is the Textures {@link UUID}
+	public HashMap<AvatarTextureIndex, UUID> Textures = new HashMap<AvatarTextureIndex, UUID>();
 
 	// Initializes a new instance of an AssetWearable object
-    public AssetWearable()
-    {
-    }
+	public AssetWearable()
+	{
+	}
 
-    /**
-     * Initializes a new instance of an AssetWearable object with parameters
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetWearable(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-    }
+	/**
+	 * Initializes a new instance of an AssetWearable object with parameters
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetWearable(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+	}
 
-    /**
-     * Initializes a new instance of an AssetWearable object with parameters
-     *
-     * @param source A string containing the asset parameters
-     */
-    public AssetWearable(String source)
-    {
-        AssetData = Helpers.StringToBytes(source);
-    }
+	/**
+	 * Initializes a new instance of an AssetWearable object with parameters
+	 * 
+	 * @param source
+	 *            A string containing the asset parameters
+	 */
+	public AssetWearable(String source)
+	{
+		AssetData = Helpers.StringToBytes(source);
+	}
 
-    /**
-     * Decode an assets byte encoded data to a string
-     *
-     * @return true if the asset data was decoded successfully
-     */
-    @Override
-    public boolean Decode()
-    {
-        int version = -1;
-        Permissions = new Permissions();
+	/**
+	 * Decode an assets byte encoded data to a string
+	 * 
+	 * @return true if the asset data was decoded successfully
+	 */
+	@Override
+	public boolean Decode()
+	{
+		int version = -1;
+		Permissions = new Permissions();
 
-        try
-        {
-            String data = Helpers.BytesToString(AssetData);
+		try
+		{
+			String data = Helpers.BytesToString(AssetData);
 
-            data = data.replace("\r", Helpers.EmptyString);
-            String[] lines = data.split("\n");
-            for (int stri = 0; stri < lines.length; stri++)
-            {
-                if (stri == 0)
-                {
-                    String versionstring = lines[stri];
-                    version = Integer.parseInt(versionstring.split(" ")[2]);
-                    if (version != 22 && version != 18)
-                        return false;
-                }
-                else if (stri == 1)
-                {
-                    Name = lines[stri];
-                }
-                else if (stri == 2)
-                {
-                    Description = lines[stri];
-                }
-                else
-                {
-                    String line = lines[stri].trim();
-                    String[] fields = line.split("\t");
+			data = data.replace("\r", Helpers.EmptyString);
+			String[] lines = data.split("\n");
+			for (int stri = 0; stri < lines.length; stri++)
+			{
+				if (stri == 0)
+				{
+					String versionstring = lines[stri];
+					version = Integer.parseInt(versionstring.split(" ")[2]);
+					if (version != 22 && version != 18)
+						return false;
+				}
+				else if (stri == 1)
+				{
+					Name = lines[stri];
+				}
+				else if (stri == 2)
+				{
+					Description = lines[stri];
+				}
+				else
+				{
+					String line = lines[stri].trim();
+					String[] fields = line.split("\t");
 
-                    if (fields.length == 1)
-                    {
-                        fields = line.split(" ");
-                        if (fields[0] == "parameters")
-                        {
-                            int count = Integer.parseInt(fields[1]) + stri;
-                            for (; stri < count;)
-                            {
-                                stri++;
-                                line = lines[stri].trim();
-                                fields = line.split(" ");
+					if (fields.length == 1)
+					{
+						fields = line.split(" ");
+						if (fields[0] == "parameters")
+						{
+							int count = Integer.parseInt(fields[1]) + stri;
+							for (; stri < count;)
+							{
+								stri++;
+								line = lines[stri].trim();
+								fields = line.split(" ");
 
-                                int id = 0;
+								int id = 0;
 
-                                // Special handling for -0 edge case
-                                if (fields[0] != "-0")
-                                    id = Integer.parseInt(fields[0]);
+								// Special handling for -0 edge case
+								if (fields[0] != "-0")
+									id = Integer.parseInt(fields[0]);
 
-                                if (fields[1] == ",")
-                                    fields[1] = "0";
-                                else
-                                    fields[1] = fields[1].replace(',', '.');
+								if (fields[1] == ",")
+									fields[1] = "0";
+								else
+									fields[1] = fields[1].replace(',', '.');
 
-                                float weight = Float.parseFloat(fields[1]);
+								float weight = Float.parseFloat(fields[1]);
 
-                                Params.put(id, weight);
-                            }
-                        }
-                        else if (fields[0] == "textures")
-                        {
-                            int count = Integer.parseInt(fields[1]) + stri;
-                            for (; stri < count;)
-                            {
-                                stri++;
-                                line = lines[stri].trim();
-                                fields = line.split(" ");
+								Params.put(id, weight);
+							}
+						}
+						else if (fields[0] == "textures")
+						{
+							int count = Integer.parseInt(fields[1]) + stri;
+							for (; stri < count;)
+							{
+								stri++;
+								line = lines[stri].trim();
+								fields = line.split(" ");
 
-                                AvatarTextureIndex id = AvatarTextureIndex.setValue(Helpers.TryParseInt(fields[0]));
-                                UUID texture = new UUID(fields[1]);
+								AvatarTextureIndex id = AvatarTextureIndex.setValue(Helpers.TryParseInt(fields[0]));
+								UUID texture = new UUID(fields[1]);
 
-                                Textures.put(id, texture);
-                            }
-                        }
-                        else if (fields[0] == "type")
-                        {
-                            wearableType = WearableType.setValue(Helpers.TryParseInt(fields[1]));
-                        }
+								Textures.put(id, texture);
+							}
+						}
+						else if (fields[0] == "type")
+						{
+							wearableType = WearableType.setValue(Helpers.TryParseInt(fields[1]));
+						}
 
-                    }
-                    else if (fields.length == 2)
-                    {
-                        if (fields[0].equals("creator_mask"))
-                        {
-                            // Deprecated, apply this as the base mask
-                            Permissions.BaseMask = (int)Helpers.TryParseHex(fields[1]);
-                        }
-                        else if (fields[0].equals("base_mask"))
-                        {
-                            Permissions.BaseMask = (int)Helpers.TryParseHex(fields[1]);
-                        }
-                        else if (fields[0].equals("owner_mask"))
-                        {
-                            Permissions.OwnerMask = (int)Helpers.TryParseHex(fields[1]);
-                        }
-                        else if (fields[0].equals("group_mask"))
-                        {
-                            Permissions.GroupMask = (int)Helpers.TryParseHex(fields[1]);
-                        }
-                        else if (fields[0].equals("everyone_mask"))
-                        {
-                            Permissions.EveryoneMask = (int)Helpers.TryParseHex(fields[1]);
-                        }
-                        else if (fields[0].equals("next_owner_mask"))
-                        {
-                            Permissions.NextOwnerMask = (int)Helpers.TryParseHex(fields[1]);
-                        }
-                        else if (fields[0].equals("creator_id"))
-                        {
-                            Creator = new UUID(fields[1]);
-                        }
-                        else if (fields[0].equals("owner_id"))
-                        {
-                            Owner = new UUID(fields[1]);
-                        }
-                        else if (fields[0].equals("last_owner_id"))
-                        {
-                            LastOwner = new UUID(fields[1]);
-                        }
-                        else if (fields[0].equals("group_id"))
-                        {
-                            Group = new UUID(fields[1]);
-                        }
-                        else if (fields[0].equals("group_owned"))
-                        {
-                            GroupOwned = (Integer.parseInt(fields[1]) != 0);
-                        }
-                        else if (fields[0].equals("sale_type"))
-                        {
-                            ForSale = SaleType.setValue(fields[1]);
-                        }
-                        else if (fields[0].equals("sale_price"))
-                        {
-                            SalePrice = Integer.parseInt(fields[1]);
-                            break;
-                        }
-                        else if (fields[0].equals("sale_info"))
-                        {
-                            // Container for sale_type and sale_price, ignore
-                        }
-                        else
-                            return false;
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Log("Failed decoding wearable asset " + AssetID + ": " + ex.getMessage(), LogLevel.Warning);
-            return false;
-        }
+					}
+					else if (fields.length == 2)
+					{
+						if (fields[0].equals("creator_mask"))
+						{
+							// Deprecated, apply this as the base mask
+							Permissions.BaseMask = (int) Helpers.TryParseHex(fields[1]);
+						}
+						else if (fields[0].equals("base_mask"))
+						{
+							Permissions.BaseMask = (int) Helpers.TryParseHex(fields[1]);
+						}
+						else if (fields[0].equals("owner_mask"))
+						{
+							Permissions.OwnerMask = (int) Helpers.TryParseHex(fields[1]);
+						}
+						else if (fields[0].equals("group_mask"))
+						{
+							Permissions.GroupMask = (int) Helpers.TryParseHex(fields[1]);
+						}
+						else if (fields[0].equals("everyone_mask"))
+						{
+							Permissions.EveryoneMask = (int) Helpers.TryParseHex(fields[1]);
+						}
+						else if (fields[0].equals("next_owner_mask"))
+						{
+							Permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
+						}
+						else if (fields[0].equals("creator_id"))
+						{
+							Creator = new UUID(fields[1]);
+						}
+						else if (fields[0].equals("owner_id"))
+						{
+							Owner = new UUID(fields[1]);
+						}
+						else if (fields[0].equals("last_owner_id"))
+						{
+							LastOwner = new UUID(fields[1]);
+						}
+						else if (fields[0].equals("group_id"))
+						{
+							Group = new UUID(fields[1]);
+						}
+						else if (fields[0].equals("group_owned"))
+						{
+							GroupOwned = (Integer.parseInt(fields[1]) != 0);
+						}
+						else if (fields[0].equals("sale_type"))
+						{
+							ForSale = SaleType.setValue(fields[1]);
+						}
+						else if (fields[0].equals("sale_price"))
+						{
+							SalePrice = Integer.parseInt(fields[1]);
+							break;
+						}
+						else if (fields[0].equals("sale_info"))
+						{
+							// Container for sale_type and sale_price, ignore
+						}
+						else
+							return false;
+					}
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger.Log("Failed decoding wearable asset " + AssetID + ": " + ex.getMessage(), LogLevel.Warning);
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    // Encode the assets string represantion into a format consumable by the asset server
-    @Override
-    public void Encode()
-    {
-        final String NL = "\n";
+	// Encode the assets string represantion into a format consumable by the
+	// asset server
+	@Override
+	public void Encode()
+	{
+		final String NL = "\n";
 
-        StringBuilder data = new StringBuilder("LLWearable version 22\n");
-        data.append(Name);
-        data.append(NL);
-        data.append(NL);
-        data.append("\tpermissions 0\n\t{\n");
-        data.append("\t\tbase_mask\t");
-        data.append(Helpers.UInt32ToHexString(Permissions.BaseMask));
-        data.append(NL);
-        data.append("\t\towner_mask\t");
-        data.append(Helpers.UInt32ToHexString(Permissions.OwnerMask));
-        data.append(NL);
-        data.append("\t\tgroup_mask\t");
-        data.append(Helpers.UInt32ToHexString(Permissions.GroupMask));
-        data.append(NL);
-        data.append("\t\teveryone_mask\t");
-        data.append(Helpers.UInt32ToHexString(Permissions.EveryoneMask));
-        data.append(NL);
-        data.append("\t\tnext_owner_mask\t");
-        data.append(Helpers.UInt32ToHexString(Permissions.NextOwnerMask));
-        data.append(NL);
-        data.append("\t\tcreator_id\t");
-        data.append(Creator.toString());
-        data.append(NL);
-        data.append("\t\towner_id\t");
-        data.append(Owner.toString());
-        data.append(NL);
-        data.append("\t\tlast_owner_id\t");
-        data.append(LastOwner.toString());
-        data.append(NL);
-        data.append("\t\tgroup_id\t");
-        data.append(Group.toString());
-        data.append(NL);
-        if (GroupOwned)
-            data.append("\t\tgroup_owned\t1\n");
-        data.append("\t}\n");
-        data.append("\tsale_info\t0\n");
-        data.append("\t{\n");
-        data.append("\t\tsale_type\t");
-        data.append(ForSale.toString());
-        data.append(NL);
-        data.append("\t\tsale_price\t");
-        data.append(SalePrice);
-        data.append(NL);
-        data.append("\t}\n");
-        data.append("type ");
-        data.append(wearableType.getValue());
-        data.append(NL);
+		StringBuilder data = new StringBuilder("LLWearable version 22\n");
+		data.append(Name);
+		data.append(NL);
+		data.append(NL);
+		data.append("\tpermissions 0\n\t{\n");
+		data.append("\t\tbase_mask\t");
+		data.append(Helpers.UInt32ToHexString(Permissions.BaseMask));
+		data.append(NL);
+		data.append("\t\towner_mask\t");
+		data.append(Helpers.UInt32ToHexString(Permissions.OwnerMask));
+		data.append(NL);
+		data.append("\t\tgroup_mask\t");
+		data.append(Helpers.UInt32ToHexString(Permissions.GroupMask));
+		data.append(NL);
+		data.append("\t\teveryone_mask\t");
+		data.append(Helpers.UInt32ToHexString(Permissions.EveryoneMask));
+		data.append(NL);
+		data.append("\t\tnext_owner_mask\t");
+		data.append(Helpers.UInt32ToHexString(Permissions.NextOwnerMask));
+		data.append(NL);
+		data.append("\t\tcreator_id\t");
+		data.append(Creator.toString());
+		data.append(NL);
+		data.append("\t\towner_id\t");
+		data.append(Owner.toString());
+		data.append(NL);
+		data.append("\t\tlast_owner_id\t");
+		data.append(LastOwner.toString());
+		data.append(NL);
+		data.append("\t\tgroup_id\t");
+		data.append(Group.toString());
+		data.append(NL);
+		if (GroupOwned)
+			data.append("\t\tgroup_owned\t1\n");
+		data.append("\t}\n");
+		data.append("\tsale_info\t0\n");
+		data.append("\t{\n");
+		data.append("\t\tsale_type\t");
+		data.append(ForSale.toString());
+		data.append(NL);
+		data.append("\t\tsale_price\t");
+		data.append(SalePrice);
+		data.append(NL);
+		data.append("\t}\n");
+		data.append("type ");
+		data.append(wearableType.getValue());
+		data.append(NL);
 
-        data.append("parameters ");
-        data.append(Params.size());
-        data.append(NL);
-        for (Entry<Integer, Float> param : Params.entrySet())
-        {
-            data.append(param.getKey());
-            data.append(" ");
-            data.append(Helpers.FloatToTerseString(param.getValue()));
-            data.append(NL);
-        }
+		data.append("parameters ");
+		data.append(Params.size());
+		data.append(NL);
+		for (Entry<Integer, Float> param : Params.entrySet())
+		{
+			data.append(param.getKey());
+			data.append(" ");
+			data.append(Helpers.FloatToTerseString(param.getValue()));
+			data.append(NL);
+		}
 
-        data.append("textures ");
-        data.append(Textures.size());
-        data.append(NL);
-        for (Entry<AvatarTextureIndex, UUID> texture : Textures.entrySet())
-        {
-            data.append(texture.getKey().getValue());
-            data.append(" ");
-            data.append(texture.getValue().toString());
-            data.append(NL);
-        }
+		data.append("textures ");
+		data.append(Textures.size());
+		data.append(NL);
+		for (Entry<AvatarTextureIndex, UUID> texture : Textures.entrySet())
+		{
+			data.append(texture.getKey().getValue());
+			data.append(" ");
+			data.append(texture.getValue().toString());
+			data.append(NL);
+		}
 
-        AssetData = Helpers.StringToBytes(data.toString());
-    }
+		AssetData = Helpers.StringToBytes(data.toString());
+	}
 }

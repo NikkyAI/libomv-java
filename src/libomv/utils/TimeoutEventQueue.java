@@ -33,7 +33,7 @@ public class TimeoutEventQueue<T>
 
 	/**
 	 * Create a new timeout event and add it to the internal list of events
-	 *
+	 * 
 	 * @return a timeout event object that is in a reset state
 	 */
 	public TimeoutEvent<T> create()
@@ -62,7 +62,7 @@ public class TimeoutEventQueue<T>
 
 	/**
 	 * Resets every event in the list and then cleans out the list
-	 *
+	 * 
 	 * @returns the number of events that have been reset
 	 */
 	public int cancel()
@@ -80,9 +80,11 @@ public class TimeoutEventQueue<T>
 	}
 
 	/**
-	 * Signals the specified event in the list and then cleans it out from the list
-	 *
-	 * @param event the timeout event to look for in the list
+	 * Signals the specified event in the list and then cleans it out from the
+	 * list
+	 * 
+	 * @param event
+	 *            the timeout event to look for in the list
 	 * @return a boolean indicating if the event was found in the list
 	 */
 	public boolean cancel(TimeoutEvent<T> event)
@@ -102,7 +104,7 @@ public class TimeoutEventQueue<T>
 
 	/**
 	 * Returns the number of events that are currently in the list
-	 *
+	 * 
 	 * @returns the number of events that are currently in the list
 	 */
 	public int size()

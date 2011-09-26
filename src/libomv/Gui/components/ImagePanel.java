@@ -41,7 +41,8 @@ public class ImagePanel extends JPanel
 	/**
 	 * Constructor to intialize the contained image from a resource
 	 * 
-	 * @param name Resource name to load the image from
+	 * @param name
+	 *            Resource name to load the image from
 	 * @wbp.parser.constructor
 	 */
 	public ImagePanel(String name)
@@ -52,7 +53,8 @@ public class ImagePanel extends JPanel
 	/**
 	 * Constructor to intialize the contained image from an image
 	 * 
-	 * @param image to use when drawing this object
+	 * @param image
+	 *            to use when drawing this object
 	 */
 	public ImagePanel(Image image)
 	{

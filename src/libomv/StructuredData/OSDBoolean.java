@@ -26,53 +26,57 @@
  */
 package libomv.StructuredData;
 
-	public class OSDBoolean extends OSD
+public class OSDBoolean extends OSD
+{
+	private boolean value;
+
+	private static byte[] trueBinary = { 0x31 };
+	private static byte[] falseBinary = { 0x30 };
+
+	@Override
+	public OSDType getType()
 	{
-		private boolean value;
-
-		private static byte[] trueBinary = { 0x31 };
-		private static byte[] falseBinary = { 0x30 };
-
-		@Override
-		public OSDType getType()
-		{
-			return OSDType.Boolean;
-		}
-
-		public OSDBoolean(boolean value)
-		{
-			this.value = value;
-		}
-
-		@Override
-		public boolean AsBoolean()
-		{
-			return value;
-		}
-		@Override
-		public int AsInteger()
-		{
-			return value ? 1 : 0;
-		}
-		@Override
-		public double AsReal()
-		{
-			return value ? 1d : 0d;
-		}
-		@Override
-		public String AsString()
-		{
-			return value ? "1" : "0";
-		}
-		@Override
-		public byte[] AsBinary()
-		{
-			return value ? trueBinary : falseBinary;
-		}
-
-		@Override
-		public String toString()
-		{
-			return AsString();
-		}
+		return OSDType.Boolean;
 	}
+
+	public OSDBoolean(boolean value)
+	{
+		this.value = value;
+	}
+
+	@Override
+	public boolean AsBoolean()
+	{
+		return value;
+	}
+
+	@Override
+	public int AsInteger()
+	{
+		return value ? 1 : 0;
+	}
+
+	@Override
+	public double AsReal()
+	{
+		return value ? 1d : 0d;
+	}
+
+	@Override
+	public String AsString()
+	{
+		return value ? "1" : "0";
+	}
+
+	@Override
+	public byte[] AsBinary()
+	{
+		return value ? trueBinary : falseBinary;
+	}
+
+	@Override
+	public String toString()
+	{
+		return AsString();
+	}
+}

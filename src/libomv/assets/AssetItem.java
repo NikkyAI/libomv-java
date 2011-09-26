@@ -36,17 +36,17 @@ public abstract class AssetItem
 	{
 		/** Unknown asset type */
 		Unknown(-1),
-		/** Texture asset, stores in JPEG2000 J2C stream format	*/
+		/** Texture asset, stores in JPEG2000 J2C stream format */
 		Texture(0),
-		/** Sound asset	*/
+		/** Sound asset */
 		Sound(1),
-		/** Calling card for another avatar	*/
+		/** Calling card for another avatar */
 		CallingCard(2),
 		/** Link to a location in world */
 		Landmark(3),
-		//[Obsolete] Legacy script asset, you should never see one of these
+		// [Obsolete] Legacy script asset, you should never see one of these
 		Script(4),
-		/** Collection of textures and parameters that can be worn by an avatar	*/
+		/** Collection of textures and parameters that can be worn by an avatar */
 		Clothing(5),
 		/** Primitive that can contain textures, sounds, scripts and more */
 		Object(6),
@@ -92,12 +92,14 @@ public abstract class AssetItem
 		EnsembleStart(26),
 		/** End of the range reserved for ensembles */
 		EnsembleEnd(45),
-		/** Folder containing inventory links to wearables and attachments that are
-		 *  part of the current outfit
+		/**
+		 * Folder containing inventory links to wearables and attachments that
+		 * are part of the current outfit
 		 */
 		CurrentOutfitFolder(46),
-		/** Folder containing inventory items or links to inventory items of wearables
-		 *  and attachments together make a full outfit
+		/**
+		 * Folder containing inventory items or links to inventory items of
+		 * wearables and attachments together make a full outfit
 		 */
 		OutfitFolder(47),
 		/** Root folder for the folders of type OutfitFolder */
@@ -105,13 +107,18 @@ public abstract class AssetItem
 		/** */
 		InboxFolder(49);
 
-		private static final String[] _AssetTypeNames = new String[] {"texture", "sound", "callcard", "landmark", "script", "clothing", "object", "notecard", "category", "root", "lsltext", "lslbyte", "txtr_tga", "bodypart", "trash", "snapshot", "lstndfnd", "snd_wav", "img_tga", "jpeg", "animatn", "gesture", "simstate", "favorites", "link", "linkfldr" };
+		private static final String[] _AssetTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
+				"script", "clothing", "object", "notecard", "category", "root", "lsltext", "lslbyte", "txtr_tga",
+				"bodypart", "trash", "snapshot", "lstndfnd", "snd_wav", "img_tga", "jpeg", "animatn", "gesture",
+				"simstate", "favorites", "link", "linkfldr" };
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
-		 *
-		 * @param type A string containing the AssetType name
-		 * @return The AssetType which matches the string name, or AssetType.Unknown if no match was found
+		 * 
+		 * @param type
+		 *            A string containing the AssetType name
+		 * @return The AssetType which matches the string name, or
+		 *         AssetType.Unknown if no match was found
 		 */
 		public static AssetType setValue(String value)
 		{
@@ -146,66 +153,71 @@ public abstract class AssetItem
 		public String toString()
 		{
 			int i = ordinal() - 1;
-			if (i >= 0 && ordinal() < _AssetTypeNames.length )
-			    return _AssetTypeNames[i];
+			if (i >= 0 && ordinal() < _AssetTypeNames.length)
+				return _AssetTypeNames[i];
 			return "unknown";
 		}
 
 		private final byte _value;
-        private AssetType(int value) {
-            this._value = (byte)value;
-        }
+
+		private AssetType(int value)
+		{
+			this._value = (byte) value;
+		}
 	}
 
 	/** A byte array containing the raw asset data */
-    public byte[] AssetData;
-    /** True if the asset is only stored on the server temporarily */
-    public boolean Temporary;
-    /** The assets unique unique ID */
-    protected UUID AssetID;
+	public byte[] AssetData;
+	/** True if the asset is only stored on the server temporarily */
+	public boolean Temporary;
+	/** The assets unique unique ID */
+	protected UUID AssetID;
 
-    public UUID getAssetID()
-    {
-        return AssetID;
-    }
+	public UUID getAssetID()
+	{
+		return AssetID;
+	}
 
-    public void setAssetID(UUID value)
-    {
-        AssetID = value;
-    }
+	public void setAssetID(UUID value)
+	{
+		AssetID = value;
+	}
 
-    /** The "type" of asset, Notecard, Animation, etc */
-    public abstract AssetType getAssetType();
+	/** The "type" of asset, Notecard, Animation, etc */
+	public abstract AssetType getAssetType();
 
-    /**
-     * Construct a new Asset object
-     */
-    public AssetItem()
-    {
-    }
+	/**
+	 * Construct a new Asset object
+	 */
+	public AssetItem()
+	{
+	}
 
-    /**
-     * Construct a new Asset object
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetItem(UUID assetID, byte[] assetData)
-    {
-        AssetID = assetID;
-        AssetData = assetData;
-    }
+	/**
+	 * Construct a new Asset object
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetItem(UUID assetID, byte[] assetData)
+	{
+		AssetID = assetID;
+		AssetData = assetData;
+	}
 
-    /**
-     * Regenerates the <code>AssetData</code> byte array from the properties
-     * of the derived class.
-     */
-    public abstract void Encode();
+	/**
+	 * Regenerates the <code>AssetData</code> byte array from the properties of
+	 * the derived class.
+	 */
+	public abstract void Encode();
 
-    /**
-     * Decodes the AssetData, placing it in appropriate properties of the derived class.
-     *
-     * @return True if the asset decoding succeeded, otherwise false
-     */
-    public abstract boolean Decode();
+	/**
+	 * Decodes the AssetData, placing it in appropriate properties of the
+	 * derived class.
+	 * 
+	 * @return True if the asset decoding succeeded, otherwise false
+	 */
+	public abstract boolean Decode();
 }

@@ -44,11 +44,16 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 	/**
 	 * Constructor to create the teleport offered dialog
 	 * 
-	 * @param client The GridClient used to answer the result of the user decision
-	 * @param parent The parent object of this dialog
-	 * @param agentName The name of the Avatar offering teleportation
-	 * @param agentID The UID of the agent offering teleportation
-	 * @param message The message sent from the Avatar
+	 * @param client
+	 *            The GridClient used to answer the result of the user decision
+	 * @param parent
+	 *            The parent object of this dialog
+	 * @param agentName
+	 *            The name of the Avatar offering teleportation
+	 * @param agentID
+	 *            The UID of the agent offering teleportation
+	 * @param message
+	 *            The message sent from the Avatar
 	 */
 	public TeleportOfferDialog(GridClient client, JFrame parent, String agentName, UUID agentID, String message)
 	{
@@ -59,9 +64,11 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the accept button is activated
+	 * Get the {@link ActionListener} to be called when the accept button is
+	 * activated
 	 * 
-	 * @return The {@link ActionListener} to be called when the accept button is activated
+	 * @return The {@link ActionListener} to be called when the accept button is
+	 *         activated
 	 */
 	@Override
 	protected ActionListener getAcceptButtonActionListener()
@@ -76,7 +83,9 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 					// Accept the request
 					_Client.Self.TeleportLureRespond(_AgentID, true);
 				}
-				catch (Exception ex) { }
+				catch (Exception ex)
+				{
+				}
 				// Destroy the form
 				setVisible(false);
 				dispose();
@@ -85,9 +94,11 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the decline button is activated
+	 * Get the {@link ActionListener} to be called when the decline button is
+	 * activated
 	 * 
-	 * @return The {@link ActionListener} to be called when the decline button is activated
+	 * @return The {@link ActionListener} to be called when the decline button
+	 *         is activated
 	 */
 	@Override
 	protected ActionListener getDeclineButtonActionListener()
@@ -105,7 +116,9 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 					// Decline the request
 					_Client.Self.TeleportLureRespond(_AgentID, false);
 				}
-				catch (Exception ex) { }
+				catch (Exception ex)
+				{
+				}
 				// Destroy the form
 				setVisible(false);
 				dispose();

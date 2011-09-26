@@ -28,7 +28,8 @@ package libomv.StructuredData;
 
 import libomv.utils.Helpers;
 
-public class OSDReal extends OSD {
+public class OSDReal extends OSD
+{
 	private double value;
 
 	@Override
@@ -41,11 +42,13 @@ public class OSDReal extends OSD {
 	{
 		this.value = value;
 	}
+
 	@Override
 	public boolean AsBoolean()
 	{
 		return (!Double.isNaN(value) && value != 0d);
 	}
+
 	@Override
 	public int AsInteger()
 	{
@@ -61,8 +64,9 @@ public class OSDReal extends OSD {
 		{
 			return Integer.MIN_VALUE;
 		}
-		return (int)Math.round(value);
+		return (int) Math.round(value);
 	}
+
 	@Override
 	public int AsUInteger()
 	{
@@ -70,7 +74,7 @@ public class OSDReal extends OSD {
 		{
 			return 0;
 		}
-		if (value > (2 * (double)Integer.MAX_VALUE + 1))
+		if (value > (2 * (double) Integer.MAX_VALUE + 1))
 		{
 			return (0xffffffff);
 		}
@@ -78,8 +82,9 @@ public class OSDReal extends OSD {
 		{
 			return 0;
 		}
-		return (int)Math.round(value);
+		return (int) Math.round(value);
 	}
+
 	@Override
 	public long AsLong()
 	{
@@ -97,6 +102,7 @@ public class OSDReal extends OSD {
 		}
 		return Math.round(value);
 	}
+
 	@Override
 	public long AsULong()
 	{
@@ -104,7 +110,7 @@ public class OSDReal extends OSD {
 		{
 			return 0;
 		}
-		if (value > (2 * (double)Long.MAX_VALUE + 1))
+		if (value > (2 * (double) Long.MAX_VALUE + 1))
 		{
 			return 0xffffffffffl;
 		}
@@ -114,21 +120,25 @@ public class OSDReal extends OSD {
 		}
 		return Math.round(value);
 	}
+
 	@Override
 	public double AsReal()
 	{
 		return value;
 	}
+
 	@Override
 	public String AsString()
 	{
 		return Double.toString(value);
 	}
+
 	@Override
 	public byte[] AsBinary()
 	{
 		return Helpers.DoubleToBytesB(value);
 	}
+
 	@Override
 	public String toString()
 	{

@@ -40,7 +40,8 @@ public class OSDMap extends OSD implements Map<String, OSD>
 {
 	private HashMap<String, OSD> value;
 
-	@Override // OSD
+	@Override
+	// OSD
 	public OSDType getType()
 	{
 		return OSDType.Map;
@@ -68,14 +69,16 @@ public class OSDMap extends OSD implements Map<String, OSD>
 		}
 	}
 
-	@Override //Map
+	@Override
+	// Map
 	public final int size()
 	{
 		return value.size();
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty()
+	{
 		return value.size() == 0;
 	}
 
@@ -88,9 +91,12 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	@Override
 	public String toString()
 	{
-		try {
+		try
+		{
 			return LLSDNotation.serializeToString(this);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return null;
@@ -114,7 +120,8 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	}
 
 	@Override
-	public boolean containsKey(Object key) {
+	public boolean containsKey(Object key)
+	{
 		return value.containsKey(key);
 	}
 
@@ -179,10 +186,13 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	{
 		value.putAll(m);
 	}
+
 	/**
-	 * Uses reflection to deserialize member variables in an object from this OSDMap
-	 *
-	 * @param obj Reference to an object to fill with deserialized values
+	 * Uses reflection to deserialize member variables in an object from this
+	 * OSDMap
+	 * 
+	 * @param obj
+	 *            Reference to an object to fill with deserialized values
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */

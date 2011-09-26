@@ -34,7 +34,8 @@ import libomv.types.Vector3;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
-public class Quaternion {
+public class Quaternion
+{
 	public float X;
 
 	public float Y;
@@ -43,23 +44,29 @@ public class Quaternion {
 
 	public float W;
 
-	public Quaternion() {
+	public Quaternion()
+	{
 		X = Y = Z = 0.0f;
 		W = 1.0f;
 	}
 
-	public Quaternion(float x, float y, float z, float w) {
+	public Quaternion(float x, float y, float z, float w)
+	{
 		X = x;
 		Y = y;
 		Z = z;
 		W = w;
 	}
 
-	/** Build a quaternion from normalized float values
-	 *
-	 *  @param x X value from -1.0 to 1.0
-	 *  @param y Y value from -1.0 to 1.0
-	 *  @param z Z value from -1.0 to 1.0
+	/**
+	 * Build a quaternion from normalized float values
+	 * 
+	 * @param x
+	 *            X value from -1.0 to 1.0
+	 * @param y
+	 *            Y value from -1.0 to 1.0
+	 * @param z
+	 *            Z value from -1.0 to 1.0
 	 */
 	public Quaternion(float x, float y, float z)
 	{
@@ -68,7 +75,7 @@ public class Quaternion {
 		Z = z;
 
 		float xyzsum = 1 - X * X - Y * Y - Z * Z;
-		W = (xyzsum > 0) ? (float)Math.sqrt(xyzsum) : 0;
+		W = (xyzsum > 0) ? (float) Math.sqrt(xyzsum) : 0;
 	}
 
 	public Quaternion(Vector3 vectorPart, float scalarPart)
@@ -79,12 +86,16 @@ public class Quaternion {
 		W = scalarPart;
 	}
 
-	/** Constructor, builds a quaternion object from a byte array
-	 *
-	 *  @param byteArray Byte array containing four four-byte floats
-	 *  @param pos Offset in the byte array to start reading at
-	 *  @param normalized Whether the source data is normalized or not.
-	 *         If this is true 12 bytes will be read, otherwise 16 bytes will be read.
+	/**
+	 * Constructor, builds a quaternion object from a byte array
+	 * 
+	 * @param byteArray
+	 *            Byte array containing four four-byte floats
+	 * @param pos
+	 *            Offset in the byte array to start reading at
+	 * @param normalized
+	 *            Whether the source data is normalized or not. If this is true
+	 *            12 bytes will be read, otherwise 16 bytes will be read.
 	 */
 	public Quaternion(byte[] byteArray, int pos, boolean normalized)
 	{
@@ -98,13 +109,17 @@ public class Quaternion {
 		FromBytes(byteArray, pos, normalized, le);
 	}
 
-	public Quaternion(ByteBuffer byteArray, boolean normalized) {
+	public Quaternion(ByteBuffer byteArray, boolean normalized)
+	{
 		X = byteArray.getFloat();
 		Y = byteArray.getFloat();
 		Z = byteArray.getFloat();
-		if (!normalized) {
+		if (!normalized)
+		{
 			W = byteArray.getFloat();
-		} else {
+		}
+		else
+		{
 			float xyzsum = 1f - X * X - Y * Y - Z * Z;
 			W = (xyzsum > 0f) ? (float) Math.sqrt(xyzsum) : 0;
 		}
@@ -126,7 +141,7 @@ public class Quaternion {
 
 	public float Length()
 	{
-		return (float)Math.sqrt(X * X + Y * Y + Z * Z + W * W);
+		return (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
 	}
 
 	public float LengthSquared()
@@ -144,11 +159,12 @@ public class Quaternion {
 		W = val.W;
 	}
 
-	/** Normalize this quaternion and serialize it to a byte array
-	 *
-	 *  @return A 12 byte array containing normalized X, Y, and Z floating
-	 *          point values in order using little endian byte ordering
-	 *  @throws Exception
+	/**
+	 * Normalize this quaternion and serialize it to a byte array
+	 * 
+	 * @return A 12 byte array containing normalized X, Y, and Z floating point
+	 *         values in order using little endian byte ordering
+	 * @throws Exception
 	 */
 	public byte[] GetBytes() throws Exception
 	{
@@ -157,15 +173,19 @@ public class Quaternion {
 		return bytes;
 	}
 
-	/** Returns a ByteBuffer for this vector
-	 *
-	 *  @param byteArray buffer to copye the 12 bytes for X, Y, and Z
-	 *  @throws Exception
+	/**
+	 * Returns a ByteBuffer for this vector
+	 * 
+	 * @param byteArray
+	 *            buffer to copye the 12 bytes for X, Y, and Z
+	 * @throws Exception
 	 */
-	public void GetBytes(ByteBuffer bytes) throws Exception {
+	public void GetBytes(ByteBuffer bytes) throws Exception
+	{
 		float norm = (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
 
-		if (norm != 0) {
+		if (norm != 0)
+		{
 			norm = 1f / norm;
 
 			float x, y, z;
@@ -184,15 +204,17 @@ public class Quaternion {
 			bytes.putFloat(norm * x);
 			bytes.putFloat(norm * y);
 			bytes.putFloat(norm * z);
-		} else {
-			throw new Exception("Quaternion <" + X + "," + Y + "," + Z + ","
-					+ W + "> normalized to zero");
+		}
+		else
+		{
+			throw new Exception("Quaternion <" + X + "," + Y + "," + Z + "," + W + "> normalized to zero");
 		}
 	}
 
-	/** Get a formatted string representation of the vector
-	 *
-	 *  @return A string representation of the vector
+	/**
+	 * Get a formatted string representation of the vector
+	 * 
+	 * @return A string representation of the vector
 	 */
 	@Override
 	public String toString()
@@ -203,15 +225,19 @@ public class Quaternion {
 	@Override
 	public int hashCode()
 	{
-		return (((Float)X).hashCode() ^ ((Float)Y).hashCode() ^ ((Float)Z).hashCode() ^ ((Float)W).hashCode());
+		return (((Float) X).hashCode() ^ ((Float) Y).hashCode() ^ ((Float) Z).hashCode() ^ ((Float) W).hashCode());
 	}
 
-	/**	 Builds a quaternion object from a byte array
-	 *
-	 * @param byteArray The source byte array
-	 * @param pos Offset in the byte array to start reading at
-	 * @param normalized Whether the source data is normalized or not.
-	 *        If this is true 12 bytes will be read, otherwise 16 bytes will be read.
+	/**
+	 * Builds a quaternion object from a byte array
+	 * 
+	 * @param byteArray
+	 *            The source byte array
+	 * @param pos
+	 *            Offset in the byte array to start reading at
+	 * @param normalized
+	 *            Whether the source data is normalized or not. If this is true
+	 *            12 bytes will be read, otherwise 16 bytes will be read.
 	 */
 	public void FromBytes(byte[] bytes, int pos, boolean normalized, boolean le)
 	{
@@ -239,20 +265,23 @@ public class Quaternion {
 		if (normalized)
 		{
 			float xyzsum = 1f - X * X - Y * Y - Z * Z;
-			W = (xyzsum > 0f) ? (float)Math.sqrt(xyzsum) : 0f;
+			W = (xyzsum > 0f) ? (float) Math.sqrt(xyzsum) : 0f;
 		}
 	}
 
-	/** Writes the raw bytes for this quaternion to a byte array
-	 *
-	 *  @param dest Destination byte array
-	 *  @param pos Position in the destination array to start
-	 *         writing. Must be at least 12 bytes before the end of the array
-	 *  @throws Exception
+	/**
+	 * Writes the raw bytes for this quaternion to a byte array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
+	 *            least 12 bytes before the end of the array
+	 * @throws Exception
 	 */
 	public void ToBytes(byte[] dest, int pos, boolean le) throws Exception
 	{
-		float norm = (float)Math.sqrt(X * X + Y * Y + Z * Z + W * W);
+		float norm = (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
 
 		if (norm != 0f)
 		{
@@ -291,11 +320,15 @@ public class Quaternion {
 		}
 	}
 
-	/** Convert this quaternion to euler angles
-	 *
-	 *  @param roll X euler angle
-	 *  @param pitch Y euler angle
-	 *  @param yaw Z euler angle
+	/**
+	 * Convert this quaternion to euler angles
+	 * 
+	 * @param roll
+	 *            X euler angle
+	 * @param pitch
+	 *            Y euler angle
+	 * @param yaw
+	 *            Z euler angle
 	 */
 	public void GetEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
 	{
@@ -311,34 +344,37 @@ public class Quaternion {
 		if (test > 0.499f * unit)
 		{
 			// Singularity at north pole
-			yaw.argvalue = 2f * (float)Math.atan2(X, W);
-			pitch.argvalue = (float)Math.PI / 2f;
+			yaw.argvalue = 2f * (float) Math.atan2(X, W);
+			pitch.argvalue = (float) Math.PI / 2f;
 			roll.argvalue = 0f;
 		}
 		else if (test < -0.499f * unit)
 		{
 			// Singularity at south pole
-			yaw.argvalue = -2f * (float)Math.atan2(X, W);
-			pitch.argvalue = -(float)Math.PI / 2f;
+			yaw.argvalue = -2f * (float) Math.atan2(X, W);
+			pitch.argvalue = -(float) Math.PI / 2f;
 			roll.argvalue = 0f;
 		}
 		else
 		{
-			yaw.argvalue = (float)Math.atan2(2f * Y * W - 2f * X * Z, sqx - sqy - sqz + sqw);
-			pitch.argvalue = (float)Math.asin(2f * test / unit);
-			roll.argvalue = (float)Math.atan2(2f * X * W - 2f * Y * Z, -sqx + sqy - sqz + sqw);
+			yaw.argvalue = (float) Math.atan2(2f * Y * W - 2f * X * Z, sqx - sqy - sqz + sqw);
+			pitch.argvalue = (float) Math.asin(2f * test / unit);
+			roll.argvalue = (float) Math.atan2(2f * X * W - 2f * Y * Z, -sqx + sqy - sqz + sqw);
 		}
 	}
 
-	/** Convert this quaternion to an angle around an axis
-	 *
-	 *  @param axis Unit vector describing the axis
-	 *  @param angle Angle around the axis, in radians
+	/**
+	 * Convert this quaternion to an angle around an axis
+	 * 
+	 * @param axis
+	 *            Unit vector describing the axis
+	 * @param angle
+	 *            Angle around the axis, in radians
 	 */
 	public void GetAxisAngle(RefObject<Vector3> axis, RefObject<Float> angle)
 	{
 		axis.argvalue = new Vector3(0f);
-		float scale = (float)Math.sqrt(X * X + Y * Y + Z * Z);
+		float scale = (float) Math.sqrt(X * X + Y * Y + Z * Z);
 
 		if (scale < Helpers.FLOAT_MAG_THRESHOLD || W > 1.0f || W < -1.0f)
 		{
@@ -349,7 +385,7 @@ public class Quaternion {
 		}
 		else
 		{
-			angle.argvalue = 2.0f * (float)Math.acos(W);
+			angle.argvalue = 2.0f * (float) Math.acos(W);
 			float ooscale = 1f / scale;
 			axis.argvalue.X = X * ooscale;
 			axis.argvalue.Y = Y * ooscale;
@@ -357,17 +393,22 @@ public class Quaternion {
 		}
 	}
 
-	/** Build a quaternion from an axis and an angle of rotation around that axis */
+	/**
+	 * Build a quaternion from an axis and an angle of rotation around that axis
+	 */
 	public static Quaternion CreateFromAxisAngle(float axisX, float axisY, float axisZ, float angle)
 	{
 		Vector3 axis = new Vector3(axisX, axisY, axisZ);
 		return CreateFromAxisAngle(axis, angle);
 	}
 
-	/** Build a quaternion from an axis and an angle of rotation around that axis
-	 *
-	 *  @param axis Axis of rotation
-	 *  @param angle Angle of rotation
+	/**
+	 * Build a quaternion from an axis and an angle of rotation around that axis
+	 * 
+	 * @param axis
+	 *            Axis of rotation
+	 * @param angle
+	 *            Angle of rotation
 	 */
 	public static Quaternion CreateFromAxisAngle(Vector3 axis, float angle)
 	{
@@ -375,8 +416,8 @@ public class Quaternion {
 		axis = Vector3.Normalize(axis);
 
 		angle *= 0.5f;
-		float c = (float)Math.cos(angle);
-		float s = (float)Math.sin(angle);
+		float c = (float) Math.cos(angle);
+		float s = (float) Math.sin(angle);
 
 		q.X = axis.X * s;
 		q.Y = axis.Y * s;
@@ -386,24 +427,31 @@ public class Quaternion {
 		return Normalize(q);
 	}
 
-	/** Creates a quaternion from a vector containing roll, pitch, and yaw in radians
-	 *
-	 *  @param eulers Vector representation of the euler angles in radians
-	 *  @return Quaternion representation of the euler angles
-	 *  @throws Exception
+	/**
+	 * Creates a quaternion from a vector containing roll, pitch, and yaw in
+	 * radians
+	 * 
+	 * @param eulers
+	 *            Vector representation of the euler angles in radians
+	 * @return Quaternion representation of the euler angles
+	 * @throws Exception
 	 */
 	public static Quaternion CreateFromEulers(Vector3 eulers) throws Exception
 	{
 		return CreateFromEulers(eulers.X, eulers.Y, eulers.Z);
 	}
 
-	/** Creates a quaternion from roll, pitch, and yaw euler angles in radians
-	 *
-	 *  @param roll X angle in radians
-	 *  @param pitch Y angle in radians
-	 *  @param yaw Z angle in radians
-	 *  @return Quaternion representation of the euler angles
-	 *  @throws Exception
+	/**
+	 * Creates a quaternion from roll, pitch, and yaw euler angles in radians
+	 * 
+	 * @param roll
+	 *            X angle in radians
+	 * @param pitch
+	 *            Y angle in radians
+	 * @param yaw
+	 *            Z angle in radians
+	 * @return Quaternion representation of the euler angles
+	 * @throws Exception
 	 */
 	public static Quaternion CreateFromEulers(float roll, float pitch, float yaw) throws Exception
 	{
@@ -420,7 +468,9 @@ public class Quaternion {
 		double upSin = Math.sin(yaw / 2f);
 		double atLeftCos = atCos * leftCos;
 		double atLeftSin = atSin * leftSin;
-		return new Quaternion((float)(atSin * leftCos * upCos + atCos * leftSin * upSin), (float)(atCos * leftSin * upCos - atSin * leftCos * upSin), (float)(atLeftCos * upSin + atLeftSin * upCos), (float)(atLeftCos * upCos - atLeftSin * upSin));
+		return new Quaternion((float) (atSin * leftCos * upCos + atCos * leftSin * upSin), (float) (atCos * leftSin
+				* upCos - atSin * leftCos * upSin), (float) (atLeftCos * upSin + atLeftSin * upCos), (float) (atLeftCos
+				* upCos - atLeftSin * upSin));
 	}
 
 	public static Quaternion CreateFromRotationMatrix(Matrix4 m)
@@ -431,7 +481,7 @@ public class Quaternion {
 
 		if (trace > Helpers.FLOAT_MAG_THRESHOLD)
 		{
-			float s = (float)Math.sqrt(trace + 1f);
+			float s = (float) Math.sqrt(trace + 1f);
 			quat.W = s * 0.5f;
 			s = 0.5f / s;
 			quat.X = (m.M23 - m.M32) * s;
@@ -442,7 +492,7 @@ public class Quaternion {
 		{
 			if (m.M11 > m.M22 && m.M11 > m.M33)
 			{
-				float s = (float)Math.sqrt(1f + m.M11 - m.M22 - m.M33);
+				float s = (float) Math.sqrt(1f + m.M11 - m.M22 - m.M33);
 				quat.X = 0.5f * s;
 				s = 0.5f / s;
 				quat.Y = (m.M12 + m.M21) * s;
@@ -451,7 +501,7 @@ public class Quaternion {
 			}
 			else if (m.M22 > m.M33)
 			{
-				float s = (float)Math.sqrt(1f + m.M22 - m.M11 - m.M33);
+				float s = (float) Math.sqrt(1f + m.M22 - m.M11 - m.M33);
 				quat.Y = 0.5f * s;
 				s = 0.5f / s;
 				quat.X = (m.M21 + m.M12) * s;
@@ -460,7 +510,7 @@ public class Quaternion {
 			}
 			else
 			{
-				float s = (float)Math.sqrt(1f + m.M33 - m.M11 - m.M22);
+				float s = (float) Math.sqrt(1f + m.M33 - m.M11 - m.M22);
 				quat.Z = 0.5f * s;
 				s = 0.5f / s;
 				quat.X = (m.M31 + m.M13) * s;
@@ -478,9 +528,8 @@ public class Quaternion {
 	}
 
 	/**
-	 Conjugates and renormalizes a vector
-
-	*/
+	 * Conjugates and renormalizes a vector
+	 */
 	public static Quaternion Inverse(Quaternion quaternion)
 	{
 		float norm = quaternion.LengthSquared();
@@ -522,10 +571,10 @@ public class Quaternion {
 			if ((1f - angle) >= 0.05f)
 			{
 				// slerp
-				float theta = (float)Math.acos(angle);
-				float invsintheta = 1f / (float)Math.sin(theta);
-				scale = (float)Math.sin(theta * (1f - amount)) * invsintheta;
-				invscale = (float)Math.sin(theta * amount) * invsintheta;
+				float theta = (float) Math.acos(angle);
+				float invsintheta = 1f / (float) Math.sin(theta);
+				scale = (float) Math.sin(theta * (1f - amount)) * invsintheta;
+				invscale = (float) Math.sin(theta * amount) * invsintheta;
 			}
 			else
 			{
@@ -541,13 +590,12 @@ public class Quaternion {
 			q2.Z = -q1.W;
 			q2.W = q1.Z;
 
-			scale = (float)Math.sin(Helpers.PI * (0.5f - amount));
-			invscale = (float)Math.sin(Helpers.PI * amount);
+			scale = (float) Math.sin(Helpers.PI * (0.5f - amount));
+			invscale = (float) Math.sin(Helpers.PI * amount);
 		}
 
 		return add(multiply(q1, scale), multiply(q2, invscale));
 	}
-
 
 	public static Quaternion Normalize(Quaternion q)
 	{
@@ -579,9 +627,11 @@ public class Quaternion {
 		String[] split = val.replace("<", "").replace(">", "").split(splitChar);
 		if (split.length == 3)
 		{
-			return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()), Float.parseFloat(split[2].trim()));
+			return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()),
+					Float.parseFloat(split[2].trim()));
 		}
-		return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()), Float.parseFloat(split[2].trim()), Float.parseFloat(split[3].trim()));
+		return new Quaternion(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()),
+				Float.parseFloat(split[2].trim()), Float.parseFloat(split[3].trim()));
 	}
 
 	public static boolean TryParse(String val, RefObject<Quaternion> result)
@@ -601,7 +651,7 @@ public class Quaternion {
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Quaternion) ? this == (Quaternion)obj : false;
+		return (obj instanceof Quaternion) ? this == (Quaternion) obj : false;
 	}
 
 	public boolean equals(Quaternion other)
@@ -648,7 +698,9 @@ public class Quaternion {
 
 	public static Quaternion multiply(Quaternion q1, Quaternion q2)
 	{
-		return new Quaternion((q1.W * q2.X) + (q1.X * q2.W) + (q1.Y * q2.Z) - (q1.Z * q2.Y), (q1.W * q2.Y) - (q1.X * q2.Z) + (q1.Y * q2.W) + (q1.Z * q2.X), (q1.W * q2.Z) + (q1.X * q2.Y) - (q1.Y * q2.X) + (q1.Z * q2.W), (q1.W * q2.W) - (q1.X * q2.X) - (q1.Y * q2.Y) - (q1.Z * q2.Z));
+		return new Quaternion((q1.W * q2.X) + (q1.X * q2.W) + (q1.Y * q2.Z) - (q1.Z * q2.Y), (q1.W * q2.Y)
+				- (q1.X * q2.Z) + (q1.Y * q2.W) + (q1.Z * q2.X), (q1.W * q2.Z) + (q1.X * q2.Y) - (q1.Y * q2.X)
+				+ (q1.Z * q2.W), (q1.W * q2.W) - (q1.X * q2.X) - (q1.Y * q2.Y) - (q1.Z * q2.Z));
 	}
 
 	public static Quaternion multiply(Quaternion quaternion, float scaleFactor)
@@ -667,14 +719,15 @@ public class Quaternion {
 		float z = quaternion1.Z;
 		float w = quaternion1.W;
 
-		float q2lensq = quaternion2.LengthSquared(); //num14
+		float q2lensq = quaternion2.LengthSquared(); // num14
 		float ooq2lensq = 1f / q2lensq;
 		float x2 = -quaternion2.X * ooq2lensq;
 		float y2 = -quaternion2.Y * ooq2lensq;
 		float z2 = -quaternion2.Z * ooq2lensq;
 		float w2 = quaternion2.W * ooq2lensq;
 
-		return new Quaternion(((x * w2) + (x2 * w)) + (y * z2) - (z * y2), ((y * w2) + (y2 * w)) + (z * x2) - (x * z2), ((z * w2) + (z2 * w)) + (x * y2) - (y * x2), (w * w2) - ((x * x2) + (y * y2)) + (z * z2));
+		return new Quaternion(((x * w2) + (x2 * w)) + (y * z2) - (z * y2), ((y * w2) + (y2 * w)) + (z * x2) - (x * z2),
+				((z * w2) + (z2 * w)) + (x * y2) - (y * x2), (w * w2) - ((x * x2) + (y * y2)) + (z * z2));
 	}
 
 	/** Returns the conjugate (spatial inverse) of a quaternion */

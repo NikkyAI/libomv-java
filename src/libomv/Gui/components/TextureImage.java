@@ -52,11 +52,14 @@ public class TextureImage extends JPanel
 	private GridClient _Client;
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 * 
-	 * @param textureID The UUID of the image
-	 * @param dimension The desired dimension
-	 * @param initialImage The initial image to use
+	 * @param textureID
+	 *            The UUID of the image
+	 * @param dimension
+	 *            The desired dimension
+	 * @param initialImage
+	 *            The initial image to use
 	 */
 	public TextureImage(GridClient client, UUID textureID, Dimension dimension, Image initialImage)
 	{
@@ -69,7 +72,8 @@ public class TextureImage extends JPanel
 	/**
 	 * Force the size to the specified dimension.
 	 * 
-	 * @param dimension The dimension to force.
+	 * @param dimension
+	 *            The dimension to force.
 	 */
 	public void forceSize(Dimension dimension)
 	{
@@ -83,7 +87,8 @@ public class TextureImage extends JPanel
 	/**
 	 * Called to paint the component.
 	 * 
-	 * @param g The graphics to paint.
+	 * @param g
+	 *            The graphics to paint.
 	 */
 	@Override
 	public void paintComponent(Graphics g)
@@ -98,7 +103,8 @@ public class TextureImage extends JPanel
 	/**
 	 * Called to update the component
 	 * 
-	 * @param g The graphics to update
+	 * @param g
+	 *            The graphics to update
 	 */
 	@Override
 	public void update(Graphics g)
@@ -154,7 +160,7 @@ public class TextureImage extends JPanel
 		this.repaint();
 	}
 
-	/** 
+	/**
 	 * Callback receiving the texture download result
 	 * 
 	 */

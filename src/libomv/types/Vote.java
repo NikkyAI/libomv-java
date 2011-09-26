@@ -26,8 +26,8 @@
  */
 package libomv.types;
 
-
-public class Vote {
+public class Vote
+{
 	public UUID Candidate;
 
 	public String VoteString;

@@ -63,10 +63,12 @@ public class UUID
 
 	/**
 	 * Constructor that takes a string UUID representation
-	 *
-	 * @param val A string representation of a UUID, case insensitive and can
+	 * 
+	 * @param val
+	 *            A string representation of a UUID, case insensitive and can
 	 *            either be hyphenated or non-hyphenated
-	 * <example>UUID("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
+	 *            <example>UUID("11f8aa9c-b071-4242-836b-13b7abe0d489"
+	 *            )</example>
 	 */
 	public UUID(String string)
 	{
@@ -75,8 +77,9 @@ public class UUID
 
 	/**
 	 * Constructor that takes a ByteBuffer containing a UUID
-	 *
-	 * @param source ByteBuffer containing a 16 byte UUID
+	 * 
+	 * @param source
+	 *            ByteBuffer containing a 16 byte UUID
 	 */
 	public UUID(ByteBuffer byteArray)
 	{
@@ -86,9 +89,11 @@ public class UUID
 
 	/**
 	 * Constructor that takes a byte array containing a UUID
-	 *
-	 * @param source Byte array containing a 16 byte UUID
-	 * @param pos Beginning offset in the array
+	 * 
+	 * @param source
+	 *            Byte array containing a 16 byte UUID
+	 * @param pos
+	 *            Beginning offset in the array
 	 */
 	public UUID(byte[] byteArray)
 	{
@@ -97,14 +102,16 @@ public class UUID
 
 	public UUID(byte[] byteArray, int pos)
 	{
-        data = new byte[16];
-        System.arraycopy(byteArray, pos, data, 0, 16);
+		data = new byte[16];
+		System.arraycopy(byteArray, pos, data, 0, 16);
 	}
 
 	/**
-	 * Constructor that takes an unsigned 64-bit unsigned integer to convert to a UUID
-	 *
-	 * @param val 64-bit unsigned integer to convert to a UUID
+	 * Constructor that takes an unsigned 64-bit unsigned integer to convert to
+	 * a UUID
+	 * 
+	 * @param val
+	 *            64-bit unsigned integer to convert to a UUID
 	 */
 	public UUID(long value)
 	{
@@ -113,15 +120,15 @@ public class UUID
 
 	public UUID(long value, boolean le)
 	{
-        data = new byte[16];
-        if (le)
-        {
-            Helpers.UInt64ToBytesL(value, data, 8);
-        }
-        else
-        {
-            Helpers.UInt64ToBytesB(value, data, 8);
-	    }
+		data = new byte[16];
+		if (le)
+		{
+			Helpers.UInt64ToBytesL(value, data, 8);
+		}
+		else
+		{
+			Helpers.UInt64ToBytesB(value, data, 8);
+		}
 	}
 
 	public UUID(boolean randomize)
@@ -129,44 +136,51 @@ public class UUID
 		if (randomize)
 		{
 			data = makeNewGuid();
-		} else {
+		}
+		else
+		{
 			data = new byte[16];
 		}
 	}
 
 	/**
 	 * Copy constructor
-	 *
-	 * @param val UUID to copy
+	 * 
+	 * @param val
+	 *            UUID to copy
 	 */
 	public UUID(UUID val)
 	{
 		data = new byte[16];
-        System.arraycopy(data, 0, val.data, 0, 16);
+		System.arraycopy(data, 0, val.data, 0, 16);
 	}
 
 	/**
 	 * Assigns this UUID from 16 bytes out of a byte array
-	 *
-	 * @param source Byte array containing the UUID to assign this UUID to
-	 * @param pos Starting position of the UUID in the byte array
+	 * 
+	 * @param source
+	 *            Byte array containing the UUID to assign this UUID to
+	 * @param pos
+	 *            Starting position of the UUID in the byte array
 	 * @return true when successful, false otherwise
 	 */
 	public boolean FromBytes(byte[] source, int pos)
 	{
 		if (source.length >= pos + 16)
 		{
-            System.arraycopy(source, pos, data, 0, 16);
-            return true;
+			System.arraycopy(source, pos, data, 0, 16);
+			return true;
 		}
 		return false;
 	}
 
 	/**
 	 * Parses a string UUID representation and assigns its value to the object
-	 * <example>uuid.FromString("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
-	 *
-	 * @param val A string representation of a UUID, case insensitive and can
+	 * <example
+	 * >uuid.FromString("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
+	 * 
+	 * @param val
+	 *            A string representation of a UUID, case insensitive and can
 	 *            either be hyphenated or non-hyphenated
 	 * @return true when successful, false otherwise
 	 */
@@ -189,42 +203,47 @@ public class UUID
 
 		// Always create new data array to prevent overwriting byref data
 		data = new byte[16];
-		for (int i = 0; i < 16; ++i) {
-			data[i] = (byte) Integer.parseInt(
-					string.substring(i * 2, (i * 2) + 2), 16);
+		for (int i = 0; i < 16; ++i)
+		{
+			data[i] = (byte) Integer.parseInt(string.substring(i * 2, (i * 2) + 2), 16);
 		}
 		return true;
 	}
 
 	/**
 	 * Returns a copy of the raw bytes for this UUID
-	 *
+	 * 
 	 * @return A 16 byte array containing this UUID
 	 */
-	public byte[] GetBytes() {
+	public byte[] GetBytes()
+	{
 		return data;
 	}
 
 	/**
 	 * Copies the raw bytes for this UUID into a ByteBuffer
-	 *
-	 * @param bytes The ByteBuffer in which the 16 byte of this UUID are copied
+	 * 
+	 * @param bytes
+	 *            The ByteBuffer in which the 16 byte of this UUID are copied
 	 */
-	public void GetBytes(ByteBuffer bytes) {
+	public void GetBytes(ByteBuffer bytes)
+	{
 		bytes.put(data);
 	}
 
 	/**
 	 * Writes the raw bytes for this UUID to a byte array
-	 *
-	 * @param dest Destination byte array
-	 * @param pos Position in the destination array to start writeing.
-	 *        Must be at least 16 bytes before the end of the array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writeing. Must be
+	 *            at least 16 bytes before the end of the array
 	 */
 	public int ToBytes(byte[] dest, int pos)
 	{
-	    System.arraycopy(data, 0, dest, pos, data.length);
-	    return data.length;
+		System.arraycopy(data, 0, dest, pos, data.length);
+		return data.length;
 	}
 
 	public long AsLong()
@@ -235,17 +254,18 @@ public class UUID
 	public long AsLong(boolean le)
 	{
 		if (le)
-            return Helpers.BytesToUInt64L(data);
+			return Helpers.BytesToUInt64L(data);
 
-        return Helpers.BytesToUInt64B(data);
+		return Helpers.BytesToUInt64B(data);
 	}
 
 	/**
 	 * Calculate an LLCRC (cyclic redundancy check) for this LLUUID
-     *
+	 * 
 	 * @returns The CRC checksum for this UUID
 	 */
-	public long CRC() {
+	public long CRC()
+	{
 		long retval = 0;
 
 		retval += ((data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0]);
@@ -256,13 +276,14 @@ public class UUID
 		return retval;
 	}
 
-	public static UUID GenerateUUID() {
+	public static UUID GenerateUUID()
+	{
 		return new UUID(makeNewGuid());
 	}
 
 	/**
 	 * Return a hash code for this UUID, used by .NET for hash tables
-	 *
+	 * 
 	 * @return An integer composed of all the UUID bytes XORed together
 	 */
 	@Override
@@ -273,19 +294,23 @@ public class UUID
 
 	/**
 	 * Comparison function
-	 *
-	 * @param o An object to compare to this UUID
+	 * 
+	 * @param o
+	 *            An object to compare to this UUID
 	 * @return True if the object is a UUID and both UUIDs are equal
 	 */
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(Object o)
+	{
 		if ((o.getClass() != this.getClass()))
 		{
 			return false;
 		}
 		UUID uuid = (UUID) o;
-		for (int i = 0; i < 16; ++i) {
-			if (data[i] != uuid.data[i]) {
+		for (int i = 0; i < 16; ++i)
+		{
+			if (data[i] != uuid.data[i])
+			{
 				return false;
 			}
 		}
@@ -294,14 +319,17 @@ public class UUID
 
 	/**
 	 * Comparison function
-	 *
-	 * @param uuid UUID to compare to
+	 * 
+	 * @param uuid
+	 *            UUID to compare to
 	 * @return True if the UUIDs are equal, otherwise false
-	*/
+	 */
 	public boolean equals(UUID uuid)
 	{
-		for (int i = 0; i < 16; ++i) {
-			if (data[i] != uuid.data[i]) {
+		for (int i = 0; i < 16; ++i)
+		{
+			if (data[i] != uuid.data[i])
+			{
 				return false;
 			}
 		}
@@ -310,10 +338,12 @@ public class UUID
 
 	/**
 	 * Generate a UUID from a string
-	 *
-	 * @param val A string representation of a UUID, case insensitive and can either
-	 *            be hyphenated or non-hyphenated
-	 *  <example>UUID.Parse("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
+	 * 
+	 * @param val
+	 *            A string representation of a UUID, case insensitive and can
+	 *            either be hyphenated or non-hyphenated
+	 *            <example>UUID.Parse("11f8aa9c-b071-4242-836b-13b7abe0d489"
+	 *            )</example>
 	 */
 	public static UUID Parse(String val)
 	{
@@ -322,16 +352,20 @@ public class UUID
 
 	/**
 	 * Generate a UUID from a string
-	 *
-	 * @param val A string representation of a UUID, case
-	 *            insensitive and can either be hyphenated or non-hyphenated
-	 * @param result Will contain the parsed UUID if successful, otherwise null
+	 * 
+	 * @param val
+	 *            A string representation of a UUID, case insensitive and can
+	 *            either be hyphenated or non-hyphenated
+	 * @param result
+	 *            Will contain the parsed UUID if successful, otherwise null
 	 * @return True if the string was successfully parse, otherwise false
-	 * <example>UUID.TryParse("11f8aa9c-b071-4242-836b-13b7abe0d489", result)</example>
+	 *         <example>UUID.TryParse("11f8aa9c-b071-4242-836b-13b7abe0d489",
+	 *         result)</example>
 	 */
 	public static boolean TryParse(String val, RefObject<UUID> result)
 	{
-		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() != 38) || (val.length() != 36 && val.length() != 32))
+		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() != 38)
+				|| (val.length() != 36 && val.length() != 32))
 		{
 			result.argvalue = UUID.Zero;
 			return false;
@@ -350,32 +384,39 @@ public class UUID
 	}
 
 	/**
-	 * Combine two UUIDs together by taking the MD5 hash of a byte array containing both UUIDs
-	 *
-	 * @param first First UUID to combine
-	 * @param second Second UUID to combine
+	 * Combine two UUIDs together by taking the MD5 hash of a byte array
+	 * containing both UUIDs
+	 * 
+	 * @param first
+	 *            First UUID to combine
+	 * @param second
+	 *            Second UUID to combine
 	 * @return The UUID product of the combination
 	 */
 	public static UUID Combine(UUID first, UUID second)
 	{
 		MessageDigest md;
-		try {
+		try
+		{
 			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
+		}
+		catch (NoSuchAlgorithmException e)
+		{
 			return null;
 		}
 
 		// Construct the buffer that MD5ed
 		byte[] input = new byte[32];
-        first.ToBytes(input, 0);
-        second.ToBytes(input, 16);
+		first.ToBytes(input, 0);
+		second.ToBytes(input, 16);
 		return new UUID(md.digest(input));
 	}
 
 	/**
 	 * XOR two UUIDs together
-	 *
-	 * @param uuid UUID to combine
+	 * 
+	 * @param uuid
+	 *            UUID to combine
 	 */
 	public void XOr(UUID uuid)
 	{
@@ -393,16 +434,17 @@ public class UUID
 		int i = 0;
 		for (byte b : first.GetBytes())
 		{
-			res[i] = (byte)(b ^ sec[i]);
+			res[i] = (byte) (b ^ sec[i]);
 			i++;
 		}
 		return new UUID(res);
 	}
 
-	/** Get a hyphenated string representation of this UUID
-	 *
-	 *  @return A string representation of this UUID, lowercase and with hyphens
-	 *  <example>11f8aa9c-b071-4242-836b-13b7abe0d489</example>
+	/**
+	 * Get a hyphenated string representation of this UUID
+	 * 
+	 * @return A string representation of this UUID, lowercase and with hyphens
+	 *         <example>11f8aa9c-b071-4242-836b-13b7abe0d489</example>
 	 */
 	@Override
 	public String toString()

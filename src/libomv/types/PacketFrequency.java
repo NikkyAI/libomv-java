@@ -26,7 +26,8 @@
  */
 package libomv.types;
 
-public interface PacketFrequency {
+public interface PacketFrequency
+{
 	public static final byte Low = 0;
 
 	public static final byte Medium = 1;

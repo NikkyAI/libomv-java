@@ -49,213 +49,222 @@ import libomv.utils.Logger.LogLevel;
 
 public class CapsToPacket
 {
-    // #region Serialization/Deserialization
-    public static String ToXmlString(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException
-    {
-        return LLSDXml.serializeToString(GetLLSD(packet));
-    }
+	// #region Serialization/Deserialization
+	public static String ToXmlString(Packet packet) throws IOException, IllegalArgumentException,
+			IllegalAccessException
+	{
+		return LLSDXml.serializeToString(GetLLSD(packet));
+	}
 
-    public static OSD GetLLSD(Packet packet) throws IllegalArgumentException, IllegalAccessException
-    {
-        OSDMap body = new OSDMap();
-        java.lang.Class<? extends PacketType> type = packet.getType().getClass();
+	public static OSD GetLLSD(Packet packet) throws IllegalArgumentException, IllegalAccessException
+	{
+		OSDMap body = new OSDMap();
+		java.lang.Class<? extends PacketType> type = packet.getType().getClass();
 
-        for (Field field : type.getDeclaredFields())
-        {
-            if (Modifier.isPublic(field.getModifiers()))
-            {
-                Object object = field.get(packet);
-                if (field.getType().isArray())
-                {
-                    int length = Array.getLength(object);
-                    OSDArray blockList = new OSDArray(length);
-                    for (int i = 0; i < length; i++)
-                    {
-                        Object block = Array.get(object, i);
-                        blockList.add(BuildLLSDBlock(block));
-                    }
-                    body.put(field.getName(), blockList);
-                }
-                else
-                {
-                    body.put(field.getName(), BuildLLSDBlock(object));
-                }
-            }
-        }
-        return body;
-    }
+		for (Field field : type.getDeclaredFields())
+		{
+			if (Modifier.isPublic(field.getModifiers()))
+			{
+				Object object = field.get(packet);
+				if (field.getType().isArray())
+				{
+					int length = Array.getLength(object);
+					OSDArray blockList = new OSDArray(length);
+					for (int i = 0; i < length; i++)
+					{
+						Object block = Array.get(object, i);
+						blockList.add(BuildLLSDBlock(block));
+					}
+					body.put(field.getName(), blockList);
+				}
+				else
+				{
+					body.put(field.getName(), BuildLLSDBlock(object));
+				}
+			}
+		}
+		return body;
+	}
 
-    public static byte[] ToBinary(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException
-    {
-    	ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        LLSDBinary.serialize(stream, GetLLSD(packet));
-        return stream.toByteArray();
-    }
+	public static byte[] ToBinary(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException
+	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		LLSDBinary.serialize(stream, GetLLSD(packet));
+		return stream.toByteArray();
+	}
 
-    public static Packet FromXmlString(String xml) throws IOException, ParseException
-    {
-        return FromLLSD(LLSDXml.parse(xml));
-    }
+	public static Packet FromXmlString(String xml) throws IOException, ParseException
+	{
+		return FromLLSD(LLSDXml.parse(xml));
+	}
 
-    public static Packet FromLLSD(OSD osd)
-    {
-        // FIXME: Need the inverse of the reflection magic above done here
-        throw new UnsupportedOperationException();
-    }
-    // #endregion Serialization/Deserialization
+	public static Packet FromLLSD(OSD osd)
+	{
+		// FIXME: Need the inverse of the reflection magic above done here
+		throw new UnsupportedOperationException();
+	}
 
-    /** 
-     * Attempts to convert an LLSD structure to a known Packet type
-     * 
-     * @param capsEventName Event name, this must match an actual packet name for a Packet to be successfully built
-     * @param body LLSD to convert to a Packet
-     * @return A Packet on success, otherwise null
-     * @throws ClassNotFoundException 
-     */
-    public static Packet BuildPacket(String capsKey, OSDMap body)
-    {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	// #endregion Serialization/Deserialization
 
-        // Check if we have a subclass of packet with the same name as this event
-        Class<?> type;
+	/**
+	 * Attempts to convert an LLSD structure to a known Packet type
+	 * 
+	 * @param capsEventName
+	 *            Event name, this must match an actual packet name for a Packet
+	 *            to be successfully built
+	 * @param body
+	 *            LLSD to convert to a Packet
+	 * @return A Packet on success, otherwise null
+	 * @throws ClassNotFoundException
+	 */
+	public static Packet BuildPacket(String capsKey, OSDMap body)
+	{
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+		// Check if we have a subclass of packet with the same name as this
+		// event
+		Class<?> type;
 		try
 		{
 			type = classLoader.loadClass("libomv.packets." + capsKey + "Packet");
 		}
 		catch (ClassNotFoundException e)
 		{
-            return null;
+			return null;
 		}
 
-        Packet packet = null;
+		Packet packet = null;
 
-        try
-        {
-            // Create an instance of the object
-            packet = (Packet)type.newInstance();
+		try
+		{
+			// Create an instance of the object
+			packet = (Packet) type.newInstance();
 
-            // Iterate over all of the fields in the packet class, looking for matches in the LLSD
-            for (Field field : type.getFields())
-            {
-                if (body.containsKey(field.getName()))
-                {
-                    Class<?> blockType = field.getType();
+			// Iterate over all of the fields in the packet class, looking for
+			// matches in the LLSD
+			for (Field field : type.getFields())
+			{
+				if (body.containsKey(field.getName()))
+				{
+					Class<?> blockType = field.getType();
 
-                    if (blockType.isArray())
-                    {
-                        OSDArray array = (OSDArray)body.get(field.getName());
-                        Class<?> elementType = blockType.getComponentType();
-                        Object[] blockArray = (Object[])Array.newInstance(elementType, array.size());
+					if (blockType.isArray())
+					{
+						OSDArray array = (OSDArray) body.get(field.getName());
+						Class<?> elementType = blockType.getComponentType();
+						Object[] blockArray = (Object[]) Array.newInstance(elementType, array.size());
 
-                        for (int i = 0; i < array.size(); i++)
-                        {
-                            OSDMap map = (OSDMap)array.get(i);
-                            blockArray[i] = ParseLLSDBlock(map, elementType);
-                        }
-                        field.set(packet, blockArray);
-                    }
-                    else
-                    {
-                        OSDMap map = (OSDMap)body.get(field.getName());
-                        field.set(packet, ParseLLSDBlock(map, blockType));
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            //FIXME
-        	Logger.Log(ex.getMessage(), LogLevel.Error, ex);
-        }
+						for (int i = 0; i < array.size(); i++)
+						{
+							OSDMap map = (OSDMap) array.get(i);
+							blockArray[i] = ParseLLSDBlock(map, elementType);
+						}
+						field.set(packet, blockArray);
+					}
+					else
+					{
+						OSDMap map = (OSDMap) body.get(field.getName());
+						field.set(packet, ParseLLSDBlock(map, blockType));
+					}
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			// FIXME
+			Logger.Log(ex.getMessage(), LogLevel.Error, ex);
+		}
 
-        return packet;
-    }
+		return packet;
+	}
 
-    private static Object ParseLLSDBlock(OSDMap blockData, Class<?> blockType) throws IllegalArgumentException, IllegalAccessException, InstantiationException
-    {
-        Object block = blockType.newInstance();
+	private static Object ParseLLSDBlock(OSDMap blockData, Class<?> blockType) throws IllegalArgumentException,
+			IllegalAccessException, InstantiationException
+	{
+		Object block = blockType.newInstance();
 
-        // Iterate over each field and set the value if a match was found in the LLSD
-        for (Field field : blockType.getFields())
-        {
-            if (blockData.containsKey(field.getName()))
-            {
-                Class<?> fieldType = field.getType();
+		// Iterate over each field and set the value if a match was found in the
+		// LLSD
+		for (Field field : blockType.getFields())
+		{
+			if (blockData.containsKey(field.getName()))
+			{
+				Class<?> fieldType = field.getType();
 
-                if (fieldType == long.class)
-                {
-                    // ulongs come in as a byte array, convert it manually here
-                    byte[] bytes = blockData.get(field.getName()).AsBinary();
-                    long value = Helpers.BytesToUInt64B(bytes);
-                    field.set(block, value);
-                }
-                else if (fieldType == int.class)
-                {
-                    // uints come in as a byte array, convert it manually here
-                    byte[] bytes = blockData.get(field.getName()).AsBinary();
-                    long value = Helpers.BytesToUInt32B(bytes);
-                    field.set(block, (int)value);
-                }
-                else if (fieldType == short.class)
-                {
-                    field.set(block, (short)blockData.get(field.getName()).AsInteger());
-                }
-                else if (fieldType == byte.class)
-                {
-                    field.set(block, (byte)blockData.get(field.getName()).AsInteger());
-                }
-                else if (fieldType == String.class)
-                {
-                    field.set(block, blockData.get(field.getName()).AsString());
-                }
-                else if (fieldType == boolean.class)
-                {
-                    field.set(block, blockData.get(field.getName()).AsBoolean());
-                }
-                else if (fieldType == float.class)
-                {
-                    field.set(block, (float)blockData.get(field.getName()).AsReal());
-                }
-                else if (fieldType == double.class)
-                {
-                    field.set(block, blockData.get(field.getName()).AsReal());
-                }
-                else if (fieldType == UUID.class)
-                {
-                    field.set(block, blockData.get(field.getName()).AsUUID());
-                }
-                else if (fieldType == Vector3.class)
-                {
-                    Vector3 vec = ((OSDArray)blockData.get(field.getName())).AsVector3();
-                    field.set(block, vec);
-                }
-                else if (fieldType == Vector4.class)
-                {
-                    Vector4 vec = ((OSDArray)blockData.get(field.getName())).AsVector4();
-                    field.set(block, vec);
-                }
-                else if (fieldType == Quaternion.class)
-                {
-                    Quaternion quat = ((OSDArray)blockData.get(field.getName())).AsQuaternion();
-                    field.set(block, quat);
-                }
-            }
-        }
-        return block;
-    }
+				if (fieldType == long.class)
+				{
+					// ulongs come in as a byte array, convert it manually here
+					byte[] bytes = blockData.get(field.getName()).AsBinary();
+					long value = Helpers.BytesToUInt64B(bytes);
+					field.set(block, value);
+				}
+				else if (fieldType == int.class)
+				{
+					// uints come in as a byte array, convert it manually here
+					byte[] bytes = blockData.get(field.getName()).AsBinary();
+					long value = Helpers.BytesToUInt32B(bytes);
+					field.set(block, (int) value);
+				}
+				else if (fieldType == short.class)
+				{
+					field.set(block, (short) blockData.get(field.getName()).AsInteger());
+				}
+				else if (fieldType == byte.class)
+				{
+					field.set(block, (byte) blockData.get(field.getName()).AsInteger());
+				}
+				else if (fieldType == String.class)
+				{
+					field.set(block, blockData.get(field.getName()).AsString());
+				}
+				else if (fieldType == boolean.class)
+				{
+					field.set(block, blockData.get(field.getName()).AsBoolean());
+				}
+				else if (fieldType == float.class)
+				{
+					field.set(block, (float) blockData.get(field.getName()).AsReal());
+				}
+				else if (fieldType == double.class)
+				{
+					field.set(block, blockData.get(field.getName()).AsReal());
+				}
+				else if (fieldType == UUID.class)
+				{
+					field.set(block, blockData.get(field.getName()).AsUUID());
+				}
+				else if (fieldType == Vector3.class)
+				{
+					Vector3 vec = ((OSDArray) blockData.get(field.getName())).AsVector3();
+					field.set(block, vec);
+				}
+				else if (fieldType == Vector4.class)
+				{
+					Vector4 vec = ((OSDArray) blockData.get(field.getName())).AsVector4();
+					field.set(block, vec);
+				}
+				else if (fieldType == Quaternion.class)
+				{
+					Quaternion quat = ((OSDArray) blockData.get(field.getName())).AsQuaternion();
+					field.set(block, quat);
+				}
+			}
+		}
+		return block;
+	}
 
-    private static OSD BuildLLSDBlock(Object block) throws IllegalArgumentException, IllegalAccessException
-    {
-        OSDMap map = new OSDMap();
-        Class<?> blockType = block.getClass();
+	private static OSD BuildLLSDBlock(Object block) throws IllegalArgumentException, IllegalAccessException
+	{
+		OSDMap map = new OSDMap();
+		Class<?> blockType = block.getClass();
 
-        for (Field field : blockType.getFields())
-        {
-            if (Modifier.isPublic(field.getModifiers()))
-            {
-                map.put(field.getName(), OSD.FromObject(field.get(block)));
-            }
-        }
-        return map;
-    }
+		for (Field field : blockType.getFields())
+		{
+			if (Modifier.isPublic(field.getModifiers()))
+			{
+				map.put(field.getName(), OSD.FromObject(field.get(block)));
+			}
+		}
+		return map;
+	}
 }

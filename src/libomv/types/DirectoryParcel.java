@@ -27,7 +27,8 @@
 package libomv.types;
 
 /* A parcel retrieved from the dataserver such as results from the "For-Sale" listings */
-public class DirectoryParcel {
+public class DirectoryParcel
+{
 	public UUID ID;
 
 	public UUID OwnerID;
@@ -52,7 +53,8 @@ public class DirectoryParcel {
 
 	public float Dwell;
 
-	public DirectoryParcel() {
+	public DirectoryParcel()
+	{
 		GlobalPosition = new Vector3(0.0f);
 		SimPosition = new Vector3(0.0f);
 	}

@@ -84,7 +84,7 @@ public class LogoPanel extends JPanel
 				{
 					// The image frame index
 					int x, y, imgIndex = 0;
-					
+
 					BufferedImage progress = Resources.loadImage(Resources.IMAGE_WORKING);
 
 					// While we're still connecting
@@ -100,7 +100,7 @@ public class LogoPanel extends JPanel
 						y = (imgIndex % 4) * 32;
 
 						activeImage = progress.getSubimage(x, y, 32, 32);
-						
+
 						// Increment the frame
 						imgIndex++;
 						// Repaint the image

@@ -34,93 +34,100 @@ import java.io.ObjectOutputStream;
 import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
 
-/** A folder contains {@link T:OpenMetaverse.InventoryItem}s and has certain attributes specific to itself */
+/**
+ * A folder contains {@link T:OpenMetaverse.InventoryItem}s and has certain
+ * attributes specific to itself
+ */
 public class InventoryFolder extends InventoryBase
 {
 	private static final long serialVersionUID = 1L;
 	// The Preferred {@link T:OpenMetaverse.AssetType} for a folder.
-    public AssetType preferredType;
-    // The Version of this folder
-    public int version;
-    // Number of child items this folder contains.
-    public int descendentCount;
+	public AssetType preferredType;
+	// The Version of this folder
+	public int version;
+	// Number of child items this folder contains.
+	public int descendentCount;
 
-    /**
-     * Constructor
-     *
-     * @param itemID UUID of the folder
-     */
-    public InventoryFolder(UUID itemID)
-    {
-        super(itemID);
-        preferredType = AssetType.Unknown;
-        version = 1;
-        // set to -1 to indicate that we don't know the descendent count yet
-        descendentCount = -1;
-    }
+	/**
+	 * Constructor
+	 * 
+	 * @param itemID
+	 *            UUID of the folder
+	 */
+	public InventoryFolder(UUID itemID)
+	{
+		super(itemID);
+		preferredType = AssetType.Unknown;
+		version = 1;
+		// set to -1 to indicate that we don't know the descendent count yet
+		descendentCount = -1;
+	}
 
-    /**
-     * Initializes an InventoryFolder object from a serialization stream
-     *
-     * @param info serialization stream
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    @Override
+	/**
+	 * Initializes an InventoryFolder object from a serialization stream
+	 * 
+	 * @param info
+	 *            serialization stream
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	@Override
 	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
-    {
-        super.readObject(info);
-        if (serialVersionUID != info.readLong())
-        	throw new InvalidObjectException("InventoryItem serial version mismatch");
-        preferredType = AssetType.setValue(info.readByte());
-        version = info.readInt();
-        descendentCount = info.readInt();
-    }
+	{
+		super.readObject(info);
+		if (serialVersionUID != info.readLong())
+			throw new InvalidObjectException("InventoryItem serial version mismatch");
+		preferredType = AssetType.setValue(info.readByte());
+		version = info.readInt();
+		descendentCount = info.readInt();
+	}
 
-    /**
-     * Write Serilization data for this InventoryFolder object to the stream
-     *
-     * @param info serialization stream
-     * @throws IOException
-     */
-    @Override
-    protected void writeObject(ObjectOutputStream info) throws IOException
-    {
-        super.writeObject(info);
-        info.writeLong(serialVersionUID);
-        info.writeByte(preferredType.getValue());
-        info.writeInt(version);
-        info.writeInt(descendentCount);
-    }
+	/**
+	 * Write Serilization data for this InventoryFolder object to the stream
+	 * 
+	 * @param info
+	 *            serialization stream
+	 * @throws IOException
+	 */
+	@Override
+	protected void writeObject(ObjectOutputStream info) throws IOException
+	{
+		super.writeObject(info);
+		info.writeLong(serialVersionUID);
+		info.writeByte(preferredType.getValue());
+		info.writeInt(version);
+		info.writeInt(descendentCount);
+	}
 
-    @Override
-    public String toString()
-    {
-        return Name;
-    }
+	@Override
+	public String toString()
+	{
+		return Name;
+	}
 
-    @Override
-    public int hashCode()
-    {
-        return preferredType.hashCode() ^ version ^ descendentCount;
-    }
+	@Override
+	public int hashCode()
+	{
+		return preferredType.hashCode() ^ version ^ descendentCount;
+	}
 
-    @Override
-    public boolean equals(Object o)
-    {
-        InventoryFolder folder = (InventoryFolder)((o instanceof InventoryFolder) ? o : null);
-        return folder != null && equals(folder);
-    }
+	@Override
+	public boolean equals(Object o)
+	{
+		InventoryFolder folder = (InventoryFolder) ((o instanceof InventoryFolder) ? o : null);
+		return folder != null && equals(folder);
+	}
 
-    @Override
-    public boolean equals(InventoryBase o)
-    {
-        InventoryFolder folder = (InventoryFolder)((o instanceof InventoryFolder) ? o : null);
-        return folder != null && equals(folder);
-    }
+	@Override
+	public boolean equals(InventoryBase o)
+	{
+		InventoryFolder folder = (InventoryFolder) ((o instanceof InventoryFolder) ? o : null);
+		return folder != null && equals(folder);
+	}
 
-    public final boolean equals(InventoryFolder o)
-    {
-        return super.equals(o) && o.descendentCount == descendentCount && o.preferredType == preferredType && o.version == version;
-    }
+	public final boolean equals(InventoryFolder o)
+	{
+		return super.equals(o) && o.descendentCount == descendentCount && o.preferredType == preferredType
+				&& o.version == version;
+	}
 }

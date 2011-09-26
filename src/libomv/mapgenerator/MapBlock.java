@@ -28,8 +28,8 @@ package libomv.mapgenerator;
 
 import java.util.Vector;
 
-
-public class MapBlock implements Comparable<Object> {
+public class MapBlock implements Comparable<Object>
+{
 	public int KeywordPosition;
 
 	public String Name;
@@ -39,7 +39,8 @@ public class MapBlock implements Comparable<Object> {
 	public Vector<MapField> Fields;
 
 	@Override
-	public int compareTo(Object obj) {
+	public int compareTo(Object obj)
+	{
 
 		MapBlock temp = (MapBlock) obj;
 

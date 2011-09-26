@@ -64,34 +64,21 @@ import libomv.utils.Helpers;
 
 public class OSD
 {
-    protected static final String FRACT_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss.SS'Z'";
-    protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";;
+	protected static final String FRACT_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss.SS'Z'";
+	protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";;
 	private static final String LLSD_BINARY_HEADER = "<?llsd/binary?>";
 	private static final String LLSD_XML_HEADER = "<llsd>";
 	private static final String LLSD_XML_ALT_HEADER = "<?xml";
 	private static final String LLSD_XML_ALT2_HEADER = "<?llsd/xml?>";
 
-    public enum OSDType
+	public enum OSDType
 	{
-		Unknown,
-		Boolean,
-		Integer,
-		Real,
-		String,
-		UUID,
-		Date,
-		URI,
-		Binary,
-		Map,
-		Array
+		Unknown, Boolean, Integer, Real, String, UUID, Date, URI, Binary, Map, Array
 	}
 
 	public enum OSDFormat
 	{
-		Xml,
-		Json,
-		Binary,
-		Notation
+		Xml, Json, Binary, Notation
 	}
 
 	/** The OSD class implementation */
@@ -99,46 +86,57 @@ public class OSD
 	{
 		return OSDType.Unknown;
 	}
+
 	public boolean AsBoolean()
 	{
 		return false;
 	}
+
 	public int AsInteger()
 	{
 		return 0;
 	}
+
 	public int AsUInteger()
 	{
 		return 0;
 	}
+
 	public long AsLong()
 	{
 		return 0;
 	}
+
 	public long AsULong()
 	{
 		return 0;
 	}
+
 	public double AsReal()
 	{
 		return 0d;
 	}
+
 	public String AsString()
 	{
 		return "";
 	}
+
 	public UUID AsUUID()
 	{
 		return UUID.Zero;
 	}
+
 	public Date AsDate()
 	{
 		return Helpers.Epoch;
 	}
+
 	public URI AsUri()
 	{
 		return null;
 	}
+
 	public byte[] AsBinary()
 	{
 		return Helpers.EmptyBytes;
@@ -146,9 +144,12 @@ public class OSD
 
 	public InetAddress AsInetAddress()
 	{
-		try {
+		try
+		{
 			return InetAddress.getByName("0.0.0.0");
-		} catch (UnknownHostException e) {
+		}
+		catch (UnknownHostException e)
+		{
 			return null;
 		}
 	}
@@ -193,62 +194,77 @@ public class OSD
 	{
 		return new OSDBoolean(value);
 	}
+
 	public static OSD FromInteger(short value)
 	{
 		return new OSDInteger(value);
 	}
+
 	public static OSD FromInteger(int value)
 	{
 		return new OSDInteger(value);
 	}
+
 	public static OSD FromUInteger(int value)
 	{
 		return new OSDBinary(value & 0xffffffff);
 	}
+
 	public static OSD FromLong(long value)
 	{
 		return new OSDBinary(value);
 	}
+
 	public static OSD FromULong(long value)
 	{
 		return new OSDBinary(value & 0xffffffffffffffffl);
 	}
+
 	public static OSD FromReal(double value)
 	{
 		return new OSDReal(value);
 	}
+
 	public static OSD FromReal(float value)
 	{
 		return new OSDReal(value);
 	}
+
 	public static OSD FromString(String value)
 	{
 		return new OSDString(value);
 	}
+
 	public static OSD FromString(InetAddress value)
 	{
 		return new OSDString(value.getHostAddress());
 	}
+
 	public static OSD FromUUID(UUID value)
 	{
 		return new OSDUUID(value);
 	}
+
 	public static OSD FromDate(Date value)
 	{
 		return new OSDDate(value);
 	}
+
 	public static OSD FromUri(URI value)
 	{
 		return new OSDUri(value);
 	}
+
 	public static OSD FromBinary(byte[] value)
 	{
 		return new OSDBinary(value);
 	}
+
 	public static OSD FromBinary(long value)
 	{
 		return new OSDBinary(value);
 	}
+
 	public static OSD FromBinary(InetAddress value)
 	{
 		return new OSDBinary(value.getAddress());
@@ -318,75 +334,75 @@ public class OSD
 		}
 		else if (value instanceof Boolean)
 		{
-			return new OSDBoolean((Boolean)value);
+			return new OSDBoolean((Boolean) value);
 		}
 		else if (value instanceof Integer)
 		{
-			return new OSDInteger((Integer)value);
+			return new OSDInteger((Integer) value);
 		}
 		else if (value instanceof Short)
 		{
-			return new OSDInteger(((Short)value).intValue());
+			return new OSDInteger(((Short) value).intValue());
 		}
 		else if (value instanceof Byte)
 		{
-			return new OSDInteger(((Byte)value).intValue());
+			return new OSDInteger(((Byte) value).intValue());
 		}
 		else if (value instanceof Double)
 		{
-			return new OSDReal(((Double)value).doubleValue());
+			return new OSDReal(((Double) value).doubleValue());
 		}
 		else if (value instanceof Float)
 		{
-			return new OSDReal(((Float)value).doubleValue());
+			return new OSDReal(((Float) value).doubleValue());
 		}
 		else if (value instanceof String)
 		{
-			return new OSDString((String)value);
+			return new OSDString((String) value);
 		}
 		else if (value instanceof UUID)
 		{
-			return new OSDUUID((UUID)value);
+			return new OSDUUID((UUID) value);
 		}
 		else if (value instanceof Date)
 		{
-			return new OSDDate((Date)value);
+			return new OSDDate((Date) value);
 		}
 		else if (value instanceof URI)
 		{
-			return new OSDUri((URI)value);
+			return new OSDUri((URI) value);
 		}
 		else if (value instanceof byte[])
 		{
-			return new OSDBinary((byte[])value);
+			return new OSDBinary((byte[]) value);
 		}
 		else if (value instanceof Long)
 		{
-			return new OSDBinary((Long)value);
+			return new OSDBinary((Long) value);
 		}
 		else if (value instanceof Vector2)
 		{
-			return FromVector2((Vector2)value);
+			return FromVector2((Vector2) value);
 		}
 		else if (value instanceof Vector3)
 		{
-			return FromVector3((Vector3)value);
+			return FromVector3((Vector3) value);
 		}
 		else if (value instanceof Vector3d)
 		{
-			return FromVector3d((Vector3d)value);
+			return FromVector3d((Vector3d) value);
 		}
 		else if (value instanceof Vector4)
 		{
-			return FromVector4((Vector4)value);
+			return FromVector4((Vector4) value);
 		}
 		else if (value instanceof Quaternion)
 		{
-			return FromQuaternion((Quaternion)value);
+			return FromQuaternion((Quaternion) value);
 		}
 		else if (value instanceof Color4)
 		{
-			return FromColor4((Color4)value);
+			return FromColor4((Color4) value);
 		}
 		else
 		{
@@ -406,11 +422,11 @@ public class OSD
 		}
 		else if (type == Short.class || type == short.class)
 		{
-			return (short)value.AsInteger();
+			return (short) value.AsInteger();
 		}
 		else if (type == Byte.class || type == byte.class)
 		{
-			return (byte)value.AsInteger();
+			return (byte) value.AsInteger();
 		}
 		else if (type == String.class)
 		{
@@ -422,7 +438,7 @@ public class OSD
 		}
 		else if (type == Float.class || type == float.class)
 		{
-			return (float)value.AsReal();
+			return (float) value.AsReal();
 		}
 		else if (type == Double.class || type == double.class)
 		{
@@ -440,7 +456,7 @@ public class OSD
 		{
 			if (value.getType() == OSDType.Array)
 			{
-				return ((OSDArray)value).AsVector3();
+				return ((OSDArray) value).AsVector3();
 			}
 			return Vector3.Zero;
 		}
@@ -448,7 +464,7 @@ public class OSD
 		{
 			if (value.getType() == OSDType.Array)
 			{
-				return ((OSDArray)value).AsVector4();
+				return ((OSDArray) value).AsVector4();
 			}
 			return Vector4.Zero;
 		}
@@ -456,7 +472,7 @@ public class OSD
 		{
 			if (value.getType() == OSDType.Array)
 			{
-				return ((OSDArray)value).AsQuaternion();
+				return ((OSDArray) value).AsQuaternion();
 			}
 			return Quaternion.Identity;
 		}
@@ -470,18 +486,18 @@ public class OSD
 	{
 		switch (type)
 		{
-		    case Binary:
-		    	LLSDBinary.serialize(new WriterOutputStream(writer), this);
-		    	break;
-		    case Notation:
-		    	LLSDNotation.serialize(writer, this);
-			    break;
-		    case Xml:
-		    	LLSDXml.serialize(writer, this);
-			    break;
-		    case Json:
-//		    	Json.serialize(writer, this);
-			    break;
+			case Binary:
+				LLSDBinary.serialize(new WriterOutputStream(writer), this);
+				break;
+			case Notation:
+				LLSDNotation.serialize(writer, this);
+				break;
+			case Xml:
+				LLSDXml.serialize(writer, this);
+				break;
+			case Json:
+				// Json.serialize(writer, this);
+				break;
 		}
 	}
 
@@ -489,18 +505,18 @@ public class OSD
 	{
 		switch (type)
 		{
-		    case Binary:
-		    	LLSDBinary.serialize(stream, this);
-			    break;
-		    case Notation:
-		    	LLSDNotation.serialize(new OutputStreamWriter(stream), this);
-			    break;
-		    case Xml:
-		    	LLSDXml.serialize(new OutputStreamWriter(stream), this);
-			    break;
-		    case Json:
-//		    	Json.serialize(new OutputStreamWriter(stream), this);
-			    break;
+			case Binary:
+				LLSDBinary.serialize(stream, this);
+				break;
+			case Notation:
+				LLSDNotation.serialize(new OutputStreamWriter(stream), this);
+				break;
+			case Xml:
+				LLSDXml.serialize(new OutputStreamWriter(stream), this);
+				break;
+			case Json:
+				// Json.serialize(new OutputStreamWriter(stream), this);
+				break;
 		}
 	}
 
@@ -508,18 +524,18 @@ public class OSD
 	{
 		switch (type)
 		{
-		    case Binary:
-		    	OutputStream binary = new ByteArrayOutputStream();
-		    	LLSDBinary.serialize(binary, this);
-		    	return binary.toString();
-		    case Notation:
-		    	return LLSDNotation.serializeToString(this);
-		    case Xml:
-		    	return LLSDXml.serializeToString(this);
-		    case Json:
-		    	Writer json = new StringWriter();
-//		    	Json.serialize(json, this);
-			    return json.toString();
+			case Binary:
+				OutputStream binary = new ByteArrayOutputStream();
+				LLSDBinary.serialize(binary, this);
+				return binary.toString();
+			case Notation:
+				return LLSDNotation.serializeToString(this);
+			case Xml:
+				return LLSDXml.serializeToString(this);
+			case Json:
+				Writer json = new StringWriter();
+				// Json.serialize(json, this);
+				return json.toString();
 		}
 		return null;
 	}
@@ -529,20 +545,21 @@ public class OSD
 		ByteArrayOutputStream stream;
 		switch (type)
 		{
-		    case Binary:
-		    	stream = new ByteArrayOutputStream();
-		    	LLSDBinary.serialize(stream, this);
-		    	return stream.toByteArray();
-		    case Notation:
-		    	stream = new ByteArrayOutputStream();
-		    	LLSDNotation.serialize(new OutputStreamWriter(stream, Helpers.UTF8_ENCODING), this);
-		    	return stream.toByteArray();
-		    case Xml:
-		    	return LLSDXml.serializeToBytes(this, Helpers.UTF8_ENCODING);
-		    case Json:
-		    	stream = new ByteArrayOutputStream();
-//		    	Json.serialize(new OutputStreamWriter(stream, Helpers.UTF8_ENCODING), this);
-		    	return stream.toByteArray();
+			case Binary:
+				stream = new ByteArrayOutputStream();
+				LLSDBinary.serialize(stream, this);
+				return stream.toByteArray();
+			case Notation:
+				stream = new ByteArrayOutputStream();
+				LLSDNotation.serialize(new OutputStreamWriter(stream, Helpers.UTF8_ENCODING), this);
+				return stream.toByteArray();
+			case Xml:
+				return LLSDXml.serializeToBytes(this, Helpers.UTF8_ENCODING);
+			case Json:
+				stream = new ByteArrayOutputStream();
+				// Json.serialize(new OutputStreamWriter(stream,
+				// Helpers.UTF8_ENCODING), this);
+				return stream.toByteArray();
 		}
 		return null;
 	}
@@ -559,13 +576,13 @@ public class OSD
 		{
 			return LLSDBinary.parse(new ReaderInputStream(reader, Helpers.ASCII_ENCODING));
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
+		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
-	        return LLSDXml.parse(reader);
+			return LLSDXml.parse(reader);
 		}
-        return null;
+		return null;
 	}
 
 	public static OSD parse(InputStream instream, String encoding) throws IOException, ParseException
@@ -580,11 +597,11 @@ public class OSD
 		{
 			return LLSDBinary.parse(stream);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
+		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
-	        return LLSDXml.parse(stream, encoding);
+			return LLSDXml.parse(stream, encoding);
 		}
 		return null;
 	}
@@ -596,36 +613,37 @@ public class OSD
 			InputStream stream = new ReaderInputStream(new StringReader(string));
 			return LLSDBinary.parse(stream);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
+		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
-	        return LLSDXml.parse(string);
+			return LLSDXml.parse(string);
 		}
-        return null;
+		return null;
 	}
 
-	public static OSD parse(byte [] data, String encoding) throws IOException, ParseException
+	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
 	{
 		String string = new String(data, 0, 15, encoding);
 		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
 		{
 			return LLSDBinary.parse(new ByteArrayInputStream(data));
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER) ||
-				 string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
+		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
+				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
-	        return LLSDXml.parse(data, encoding);
+			return LLSDXml.parse(data, encoding);
 		}
-       return null;
+		return null;
 	}
 
 	/**
-	 * Uses reflection to create an SDMap from all of the SD
-	 * serializable types in an object
-	 *
-	 * @param obj Class or struct containing serializable types
+	 * Uses reflection to create an SDMap from all of the SD serializable types
+	 * in an object
+	 * 
+	 * @param obj
+	 *            Class or struct containing serializable types
 	 * @return An SDMap holding the serialized values from the container object
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
@@ -650,14 +668,18 @@ public class OSD
 	}
 
 	/**
-	 * Uses reflection to deserialize member variables in an object from an SDMap
-	 *
-	 * @param obj Reference to an object to fill with deserialized values
-	 * @param serialized Serialized values to put in the target object
+	 * Uses reflection to deserialize member variables in an object from an
+	 * SDMap
+	 * 
+	 * @param obj
+	 *            Reference to an object to fill with deserialized values
+	 * @param serialized
+	 *            Serialized values to put in the target object
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public static Object deserializeMembers(Object obj, OSDMap serialized) throws IllegalArgumentException, IllegalAccessException
+	public static Object deserializeMembers(Object obj, OSDMap serialized) throws IllegalArgumentException,
+			IllegalAccessException
 	{
 		for (Field field : obj.getClass().getFields())
 		{

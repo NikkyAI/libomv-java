@@ -28,39 +28,45 @@ package libomv.assets;
 
 import libomv.types.UUID;
 
-
-/** Represents an {@link AssetWearable} that represents an avatars body ie: Hair, Etc. */
+/**
+ * Represents an {@link AssetWearable} that represents an avatars body ie: Hair,
+ * Etc.
+ */
 public class AssetBodypart extends AssetWearable
 {
-    // Override the base classes AssetType
+	// Override the base classes AssetType
 	@Override
-    public AssetType getAssetType()
-    {
-        return AssetType.Bodypart;
-    }
+	public AssetType getAssetType()
+	{
+		return AssetType.Bodypart;
+	}
 
-    // Initializes a new instance of an AssetBodyPart object
-    public AssetBodypart()
-    {
-    }
+	// Initializes a new instance of an AssetBodyPart object
+	public AssetBodypart()
+	{
+	}
 
-    /**
-     * Initializes a new instance of an AssetBodyPart object with parameters
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData byte array containing the raw asset data
-     */
-    public AssetBodypart(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-    }
+	/**
+	 * Initializes a new instance of an AssetBodyPart object with parameters
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            byte array containing the raw asset data
+	 */
+	public AssetBodypart(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+	}
 
-    /**
-     * Initializes a new instance of an AssetBodyPart object with parameters
-     *
-     * @param source A string representing the values of the Bodypart
-     */
-    public AssetBodypart(String source)
-    {
-        super(source);
-    }
+	/**
+	 * Initializes a new instance of an AssetBodyPart object with parameters
+	 * 
+	 * @param source
+	 *            A string representing the values of the Bodypart
+	 */
+	public AssetBodypart(String source)
+	{
+		super(source);
+	}
 }

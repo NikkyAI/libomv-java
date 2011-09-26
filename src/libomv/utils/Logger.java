@@ -40,12 +40,16 @@ public final class Logger
 
 		public final static int Info = 1;
 
-		// A non-critical error occurred. A warning will not prevent the rest of libomv from
-		// operating as usual, although it may be indicative of an underlying issue
+		// A non-critical error occurred. A warning will not prevent the rest of
+		// libomv from
+		// operating as usual, although it may be indicative of an underlying
+		// issue
 		public final static int Warning = 2;
 
-		// A critical error has occurred. Generally this will be followed by the network layer
-		// shutting down, although the stability of libomv after an error is uncertain
+		// A critical error has occurred. Generally this will be followed by the
+		// network layer
+		// shutting down, although the stability of libomv after an error is
+		// uncertain
 		public final static int Error = 3;
 
 		public final static int Debug = 4;
@@ -62,156 +66,188 @@ public final class Logger
 		{
 			output("Info ", message, ex);
 		}
+
 		public void warn(Object message, Throwable ex)
 		{
 			output("Warn ", message, ex);
 		}
+
 		public void debug(Object message, Throwable ex)
 		{
 			output("Debug", message, ex);
 		}
+
 		public void error(Object message, Throwable ex)
 		{
 			output("Error", message, ex);
 		}
 	}
 
-	public interface LogCallback {
+	public interface LogCallback
+	{
 		public void callback(Object message, int level);
 	}
 
-	/** Callback used for client apps to receive log messages from the library. Tyiggered
-     *  whenever a message is logged. If this is left null, log messages will go to the console.
-     *
-     *  @param message Data being logged
-     *  @param level The severity of the log entry from {@link Helpers.LogLevel}
-     */
- 	public static LogCallback OnLogMessage;
+	/**
+	 * Callback used for client apps to receive log messages from the library.
+	 * Tyiggered whenever a message is logged. If this is left null, log
+	 * messages will go to the console.
+	 * 
+	 * @param message
+	 *            Data being logged
+	 * @param level
+	 *            The severity of the log entry from {@link Helpers.LogLevel}
+	 */
+	public static LogCallback OnLogMessage;
 
-    public static Log LogInstance;
+	public static Log LogInstance;
 
-    /* Default constructor */
-    static
-    {
-        LogInstance = new Log();
-    }
+	/* Default constructor */
+	static
+	{
+		LogInstance = new Log();
+	}
 
-    /** Send a log message to the logging engine
-     *
-     *  @param message The log message
-     *  @param level The severity of the log entry
-     */
-    public static void Log(Object message, int level)
-    {
-        Log(message, level, null, null);
-    }
+	/**
+	 * Send a log message to the logging engine
+	 * 
+	 * @param message
+	 *            The log message
+	 * @param level
+	 *            The severity of the log entry
+	 */
+	public static void Log(Object message, int level)
+	{
+		Log(message, level, null, null);
+	}
 
-    /** Send a log message to the logging engine
-     *
-     *  @param message The log message
-     *  @param level The severity of the log entry
-     *  @param client Instance of the client
-     */
-    public static void Log(Object message, int level, GridClient client)
-    {
-        Log(message, level, client, null);
-    }
+	/**
+	 * Send a log message to the logging engine
+	 * 
+	 * @param message
+	 *            The log message
+	 * @param level
+	 *            The severity of the log entry
+	 * @param client
+	 *            Instance of the client
+	 */
+	public static void Log(Object message, int level, GridClient client)
+	{
+		Log(message, level, client, null);
+	}
 
-    /** Send a log message to the logging engine
-     *
-     * @param message The log message
-     *  @param level The severity of the log entry
-     *  @param exception Exception that was raised
-     */
-    public static void Log(Object message, int level, Throwable exception)
-    {
-        Log(message, level, null, exception);
-    }
+	/**
+	 * Send a log message to the logging engine
+	 * 
+	 * @param message
+	 *            The log message
+	 * @param level
+	 *            The severity of the log entry
+	 * @param exception
+	 *            Exception that was raised
+	 */
+	public static void Log(Object message, int level, Throwable exception)
+	{
+		Log(message, level, null, exception);
+	}
 
-    /** Send a log message to the logging engine
-     *
-     *  @param message The log message
-     *  @param level The severity of the log entry
-     *  @param client Instance of the client
-     *  @param exception Exception that was raised
-     */
-    public static void Log(Object message, int level, GridClient client, Throwable exception)
-    {
-        if (client != null && client.Settings.LOG_NAMES)
-        {
-            message = String.format("<%s>: {%s}", client.Self.getName(), message);
-        }
+	/**
+	 * Send a log message to the logging engine
+	 * 
+	 * @param message
+	 *            The log message
+	 * @param level
+	 *            The severity of the log entry
+	 * @param client
+	 *            Instance of the client
+	 * @param exception
+	 *            Exception that was raised
+	 */
+	public static void Log(Object message, int level, GridClient client, Throwable exception)
+	{
+		if (client != null && client.Settings.LOG_NAMES)
+		{
+			message = String.format("<%s>: {%s}", client.Self.getName(), message);
+		}
 
-        if (OnLogMessage != null)
-        {
-            OnLogMessage.callback(message, level);
-        }
+		if (OnLogMessage != null)
+		{
+			OnLogMessage.callback(message, level);
+		}
 
-        switch (level)
-        {
-            case LogLevel.Debug:
-                if (Settings.LOG_LEVEL == LogLevel.Debug)
-                {
-                    LogInstance.debug(message, exception);
-                }
-                break;
-            case LogLevel.Info:
-                if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info)
-                {
-                    LogInstance.info(message, exception);
-                }
-                break;
-            case LogLevel.Warning:
-                if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info || Settings.LOG_LEVEL == LogLevel.Warning)
-                {
-                    LogInstance.warn(message, exception);
-                }
-                break;
-            case LogLevel.Error:
-                if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info || Settings.LOG_LEVEL == LogLevel.Warning || Settings.LOG_LEVEL == LogLevel.Error)
-                {
-                    LogInstance.error(message, exception);
-                }
-                break;
-            default:
-                break;
-        }
-    }
+		switch (level)
+		{
+			case LogLevel.Debug:
+				if (Settings.LOG_LEVEL == LogLevel.Debug)
+				{
+					LogInstance.debug(message, exception);
+				}
+				break;
+			case LogLevel.Info:
+				if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info)
+				{
+					LogInstance.info(message, exception);
+				}
+				break;
+			case LogLevel.Warning:
+				if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
+						|| Settings.LOG_LEVEL == LogLevel.Warning)
+				{
+					LogInstance.warn(message, exception);
+				}
+				break;
+			case LogLevel.Error:
+				if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
+						|| Settings.LOG_LEVEL == LogLevel.Warning || Settings.LOG_LEVEL == LogLevel.Error)
+				{
+					LogInstance.error(message, exception);
+				}
+				break;
+			default:
+				break;
+		}
+	}
 
-    /**
-     * If the library is compiled with DEBUG defined, an event will be fired if an
-     * <code>OnLogMessage</code> handler is registered and the @param message message
-     * will be sent to the logging engine
-     *
-     * @param message The message to log at the DEBUG level to the current logging engine
-     */
-    public static void DebugLog(Object message)
-    {
-        DebugLog(message, null);
-    }
+	/**
+	 * If the library is compiled with DEBUG defined, an event will be fired if
+	 * an <code>OnLogMessage</code> handler is registered and the @param message
+	 * message will be sent to the logging engine
+	 * 
+	 * @param message
+	 *            The message to log at the DEBUG level to the current logging
+	 *            engine
+	 */
+	public static void DebugLog(Object message)
+	{
+		DebugLog(message, null);
+	}
 
-    /**
-     * If  <code>GridClient.Settings.DEBUG</code> is true, an event will be fired if an
-     * <code>OnLogMessage</code> handler is registered and the message will be sent to the logging engine
-     *
-     * @param message The message to log at the DEBUG level to the current logging engine
-     * @param client Instance of the client
-     */
-    public static void DebugLog(Object message, GridClient client)
-    {
-        if (Settings.LOG_LEVEL == LogLevel.Debug)
-        {
-            if (client != null && client.Settings.LOG_NAMES)
-            {
-                message = String.format("<%s>: {%s}", client.Self.getName(), message);
-            }
+	/**
+	 * If <code>GridClient.Settings.DEBUG</code> is true, an event will be fired
+	 * if an <code>OnLogMessage</code> handler is registered and the message
+	 * will be sent to the logging engine
+	 * 
+	 * @param message
+	 *            The message to log at the DEBUG level to the current logging
+	 *            engine
+	 * @param client
+	 *            Instance of the client
+	 */
+	public static void DebugLog(Object message, GridClient client)
+	{
+		if (Settings.LOG_LEVEL == LogLevel.Debug)
+		{
+			if (client != null && client.Settings.LOG_NAMES)
+			{
+				message = String.format("<%s>: {%s}", client.Self.getName(), message);
+			}
 
-            if (OnLogMessage != null)
-            {
-                OnLogMessage.callback(message, LogLevel.Debug);
-            }
+			if (OnLogMessage != null)
+			{
+				OnLogMessage.callback(message, LogLevel.Debug);
+			}
 
-            LogInstance.debug(message, null);
-        }
-    }
+			LogInstance.debug(message, null);
+		}
+	}
 }

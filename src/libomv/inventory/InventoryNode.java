@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package libomv.inventory;
+
 //
 
 import java.io.IOException;
@@ -41,122 +42,130 @@ public class InventoryNode implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	private InventoryBase data;
-    private InventoryNode parent;
-    private HashMap<UUID, InventoryNode> nodes;
-    private boolean needsUpdate = false;
+	private InventoryNode parent;
+	private HashMap<UUID, InventoryNode> nodes;
+	private boolean needsUpdate = false;
 
-    public final InventoryBase getData()
-    {
-        return data;
-    }
-    public final void setData(InventoryBase value)
-    {
-        data = value;
-    }
+	public final InventoryBase getData()
+	{
+		return data;
+	}
 
-    public final InventoryNode getParent()
-    {
-        return parent;
-    }
-    public final void setParent(InventoryNode value)
-    {
-        parent = value;
-    }
+	public final void setData(InventoryBase value)
+	{
+		data = value;
+	}
 
-    public final UUID getParentID_()
-    {
-        return parent.getData().UUID;
-    }
+	public final InventoryNode getParent()
+	{
+		return parent;
+	}
 
-    public final HashMap<UUID, InventoryNode> getNodes()
-    {
-        if (nodes == null)
-        {
-            nodes = new HashMap<UUID, InventoryNode>();
-        }
-        return nodes;
-    }
-    public final void setNodes(HashMap<UUID, InventoryNode> value)
-    {
-        nodes = value;
-    }
+	public final void setParent(InventoryNode value)
+	{
+		parent = value;
+	}
 
-    /* For inventory folder nodes specifies weather the folder needs to be
-       refreshed from the server */
-    public final boolean getNeedsUpdate()
-    {
-        return needsUpdate;
-    }
-    public final void setNeedsUpdate(boolean value)
-    {
-        needsUpdate = value;
-    }
+	public final UUID getParentID_()
+	{
+		return parent.getData().UUID;
+	}
 
-    public InventoryNode()
-    {
-    }
+	public final HashMap<UUID, InventoryNode> getNodes()
+	{
+		if (nodes == null)
+		{
+			nodes = new HashMap<UUID, InventoryNode>();
+		}
+		return nodes;
+	}
 
-    public InventoryNode(InventoryBase data)
-    {
-        this.data = data;
-    }
+	public final void setNodes(HashMap<UUID, InventoryNode> value)
+	{
+		nodes = value;
+	}
 
-    /* De-serialization constructor for the InventoryNode Class */
-    public InventoryNode(InventoryBase data, InventoryNode parent)
-    {
-        this.data = data;
-        this.parent = parent;
+	/*
+	 * For inventory folder nodes specifies weather the folder needs to be
+	 * refreshed from the server
+	 */
+	public final boolean getNeedsUpdate()
+	{
+		return needsUpdate;
+	}
 
-        if (parent != null)
-        {
-            // Add this node to the collection of parent nodes
-            parent.nodes.put(data.UUID, this);
-        }
-    }
+	public final void setNeedsUpdate(boolean value)
+	{
+		needsUpdate = value;
+	}
 
-    /**
-     * Initializes an InventoryItem object from a serialization stream
-     *
-     * @param info serialization stream
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    private void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
-    {
-        if (serialVersionUID != info.readLong())
-        	throw new InvalidObjectException("InventoryItem serial version mismatch");
-        data = (InventoryBase)info.readObject();
-        parent = (InventoryNode)info.readObject();
-        needsUpdate = info.readBoolean();
-        Object obj = info.readObject();
-        if (obj instanceof HashMap)
-            nodes = (HashMap<UUID, InventoryNode>)obj;
-        else
-        	throw new InvalidObjectException("");
-    }
+	public InventoryNode()
+	{
+	}
 
-    /**
-     * Write Serilization data for this InventoryFolder object to the stream
-     *
-     * @param info serialization stream
-     * @throws IOException
-     */
-    private void writeObject(ObjectOutputStream info) throws IOException
-    {
+	public InventoryNode(InventoryBase data)
+	{
+		this.data = data;
+	}
+
+	/* De-serialization constructor for the InventoryNode Class */
+	public InventoryNode(InventoryBase data, InventoryNode parent)
+	{
+		this.data = data;
+		this.parent = parent;
+
+		if (parent != null)
+		{
+			// Add this node to the collection of parent nodes
+			parent.nodes.put(data.UUID, this);
+		}
+	}
+
+	/**
+	 * Initializes an InventoryItem object from a serialization stream
+	 * 
+	 * @param info
+	 *            serialization stream
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	private void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+	{
+		if (serialVersionUID != info.readLong())
+			throw new InvalidObjectException("InventoryItem serial version mismatch");
+		data = (InventoryBase) info.readObject();
+		parent = (InventoryNode) info.readObject();
+		needsUpdate = info.readBoolean();
+		Object obj = info.readObject();
+		if (obj instanceof HashMap)
+			nodes = (HashMap<UUID, InventoryNode>) obj;
+		else
+			throw new InvalidObjectException("");
+	}
+
+	/**
+	 * Write Serilization data for this InventoryFolder object to the stream
+	 * 
+	 * @param info
+	 *            serialization stream
+	 * @throws IOException
+	 */
+	private void writeObject(ObjectOutputStream info) throws IOException
+	{
 		info.writeLong(serialVersionUID);
 		info.writeObject(data);
 		info.writeObject(parent);
 		info.writeBoolean(needsUpdate);
 		info.writeObject(nodes);
-    }
+	}
 
-    @Override
-    public String toString()
-    {
-        if (data == null)
-        {
-            return "[Empty Node]";
-        }
-        return data.toString();
-    }
+	@Override
+	public String toString()
+	{
+		if (data == null)
+		{
+			return "[Empty Node]";
+		}
+		return data.toString();
+	}
 }

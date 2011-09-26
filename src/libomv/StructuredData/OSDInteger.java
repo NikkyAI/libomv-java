@@ -48,11 +48,13 @@ public class OSDInteger extends OSD
 	{
 		return value != 0;
 	}
+
 	@Override
 	public int AsInteger()
 	{
 		return value;
 	}
+
 	@Override
 	public int AsUInteger()
 	{
@@ -64,26 +66,31 @@ public class OSDInteger extends OSD
 	{
 		return value;
 	}
+
 	@Override
 	public long AsULong()
 	{
 		return (value & 0xFFFFFFFF);
 	}
+
 	@Override
 	public double AsReal()
 	{
 		return value;
 	}
+
 	@Override
 	public String AsString()
 	{
-		return ((Integer)value).toString();
+		return ((Integer) value).toString();
 	}
+
 	@Override
 	public byte[] AsBinary()
 	{
 		return Helpers.Int32ToBytesB(value);
 	}
+
 	@Override
 	public String toString()
 	{

@@ -38,23 +38,27 @@ public class Vector3d
 
 	public double Z;
 
-	public Vector3d(double val) {
+	public Vector3d(double val)
+	{
 		X = Y = Z = val;
 	}
 
-	public Vector3d(double x, double y, double z) {
+	public Vector3d(double x, double y, double z)
+	{
 		X = x;
 		Y = y;
 		Z = z;
 	}
 
-	public Vector3d(ByteBuffer byteArray) {
+	public Vector3d(ByteBuffer byteArray)
+	{
 		X = byteArray.getDouble();
 		Y = byteArray.getDouble();
 		Z = byteArray.getDouble();
 	}
 
-	public void GetBytes(ByteBuffer byteArray) {
+	public void GetBytes(ByteBuffer byteArray)
+	{
 		byteArray.putDouble(X);
 		byteArray.putDouble(Y);
 		byteArray.putDouble(Z);
@@ -62,10 +66,12 @@ public class Vector3d
 
 	/**
 	 * Writes the raw bytes for this UUID to a byte array
-	 *
-	 * @param dest Destination byte array
-	 * @param pos Position in the destination array to start writeing.
-	 *        Must be at least 16 bytes before the end of the array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writeing. Must be
+	 *            at least 16 bytes before the end of the array
 	 */
 	public int ToBytes(byte[] dest, int pos)
 	{
@@ -90,7 +96,8 @@ public class Vector3d
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "" + X + " " + Y + " " + Z;
 	}
 
@@ -102,13 +109,13 @@ public class Vector3d
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector3d) ? equals((Vector3d)obj) : false;
+		return (obj instanceof Vector3d) ? equals((Vector3d) obj) : false;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return (int)X + (int)Y + (int)Z;
+		return (int) X + (int) Y + (int) Z;
 	}
 
 	/** A vector with a value of 0,0,0 */
@@ -117,7 +124,7 @@ public class Vector3d
 	public final static Vector3d One = new Vector3d(1d, 1d, 1d);
 	/** A unit vector facing forward (X axis), value 1,0,0 */
 	public final static Vector3d UnitX = new Vector3d(1d, 0d, 0d);
-	/** A unit vector facing left (Y axis), value 0,1,0	*/
+	/** A unit vector facing left (Y axis), value 0,1,0 */
 	public final static Vector3d UnitY = new Vector3d(0d, 1d, 0d);
 	/** A unit vector facing up (Z axis), value 0,0,1 */
 	public final static Vector3d UnitZ = new Vector3d(0d, 0d, 1d);

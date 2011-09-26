@@ -74,22 +74,26 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public boolean add(OSD osd) {
+	public boolean add(OSD osd)
+	{
 		return value.add(osd);
 	}
 
 	@Override
-	public void add(int index, OSD osd) {
+	public void add(int index, OSD osd)
+	{
 		value.add(index, osd);
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends OSD> coll) {
+	public boolean addAll(Collection<? extends OSD> coll)
+	{
 		return value.addAll(coll);
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends OSD> coll) {
+	public boolean addAll(int index, Collection<? extends OSD> coll)
+	{
 		return value.addAll(index, coll);
 	}
 
@@ -100,7 +104,8 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public boolean contains(Object obj) {
+	public boolean contains(Object obj)
+	{
 		return value.contains(obj);
 	}
 
@@ -118,47 +123,56 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> objs) {
+	public boolean containsAll(Collection<?> objs)
+	{
 		return value.containsAll(objs);
 	}
 
 	@Override
-	public OSD get(int index) {
+	public OSD get(int index)
+	{
 		return value.get(index);
 	}
 
 	@Override
-	public int indexOf(Object obj) {
+	public int indexOf(Object obj)
+	{
 		return value.indexOf(obj);
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty()
+	{
 		return size() == 0;
 	}
 
 	@Override
-	public Iterator<OSD> iterator() {
+	public Iterator<OSD> iterator()
+	{
 		return value.iterator();
 	}
 
 	@Override
-	public int lastIndexOf(Object obj) {
+	public int lastIndexOf(Object obj)
+	{
 		return value.lastIndexOf(obj);
 	}
 
 	@Override
-	public ListIterator<OSD> listIterator() {
+	public ListIterator<OSD> listIterator()
+	{
 		return value.listIterator();
 	}
 
 	@Override
-	public ListIterator<OSD> listIterator(int index) {
+	public ListIterator<OSD> listIterator(int index)
+	{
 		return value.listIterator(index);
 	}
 
 	@Override
-	public boolean remove(Object key) {
+	public boolean remove(Object key)
+	{
 		return value.remove(key);
 	}
 
@@ -168,42 +182,50 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public OSD remove(int key) {
+	public OSD remove(int key)
+	{
 		return value.remove(key);
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> values) {
+	public boolean removeAll(Collection<?> values)
+	{
 		return value.removeAll(values);
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> values) {
+	public boolean retainAll(Collection<?> values)
+	{
 		return value.retainAll(values);
 	}
 
 	@Override
-	public OSD set(int index, OSD osd) {
+	public OSD set(int index, OSD osd)
+	{
 		return value.set(index, osd);
 	}
 
 	@Override
-	public int size() {
+	public int size()
+	{
 		return value.size();
 	}
 
 	@Override
-	public List<OSD> subList(int from, int to) {
+	public List<OSD> subList(int from, int to)
+	{
 		return value.subList(from, to);
 	}
 
 	@Override
-	public Object[] toArray() {
+	public Object[] toArray()
+	{
 		return value.toArray();
 	}
 
 	@Override
-	public <T> T[] toArray(T[] arg) {
+	public <T> T[] toArray(T[] arg)
+	{
 		return value.toArray(arg);
 	}
 
@@ -214,7 +236,7 @@ public class OSDArray extends OSD implements List<OSD>
 
 		for (int i = 0; i < value.size(); i++)
 		{
-			binary[i] = (byte)value.get(i).AsInteger();
+			binary[i] = (byte) value.get(i).AsInteger();
 		}
 		return binary;
 	}
@@ -247,8 +269,8 @@ public class OSDArray extends OSD implements List<OSD>
 
 		if (this.size() == 2)
 		{
-			vector.X = (float)this.get(0).AsReal();
-			vector.Y = (float)this.get(1).AsReal();
+			vector.X = (float) this.get(0).AsReal();
+			vector.Y = (float) this.get(1).AsReal();
 		}
 
 		return vector;
@@ -261,9 +283,9 @@ public class OSDArray extends OSD implements List<OSD>
 
 		if (this.size() == 3)
 		{
-			vector.X = (float)this.get(0).AsReal();
-			vector.Y = (float)this.get(1).AsReal();
-			vector.Z = (float)this.get(2).AsReal();
+			vector.X = (float) this.get(0).AsReal();
+			vector.Y = (float) this.get(1).AsReal();
+			vector.Z = (float) this.get(2).AsReal();
 		}
 
 		return vector;
@@ -291,10 +313,10 @@ public class OSDArray extends OSD implements List<OSD>
 
 		if (this.size() == 4)
 		{
-			vector.X = (float)this.get(0).AsReal();
-			vector.Y = (float)this.get(1).AsReal();
-			vector.Z = (float)this.get(2).AsReal();
-			vector.S = (float)this.get(3).AsReal();
+			vector.X = (float) this.get(0).AsReal();
+			vector.Y = (float) this.get(1).AsReal();
+			vector.Z = (float) this.get(2).AsReal();
+			vector.S = (float) this.get(3).AsReal();
 		}
 		return vector;
 	}
@@ -306,10 +328,10 @@ public class OSDArray extends OSD implements List<OSD>
 
 		if (this.size() == 4)
 		{
-			quaternion.X = (float)this.get(0).AsReal();
-			quaternion.Y = (float)this.get(1).AsReal();
-			quaternion.Z = (float)this.get(2).AsReal();
-			quaternion.W = (float)this.get(3).AsReal();
+			quaternion.X = (float) this.get(0).AsReal();
+			quaternion.Y = (float) this.get(1).AsReal();
+			quaternion.Z = (float) this.get(2).AsReal();
+			quaternion.W = (float) this.get(3).AsReal();
 		}
 		return quaternion;
 	}
@@ -321,10 +343,10 @@ public class OSDArray extends OSD implements List<OSD>
 
 		if (this.size() == 4)
 		{
-			color.R = (float)this.get(0).AsReal();
-			color.G = (float)this.get(1).AsReal();
-			color.B = (float)this.get(2).AsReal();
-			color.A = (float)this.get(3).AsReal();
+			color.R = (float) this.get(0).AsReal();
+			color.G = (float) this.get(1).AsReal();
+			color.B = (float) this.get(2).AsReal();
+			color.A = (float) this.get(3).AsReal();
 		}
 		return color;
 	}
@@ -338,9 +360,12 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public String toString()
 	{
-		try {
+		try
+		{
 			return LLSDNotation.serializeToString(this);
-		} catch (IOException ex) {
+		}
+		catch (IOException ex)
+		{
 			ex.printStackTrace();
 		}
 		return null;

@@ -30,16 +30,19 @@ import libomv.packets.EstateOwnerMessagePacket;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class EstateTools {
+public class EstateTools
+{
 	private GridClient Client;
 
 	// <param name="client"></param>
-	public EstateTools(GridClient client) {
+	public EstateTools(GridClient client)
+	{
 		Client = client;
 	}
 
 	// <param name="prey"></param>
-	public void KickUser(UUID prey) throws Exception {
+	public void KickUser(UUID prey) throws Exception
+	{
 		EstateOwnerMessagePacket estate = new EstateOwnerMessagePacket();
 		estate.AgentData.AgentID = Client.Self.getAgentID();
 		estate.AgentData.SessionID = Client.Self.getSessionID();
@@ -53,19 +56,22 @@ public class EstateTools {
 	}
 
 	// <param name="prey"></param>
-	public void BanUser(UUID prey) {
+	public void BanUser(UUID prey)
+	{
 		// FIXME:
 		// Client.Network.SendPacket(Packets.Estate.EstateBan(Client.Protocol,Client.Avatar.ID,Client.Network.SessionID,prey));
 	}
 
 	// <param name="prey"></param>
-	public void UnBanUser(UUID prey) {
+	public void UnBanUser(UUID prey)
+	{
 		// FIXME:
 		// Client.Network.SendPacket(Packets.Estate.EstateUnBan(Client.Protocol,Client.Avatar.ID,Client.Network.SessionID,prey));
 	}
 
 	// <param name="prey"></param>
-	public void TeleportHomeUser(UUID prey) {
+	public void TeleportHomeUser(UUID prey)
+	{
 		// FIXME:
 		// Client.Network.SendPacket(Packets.Estate.EstateTeleportUser(Client.Protocol,Client.Avatar.ID,Client.Network.SessionID,prey));
 	}

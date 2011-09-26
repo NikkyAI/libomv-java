@@ -76,7 +76,7 @@ public class GridClient
 		public String support; // help, support
 		public String register; // register, account
 		public int version;
-		
+
 		public transient boolean saveSettings;
 		public transient boolean savePassword;
 		public transient String firstname; // firstname
@@ -84,10 +84,12 @@ public class GridClient
 		public transient String startLocation;
 
 		private transient String password; // password
+
 		public String getPassword()
 		{
 			return password;
 		}
+
 		public void setPassword(String password)
 		{
 			if (password.length() != 35 && !password.startsWith("$1$"))
@@ -495,7 +497,8 @@ public class GridClient
 			HttpResponse response = client.execute(getMethod);
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
 			{
-				throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+				throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine()
+						.getReasonPhrase());
 			}
 
 			HttpEntity entity = response.getEntity();

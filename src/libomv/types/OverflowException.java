@@ -26,10 +26,12 @@
  */
 package libomv.types;
 
-public class OverflowException extends Exception {
+public class OverflowException extends Exception
+{
 	private static final long serialVersionUID = 6009166824411508574L;
 
-	public OverflowException(String msg) {
+	public OverflowException(String msg)
+	{
 		super(msg);
 	}
 }

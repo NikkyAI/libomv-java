@@ -31,38 +31,40 @@ import libomv.types.UUID;
 /** Represents an Animation */
 public class AssetAnimation extends AssetItem
 {
-    // Override the base classes AssetType
-    @Override
+	// Override the base classes AssetType
+	@Override
 	public AssetItem.AssetType getAssetType()
-    {
-        return AssetItem.AssetType.Animation;
-    }
+	{
+		return AssetItem.AssetType.Animation;
+	}
 
-    // Default Constructor
-    public AssetAnimation()
-    {
-    }
+	// Default Constructor
+	public AssetAnimation()
+	{
+	}
 
-    /**
-     *  Construct an Asset object of type Animation
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetAnimation(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-        AssetData = assetData;
-    }
+	/**
+	 * Construct an Asset object of type Animation
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetAnimation(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+		AssetData = assetData;
+	}
 
-    @Override
+	@Override
 	public void Encode()
-    {
-    }
+	{
+	}
 
-    @Override
+	@Override
 	public boolean Decode()
-    {
-        return true;
-    }
+	{
+		return true;
+	}
 }

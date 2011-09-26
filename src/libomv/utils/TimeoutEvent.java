@@ -32,32 +32,33 @@ public class TimeoutEvent<T>
 
 	public synchronized void reset()
 	{
-		this.fired =  false;
+		this.fired = false;
 		this.object = null;
 		this.notifyAll();
 	}
 
 	public synchronized void set(T object)
 	{
-	   this.object = object;
-	   this.fired = (object != null);
-	   this.notifyAll();
+		this.object = object;
+		this.fired = (object != null);
+		this.notifyAll();
 	}
 
 	/**
 	 * Wait on the timeout to be triggerd or until the timeout occurres
-	 *
-	 * @param timeout The amount of milliseconds to wait. -1 will wait indefinitely
+	 * 
+	 * @param timeout
+	 *            The amount of milliseconds to wait. -1 will wait indefinitely
 	 * @return
 	 * @throws InterruptedException
 	 */
 	public synchronized T waitOne(long timeout) throws InterruptedException
 	{
-	    if (!fired)
-	        if (timeout < 0)
-	            wait(timeout);
-	        else
-	            wait();
-	    return object;
+		if (!fired)
+			if (timeout < 0)
+				wait(timeout);
+			else
+				wait();
+		return object;
 	}
 }

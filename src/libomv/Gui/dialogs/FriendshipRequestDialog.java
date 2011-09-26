@@ -46,11 +46,16 @@ public class FriendshipRequestDialog extends PopupQuestionDialog
 	/**
 	 * Constructor to create the friendship offered dialog
 	 * 
-	 * @param client The GridClient used to answer the result of the user decision
-	 * @param parent The parent object of this dialog
-	 * @param agentName The name of the Avatar offering friendship 
-	 * @param agentID The UID of the agent offering friendship 
-	 * @param sessionID The UID of the session to use when answering the request
+	 * @param client
+	 *            The GridClient used to answer the result of the user decision
+	 * @param parent
+	 *            The parent object of this dialog
+	 * @param agentName
+	 *            The name of the Avatar offering friendship
+	 * @param agentID
+	 *            The UID of the agent offering friendship
+	 * @param sessionID
+	 *            The UID of the session to use when answering the request
 	 */
 	public FriendshipRequestDialog(GridClient client, JFrame parent, String agentName, UUID agentID, UUID sessionID)
 	{
@@ -62,9 +67,11 @@ public class FriendshipRequestDialog extends PopupQuestionDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the accept button is activated
+	 * Get the {@link ActionListener} to be called when the accept button is
+	 * activated
 	 * 
-	 * @return The {@link ActionListener} to be called when the accept button is activated
+	 * @return The {@link ActionListener} to be called when the accept button is
+	 *         activated
 	 */
 	@Override
 	protected ActionListener getAcceptButtonActionListener()
@@ -82,7 +89,9 @@ public class FriendshipRequestDialog extends PopupQuestionDialog
 				{
 					_Client.Friends.AcceptFriendship(_AgentID, _SessionID);
 				}
-				catch (Exception ex) { }
+				catch (Exception ex)
+				{
+				}
 				// Destroy the form
 				setVisible(false);
 				dispose();
@@ -91,9 +100,11 @@ public class FriendshipRequestDialog extends PopupQuestionDialog
 	}
 
 	/**
-	 * Get the {@link ActionListener} to be called when the decline button is activated
+	 * Get the {@link ActionListener} to be called when the decline button is
+	 * activated
 	 * 
-	 * @return The {@link ActionListener} to be called when the decline button is activated
+	 * @return The {@link ActionListener} to be called when the decline button
+	 *         is activated
 	 */
 	@Override
 	protected ActionListener getDeclineButtonActionListener()
@@ -111,7 +122,9 @@ public class FriendshipRequestDialog extends PopupQuestionDialog
 				{
 					_Client.Friends.DeclineFriendship(_AgentID, _SessionID);
 				}
-				catch (Exception ex) { }
+				catch (Exception ex)
+				{
+				}
 				// Destroy the form
 				setVisible(false);
 				dispose();

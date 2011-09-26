@@ -48,21 +48,25 @@ public class OSDUUID extends OSD
 	{
 		return (value == null || value.equals(UUID.Zero)) ? false : true;
 	}
+
 	@Override
 	public String AsString()
 	{
 		return value.toString();
 	}
+
 	@Override
 	public UUID AsUUID()
 	{
 		return value;
 	}
+
 	@Override
 	public byte[] AsBinary()
 	{
 		return value.GetBytes();
 	}
+
 	@Override
 	public String toString()
 	{

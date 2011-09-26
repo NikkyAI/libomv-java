@@ -35,83 +35,91 @@ import libomv.utils.Helpers;
 // Represents a Landmark with RegionID and Position vector
 public class AssetLandmark extends AssetItem
 {
-    @Override
-	public  AssetType getAssetType()
-    {
-        return AssetType.Landmark;
-    }
+	@Override
+	public AssetType getAssetType()
+	{
+		return AssetType.Landmark;
+	}
 
-    // UUID of the Landmark target region
-    public UUID RegionID = UUID.Zero;
-    // Local position of the target
-    public Vector3 Position = Vector3.Zero;
+	// UUID of the Landmark target region
+	public UUID RegionID = UUID.Zero;
+	// Local position of the target
+	public Vector3 Position = Vector3.Zero;
 
-    // Construct an Asset of type Landmark
-    public AssetLandmark()
-    {
-    }
+	// Construct an Asset of type Landmark
+	public AssetLandmark()
+	{
+	}
 
-    /**
-     * Construct an Asset object of type Landmark
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetLandmark(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-        Decode();
-    }
+	/**
+	 * Construct an Asset object of type Landmark
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetLandmark(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+		Decode();
+	}
 
-    /**
-     * Constuct an asset of type Landmark
-     *
-     * @param regionID UUID of the target region
-     * @param pos Local position of landmark
-     */
-    public AssetLandmark(UUID regionID, Vector3 pos)
-    {
-        RegionID = regionID;
-        Position = pos;
-        Encode();
-    }
+	/**
+	 * Constuct an asset of type Landmark
+	 * 
+	 * @param regionID
+	 *            UUID of the target region
+	 * @param pos
+	 *            Local position of landmark
+	 */
+	public AssetLandmark(UUID regionID, Vector3 pos)
+	{
+		RegionID = regionID;
+		Position = pos;
+		Encode();
+	}
 
-    /**
-     * Encode the raw contents of a string with the specific Landmark format
-     *
-     */
-    @Override
+	/**
+	 * Encode the raw contents of a string with the specific Landmark format
+	 * 
+	 */
+	@Override
 	public void Encode()
-    {
-        String temp = "Landmark version 2\n";
-        temp += "region_id " + RegionID + "\n";
-        temp += String.format("local_pos %f %f %f\n", Position.X, Position.Y, Position.Z);
-        AssetData = Helpers.StringToBytes(temp);
-    }
+	{
+		String temp = "Landmark version 2\n";
+		temp += "region_id " + RegionID + "\n";
+		temp += String.format("local_pos %f %f %f\n", Position.X, Position.Y, Position.Z);
+		AssetData = Helpers.StringToBytes(temp);
+	}
 
-    /**
-     * Decode the raw asset data, populating the RegionID and Position
-     *
-     * @return true if the AssetData was successfully decoded to a UUID and Vector
-     */
-    @Override
-    public boolean Decode()
-    {
-    	try
+	/**
+	 * Decode the raw asset data, populating the RegionID and Position
+	 * 
+	 * @return true if the AssetData was successfully decoded to a UUID and
+	 *         Vector
+	 */
+	@Override
+	public boolean Decode()
+	{
+		try
 		{
 			String text = Helpers.BytesToString(AssetData);
-	        if (text.toLowerCase().contains("landmark version 2"))
-	        {
-	            RegionID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
-	            String[] vecStrings = text.substring(text.indexOf("local_pos") + 10).split(" ");
-	            if (vecStrings.length == 3)
-	            {
-	                Position = new Vector3(Helpers.TryParseFloat(vecStrings[0]), Helpers.TryParseFloat(vecStrings[1]), Helpers.TryParseFloat(vecStrings[2]));
-	                return true;
-	            }
-	        }
+			if (text.toLowerCase().contains("landmark version 2"))
+			{
+				RegionID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
+				String[] vecStrings = text.substring(text.indexOf("local_pos") + 10).split(" ");
+				if (vecStrings.length == 3)
+				{
+					Position = new Vector3(Helpers.TryParseFloat(vecStrings[0]), Helpers.TryParseFloat(vecStrings[1]),
+							Helpers.TryParseFloat(vecStrings[2]));
+					return true;
+				}
+			}
 		}
-		catch (UnsupportedEncodingException e) { }
-        return false;
-    }
+		catch (UnsupportedEncodingException e)
+		{
+		}
+		return false;
+	}
 }

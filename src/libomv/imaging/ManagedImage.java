@@ -2,86 +2,90 @@ package libomv.imaging;
 
 public class ManagedImage
 {
-    // [Flags]
-    public class ImageChannels
-    {
-        public static final byte Gray = 1;
-        public static final byte Color = 2;
-        public static final byte Alpha = 4;
-        public static final byte Bump = 8;
+	// [Flags]
+	public class ImageChannels
+	{
+		public static final byte Gray = 1;
+		public static final byte Color = 2;
+		public static final byte Alpha = 4;
+		public static final byte Bump = 8;
 
-        public void setValue(int value)
-        {
-        	_value = (byte)value;
-        }
+		public void setValue(int value)
+		{
+			_value = (byte) value;
+		}
 
-        public byte getValue()
-        {
-        	return _value;
-        }
-        private byte _value;
-    };
+		public byte getValue()
+		{
+			return _value;
+		}
 
-    public enum ImageResizeAlgorithm
-    {
-        NearestNeighbor
-    }
+		private byte _value;
+	};
 
-    // Image width
-    public int Width;
+	public enum ImageResizeAlgorithm
+	{
+		NearestNeighbor
+	}
 
-    // Image height
-    public int Height;
+	// Image width
+	public int Width;
 
-    // Image channel flags
-    public byte Channels;
+	// Image height
+	public int Height;
 
-    // Red channel data
-    public byte[] Red;
+	// Image channel flags
+	public byte Channels;
 
-    // Green channel data
-    public byte[] Green;
+	// Red channel data
+	public byte[] Red;
 
-    // Blue channel data
-    public byte[] Blue;
+	// Green channel data
+	public byte[] Green;
 
-    // Alpha channel data
-    public byte[] Alpha;
+	// Blue channel data
+	public byte[] Blue;
 
-    // Bump channel data
-    public byte[] Bump;
+	// Alpha channel data
+	public byte[] Alpha;
 
-    /**
-     * Create a new blank image
-     *
-     * @param width width
-     * @param height height
-     * @param channels channel flags
-     */
-    public ManagedImage(int width, int height, byte channels)
-    {
-        Width = width;
-        Height = height;
-        Channels = channels;
+	// Bump channel data
+	public byte[] Bump;
 
-        int n = width * height;
+	/**
+	 * Create a new blank image
+	 * 
+	 * @param width
+	 *            width
+	 * @param height
+	 *            height
+	 * @param channels
+	 *            channel flags
+	 */
+	public ManagedImage(int width, int height, byte channels)
+	{
+		Width = width;
+		Height = height;
+		Channels = channels;
 
-        if ((channels & ImageChannels.Gray) != 0)
-        {
-            Red = new byte[n];
-        }
-        else if ((channels & ImageChannels.Color) != 0)
-        {
-            Red = new byte[n];
-            Green = new byte[n];
-            Blue = new byte[n];
-        }
+		int n = width * height;
 
-        if ((channels & ImageChannels.Alpha) != 0)
-            Alpha = new byte[n];
+		if ((channels & ImageChannels.Gray) != 0)
+		{
+			Red = new byte[n];
+		}
+		else if ((channels & ImageChannels.Color) != 0)
+		{
+			Red = new byte[n];
+			Green = new byte[n];
+			Blue = new byte[n];
+		}
 
-        if ((channels & ImageChannels.Bump) != 0)
-            Bump = new byte[n];
-    }
+		if ((channels & ImageChannels.Alpha) != 0)
+			Alpha = new byte[n];
+
+		if ((channels & ImageChannels.Bump) != 0)
+			Bump = new byte[n];
+	}
 
 }

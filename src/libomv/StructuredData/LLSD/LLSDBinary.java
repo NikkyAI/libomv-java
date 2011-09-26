@@ -38,7 +38,6 @@ package libomv.StructuredData.LLSD;
 // *
 //
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,28 +57,32 @@ public final class LLSDBinary
 	private static final int int32Length = 4;
 	private static final int doubleLength = 8;
 
-	private static final byte[] llsdBinaryHead = {'<','?','l','l','s','d','/','b','i','n','a','r','y','?','>','\n'};
-	private static final byte undefBinaryValue = (byte)'!';
-	private static final byte trueBinaryValue = (byte)'1';
-	private static final byte falseBinaryValue = (byte)'0';
-	private static final byte integerBinaryMarker = (byte)'i';
-	private static final byte realBinaryMarker = (byte)'r';
-	private static final byte uuidBinaryMarker = (byte)'u';
-	private static final byte binaryBinaryMarker = (byte)'b';
-	private static final byte stringBinaryMarker = (byte)'s';
-	private static final byte uriBinaryMarker = (byte)'l';
-	private static final byte dateBinaryMarker = (byte)'d';
-	private static final byte arrayBeginBinaryMarker = (byte)'[';
-	private static final byte arrayEndBinaryMarker = (byte)']';
-	private static final byte mapBeginBinaryMarker = (byte)'{';
-	private static final byte mapEndBinaryMarker = (byte)'}';
-	private static final byte keyBinaryMarker = (byte)'k';
+	private static final byte[] llsdBinaryHead = { '<', '?', 'l', 'l', 's', 'd', '/', 'b', 'i', 'n', 'a', 'r', 'y',
+			'?', '>', '\n' };
+	private static final byte undefBinaryValue = (byte) '!';
+	private static final byte trueBinaryValue = (byte) '1';
+	private static final byte falseBinaryValue = (byte) '0';
+	private static final byte integerBinaryMarker = (byte) 'i';
+	private static final byte realBinaryMarker = (byte) 'r';
+	private static final byte uuidBinaryMarker = (byte) 'u';
+	private static final byte binaryBinaryMarker = (byte) 'b';
+	private static final byte stringBinaryMarker = (byte) 's';
+	private static final byte uriBinaryMarker = (byte) 'l';
+	private static final byte dateBinaryMarker = (byte) 'd';
+	private static final byte arrayBeginBinaryMarker = (byte) '[';
+	private static final byte arrayEndBinaryMarker = (byte) ']';
+	private static final byte mapBeginBinaryMarker = (byte) '{';
+	private static final byte mapEndBinaryMarker = (byte) '}';
+	private static final byte keyBinaryMarker = (byte) 'k';
 
-	/** Creates an OSD (object structured data) object from a binary data stream
-
-	    @param stream The byte stream to read from
-	    @return and OSD object
-	 *  @throws IOException, OSDException
+	/**
+	 * Creates an OSD (object structured data) object from a binary data stream
+	 * 
+	 * @param stream
+	 *            The byte stream to read from
+	 * @return and OSD object
+	 * @throws IOException
+	 *             , OSDException
 	 */
 	public static OSD parse(InputStream instr) throws IOException, ParseException
 	{
@@ -128,7 +131,7 @@ public final class LLSDBinary
 				stream.write(uuidBinaryMarker);
 				stream.write(osd.AsBinary(), 0, 16);
 				break;
-		    case String:
+			case String:
 				rawBinary = osd.AsBinary();
 				stream.write(stringBinaryMarker);
 				stream.write(Helpers.Int32ToBytesB(rawBinary.length));
@@ -151,14 +154,14 @@ public final class LLSDBinary
 				stream.write(rawBinary, 0, rawBinary.length);
 				break;
 			case Array:
-				serializeLLSDBinaryArray(stream, (OSDArray)osd);
+				serializeLLSDBinaryArray(stream, (OSDArray) osd);
 				break;
 			case Map:
-				serializeLLSDBinaryMap(stream, (OSDMap)osd);
+				serializeLLSDBinaryMap(stream, (OSDMap) osd);
 				break;
 			default:
 				throw new IOException("Binary serialization: Not existing element discovered.");
-			}
+		}
 	}
 
 	private static void serializeLLSDBinaryArray(OutputStream stream, OSDArray osdArray) throws IOException
@@ -199,7 +202,7 @@ public final class LLSDBinary
 			throw new ParseException("Binary LLSD parsing: Unexpected end of stream.", 1);
 		}
 
-		switch ((byte)marker)
+		switch ((byte) marker)
 		{
 			case undefBinaryValue:
 				osd = new OSD();
@@ -238,7 +241,8 @@ public final class LLSDBinary
 				}
 				catch (URISyntaxException ex)
 				{
-					throw new ParseException("Binary LLSD parsing: Invalid Uri format detected: " + ex.getMessage(), stream.getBytePosition());
+					throw new ParseException("Binary LLSD parsing: Invalid Uri format detected: " + ex.getMessage(),
+							stream.getBytePosition());
 				}
 				osd = OSD.FromUri(uri);
 				break;
@@ -254,7 +258,7 @@ public final class LLSDBinary
 				break;
 			default:
 				throw new ParseException("Binary LLSD parsing: Unknown type marker.", stream.getBytePosition());
-			}
+		}
 		return osd;
 	}
 
@@ -300,15 +304,15 @@ public final class LLSDBinary
 	}
 
 	/**
-
-	 @param stream
+	 * @param stream
 	 * @throws IOException
-	*/
+	 */
 	private static void skipWhiteSpace(LLSDInputStream stream) throws IOException
 	{
 		int bt;
-		while (((bt = stream.read()) > 0) &&
-			   ((byte)bt == ' ' || (byte)bt == '\t' || (byte)bt == '\n' || (byte)bt == '\r'));
+		while (((bt = stream.read()) > 0)
+				&& ((byte) bt == ' ' || (byte) bt == '\t' || (byte) bt == '\n' || (byte) bt == '\r'))
+			;
 		stream.unread(bt);
 	}
 
@@ -319,7 +323,7 @@ public final class LLSDBinary
 		{
 			return false;
 		}
-		if ((byte)bt == toFind)
+		if ((byte) bt == toFind)
 		{
 			return true;
 		}
@@ -331,7 +335,7 @@ public final class LLSDBinary
 	{
 		if (toFind.length == 0)
 		{
-		    return false;
+			return false;
 		}
 
 		boolean found = true;
@@ -340,7 +344,7 @@ public final class LLSDBinary
 
 		while (found && ((bt = stream.read()) > 0) && (crrIndex < toFind.length))
 		{
-			if (toFind[crrIndex] == (byte)bt)
+			if (toFind[crrIndex] == (byte) bt)
 			{
 				found = true;
 				crrIndex++;

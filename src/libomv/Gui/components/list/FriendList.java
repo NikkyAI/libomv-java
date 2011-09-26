@@ -48,7 +48,7 @@ public class FriendList extends JList
 	private GridClient _Client;
 
 	/**
-	 * Constructs a list to display 
+	 * Constructs a list to display
 	 */
 	public FriendList(GridClient client)
 	{
@@ -73,34 +73,35 @@ public class FriendList extends JList
 						if (e.getClickCount() >= 2)
 						{
 							// Get the associated agent.
-							FriendInfo friend = (FriendInfo)getSelectedValue();
-							// Only allow creation of a chat window if the avatar name is resolved.
+							FriendInfo friend = (FriendInfo) getSelectedValue();
+							// Only allow creation of a chat window if the
+							// avatar name is resolved.
 							if (friend.getName() != null && !friend.getName().isEmpty())
 							{
 								// TODO: Create a private chat
 							}
 						}
-					}	
+					}
 					// If the right mouse button was pressed...
 					else if (SwingUtilities.isRightMouseButton(e))
 					{
-						FriendPopupMenu fpm = new FriendPopupMenu(_Client, (FriendInfo)(getSelectedValue()));
+						FriendPopupMenu fpm = new FriendPopupMenu(_Client, (FriendInfo) (getSelectedValue()));
 						fpm.show(getJList(), e.getX(), e.getY());
 					}
-				} 
+				}
 			}
 		});
-		
+
 		// install friend change event handlers
 		_Client.Friends.OnFriendRights.add(new FriendRightsChanged());
 		_Client.Friends.OnFriendNotification.add(new FriendNotification());
-		
+
 		// create Renderer and display
 		setCellRenderer(new FriendListRow());
 		// only allow single selections.
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
-	
+
 	private final JList getJList()
 	{
 		return this;
@@ -113,8 +114,8 @@ public class FriendList extends JList
 		{
 			if (arg1 instanceof FriendInfo && arg1 instanceof FriendInfo)
 			{
-				FriendInfo info1 = (FriendInfo)arg1;
-				FriendInfo info2 = (FriendInfo)arg2;
+				FriendInfo info1 = (FriendInfo) arg1;
+				FriendInfo info2 = (FriendInfo) arg2;
 				if (info1.getIsOnline() == (info2.getIsOnline()))
 				{
 					return info1.getName().compareToIgnoreCase(info2.getName());
@@ -132,22 +133,22 @@ public class FriendList extends JList
 		@Override
 		public void callback(FriendRightsCallbackArgs a)
 		{
-			DefaultListModel list = (DefaultListModel)((SortedListModel)getModel()).getUnsortedModel();
+			DefaultListModel list = (DefaultListModel) ((SortedListModel) getModel()).getUnsortedModel();
 			int idx = list.indexOf(a.getFriendInfo());
 			if (idx >= 0)
 				list.setElementAt(a.getFriendInfo(), idx);
 		}
 	}
-	
+
 	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
 		public void callback(FriendNotificationCallbackArgs a)
 		{
-			DefaultListModel list = (DefaultListModel)((SortedListModel)getModel()).getUnsortedModel();
-			for (Enumeration<?> e = list.elements(); e.hasMoreElements(); )
+			DefaultListModel list = (DefaultListModel) ((SortedListModel) getModel()).getUnsortedModel();
+			for (Enumeration<?> e = list.elements(); e.hasMoreElements();)
 			{
-				FriendInfo info = (FriendInfo)e.nextElement();
+				FriendInfo info = (FriendInfo) e.nextElement();
 				if (info.getUUID().equals(a.getAgentID()))
 				{
 					info.setIsOnline(a.getOnline());
@@ -283,7 +284,7 @@ public class FriendList extends JList
 			return this;
 		}
 	}
-	
+
 	public class FriendPopupMenu extends JPopupMenu
 	{
 		private static final long serialVersionUID = 1L;
@@ -310,8 +311,10 @@ public class FriendList extends JList
 		/**
 		 * Constructor
 		 * 
-		 * @param client The client to use to communicate with the grid
-		 * @param info The friend to generate the menu for.
+		 * @param client
+		 *            The client to use to communicate with the grid
+		 * @param info
+		 *            The friend to generate the menu for.
 		 */
 		public FriendPopupMenu(GridClient client, FriendInfo info)
 		{
@@ -338,7 +341,7 @@ public class FriendList extends JList
 					add(getJmiAutopilotTo());
 					add(new JPopupMenu.Separator());
 				}
-				
+
 			}
 			// Allow removing as a friend.
 			add(getJmiRemoveAsFriend());
@@ -351,7 +354,7 @@ public class FriendList extends JList
 		 */
 		private JMenuItem getJmiSendMessage()
 		{
-			if(jmiSendMessage == null)
+			if (jmiSendMessage == null)
 			{
 				jmiSendMessage = new JMenuItem("Send message");
 				// Add an ActionListener.
@@ -360,7 +363,8 @@ public class FriendList extends JList
 					/**
 					 * Called when an action is performed
 					 * 
-					 * @param e The ActionEvent
+					 * @param e
+					 *            The ActionEvent
 					 */
 					@Override
 					public void actionPerformed(ActionEvent e)
@@ -381,7 +385,7 @@ public class FriendList extends JList
 		 */
 		private JMenuItem getJmiProfile()
 		{
-			if(jmiProfile == null)
+			if (jmiProfile == null)
 			{
 				jmiProfile = new JMenuItem("Profile ..");
 				// add an ActionListener
@@ -390,13 +394,15 @@ public class FriendList extends JList
 					/**
 					 * Called when an action is performed
 					 * 
-					 * @param e The ActionEvent
+					 * @param e
+					 *            The ActionEvent
 					 */
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
 						// TODO: request avatar profile
-//						_Client.Avatars.RequestAvatarProfile(_Info.getUUID(), _Info.getName());
+						// _Client.Avatars.RequestAvatarProfile(_Info.getUUID(),
+						// _Info.getName());
 					}
 				});
 			}
@@ -419,7 +425,8 @@ public class FriendList extends JList
 					/**
 					 * Called when an action is performed
 					 * 
-					 * @param e The ActionEvent
+					 * @param e
+					 *            The ActionEvent
 					 */
 					@Override
 					public void actionPerformed(ActionEvent e)
@@ -438,19 +445,22 @@ public class FriendList extends JList
 		 */
 		private JMenuItem getJmiOfferTeleport()
 		{
-			if(jmiOfferTeleport == null)
+			if (jmiOfferTeleport == null)
 			{
 				jmiOfferTeleport = new JMenuItem("Offer Teleport ..");
 				// Add an action listener.
-				jmiOfferTeleport.addActionListener(new ActionListener() {
+				jmiOfferTeleport.addActionListener(new ActionListener()
+				{
 					/**
 					 * Called when an action is performed
 					 * 
-					 * @param e The ActionEvent
+					 * @param e
+					 *            The ActionEvent
 					 */
 					@Override
-					public void actionPerformed(ActionEvent e){
-						
+					public void actionPerformed(ActionEvent e)
+					{
+
 						// Offer teleportation.
 						try
 						{
@@ -473,7 +483,7 @@ public class FriendList extends JList
 		 */
 		private JMenuItem getJmiRemoveAsFriend()
 		{
-			if(jmiRemoveAsFriend == null)
+			if (jmiRemoveAsFriend == null)
 			{
 				jmiRemoveAsFriend = new JMenuItem("Remove ..");
 				// Add an action listener
@@ -482,7 +492,8 @@ public class FriendList extends JList
 					/**
 					 * Called when an action is performed
 					 * 
-					 * @param e The ActionEvent
+					 * @param e
+					 *            The ActionEvent
 					 */
 					@Override
 					public void actionPerformed(ActionEvent e)
@@ -509,7 +520,7 @@ public class FriendList extends JList
 		 */
 		private JMenuItem getJmiTeleportTo()
 		{
-			if(jmiTeleportTo == null)
+			if (jmiTeleportTo == null)
 			{
 				jmiTeleportTo = new JMenuItem("Teleport to");
 				// Add an ActionListener
@@ -518,7 +529,8 @@ public class FriendList extends JList
 					/**
 					 * Called when an action is performed
 					 * 
-					 * @param e The ActionEvent
+					 * @param e
+					 *            The ActionEvent
 					 */
 					@Override
 					public void actionPerformed(ActionEvent e)
@@ -540,14 +552,14 @@ public class FriendList extends JList
 		}
 
 		/**
-		 * Get the autopilot to menu item.
-		 * If it has not been initialised, it is initialised upon first call.
+		 * Get the autopilot to menu item. If it has not been initialised, it is
+		 * initialised upon first call.
 		 * 
 		 * @return The autopilot to menu item.
 		 */
 		private JMenuItem getJmiAutopilotTo()
 		{
-			if(jmiAutopilotTo == null)
+			if (jmiAutopilotTo == null)
 			{
 				jmiAutopilotTo = new JMenuItem("Autopilot to");
 				// Add an ActionListener.
@@ -556,7 +568,8 @@ public class FriendList extends JList
 					/**
 					 * Called when an action is performed.
 					 * 
-					 * @param e The ActionEvent.
+					 * @param e
+					 *            The ActionEvent.
 					 */
 					@Override
 					public void actionPerformed(ActionEvent e)
@@ -565,7 +578,7 @@ public class FriendList extends JList
 						try
 						{
 							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getUUID());
-							_Client.Self.AutoPilotLocal((int)pos.X, (int)pos.Y, pos.Y);
+							_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
 						}
 						catch (Exception ex)
 						{
@@ -576,5 +589,5 @@ public class FriendList extends JList
 			}
 			return jmiAutopilotTo;
 		}
-	}	
+	}
 }

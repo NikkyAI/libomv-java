@@ -56,8 +56,10 @@ public abstract class PopupDialog extends JDialog
 	/**
 	 * Method to determine where to wrap text within a JLabel
 	 * 
-	 * @param label The label
-	 * @param text The text
+	 * @param label
+	 *            The label
+	 * @param text
+	 *            The text
 	 */
 	protected void wrapLabelText(JLabel label, String text)
 	{
@@ -75,7 +77,7 @@ public abstract class PopupDialog extends JDialog
 		int start = 0;
 
 		String word = null;
-		
+
 		// While there are remaining boundaries
 		for (int end = breakIterator.next(); end != BreakIterator.DONE; start = end, end = breakIterator.next())
 		{
@@ -101,7 +103,8 @@ public abstract class PopupDialog extends JDialog
 
 				if (!wasTag)
 				{
-					// Reset the trial (but keep the word in buffer as we will put this on the next line)
+					// Reset the trial (but keep the word in buffer as we will
+					// put this on the next line)
 					currentLine = new StringBuffer(word);
 				}
 				else

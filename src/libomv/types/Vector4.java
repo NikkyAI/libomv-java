@@ -40,45 +40,50 @@ public class Vector4
 
 	public float S;
 
-	public Vector4(float val) {
+	public Vector4(float val)
+	{
 		X = Y = Z = S = val;
 	}
 
-	public Vector4(ByteBuffer byteArray) {
+	public Vector4(ByteBuffer byteArray)
+	{
 		X = byteArray.getFloat();
 		Y = byteArray.getFloat();
 		Z = byteArray.getFloat();
 		S = byteArray.getFloat();
 	}
 
-	public Vector4(float x, float y, float z, float s) {
+	public Vector4(float x, float y, float z, float s)
+	{
 		X = x;
 		Y = y;
 		Z = z;
 		S = s;
 	}
 
-	public Vector4(byte[] objectData, int pos) {
+	public Vector4(byte[] objectData, int pos)
+	{
 		this(objectData, pos, false);
 	}
 
-	public Vector4(byte[] objectData, int pos, boolean bigEndian) {
+	public Vector4(byte[] objectData, int pos, boolean bigEndian)
+	{
 		if (objectData.length >= (pos + 16))
 		{
-		    if (bigEndian)
-		    {
-			    X = Helpers.BytesToFloatB(objectData, pos);
-		        Y = Helpers.BytesToFloatB(objectData, pos + 4);
-		        Z = Helpers.BytesToFloatB(objectData, pos + 8);
-		        S = Helpers.BytesToFloatB(objectData, pos + 12);
-		    }
-		    else
-		    {
-			    X = Helpers.BytesToFloatL(objectData, pos);
-		        Y = Helpers.BytesToFloatL(objectData, pos + 4);
-		        Z = Helpers.BytesToFloatL(objectData, pos + 8);
-		        S = Helpers.BytesToFloatL(objectData, pos + 12);
-		    }
+			if (bigEndian)
+			{
+				X = Helpers.BytesToFloatB(objectData, pos);
+				Y = Helpers.BytesToFloatB(objectData, pos + 4);
+				Z = Helpers.BytesToFloatB(objectData, pos + 8);
+				S = Helpers.BytesToFloatB(objectData, pos + 12);
+			}
+			else
+			{
+				X = Helpers.BytesToFloatL(objectData, pos);
+				Y = Helpers.BytesToFloatL(objectData, pos + 4);
+				Z = Helpers.BytesToFloatL(objectData, pos + 8);
+				S = Helpers.BytesToFloatL(objectData, pos + 12);
+			}
 		}
 		else
 		{
@@ -96,43 +101,51 @@ public class Vector4
 	}
 
 	// <returns></returns>
-	public void GetBytes(ByteBuffer byteArray) {
+	public void GetBytes(ByteBuffer byteArray)
+	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
 		byteArray.putFloat(Z);
 		byteArray.putFloat(S);
 	}
 
-	/** Serializes this color into four bytes in a byte array
-	 *
-	 *  @param dest Destination byte array
-	 *  @param pos Position in the destination array to start writing.
-	 *         Must be at least 4 bytes before the end of the array
-	 *  @return number of bytes filled to the byte array
+	/**
+	 * Serializes this color into four bytes in a byte array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
+	 *            least 4 bytes before the end of the array
+	 * @return number of bytes filled to the byte array
 	 */
 	public int ToBytes(byte[] bytes)
 	{
 		return ToBytes(bytes, 0);
 	}
 
-	/** Serializes this color into four bytes in a byte array
-	 *
-	 *  @param dest Destination byte array
-	 *  @param pos Position in the destination array to start writing.
-	 *         Must be at least 4 bytes before the end of the array
-	 *  @return number of bytes filled to the byte array
+	/**
+	 * Serializes this color into four bytes in a byte array
+	 * 
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
+	 *            least 4 bytes before the end of the array
+	 * @return number of bytes filled to the byte array
 	 */
 	public int ToBytes(byte[] dest, int pos)
 	{
-		pos =+ Helpers.FloatToBytesL(X, dest, pos);
-		pos =+ Helpers.FloatToBytesL(Y, dest, pos);
-		pos =+ Helpers.FloatToBytesL(Z, dest, pos);
-		pos =+ Helpers.FloatToBytesL(S, dest, pos);
+		pos = +Helpers.FloatToBytesL(X, dest, pos);
+		pos = +Helpers.FloatToBytesL(Y, dest, pos);
+		pos = +Helpers.FloatToBytesL(Z, dest, pos);
+		pos = +Helpers.FloatToBytesL(S, dest, pos);
 		return 16;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "" + X + " " + Y + " " + Z + " " + S;
 	}
 
@@ -144,13 +157,13 @@ public class Vector4
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector4) ? equals((Vector4)obj) : false;
+		return (obj instanceof Vector4) ? equals((Vector4) obj) : false;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return (int)X + (int)Y + (int)Z + (int)S;
+		return (int) X + (int) Y + (int) Z + (int) S;
 	}
 
 	/** A vector with a value of 0,0,0,0 */
@@ -159,7 +172,7 @@ public class Vector4
 	public final static Vector4 One = new Vector4(1f, 1f, 1f, 1f);
 	/** A unit vector facing forward (X axis), value 1,0,0,0 */
 	public final static Vector4 UnitX = new Vector4(1f, 0f, 0f, 0f);
-	/** A unit vector facing left (Y axis), value 0,1,0,0	*/
+	/** A unit vector facing left (Y axis), value 0,1,0,0 */
 	public final static Vector4 UnitY = new Vector4(0f, 1f, 0f, 0f);
 	/** A unit vector facing up (Z axis), value 0,0,1,0 */
 	public final static Vector4 UnitZ = new Vector4(0f, 0f, 1f, 0f);

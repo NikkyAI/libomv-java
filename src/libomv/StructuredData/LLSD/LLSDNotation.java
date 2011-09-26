@@ -48,7 +48,7 @@ public final class LLSDNotation
 {
 	private static final String baseIndent = "  ";
 
-	private static final char[] newLine = {'\n'};
+	private static final char[] newLine = { '\n' };
 
 	private static final char undefNotationValue = '!';
 
@@ -114,8 +114,9 @@ public final class LLSDNotation
 
 	/**
 	 * Read the next LLSD data element in and return the OSD structure for it
-	 *
-	 * @param reader a pushback reader to read in data from
+	 * 
+	 * @param reader
+	 *            a pushback reader to read in data from
 	 * @return the OSD data corresponding to the LLSD data element
 	 * @throws IOException
 	 */
@@ -124,12 +125,13 @@ public final class LLSDNotation
 		int character = skipWhitespace(reader);
 		if (character <= 0)
 		{
-			return new OSD(); // server returned an empty file, so we're going to pass along a null LLSD object
+			return new OSD(); // server returned an empty file, so we're going
+								// to pass along a null LLSD object
 		}
 
 		OSD osd;
 		int matching;
-		switch ((char)character)
+		switch ((char) character)
 		{
 			case undefNotationValue:
 				osd = new OSD();
@@ -141,7 +143,8 @@ public final class LLSDNotation
 				matching = BufferCharactersEqual(reader, trueNotationValueTwoFull, 1);
 				if (matching > 1 && matching < trueNotationValueTwoFull.length)
 				{
-					throw new ParseException("Notation LLSD parsing: True value parsing error:", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: True value parsing error:",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromBoolean(true);
 				break;
@@ -149,7 +152,8 @@ public final class LLSDNotation
 				matching = BufferCharactersEqual(reader, trueNotationValueThreeFull, 1);
 				if (matching > 1 && matching < trueNotationValueThreeFull.length)
 				{
-					throw new ParseException("Notation LLSD parsing: True value parsing error:", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: True value parsing error:",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromBoolean(true);
 				break;
@@ -160,7 +164,8 @@ public final class LLSDNotation
 				matching = BufferCharactersEqual(reader, falseNotationValueTwoFull, 1);
 				if (matching > 1 && matching < falseNotationValueTwoFull.length)
 				{
-					throw new ParseException("Notation LLSD parsing: True value parsing error:", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: True value parsing error:",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromBoolean(false);
 				break;
@@ -168,7 +173,8 @@ public final class LLSDNotation
 				matching = BufferCharactersEqual(reader, falseNotationValueThreeFull, 1);
 				if (matching > 1 && matching < falseNotationValueThreeFull.length)
 				{
-					throw new ParseException("Notation LLSD parsing: True value parsing error:", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: True value parsing error:",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromBoolean(false);
 				break;
@@ -182,7 +188,8 @@ public final class LLSDNotation
 				char[] uuidBuf = new char[36];
 				if (reader.read(uuidBuf, 0, 36) < 36)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in UUID.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in UUID.",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromUUID(new UUID(uuidBuf.toString()));
 				break;
@@ -191,32 +198,37 @@ public final class LLSDNotation
 				int bChar = reader.read();
 				if (bChar < 0)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.",
+							reader.getBytePosition());
 				}
 				else if (bChar == sizeBeginNotationMarker)
 				{
-					throw new ParseException("Notation LLSD parsing: Raw binary encoding not supported.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Raw binary encoding not supported.",
+							reader.getBytePosition());
 				}
-				else if (Character.isDigit((char)bChar))
+				else if (Character.isDigit((char) bChar))
 				{
 					char[] charsBaseEncoding = new char[2];
 					if (reader.read(charsBaseEncoding, 0, 2) < 2)
 					{
-						throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.", reader.getBytePosition());
+						throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.",
+								reader.getBytePosition());
 					}
 					int baseEncoding = new Integer(new String(charsBaseEncoding));
 					if (baseEncoding == 64)
 					{
 						if (reader.read() < 0)
 						{
-							throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.", reader.getBytePosition());
+							throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.",
+									reader.getBytePosition());
 						}
 						String bytes64 = GetStringDelimitedBy(reader, doubleQuotesNotationMarker);
 						bytes = Base64.decodeBase64(bytes64);
 					}
 					else
 					{
-						throw new ParseException("Notation LLSD parsing: Encoding base" + baseEncoding + " + not supported.", reader.getBytePosition());
+						throw new ParseException("Notation LLSD parsing: Encoding base" + baseEncoding
+								+ " + not supported.", reader.getBytePosition());
 					}
 				}
 				osd = OSD.FromBinary(bytes);
@@ -225,16 +237,19 @@ public final class LLSDNotation
 				int numChars = GetLengthInBrackets(reader);
 				if (reader.read() < 0)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
+							reader.getBytePosition());
 				}
 				char[] chars = new char[numChars];
 				if (reader.read(chars, 0, numChars) < numChars)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
+							reader.getBytePosition());
 				}
 				if (reader.read() < 0)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromString(new String(chars));
 				break;
@@ -249,7 +264,8 @@ public final class LLSDNotation
 			case uriNotationMarker:
 				if (reader.read() < 0)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
+							reader.getBytePosition());
 				}
 				URI uri;
 				try
@@ -258,17 +274,19 @@ public final class LLSDNotation
 				}
 				catch (Throwable t)
 				{
-					throw new ParseException("Notation LLSD parsing: Invalid Uri format detected.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Invalid Uri format detected.",
+							reader.getBytePosition());
 				}
 				osd = OSD.FromUri(uri);
 				break;
 			case dateNotationMarker:
 				if (reader.read() < 0)
 				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in date.", reader.getBytePosition());
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in date.",
+							reader.getBytePosition());
 				}
 				String date = GetStringDelimitedBy(reader, doubleQuotesNotationMarker);
-			    osd = OSD.FromDate(new OSDString(date).AsDate());
+				osd = OSD.FromDate(new OSDString(date).AsDate());
 				break;
 			case arrayBeginNotationMarker:
 				osd = parseArray(reader);
@@ -277,7 +295,8 @@ public final class LLSDNotation
 				osd = parseMap(reader);
 				break;
 			default:
-				throw new ParseException("Notation LLSD parsing: Unknown type marker '" + (char)character + "'.", reader.getBytePosition());
+				throw new ParseException("Notation LLSD parsing: Unknown type marker '" + (char) character + "'.",
+						reader.getBytePosition());
 		}
 		return osd;
 	}
@@ -286,13 +305,13 @@ public final class LLSDNotation
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
-		if (((character = reader.read()) > 0) && ((char)character == '-'))
+		if (((character = reader.read()) > 0) && ((char) character == '-'))
 		{
-			s.append((char)character);
+			s.append((char) character);
 		}
-		while (character >= 0 && Character.isDigit((char)character))
+		while (character >= 0 && Character.isDigit((char) character))
 		{
-			s.append((char)character);
+			s.append((char) character);
 			character = reader.read();
 		}
 		if (character >= 0)
@@ -306,13 +325,15 @@ public final class LLSDNotation
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
-		if (((character = reader.read()) > 0) && ((char)character == '-' && (char)character == '+'))
+		if (((character = reader.read()) > 0) && ((char) character == '-' && (char) character == '+'))
 		{
-			s.append((char)character);
+			s.append((char) character);
 		}
-		while ((character >= 0) && (Character.isDigit((char)character) || (char)character == '.' || (char)character == 'e' || (char)character == 'E' || (char)character == '+' || (char)character == '-'))
+		while ((character >= 0)
+				&& (Character.isDigit((char) character) || (char) character == '.' || (char) character == 'e'
+						|| (char) character == 'E' || (char) character == '+' || (char) character == '-'))
 		{
-			s.append((char)character);
+			s.append((char) character);
 			character = reader.read();
 		}
 		if (character >= 0)
@@ -326,7 +347,7 @@ public final class LLSDNotation
 	{
 		int character;
 		OSDArray osdArray = new OSDArray();
-		while (((character = skipWhitespace(reader)) > 0) && ((char)character != arrayEndNotationMarker))
+		while (((character = skipWhitespace(reader)) > 0) && ((char) character != arrayEndNotationMarker))
 		{
 			reader.unread(character);
 			osdArray.add(parseElement(reader));
@@ -334,16 +355,18 @@ public final class LLSDNotation
 			character = skipWhitespace(reader);
 			if (character < 0)
 			{
-				throw new ParseException("Notation LLSD parsing: Unexpected end of array discovered.", reader.getBytePosition());
+				throw new ParseException("Notation LLSD parsing: Unexpected end of array discovered.",
+						reader.getBytePosition());
 			}
-			else if ((char)character == arrayEndNotationMarker)
+			else if ((char) character == arrayEndNotationMarker)
 			{
 				break;
 			}
 		}
 		if (character < 0)
 		{
-			throw new ParseException("Notation LLSD parsing: Unexpected end of array discovered.", reader.getBytePosition());
+			throw new ParseException("Notation LLSD parsing: Unexpected end of array discovered.",
+					reader.getBytePosition());
 		}
 		return osdArray;
 	}
@@ -352,7 +375,7 @@ public final class LLSDNotation
 	{
 		int character;
 		OSDMap osdMap = new OSDMap();
-		while (((character = skipWhitespace(reader)) > 0) && ((char)character != mapEndNotationMarker))
+		while (((character = skipWhitespace(reader)) > 0) && ((char) character != mapEndNotationMarker))
 		{
 			reader.unread(character);
 			OSD osdKey = parseElement(reader);
@@ -363,11 +386,12 @@ public final class LLSDNotation
 			String key = osdKey.AsString();
 
 			character = skipWhitespace(reader);
-			if ((char)character != keyNotationDelimiter)
+			if ((char) character != keyNotationDelimiter)
 			{
-				throw new ParseException("Notation LLSD parsing: Unexpected end of stream in map.", reader.getBytePosition());
+				throw new ParseException("Notation LLSD parsing: Unexpected end of stream in map.",
+						reader.getBytePosition());
 			}
-			if ((char)character != keyNotationDelimiter)
+			if ((char) character != keyNotationDelimiter)
 			{
 				throw new ParseException("Notation LLSD parsing: Invalid delimiter in map.", reader.getBytePosition());
 			}
@@ -376,82 +400,84 @@ public final class LLSDNotation
 			character = skipWhitespace(reader);
 			if (character < 0)
 			{
-				throw new ParseException("Notation LLSD parsing: Unexpected end of map discovered.", reader.getBytePosition());
+				throw new ParseException("Notation LLSD parsing: Unexpected end of map discovered.",
+						reader.getBytePosition());
 			}
-			else if ((char)character == mapEndNotationMarker)
+			else if ((char) character == mapEndNotationMarker)
 			{
 				break;
 			}
 		}
 		if (character < 0)
 		{
-			throw new ParseException("Notation LLSD parsing: Unexpected end of map discovered.", reader.getBytePosition());
+			throw new ParseException("Notation LLSD parsing: Unexpected end of map discovered.",
+					reader.getBytePosition());
 		}
 		return osdMap;
 	}
 
 	private static void serializeElement(Writer writer, OSD osd) throws IOException
 	{
-			switch (osd.getType())
-			{
-				case Unknown:
-					writer.write(undefNotationValue);
-					break;
-				case Boolean:
-					if (osd.AsBoolean())
-					{
-						writer.write(trueNotationValueTwo);
-					}
-					else
-					{
-						writer.write(falseNotationValueTwo);
-					}
-					break;
-				case Integer:
-					writer.write(integerNotationMarker);
-					writer.write(osd.AsString());
-					break;
-				case Real:
-					writer.write(realNotationMarker);
-					writer.write(osd.AsString());
-					break;
-				case UUID:
-					writer.write(uuidNotationMarker);
-					writer.write(osd.AsString());
-					break;
-				case String:
-					writer.write(singleQuotesNotationMarker);
-					writer.write(escapeCharacter(osd.AsString(), singleQuotesNotationMarker));
-					writer.write(singleQuotesNotationMarker);
-					break;
-				case Binary:
-					writer.write(binaryNotationMarker);
-					writer.write("64");
-					writer.write(doubleQuotesNotationMarker);
-					writer.write(osd.AsString());
-					writer.write(doubleQuotesNotationMarker);
-					break;
-				case Date:
-					writer.write(dateNotationMarker);
-					writer.write(doubleQuotesNotationMarker);
-					writer.write(osd.AsString());
-					writer.write(doubleQuotesNotationMarker);
-					break;
-				case URI:
-					writer.write(uriNotationMarker);
-					writer.write(doubleQuotesNotationMarker);
-					writer.write(escapeCharacter(osd.AsString(), doubleQuotesNotationMarker));
-					writer.write(doubleQuotesNotationMarker);
-					break;
-				case Array:
-					serializeArray(writer, (OSDArray)osd);
-					break;
-				case Map:
-					serializeMap(writer, (OSDMap)osd);
-					break;
-				default:
-					throw new IOException("Notation serialization: Not existing element discovered.");
-		    }
+		switch (osd.getType())
+		{
+			case Unknown:
+				writer.write(undefNotationValue);
+				break;
+			case Boolean:
+				if (osd.AsBoolean())
+				{
+					writer.write(trueNotationValueTwo);
+				}
+				else
+				{
+					writer.write(falseNotationValueTwo);
+				}
+				break;
+			case Integer:
+				writer.write(integerNotationMarker);
+				writer.write(osd.AsString());
+				break;
+			case Real:
+				writer.write(realNotationMarker);
+				writer.write(osd.AsString());
+				break;
+			case UUID:
+				writer.write(uuidNotationMarker);
+				writer.write(osd.AsString());
+				break;
+			case String:
+				writer.write(singleQuotesNotationMarker);
+				writer.write(escapeCharacter(osd.AsString(), singleQuotesNotationMarker));
+				writer.write(singleQuotesNotationMarker);
+				break;
+			case Binary:
+				writer.write(binaryNotationMarker);
+				writer.write("64");
+				writer.write(doubleQuotesNotationMarker);
+				writer.write(osd.AsString());
+				writer.write(doubleQuotesNotationMarker);
+				break;
+			case Date:
+				writer.write(dateNotationMarker);
+				writer.write(doubleQuotesNotationMarker);
+				writer.write(osd.AsString());
+				writer.write(doubleQuotesNotationMarker);
+				break;
+			case URI:
+				writer.write(uriNotationMarker);
+				writer.write(doubleQuotesNotationMarker);
+				writer.write(escapeCharacter(osd.AsString(), doubleQuotesNotationMarker));
+				writer.write(doubleQuotesNotationMarker);
+				break;
+			case Array:
+				serializeArray(writer, (OSDArray) osd);
+				break;
+			case Map:
+				serializeMap(writer, (OSDMap) osd);
+				break;
+			default:
+				throw new IOException("Notation serialization: Not existing element discovered.");
+		}
 	}
 
 	private static void serializeArray(Writer writer, OSDArray osdArray) throws IOException
@@ -546,10 +572,10 @@ public final class LLSDNotation
 				writer.write(doubleQuotesNotationMarker);
 				break;
 			case Array:
-				serializeArrayFormatted(writer, indent + baseIndent, (OSDArray)osd);
+				serializeArrayFormatted(writer, indent + baseIndent, (OSDArray) osd);
 				break;
 			case Map:
-				serializeMapFormatted(writer, indent + baseIndent, (OSDMap)osd);
+				serializeMapFormatted(writer, indent + baseIndent, (OSDMap) osd);
 				break;
 			default:
 				throw new IOException("Notation serialization: Not existing element discovered.");
@@ -620,7 +646,7 @@ public final class LLSDNotation
 		int character;
 		while ((character = reader.read()) >= 0)
 		{
-			char c = (char)character;
+			char c = (char) character;
 			if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
 			{
 				break;
@@ -633,15 +659,17 @@ public final class LLSDNotation
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
-		if (((character = skipWhitespace(reader)) > 0) && ((char)character == sizeBeginNotationMarker));
-		while ((character >= 0) && Character.isDigit((char)character) && ((char)character != sizeEndNotationMarker))
+		if (((character = skipWhitespace(reader)) > 0) && ((char) character == sizeBeginNotationMarker))
+			;
+		while ((character >= 0) && Character.isDigit((char) character) && ((char) character != sizeEndNotationMarker))
 		{
-			s.append((char)character);
+			s.append((char) character);
 			reader.read();
 		}
 		if (character < 0)
 		{
-			throw new ParseException("Notation LLSD parsing: Can't parse length value cause unexpected end of stream.", reader.getBytePosition());
+			throw new ParseException("Notation LLSD parsing: Can't parse length value cause unexpected end of stream.",
+					reader.getBytePosition());
 		}
 		reader.unread(character);
 		return new Integer(s.toString());
@@ -652,12 +680,13 @@ public final class LLSDNotation
 		int character;
 		boolean foundEscape = false;
 		StringBuilder s = new StringBuilder();
-		while (((character = reader.read()) >= 0) && (((char)character != delimiter) || ((char)character == delimiter && foundEscape)))
+		while (((character = reader.read()) >= 0)
+				&& (((char) character != delimiter) || ((char) character == delimiter && foundEscape)))
 		{
 			if (foundEscape)
 			{
 				foundEscape = false;
-				switch ((char)character)
+				switch ((char) character)
 				{
 					case 'a':
 						s.append('\005');
@@ -681,22 +710,24 @@ public final class LLSDNotation
 						s.append('\013');
 						break;
 					default:
-						s.append((char)character);
+						s.append((char) character);
 						break;
 				}
 			}
-			else if ((char)character == '\\')
+			else if ((char) character == '\\')
 			{
 				foundEscape = true;
 			}
 			else
 			{
-				s.append((char)character);
+				s.append((char) character);
 			}
 		}
 		if (character < 0)
 		{
-			throw new ParseException("Notation LLSD parsing: Can't parse text because unexpected end of stream while expecting a '" + delimiter + "' character.", reader.getBytePosition());
+			throw new ParseException(
+					"Notation LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
+							+ delimiter + "' character.", reader.getBytePosition());
 		}
 		return s.toString();
 	}
@@ -709,7 +740,7 @@ public final class LLSDNotation
 
 		while ((character = reader.read()) >= 0 && offset < buffer.length && charactersEqual)
 		{
-			if (((char)character) != buffer[offset])
+			if (((char) character) != buffer[offset])
 			{
 				charactersEqual = false;
 				reader.unread(character);

@@ -27,68 +27,41 @@ package libomv;
 
 public class AppearenceManager
 {
-    // Index of TextureEntry slots for avatar appearances
-    public enum AvatarTextureIndex
-    {
-        Unknown,
-        HeadBodypaint,
-        UpperShirt,
-        LowerPants,
-        EyesIris,
-        Hair,
-        UpperBodypaint,
-        LowerBodypaint,
-        LowerShoes,
-        HeadBaked,
-        UpperBaked,
-        LowerBaked,
-        EyesBaked,
-        LowerSocks,
-        UpperJacket,
-        LowerJacket,
-        UpperGloves,
-        UpperUndershirt,
-        LowerUnderpants,
-        Skirt,
-        SkirtBaked,
-        HairBaked;
+	// Index of TextureEntry slots for avatar appearances
+	public enum AvatarTextureIndex
+	{
+		Unknown, HeadBodypaint, UpperShirt, LowerPants, EyesIris, Hair, UpperBodypaint, LowerBodypaint, LowerShoes, HeadBaked, UpperBaked, LowerBaked, EyesBaked, LowerSocks, UpperJacket, LowerJacket, UpperGloves, UpperUndershirt, LowerUnderpants, Skirt, SkirtBaked, HairBaked;
 
-        public static AvatarTextureIndex setValue(int value)
-        {
-        	return values()[value + 1];
-        }
+		public static AvatarTextureIndex setValue(int value)
+		{
+			return values()[value + 1];
+		}
 
-        public static byte getValue(AvatarTextureIndex value)
-        {
-        	return (byte)(value.ordinal() - 1);
-        }
+		public static byte getValue(AvatarTextureIndex value)
+		{
+			return (byte) (value.ordinal() - 1);
+		}
 
-        public byte getValue()
-        {
-        	return (byte)(ordinal() - 1);
-        }
-    }
+		public byte getValue()
+		{
+			return (byte) (ordinal() - 1);
+		}
+	}
 
-    // Bake layers for avatar appearance
-    public enum BakeType
-    {
-        Unknown,
-        Head,
-        UpperBody,
-        LowerBody,
-        Eyes,
-        Skirt,
-        Hair;
+	// Bake layers for avatar appearance
+	public enum BakeType
+	{
+		Unknown, Head, UpperBody, LowerBody, Eyes, Skirt, Hair;
 
-        public static BakeType setValue(int value)
-        {
-        	return values()[value + 1];
-        }
+		public static BakeType setValue(int value)
+		{
+			return values()[value + 1];
+		}
 
-        public static byte getValue(BakeType value)
-        {
-        	return (byte)(value.ordinal() - 1);
-        }
-    }
+		public static byte getValue(BakeType value)
+		{
+			return (byte) (value.ordinal() - 1);
+		}
+	}
 
 }

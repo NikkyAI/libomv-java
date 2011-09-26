@@ -365,7 +365,8 @@ public class SortedListModel extends AbstractListModel
 	}
 
 	/**
-	 * Internal helper method to find the insertion point for a new entry in the sorted model.
+	 * Internal helper method to find the insertion point for a new entry in the
+	 * sorted model.
 	 */
 	private int findInsertionPoint(SortedListEntry entry)
 	{
@@ -390,7 +391,7 @@ public class SortedListModel extends AbstractListModel
 	{
 		return unsortedModel;
 	}
-	
+
 	public enum SortOrder
 	{
 		UNORDERED, ASCENDING, DESCENDING;
@@ -416,10 +417,12 @@ public class SortedListModel extends AbstractListModel
 		@Override
 		public int compareTo(Object o)
 		{
-			// retrieve the element that this entry points to in the original model
+			// retrieve the element that this entry points to in the original
+			// model
 			Object thisElement = unsortedModel.getElementAt(index);
 			SortedListEntry thatEntry = (SortedListEntry) o;
-			// retrieve the element that thatEntry points to in the original model
+			// retrieve the element that thatEntry points to in the original
+			// model
 			Object thatElement = unsortedModel.getElementAt(thatEntry.getIndex());
 			if (comparator instanceof Collator)
 			{
@@ -435,6 +438,7 @@ public class SortedListModel extends AbstractListModel
 			}
 			return comparison;
 		}
+
 		private int index;
 	}
 }

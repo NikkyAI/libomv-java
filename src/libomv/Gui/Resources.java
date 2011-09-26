@@ -44,9 +44,11 @@ public final class Resources
 	public static final String ICON_OFFLINE = "/res/images/user-offline.png";
 	// The 16x16 close tab icon for displaying next to a closable tab name
 	public static final String ICON_CLOSE_TAB = "/res/images/";
-	// The 16x16 typing icon for displaying next to an agent's name when they are typing
+	// The 16x16 typing icon for displaying next to an agent's name when they
+	// are typing
 	public static final String ICON_TYPING = "/res/images/";
-	// The 16x16 "message pending" icon for displaying next to an agent's name when there are pending messages
+	// The 16x16 "message pending" icon for displaying next to an agent's name
+	// when there are pending messages
 	public static final String ICON_PENDING_MESSAGES = "/res/images/mail-message-new.png";
 	// The 16x16 "unknown status" icon
 	public static final String ICON_UNKNOWN_STATUS = "/res/images/";

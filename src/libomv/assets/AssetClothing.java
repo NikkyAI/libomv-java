@@ -31,38 +31,41 @@ import libomv.types.UUID;
 // Represents an {@link AssetWearable} that can be worn on an avatar such as a Shirt, Pants, etc.
 public class AssetClothing extends AssetWearable
 {
-    // Override the base classes AssetType
-    @Override
-    public AssetType getAssetType()
-    {
-        return AssetType.Clothing;
-    }
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType()
+	{
+		return AssetType.Clothing;
+	}
 
-    /**
-     * Initializes a new instance of an AssetScriptBinary object
-     */
-    public AssetClothing()
-    {
-    }
+	/**
+	 * Initializes a new instance of an AssetScriptBinary object
+	 */
+	public AssetClothing()
+	{
+	}
 
-    /**
-     * Initializes a new instance of an AssetScriptBinary object with parameters
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetClothing(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-    }
+	/**
+	 * Initializes a new instance of an AssetScriptBinary object with parameters
+	 * 
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetClothing(UUID assetID, byte[] assetData)
+	{
+		super(assetID, assetData);
+	}
 
-    /**
-     * Initializes a new instance of an AssetScriptBinary object with parameters
-     *
-     * @param source A string containing the Clothings data
-     */
-    public AssetClothing(String source)
-    {
-        super(source);
-    }
+	/**
+	 * Initializes a new instance of an AssetScriptBinary object with parameters
+	 * 
+	 * @param source
+	 *            A string containing the Clothings data
+	 */
+	public AssetClothing(String source)
+	{
+		super(source);
+	}
 }
