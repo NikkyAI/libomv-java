@@ -74,6 +74,7 @@ import libomv.capabilities.CapsMessage.UpdateAgentLanguageMessage;
 import libomv.capabilities.IMessage;
 import libomv.packets.ActivateGesturesPacket;
 import libomv.packets.AgentAnimationPacket;
+import libomv.packets.AgentDataUpdatePacket;
 import libomv.packets.AgentHeightWidthPacket;
 import libomv.packets.AgentMovementCompletePacket;
 import libomv.packets.AgentRequestSitPacket;
@@ -1216,6 +1217,28 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandler<SetDisplayNameReplyCallbackArgs>();
 
+	public class AgentDataReplyCallbackArgs implements CallbackArgs
+	{
+		String m_FirstName;
+		String m_LastName;
+		UUID m_ActiveGroup;
+		String m_GroupName;
+		String m_GroupTitle;
+		long m_ActiveGroupPowers;
+		
+		public AgentDataReplyCallbackArgs(String firstName, String lastName, UUID activeGroup, String groupTitle, long activeGroupPowers, String groupName)
+		{
+			this.m_FirstName = firstName;
+			this.m_LastName = lastName;
+			this.m_ActiveGroup = activeGroup;
+			this.m_GroupName = groupName;
+			this.m_GroupTitle = groupTitle;
+			this.m_ActiveGroupPowers = activeGroupPowers;
+		}
+	}
+	
+	public CallbackHandler<AgentDataReplyCallbackArgs> OnAgentData = new CallbackHandler<AgentDataReplyCallbackArgs>();
+			
 	// Contains the transaction summary when an item is purchased, money is
 	// given, or land is purchased
 	public class MoneyBalanceReplyCallbackArgs implements CallbackArgs
@@ -1323,7 +1346,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private float health;
 	private int balance;
 	private UUID activeGroup;
-	private GroupPowers activeGroupPowers;
+	private long activeGroupPowers;
 
 	// Your (client) Avatar ID, local to Region/sim
 	private long localID;
@@ -1524,7 +1547,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/* Gets the Agents powers in the currently active group */
-	public final GroupPowers getActiveGroupPowers()
+	public final long getActiveGroupPowers()
 	{
 		return activeGroupPowers;
 	}
@@ -3978,7 +4001,37 @@ public class AgentManager implements PacketCallback, CapsCallback
 		teleportTimeout.set(teleportStatus);
 	}
 
-	/**
+    /**
+     * Process an incoming packet and raise the appropriate events
+     * 
+     * @throws UnsupportedEncodingException 
+     */
+    protected final void AgentDataUpdateHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+        AgentDataUpdatePacket p = (AgentDataUpdatePacket)packet;
+
+        if (p.AgentData.AgentID == simulator.getClient().Self.getAgentID())
+        {
+            firstName = Helpers.BytesToString(p.AgentData.getFirstName());
+            lastName = Helpers.BytesToString(p.AgentData.getLastName());
+            activeGroup = p.AgentData.ActiveGroupID;
+            activeGroupPowers = GroupPowers.setValue(p.AgentData.GroupPowers);
+
+            if (OnAgentData.count() > 0)
+            {
+                String groupTitle = Helpers.BytesToString(p.AgentData.getGroupTitle());
+                String groupName = Helpers.BytesToString(p.AgentData.getGroupName());
+
+                OnAgentData.dispatch(new AgentDataReplyCallbackArgs(firstName, lastName, activeGroup, groupTitle, activeGroupPowers, groupName));
+            }
+        }
+        else
+        {
+            Logger.Log("Got an AgentDataUpdate packet for avatar " + p.AgentData.AgentID.toString() + " instead of " + _Client.Self.getAgentID().toString() + ", this shouldn't happen", LogLevel.Error, _Client);
+        }
+    }
+
+    /**
 	 * Process an incoming packet and raise the appropriate events
 	 * 
 	 * @throws Exception
