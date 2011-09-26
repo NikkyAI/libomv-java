@@ -277,7 +277,6 @@ public class SortedListModel extends AbstractListModel
 	 * original/decorated model.
 	 * 
 	 */
-	@SuppressWarnings("boxing")
 	private void unsortedIntervalAdded(ListDataEvent e)
 	{
 		int begin = e.getIndex0();
@@ -314,7 +313,6 @@ public class SortedListModel extends AbstractListModel
 	 * Update this model when items are removed from the original/decorated
 	 * model. Also, let our listeners know that we've removed items.
 	 */
-	@SuppressWarnings("boxing")
 	private void unsortedIntervalRemoved(ListDataEvent e)
 	{
 		int begin = e.getIndex0();
@@ -388,6 +386,11 @@ public class SortedListModel extends AbstractListModel
 	private Comparator<Object> comparator;
 	private SortOrder sortOrder;
 
+	public ListModel getUnsortedModel()
+	{
+		return unsortedModel;
+	}
+	
 	public enum SortOrder
 	{
 		UNORDERED, ASCENDING, DESCENDING;
