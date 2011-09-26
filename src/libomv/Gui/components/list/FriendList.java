@@ -466,7 +466,7 @@ public class FriendList extends JScrollPane
 			add(getJmiProfile());
 			// Send money transfer
 			add(getJmiMoneyTransfer());
-			if (_Info.getIsOnline())g
+			if (_Info.getIsOnline())
 			{
 				// Offer teleport.
 				add(getJmiOfferTeleport());
