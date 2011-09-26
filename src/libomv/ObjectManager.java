@@ -332,8 +332,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     }
      * </code>
      * </example>
-     * {@link ObjectManager.ObjectUpdate}
-     * {@link ObjectManager.AvatarUpdate}
+     * {@link ObjectManager.OnObjectUpdate}
+     * {@link ObjectManager.OnAvatarUpdate}
      * {@link AvatarUpdateCallbackArgs}
      */
     public class PrimCallbackArgs implements CallbackArgs
@@ -548,11 +548,11 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	public CallbackHandler<ObjectPropertiesFamilyCallbackArgs> OnObjectPropertiesFamily = new CallbackHandler<ObjectPropertiesFamilyCallbackArgs>();
 
     /**
-     * Provides data for the <see cref="ObjectManager.AvatarUpdate"/> event
-     * <p>The <see cref="ObjectManager.AvatarUpdate"/> event occurs when the simulator sends
+     * Provides data for the <see cref="ObjectManager.OnAvatarUpdate"/> event
+     * <p>The <see cref="ObjectManager.OnAvatarUpdate"/> event occurs when the simulator sends
      * an <see cref="ObjectUpdatePacket"/> containing Avatar data</p>
-     * <p>Note 1: The <see cref="ObjectManager.AvatarUpdate"/> event will not be raised when the object is an Avatar</p>
-     * <p>Note 2: It is possible for the <see cref="ObjectManager.AvatarUpdate"/> to be
+     * <p>Note 1: The <see cref="ObjectManager.OnAvatarUpdate"/> event will not be raised when the object is an Avatar</p>
+     * <p>Note 2: It is possible for the <see cref="ObjectManager.OnAvatarUpdate"/> to be
      * raised twice for the same avatar if for example the avatar moved to a new simulator, then returned to the current simulator</p>
      *
      * <example>
@@ -560,7 +560,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      * using the <see cref="AvatarManager.RequestAvatarPicks"/> method in the <see cref="AvatarManager"/> class to display the names
      * of our own agents picks listings on the <see cref="Console"/> window.
      * <code>
-     *     // subscribe to the AvatarUpdate event to get our information
+     *     // subscribe to the OnAvatarUpdate event to get our information
      *
      *     CallbackHandler<AvatarUpdateCallbackArgs> cbu = new Objects_AvatarUpdate();
      *     CallbackHandler<AvatarPicksReplyCallbackArgs> cba = new Objects_AvatarPicksReply();
@@ -599,7 +599,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
      *     }
      * </code>
      * </example>
-     * {@link ObjectManager.ObjectUpdate}
+     * {@link ObjectManager.OnObjectUpdate}
      * {@link PrimEventArgs}
      */
 	public class AvatarUpdateCallbackArgs implements CallbackArgs{
