@@ -68,7 +68,7 @@ public class LoginManager
 	// #region Enums
 	public enum LoginStatus
 	{
-		Failed, None, ConnectingToLogin, ReadingResponse, ConnectingToSim, Redirecting, Success;
+		None, Failed, ConnectingToLogin, ReadingResponse, Redirecting, ConnectingToSim, Success;
 	}
 
 	// #endregion Enums
@@ -666,28 +666,23 @@ public class LoginManager
 
 	public CallbackHandler<LoginProgressCallbackArgs> OnLoginProgress = new CallbackHandler<LoginProgressCallbackArgs>();
 
-	private HashMap<Callback<LoginProgressCallbackArgs>, String[]> CallbackOptions;
+	private HashMap<Callback<LoginProgressCallbackArgs>, String[]> CallbackOptions = new HashMap<Callback<LoginProgressCallbackArgs>, String[]>();
 
 	public final void RegisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback, String[] options,
 			boolean autoremove)
 	{
-		CallbackOptions.put(callback, options);
+		if (options != null)
+			CallbackOptions.put(callback, options);
 		OnLoginProgress.add(callback, autoremove);
 	}
 
-	public final void UnregisterLoginResponseCallback(Callback<LoginProgressCallbackArgs> callback)
+	public final void UnregisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback)
 	{
 		CallbackOptions.remove(callback);
 		OnLoginProgress.remove(callback);
 	}
 
 	// #endregion Callback handlers
-
-	// #region Public Members
-	/** Seed CAPS URL returned from the login server */
-	public String LoginSeedCapability = "";
-
-	// #endregion
 
 	// #region Private Members
 	private GridClient _Client;
@@ -901,8 +896,7 @@ public class LoginManager
 		return String.format("uri:%s&%d&%d&%d", sim, x, y, z);
 	}
 
-	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback)
-			throws Exception
+	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
 	{
 		// Generate a random ID to identify this login attempt
 		loginParams.LoginID = new UUID();
@@ -967,108 +961,108 @@ public class LoginManager
 		{
 			Logger.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()),
 					LogLevel.Error, _Client);
-			return;
+			throw ex;
 		}
 
-		if (_Client.Settings.USE_LLSD_LOGIN)
+		UpdateLoginStatus(LoginStatus.ConnectingToLogin, "Logging in as " + loginParams.FirstName + " " 
+				          + loginParams.LastName + " ...", null, null);
+
+		try
 		{
-			// #region LLSD Based Login
-
-			// Create the CAPS login structure
-			OSDMap loginLLSD = new OSDMap();
-			loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
-			loginLLSD.put("last", OSD.FromString(loginParams.LastName));
-			loginLLSD.put("passwd", OSD.FromString(loginParams.Password));
-			loginLLSD.put("start", OSD.FromString(loginParams.Start));
-			loginLLSD.put("channel", OSD.FromString(loginParams.Channel));
-			loginLLSD.put("version", OSD.FromString(loginParams.Version));
-			loginLLSD.put("platform", OSD.FromString(loginParams.Platform));
-			loginLLSD.put("mac", OSD.FromString(loginParams.MAC));
-			loginLLSD.put("agree_to_tos", OSD.FromBoolean(loginParams.AgreeToTos));
-			loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
-			loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
-			loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
-
-			// Create the options LLSD array
-			OSDArray optionsOSD = new OSDArray(loginParams.Options.length);
-			for (int i = 0; i < loginParams.Options.length; i++)
+			if (_Client.Settings.USE_LLSD_LOGIN)
 			{
-				optionsOSD.add(OSD.FromString(loginParams.Options[i]));
-			}
+				// #region LLSD Based Login
 
-			for (String[] callbackOpts : CallbackOptions.values())
-			{
-				if (callbackOpts != null)
+				// Create the CAPS login structure
+				OSDMap loginLLSD = new OSDMap();
+				loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
+				loginLLSD.put("last", OSD.FromString(loginParams.LastName));
+				loginLLSD.put("passwd", OSD.FromString(loginParams.Password));
+				loginLLSD.put("start", OSD.FromString(loginParams.Start));
+				loginLLSD.put("channel", OSD.FromString(loginParams.Channel));
+				loginLLSD.put("version", OSD.FromString(loginParams.Version));
+				loginLLSD.put("platform", OSD.FromString(loginParams.Platform));
+				loginLLSD.put("mac", OSD.FromString(loginParams.MAC));
+				loginLLSD.put("agree_to_tos", OSD.FromBoolean(loginParams.AgreeToTos));
+				loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
+				loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
+				loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
+
+				// Create the options LLSD array
+				OSDArray optionsOSD = new OSDArray(loginParams.Options.length);
+				for (int i = 0; i < loginParams.Options.length; i++)
 				{
-					for (int i = 0; i < callbackOpts.length; i++)
+					optionsOSD.add(OSD.FromString(loginParams.Options[i]));
+				}
+
+				for (String[] callbackOpts : CallbackOptions.values())
+				{
+					if (callbackOpts != null)
 					{
-						if (!optionsOSD.contains(callbackOpts[i]))
+						for (int i = 0; i < callbackOpts.length; i++)
 						{
-							optionsOSD.add(OSD.FromString(callbackOpts[i]));
+							if (!optionsOSD.contains(callbackOpts[i]))
+							{
+								optionsOSD.add(OSD.FromString(callbackOpts[i]));
+							}
 						}
 					}
 				}
+				loginLLSD.put("options", optionsOSD);
+
+				// Make the CAPS POST for login
+
+				CapsClient loginRequest = new CapsClient(loginUri);
+				loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout, new LoginReplyLLSDHandler(loginParams));
+				// #endregion
 			}
-			loginLLSD.put("options", optionsOSD);
-
-			// Make the CAPS POST for login
-
-			CapsClient loginRequest = new CapsClient(loginUri);
-			UpdateLoginStatus(LoginStatus.ConnectingToLogin, "Logging in as " + loginParams.FirstName + " "
-					+ loginParams.LastName + " ...", null, null);
-			loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout, new LoginReplyLLSDHandler(
-					loginParams));
-			// #endregion
-		}
-		else
-		{
-			// #region XML-RPC Based Login Code
-
-			// Create the Hashtable for XmlRpcCs
-			HashMap<String, Object> loginXmlRpc = new HashMap<String, Object>();
-			loginXmlRpc.put("first", loginParams.FirstName);
-			loginXmlRpc.put("last", loginParams.LastName);
-			loginXmlRpc.put("passwd", loginParams.Password);
-			loginXmlRpc.put("start", loginParams.Start);
-			loginXmlRpc.put("channel", loginParams.Channel);
-			loginXmlRpc.put("version", loginParams.Version);
-			loginXmlRpc.put("platform", loginParams.Platform);
-			loginXmlRpc.put("mac", loginParams.MAC);
-			if (loginParams.AgreeToTos)
+			else
 			{
-				loginXmlRpc.put("agree_to_tos", "true");
-			}
-			if (loginParams.ReadCritical)
-			{
-				loginXmlRpc.put("read_critical", "true");
-			}
-			loginXmlRpc.put("id0", loginParams.ID0);
-			loginXmlRpc.put("last_exec_event", 0);
+				// #region XML-RPC Based Login Code
 
-			// Create the options array
-			ArrayList<String> options = new ArrayList<String>();
-			for (int i = 0; i < loginParams.Options.length; i++)
-			{
-				options.add(loginParams.Options[i]);
-			}
-
-			for (String[] callbackOpts : CallbackOptions.values())
-			{
-				if (callbackOpts != null)
+				// Create the Hashtable for XmlRpcCs
+				HashMap<String, Object> loginXmlRpc = new HashMap<String, Object>();
+				loginXmlRpc.put("first", loginParams.FirstName);
+				loginXmlRpc.put("last", loginParams.LastName);
+				loginXmlRpc.put("passwd", loginParams.Password);
+				loginXmlRpc.put("start", loginParams.Start);
+				loginXmlRpc.put("channel", loginParams.Channel);
+				loginXmlRpc.put("version", loginParams.Version);
+				loginXmlRpc.put("platform", loginParams.Platform);
+				loginXmlRpc.put("mac", loginParams.MAC);
+				if (loginParams.AgreeToTos)
 				{
-					for (int i = 0; i < callbackOpts.length; i++)
+					loginXmlRpc.put("agree_to_tos", "true");
+				}
+				if (loginParams.ReadCritical)
+				{
+					loginXmlRpc.put("read_critical", "true");
+				}
+				loginXmlRpc.put("id0", loginParams.ID0);
+				loginXmlRpc.put("last_exec_event", 0);
+
+				// Create the options array
+				ArrayList<String> options = new ArrayList<String>();
+				for (int i = 0; i < loginParams.Options.length; i++)
+				{
+					options.add(loginParams.Options[i]);
+				}
+
+				for (String[] callbackOpts : CallbackOptions.values())
+				{
+					if (callbackOpts != null)
 					{
-						if (!options.contains(callbackOpts[i]))
+						for (int i = 0; i < callbackOpts.length; i++)
 						{
-							options.add(callbackOpts[i]);
+							if (!options.contains(callbackOpts[i]))
+							{
+								options.add(callbackOpts[i]);
+							}
 						}
 					}
 				}
-			}
-			loginXmlRpc.put("options", options);
+				loginXmlRpc.put("options", options);
 
-			try
-			{
 				final XMLRPCClient client = new XMLRPCClient(loginUri);
 				final Object[] request = new Object[] { loginXmlRpc };
 
@@ -1086,23 +1080,23 @@ public class LoginManager
 						try
 						{
 							Object data = client.callEx(loginParams.MethodName, request);
-							LoginReplyXmlRpcHandler(data, loginParams);
+							HandleLoginReplyXmlRpc(data, loginParams);
 						}
 						catch (Exception ex)
 						{
-							UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
+							UpdateLoginStatus(LoginStatus.Failed, ex.toString(), ex.getClass().toString(), null);
 						}
 					}
 				};
 				requestThread.setName("XML-RPC Login");
 				requestThread.start();
 			}
-			catch (Exception ex)
-			{
-				UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
-				throw ex;
-			}
 			// #endregion
+		}
+		catch (Exception ex)
+		{
+			UpdateLoginStatus(LoginStatus.Failed, ex.toString(), ex.getClass().toString(), null);
+			throw ex;
 		}
 	}
 
@@ -1113,7 +1107,7 @@ public class LoginManager
 	private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply)
 	{
 		Logger.DebugLog("Login status: " + status.toString() + ", Message: " + message
-				+ (reason != null ? " Reason: " + reason : ""), _Client);
+				+ (reason != null ? ", Reason: " + reason : ""), _Client);
 
 		// If we reached a login resolution trigger the event
 		if (status == LoginStatus.Success || status == LoginStatus.Failed)
@@ -1133,16 +1127,18 @@ public class LoginManager
 	 *            login params, used to start the next round on redirects
 	 * @throws Exception
 	 */
-	private void LoginReplyXmlRpcHandler(Object response, LoginParams loginParams)
+	private void HandleLoginReplyXmlRpc(Object response, LoginParams loginParams) throws Exception
 	{
 		LoginResponseData reply = new LoginResponseData();
 
 		// Fetch the login response
 		if (response == null || !(response instanceof HashMap))
 		{
-			UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", "bad response",
-					null);
+			UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", "bad response", null);
+			return;
 		}
+
+		UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> result = (HashMap<String, Object>) response;
@@ -1160,14 +1156,7 @@ public class LoginManager
 				reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
 			}
 		}
-		try
-		{
-			HandleLoginResponse(reply, loginParams);
-		}
-		catch (Exception ex)
-		{
-			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
-		}
+		HandleLoginResponse(reply, loginParams);
 	}
 
 	/**
@@ -1192,6 +1181,8 @@ public class LoginManager
 			if (result != null && result.getType().equals(OSDType.Map))
 			{
 				OSDMap map = (OSDMap) result;
+
+				UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
 				LoginResponseData reply = new LoginResponseData();
 				reply.ParseLoginReply(map);
@@ -1258,22 +1249,20 @@ public class LoginManager
 			// Login succeeded
 			_Client.Network.setCircuitCode(reply.CircuitCode);
 			_Client.Network.setUDPBlackList(reply.UDPBlacklist);
-			LoginSeedCapability = reply.SeedCapability;
 
-			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", null);
+			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
 
 			if (reply.SimIP != null && reply.SimPort != 0)
 			{
 				// Connect to the sim given in the login reply
 				if (_Client.Network.Connect(reply.SimIP, reply.SimPort,
-						Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, LoginSeedCapability) != null)
+						Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, reply.SeedCapability) != null)
 				{
 					// Request the economy data right after login
 					_Client.Network.SendPacket(new EconomyDataRequestPacket());
 
-					// Update the login message with the MOTD returned from the
-					// server
-					UpdateLoginStatus(LoginStatus.Success, reply.Message, reply.Reason, null);
+					// Update the login message with the MOTD returned from the server
+					UpdateLoginStatus(LoginStatus.Success, reply.Message, reply.Reason, reply);
 				}
 				else
 				{
@@ -1283,13 +1272,13 @@ public class LoginManager
 			}
 			else
 			{
-				UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a simulator address", "no sim", null);
+				UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a valid simulator address", "no sim", null);
 			}
 		}
 		else
 		{
 			// Login failed, make sure a usable error key is set
-			if (Helpers.isEmpty(reply.Reason))
+			if (reply.Reason == null || reply.Reason.isEmpty())
 			{
 				reply.Reason = "unknown";
 			}
