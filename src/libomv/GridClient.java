@@ -162,8 +162,8 @@ public class GridClient
 	/* Handles sound-related networking */
 	// public SoundManager Sound;
 
-	// Debug flag
-	public boolean Debug;
+	// Packet Statistics
+	public Statistics Stats;
 
 	//
 	// Constructor.
@@ -200,7 +200,7 @@ public class GridClient
 		// Avatars = new AvatarManager(this);
 		// Objects = new ObjectManager(this);
 		// Directory = new DirectoryManager(this);
-		Debug = true;
+		Stats = new Statistics();
 	}
 
 	public Set<String> getGridNames()
