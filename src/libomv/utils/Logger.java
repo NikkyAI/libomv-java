@@ -59,7 +59,7 @@ public final class Logger
 	{
 		private void output(String level, Object message, Throwable ex)
 		{
-			System.out.println(level + ": " + message + (ex != null ? " Exception: " + ex.getMessage() : ""));
+			System.out.println(level + ": " + message + (ex != null ? " Exception: " + ex.toString() : ""));
 		}
 
 		public void info(Object message, Throwable ex)
