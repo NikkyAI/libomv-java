@@ -822,10 +822,8 @@ public class NetworkManager implements PacketCallback
 	 */
 	public void SendPacket(Packet packet) throws Exception
 	{
-		// try CurrentSim, however directly after login this will be null, so if
-		// it is, we'll try to
-		// find the first simulator we're connected to in order to send the
-		// packet.
+		// try CurrentSim, however directly after login this will be null, so if it is, we'll
+		// try to find the first simulator we're connected to in order to send the packet.
 		Simulator simulator = _CurrentSim;
 		synchronized (_Simulators)
 		{

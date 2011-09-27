@@ -815,9 +815,8 @@ public class Simulator extends Thread
 		{
 			if (_Connected)
 			{
-				Logger.Log(
-						String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime),
-						LogLevel.Info, _Client);
+				Logger.Log(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime),
+						   LogLevel.Info, _Client);
 				break;
 			}
 			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.SIMULATOR_TIMEOUT)
@@ -852,7 +851,7 @@ public class Simulator extends Thread
 		}
 		catch (Exception ex)
 		{
-			Logger.Log(ex.getMessage(), LogLevel.Error, _Client);
+			Logger.Log("Failed to update our status", LogLevel.Error, _Client, ex);
 		}
 		return false;
 	}
@@ -1147,11 +1146,15 @@ public class Simulator extends Thread
 						DebugDumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet length = ");
 					}
 				}
-				Statistics.RecvBytes += numBytes;
-				Statistics.RecvPackets++;
 
 				if (packet == null)
+				{
+					Logger.Log("Couldn't build a message from the incoming data", LogLevel.Warning, _Client);
 					return;
+				}
+
+				Statistics.RecvBytes += numBytes;
+				Statistics.RecvPackets++;
 
 				if (packet.getHeader().getResent())
 				{
@@ -1221,15 +1224,12 @@ public class Simulator extends Thread
 					return;
 				}
 
-				// Let the network manager distribute the packets to the
-				// callbacks
+				// Let the network manager distribute the packet to the callbacks
 				_Client.Network.DistributePacket(this, packet);
 
 				if (_Client.Settings.TRACK_UTILIZATION)
 				{
-					/* TODO Implement Utilization tracking */
-					// Client.Statistics.Update(packet.Type.ToString(),
-					// OpenMetaverse.Statistics.Type.Packet, 0, packet.Length);
+					_Client.Stats.Update(packet.getType().toString(), libomv.Statistics.Type.Packet, 0, numBytes);
 				}
 			}
 			catch (Exception ex)
@@ -1295,7 +1295,6 @@ public class Simulator extends Thread
 				data.position(0);
 			}
 		}
-		_Client.Network.RaisePacketSentCallback(data.array(), data.limit(), this);
 
 		// #region Queue or Send
 		NetworkManager.OutgoingPacket outgoingPacket = _Client.Network.new OutgoingPacket(this, data);
@@ -1316,12 +1315,7 @@ public class Simulator extends Thread
 		// #region Stats Tracking
 		if (_Client.Settings.TRACK_UTILIZATION)
 		{
-			// Stats tracking
-			Statistics.SentBytes += data.capacity();
-			Statistics.SentPackets++;
-
-			// _Client.Statistics.Update(type.ToString(),
-			// OpenMetaverse.Statistics.Type.Packet, data.capacity(), 0);
+			_Client.Stats.Update(type.toString(), libomv.Statistics.Type.Packet, data.capacity(), 0);
 		}
 	}
 
@@ -1477,6 +1471,11 @@ public class Simulator extends Thread
 		{
 			Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
 		}
+
+		// Stats tracking
+		Statistics.SentBytes += dataLength;
+		Statistics.SentPackets++;
+		_Client.Network.RaisePacketSentCallback(buffer.array(), dataLength, this);
 	}
 
 	/* #region timer callbacks */
