@@ -389,7 +389,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	protected void finalize() throws Throwable
 	{
 		_Client.Self.OnInstantMessage.remove(instantMessageCallback);
-		_Client.Login.UnregisterLoginResponseCallback(loginProgressCallback);
+		_Client.Login.UnregisterLoginProgressCallback(loginProgressCallback);
 		super.finalize();
 	}
 
