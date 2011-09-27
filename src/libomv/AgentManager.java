@@ -1383,11 +1383,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return sessionID;
 	}
 
-	public final void setSessionID(UUID uuid)
-	{
-		sessionID = uuid;
-	}
-
 	/* Shared secret {@link UUID} that is never sent over the wire */
 	public final UUID getSecureSessionID()
 	{
@@ -1690,7 +1685,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		@Override
 		public void callback(LoginProgressCallbackArgs e)
 		{
-			if (e.getStatus() == LoginStatus.Success)
+			if (e.getStatus() == LoginStatus.ConnectingToSim)
 			{
 				_Movement.ResetTimer();
 
@@ -2667,7 +2662,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 		heightwidth.AgentData.AgentID = this.agentID;
 		heightwidth.AgentData.SessionID = this.sessionID;
 		heightwidth.AgentData.CircuitCode = _Client.Network.getCircuitCode();
-		heightwidth.HeightWidthBlock.GenCounter = HeightWidthGenCounter++;
 		heightwidth.HeightWidthBlock.Height = height;
 		heightwidth.HeightWidthBlock.Width = width;
 		heightwidth.HeightWidthBlock.GenCounter = heightWidthGenCounter++;
@@ -4013,7 +4007,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     {
         AgentDataUpdatePacket p = (AgentDataUpdatePacket)packet;
 
-        if (p.AgentData.AgentID == simulator.getClient().Self.getAgentID())
+        if (p.AgentData.AgentID.equals(simulator.getClient().Self.getAgentID()))
         {
             firstName = Helpers.BytesToString(p.AgentData.getFirstName());
             lastName = Helpers.BytesToString(p.AgentData.getLastName());
