@@ -271,8 +271,6 @@ public class InventoryItem extends InventoryBase
 	public Permissions Permissions;
 	/* The type of item from {@link OpenMetaverse.AssetType} */
 	public AssetType assetType;
-	/* The type of item from the {@link OpenMetaverse.InventoryType} enum */
-	public InventoryType inventoryType;
 	/* The {@link OpenMetaverse.UUID} of the creator of this item */
 	public UUID CreatorID;
 	/* A Description of this item */
@@ -306,17 +304,6 @@ public class InventoryItem extends InventoryBase
 	public UUID LastOwnerID;
 
 	/**
-	 * Construct a new InventoryItem object
-	 * 
-	 * @param itemID
-	 *            The {@link OpenMetaverse.UUID} of the item
-	 */
-	public InventoryItem(UUID itemID)
-	{
-		super(itemID);
-	}
-
-	/**
 	 * Construct a new InventoryItem object of a specific Type
 	 * 
 	 * @param type
@@ -324,12 +311,17 @@ public class InventoryItem extends InventoryBase
 	 * @param itemID
 	 *            {@link OpenMetaverse.UUID} of the item
 	 */
-	public InventoryItem(InventoryType type, UUID itemID)
+	public InventoryItem(UUID itemID)
 	{
 		super(itemID);
-		inventoryType = type;
 	}
 
+	@Override
+	public InventoryType getType()
+	{
+		return InventoryType.Unknown;
+	}
+	
 	/**
 	 * Indicates inventory item is a link
 	 * 
@@ -346,7 +338,6 @@ public class InventoryItem extends InventoryBase
 		map.put("AssetUUID", OSD.FromUUID(AssetID));
 		map.put("Permissions", Permissions.Serialize());
 		map.put("AssetType", OSD.FromInteger(assetType.getValue()));
-		map.put("InventoryType", OSD.FromInteger(inventoryType.getValue()));
 		map.put("CreatorID", OSD.FromUUID(CreatorID));
 		map.put("Description", OSD.FromString(Description));
 		map.put("GroupID", OSD.FromUUID(GroupID));
@@ -370,7 +361,6 @@ public class InventoryItem extends InventoryBase
 			AssetID = map.get("AssetUUID").AsUUID();
 			Permissions = new Permissions(map.get("Permissions"));
 			assetType = AssetType.setValue(map.get("AssetType").AsInteger());
-			inventoryType = InventoryType.setValue(map.get("InventoryType").AsInteger());
 			CreatorID = map.get("CreatorID").AsUUID();
 			Description = map.get("Description").AsString();
 			GroupID = map.get("GroupID").AsUUID();
@@ -400,7 +390,6 @@ public class InventoryItem extends InventoryBase
 		AssetID = (UUID) info.readObject();
 		Permissions = (Permissions) info.readObject();
 		assetType = AssetType.setValue(info.readByte());
-		inventoryType = InventoryType.setValue(info.readByte());
 		CreatorID = (UUID) info.readObject();
 		Description = info.readUTF();
 		GroupID = (UUID) info.readObject();
@@ -427,7 +416,6 @@ public class InventoryItem extends InventoryBase
 		info.writeObject(AssetID);
 		info.writeObject(Permissions);
 		info.writeByte(assetType.getValue());
-		info.writeByte(inventoryType.getValue());
 		info.writeObject(CreatorID);
 		info.writeUTF(Description);
 		info.writeObject(GroupID);
@@ -449,7 +437,7 @@ public class InventoryItem extends InventoryBase
 	@Override
 	public int hashCode()
 	{
-		return AssetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ inventoryType.hashCode()
+		return AssetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ getType().hashCode()
 				^ Description.hashCode() ^ GroupID.hashCode() ^ ((Boolean) GroupOwned).hashCode() ^ SalePrice
 				^ saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode() ^ LastOwnerID.hashCode();
 	}
@@ -497,7 +485,7 @@ public class InventoryItem extends InventoryBase
 	{
 		return o != null && super.equals(o) && o.assetType.equals(assetType) && o.AssetID.equals(AssetID)
 				&& o.CreationDate.equals(CreationDate) && o.Description.equals(Description) && o.ItemFlags == ItemFlags
-				&& o.GroupID.equals(GroupID) && o.GroupOwned == GroupOwned && o.inventoryType.equals(inventoryType)
+				&& o.GroupID.equals(GroupID) && o.GroupOwned == GroupOwned && o.getType().equals(getType())
 				&& o.Permissions.equals(Permissions) && o.SalePrice == SalePrice && o.saleType.equals(saleType)
 				&& o.LastOwnerID.equals(LastOwnerID);
 	}

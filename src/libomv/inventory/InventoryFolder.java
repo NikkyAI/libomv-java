@@ -32,6 +32,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import libomv.assets.AssetItem.AssetType;
+import libomv.inventory.InventoryItem.InventoryType;
 import libomv.types.UUID;
 
 /**
@@ -41,7 +42,7 @@ import libomv.types.UUID;
 public class InventoryFolder extends InventoryBase
 {
 	private static final long serialVersionUID = 1L;
-	// The Preferred {@link T:OpenMetaverse.AssetType} for a folder.
+	// The Preferred {@link T:libomv.assets.AssetItem.AssetType} for a folder.
 	public AssetType preferredType;
 	// The Version of this folder
 	public int version;
@@ -61,6 +62,12 @@ public class InventoryFolder extends InventoryBase
 		version = 1;
 		// set to -1 to indicate that we don't know the descendent count yet
 		descendentCount = -1;
+	}
+
+	@Override
+	public InventoryType getType()
+	{
+		return InventoryType.Folder;
 	}
 
 	/**

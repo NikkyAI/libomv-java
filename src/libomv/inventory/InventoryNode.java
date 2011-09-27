@@ -66,7 +66,7 @@ public class InventoryNode implements Serializable
 		parent = value;
 	}
 
-	public final UUID getParentID_()
+	public final UUID getParentID()
 	{
 		return parent.getData().UUID;
 	}

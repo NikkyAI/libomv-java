@@ -30,8 +30,6 @@
  */
 package libomv.inventory;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -133,22 +131,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryTexture(UUID itemID)
 		{
-			super(InventoryType.Texture, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryTexture object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
+		
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Texture;
+			return InventoryType.Texture;
 		}
 	}
 
@@ -165,22 +154,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventorySound(UUID itemID)
 		{
-			super(InventoryType.Sound, itemID);
+			super(itemID);
 		}
 
-		/**
-		 * Construct an InventorySound object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
+		
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Sound;
+			return InventoryType.Sound;
 		}
 	}
 
@@ -197,22 +178,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryCallingCard(UUID itemID)
 		{
-			super(InventoryType.CallingCard, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryCallingCard object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
+		
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.CallingCard;
+			return InventoryType.CallingCard;
 		}
 	}
 
@@ -229,22 +201,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryLandmark(UUID itemID)
 		{
-			super(InventoryType.Landmark, itemID);
+			super(itemID);
 		}
 
-		/**
-		 * Construct an InventoryLandmark object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Landmark;
+			return InventoryType.Landmark;
 
 		}
 
@@ -286,22 +249,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryObject(UUID itemID)
 		{
-			super(InventoryType.Object, itemID);
+			super(itemID);
 		}
 
-		/**
-		 * Construct an InventoryObject object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Object;
+			return InventoryType.Object;
 		}
 
 		/** Gets or sets the upper byte of the Flags value */
@@ -343,22 +297,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryNotecard(UUID itemID)
 		{
-			super(InventoryType.Notecard, itemID);
+			super(itemID);
 		}
 
-		/**
-		 * Construct an InventoryNotecard object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Notecard;
+			return InventoryType.Notecard;
 		}
 	}
 
@@ -379,22 +324,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryCategory(UUID itemID)
 		{
-			super(InventoryType.Category, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryCategory object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Category;
+			return InventoryType.Category;
 		}
 	}
 
@@ -411,22 +346,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryLSL(UUID itemID)
 		{
-			super(InventoryType.LSL, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryLSL object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.LSL;
+			return InventoryType.LSL;
 		}
 	}
 
@@ -443,22 +368,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventorySnapshot(UUID itemID)
 		{
-			super(InventoryType.Snapshot, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventorySnapshot object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Snapshot;
+			return InventoryType.Snapshot;
 		}
 	}
 
@@ -475,22 +390,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryAttachment(UUID itemID)
 		{
-			super(InventoryType.Attachment, itemID);
+			super(itemID);
 		}
 
-		/**
-		 * Construct an InventoryAttachment object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Attachment;
+			return InventoryType.Attachment;
 		}
 
 		/** Get the last AttachmentPoint this object was attached to */
@@ -518,22 +424,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryWearable(UUID itemID)
 		{
-			super(InventoryType.Wearable, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryWearable object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
+		
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Wearable;
+			return InventoryType.Wearable;
 		}
 
 		/** The {@link OpenMetaverse.WearableType} , Skin, Shape, Skirt, Etc */
@@ -561,22 +458,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryAnimation(UUID itemID)
 		{
-			super(InventoryType.Animation, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryAnimation object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Animation;
+			return InventoryType.Animation;
 		}
 	}
 
@@ -596,22 +483,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		 */
 		public InventoryGesture(UUID itemID)
 		{
-			super(InventoryType.Gesture, itemID);
+			super(itemID);
 		}
-
-		/**
-		 * Construct an InventoryGesture object from a serialization stream
-		 * 
-		 * @param info
-		 *            serialization stream
-		 * @throws ClassNotFoundException
-		 * @throws IOException
-		 */
 		@Override
-		protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+		public InventoryType getType()
 		{
-			super.readObject(info);
-			inventoryType = InventoryType.Gesture;
+			return InventoryType.Gesture;
 		}
 	}
 
@@ -2036,8 +1913,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		else if (bse instanceof InventoryItem)
 		{
 			InventoryItem item = (InventoryItem) bse;
-			CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.inventoryType,
-					new UUID(), callback);
+			CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.getType(), new UUID(), callback);
 		}
 	}
 
@@ -2055,8 +1931,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void CreateLink(UUID folderID, InventoryItem item, Callback<ItemCreatedCallbackArgs> callback)
 			throws Exception
 	{
-		CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.inventoryType, new UUID(),
-				callback);
+		CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.getType(), new UUID(), callback);
 	}
 
 	/**
@@ -2073,8 +1948,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void CreateLink(UUID folderID, InventoryFolder folder, Callback<ItemCreatedCallbackArgs> callback)
 			throws Exception
 	{
-		CreateLink(folderID, folder.UUID, folder.Name, "", AssetType.LinkFolder, InventoryType.Folder, new UUID(),
-				callback);
+		CreateLink(folderID, folder.UUID, folder.Name, "", AssetType.LinkFolder, InventoryType.Folder, new UUID(), callback);
 	}
 
 	/**
@@ -2319,7 +2193,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			block.GroupID = item.GroupID;
 			block.GroupMask = item.Permissions.GroupMask;
 			block.GroupOwned = item.GroupOwned;
-			block.InvType = item.inventoryType.getValue();
+			block.InvType = item.getType().getValue();
 			block.ItemID = item.UUID;
 			block.setName(Helpers.StringToBytes(item.Name));
 			block.NextOwnerMask = item.Permissions.NextOwnerMask;
@@ -2600,8 +2474,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
 		add.InventoryData.GroupOwned = item.GroupOwned;
 		add.InventoryData.TransactionID = queryID;
-		add.InventoryData.Type = item.inventoryType.getValue();
-		add.InventoryData.InvType = item.inventoryType.getValue();
+		add.InventoryData.Type = item.getType().getValue();
+		add.InventoryData.InvType = item.getType().getValue();
 		add.InventoryData.Flags = item.ItemFlags;
 		add.InventoryData.SaleType = item.saleType.getValue();
 		add.InventoryData.SalePrice = item.SalePrice;
@@ -2698,8 +2572,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
 		add.InventoryData.GroupOwned = item.GroupOwned;
 		add.InventoryData.TransactionID = queryID;
-		add.InventoryData.Type = item.inventoryType.getValue();
-		add.InventoryData.InvType = item.inventoryType.getValue();
+		add.InventoryData.Type = item.getType().getValue();
+		add.InventoryData.InvType = item.getType().getValue();
 		add.InventoryData.Flags = item.ItemFlags;
 		add.InventoryData.SaleType = item.saleType.getValue();
 		add.InventoryData.SalePrice = item.SalePrice;
@@ -2838,7 +2712,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		update.InventoryData.GroupOwned = item.GroupOwned;
 		update.InventoryData.TransactionID = transactionID;
 		update.InventoryData.Type = item.assetType.getValue();
-		update.InventoryData.InvType = item.inventoryType.getValue();
+		update.InventoryData.InvType = item.getType().getValue();
 		update.InventoryData.Flags = item.ItemFlags;
 		update.InventoryData.SaleType = item.saleType.getValue();
 		update.InventoryData.SalePrice = item.SalePrice;
@@ -3079,7 +2953,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		ScriptPacket.InventoryBlock.GroupOwned = item.GroupOwned;
 		ScriptPacket.InventoryBlock.TransactionID = transactionID;
 		ScriptPacket.InventoryBlock.Type = item.assetType.getValue();
-		ScriptPacket.InventoryBlock.InvType = item.inventoryType.getValue();
+		ScriptPacket.InventoryBlock.InvType = item.getType().getValue();
 		ScriptPacket.InventoryBlock.Flags = item.ItemFlags;
 		ScriptPacket.InventoryBlock.SaleType = item.saleType.getValue();
 		ScriptPacket.InventoryBlock.SalePrice = item.SalePrice;
@@ -3232,7 +3106,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		// The rest of the CRC fields
 		CRC += iitem.ItemFlags; // Flags
-		CRC += iitem.inventoryType.getValue(); // InvType
+		CRC += iitem.getType().getValue(); // InvType
 		CRC += iitem.assetType.getValue(); // Type
 		CRC += Helpers.DateTimeToUnixTime(iitem.CreationDate); // CreationDate
 		CRC += iitem.SalePrice; // SalePrice
@@ -3311,8 +3185,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			case Gesture:
 				return new InventoryGesture(id);
 			default:
-				return new InventoryItem(type, id);
+				try
+				{
+					return (InventoryItem)Class.forName("Inventory " + type).getConstructor(id.getClass()).newInstance(id);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, _Client, ex);
+				}
 		}
+		return null;
 	}
 
 	private InventoryItem SafeCreateInventoryItem(InventoryType InvType, UUID ItemID)
@@ -4468,8 +4350,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			}
 
 			// This is triggered when an item is received from a task
-			OnTaskItemReceived.dispatch(new TaskItemReceivedCallbackArgs(item.UUID, dataBlock.FolderID, item.CreatorID,
-					item.AssetID, item.inventoryType));
+			OnTaskItemReceived.dispatch(new TaskItemReceivedCallbackArgs(item.UUID, dataBlock.FolderID, item.CreatorID, item.AssetID, item.getType()));
 		}
 	}
 
@@ -4628,7 +4509,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			item.ItemFlags = dataBlock.Flags;
 			item.GroupID = dataBlock.GroupID;
 			item.GroupOwned = dataBlock.GroupOwned;
-			item.inventoryType = InventoryType.setValue(dataBlock.InvType);
 			item.Name = Helpers.BytesToString(dataBlock.getName());
 			item.OwnerID = dataBlock.OwnerID;
 			item.ParentUUID = dataBlock.FolderID;

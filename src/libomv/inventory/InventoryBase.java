@@ -34,6 +34,7 @@ import java.io.Serializable;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
+import libomv.inventory.InventoryItem.InventoryType;
 import libomv.types.UUID;
 
 /* Base class for Inventory Items */
@@ -51,13 +52,7 @@ public abstract class InventoryBase implements Serializable
 	// Item/Folder Owners {@link OpenMetaverse.UUID}
 	public UUID OwnerID;
 
-	/**
-	 * Constructor
-	 */
-	public InventoryBase()
-	{
-	}
-
+	public abstract InventoryType getType();
 	/**
 	 * Constructor, takes an itemID as a parameter
 	 * 
