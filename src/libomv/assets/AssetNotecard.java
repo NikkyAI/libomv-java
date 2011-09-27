@@ -162,7 +162,7 @@ public class AssetNotecard extends AssetItem
 				}
 
 				output.append("\t\ttype\t" + item.assetType.toString() + "\n");
-				output.append("\t\tinv_type\t" + item.inventoryType.toString() + "\n");
+				output.append("\t\tinv_type\t" + item.getType().toString() + "\n");
 				output.append("\t\tflags\t" + String.format("08x", item.ItemFlags) + "\n");
 
 				output.append("\tsale_info\t0\n");
@@ -402,7 +402,7 @@ public class AssetNotecard extends AssetItem
 						creationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(val));
 					}
 				}
-				InventoryItem finalEmbedded = new InventoryItem(inventoryType, uuid);
+				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid);
 
 				finalEmbedded.CreatorID = creatorID;
 				finalEmbedded.OwnerID = ownerID;
