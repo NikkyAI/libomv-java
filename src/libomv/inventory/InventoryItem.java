@@ -38,6 +38,8 @@ import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 /* An Item in Inventory */
 public class InventoryItem extends InventoryBase
@@ -302,6 +304,58 @@ public class InventoryItem extends InventoryBase
 	// public UUID TransactionID;
 	/* The {@link OpenMetaverse.UUID} of the previous owner of the item */
 	public UUID LastOwnerID;
+
+	/**
+	 * Wrapper for creating a new {@link InventoryItem} object
+	 * 
+	 * @param type
+	 *            The type of item from the {@link InventoryType} enum
+	 * @param id
+	 *            The {@link UUID} of the newly created object
+	 * @return An {@link InventoryItem} object with the type and id passed
+	 */
+	public static InventoryItem create(InventoryType type, UUID id)
+	{
+		switch (type)
+		{
+			case Texture:
+				return new InventoryTexture(id);
+			case Sound:
+				return new InventorySound(id);
+			case CallingCard:
+				return new InventoryCallingCard(id);
+			case Landmark:
+				return new InventoryLandmark(id);
+			case Object:
+				return new InventoryObject(id);
+			case Notecard:
+				return new InventoryNotecard(id);
+			case Category:
+				return new InventoryCategory(id);
+			case LSL:
+				return new InventoryLSL(id);
+			case Snapshot:
+				return new InventorySnapshot(id);
+			case Attachment:
+				return new InventoryAttachment(id);
+			case Wearable:
+				return new InventoryWearable(id);
+			case Animation:
+				return new InventoryAnimation(id);
+			case Gesture:
+				return new InventoryGesture(id);
+			default:
+				try
+				{
+					return (InventoryItem)Class.forName("Inventory " + type).getConstructor(id.getClass()).newInstance(id);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, ex);
+				}
+		}
+		return null;
+	}
 
 	/**
 	 * Construct a new InventoryItem object of a specific Type

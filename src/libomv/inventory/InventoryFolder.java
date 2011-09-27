@@ -49,6 +49,11 @@ public class InventoryFolder extends InventoryBase
 	// Number of child items this folder contains.
 	public int descendentCount;
 
+	public static InventoryFolder create(UUID folderID)
+	{
+		return new InventoryFolder(folderID);
+	}
+
 	/**
 	 * Constructor
 	 * 

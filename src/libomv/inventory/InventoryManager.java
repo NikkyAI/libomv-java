@@ -98,7 +98,6 @@ import libomv.packets.UpdateInventoryFolderPacket;
 import libomv.packets.UpdateInventoryItemPacket;
 import libomv.packets.UpdateTaskInventoryPacket;
 import libomv.packets.LinkInventoryItemPacket;
-import libomv.primitives.Primitive.AttachmentPoint;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.Quaternion;
@@ -118,380 +117,6 @@ import libomv.utils.TimeoutEvent;
 /* Tools for dealing with agents inventory */
 public class InventoryManager implements PacketCallback, CapsCallback
 {
-	/** InventoryTexture Class representing a graphical image */
-	@SuppressWarnings("serial")
-	public class InventoryTexture extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryTexture object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryTexture(UUID itemID)
-		{
-			super(itemID);
-		}
-		
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Texture;
-		}
-	}
-
-	/** InventorySound Class representing a playable sound */
-	@SuppressWarnings("serial")
-	public class InventorySound extends InventoryItem
-	{
-		/**
-		 * Construct an InventorySound object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventorySound(UUID itemID)
-		{
-			super(itemID);
-		}
-
-		
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Sound;
-		}
-	}
-
-	/** InventoryCallingCard Class, contains information on another avatar */
-	@SuppressWarnings("serial")
-	public class InventoryCallingCard extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryCallingCard object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryCallingCard(UUID itemID)
-		{
-			super(itemID);
-		}
-		
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.CallingCard;
-		}
-	}
-
-	/** InventoryLandmark Class, contains details on a specific location */
-	@SuppressWarnings("serial")
-	public class InventoryLandmark extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryLandmark object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryLandmark(UUID itemID)
-		{
-			super(itemID);
-		}
-
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Landmark;
-
-		}
-
-		/**
-		 * Landmarks use the InventoryItemFlags struct and will have a flag of 1
-		 * set if they have been visited
-		 */
-		public final boolean getLandmarkVisited()
-		{
-			return (ItemFlags & 1) != 0;
-		}
-
-		public final void setLandmarkVisited(boolean value)
-		{
-			if (value)
-			{
-				ItemFlags |= 1;
-			}
-			else
-			{
-				ItemFlags &= ~1;
-			}
-		}
-	}
-
-	/**
-	 * InventoryObject Class contains details on a primitive or coalesced set of
-	 * primitives
-	 */
-	@SuppressWarnings("serial")
-	public class InventoryObject extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryObject object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryObject(UUID itemID)
-		{
-			super(itemID);
-		}
-
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Object;
-		}
-
-		/** Gets or sets the upper byte of the Flags value */
-		public final int getItemFlags()
-		{
-			return ItemFlags & ~0xFF;
-		}
-
-		public final void setItemFlags(int value)
-		{
-			ItemFlags = value | (ItemFlags & 0xFF);
-		}
-
-		/**
-		 * Gets or sets the object attachment point, the lower byte of the Flags
-		 * value
-		 */
-		public final AttachmentPoint getAttachPoint()
-		{
-			return AttachmentPoint.setValue(ItemFlags & 0xFF);
-		}
-
-		public final void setAttachPoint(AttachmentPoint value)
-		{
-			ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
-		}
-	}
-
-	/** InventoryNotecard Class, contains details on an encoded text document */
-	@SuppressWarnings("serial")
-	public class InventoryNotecard extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryNotecard object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryNotecard(UUID itemID)
-		{
-			super(itemID);
-		}
-
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Notecard;
-		}
-	}
-
-	/**
-	 * InventoryCategory Class
-	 * 
-	 * TODO: Is this even used for anything?
-	 */
-	@SuppressWarnings("serial")
-	public class InventoryCategory extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryCategory object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryCategory(UUID itemID)
-		{
-			super(itemID);
-		}
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Category;
-		}
-	}
-
-	/** InventoryLSL Class, represents a Linden Scripting Language object */
-	@SuppressWarnings("serial")
-	public class InventoryLSL extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryLSL object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryLSL(UUID itemID)
-		{
-			super(itemID);
-		}
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.LSL;
-		}
-	}
-
-	/** InventorySnapshot Class, an image taken with the viewer */
-	@SuppressWarnings("serial")
-	public class InventorySnapshot extends InventoryItem
-	{
-		/**
-		 * Construct an InventorySnapshot object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventorySnapshot(UUID itemID)
-		{
-			super(itemID);
-		}
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Snapshot;
-		}
-	}
-
-	/** InventoryAttachment Class, contains details on an attachable object */
-	@SuppressWarnings("serial")
-	public class InventoryAttachment extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryAttachment object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryAttachment(UUID itemID)
-		{
-			super(itemID);
-		}
-
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Attachment;
-		}
-
-		/** Get the last AttachmentPoint this object was attached to */
-		public final AttachmentPoint getAttachmentPoint()
-		{
-			return AttachmentPoint.setValue(ItemFlags & 0xFF);
-		}
-
-		public final void setAttachmentPoint(AttachmentPoint value)
-		{
-			ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
-		}
-	}
-
-	/** InventoryWearable Class, details on a clothing item or body part */
-	@SuppressWarnings("serial")
-	public class InventoryWearable extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryWearable object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryWearable(UUID itemID)
-		{
-			super(itemID);
-		}
-		
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Wearable;
-		}
-
-		/** The {@link OpenMetaverse.WearableType} , Skin, Shape, Skirt, Etc */
-		public final WearableType getWearableType()
-		{
-			return WearableType.setValue(ItemFlags & 0xFF);
-		}
-
-		public final void setWearableType(WearableType value)
-		{
-			ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
-		}
-	}
-
-	/** InventoryAnimation Class, A bvh encoded object which animates an avatar */
-	@SuppressWarnings("serial")
-	public class InventoryAnimation extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryAnimation object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryAnimation(UUID itemID)
-		{
-			super(itemID);
-		}
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Animation;
-		}
-	}
-
-	/**
-	 * InventoryGesture Class, details on a series of animations, sounds, and
-	 * actions
-	 */
-	@SuppressWarnings("serial")
-	public class InventoryGesture extends InventoryItem
-	{
-		/**
-		 * Construct an InventoryGesture object
-		 * 
-		 * @param itemID
-		 *            A {@link OpenMetaverse.UUID} which becomes the
-		 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
-		 */
-		public InventoryGesture(UUID itemID)
-		{
-			super(itemID);
-		}
-		@Override
-		public InventoryType getType()
-		{
-			return InventoryType.Gesture;
-		}
-	}
-
 	// [Flags]
 	public static class InventorySortOrder
 	{
@@ -3145,57 +2770,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		return uuid;
 	}
 
-	/**
-	 * Wrapper for creating a new {@link InventoryItem} object
-	 * 
-	 * @param type
-	 *            The type of item from the {@link InventoryType} enum
-	 * @param id
-	 *            The {@link UUID} of the newly created object
-	 * @return An {@link InventoryItem} object with the type and id passed
-	 */
-	public InventoryItem CreateInventoryItem(InventoryType type, UUID id)
-	{
-		switch (type)
-		{
-			case Texture:
-				return new InventoryTexture(id);
-			case Sound:
-				return new InventorySound(id);
-			case CallingCard:
-				return new InventoryCallingCard(id);
-			case Landmark:
-				return new InventoryLandmark(id);
-			case Object:
-				return new InventoryObject(id);
-			case Notecard:
-				return new InventoryNotecard(id);
-			case Category:
-				return new InventoryCategory(id);
-			case LSL:
-				return new InventoryLSL(id);
-			case Snapshot:
-				return new InventorySnapshot(id);
-			case Attachment:
-				return new InventoryAttachment(id);
-			case Wearable:
-				return new InventoryWearable(id);
-			case Animation:
-				return new InventoryAnimation(id);
-			case Gesture:
-				return new InventoryGesture(id);
-			default:
-				try
-				{
-					return (InventoryItem)Class.forName("Inventory " + type).getConstructor(id.getClass()).newInstance(id);
-				}
-				catch (Exception ex)
-				{
-					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, _Client, ex);
-				}
-		}
-		return null;
-	}
 
 	private InventoryItem SafeCreateInventoryItem(InventoryType InvType, UUID ItemID)
 	{
@@ -3212,16 +2786,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					ret = CreateInventoryItem(InvType, ItemID);
+					ret = InventoryItem.create(InvType, ItemID);
 				}
 			}
 		}
 		return ret;
-	}
-
-	public InventoryFolder CreateInventoryFolder(UUID folderID)
-	{
-		return new InventoryFolder(folderID);
 	}
 
 	private static boolean ParseLine(String line, RefObject<String> key, RefObject<String> value)
@@ -3320,7 +2889,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 					if (assetType == AssetType.Folder)
 					{
-						InventoryFolder folder = CreateInventoryFolder(itemID);
+						InventoryFolder folder = InventoryFolder.create(itemID);
 						folder.Name = name;
 						folder.ParentUUID = parentID;
 
@@ -3535,7 +3104,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						}
 					}
 
-					InventoryItem item = CreateInventoryItem(inventoryType, itemID);
+					InventoryItem item = InventoryItem.create(inventoryType, itemID);
 					item.AssetID = assetID;
 					item.assetType = assetType;
 					item.CreationDate = creationDate;
@@ -3789,13 +3358,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				Logger.DebugLog("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client);
 				synchronized (_Store)
 				{
-					_Store.setRootFolder(CreateInventoryFolder(replyData.InventoryRoot));
+					_Store.setRootFolder(InventoryFolder.create(replyData.InventoryRoot));
 					for (int i = 0; i < replyData.InventorySkeleton.length; i++)
 					{
 						_Store.updateNodeFor(replyData.InventorySkeleton[i]);
 					}
 
-					_Store.setLibraryFolder(CreateInventoryFolder(replyData.LibraryRoot));
+					_Store.setLibraryFolder(InventoryFolder.create(replyData.LibraryRoot));
 					for (int i = 0; i < replyData.LibrarySkeleton.length; i++)
 					{
 						_Store.updateNodeFor(replyData.LibrarySkeleton[i]);
@@ -4090,7 +3659,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					// should not be present.
 					else if (!_Store.containsKey(reply.FolderData[i].FolderID))
 					{
-						InventoryFolder folder = CreateInventoryFolder(reply.FolderData[i].FolderID);
+						InventoryFolder folder = InventoryFolder.create(reply.FolderData[i].FolderID);
 
 						folder.ParentUUID = reply.FolderData[i].ParentID;
 						folder.Name = Helpers.BytesToString(reply.FolderData[i].getName());
@@ -4123,11 +3692,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					if (AssetType.Object.equals(AssetType.setValue(reply.ItemData[i].Type))
 							&& InventoryType.Texture.equals(InventoryType.setValue(reply.ItemData[i].InvType)))
 					{
-						item = CreateInventoryItem(InventoryType.Attachment, reply.ItemData[i].ItemID);
+						item = InventoryItem.create(InventoryType.Attachment, reply.ItemData[i].ItemID);
 					}
 					else
 					{
-						item = CreateInventoryItem(InventoryType.setValue(reply.ItemData[i].InvType),
+						item = InventoryItem.create(InventoryType.setValue(reply.ItemData[i].InvType),
 								reply.ItemData[i].ItemID);
 					}
 					item.ParentUUID = reply.ItemData[i].FolderID;
@@ -4274,7 +3843,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				continue;
 			}
 
-			InventoryItem item = CreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID);
+			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID);
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.AssetID = dataBlock.AssetID;
 			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
@@ -4399,7 +3968,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								_Client);
 					}
 
-					InventoryFolder folder = CreateInventoryFolder(dataBlock.FolderID);
+					InventoryFolder folder = InventoryFolder.create(dataBlock.FolderID);
 					folder.Name = Helpers.BytesToString(dataBlock.getName());
 					folder.OwnerID = update.AgentData.AgentID;
 					folder.ParentUUID = dataBlock.ParentID;
@@ -4500,7 +4069,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				continue;
 			}
 
-			InventoryItem item = CreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID);
+			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID);
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.AssetID = dataBlock.AssetID;
 			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);

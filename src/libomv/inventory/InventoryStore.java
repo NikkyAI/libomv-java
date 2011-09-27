@@ -114,8 +114,9 @@ public class InventoryStore
 
 	public CallbackHandler<InventoryObjectAddedCallbackArgs> OnInventoryObjectAdded = new CallbackHandler<InventoryObjectAddedCallbackArgs>();
 
+
 	private InventoryNode _RootNode;
-	private InventoryNode _LibraryRootNode;
+	private InventoryNode _LibraryNode;
 
 	// The root node of the avatars inventory
 	public final InventoryNode getRootNode()
@@ -124,9 +125,9 @@ public class InventoryStore
 	}
 
 	// The root node of the default shared library
-	public final InventoryNode getLibraryRootNode()
+	public final InventoryNode getLibraryNode()
 	{
-		return _LibraryRootNode;
+		return _LibraryNode;
 	}
 
 	// The root folder of this avatars inventory
@@ -147,7 +148,7 @@ public class InventoryStore
 	// The default shared library folder
 	public final InventoryFolder getLibraryFolder()
 	{
-		InventoryBase root = getLibraryRootNode().getData();
+		InventoryBase root = getLibraryNode().getData();
 		return (InventoryFolder) ((root instanceof InventoryFolder) ? root : null);
 	}
 
@@ -156,7 +157,7 @@ public class InventoryStore
 		value.Name = Helpers.EmptyString;
 		value.ParentUUID = UUID.Zero;
 		updateNodeFor(value);
-		_LibraryRootNode = Items.get(value.UUID);
+		_LibraryNode = Items.get(value.UUID);
 	}
 
 	public final UUID getOwner()
