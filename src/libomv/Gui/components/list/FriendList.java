@@ -94,7 +94,7 @@ public class FriendList extends JScrollPane
 		// Choose a sensible minimum size.
 		setPreferredSize(new Dimension(200, 0));
 		// Add the friends list to the viewport.
-		getViewport().add(getJFriendsList());
+		setViewportView(getJFriendsList());
 	}
 
 	private final JList getJFriendsList()
