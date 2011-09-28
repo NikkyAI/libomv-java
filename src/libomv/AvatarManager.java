@@ -26,9 +26,10 @@
  */
 package libomv;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
@@ -196,20 +197,21 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		public boolean ListInProfile;
 	}
 
-	private GridClient Client;
+	private GridClient _Client;
 
-	private Hashtable<UUID, Avatar> Avatars;
+	/* HashMap containing all known avatars to this client */ 
+	private HashMap<UUID, Avatar> _Avatars;
 
 	public class AgentNamesCallbackArgs implements CallbackArgs
 	{
-		private Hashtable<UUID, String> names;
+		private HashMap<UUID, String> names;
 
-		public Hashtable<UUID, String> getNames()
+		public HashMap<UUID, String> getNames()
 		{
 			return names;
 		}
 
-		public AgentNamesCallbackArgs(Hashtable<UUID, String> names)
+		public AgentNamesCallbackArgs(HashMap<UUID, String> names)
 		{
 			this.names = names;
 		}
@@ -246,40 +248,40 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	public AvatarManager(GridClient client)
 	{
-		Client = client;
-		Avatars = new Hashtable<UUID, Avatar>();
+		_Client = client;
+		_Avatars = new HashMap<UUID, Avatar>();
 
 		// Avatar appearance callback
-		Client.Network.RegisterCallback(PacketType.AvatarAppearance, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarAppearance, this);
 
 		// Avatar profile callbacks
-		Client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, this);
 		// Client.Network.RegisterCallback(PacketType.AvatarStatisticsReply,
 		// AvatarStatisticsHandler);
-		Client.Network.RegisterCallback(PacketType.AvatarInterestsReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarInterestsReply, this);
 
 		// Avatar group callback
-		Client.Network.RegisterCallback(PacketType.AvatarGroupsReply, this);
-		Client.Network.RegisterCallback(CapsEventType.AgentGroupDataUpdate, this);
-		Client.Network.RegisterCallback(CapsEventType.AvatarGroupsReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarGroupsReply, this);
+		_Client.Network.RegisterCallback(CapsEventType.AgentGroupDataUpdate, this);
+		_Client.Network.RegisterCallback(CapsEventType.AvatarGroupsReply, this);
 
 		// Viewer effect callback
-		Client.Network.RegisterCallback(PacketType.ViewerEffect, this);
+		_Client.Network.RegisterCallback(PacketType.ViewerEffect, this);
 
 		// Other callbacks
-		Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
-		Client.Network.RegisterCallback(PacketType.AvatarPickerReply, this);
-		Client.Network.RegisterCallback(PacketType.AvatarAnimation, this);
+		_Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarPickerReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarAnimation, this);
 
 		// Picks callbacks
-		Client.Network.RegisterCallback(PacketType.AvatarPicksReply, this);
-		Client.Network.RegisterCallback(PacketType.PickInfoReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarPicksReply, this);
+		_Client.Network.RegisterCallback(PacketType.PickInfoReply, this);
 
 		// Classifieds callbacks
-		Client.Network.RegisterCallback(PacketType.AvatarClassifiedReply, this);
-		Client.Network.RegisterCallback(PacketType.ClassifiedInfoReply, this);
+		_Client.Network.RegisterCallback(PacketType.AvatarClassifiedReply, this);
+		_Client.Network.RegisterCallback(PacketType.ClassifiedInfoReply, this);
 
-		Client.Network.RegisterCallback(CapsEventType.DisplayNameUpdate, this);
+		_Client.Network.RegisterCallback(CapsEventType.DisplayNameUpdate, this);
 	}
 
 	@Override
@@ -288,40 +290,40 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case AvatarAppearance:
-				// AvatarAppearanceHandler(packet, simulator);
+				// HandleAvatarAppearance(packet, simulator);
 				break;
 			case AvatarPropertiesReply:
-				// AvatarPropertiesHandler(packet, simulator);
+				// HandleAvatarProperties(packet, simulator);
 				break;
 			case AvatarInterestsReply:
-				// AvatarInterestsHandler(packet, simulator);
+				// HandleAvatarInterests(packet, simulator);
 				break;
 			case AvatarGroupsReply:
-				// AvatarGroupsReplyHandler(packet, simulator);
+				// HandleAvatarGroupsReply(packet, simulator);
 				break;
 			case ViewerEffect:
-				// ViewerEffectHandler(packet, simulator);
+				// HandleViewerEffect(packet, simulator);
 				break;
 			case UUIDNameReply:
-				UUIDNameReplyHandler(packet, simulator);
+				HandleUUIDNameReply(packet, simulator);
 				break;
 			case AvatarPickerReply:
-				// AvatarPickerReplyHandler(packet, simulator);
+				// HandleAvatarPickerReply(packet, simulator);
 				break;
 			case AvatarAnimation:
-				// AvatarAnimationHandler(packet, simulator);
+				// HandleAvatarAnimation(packet, simulator);
 				break;
 			case AvatarPicksReply:
-				// AvatarPicksReplyHandler(packet, simulator);
+				// HandleAvatarPicksReply(packet, simulator);
 				break;
 			case PickInfoReply:
-				// PickInfoReplyHandler(packet, simulator);
+				// HandlePickInfoReply(packet, simulator);
 				break;
 			case AvatarClassifiedReply:
-				// AvatarClassifiedReplyHandler(packet, simulator);
+				// HandleAvatarClassifiedReply(packet, simulator);
 				break;
 			case ClassifiedInfoReply:
-				// ClassifiedInfoReplyHandler(packet, simulator);
+				// HandleClassifiedInfoReply(packet, simulator);
 				break;
 		}
 	}
@@ -332,13 +334,13 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case DisplayNameUpdate:
-				DisplayNameUpdateMessageHandler(message, simulator);
+				HandleDisplayNameUpdate(message, simulator);
 				break;
 			case AgentGroupDataUpdate:
-				// AgentGroupDataUpdateHandler(message, simulator);
+				// HandleAgentGroupDataUpdate(message, simulator);
 				break;
 			case AvatarGroupsReply:
-				// AvatarGroupsReplyHandler(message, simulator);
+				// HandleAvatarGroupsReply(message, simulator);
 				break;
 		}
 	}
@@ -349,17 +351,20 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	 * @param avatar
 	 *            Filled-out Avatar class to insert
 	 */
-	public void AddAvatar(Avatar avatar)
-	{
-		synchronized (Avatars)
+	public void add(Avatar avatar)
+	{ 
+		synchronized (_Avatars)
 		{
-			Avatars.put(avatar.ID, avatar);
+			_Avatars.put(avatar.ID, avatar);
 		}
 	}
 
-	public boolean Contains(UUID id)
+	public boolean contains(UUID id)
 	{
-		return Avatars.containsKey(id);
+		synchronized (_Avatars)
+		{
+			return _Avatars.containsKey(id);
+		}
 	}
 
 	/**
@@ -374,11 +379,11 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	{
 		String name = Helpers.EmptyString;
 
-		synchronized (Avatars)
+		synchronized (_Avatars)
 		{
-			if (Avatars.containsKey(id))
+			if (_Avatars.containsKey(id))
 			{
-				name = Avatars.get(id).getName();
+				name = _Avatars.get(id).getName();
 			}
 		}
 		return name;
@@ -397,38 +402,42 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	{
 		// TODO: BeginGetAvatarNames is pretty bulky, rewrite a simple version
 		// here
-		Vector<UUID> ids = new Vector<UUID>();
-		ids.addElement(id);
+		ArrayList<UUID> ids = new ArrayList<UUID>();
+		ids.add(id);
 
 		RequestAvatarNames(ids, anc);
 	}
 
 	//
 	// <param name="ids"></param>
-	public void RequestAvatarNames(Vector<UUID> ids, Callback<AgentNamesCallbackArgs> anc) throws Exception
+	public void RequestAvatarNames(ArrayList<UUID> ids, Callback<AgentNamesCallbackArgs> anc) throws Exception
 	{
 		if (anc != null)
 		{
 			OnAgentNames.add(anc);
 		}
 
-		Hashtable<UUID, String> havenames = new Hashtable<UUID, String>();
-		Vector<UUID> neednames = new Vector<UUID>();
+		HashMap<UUID, String> havenames = new HashMap<UUID, String>();
+		ArrayList<UUID> neednames = new ArrayList<UUID>();
 
-		// Fire callbacks for the ones we already have cached
-		for (int i = 0; i < ids.size(); i++)
+		synchronized (_Avatars)
 		{
-			UUID id = ids.elementAt(i);
-			if (Avatars.containsKey(id))
+			// Fire callbacks for the ones we already have cached
+			Iterator<UUID> iter = ids.listIterator();
+			while (iter.hasNext())
 			{
-				havenames.put(id, Avatars.get(id).getName());
-			}
-			else
-			{
-				neednames.addElement(id);
+				UUID id = iter.next();
+				if (_Avatars.containsKey(id))
+				{
+					havenames.put(id, _Avatars.get(id).getName());
+				}
+				else
+				{
+					neednames.add(id);
+				}
 			}
 		}
-
+		
 		if (havenames.size() > 0)
 		{
 			OnAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
@@ -443,9 +452,13 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			for (int i = 0; i < neednames.size(); i++)
 			{
 				request.UUIDNameBlock[i] = request.createUUIDNameBlockBlock();
-				request.UUIDNameBlock[i].ID = neednames.elementAt(i);
+				request.UUIDNameBlock[i].ID = neednames.get(i);
 			}
-			Client.Network.SendPacket(request);
+			_Client.Network.SendPacket(request);
+		}
+		else
+		{
+			OnAgentNames.remove(anc);			
 		}
 	}
 
@@ -458,23 +471,23 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	 *            Unused
 	 * @throws Exception
 	 */
-	private void UUIDNameReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleUUIDNameReply(Packet packet, Simulator simulator) throws Exception
 	{
-		Hashtable<UUID, String> names = new Hashtable<UUID, String>();
+		HashMap<UUID, String> names = new HashMap<UUID, String>();
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
-		synchronized (Avatars)
+		synchronized (_Avatars)
 		{
 			for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock)
 			{
-				if (!Avatars.containsKey(block.ID))
+				if (!_Avatars.containsKey(block.ID))
 				{
-					Avatars.put(block.ID, new Avatar(block.ID));
+					_Avatars.put(block.ID, new Avatar(block.ID));
 				}
 
-				Avatars.get(block.ID).setNames(Helpers.BytesToString(block.getFirstName()),
+				_Avatars.get(block.ID).setNames(Helpers.BytesToString(block.getFirstName()),
 						Helpers.BytesToString(block.getLastName()));
-				names.put(block.ID, Avatars.get(block.ID).getName());
+				names.put(block.ID, _Avatars.get(block.ID).getName());
 			}
 		}
 		OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
@@ -483,7 +496,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	/**
 	 * EQ Message fired when someone nearby changes their display name
 	 */
-	private void DisplayNameUpdateMessageHandler(IMessage message, Simulator simulator)
+	private void HandleDisplayNameUpdate(IMessage message, Simulator simulator)
 	{
 		DisplayNameUpdateMessage msg = (DisplayNameUpdateMessage) message;
 		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
