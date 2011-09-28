@@ -149,11 +149,6 @@ public class LoginManager
 		 * An array of string sent to the login server to enable various options
 		 */
 		public String[] Options;
-		/**
-		 * A randomly generated ID to distinguish between login attempts. This value
-		 * value is only used internally in the library and is never sent over the wire
-		 */
-		private UUID LoginID;
 
 		/**
 		 * Default constructor, initializes sane default values
@@ -263,7 +258,10 @@ public class LoginManager
 		public String AgentRegionAccess;
 		public int AOTransition;
 		public String InventoryHost;
-
+        public int MaxAgentGroups;
+        public String OpenIDUrl;
+        public String XMPPHost;
+        
 		// Unhandled:
 		// reply.gestures
 		// reply.event_categories
@@ -375,7 +373,32 @@ public class LoginManager
 			LibraryOwner = ParseMappedUUID("inventory-lib-owner", "agent_id", reply);
 			LibraryRoot = ParseMappedUUID("inventory-lib-root", "folder_id", reply);
 			LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
-		}
+
+            // UDP Blacklist
+            if (reply.containsKey("udp_blacklist"))
+            {
+                UDPBlacklist = reply.get("udp_blacklist").AsString();
+            }
+
+            if (reply.containsKey("max-agent-groups"))
+            {
+                MaxAgentGroups = reply.get("max-agent-groups").AsUInteger();
+            }
+            else
+            {
+                MaxAgentGroups = -1;
+            }
+
+            if (reply.containsKey("openid_url"))
+            {
+                OpenIDUrl = reply.get("openid_url").AsString();
+            }
+
+            if (reply.containsKey("xmpp_host"))
+            {
+                XMPPHost = reply.get("xmpp_host").AsString();
+            }
+}
 
 		private void ParseLoginReply(HashMap<String, Object> reply)
 		{
@@ -529,6 +552,25 @@ public class LoginManager
 			{
 				UDPBlacklist = ParseString("udp_blacklist", reply);
 			}
+
+			if (reply.containsKey("max-agent-groups"))
+            {
+                MaxAgentGroups = ParseUInt("max-agent-groups", reply);
+            }
+            else
+            {
+                MaxAgentGroups = -1;
+            }
+
+            if (reply.containsKey("openid_url"))
+            {
+                OpenIDUrl = ParseString("openid_url", reply);
+            }
+
+            if (reply.containsKey("xmpp_host"))
+            {
+                XMPPHost = ParseString("xmpp_host", reply);
+            }
 		}
 
 		public InventoryFolder[] ParseInventoryFolders(String key, UUID owner, OSDMap reply)
@@ -898,9 +940,6 @@ public class LoginManager
 
 	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
 	{
-		// Generate a random ID to identify this login attempt
-		loginParams.LoginID = new UUID();
-
 		// #region Sanity Check loginParams
 		if (loginParams.Options == null)
 		{
@@ -911,41 +950,6 @@ public class LoginManager
 		if (loginParams.Password.length() != 35 && !loginParams.Password.startsWith("$1$"))
 		{
 			loginParams.Password = Helpers.MD5Password(loginParams.Password);
-		}
-
-		if (loginParams.ViewerDigest == null)
-		{
-			loginParams.ViewerDigest = "";
-		}
-
-		if (loginParams.Version == null)
-		{
-			loginParams.Version = "";
-		}
-
-		if (loginParams.UserAgent == null)
-		{
-			loginParams.UserAgent = "";
-		}
-
-		if (loginParams.Platform == null)
-		{
-			loginParams.Platform = "";
-		}
-
-		if (loginParams.MAC == null)
-		{
-			loginParams.MAC = "";
-		}
-
-		if (loginParams.Channel == null)
-		{
-			loginParams.Channel = "";
-		}
-
-		if (loginParams.Author == null)
-		{
-			loginParams.Author = "";
 		}
 		// #endregion
 
@@ -988,30 +992,37 @@ public class LoginManager
 				loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
 				loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
 
+				OSDArray optionsOSD;
 				// Create the options LLSD array
-				OSDArray optionsOSD = new OSDArray(loginParams.Options.length);
-				for (int i = 0; i < loginParams.Options.length; i++)
+				if (loginParams.Options != null && loginParams.Options.length > 0)
 				{
-					optionsOSD.add(OSD.FromString(loginParams.Options[i]));
-				}
-
-				for (String[] callbackOpts : CallbackOptions.values())
-				{
-					if (callbackOpts != null)
+					optionsOSD = new OSDArray(loginParams.Options.length);
+					for (int i = 0; i < loginParams.Options.length; i++)
 					{
-						for (int i = 0; i < callbackOpts.length; i++)
+						optionsOSD.add(OSD.FromString(loginParams.Options[i]));
+					}
+
+					for (String[] callbackOpts : CallbackOptions.values())
+					{
+						if (callbackOpts != null)
 						{
-							if (!optionsOSD.contains(callbackOpts[i]))
+							for (int i = 0; i < callbackOpts.length; i++)
 							{
-								optionsOSD.add(OSD.FromString(callbackOpts[i]));
+								if (!optionsOSD.contains(callbackOpts[i]))
+								{
+									optionsOSD.add(OSD.FromString(callbackOpts[i]));
+								}
 							}
 						}
 					}
 				}
+				else
+				{
+					optionsOSD = new OSDArray();					
+				}
 				loginLLSD.put("options", optionsOSD);
 
 				// Make the CAPS POST for login
-
 				CapsClient loginRequest = new CapsClient(loginUri);
 				loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout, new LoginReplyLLSDHandler(loginParams));
 				// #endregion
@@ -1022,14 +1033,14 @@ public class LoginManager
 
 				// Create the Hashtable for XmlRpcCs
 				HashMap<String, Object> loginXmlRpc = new HashMap<String, Object>();
-				loginXmlRpc.put("first", loginParams.FirstName);
-				loginXmlRpc.put("last", loginParams.LastName);
-				loginXmlRpc.put("passwd", loginParams.Password);
-				loginXmlRpc.put("start", loginParams.Start);
-				loginXmlRpc.put("channel", loginParams.Channel);
-				loginXmlRpc.put("version", loginParams.Version);
-				loginXmlRpc.put("platform", loginParams.Platform);
-				loginXmlRpc.put("mac", loginParams.MAC);
+				loginXmlRpc.put("first", loginParams.FirstName != null ? loginParams.FirstName : Helpers.EmptyString);
+				loginXmlRpc.put("last", loginParams.LastName != null ? loginParams.LastName : Helpers.EmptyString);
+				loginXmlRpc.put("passwd", loginParams.Password != null ? loginParams.Password : Helpers.EmptyString);
+				loginXmlRpc.put("start", loginParams.Start != null ? loginParams.Start : Helpers.EmptyString);
+				loginXmlRpc.put("channel", loginParams.Channel != null ? loginParams.Channel : Helpers.EmptyString);
+				loginXmlRpc.put("version", loginParams.Version != null ? loginParams.Version : Helpers.EmptyString);
+				loginXmlRpc.put("platform", loginParams.Platform != null ? loginParams.Platform : Helpers.EmptyString);
+				loginXmlRpc.put("mac", loginParams.MAC != null ? loginParams.MAC : Helpers.EmptyString);
 				if (loginParams.AgreeToTos)
 				{
 					loginXmlRpc.put("agree_to_tos", "true");
@@ -1038,25 +1049,28 @@ public class LoginManager
 				{
 					loginXmlRpc.put("read_critical", "true");
 				}
-				loginXmlRpc.put("id0", loginParams.ID0);
+				loginXmlRpc.put("id0", loginParams.ID0 != null ? loginParams.ID0 : Helpers.EmptyString);
 				loginXmlRpc.put("last_exec_event", 0);
 
-				// Create the options array
 				ArrayList<String> options = new ArrayList<String>();
-				for (int i = 0; i < loginParams.Options.length; i++)
+				// Create the options array
+				if (loginParams.Options != null && loginParams.Options.length > 0)
 				{
-					options.add(loginParams.Options[i]);
-				}
-
-				for (String[] callbackOpts : CallbackOptions.values())
-				{
-					if (callbackOpts != null)
+					for (int i = 0; i < loginParams.Options.length; i++)
 					{
-						for (int i = 0; i < callbackOpts.length; i++)
+						options.add(loginParams.Options[i]);
+					}
+
+					for (String[] callbackOpts : CallbackOptions.values())
+					{
+						if (callbackOpts != null)
 						{
-							if (!options.contains(callbackOpts[i]))
+							for (int i = 0; i < callbackOpts.length; i++)
 							{
-								options.add(callbackOpts[i]);
+								if (!options.contains(callbackOpts[i]))
+								{
+									options.add(callbackOpts[i]);
+								}
 							}
 						}
 					}
@@ -1248,7 +1262,7 @@ public class LoginManager
 		{
 			// Login succeeded
 			_Client.Network.setCircuitCode(reply.CircuitCode);
-			_Client.Network.setUDPBlackList(reply.UDPBlacklist);
+			_Client.Network.setUDPBlacklist(reply.UDPBlacklist);
 
 			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
 
