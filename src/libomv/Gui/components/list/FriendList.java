@@ -141,7 +141,7 @@ public class FriendList extends JScrollPane
 			
 			// Initialize the list with the values from the friends manager
 			DefaultListModel model = (DefaultListModel) ((SortedListModel) jLFriendsList.getModel()).getUnsortedModel();
-			model.copyInto(_Client.Friends.FriendList.values().toArray());
+			model.copyInto(_Client.Friends.getFriendList().values().toArray());
 			// create Renderer and display
 			jLFriendsList.setCellRenderer(new FriendListRow());
 			// only allow single selections.
@@ -185,7 +185,7 @@ public class FriendList extends JScrollPane
 		@Override
 		public void callback(FriendNotificationCallbackArgs e)
 		{
-			FriendInfo info = _Client.Friends.FriendList.get(e.getAgentID());
+			FriendInfo info = _Client.Friends.getFriendList().get(e.getAgentID());
 			if (info != null)
 			{
 				addFriend(info);
@@ -198,7 +198,7 @@ public class FriendList extends JScrollPane
 		@Override
 		public void callback(FriendshipResponseCallbackArgs e)
 		{
-			FriendInfo info =  _Client.Friends.FriendList.get(e.getAgentID());
+			FriendInfo info =  _Client.Friends.getFriendList().get(e.getAgentID());
 			if (info != null)
 			{
 				if (e.getAccepted())

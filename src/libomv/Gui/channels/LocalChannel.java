@@ -26,8 +26,8 @@
 package libomv.Gui.channels;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,84 +41,119 @@ import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
 import javax.swing.text.StyledDocument;
 
+import libomv.GridClient;
 import libomv.types.UUID;
 
 public class LocalChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
-	private JTextField chatText;
-	private JTextField textField;
+
+	private JTextField jTxChat;
+	private JTextPane jTxPane;
+	private JScrollPane jScrpAttendents; 
+
+	private GridClient _Client;
 
 	/**
 	 * This is the default constructor
 	 */
-	public LocalChannel()
+	public LocalChannel(GridClient client)
 	{
-		super();
+		super("Local Chat");
+		
+		_Client = client;
+		
 		setLayout(new BorderLayout(0, 0));
-
+		setSize(600, 480);
+		
 		JPanel panelNorth = new JPanel();
-		add(panelNorth, BorderLayout.NORTH);
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
 		
-		textField = new JTextField();
-		panelNorth.add(textField);
+		JTextField textField = new JTextField();
 		textField.setColumns(10);
+		panelNorth.add(textField);
 
 		JToggleButton jtbExpandAttendents = new JToggleButton("Show Attendents");
 		jtbExpandAttendents.setHorizontalAlignment(SwingConstants.RIGHT);
+		jtbExpandAttendents.setSelected(false);
+		getJScrpAttendents().setVisible(false);
+		jtbExpandAttendents.addItemListener(new ItemListener()
+		{
+			@Override
+			public void itemStateChanged(ItemEvent e)
+			{
+				getJScrpAttendents().setVisible(e.getStateChange() == ItemEvent.SELECTED);
+			}
+		});
+	
 		panelNorth.add(jtbExpandAttendents);
+		add(panelNorth, BorderLayout.NORTH);
 
 		JPanel panelSouth = new JPanel();
-		add(panelSouth, BorderLayout.SOUTH);
 		panelSouth.setLayout(new BoxLayout(panelSouth, BoxLayout.X_AXIS));
-
-		chatText = new JTextField();
-		chatText.setHorizontalAlignment(SwingConstants.LEFT);
-		panelSouth.add(chatText);
-		chatText.setColumns(20);
+		panelSouth.add(getJTxChat());
 
 		JButton btnSay = new JButton("Say");
 		btnSay.setHorizontalAlignment(SwingConstants.RIGHT);
-		btnSay.addActionListener(new ActionListener()
+		btnSay.addItemListener(new ItemListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			@Override
+			public void itemStateChanged(ItemEvent e)
 			{
-				// TODO add chat routing
+				// TODO send the text from the chatTextField
+				getJTxChat().getText();
 			}
 		});
+
 		panelSouth.add(btnSay);
+		add(panelSouth, BorderLayout.SOUTH);
 
 		JScrollPane scrollPaneText = new JScrollPane();
+		scrollPaneText.setViewportView(getTxPane());
 		add(scrollPaneText, BorderLayout.CENTER);
-		
-		JTextPane textPane = new JTextPane();
-		scrollPaneText.setViewportView(textPane);
 
-		JScrollPane scrollPaneAttendents = new JScrollPane();
-		add(scrollPaneAttendents, BorderLayout.EAST);
-
-		JList listAttendents = new JList();
-		listAttendents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		scrollPaneAttendents.setViewportView(listAttendents);
-		initialize();
+		add(getJScrpAttendents(), BorderLayout.EAST);
 	}
 
-	/**
-	 * This method initializes this
-	 * 
-	 * @return void
-	 */
-	private void initialize()
+	
+	private JTextField getJTxChat()
 	{
-		this.setSize(548, 587);
+		if (jTxChat == null)
+		{
+			jTxChat = new JTextField();
+			jTxChat.setHorizontalAlignment(SwingConstants.LEFT);
+			jTxChat.setColumns(20);
+		}
+		return jTxChat;
+	}
+	
+	private JTextPane getTxPane()
+	{
+		if (jTxPane == null)
+		{
+			jTxPane = new JTextPane();
+		}
+		return jTxPane;
 	}
 
+	private JScrollPane getJScrpAttendents()
+	{
+		if (jScrpAttendents == null)
+		{
+			jScrpAttendents = new JScrollPane();
+			add(jScrpAttendents, BorderLayout.EAST);
+
+			JList listAttendents = new JList();
+			listAttendents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jScrpAttendents.setViewportView(listAttendents);
+		}
+		return jScrpAttendents;
+	}
+	
 	@Override
 	public UUID getID()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return UUID.Zero;
 	}
 
 	@Override

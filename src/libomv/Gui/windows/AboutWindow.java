@@ -25,15 +25,11 @@
  */
 package libomv.Gui.windows;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.Window;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class AboutWindow extends JDialog
 {

@@ -25,16 +25,17 @@
  */
 package libomv.Gui.windows;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.GridLayout;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.LineBorder;
+
 import libomv.GridClient;
 import libomv.Gui.channels.AbstractChannel;
+import libomv.Gui.channels.LocalChannel;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 
@@ -45,21 +46,20 @@ public class CommWindow extends JFrame
 	private JTabbedPane jTpComm;
 	private JTabbedPane jTpContacts;
 	
+	private GridClient _Client;
+	
 	public CommWindow(GridClient client)
 	{
+		super();
+		
+		_Client = client;
+		
 		setTitle("Communication");
 		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
 		
-		JScrollPane jLFriends = new FriendList(client); 
-		getJTpContacts().add("Friends", jLFriends);
-
-		JScrollPane jLGroups = new GroupList(client); 
-		getJTpContacts().add("Groups", jLGroups);
-		
-		getJTpComm().add("Contacts", getJTpContacts());
-		
-		JPanel jPLocal = new JPanel();
-		getJTpComm().add("Local Chat", jPLocal);
+		JPanel jPnl = new JPanel();
+		jPnl.add(getJTpComm());
+		setContentPane(jPnl);				
 	}
 	
 	private JTabbedPane getJTpComm()
@@ -69,7 +69,9 @@ public class CommWindow extends JFrame
 			jTpComm = new JTabbedPane(JTabbedPane.BOTTOM);
 			jTpComm.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 			jTpComm.setBorder(new LineBorder(new Color(0, 0, 0)));
-			getContentPane().add(jTpComm);
+
+			jTpComm.add("Contacts", getJTpContacts());
+			jTpComm.add("Local Chat", new LocalChannel(_Client));
 		}
 		return jTpComm;
 	}
@@ -81,7 +83,9 @@ public class CommWindow extends JFrame
 			jTpContacts = new JTabbedPane(JTabbedPane.TOP);
 			jTpContacts.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 			jTpContacts.setBorder(new LineBorder(new Color(0, 0, 0)));
-			jTpComm.add("Contacts", jTpContacts);
+
+			jTpContacts.add("Friends", new FriendList(_Client));
+			jTpContacts.add("Groups", new GroupList(_Client));
 		}
 		return jTpContacts;
 	}

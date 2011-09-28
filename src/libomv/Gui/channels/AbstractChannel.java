@@ -32,9 +32,15 @@ import libomv.types.UUID;
 
 public abstract class AbstractChannel extends JPanel
 {
+	public AbstractChannel(String name)
+	{
+		super();
+		setName(name);
+	}
+	
 	private static final long serialVersionUID = 1L;
 
 	public abstract UUID getID();
-	
+
 	public abstract StyledDocument getDocument();
 }

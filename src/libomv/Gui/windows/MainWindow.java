@@ -26,50 +26,28 @@
 package libomv.Gui.windows;
 
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import java.awt.Panel;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Label;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import java.awt.Dimension;
-import javax.swing.JOptionPane;
-import javax.swing.JEditorPane;
-import javax.swing.ImageIcon;
-import javax.swing.JPasswordField;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.JTable;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.BorderFactory;
-import java.awt.Color;
-import java.awt.GridLayout;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.BevelBorder;
-import java.awt.ComponentOrientation;
-import java.awt.event.KeyEvent;
-import java.awt.Desktop;
-import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.TextField;
-import java.awt.Cursor;
-import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.swing.JMenuBar;
-import javax.swing.SwingConstants;
-import javax.swing.JComboBox;
+
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import libomv.GridClient;
+import libomv.Gui.components.InfoPanel;
 
 public class MainWindow extends JFrame
 {
@@ -115,6 +93,11 @@ public class MainWindow extends JFrame
 		setVisible(true);
 	}
 
+	private JFrame getJMainFrame()
+	{
+		return this;
+	}
+	
 	/**
 	 * This method initializes jContentPane
 	 * 
@@ -358,7 +341,7 @@ public class MainWindow extends JFrame
 	{
 		if (jInfoPanel == null)
 		{
-			jInfoPanel = new InfoPanel();
+			jInfoPanel = new InfoPanel(_Client);
 		}
 		return jInfoPanel;
 	}
@@ -377,8 +360,7 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e)
 				{
-					PreferenceWindow pref;
-					pref = new PreferenceWindow();
+					PreferenceWindow pref = new PreferenceWindow(getJMainFrame());
 					pref.setVisible(true);
 				}
 			});
@@ -389,8 +371,7 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					AboutWindow about;
-					about = new AboutWindow();
+					AboutWindow about = new AboutWindow(getJMainFrame());
 					about.setVisible(true);
 				}
 			});
