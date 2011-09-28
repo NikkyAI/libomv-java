@@ -56,6 +56,8 @@ public class CommunicationFrame extends JFrame
 		JScrollPane jLGroups = new GroupList(client); 
 		getJTpContacts().add("Groups", jLGroups);
 		
+		getJTpComm().add("Contacts", getJTpContacts());
+		
 		JPanel jPLocal = new JPanel();
 		getJTpComm().add("Local Chat", jPLocal);
 	}

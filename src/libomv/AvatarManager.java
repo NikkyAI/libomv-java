@@ -377,16 +377,13 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	 */
 	public String LocalAvatarNameLookup(UUID id)
 	{
-		String name = Helpers.EmptyString;
-
 		synchronized (_Avatars)
 		{
-			if (_Avatars.containsKey(id))
-			{
-				name = _Avatars.get(id).getName();
-			}
+			Avatar avatar = _Avatars.get(id);
+			if (avatar != null)
+				return avatar.getName();
 		}
-		return name;
+		return Helpers.EmptyString;
 	}
 
 	/**

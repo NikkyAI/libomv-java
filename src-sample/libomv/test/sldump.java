@@ -100,6 +100,7 @@ public class sldump implements PacketCallback
 			client.Network.RegisterCallback(PacketType.Default, this);
 			client.Network.OnDisconnected.add(disconnect, true);
 
+			loginParams.AgreeToTos = false;
 
 			// An example of how to pass additional options to the login server
 			// loginParams.ID0 = "65e142a8d3c1ee6632259f111cb168c9";
@@ -125,7 +126,7 @@ public class sldump implements PacketCallback
 		if (client != null)
 		{
 			client.Network.UnregisterCallback(PacketType.Default, this);
-			client.Login.UnregisterLoginResponseCallback(loginResp);
+			client.Login.UnregisterLoginProgressCallback(loginResp);
 			client.Network.OnDisconnected.remove(disconnect);
 			client = null;
 		}
@@ -152,7 +153,7 @@ public class sldump implements PacketCallback
 				// Server requested redirection
 				System.out.println("sldump: Server requested redirection: " + e.getReason());
 			}
-			else
+			else if (e.getStatus() == LoginStatus.Failed)
 			{
 				System.out.println("sldump: Error logging in: " + e.getReason());
 			}

@@ -1,5 +1,32 @@
 The basic library is not yet fully ported. Look for TO BE PORTED in comments.
 
-Most examples are ported, but none of the more complex applications in the libsecondlife suite.
+Most examples are ported, but none of the more complex applications in the libomv suite.
+
+What is working at this point but more testing is required:
+
+- GridList selection
+- XML_RPC login
+- LLLP (LindenLab Legacy Protocol) UDP protocol handling
+
+Implemented but needs lots of testing:
+- HTTP CAPS protocol handling
+- Buddylist handling
+- Inventory handling
+- Chat and IM handling
+- Basic Avatar names
+- Basic Group management
+- Basic Asset management
+- Basic Parcel management
+
+What needs to be attacked:
+- JPEG2000 implementation
+- Appearence management
+
+- OpenGL render interface
+- Prim, Sculpt, Mesh renderer
+- Character (Avatar) renderer
+
+For 3D implementation we should probably look at what ogoglio could offer in that respect.
+It's Apache license seems compatibile enough to use in this project.
 
 
