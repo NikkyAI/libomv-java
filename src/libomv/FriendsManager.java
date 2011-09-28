@@ -25,8 +25,8 @@
  */
 package libomv;
 
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
@@ -479,8 +479,13 @@ public class FriendsManager implements PacketCallback
 	 * {@link FriendInfo} object that contains detailed information including
 	 * permissions you have and have given to the friend
 	 */
-	public Hashtable<UUID, FriendInfo> FriendList = new Hashtable<UUID, FriendInfo>();
+	private HashMap<UUID, FriendInfo> _FriendList = new HashMap<UUID, FriendInfo>();
 
+	public HashMap<UUID, FriendInfo> getFriendList()
+	{
+		return _FriendList;
+	}
+	
 	/**
 	 * A Dictionary of key/value pairs containing current pending friendship
 	 * offers.
@@ -489,7 +494,7 @@ public class FriendsManager implements PacketCallback
 	 * is the {@link UUID} of the request which is used to accept or decline the
 	 * friendship offer
 	 */
-	public Hashtable<UUID, UUID> FriendRequests = new Hashtable<UUID, UUID>();
+	private HashMap<UUID, UUID> _FriendRequests = new HashMap<UUID, UUID>();
 
 	/**
 	 * Internal constructor
@@ -568,15 +573,15 @@ public class FriendsManager implements PacketCallback
 
 		FriendInfo friend = new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 
-		if (!FriendList.containsKey(fromAgentID))
+		synchronized (_FriendList)
 		{
-			FriendList.put(friend.getID(), friend);
+			if (!_FriendList.containsKey(fromAgentID))
+			{
+				_FriendList.put(friend.getID(), friend);
+			}
 		}
+		_FriendRequests.remove(fromAgentID);
 
-		if (FriendRequests.containsKey(fromAgentID))
-		{
-			FriendRequests.remove(fromAgentID);
-		}
 		_Client.Avatars.RequestAvatarName(fromAgentID, null);
 	}
 
@@ -597,9 +602,9 @@ public class FriendsManager implements PacketCallback
 		request.TransactionBlock.TransactionID = imSessionID;
 		_Client.Network.SendPacket(request);
 
-		if (FriendRequests.containsKey(fromAgentID))
+		synchronized (_FriendRequests)
 		{
-			FriendRequests.remove(fromAgentID);
+			_FriendRequests.remove(fromAgentID);
 		}
 	}
 
@@ -641,7 +646,14 @@ public class FriendsManager implements PacketCallback
 	 */
 	public final void TerminateFriendship(UUID agentID) throws Exception
 	{
-		if (FriendList.containsKey(agentID))
+		FriendInfo friend;
+		
+		synchronized (_FriendList)
+		{
+			friend = _FriendList.remove(agentID);
+		}
+		
+		if (friend != null)
 		{
 			TerminateFriendshipPacket request = new TerminateFriendshipPacket();
 			request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -649,8 +661,6 @@ public class FriendsManager implements PacketCallback
 			request.ExBlock.OtherID = agentID;
 
 			_Client.Network.SendPacket(request);
-
-			FriendList.remove(agentID);
 		}
 	}
 
@@ -665,7 +675,12 @@ public class FriendsManager implements PacketCallback
 	private void TerminateFriendshipHandler(Packet packet, Simulator simulator)
 	{
 		TerminateFriendshipPacket itsOver = (TerminateFriendshipPacket) packet;
-		FriendInfo friend = FriendList.remove(itsOver.ExBlock.OtherID);
+		FriendInfo friend;
+		
+		synchronized (_FriendList)
+		{
+			friend = _FriendList.remove(itsOver.ExBlock.OtherID);
+		}
 
 		OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.ExBlock.OtherID,
 				friend != null ? friend.getName() : null));
@@ -769,7 +784,7 @@ public class FriendsManager implements PacketCallback
 	 */
 	private void FriendNotificationHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		Vector<UUID> requestids = new Vector<UUID>();
+		ArrayList<UUID> requestids = new ArrayList<UUID>();
 		FriendInfo friend = null;
 		UUID agentID = null;
 		boolean doNotify = false;
@@ -780,18 +795,18 @@ public class FriendsManager implements PacketCallback
 			for (OnlineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
 			{
 				agentID = block.AgentID;
-				synchronized (FriendList)
+				synchronized (_FriendList)
 				{
-					if (!FriendList.containsKey(agentID))
+					if (!_FriendList.containsKey(agentID))
 					{
 						// Mark this friend for a name request
-						requestids.addElement(agentID);
+						requestids.add(agentID);
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-						FriendList.put(agentID, friend);
+						_FriendList.put(agentID, friend);
 					}
 					else
 					{
-						friend = FriendList.get(agentID);
+						friend = _FriendList.get(agentID);
 					}
 				}
 				doNotify |= !friend.getIsOnline();
@@ -804,19 +819,19 @@ public class FriendsManager implements PacketCallback
 			for (OfflineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
 			{
 				agentID = block.AgentID;
-				synchronized (FriendList)
+				synchronized (_FriendList)
 				{
-					if (!FriendList.containsKey(agentID))
+					if (!_FriendList.containsKey(agentID))
 					{
 						// Mark this friend for a name request
-						requestids.addElement(agentID);
+						requestids.add(agentID);
 
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-						FriendList.put(agentID, friend);
+						_FriendList.put(agentID, friend);
 					}
 					else
 					{
-						friend = FriendList.get(agentID);
+						friend = _FriendList.get(agentID);
 					}
 				}
 				doNotify |= friend.getIsOnline();
@@ -850,23 +865,26 @@ public class FriendsManager implements PacketCallback
 			FriendInfo friend;
 			ChangeUserRightsPacket rights = (ChangeUserRightsPacket) packet;
 
-			for (ChangeUserRightsPacket.RightsBlock block : rights.Rights)
+			synchronized (_FriendList)
 			{
-				if (FriendList.containsKey(block.AgentRelated))
+				for (ChangeUserRightsPacket.RightsBlock block : rights.Rights)
 				{
-					friend = FriendList.get(block.AgentRelated);
-					friend.theirRights = FriendRights.setValue(block.RelatedRights);
-
-					OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
-				}
-				else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
-				{
-					if (FriendList.containsKey(rights.AgentData.AgentID))
+					if (_FriendList.containsKey(block.AgentRelated))
 					{
-						friend = FriendList.get(rights.AgentData.AgentID);
-						friend.myRights = FriendRights.setValue(block.RelatedRights);
+						friend = _FriendList.get(block.AgentRelated);
+						friend.theirRights = FriendRights.setValue(block.RelatedRights);
 
 						OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
+					}
+					else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
+					{
+						if (_FriendList.containsKey(rights.AgentData.AgentID))
+						{
+							friend = _FriendList.get(rights.AgentData.AgentID);
+							friend.myRights = FriendRights.setValue(block.RelatedRights);
+
+							OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
+						}
 					}
 				}
 			}
@@ -910,20 +928,20 @@ public class FriendsManager implements PacketCallback
 	{
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
-		synchronized (FriendList)
+		synchronized (_FriendList)
 		{
 			for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock)
 			{
 				FriendInfo friend;
 
-				if (!FriendList.containsKey(block.ID))
+				if (!_FriendList.containsKey(block.ID))
 				{
 					friend = new FriendInfo(block.ID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-					FriendList.put(block.ID, friend);
+					_FriendList.put(block.ID, friend);
 				}
 				else
 				{
-					friend = FriendList.get(block.ID);
+					friend = _FriendList.get(block.ID);
 				}
 				friend.setName(Helpers.BytesToString(block.getFirstName()) + " "
 						+ Helpers.BytesToString(block.getLastName()));
@@ -943,15 +961,18 @@ public class FriendsManager implements PacketCallback
 			{
 				case FriendshipOffered:
 					UUID sessionID = e.getIM().IMSessionID;
-					FriendRequests.put(friendID, sessionID);
+					synchronized (_FriendRequests)
+					{
+						_FriendRequests.put(friendID, sessionID);
+					}
 					OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
 					break;
 				case FriendshipAccepted:
 					FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 					friend.setName(name);
-					synchronized (FriendList)
+					synchronized (_FriendList)
 					{
-						FriendList.put(friendID, friend);
+						_FriendList.put(friendID, friend);
 					}
 					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
 					try
@@ -982,30 +1003,37 @@ public class FriendsManager implements PacketCallback
 			{
 				if (e.getReply().BuddyList != null)
 				{
-					for (BuddyListEntry buddy : e.getReply().BuddyList)
+					synchronized (_FriendList)
 					{
-						UUID bubid = UUID.Parse(buddy.buddy_id);
-						synchronized (FriendList)
+						for (BuddyListEntry buddy : e.getReply().BuddyList)
 						{
-							if (!FriendList.containsKey(bubid))
+							UUID bubid = UUID.Parse(buddy.buddy_id);
+							if (!_FriendList.containsKey(bubid))
 							{
-								FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given,
+								_FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given,
 										buddy.buddy_rights_has));
 							}
 						}
 					}
 				}
-				Vector<UUID> request = new Vector<UUID>();
+				ArrayList<UUID> request = new ArrayList<UUID>();
 
-				if (FriendList.size() > 0)
+				synchronized (_FriendList)
 				{
-					for (FriendInfo kvp : FriendList.values())
+					if (_FriendList.size() > 0)
 					{
-						if (kvp.getName().isEmpty())
+						for (FriendInfo kvp : _FriendList.values())
 						{
-							request.add(kvp.getID());
+							if (kvp.getName() == null || kvp.getName().isEmpty())
+							{
+								request.add(kvp.getID());
+							}
 						}
 					}
+				}
+				
+				if (request.size() > 0)
+				{
 					try
 					{
 						_Client.Avatars.RequestAvatarNames(request, null);

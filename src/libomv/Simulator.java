@@ -636,9 +636,9 @@ public class Simulator extends Thread
 	private InetSocketAddress ipEndPoint;
 
 	/* A thread-safe dictionary containing avatars in a simulator */
-	private Hashtable<Integer, Avatar> ObjectsAvatars = new Hashtable<Integer, Avatar>();
+	private HashMap<Integer, Avatar> ObjectsAvatars = new HashMap<Integer, Avatar>();
 
-	public Hashtable<Integer, Avatar> getObjectsAvatars()
+	public HashMap<Integer, Avatar> getObjectsAvatars()
 	{
 		return ObjectsAvatars;
 	}
