@@ -312,7 +312,7 @@ public class Avatar extends Primitive
 	// #region Public Members
 
 	// Groups that this avatar is a member of
-	public java.util.ArrayList<UUID> Groups = new java.util.ArrayList<UUID>();
+	public ArrayList<UUID> Groups = new ArrayList<UUID>();
 	// Positive and negative ratings
 	public Statistics ProfileStatistics;
 	// Avatar properties including about text, profile URL, image IDs and
@@ -332,6 +332,7 @@ public class Avatar extends Primitive
 	// #endregion Public Members
 
 	protected String name;
+	protected String displayName;
 	protected String groupName;
 
 	// /#region Properties
@@ -426,6 +427,16 @@ public class Avatar extends Primitive
 				}
 			}
 		}
+	}
+
+	public String getDisplayName()
+	{
+		return displayName;
+	}
+	
+	public void setDisplayName(String name)
+	{
+		displayName = name;
 	}
 
 	// Active group

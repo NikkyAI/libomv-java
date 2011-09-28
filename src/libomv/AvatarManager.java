@@ -499,6 +499,15 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	private void HandleDisplayNameUpdate(IMessage message, Simulator simulator)
 	{
 		DisplayNameUpdateMessage msg = (DisplayNameUpdateMessage) message;
+		synchronized (_Avatars)
+		{
+			UUID id = msg.DisplayName.ID;
+			if (!_Avatars.containsKey(id))
+			{
+				_Avatars.put(id, new Avatar(id));
+			}
+			_Avatars.get(id).setDisplayName(msg.DisplayName.DisplayName);
+		}
 		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
 	}
 
