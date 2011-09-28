@@ -135,7 +135,7 @@ public class sldump implements PacketCallback
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
-		System.out.println("sldump: Packet received " + packet.toString());
+		System.out.println("sldump: Packet received " + packet.getType().toString());
 	}
 
 	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
