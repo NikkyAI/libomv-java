@@ -53,7 +53,7 @@ public class OSDString extends OSD
 		if (value != null)
 			this.value = value;
 		else
-			this.value = "";
+			this.value = Helpers.EmptyString;
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class OSDString extends OSD
 		if (value == null || value.isEmpty())
 			return false;
 
-		if (value == "0" || value.toLowerCase().equals("false"))
+		if (Double.parseDouble(value) == 0.0 || value.toLowerCase().equals("false"))
 			return false;
 
 		return true;
