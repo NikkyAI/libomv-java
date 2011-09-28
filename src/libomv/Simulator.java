@@ -225,11 +225,52 @@ public class Simulator extends Thread
 
 	public static enum SimStatType
 	{
-		TimeDilation, SimFPS, PhysicsFPS, AgentUpdates, FrameMS, NetMS, OtherMS, PhysicsMS, AgentMS, ImageMS, ScriptMS, TotalPrim, ActivePrim, Agents, ChildAgents, ActiveScripts, ScriptInstructionsPerSecond, InPacketsPerSecond, OutPacketsPerSecond, PendingDownloads, PendingUploads, VirtualSizeKB, ResidentSizeKB, PendingLocalUploads, UnAckedBytes, PhysicsPinnedTasks, PhysicsLODTasks, PhysicsStepMS, PhysicsShapeMS, PhysicsOtherMS, PhysicsMemory;
+		Unknown,		// -1
+		TimeDilation,   // 0
+		SimFPS,
+		PhysicsFPS,
+		AgentUpdates,
+		FrameMS,
+		NetMS,
+		OtherMS,
+		PhysicsMS,
+		AgentMS,
+		ImageMS,
+		ScriptMS,       // 10
+		TotalPrim,
+		ActivePrim,
+		Agents,
+		ChildAgents,
+		ActiveScripts,
+		ScriptInstructionsPerSecond,
+		InPacketsPerSecond,
+		OutPacketsPerSecond,
+		PendingDownloads,
+		PendingUploads, // 20
+		VirtualSizeKB,
+		ResidentSizeKB,
+		PendingLocalUploads,
+		UnAckedBytes,
+		
+		
+		PhysicsPinnedTasks,
+		PhysicsLODTasks,
+		PhysicsStepMS,
+		PhysicsShapeMS,
+		PhysicsOtherMS,
+		PhysicsMemory, // 30
+
+		ScriptEPS,
+		SimSpareTime,
+		SimSleepTime,
+		SimIOPumpTime;
+
 
 		public static SimStatType setValue(int value)
 		{
-			return values()[value];
+			if (value >= 0 && value < values().length - 1)
+				return values()[value + 1];
+			return Unknown;
 		}
 
 		public static int getValue(SimStatType type)
