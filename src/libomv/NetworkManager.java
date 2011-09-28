@@ -368,12 +368,16 @@ public class NetworkManager implements PacketCallback
 	 */
 	private final ArrayList<PacketType> _UDPBlacklist = new ArrayList<PacketType>();
 
-	public void setUDPBlackList(String blacklist)
+	public void setUDPBlacklist(String blacklist)
 	{
 		if (blacklist != null)
 		{
-			for (String s : blacklist.split(","))
-				_UDPBlacklist.add(PacketType.valueOf(s));
+			synchronized (_UDPBlacklist)
+			{
+				for (String s : blacklist.split(","))
+					_UDPBlacklist.add(PacketType.valueOf(s));
+				Logger.Log("UDP blacklisted packets: " + _UDPBlacklist.toString(), LogLevel.Debug, _Client);
+			}
 		}
 	}
 
@@ -381,9 +385,8 @@ public class NetworkManager implements PacketCallback
 
 	/**
 	 * Get the array with all currently known simulators. This list must be
-	 * protected with a synchronization lock on itself if you do anything with
-	 * it.
-	 * 
+	 * protected with a synchronization lock on itself if you do anything with it.
+	 *
 	 * @return array of simulator objects known to this client
 	 */
 	public ArrayList<Simulator> getSimulators()
@@ -1384,47 +1387,46 @@ public class NetworkManager implements PacketCallback
 					simulator.Statistics.ScriptTime = s.StatValue;
 					break;
 				case TotalPrim:
-					simulator.Statistics.Objects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.Objects = (int)s.StatValue;
 					break;
 				case ActivePrim:
-					simulator.Statistics.ScriptedObjects = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.ScriptedObjects = (int)s.StatValue;
 					break;
 				case Agents:
-					simulator.Statistics.Agents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.Agents = (int)s.StatValue;
 					break;
 				case ChildAgents:
-					simulator.Statistics.ChildAgents = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.ChildAgents = (int)s.StatValue;
 					break;
 				case ActiveScripts:
-					simulator.Statistics.ActiveScripts = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.ActiveScripts = (int)s.StatValue;
 					break;
 				case ScriptInstructionsPerSecond:
-					simulator.Statistics.LSLIPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.LSLIPS = (int)s.StatValue;
 					break;
 				case InPacketsPerSecond:
-					simulator.Statistics.INPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.INPPS = (int)s.StatValue;
 					break;
 				case OutPacketsPerSecond:
-					simulator.Statistics.OUTPPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.OUTPPS = (int)s.StatValue;
 					break;
 				case PendingDownloads:
-					simulator.Statistics.PendingDownloads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.PendingDownloads = (int)s.StatValue;
 					break;
 				case PendingUploads:
-					simulator.Statistics.PendingUploads = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.PendingUploads = (int)s.StatValue;
 					break;
 				case VirtualSizeKB:
-					simulator.Statistics.VirtualSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.VirtualSize = (int)s.StatValue;
 					break;
 				case ResidentSizeKB:
-					simulator.Statistics.ResidentSize = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.ResidentSize = (int)s.StatValue;
 					break;
 				case PendingLocalUploads:
-					simulator.Statistics.PendingLocalUploads = Helpers
-							.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.PendingLocalUploads = (int)s.StatValue;
 					break;
 				case UnAckedBytes:
-					simulator.Statistics.UnackedBytes = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.UnackedBytes = (int)s.StatValue;
 					break;
 				case PhysicsPinnedTasks:
 				case PhysicsLODTasks:
@@ -1432,6 +1434,13 @@ public class NetworkManager implements PacketCallback
 				case PhysicsShapeMS:
 				case PhysicsOtherMS:
 				case PhysicsMemory:
+				case ScriptEPS:
+				case SimSpareTime:
+				case SimSleepTime:
+				case SimIOPumpTime:
+					break;
+				default:
+					Logger.Log("Unhandled Sim Stats ID: " + s.StatID, LogLevel.Debug, _Client);
 					break;
 			}
 		}
