@@ -4036,7 +4036,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void HandleMoveInventoryItem(Packet packet, Simulator simulator) throws Exception
+	private final void HandleMoveInventoryItem(Packet packet, Simulator simulator) throws Exception
 	{
 		MoveInventoryItemPacket move = (MoveInventoryItemPacket) packet;
 
@@ -4152,7 +4152,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void HandleFetchInventoryReply(Packet packet, Simulator simulator) throws Exception
+	private final void HandleFetchInventoryReply(Packet packet, Simulator simulator) throws Exception
 	{
 		FetchInventoryReplyPacket reply = (FetchInventoryReplyPacket) ((packet instanceof FetchInventoryReplyPacket) ? packet
 				: null);

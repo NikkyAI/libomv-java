@@ -32,8 +32,7 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
@@ -400,7 +399,7 @@ public class LoginManager
             }
 }
 
-		private void ParseLoginReply(HashMap<String, Object> reply)
+		private void ParseLoginReply(Map<String, Object> reply)
 		{
 			try
 			{
@@ -514,28 +513,22 @@ public class LoginManager
 			SeedCapability = ParseString("seed_capability", reply);
 
 			// Buddy list
-			if (reply.containsKey("buddy-list") && reply.get("buddy-list") instanceof ArrayList)
+			if (reply.containsKey("buddy-list") && reply.get("buddy-list") instanceof Object[])
 			{
-				ArrayList<BuddyListEntry> buddys = new ArrayList<BuddyListEntry>();
-
-				@SuppressWarnings("unchecked")
-				ArrayList<Object> buddyArray = (ArrayList<Object>) reply.get("buddy-list");
-				for (int i = 0; i < buddyArray.size(); i++)
+				Object[] buddyArray = (Object[]) reply.get("buddy-list");
+				BuddyList = new BuddyListEntry[buddyArray.length];
+				for (int i = 0; i < buddyArray.length; i++)
 				{
-					if (buddyArray.get(i) instanceof Hashtable)
+					if (buddyArray[i] instanceof Map)
 					{
 						@SuppressWarnings("unchecked")
-						HashMap<String, Object> buddy = (HashMap<String, Object>) buddyArray.get(i);
-						BuddyListEntry bud = new BuddyListEntry();
-
-						bud.buddy_id = ParseString("buddy_id", buddy);
-						bud.buddy_rights_given = ParseUInt("buddy_rights_given", buddy);
-						bud.buddy_rights_has = ParseUInt("buddy_rights_has", buddy);
-
-						buddys.add(bud);
+						Map<String, Object> buddy = (Map<String, Object>) buddyArray[i];
+						BuddyList[i] = new BuddyListEntry();
+						BuddyList[i].buddy_id = ParseString("buddy_id", buddy);
+						BuddyList[i].buddy_rights_given = ParseUInt("buddy_rights_given", buddy);
+						BuddyList[i].buddy_rights_has = ParseUInt("buddy_rights_has", buddy);
 					}
 				}
-				BuddyList = buddys.toArray(BuddyList);
 			}
 
 			SecondsSinceEpoch = ParseUInt("seconds_since_epoch", reply);
@@ -573,57 +566,7 @@ public class LoginManager
             }
 		}
 
-		public InventoryFolder[] ParseInventoryFolders(String key, UUID owner, OSDMap reply)
-		{
-			OSD skeleton = reply.get(key);
-			if (skeleton != null && skeleton.getType().equals(OSDType.Array))
-			{
-				OSDArray array = (OSDArray) skeleton;
-				InventoryFolder[] folders = new InventoryFolder[array.size()];
-				for (int i = 0; i < array.size(); i++)
-				{
-					if (array.get(i).getType().equals(OSDType.Map))
-					{
-						OSDMap map = (OSDMap) array.get(i);
-						InventoryFolder folder = InventoryFolder.create(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID());
-						folder.name = map.get("name").AsString();
-						folder.preferredType = AssetType.setValue(map.get("type_default").AsInteger());
-						folder.version = map.get("version").AsInteger();
-						folder.ownerID = owner;
-
-						folders[i] = folder;
-					}
-				}
-				return folders;
-			}
-			return null;
-		}
-
-		public InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply)
-		{
-			OSD skeleton = reply.get(key);
-			if (skeleton != null && skeleton.getType().equals(OSDType.Array))
-			{
-				OSDArray array = (OSDArray) skeleton;
-				InventoryFolder[] folders = new InventoryFolder[array.size()];
-				for (int i = 0; i < array.size(); i++)
-				{
-					if (array.get(i).getType().equals(OSDType.Map))
-					{
-						OSDMap map = (OSDMap) array.get(i);
-						InventoryFolder folder = InventoryFolder.create(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID());
-						folder.name = map.get("name").AsString();
-						folder.preferredType = AssetType.setValue(map.get("type_default").AsInteger());
-						folder.version = map.get("version").AsInteger();
-						folders[i] = folder;
-					}
-				}
-				return folders;
-			}
-			return null;
-		}
-
-		public InventoryFolder[] ParseInventorySkeleton(String key, HashMap<String, Object> reply)
+		private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply)
 		{
 			UUID ownerID;
 			if (key.equals("inventory-skel-lib"))
@@ -635,24 +578,55 @@ public class LoginManager
 				ownerID = AgentID;
 			}
 
-			if (reply.containsKey(key) && reply.get(key) instanceof ArrayList)
+			OSD skeleton = reply.get(key);
+			if (skeleton != null && skeleton.getType().equals(OSDType.Array))
 			{
-				@SuppressWarnings("unchecked")
-				ArrayList<Object> array = (ArrayList<Object>) reply.get(key);
+				OSDArray array = (OSDArray) skeleton;
 				InventoryFolder[] folders = new InventoryFolder[array.size()];
 				for (int i = 0; i < array.size(); i++)
 				{
-					if (array.get(i) instanceof Hashtable)
+					if (array.get(i).getType().equals(OSDType.Map))
+					{
+						OSDMap map = (OSDMap) array.get(i);
+						folders[i] = InventoryFolder.create(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID());
+						folders[i].name = map.get("name").AsString();
+						folders[i].preferredType = AssetType.setValue(map.get("type_default").AsInteger());
+						folders[i].version = map.get("version").AsInteger();
+						folders[i].ownerID = ownerID;
+					}
+				}
+				return folders;
+			}
+			return null;
+		}
+
+		private InventoryFolder[] ParseInventorySkeleton(String key, Map<String, Object> reply)
+		{
+			UUID ownerID;
+			if (key.equals("inventory-skel-lib"))
+			{
+				ownerID = LibraryOwner;
+			}
+			else
+			{
+				ownerID = AgentID;
+			}
+
+			if (reply.containsKey(key) && reply.get(key) instanceof Object[])
+			{
+				Object[] array = (Object[]) reply.get(key);
+				InventoryFolder[] folders = new InventoryFolder[array.length];
+				for (int i = 0; i < array.length; i++)
+				{
+					if (array[i] instanceof Map)
 					{
 						@SuppressWarnings("unchecked")
-						HashMap<String, Object> map = (HashMap<String, Object>) array.get(i);
-						InventoryFolder folder =InventoryFolder.create(ParseUUID("folder_id", map), ParseUUID("parent_id", map));
-						folder.name = ParseString("name", map);
-						folder.preferredType = AssetType.setValue(ParseUInt("type_default", map));
-						folder.version = ParseUInt("version", map);
-						folder.ownerID = ownerID;
-
-						folders[i] = folder;
+						Map<String, Object> map = (Map<String, Object>) array[i];
+						folders[i] = InventoryFolder.create(ParseUUID("folder_id", map), ParseUUID("parent_id", map));
+						folders[i].name = ParseString("name", map);
+						folders[i].preferredType = AssetType.setValue(ParseUInt("type_default", map));
+						folders[i].version = ParseUInt("version", map);
+						folders[i].ownerID = ownerID;
 					}
 				}
 				return folders;
@@ -1143,7 +1117,7 @@ public class LoginManager
 		LoginResponseData reply = new LoginResponseData();
 
 		// Fetch the login response
-		if (response == null || !(response instanceof HashMap))
+		if (response == null || !(response instanceof Map))
 		{
 			UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", "bad response", null);
 			return;
@@ -1152,7 +1126,7 @@ public class LoginManager
 		UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
 		@SuppressWarnings("unchecked")
-		HashMap<String, Object> result = (HashMap<String, Object>) response;
+		Map<String, Object> result = (Map<String, Object>) response;
 		reply.ParseLoginReply(result);
 
 		if (reply.Success)
@@ -1300,7 +1274,7 @@ public class LoginManager
 	// #endregion
 
 	// #region Parsing Helpers
-	private static int ParseUInt(String key, HashMap<String, Object> reply)
+	private static int ParseUInt(String key, Map<String, Object> reply)
 	{
 		if (reply.containsKey(key))
 		{
@@ -1313,7 +1287,7 @@ public class LoginManager
 		return 0;
 	}
 
-	private static UUID ParseUUID(String key, HashMap<String, Object> reply)
+	private static UUID ParseUUID(String key, Map<String, Object> reply)
 	{
 		if (reply.containsKey(key))
 		{
@@ -1322,7 +1296,7 @@ public class LoginManager
 		return UUID.Zero;
 	}
 
-	private static String ParseString(String key, HashMap<String, Object> reply)
+	private static String ParseString(String key, Map<String, Object> reply)
 	{
 		if (reply.containsKey(key))
 		{
@@ -1331,22 +1305,21 @@ public class LoginManager
 		return Helpers.EmptyString;
 	}
 
-	private static Vector3 ParseVector3(String key, HashMap<String, Object> reply) throws ParseException, IOException
+	private static Vector3 ParseVector3(String key, Map<String, Object> reply) throws ParseException, IOException
 	{
 		if (reply.containsKey(key))
 		{
 			Object value = reply.get(key);
 
-			if (value instanceof List)
+			if (value instanceof Object[])
 			{
-				@SuppressWarnings("unchecked")
-				List<String> list = (List<String>) value;
-				if (list.size() == 3)
+				String[] list = (String[])value;
+				if (list.length == 3)
 				{
 					float x, y, z;
-					x = Helpers.TryParseFloat(list.get(0));
-					y = Helpers.TryParseFloat(list.get(1));
-					z = Helpers.TryParseFloat(list.get(2));
+					x = Helpers.TryParseFloat(list[0]);
+					y = Helpers.TryParseFloat(list[1]);
+					z = Helpers.TryParseFloat(list[2]);
 
 					return new Vector3(x, y, z);
 				}
@@ -1380,33 +1353,31 @@ public class LoginManager
 		return UUID.Zero;
 	}
 
-	private static UUID ParseMappedUUID(String key, String key2, HashMap<String, Object> reply)
+	private static UUID ParseMappedUUID(String key, String key2, Map<String, Object> reply)
 	{
-		if (reply.containsKey(key) && reply.get(key) instanceof ArrayList)
+		if (reply.containsKey(key) && reply.get(key) instanceof Object[])
 		{
-			@SuppressWarnings("unchecked")
-			ArrayList<Object> array = (ArrayList<Object>) reply.get(key);
-			if (array.size() == 1 && array.get(0) instanceof Hashtable)
+			Object[] array = (Object[])reply.get(key);
+			if (array.length == 1 && array[0] instanceof Map)
 			{
 				@SuppressWarnings("unchecked")
-				HashMap<String, Object> map = (HashMap<String, Object>) array.get(0);
+				Map<String, Object> map = (Map<String, Object>) array[0];
 				return ParseUUID(key2, map);
 			}
 		}
 		return UUID.Zero;
 	}
 
-	private static String[] ParseArray(String key, HashMap<String, Object> reply)
+	private static String[] ParseArray(String key, Map<String, Object> reply)
 	{
 		Object o = reply.get(key);
-		if (o instanceof List)
+		if (o instanceof Object[])
 		{
-			@SuppressWarnings("unchecked")
-			List<Object> array = (List<Object>) o;
-			String[] strings = new String[array.size()];
-			for (int i = 0; i < array.size(); i++)
+			Object[] array = (Object[]) o;
+			String[] strings = new String[array.length];
+			for (int i = 0; i < array.length; i++)
 			{
-				strings[i] = array.get(i).toString();
+				strings[i] = array[i].toString();
 			}
 		}
 		return null;
