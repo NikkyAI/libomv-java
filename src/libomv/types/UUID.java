@@ -26,6 +26,7 @@
  */
 package libomv.types;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -35,8 +36,10 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
 // A 128-bit Universally Unique Identifier, used throughout SL and OpenSim
-public class UUID
+public class UUID implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+
 	// Get a byte array of the 16 raw bytes making up the UUID
 	public byte[] getData()
 	{
