@@ -36,117 +36,16 @@ import libomv.ObjectManager.SaleType;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
 /* An Item in Inventory */
-public class InventoryItem extends InventoryBase
+public class InventoryItem extends InventoryNode
 {
-	//
 	private static final long serialVersionUID = 1L;
-
-	/** Inventory Item Types, eg Script, Notecard, Folder, etc */
-	public enum InventoryType
-	{
-		/** Unknown */
-		Unknown(-1),
-		/** Texture */
-		Texture(0),
-		/** Sound */
-		Sound(1),
-		/** Calling Card */
-		CallingCard(2),
-		/** Landmark */
-		Landmark(3),
-		// [Obsolete("See LSL")]
-		Script(4),
-		// [Obsolete("See Wearable")]
-		Clothing(5),
-		/** Object */
-		Object(6),
-		/** Notecard */
-		Notecard(7),
-		/** */
-		Category(8),
-		/** Folder */
-		Folder(8),
-		/** */
-		RootCategory(9),
-		/** an LSL Script */
-		LSL(10),
-		// [Obsolete("See LSL")] LSLBytecode = 11,
-		// [Obsolete("See Texture")] TextureTGA = 12,
-		// [Obsolete] Bodypart = 13,
-		// [Obsolete] Trash = 14,
-		/** */
-		Snapshot(15),
-		// [Obsolete] LostAndFound = 16,
-		/** */
-		Attachment(17),
-		/** */
-		Wearable(18),
-		/** */
-		Animation(19),
-		/**	*/
-		Gesture(20);
-
-		private static final String[] _InventoryTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
-				"script", "clothing", "object", "notecard", "category", "root", "script", "", "", "", "", "snapshot",
-				"", "attach", "wearable", "animation", "gesture" };
-
-		/**
-		 * Translate a string name of an AssetType into the proper Type
-		 * 
-		 * @param type
-		 *            A string containing the AssetType name
-		 * @return The AssetType which matches the string name, or
-		 *         AssetType.Unknown if no match was found
-		 */
-		public static InventoryType setValue(String value)
-		{
-			for (int i = 0; i < _InventoryTypeNames.length; i++)
-			{
-				if (value.compareToIgnoreCase(_InventoryTypeNames[i]) == 0)
-				{
-					return values()[i + 1];
-				}
-			}
-			return Unknown;
-		}
-
-		public static InventoryType setValue(int value)
-		{
-			for (InventoryType e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return null;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		@Override
-		public String toString()
-		{
-			int i = ordinal() - 1;
-			if (i >= 0 && ordinal() < _InventoryTypeNames.length)
-				return _InventoryTypeNames[i];
-			return "unknown";
-		}
-
-		private final byte _value;
-
-		private InventoryType(int value)
-		{
-			this._value = (byte) value;
-		}
-	}
 
 	/** Types of wearable assets */
 	public enum WearableType
@@ -301,7 +200,7 @@ public class InventoryItem extends InventoryBase
 	 */
 	public Date CreationDate;
 	/* Used to update the AssetID in requests sent to the server */
-	// public UUID TransactionID;
+	public UUID TransactionID;
 	/* The {@link OpenMetaverse.UUID} of the previous owner of the item */
 	public UUID LastOwnerID;
 
@@ -314,47 +213,67 @@ public class InventoryItem extends InventoryBase
 	 *            The {@link UUID} of the newly created object
 	 * @return An {@link InventoryItem} object with the type and id passed
 	 */
-	public static InventoryItem create(InventoryType type, UUID id)
+	public static InventoryItem create(InventoryType type, UUID id, UUID parentID)
 	{
+		InventoryItem item = null;
 		switch (type)
 		{
 			case Texture:
-				return new InventoryTexture(id);
+				item = new InventoryTexture(id);
+				break;
 			case Sound:
-				return new InventorySound(id);
+				item = new InventorySound(id);
+				break;
 			case CallingCard:
-				return new InventoryCallingCard(id);
+				item = new InventoryCallingCard(id);
+				break;
 			case Landmark:
-				return new InventoryLandmark(id);
+				item = new InventoryLandmark(id);
+				break;
 			case Object:
-				return new InventoryObject(id);
+				item = new InventoryObject(id);
+				break;
 			case Notecard:
-				return new InventoryNotecard(id);
+				item = new InventoryNotecard(id);
+				break;
 			case Category:
-				return new InventoryCategory(id);
+				item = new InventoryCategory(id);
+				break;
 			case LSL:
-				return new InventoryLSL(id);
+				item = new InventoryLSL(id);
+				break;
 			case Snapshot:
-				return new InventorySnapshot(id);
+				item = new InventorySnapshot(id);
+				break;
 			case Attachment:
-				return new InventoryAttachment(id);
+				item = new InventoryAttachment(id);
+				break;
 			case Wearable:
-				return new InventoryWearable(id);
+				item = new InventoryWearable(id);
+				break;
 			case Animation:
-				return new InventoryAnimation(id);
+				item = new InventoryAnimation(id);
+				break;
 			case Gesture:
-				return new InventoryGesture(id);
+				item = new InventoryGesture(id);
+				break;
 			default:
 				try
 				{
-					return (InventoryItem)Class.forName("Inventory " + type).getConstructor(id.getClass()).newInstance(id);
+					item = (InventoryItem)Class.forName("Inventory " + type).getConstructor(id.getClass()).newInstance(id);
 				}
 				catch (Exception ex)
 				{
 					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, ex);
 				}
 		}
-		return null;
+		if (item != null) item.parentID = parentID;
+		return item;
+	}
+
+	public InventoryItem()
+	{
+		super();
 	}
 
 	/**
@@ -386,45 +305,46 @@ public class InventoryItem extends InventoryBase
 		return assetType == AssetType.Link || assetType == AssetType.LinkFolder;
 	}
 
-	public OSD Serialize()
+	@Override
+	public OSDMap toOSD()
 	{
-		OSDMap map = (OSDMap) super.toOSD();
-		map.put("AssetUUID", OSD.FromUUID(AssetID));
-		map.put("Permissions", Permissions.Serialize());
-		map.put("AssetType", OSD.FromInteger(assetType.getValue()));
-		map.put("CreatorID", OSD.FromUUID(CreatorID));
-		map.put("Description", OSD.FromString(Description));
-		map.put("GroupID", OSD.FromUUID(GroupID));
-		map.put("GroupOwned", OSD.FromBoolean(GroupOwned));
-		map.put("SalePrice", OSD.FromInteger(SalePrice));
-		map.put("SaleType", OSD.FromInteger(saleType.getValue()));
-		map.put("Flags", OSD.FromInteger(ItemFlags));
-		map.put("CreationDate", OSD.FromDate(CreationDate));
-		map.put("LastOwnerID", OSD.FromUUID(LastOwnerID));
+		OSDMap map = super.toOSD();
+		map.put("assetID", OSD.FromUUID(AssetID));
+		map.put("permissions", Permissions.Serialize());
+		map.put("assetType", OSD.FromInteger(assetType.getValue()));
+		map.put("creatorID", OSD.FromUUID(CreatorID));
+		map.put("description", OSD.FromString(Description));
+		map.put("groupID", OSD.FromUUID(GroupID));
+		map.put("groupOwned", OSD.FromBoolean(GroupOwned));
+		map.put("salePrice", OSD.FromInteger(SalePrice));
+		map.put("saleType", OSD.FromInteger(saleType.getValue()));
+		map.put("flags", OSD.FromInteger(ItemFlags));
+		map.put("creationDate", OSD.FromDate(CreationDate));
+		map.put("lastOwnerID", OSD.FromUUID(LastOwnerID));
 		return map;
 	}
 
-	@Override
-	public void fromOSD(OSD osd)
+	protected static InventoryNode fromOSD(InventoryNode node, OSD osd)
 	{
-		super.fromOSD(osd);
-		if (osd instanceof OSDMap)
+		if (node != null && node.getType() != InventoryType.Folder)
 		{
 			OSDMap map = (OSDMap) osd;
+			InventoryItem item = (InventoryItem)node;
 
-			AssetID = map.get("AssetUUID").AsUUID();
-			Permissions = new Permissions(map.get("Permissions"));
-			assetType = AssetType.setValue(map.get("AssetType").AsInteger());
-			CreatorID = map.get("CreatorID").AsUUID();
-			Description = map.get("Description").AsString();
-			GroupID = map.get("GroupID").AsUUID();
-			GroupOwned = map.get("GroupOwned").AsBoolean();
-			SalePrice = map.get("SalePrice").AsInteger();
-			saleType = SaleType.setValue(map.get("SaleType").AsInteger());
-			ItemFlags = map.get("Flags").AsInteger();
-			CreationDate = map.get("CreationDate").AsDate();
-			LastOwnerID = map.get("LastOwnerID").AsUUID();
+			item.AssetID = map.get("assetID").AsUUID();
+			item.Permissions = new Permissions(map.get("permissions"));
+			item.assetType = AssetType.setValue(map.get("assetType").AsInteger());
+			item.CreatorID = map.get("creatorID").AsUUID();
+			item.Description = map.get("description").AsString();
+			item.GroupID = map.get("groupID").AsUUID();
+			item.GroupOwned = map.get("groupOwned").AsBoolean();
+			item.SalePrice = map.get("salePrice").AsInteger();
+			item.saleType = SaleType.setValue(map.get("saleType").AsInteger());
+			item.ItemFlags = map.get("flags").AsInteger();
+			item.CreationDate = map.get("creationDate").AsDate();
+			item.LastOwnerID = map.get("lastOwnerID").AsUUID();
 		}
+		return node;
 	}
 
 	/**
@@ -511,16 +431,16 @@ public class InventoryItem extends InventoryBase
 	}
 
 	/**
-	 * Determine whether the specified {@link OpenMetaverse.InventoryBase}
+	 * Determine whether the specified {@link OpenMetaverse.InventoryNode}
 	 * object is equal to the current object
 	 * 
 	 * @param o
-	 *            The {@link OpenMetaverse.InventoryBase} object to compare
+	 *            The {@link OpenMetaverse.InventoryNode} object to compare
 	 *            against
 	 * @return true if objects are the same
 	 */
 	@Override
-	public boolean equals(InventoryBase o)
+	public boolean equals(InventoryNode o)
 	{
 		InventoryItem item = (InventoryItem) ((o instanceof InventoryItem) ? o : null);
 		return item != null && equals(item);
@@ -543,51 +463,4 @@ public class InventoryItem extends InventoryBase
 				&& o.Permissions.equals(Permissions) && o.SalePrice == SalePrice && o.saleType.equals(saleType)
 				&& o.LastOwnerID.equals(LastOwnerID);
 	}
-
-	/*
-	 * // Output this item as XML
-	 * 
-	 * // <param name="outputAssets">Include an asset data as well, //
-	 * TRUE/FALSE</param> public String toXML(boolean outputAssets) throws
-	 * Exception { String output = "<item ";
-	 * 
-	 * output += "name = '" + xmlSafe(name) + "' "; output += "uuid = '" + UUID
-	 * + "' "; output += "invtype = '" + inventoryType + "' "; output +=
-	 * "type = '" + assetType + "' ";
-	 * 
-	 * output += "description = '" + xmlSafe(description) + "' "; output +=
-	 * "crc = '" + CRC + "' "; output += "debug = '" +
-	 * InventoryPacketHelper.InventoryUpdateCRC(this) + "' "; output +=
-	 * "ownerid = '" + ownerID + "' "; output += "creatorid = '" + creatorID +
-	 * "' ";
-	 * 
-	 * output += "assetid = '" + assetID + "' "; output += "groupid = '" +
-	 * groupID + "' ";
-	 * 
-	 * output += "groupowned = '" + groupOwned + "' "; output +=
-	 * "creationdate = '" + creationDate + "' "; output += "flags = '" +
-	 * itemFlags + "' ";
-	 * 
-	 * output += "saletype = '" + saleType + "' "; output += "saleprice = '" +
-	 * salePrice + "' "; output += "basemask = '" + permissions.BaseMask + "' ";
-	 * output += "everyonemask = '" + permissions.EveryoneMask + "' "; output +=
-	 * "nextownermask = '" + permissions.NextOwnerMask + "' "; output +=
-	 * "groupmask = '" + permissions.GroupMask + "' "; output += "ownermask = '"
-	 * + permissions.OwnerMask + "' ";
-	 * 
-	 * output += "/>\n";
-	 * 
-	 * return output; }
-	 */
 }
-
-/*
- * 1044 ItemData (Variable) 0047 GroupOwned (BOOLEAN / 1) 0149 CRC (U32 / 1)
- * 0159 CreationDate (S32 / 1) 0345 SaleType (U8 / 1) 0395 BaseMask (U32 / 1)
- * 0506 Name (Variable / 1) 0562 InvType (S8 / 1) 0630 Type (S8 / 1) 0680
- * AssetID (LLUUID / 1) 0699 GroupID (LLUUID / 1) 0716 SalePrice (S32 / 1) 0719
- * OwnerID (LLUUID / 1) 0736 CreatorID (LLUUID / 1) 0968 ItemID (LLUUID / 1)
- * 1025 FolderID (LLUUID / 1) 1084 EveryoneMask (U32 / 1) 1101 Description
- * (Variable / 1) 1189 Flags (U32 / 1) 1348 NextOwnerMask (U32 / 1) 1452
- * GroupMask (U32 / 1) 1505 OwnerMask (U32 / 1)
- */

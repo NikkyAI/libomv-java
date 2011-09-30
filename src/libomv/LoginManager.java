@@ -585,12 +585,11 @@ public class LoginManager
 					if (array.get(i).getType().equals(OSDType.Map))
 					{
 						OSDMap map = (OSDMap) array.get(i);
-						InventoryFolder folder = new InventoryFolder(map.get("folder_id").AsUUID());
-						folder.Name = map.get("name").AsString();
-						folder.ParentUUID = map.get("parent_id").AsUUID();
+						InventoryFolder folder = InventoryFolder.create(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID());
+						folder.name = map.get("name").AsString();
 						folder.preferredType = AssetType.setValue(map.get("type_default").AsInteger());
 						folder.version = map.get("version").AsInteger();
-						folder.OwnerID = owner;
+						folder.ownerID = owner;
 
 						folders[i] = folder;
 					}
@@ -612,9 +611,8 @@ public class LoginManager
 					if (array.get(i).getType().equals(OSDType.Map))
 					{
 						OSDMap map = (OSDMap) array.get(i);
-						InventoryFolder folder = new InventoryFolder(map.get("folder_id").AsUUID());
-						folder.Name = map.get("name").AsString();
-						folder.ParentUUID = map.get("parent_id").AsUUID();
+						InventoryFolder folder = InventoryFolder.create(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID());
+						folder.name = map.get("name").AsString();
 						folder.preferredType = AssetType.setValue(map.get("type_default").AsInteger());
 						folder.version = map.get("version").AsInteger();
 						folders[i] = folder;
@@ -648,12 +646,11 @@ public class LoginManager
 					{
 						@SuppressWarnings("unchecked")
 						HashMap<String, Object> map = (HashMap<String, Object>) array.get(i);
-						InventoryFolder folder = new InventoryFolder(ParseUUID("folder_id", map));
-						folder.Name = ParseString("name", map);
-						folder.ParentUUID = ParseUUID("parent_id", map);
+						InventoryFolder folder =InventoryFolder.create(ParseUUID("folder_id", map), ParseUUID("parent_id", map));
+						folder.name = ParseString("name", map);
 						folder.preferredType = AssetType.setValue(ParseUInt("type_default", map));
 						folder.version = ParseUInt("version", map);
-						folder.OwnerID = ownerID;
+						folder.ownerID = ownerID;
 
 						folders[i] = folder;
 					}

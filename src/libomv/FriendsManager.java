@@ -559,7 +559,7 @@ public class FriendsManager implements PacketCallback
 			throw new InventoryException(
 					"Inventory not instantiated. Need to lookup CallingCard folder in oreder to accept a friendship request.");
 
-		UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard);
+		UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard).itemID;
 
 		AcceptFriendshipPacket request = new AcceptFriendshipPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();

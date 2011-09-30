@@ -35,6 +35,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.apache.http.client.HttpResponseException;
@@ -64,8 +65,8 @@ import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
 import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
 import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryFolder;
-import libomv.inventory.InventoryItem.InventoryType;
 import libomv.inventory.InventoryItem.WearableType;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
 import libomv.packets.CopyInventoryItemPacket;
@@ -340,13 +341,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 	// #region Properties
 
+
 	/* Get this agents Inventory data */
-	public final InventoryFolder getRootFolder(boolean library)
+	public final InventoryFolder getRootNode(boolean library)
 	{
 		if (library)
 			return _Store.getLibraryFolder();
 
-		return _Store.getRootFolder();
+		return _Store.getInventoryFolder();
 	}
 
 	// #endregion Properties
@@ -399,25 +401,25 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case UpdateCreateInventoryItem:
-				UpdateCreateInventoryItemHandler(packet, simulator);
+				HandleUpdateCreateInventoryItem(packet, simulator);
 				break;
 			case SaveAssetIntoInventory:
-				SaveAssetIntoInventoryHandler(packet, simulator);
+				HandleSaveAssetIntoInventory(packet, simulator);
 				break;
 			case BulkUpdateInventory:
-				BulkUpdateInventoryHandler(packet, simulator);
+				HandleBulkUpdateInventory(packet, simulator);
 				break;
 			case MoveInventoryItem:
-				MoveInventoryItemHandler(packet, simulator);
+				HandleMoveInventoryItem(packet, simulator);
 				break;
 			case InventoryDescendents:
-				InventoryDescendentsHandler(packet, simulator);
+				HandleInventoryDescendents(packet, simulator);
 				break;
 			case FetchInventoryReply:
-				FetchInventoryReplyHandler(packet, simulator);
+				HandleFetchInventoryReply(packet, simulator);
 				break;
 			case ReplyTaskInventory:
-				ReplyTaskInventoryHandler(packet, simulator);
+				HandleReplyTaskInventory(packet, simulator);
 				break;
 		}
 	}
@@ -428,7 +430,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case ScriptRunningReply:
-				ScriptRunningReplyMessageHandler(message, simulator);
+				HandleScriptRunningReplyMessage(message, simulator);
 		}
 	}
 
@@ -458,7 +460,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			@Override
 			public void callback(ItemReceivedCallbackArgs e)
 			{
-				if (e.getItem().UUID.equals(itemID))
+				if (e.getItem().itemID.equals(itemID))
 				{
 					fetchEvent.set(e.getItem());
 				}
@@ -551,40 +553,28 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @throws InventoryException
 	 * @throws Exception
 	 */
-	public final ArrayList<InventoryBase> FolderContents(final UUID folder, UUID owner, boolean folders, boolean items,
+	public final ArrayList<InventoryNode> FolderContents(final UUID folderID, UUID ownerID, boolean folders, boolean items,
 			byte order, int timeout) throws InventoryException, Exception
 	{
-		final TimeoutEvent<ArrayList<InventoryBase>> fetchEvent = new TimeoutEvent<ArrayList<InventoryBase>>();
+		final TimeoutEvent<ArrayList<InventoryNode>> fetchEvent = new TimeoutEvent<ArrayList<InventoryNode>>();
 
 		Callback<FolderUpdatedCallbackArgs> callback = new Callback<FolderUpdatedCallbackArgs>()
 		{
 			@Override
 			public void callback(FolderUpdatedCallbackArgs e)
 			{
-				ArrayList<InventoryBase> contents = null;
-
-				if (e.getFolderID().equals(folder))
+				if (e.getFolderID().equals(folderID))
 				{
 					synchronized (_Store)
 					{
-						InventoryBase base = _Store.getItem(folder);
-						if (base instanceof InventoryFolder)
+						InventoryFolder folder = _Store.getFolder(folderID);
+						ArrayList<InventoryNode> contents = folder.children;
+						// FIXME: InventoryDescendentsHandler only stores correct
+						// descendendCount if both folders and items are fetched.
+						if (contents.size() >= folder.descendentCount)
 						{
-							// InventoryDescendentsHandler only stores correct
-							// DescendendCount if both folders and items are
-							// fetched.
-							try
-							{
-								contents = _Store.getContents(folder);
-								if (contents.size() >= ((InventoryFolder) base).descendentCount)
-								{
-									fetchEvent.set(contents);
-									return;
-								}
-							}
-							catch (InventoryException ex)
-							{
-							}
+							fetchEvent.set(contents);
+							return;
 						}
 					}
 				}
@@ -592,8 +582,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		};
 
 		OnFolderUpdated.add(callback, true);
-		RequestFolderContents(folder, owner, folders, items, order);
-		ArrayList<InventoryBase> contents = fetchEvent.waitOne(timeout);
+		RequestFolderContents(folderID, ownerID, folders, items, order);
+		ArrayList<InventoryNode> contents = fetchEvent.waitOne(timeout);
 		OnFolderUpdated.remove(callback);
 		return contents;
 	}
@@ -632,7 +622,158 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		_Client.Network.SendPacket(fetch);
 	}
 
-	// #endregion Fetch
+    /**
+     * Request the contents of an inventory folder using HTTP capabilities
+     *
+	 * @param folderID The folder to search
+	 * @param ownerID The folder owners {@link libomv.types.UUID}
+	 * @param fetchFolders true to return {@link InventoryManager.InventoryFolder}s contained in folder
+	 * @param fetchItems true to return {@link  InventoryManager.InventoryItem}s contained in folder
+	 * @param order the sort order to return items in {@link InvnetoryManager.InventorySortOrder}
+	 * {@link InventoryManager.FolderContents}
+	 */
+    public final void RequestFolderContentsCap(final UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
+    {
+        URI url = _Client.Network.getCapabilityURI("FetchInventoryDescendents2");
+
+        if (url == null)
+        {
+            Logger.Log("FetchInventoryDescendents2 capability not available in the current sim", LogLevel.Warning, _Client);
+            return;
+        }
+
+        try
+        {
+            CapsClient request = new CapsClient(url);
+            
+            final class CapsCallback implements FutureCallback<OSD>
+            {
+            	@Override
+            	public void completed(OSD result)
+            	{
+                try
+                {
+                    OSDArray fetchedFolders = (OSDArray)((OSDMap)result).get("folders");
+                    UUID parentID = null;
+                    InventoryFolder folder = null;
+                    for (int i = 0; i < fetchedFolders.size(); i++)
+                    {
+                        OSDMap res = (OSDMap)fetchedFolders.get(i);
+                        UUID folderID = res.get("folder_id").AsUUID();
+
+                        // FIXME: We need to see how we can resolve the parent here
+                        folder = SafeCreateInventoryFolder(folderID, parentID);
+                        folder.descendentCount = res.get("descendents").AsInteger();
+                        folder.version = res.get("version").AsInteger();
+                        folder.ownerID = res.get("owner_id").AsUUID();
+                        _Store.add(folder);
+
+                        // Do we have any descendants
+                        if (folder.descendentCount > 0)
+                        {
+                            // Fetch descendent folders
+                            if (res.containsKey("categories"))
+                            {
+                                InventoryFolder category = null;
+                                OSDArray folders = (OSDArray)res.get("categories");
+                                for (int j = 0; j < folders.size(); j++)
+                                {
+                                    OSDMap descFolder = (OSDMap)folders.get(j);
+                                    parentID = descFolder.get("parent_id").AsUUID();
+                                    folderID = descFolder.get("category_id").AsUUID();
+                                    category = SafeCreateInventoryFolder(folderID, parentID);
+                                    category.ownerID = descFolder.get("agent_id").AsUUID();
+                                    category.name = descFolder.get("name").AsString();
+                                    category.version = descFolder.get("version").AsInteger();
+                                    category.preferredType = AssetType.setValue(descFolder.get("type_default").AsInteger());
+                                    _Store.add(folder);
+                                }
+                            }
+                            // Fetch descendent items
+                            if (res.containsKey("items"))
+                            {
+                                OSDArray items = (OSDArray)res.get("items");
+                                for (int j = 0; j < items.size(); j++)
+                                {
+                                    OSDMap descItem = (OSDMap)items.get(j);
+                                    InventoryType type = InventoryType.setValue(descItem.get("inv_type").AsInteger());
+                                    if (type == InventoryType.Texture && AssetType.setValue(descItem.get("type").AsInteger()) == AssetType.Object)
+                                    {
+                                        type = InventoryType.Attachment;
+                                    }
+                                    InventoryItem item = SafeCreateInventoryItem(type, descItem.get("item_id").AsUUID(), folder.itemID);
+
+                                    item.name = descItem.get("name").AsString();
+                                    item.Description = descItem.get("desc").AsString();
+                                    item.ownerID = descItem.get("agent_id").AsUUID();
+                                    item.AssetID = descItem.get("asset_id").AsUUID();
+                                    item.assetType = AssetType.setValue(descItem.get("type").AsInteger());
+                                    item.CreationDate =  Helpers.UnixTimeToDateTime(descItem.get("created_at").AsReal());
+                                    item.ItemFlags = descItem.get("flags").AsInteger();
+
+                                    OSDMap perms = (OSDMap)descItem.get("permissions");
+                                    item.CreatorID = perms.get("creator_id").AsUUID();
+                                    item.LastOwnerID = perms.get("last_owner_id").AsUUID();
+                                    item.Permissions = new Permissions(perms.get("base_mask").AsInteger(), perms.get("everyone_mask").AsInteger(), perms.get("group_mask").AsInteger(), perms.get("next_owner_mask").AsInteger(), perms.get("owner_mask").AsInteger());
+                                    item.GroupOwned = perms.get("is_owner_group").AsBoolean();
+                                    item.GroupID = perms.get("group_id").AsUUID();
+
+                                    OSDMap sale = (OSDMap)descItem.get("sale_info");
+                                    item.SalePrice = sale.get("sale_price").AsInteger();
+                                    item.saleType = SaleType.setValue(sale.get("sale_type").AsInteger());
+
+                                    _Store.add(item);
+                                }
+                            }
+                        }
+                        OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(folderID));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed to fetch inventory descendants for folder id " + folderID, LogLevel.Warning, _Client, ex);
+                    return;
+                }
+            	}
+
+				@Override
+				public void cancelled()
+				{
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void failed(Exception arg0)
+				{
+					// TODO Auto-generated method stub
+					
+				}
+            };
+
+            // Construct request
+            OSDMap requestedFolder = new OSDMap(1);
+            requestedFolder.put("folder_id", OSD.FromUUID(folderID));
+            requestedFolder.put("owner_id", OSD.FromUUID(ownerID));
+            requestedFolder.put("fetch_folders", OSD.FromBoolean(fetchFolders));
+            requestedFolder.put("fetch_items", OSD.FromBoolean(fetchItems));
+            requestedFolder.put("sort_order", OSD.FromInteger(InventorySortOrder.getValue(order)));
+
+            OSDArray requestedFolders = new OSDArray(1);
+            requestedFolders.add(requestedFolder);
+            OSDMap req = new OSDMap(1);
+            req.put("folders", requestedFolders);
+
+            request.BeginGetResponse(req, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT, new CapsCallback());
+        }
+        catch (Exception ex)
+        {
+            Logger.Log("Failed to fetch inventory descendants for folder id " + folderID, LogLevel.Warning, _Client, ex);
+            return;
+        }
+    }
+
+    // #endregion Fetch
 
 	// #region Find
 
@@ -647,12 +788,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *         RootFolder if not found, or UUID.Zero on failure
 	 * @throws InventoryException
 	 */
-	public final UUID FindFolderForType(AssetType type) throws InventoryException
+	public final InventoryFolder FindFolderForType(AssetType type) throws InventoryException
 	{
 		if (_Store == null)
 		{
 			Logger.Log("Inventory is null, FindFolderForType() lookup cannot continue", LogLevel.Error, _Client);
-			return UUID.Zero;
+			return null;
 		}
 
 		synchronized (_Store)
@@ -660,27 +801,29 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			// Folders go in the root
 			if (type == AssetType.Folder)
 			{
-				return _Store.getRootFolder().UUID;
+				return _Store.getInventoryFolder();
 			}
 
 			// Loop through each top-level directory and check if PreferredType
 			// matches the requested type
-			ArrayList<InventoryBase> contents = _Store.getContents(_Store.getRootFolder().UUID);
-			for (InventoryBase inv : contents)
+			
+			Iterator<InventoryNode> iter = _Store.getInventoryFolder().children.iterator();
+			while (iter.hasNext())
 			{
-				if (inv instanceof InventoryFolder)
+				InventoryNode node = iter.next();
+				if (node.getType() == InventoryType.Folder)
 				{
-					InventoryFolder folder = (InventoryFolder) inv;
+					InventoryFolder folder = (InventoryFolder)node;
 
 					if (folder.preferredType == type)
 					{
-						return folder.UUID;
+						return folder;
 					}
 				}
 			}
 
 			// No match found, return Root Folder ID
-			return _Store.getRootFolder().UUID;
+			return _Store.getInventoryFolder();
 		}
 	}
 
@@ -772,17 +915,17 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @return A list of inventory items found
 	 * @throws InventoryException
 	 */
-	public final ArrayList<InventoryBase> LocalFind(UUID baseFolder, String[] path, int level, boolean firstOnly)
+	public final ArrayList<InventoryNode> LocalFind(UUID baseFolder, String[] path, int level, boolean firstOnly)
 			throws InventoryException
 	{
-		ArrayList<InventoryBase> objects = new ArrayList<InventoryBase>();
+		ArrayList<InventoryNode> objects = new ArrayList<InventoryNode>();
 		synchronized (_Store)
 		{
-			ArrayList<InventoryBase> contents = _Store.getContents(baseFolder);
+			ArrayList<InventoryNode> contents = _Store.getContents(baseFolder);
 
-			for (InventoryBase inv : contents)
+			for (InventoryNode inv : contents)
 			{
-				if (inv.Name.equals(path[level]))
+				if (inv.name.equals(path[level]))
 				{
 					if (level == path.length - 1)
 					{
@@ -794,7 +937,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					}
 					else if (inv instanceof InventoryFolder)
 					{
-						objects.addAll(LocalFind(inv.UUID, path, level + 1, firstOnly));
+						objects.addAll(LocalFind(inv.itemID, path, level + 1, firstOnly));
 					}
 				}
 			}
@@ -815,15 +958,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            The {@link T:InventoryFolder} to move item or folder to
 	 * @throws Exception
 	 */
-	public final void Move(InventoryBase item, InventoryFolder newParent) throws Exception
+	public final void Move(InventoryNode item, InventoryFolder newParent) throws Exception
 	{
 		if (item instanceof InventoryFolder)
 		{
-			MoveFolder(item.UUID, newParent.UUID);
+			MoveFolder(item.itemID, newParent.itemID);
 		}
 		else
 		{
-			MoveItem(item.UUID, newParent.UUID);
+			MoveItem(item.itemID, newParent.itemID);
 		}
 	}
 
@@ -839,16 +982,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void Move(InventoryBase item, InventoryFolder newParent, String newName)
+	public final void Move(InventoryNode item, InventoryFolder newParent, String newName)
 			throws UnsupportedEncodingException, Exception
 	{
 		if (item instanceof InventoryFolder)
 		{
-			MoveFolder(item.UUID, newParent.UUID, newName);
+			MoveFolder(item.itemID, newParent.itemID, newName);
 		}
 		else
 		{
-			MoveItem(item.UUID, newParent.UUID, newName);
+			MoveItem(item.itemID, newParent.itemID, newName);
 		}
 	}
 
@@ -888,13 +1031,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	{
 		synchronized (_Store)
 		{
-			if (_Store.containsKey(folderID))
+			if (_Store.containsFolder(folderID))
 			{
-				InventoryFolder inv = (InventoryFolder) (_Store.getItem(folderID));
-				inv.Name = name;
-				inv.ParentUUID = parentID;
+				InventoryFolder inv = _Store.getFolder(folderID);
+				inv.name = name;
 				inv.preferredType = type;
-				_Store.updateNodeFor(inv);
+				_Store.add(parentID, inv);
 			}
 		}
 
@@ -924,11 +1066,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	{
 		synchronized (_Store)
 		{
-			if (_Store.containsKey(folderID))
+			if (_Store.containsFolder(folderID))
 			{
-				InventoryBase inv = _Store.getItem(folderID);
-				inv.ParentUUID = newParentID;
-				_Store.updateNodeFor(inv);
+				_Store.add(newParentID, _Store.getItem(folderID));
 			}
 		}
 
@@ -956,20 +1096,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final void MoveFolders(Hashtable<UUID, UUID> foldersNewParents) throws Exception
 	{
-		// FIXME: Use two List<UUID> to stay consistent
-		synchronized (_Store)
-		{
-			for (Entry<UUID, UUID> entry : foldersNewParents.entrySet())
-			{
-				if (_Store.containsKey(entry.getKey()))
-				{
-					InventoryBase inv = _Store.getItem(entry.getKey());
-					inv.ParentUUID = entry.getValue();
-					_Store.updateNodeFor(inv);
-				}
-			}
-		}
-
 		// TODO: Test if this truly supports multiple-folder move
 		MoveInventoryFolderPacket move = new MoveInventoryFolderPacket();
 		move.AgentData.AgentID = _Client.Self.getAgentID();
@@ -987,6 +1113,18 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			move.InventoryData[index++] = block;
 		}
 		_Client.Network.SendPacket(move);
+
+		// FIXME: Use two List<UUID> to stay consistent
+		synchronized (_Store)
+		{
+			for (Entry<UUID, UUID> entry : foldersNewParents.entrySet())
+			{
+				if (_Store.containsFolder(entry.getKey()))
+				{
+					_Store.add(entry.getValue(), _Store.getItem(entry.getKey()));
+				}
+			}
+		}		
 	}
 
 	/**
@@ -1017,17 +1155,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final void MoveItem(UUID itemID, UUID folderID, String newName) throws Exception
 	{
-		synchronized (_Store)
-		{
-			if (_Store.containsKey(itemID))
-			{
-				InventoryBase inv = _Store.getItem(itemID);
-				inv.Name = newName;
-				inv.ParentUUID = folderID;
-				_Store.updateNodeFor(inv);
-			}
-		}
-
 		MoveInventoryItemPacket move = new MoveInventoryItemPacket();
 		move.AgentData.AgentID = _Client.Self.getAgentID();
 		move.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1040,6 +1167,17 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		move.InventoryData[0].setNewName(Helpers.StringToBytes(newName));
 
 		_Client.Network.SendPacket(move);
+
+		// Update our local copy
+		synchronized (_Store)
+		{
+			if (_Store.containsItem(itemID))
+			{
+				InventoryNode inv = _Store.getItem(itemID);
+				inv.name = newName;
+				_Store.add(folderID, inv);
+			}
+		}
 	}
 
 	/**
@@ -1053,19 +1191,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final void MoveItems(java.util.Hashtable<UUID, UUID> itemsNewParents) throws Exception
 	{
-		synchronized (_Store)
-		{
-			for (Entry<UUID, UUID> entry : itemsNewParents.entrySet())
-			{
-				if (_Store.containsKey(entry.getKey()))
-				{
-					InventoryBase inv = _Store.getItem(entry.getKey());
-					inv.ParentUUID = entry.getValue();
-					_Store.updateNodeFor(inv);
-				}
-			}
-		}
-
 		MoveInventoryItemPacket move = new MoveInventoryItemPacket();
 		move.AgentData.AgentID = _Client.Self.getAgentID();
 		move.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1082,7 +1207,20 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			block.setNewName(Helpers.EmptyBytes);
 			move.InventoryData[index++] = block;
 		}
+
 		_Client.Network.SendPacket(move);
+
+		// Update our local copy
+		synchronized (_Store)
+		{
+			for (Entry<UUID, UUID> entry : itemsNewParents.entrySet())
+			{
+				if (_Store.containsItem(entry.getKey()))
+				{
+					_Store.add(entry.getValue(), _Store.getItem(entry.getKey()));
+				}
+			}
+		}
 	}
 
 	// #endregion Move
@@ -1090,30 +1228,30 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// #region Remove
 
 	/**
-	 * Remove descendants of a folder
+	 * Remove descendants of a folder, basically emptying the folder
 	 * 
 	 * @param folder
 	 *            The {@link UUID} of the folder
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
-	public final void RemoveDescendants(UUID folder) throws Exception, InventoryException
+	public final void RemoveDescendants(UUID folderID) throws Exception, InventoryException
 	{
 		PurgeInventoryDescendentsPacket purge = new PurgeInventoryDescendentsPacket();
 		purge.AgentData.AgentID = _Client.Self.getAgentID();
 		purge.AgentData.SessionID = _Client.Self.getSessionID();
-		purge.InventoryData.FolderID = folder;
+		purge.InventoryData.FolderID = folderID;
 		_Client.Network.SendPacket(purge);
 
 		// Update our local copy
 		synchronized (_Store)
 		{
-			if (_Store.containsKey(folder))
+			if (_Store.containsFolder(folderID))
 			{
-				ArrayList<InventoryBase> contents = _Store.getContents(folder);
-				for (InventoryBase obj : contents)
+				Iterator<InventoryNode> iter = _Store.getFolder(folderID).children.iterator();
+				while (iter.hasNext())
 				{
-					_Store.removeNodeFor(obj);
+					_Store.remove(iter.next());
 				}
 			}
 		}
@@ -1188,9 +1326,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					rem.ItemData[i].ItemID = uuid;
 
 					// Update local copy
-					if (_Store.containsKey(uuid))
+					if (_Store.containsItem(uuid))
 					{
-						_Store.removeNodeFor(_Store.getItem(uuid));
+						_Store.remove(_Store.getItem(uuid));
 					}
 				}
 			}
@@ -1215,9 +1353,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					rem.FolderData[i].FolderID = uuid;
 
 					// Update local copy
-					if (_Store.containsKey(uuid))
+					if (_Store.containsFolder(uuid))
 					{
-						_Store.removeNodeFor(_Store.getItem(uuid));
+						_Store.remove(_Store.getFolder(uuid));
 					}
 				}
 			}
@@ -1259,36 +1397,40 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	{
 		synchronized (_Store)
 		{
-			ArrayList<InventoryBase> items = _Store.getContents(_Store.getRootFolder());
-			UUID folderKey = UUID.Zero;
-			for (InventoryBase item : items)
+			Iterator<InventoryNode> iter = _Store.getInventoryFolder().children.iterator();
+			InventoryFolder folder = null;
+			while (iter.hasNext())
 			{
-				if (((InventoryFolder) ((item instanceof InventoryFolder) ? item : null)) != null)
+				InventoryNode node = iter.next();
+				if (node.getType() == InventoryType.Folder)
 				{
-					InventoryFolder folder = (InventoryFolder) ((item instanceof InventoryFolder) ? item : null);
-					if (folder.preferredType == folderType)
+					if (((InventoryFolder)node).preferredType == folderType)
 					{
-						folderKey = folder.UUID;
-						break;
+						folder = (InventoryFolder)node;
 					}
 				}
 			}
-			items = _Store.getContents(folderKey);
 
-			ArrayList<UUID> remItems = new ArrayList<UUID>();
-			ArrayList<UUID> remFolders = new ArrayList<UUID>();
-			for (InventoryBase item : items)
+			if (folder != null)
 			{
-				if (((InventoryFolder) ((item instanceof InventoryFolder) ? item : null)) != null)
+				iter = folder.children.iterator();
+
+				ArrayList<UUID> remItems = new ArrayList<UUID>();
+				ArrayList<UUID> remFolders = new ArrayList<UUID>();
+				while (iter.hasNext())
 				{
-					remFolders.add(item.UUID);
+					InventoryNode node = iter.next();
+					if (node.getType() == InventoryType.Folder)
+					{
+						remFolders.add(node.itemID);
+					}
+					else
+					{
+						remItems.add(node.itemID);
+					}
 				}
-				else
-				{
-					remItems.add(item.UUID);
-				}
+				Remove(remItems, remFolders);
 			}
-			Remove(remItems, remFolders);
 		}
 	}
 
@@ -1315,8 +1457,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			UUID assetTransactionID, InventoryType invType, int nextOwnerMask,
 			Callback<ItemCreatedCallbackArgs> callback) throws Exception
 	{
-		// Even though WearableType.Shape, in this context it is treated as
-		// NOT_WEARABLE
+		// Even though WearableType.Shape, in this context it is treated as NOT_WEARABLE
 		RequestCreateItem(parentFolder, name, description, type, assetTransactionID, invType, WearableType.Shape,
 				nextOwnerMask, callback);
 	}
@@ -1409,16 +1550,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		}
 
 		// Create the new folder locally
-		InventoryFolder newFolder = new InventoryFolder(id);
+		InventoryFolder newFolder = new InventoryFolder(id, parentID);
 		newFolder.version = 1;
-		newFolder.descendentCount = 0;
-		newFolder.ParentUUID = parentID;
 		newFolder.preferredType = preferredType;
-		newFolder.Name = name;
-		newFolder.OwnerID = _Client.Self.getAgentID();
+		newFolder.name = name;
 
 		// Update the local store
-		_Store.setItem(newFolder.UUID, newFolder);
+		_Store.add(parentID, newFolder);
 
 		// Create the create folder packet and send it
 		CreateInventoryFolderPacket create = new CreateInventoryFolderPacket();
@@ -1527,7 +1665,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            Method to call upon creation of the link
 	 * @throws Exception
 	 */
-	public final void CreateLink(UUID folderID, InventoryBase bse, Callback<ItemCreatedCallbackArgs> callback)
+	public final void CreateLink(UUID folderID, InventoryNode bse, Callback<ItemCreatedCallbackArgs> callback)
 			throws Exception
 	{
 		if (bse instanceof InventoryFolder)
@@ -1538,7 +1676,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		else if (bse instanceof InventoryItem)
 		{
 			InventoryItem item = (InventoryItem) bse;
-			CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.getType(), new UUID(), callback);
+			CreateLink(folderID, item.itemID, item.name, item.Description, AssetType.Link, item.getType(), new UUID(), callback);
 		}
 	}
 
@@ -1556,7 +1694,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void CreateLink(UUID folderID, InventoryItem item, Callback<ItemCreatedCallbackArgs> callback)
 			throws Exception
 	{
-		CreateLink(folderID, item.UUID, item.Name, item.Description, AssetType.Link, item.getType(), new UUID(), callback);
+		CreateLink(folderID, item.itemID, item.name, item.Description, AssetType.Link, item.getType(), new UUID(), callback);
 	}
 
 	/**
@@ -1573,7 +1711,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void CreateLink(UUID folderID, InventoryFolder folder, Callback<ItemCreatedCallbackArgs> callback)
 			throws Exception
 	{
-		CreateLink(folderID, folder.UUID, folder.Name, "", AssetType.LinkFolder, InventoryType.Folder, new UUID(), callback);
+		CreateLink(folderID, folder.itemID, folder.name, "", AssetType.LinkFolder, InventoryType.Folder, new UUID(), callback);
 	}
 
 	/**
@@ -1723,8 +1861,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestCopyItemFromNotecard(UUID objectID, UUID notecardID, UUID folderID, UUID itemID,
 			Callback<ItemCopiedCallbackArgs> callback) throws Exception
 	{
-		_ItemCopiedCallbacks.put(0, callback); // Notecards always use callback
-												// ID 0
+		_ItemCopiedCallbacks.put(0, callback); // Notecards always use callback ID 0
 
 		URI url = _Client.Network.getCapabilityURI("CopyInventoryFromNotecard");
 		if (url != null)
@@ -1814,15 +1951,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			block.setDescription(Helpers.StringToBytes(item.Description));
 			block.EveryoneMask = item.Permissions.EveryoneMask;
 			block.Flags = item.ItemFlags;
-			block.FolderID = item.ParentUUID;
+			block.FolderID = item.parent.itemID;
 			block.GroupID = item.GroupID;
 			block.GroupMask = item.Permissions.GroupMask;
 			block.GroupOwned = item.GroupOwned;
 			block.InvType = item.getType().getValue();
-			block.ItemID = item.UUID;
-			block.setName(Helpers.StringToBytes(item.Name));
+			block.ItemID = item.itemID;
+			block.setName(Helpers.StringToBytes(item.name));
 			block.NextOwnerMask = item.Permissions.NextOwnerMask;
-			block.OwnerID = item.OwnerID;
+			block.OwnerID = _Store.getOwnerID();
 			block.OwnerMask = item.Permissions.OwnerMask;
 			block.SalePrice = item.SalePrice;
 			block.SaleType = item.saleType.getValue();
@@ -2087,10 +2224,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.RezData.EveryoneMask = item.Permissions.EveryoneMask;
 		add.RezData.NextOwnerMask = item.Permissions.NextOwnerMask;
 
-		add.InventoryData.ItemID = item.UUID;
-		add.InventoryData.FolderID = item.ParentUUID;
+		add.InventoryData.ItemID = item.itemID;
+		add.InventoryData.FolderID = item.parent.itemID;
 		add.InventoryData.CreatorID = item.CreatorID;
-		add.InventoryData.OwnerID = item.OwnerID;
+		add.InventoryData.OwnerID = item.ownerID;
 		add.InventoryData.GroupID = item.GroupID;
 		add.InventoryData.BaseMask = item.Permissions.BaseMask;
 		add.InventoryData.OwnerMask = item.Permissions.OwnerMask;
@@ -2104,7 +2241,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.InventoryData.Flags = item.ItemFlags;
 		add.InventoryData.SaleType = item.saleType.getValue();
 		add.InventoryData.SalePrice = item.SalePrice;
-		add.InventoryData.setName(Helpers.StringToBytes(item.Name));
+		add.InventoryData.setName(Helpers.StringToBytes(item.name));
 		add.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
 		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 
@@ -2126,7 +2263,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestDeRezToInventory(int objectLocalID) throws Exception
 	{
 		RequestDeRezToInventory(objectLocalID, DeRezDestination.AgentInventoryTake,
-				FindFolderForType(AssetType.Object), new UUID());
+				FindFolderForType(AssetType.Object).itemID, new UUID());
 	}
 
 	/**
@@ -2185,10 +2322,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.AgentData.AgentID = _Client.Self.getAgentID();
 		add.AgentData.SessionID = _Client.Self.getSessionID();
 
-		add.InventoryData.ItemID = item.UUID;
-		add.InventoryData.FolderID = item.ParentUUID;
+		add.InventoryData.ItemID = item.itemID;
+		add.InventoryData.FolderID = item.parent.itemID;
 		add.InventoryData.CreatorID = item.CreatorID;
-		add.InventoryData.OwnerID = item.OwnerID;
+		add.InventoryData.OwnerID = item.ownerID;
 		add.InventoryData.GroupID = item.GroupID;
 		add.InventoryData.BaseMask = item.Permissions.BaseMask;
 		add.InventoryData.OwnerMask = item.Permissions.OwnerMask;
@@ -2202,7 +2339,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.InventoryData.Flags = item.ItemFlags;
 		add.InventoryData.SaleType = item.saleType.getValue();
 		add.InventoryData.SalePrice = item.SalePrice;
-		add.InventoryData.setName(Helpers.StringToBytes(item.Name));
+		add.InventoryData.setName(Helpers.StringToBytes(item.name));
 		add.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
 		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 
@@ -2267,11 +2404,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		byte[] bucket;
 
 		ArrayList<InventoryItem> folderContents = new ArrayList<InventoryItem>();
-		ArrayList<InventoryBase> ibl = FolderContents(folderID, _Client.Self.getAgentID(), false, true,
+		ArrayList<InventoryNode> ibl = FolderContents(folderID, _Client.Self.getAgentID(), false, true,
 				InventorySortOrder.ByDate, 1000 * 15);
-		for (InventoryBase ib : ibl)
+		for (InventoryNode ib : ibl)
 		{
-			folderContents.add(FetchItem(ib.UUID, _Client.Self.getAgentID(), 1000 * 10));
+			folderContents.add(FetchItem(ib.itemID, _Client.Self.getAgentID(), 1000 * 10));
 		}
 		bucket = new byte[17 * (folderContents.size() + 1)];
 
@@ -2283,7 +2420,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		for (int i = 1; i <= folderContents.size(); ++i)
 		{
 			bucket[i * 17] = folderContents.get(i - 1).assetType.getValue();
-			folderContents.get(i - 1).UUID.ToBytes(bucket, i * 17 + 1);
+			folderContents.get(i - 1).itemID.ToBytes(bucket, i * 17 + 1);
 		}
 		_Client.Self.InstantMessage(_Client.Self.getName(), recipient, folderName, new UUID(),
 				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, _Client.Self.getSimPosition(),
@@ -2324,10 +2461,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		update.UpdateData.Key = 0;
 		update.UpdateData.LocalID = objectLocalID;
 
-		update.InventoryData.ItemID = item.UUID;
-		update.InventoryData.FolderID = item.ParentUUID;
+		update.InventoryData.ItemID = item.itemID;
+		update.InventoryData.FolderID = item.parent.itemID;
 		update.InventoryData.CreatorID = item.CreatorID;
-		update.InventoryData.OwnerID = item.OwnerID;
+		update.InventoryData.OwnerID = item.ownerID;
 		update.InventoryData.GroupID = item.GroupID;
 		update.InventoryData.BaseMask = item.Permissions.BaseMask;
 		update.InventoryData.OwnerMask = item.Permissions.OwnerMask;
@@ -2341,7 +2478,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		update.InventoryData.Flags = item.ItemFlags;
 		update.InventoryData.SaleType = item.saleType.getValue();
 		update.InventoryData.SalePrice = item.SalePrice;
-		update.InventoryData.setName(Helpers.StringToBytes(item.Name));
+		update.InventoryData.setName(Helpers.StringToBytes(item.name));
 		update.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
 		update.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 		update.InventoryData.CRC = ItemCRC(item);
@@ -2369,7 +2506,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *         a timeout occurs
 	 * @throws Exception
 	 */
-	public final ArrayList<InventoryBase> GetTaskInventory(final UUID objectID, int objectLocalID, int timeout)
+	public final ArrayList<InventoryNode> GetTaskInventory(final UUID objectID, int objectLocalID, int timeout)
 			throws Exception
 	{
 		if (_Client.Assets == null)
@@ -2432,7 +2569,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			}
 
 			Logger.DebugLog("Task is empty for " + objectLocalID, _Client);
-			return new ArrayList<InventoryBase>(0);
+			return new ArrayList<InventoryNode>(0);
 		}
 
 		Logger.Log("Timed out waiting for task inventory reply for " + objectLocalID, LogLevel.Warning, _Client);
@@ -2565,10 +2702,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		ScriptPacket.UpdateBlock.ObjectLocalID = objectLocalID;
 		ScriptPacket.UpdateBlock.Enabled = enableScript;
 
-		ScriptPacket.InventoryBlock.ItemID = item.UUID;
-		ScriptPacket.InventoryBlock.FolderID = item.ParentUUID;
+		ScriptPacket.InventoryBlock.ItemID = item.itemID;
+		ScriptPacket.InventoryBlock.FolderID = item.parent.itemID;
 		ScriptPacket.InventoryBlock.CreatorID = item.CreatorID;
-		ScriptPacket.InventoryBlock.OwnerID = item.OwnerID;
+		ScriptPacket.InventoryBlock.OwnerID = item.ownerID;
 		ScriptPacket.InventoryBlock.GroupID = item.GroupID;
 		ScriptPacket.InventoryBlock.BaseMask = item.Permissions.BaseMask;
 		ScriptPacket.InventoryBlock.OwnerMask = item.Permissions.OwnerMask;
@@ -2582,7 +2719,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		ScriptPacket.InventoryBlock.Flags = item.ItemFlags;
 		ScriptPacket.InventoryBlock.SaleType = item.saleType.getValue();
 		ScriptPacket.InventoryBlock.SalePrice = item.SalePrice;
-		ScriptPacket.InventoryBlock.setName(Helpers.StringToBytes(item.Name));
+		ScriptPacket.InventoryBlock.setName(Helpers.StringToBytes(item.name));
 		ScriptPacket.InventoryBlock.setDescription(Helpers.StringToBytes(item.Description));
 		ScriptPacket.InventoryBlock.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 		ScriptPacket.InventoryBlock.CRC = ItemCRC(item);
@@ -2710,12 +2847,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		// IDs
 		CRC += iitem.AssetID.CRC(); // AssetID
-		CRC += iitem.ParentUUID.CRC(); // FolderID
-		CRC += iitem.UUID.CRC(); // ItemID
+		CRC += iitem.parent.itemID.CRC(); // FolderID
+		CRC += iitem.itemID.CRC(); // ItemID
 
 		// Permission stuff
 		CRC += iitem.CreatorID.CRC(); // CreatorID
-		CRC += iitem.OwnerID.CRC(); // OwnerID
+		CRC += iitem.ownerID.CRC(); // OwnerID
 		CRC += iitem.GroupID.CRC(); // GroupID
 
 		// CRC += another 4 words which always seem to be zero -- unclear if
@@ -2771,26 +2908,28 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	}
 
 
-	private InventoryItem SafeCreateInventoryItem(InventoryType InvType, UUID ItemID)
+	private InventoryFolder SafeCreateInventoryFolder(UUID folderID, UUID parentID)
 	{
-		InventoryItem ret = null;
-
 		synchronized (_Store)
 		{
-			if (_Store.containsKey(ItemID))
+			if (_Store.containsFolder(folderID))
 			{
-				InventoryBase base = _Store.getItem(ItemID);
-				if (base instanceof InventoryItem)
-				{
-					ret = (InventoryItem) base;
-				}
-				else
-				{
-					ret = InventoryItem.create(InvType, ItemID);
-				}
+				return _Store.getFolder(folderID);
 			}
+			return InventoryFolder.create(folderID, parentID);
 		}
-		return ret;
+	}
+
+	private InventoryItem SafeCreateInventoryItem(InventoryType type, UUID itemID, UUID parentID)
+	{
+		synchronized (_Store)
+		{
+			if (_Store.containsItem(itemID))
+			{
+				return _Store.getItem(itemID);
+			}
+			return InventoryItem.create(type, itemID, parentID);
+		}
 	}
 
 	private static boolean ParseLine(String line, RefObject<String> key, RefObject<String> value)
@@ -2835,9 +2974,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            A string which contains the data from the task reply
 	 * @return A List containing the items contained within the tasks inventory
 	 */
-	public ArrayList<InventoryBase> ParseTaskInventory(String taskData)
+	public ArrayList<InventoryNode> ParseTaskInventory(String taskData)
 	{
-		ArrayList<InventoryBase> items = new ArrayList<InventoryBase>();
+		ArrayList<InventoryNode> items = new ArrayList<InventoryNode>();
 		int lineNum = 0;
 		String[] lines = taskData.replace("\r\n", "\n").split("\n");
 		String key = Helpers.EmptyString;
@@ -2878,7 +3017,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 							}
 							else if (key.equals("type"))
 							{
-								assetType = AssetType.valueOf(val);
+								assetType = AssetType.setValue(val);
 							}
 							else if (key.equals("name"))
 							{
@@ -2887,23 +3026,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						}
 					}
 
-					if (assetType == AssetType.Folder)
-					{
-						InventoryFolder folder = InventoryFolder.create(itemID);
-						folder.Name = name;
-						folder.ParentUUID = parentID;
-
-						items.add(folder);
-					}
-					else
-					{
-						InventoryItem item = new InventoryItem(itemID);
-						item.Name = name;
-						item.ParentUUID = parentID;
-						item.assetType = assetType;
-
-						items.add(item);
-					}
+					InventoryFolder folder = InventoryFolder.create(itemID, parentID);
+					folder.name = name;
+					folder.preferredType = assetType;
+					items.add(folder);
 				}
 				else if (key.equals("inv_item"))
 				{
@@ -3104,7 +3230,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						}
 					}
 
-					InventoryItem item = InventoryItem.create(inventoryType, itemID);
+					InventoryItem item = InventoryItem.create(inventoryType, itemID, parentID);
 					item.AssetID = assetID;
 					item.assetType = assetType;
 					item.CreationDate = creationDate;
@@ -3113,10 +3239,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					item.ItemFlags = flags;
 					item.GroupID = groupID;
 					item.GroupOwned = groupOwned;
-					item.Name = name;
-					item.OwnerID = ownerID;
+					item.name = name;
+					item.ownerID = ownerID;
 					item.LastOwnerID = lastOwnerID;
-					item.ParentUUID = parentID;
 					item.Permissions = perms;
 					item.SalePrice = salePrice;
 					item.saleType = saleType;
@@ -3184,7 +3309,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				try
 				{
 					// Find the folder where this is going to go
-					UUID destinationFolderID = FindFolderForType(type);
+					InventoryFolder parent = FindFolderForType(type);
 					ImprovedInstantMessagePacket imp = new ImprovedInstantMessagePacket();
 					imp.AgentData.AgentID = _Client.Self.getAgentID();
 					imp.AgentData.SessionID = _Client.Self.getSessionID();
@@ -3200,7 +3325,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					imp.MessageBlock.Position = _Client.Self.getSimPosition();
 
 					InventoryObjectOfferedCallbackArgs args = new InventoryObjectOfferedCallbackArgs(e.getIM(), type,
-							objectID, fromTask, destinationFolderID);
+							objectID, fromTask, parent.itemID);
 
 					OnInventoryObjectOffered.dispatch(args);
 
@@ -3358,16 +3483,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				Logger.DebugLog("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client);
 				synchronized (_Store)
 				{
-					_Store.setRootFolder(InventoryFolder.create(replyData.InventoryRoot));
+					_Store.setInventoryFolder(InventoryFolder.create(replyData.InventoryRoot, _Store.itemID));
 					for (int i = 0; i < replyData.InventorySkeleton.length; i++)
 					{
-						_Store.updateNodeFor(replyData.InventorySkeleton[i]);
+						_Store.add(replyData.InventorySkeleton[i]);
 					}
 
-					_Store.setLibraryFolder(InventoryFolder.create(replyData.LibraryRoot));
+					_Store.setLibraryFolder(InventoryFolder.create(replyData.LibraryRoot, _Store.itemID));
 					for (int i = 0; i < replyData.LibrarySkeleton.length; i++)
 					{
-						_Store.updateNodeFor(replyData.LibrarySkeleton[i]);
+						_Store.add(replyData.LibrarySkeleton[i]);
 					}
 				}
 			}
@@ -3629,14 +3754,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// #endregion Internal Handlers
 
 	// #region Packet Handlers
-	protected final void SaveAssetIntoInventoryHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleSaveAssetIntoInventory(Packet packet, Simulator simulator) throws Exception
 	{
 		SaveAssetIntoInventoryPacket save = (SaveAssetIntoInventoryPacket) packet;
 		OnSaveAssetToInventory.dispatch(new SaveAssetToInventoryCallbackArgs(save.InventoryData.ItemID,
 				save.InventoryData.NewAssetID));
 	}
 
-	protected final void InventoryDescendentsHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleInventoryDescendents(Packet packet, Simulator simulator) throws Exception
 	{
 		InventoryDescendentsPacket reply = (InventoryDescendentsPacket) packet;
 
@@ -3653,19 +3778,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					{
 						break;
 					}
-					// If folder already exists then ignore, we assume the
-					// version cache
-					// logic is working and if the folder is stale then it
-					// should not be present.
-					else if (!_Store.containsKey(reply.FolderData[i].FolderID))
+					// If folder already exists then ignore, we assume the version cache
+					// logic is working and if the folder is stale then it should not be present.
+					else if (!_Store.containsFolder(reply.FolderData[i].FolderID))
 					{
-						InventoryFolder folder = InventoryFolder.create(reply.FolderData[i].FolderID);
-
-						folder.ParentUUID = reply.FolderData[i].ParentID;
-						folder.Name = Helpers.BytesToString(reply.FolderData[i].getName());
+						InventoryFolder folder = InventoryFolder.create(reply.FolderData[i].FolderID, reply.FolderData[i].ParentID);
+						folder.name = Helpers.BytesToString(reply.FolderData[i].getName());
+						folder.ownerID = reply.AgentData.OwnerID;
 						folder.preferredType = AssetType.setValue(reply.FolderData[i].Type);
-						folder.OwnerID = reply.AgentData.OwnerID;
-						_Store.setItem(folder.UUID, folder);
+						_Store.add(folder);
 					}
 				}
 
@@ -3692,65 +3813,57 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					if (AssetType.Object.equals(AssetType.setValue(reply.ItemData[i].Type))
 							&& InventoryType.Texture.equals(InventoryType.setValue(reply.ItemData[i].InvType)))
 					{
-						item = InventoryItem.create(InventoryType.Attachment, reply.ItemData[i].ItemID);
+						item = InventoryItem.create(InventoryType.Attachment, reply.ItemData[i].ItemID, reply.ItemData[i].FolderID);
 					}
 					else
 					{
 						item = InventoryItem.create(InventoryType.setValue(reply.ItemData[i].InvType),
-								reply.ItemData[i].ItemID);
+								reply.ItemData[i].ItemID, reply.ItemData[i].FolderID);
 					}
-					item.ParentUUID = reply.ItemData[i].FolderID;
+					item.name = Helpers.BytesToString(reply.ItemData[i].getName());
+					item.ownerID = reply.AgentData.OwnerID;
 					item.CreatorID = reply.ItemData[i].CreatorID;
 					item.assetType = AssetType.setValue(reply.ItemData[i].Type);
 					item.AssetID = reply.ItemData[i].AssetID;
 					item.CreationDate = Helpers.UnixTimeToDateTime(reply.ItemData[i].CreationDate);
 					item.Description = Helpers.BytesToString(reply.ItemData[i].getDescription());
 					item.ItemFlags = reply.ItemData[i].Flags;
-					item.Name = Helpers.BytesToString(reply.ItemData[i].getName());
 					item.GroupID = reply.ItemData[i].GroupID;
 					item.GroupOwned = reply.ItemData[i].GroupOwned;
 					item.Permissions = new Permissions(reply.ItemData[i].BaseMask, reply.ItemData[i].EveryoneMask,
 							reply.ItemData[i].GroupMask, reply.ItemData[i].NextOwnerMask, reply.ItemData[i].OwnerMask);
 					item.SalePrice = reply.ItemData[i].SalePrice;
 					item.saleType = SaleType.setValue(reply.ItemData[i].SaleType);
-					item.OwnerID = reply.AgentData.OwnerID;
-					_Store.setItem(item.UUID, item);
+					_Store.add(item);
 				}
 			}
 
-			InventoryFolder parentFolder = null;
+			InventoryFolder parent = null;
 
-			if (_Store.containsKey(reply.AgentData.FolderID))
+			if (_Store.containsFolder(reply.AgentData.FolderID))
 			{
-				InventoryBase base = _Store.getItem(reply.AgentData.FolderID);
-				if (base instanceof InventoryFolder)
-				{
-					parentFolder = (InventoryFolder) base;
-				}
+				parent = _Store.getFolder(reply.AgentData.FolderID);
 			}
 
-			if (parentFolder == null)
+			if (parent == null)
 			{
 				Logger.Log("Don't have a reference to FolderID " + reply.AgentData.FolderID.toString()
 						+ " or it is not a folder", LogLevel.Error, _Client);
 				return;
 			}
 
-			if (reply.AgentData.Version < parentFolder.version)
+			if (reply.AgentData.Version < parent.version)
 			{
-				Logger.Log("Got an outdated InventoryDescendents packet for folder " + parentFolder.Name
-						+ ", this version = " + reply.AgentData.Version + ", latest version = " + parentFolder.version,
+				Logger.Log("Got an outdated InventoryDescendents packet for folder " + parent.name
+						+ ", this version = " + reply.AgentData.Version + ", latest version = " + parent.version,
 						LogLevel.Warning, _Client);
 				return;
 			}
 
-			parentFolder.version = reply.AgentData.Version;
-			// FIXME: reply.AgentData.Descendants is not
-			// parentFolder.DescendentCount if we didn't request items and
-			// folders
-			parentFolder.descendentCount = reply.AgentData.Descendents;
-
-			_Store.getNodeFor(reply.AgentData.FolderID).setNeedsUpdate(false);
+			parent.version = reply.AgentData.Version;
+			// FIXME: reply.AgentData.Descendants is not parentFolder.DescendentCount
+			// if we didn't request items and folders
+			parent.descendentCount = reply.AgentData.Descendents;
 
 			// #region FindObjectByPath Handling
 
@@ -3764,7 +3877,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					for (int i = 0; i < _Searches.size(); i++)
 					{
 						InventorySearch search = _Searches.get(i);
-						ArrayList<InventoryBase> folderContents;
+						ArrayList<InventoryNode> folderContents;
 						folderContents = _Store.getContents(search.Folder);
 
 						// Iterate over all of the inventory objects in the base
@@ -3773,7 +3886,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						{
 							// Check if this inventory object matches the
 							// current path node
-							if (folderContents.get(j).Name.equals(search.Path[search.Level]))
+							if (folderContents.get(j).name.equals(search.Path[search.Level]))
 							{
 								String string = "";
 								int k = 0;
@@ -3790,7 +3903,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 									// This is the last node in the path, fire
 									// the callback and clean up
 									OnFindObjectByPathReply.dispatch(new FindObjectByPathReplyCallbackArgs(string,
-											folderContents.get(j).UUID));
+											folderContents.get(j).itemID));
 									break;
 								}
 
@@ -3799,7 +3912,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								Logger.DebugLog(String.format("Matched level %d/%d in a path search of %s",
 										search.Level, search.Path.length - 1, string), _Client);
 
-								search.Folder = folderContents.get(j).UUID;
+								search.Folder = folderContents.get(j).itemID;
 								search.Level++;
 								remaining.add(search);
 
@@ -3814,7 +3927,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			// #endregion FindObjectByPath Handling
 
 			// Callback for inventory folder contents being updated
-			OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(parentFolder.UUID));
+			OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(parent.itemID));
 		}
 	}
 
@@ -3829,10 +3942,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The CallbackArgs object containing the packet data
 	 */
-	protected final void UpdateCreateInventoryItemHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleUpdateCreateInventoryItem(Packet packet, Simulator simulator) throws Exception
 	{
-		UpdateCreateInventoryItemPacket reply = (UpdateCreateInventoryItemPacket) ((packet instanceof UpdateCreateInventoryItemPacket) ? packet
-				: null);
+		UpdateCreateInventoryItemPacket reply = (UpdateCreateInventoryItemPacket)packet;
 
 		for (UpdateCreateInventoryItemPacket.InventoryDataBlock dataBlock : reply.InventoryData)
 		{
@@ -3843,7 +3955,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				continue;
 			}
 
-			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID);
+			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID);
+			item.name = Helpers.BytesToString(dataBlock.getName());
+			item.ownerID = dataBlock.OwnerID;
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.AssetID = dataBlock.AssetID;
 			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
@@ -3852,9 +3966,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			item.ItemFlags = dataBlock.Flags;
 			item.GroupID = dataBlock.GroupID;
 			item.GroupOwned = dataBlock.GroupOwned;
-			item.Name = Helpers.BytesToString(dataBlock.getName());
-			item.OwnerID = dataBlock.OwnerID;
-			item.ParentUUID = dataBlock.FolderID;
 			item.Permissions = new Permissions(dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 					dataBlock.NextOwnerMask, dataBlock.OwnerMask);
 			item.SalePrice = dataBlock.SalePrice;
@@ -3864,25 +3975,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			 * When attaching new objects, an UpdateCreateInventoryItem packet
 			 * will be returned by the server that has a FolderID/ParentUUID of
 			 * zero. It is up to the client to make sure that the item gets a
-			 * good folder, otherwise it will end up inaccesible in inventory.
+			 * good folder, otherwise it will end up inaccessible in inventory.
 			 */
-			if (item.ParentUUID.equals(UUID.Zero))
+			if (dataBlock.FolderID.equals(UUID.Zero))
 			{
 				// assign default folder for type
-				item.ParentUUID = FindFolderForType(item.assetType);
+				item.parent = FindFolderForType(item.assetType);
 
-				Logger.Log(
-						"Received an item through UpdateCreateInventoryItem with no parent folder, assigning to folder "
-								+ item.ParentUUID, LogLevel.Info);
+				Logger.Log("Received an item through UpdateCreateInventoryItem with no parent folder, assigning to folder "
+								+ item.parent.itemID, LogLevel.Info);
 
 				// send update to the sim
 				RequestUpdateItem(item);
 			}
-
+			
 			synchronized (_Store)
 			{
 				// Update the local copy
-				_Store.setItem(item.UUID, item);
+				_Store.add(item);
 			}
 
 			// Look for an "item created" callback
@@ -3919,39 +4029,32 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			}
 
 			// This is triggered when an item is received from a task
-			OnTaskItemReceived.dispatch(new TaskItemReceivedCallbackArgs(item.UUID, dataBlock.FolderID, item.CreatorID, item.AssetID, item.getType()));
+			OnTaskItemReceived.dispatch(new TaskItemReceivedCallbackArgs(item.itemID, dataBlock.FolderID, item.CreatorID, item.AssetID, item.getType()));
 		}
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
-	 * @param sender
-	 *            The sender
-	 * @param e
-	 *            The CallbackArgs object containing the packet data
 	 */
-	protected final void MoveInventoryItemHandler(Packet packet, Simulator simulator) throws Exception
+	protected final void HandleMoveInventoryItem(Packet packet, Simulator simulator) throws Exception
 	{
 		MoveInventoryItemPacket move = (MoveInventoryItemPacket) packet;
 
-		for (int i = 0; i < move.InventoryData.length; i++)
+		for (MoveInventoryItemPacket.InventoryDataBlock block : move.InventoryData)
 		{
-			// FIXME: Do something here
-			String newName = Helpers.BytesToString(move.InventoryData[i].getNewName());
-
-			Logger.Log(
-					String.format(
-							"MoveInventoryItemHandler: Item %s is moving to Folder %s with new name \"%s\". Someone write this function!",
-							move.InventoryData[i].ItemID.toString(), move.InventoryData[i].FolderID.toString(), newName),
-					LogLevel.Warning, _Client);
+			InventoryNode node = _Store.getNode(block.ItemID);
+			if (block.getNewName().length > 0)
+				node.name = Helpers.BytesToString(block.getNewName());
+			node.parent.children.remove(node);
+			node.parent = _Store.getFolder(block.FolderID);
+			_Store.add(node);
 		}
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void BulkUpdateInventoryHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleBulkUpdateInventory(Packet packet, Simulator simulator) throws Exception
 	{
 		BulkUpdateInventoryPacket update = (BulkUpdateInventoryPacket) ((packet instanceof BulkUpdateInventoryPacket) ? packet
 				: null);
@@ -3962,17 +4065,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			{
 				for (BulkUpdateInventoryPacket.FolderDataBlock dataBlock : update.FolderData)
 				{
-					if (!_Store.containsKey(dataBlock.FolderID))
+					if (!_Store.containsFolder(dataBlock.FolderID))
 					{
 						Logger.Log("Received BulkUpdate for unknown folder: " + dataBlock.FolderID, LogLevel.Warning,
 								_Client);
 					}
 
-					InventoryFolder folder = InventoryFolder.create(dataBlock.FolderID);
-					folder.Name = Helpers.BytesToString(dataBlock.getName());
-					folder.OwnerID = update.AgentData.AgentID;
-					folder.ParentUUID = dataBlock.ParentID;
-					_Store.setItem(folder.UUID, folder);
+					InventoryFolder folder = InventoryFolder.create(dataBlock.FolderID, dataBlock.ParentID);
+					folder.name = Helpers.BytesToString(dataBlock.getName());
+					_Store.add(dataBlock.ParentID, folder);
 				}
 			}
 		}
@@ -3986,16 +4087,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					BulkUpdateInventoryPacket.ItemDataBlock dataBlock = update.ItemData[i];
 
 					// If we are given a folder of items, the item information
-					// might arrive before the folder
-					// (parent) is in the store
-					if (!_Store.containsKey(dataBlock.ItemID))
+					// might arrive before the folder (parent) is in the store
+					if (!_Store.containsItem(dataBlock.ItemID))
 					{
 						Logger.Log("Received BulkUpdate for unknown item: " + dataBlock.ItemID, LogLevel.Warning,
 								_Client);
 					}
 
-					InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType),
-							dataBlock.ItemID);
+					InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID);
 
 					item.assetType = AssetType.setValue(dataBlock.Type);
 					if (!dataBlock.AssetID.equals(UUID.Zero))
@@ -4008,15 +4107,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					item.ItemFlags = dataBlock.Flags;
 					item.GroupID = dataBlock.GroupID;
 					item.GroupOwned = dataBlock.GroupOwned;
-					item.Name = Helpers.BytesToString(dataBlock.getName());
-					item.OwnerID = dataBlock.OwnerID;
-					item.ParentUUID = dataBlock.FolderID;
+					item.name = Helpers.BytesToString(dataBlock.getName());
 					item.Permissions = new Permissions(dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 							dataBlock.NextOwnerMask, dataBlock.OwnerMask);
 					item.SalePrice = dataBlock.SalePrice;
 					item.saleType = SaleType.setValue(dataBlock.SaleType);
 
-					_Store.setItem(item.UUID, item);
+					_Store.add(item);
 
 					// Look for an "item created" callback
 					if (_ItemCreatedCallbacks.containsKey(dataBlock.CallbackID))
@@ -4055,7 +4152,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void FetchInventoryReplyHandler(Packet packet, Simulator simulator) throws Exception
+	protected final void HandleFetchInventoryReply(Packet packet, Simulator simulator) throws Exception
 	{
 		FetchInventoryReplyPacket reply = (FetchInventoryReplyPacket) ((packet instanceof FetchInventoryReplyPacket) ? packet
 				: null);
@@ -4069,7 +4166,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				continue;
 			}
 
-			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID);
+			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID);
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.AssetID = dataBlock.AssetID;
 			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
@@ -4078,18 +4175,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			item.ItemFlags = dataBlock.Flags;
 			item.GroupID = dataBlock.GroupID;
 			item.GroupOwned = dataBlock.GroupOwned;
-			item.Name = Helpers.BytesToString(dataBlock.getName());
-			item.OwnerID = dataBlock.OwnerID;
-			item.ParentUUID = dataBlock.FolderID;
+			item.name = Helpers.BytesToString(dataBlock.getName());
 			item.Permissions = new Permissions(dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 					dataBlock.NextOwnerMask, dataBlock.OwnerMask);
 			item.SalePrice = dataBlock.SalePrice;
 			item.saleType = SaleType.setValue(dataBlock.SaleType);
 
-			synchronized (_Store)
-			{
-				_Store.setItem(item.UUID, item);
-			}
+			_Store.add(dataBlock.FolderID, item);
 
 			// Fire the callback for an item being fetched
 			OnItemReceived.dispatch(new ItemReceivedCallbackArgs(item));
@@ -4099,14 +4191,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void ReplyTaskInventoryHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleReplyTaskInventory(Packet packet, Simulator simulator) throws Exception
 	{
 		ReplyTaskInventoryPacket reply = (ReplyTaskInventoryPacket) packet;
 		OnTaskInventoryReply.dispatch(new TaskInventoryReplyCallbackArgs(reply.InventoryData.TaskID,
 				reply.InventoryData.Serial, Helpers.BytesToString(reply.InventoryData.getFilename())));
 	}
 
-	protected final void ScriptRunningReplyMessageHandler(IMessage message, Simulator simulator)
+	private final void HandleScriptRunningReplyMessage(IMessage message, Simulator simulator)
 	{
 		ScriptRunningReplyMessage msg = (ScriptRunningReplyMessage) message;
 		OnScriptRunningReply.dispatch(new ScriptRunningReplyCallbackArgs(msg.ObjectID, msg.ItemID, msg.Mono,

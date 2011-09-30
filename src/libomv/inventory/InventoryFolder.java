@@ -30,43 +30,56 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDArray;
+import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
-import libomv.inventory.InventoryItem.InventoryType;
 import libomv.types.UUID;
 
 /**
  * A folder contains {@link T:OpenMetaverse.InventoryItem}s and has certain
  * attributes specific to itself
  */
-public class InventoryFolder extends InventoryBase
+public class InventoryFolder extends InventoryNode
 {
 	private static final long serialVersionUID = 1L;
 	// The Preferred {@link T:libomv.assets.AssetItem.AssetType} for a folder.
 	public AssetType preferredType;
 	// The Version of this folder
 	public int version;
-	// Number of child items this folder contains.
-	public int descendentCount;
 
-	public static InventoryFolder create(UUID folderID)
+	protected int descendentCount;
+	
+	protected ArrayList<InventoryNode> children;
+	
+	public ArrayList<InventoryNode> getNodes()
 	{
-		return new InventoryFolder(folderID);
+		return children;
 	}
 
+	public static InventoryFolder create(UUID id, UUID parentID)
+	{
+		return new InventoryFolder(id, parentID);
+	}
+	
+	public InventoryFolder()
+	{
+		super();
+	}
 	/**
 	 * Constructor
 	 * 
 	 * @param itemID
 	 *            UUID of the folder
 	 */
-	public InventoryFolder(UUID itemID)
+	public InventoryFolder(UUID itemID, UUID parentID)
 	{
 		super(itemID);
 		preferredType = AssetType.Unknown;
 		version = 1;
-		// set to -1 to indicate that we don't know the descendent count yet
-		descendentCount = -1;
 	}
 
 	@Override
@@ -75,6 +88,47 @@ public class InventoryFolder extends InventoryBase
 		return InventoryType.Folder;
 	}
 
+	@Override
+	public OSDMap toOSD()
+	{
+		OSDMap map = super.toOSD();
+		map.put("preferedType", OSD.FromInteger(preferredType.getValue()));
+		map.put("version", OSD.FromInteger(version));
+		
+		if (children != null)
+		{
+			OSDArray array = new OSDArray(children.size());
+			Iterator<InventoryNode> iter = children.iterator();
+			while (iter.hasNext())
+			{
+				array.add(iter.next().toOSD());
+			}
+			map.put("children", array);
+		}
+		return map;
+	}
+	
+	protected static InventoryNode fromOSD(InventoryNode node, OSD osd)
+	{
+		if (node != null && node.getType() == InventoryType.Folder)
+		{
+			OSDMap map = (OSDMap)osd;
+			InventoryFolder folder = (InventoryFolder)node;
+			folder.preferredType = AssetType.setValue(map.get("preferedType").AsInteger());
+			folder.version = map.get("version").AsInteger();
+			if (map.containsKey("children"))
+			{
+				OSDArray array = (OSDArray)map.get("children");
+				folder.children = new ArrayList<InventoryNode>(array.size());
+				for (int i = 0; i < array.size(); i++)
+				{
+					folder.children.add(InventoryNode.fromOSD(array.get(i)));
+				}
+			}
+		}
+		return node;
+	}
+	
 	/**
 	 * Initializes an InventoryFolder object from a serialization stream
 	 * 
@@ -89,9 +143,17 @@ public class InventoryFolder extends InventoryBase
 		super.readObject(info);
 		if (serialVersionUID != info.readLong())
 			throw new InvalidObjectException("InventoryItem serial version mismatch");
+
 		preferredType = AssetType.setValue(info.readByte());
 		version = info.readInt();
-		descendentCount = info.readInt();
+
+		int num = info.readInt();
+		if (num >= 0)
+		{
+			children = new ArrayList<InventoryNode>(num);
+			for (int i = 0; i < num; i++)
+				children.add((InventoryNode)info.readObject());
+		}
 	}
 
 	/**
@@ -108,19 +170,29 @@ public class InventoryFolder extends InventoryBase
 		info.writeLong(serialVersionUID);
 		info.writeByte(preferredType.getValue());
 		info.writeInt(version);
-		info.writeInt(descendentCount);
+		if (children == null)
+		{
+			info.writeInt(-1);
+		}
+		else
+		{
+			info.writeInt(children.size());
+			Iterator<InventoryNode> iter = children.iterator();
+			while (iter.hasNext())
+				info.writeObject(iter.next());
+		}
 	}
 
 	@Override
 	public String toString()
 	{
-		return Name;
+		return name;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return preferredType.hashCode() ^ version ^ descendentCount;
+		return super.hashCode() ^ preferredType.hashCode() ^ version ^ children.hashCode();
 	}
 
 	@Override
@@ -131,7 +203,7 @@ public class InventoryFolder extends InventoryBase
 	}
 
 	@Override
-	public boolean equals(InventoryBase o)
+	public boolean equals(InventoryNode o)
 	{
 		InventoryFolder folder = (InventoryFolder) ((o instanceof InventoryFolder) ? o : null);
 		return folder != null && equals(folder);
@@ -139,7 +211,6 @@ public class InventoryFolder extends InventoryBase
 
 	public final boolean equals(InventoryFolder o)
 	{
-		return super.equals(o) && o.descendentCount == descendentCount && o.preferredType == preferredType
-				&& o.version == version;
+		return super.equals(o) && o.preferredType.equals(preferredType) && o.version == version;
 	}
 }

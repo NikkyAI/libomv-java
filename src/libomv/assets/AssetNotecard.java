@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
 
 import libomv.ObjectManager.SaleType;
 import libomv.inventory.InventoryItem;
-import libomv.inventory.InventoryItem.InventoryType;
 import libomv.inventory.InventoryManager;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.UUID;
@@ -132,8 +132,8 @@ public class AssetNotecard extends AssetItem
 				output.append("\tinv_item\t0\n");
 				output.append("\t{\n");
 
-				output.append("\t\titem_id\t" + item.UUID + "\n");
-				output.append("\t\tparent_id\t" + item.ParentUUID + "\n");
+				output.append("\t\titem_id\t" + item.itemID + "\n");
+				output.append("\t\tparent_id\t" + item.getParentID() + "\n");
 
 				output.append("\tpermissions 0\n");
 				output.append("\t{\n");
@@ -143,7 +143,7 @@ public class AssetNotecard extends AssetItem
 				output.append("\t\teveryone_mask\t" + String.format("08x", item.Permissions.EveryoneMask) + "\n");
 				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.Permissions.NextOwnerMask) + "\n");
 				output.append("\t\tcreator_id\t" + item.CreatorID + "\n");
-				output.append("\t\towner_id\t" + item.OwnerID + "\n");
+				output.append("\t\towner_id\t" + item.ownerID + "\n");
 				output.append("\t\tlast_owner_id\t" + item.LastOwnerID + "\n");
 				output.append("\t\tgroup_id\t" + item.GroupID + "\n");
 				if (item.GroupOwned)
@@ -171,7 +171,7 @@ public class AssetNotecard extends AssetItem
 				output.append("\t\tsale_price\t" + item.SalePrice + "\n");
 				output.append("\t}\n");
 
-				output.append("\t\tname\t" + item.Name.replace('|', '_') + "|\n");
+				output.append("\t\tname\t" + item.name.replace('|', '_') + "|\n");
 				output.append("\t\tdesc\t" + item.Description.replace('|', '_') + "|\n");
 				output.append("\t\tcreation_date\t" + Helpers.DateTimeToUnixTime(item.CreationDate) + "\n");
 
@@ -265,8 +265,8 @@ public class AssetNotecard extends AssetItem
 				Permissions permissions = Permissions.NoPermissions;
 				int salePrice = 0;
 				SaleType saleType = SaleType.Not;
-				UUID parentUUID = UUID.Zero;
-				UUID assetUUID = UUID.Zero;
+				UUID parentID = UUID.Zero;
+				UUID assetID = UUID.Zero;
 				AssetType assetType = AssetType.Unknown;
 				InventoryType inventoryType = InventoryType.Unknown;
 				int flags = 0;
@@ -371,11 +371,11 @@ public class AssetNotecard extends AssetItem
 					}
 					else if (key == "parent_id")
 					{
-						parentUUID = new UUID(val);
+						parentID = new UUID(val);
 					}
 					else if (key == "asset_id")
 					{
-						assetUUID = new UUID(val);
+						assetID = new UUID(val);
 					}
 					else if (key == "type")
 					{
@@ -402,20 +402,19 @@ public class AssetNotecard extends AssetItem
 						creationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(val));
 					}
 				}
-				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid);
+				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid, parentID);
 
 				finalEmbedded.CreatorID = creatorID;
-				finalEmbedded.OwnerID = ownerID;
+				finalEmbedded.ownerID = ownerID;
 				finalEmbedded.LastOwnerID = lastOwnerID;
 				finalEmbedded.GroupID = groupID;
 				finalEmbedded.Permissions = permissions;
 				finalEmbedded.SalePrice = salePrice;
 				finalEmbedded.saleType = saleType;
-				finalEmbedded.ParentUUID = parentUUID;
-				finalEmbedded.AssetID = assetUUID;
+				finalEmbedded.AssetID = assetID;
 				finalEmbedded.assetType = assetType;
 				finalEmbedded.ItemFlags = flags;
-				finalEmbedded.Name = name;
+				finalEmbedded.name = name;
 				finalEmbedded.Description = description;
 				finalEmbedded.CreationDate = creationDate;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2008, openmetaverse.org
+ * Copyright (c) 2006-2008, openmetaverse.org
  * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
@@ -26,146 +26,267 @@
  */
 package libomv.inventory;
 
-//
-
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
 
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDMap;
 import libomv.types.UUID;
 
-public class InventoryNode implements Serializable
+/* Base class for Inventory Items with tree structure support */
+public abstract class InventoryNode implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private InventoryBase data;
-	private InventoryNode parent;
-	private HashMap<UUID, InventoryNode> nodes;
-	private boolean needsUpdate = false;
-
-	public final InventoryBase getData()
+	/** Inventory Node Types, eg Script, Notecard, Folder, etc */
+	public enum InventoryType
 	{
-		return data;
+		/** Unknown */
+		Unknown(-1),
+		/** Texture */
+		Texture(0),
+		/** Sound */
+		Sound(1),
+		/** Calling Card */
+		CallingCard(2),
+		/** Landmark */
+		Landmark(3),
+		// [Obsolete("See LSL")]
+		Script(4),
+		// [Obsolete("See Wearable")]
+		Clothing(5),
+		/** Object */
+		Object(6),
+		/** Notecard */
+		Notecard(7),
+		/** */
+		Category(8),
+		/** Folder */
+		Folder(8),
+		/** */
+		RootCategory(9),
+		/** an LSL Script */
+		LSL(10),
+		// [Obsolete("See LSL")] LSLBytecode = 11,
+		// [Obsolete("See Texture")] TextureTGA = 12,
+		// [Obsolete] Bodypart = 13,
+		// [Obsolete] Trash = 14,
+		/** */
+		Snapshot(15),
+		// [Obsolete] LostAndFound = 16,
+		/** */
+		Attachment(17),
+		/** */
+		Wearable(18),
+		/** */
+		Animation(19),
+		/**	*/
+		Gesture(20);
+
+		private static final String[] _InventoryTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
+				"script", "clothing", "object", "notecard", "category", "root", "script", "", "", "", "", "snapshot",
+				"", "attach", "wearable", "animation", "gesture" };
+
+		/**
+		 * Translate a string name of an AssetType into the proper Type
+		 * 
+		 * @param type
+		 *            A string containing the AssetType name
+		 * @return The AssetType which matches the string name, or
+		 *         AssetType.Unknown if no match was found
+		 */
+		public static InventoryType setValue(String value)
+		{
+			for (int i = 0; i < _InventoryTypeNames.length; i++)
+			{
+				if (value.compareToIgnoreCase(_InventoryTypeNames[i]) == 0)
+				{
+					return values()[i + 1];
+				}
+			}
+			return Unknown;
+		}
+
+		public static InventoryType setValue(int value)
+		{
+			for (InventoryType e : values())
+			{
+				if (e._value == value)
+					return e;
+			}
+			return null;
+		}
+
+		public byte getValue()
+		{
+			return _value;
+		}
+
+		@Override
+		public String toString()
+		{
+			int i = ordinal() - 1;
+			if (i >= 0 && ordinal() < _InventoryTypeNames.length)
+				return _InventoryTypeNames[i];
+			return "unknown";
+		}
+
+		private final byte _value;
+
+		private InventoryType(int value)
+		{
+			this._value = (byte) value;
+		}
 	}
 
-	public final void setData(InventoryBase value)
-	{
-		data = value;
-	}
-
-	public final InventoryNode getParent()
+	// {@link libomv.types.UUID} of item/folder
+	public UUID itemID;
+	// Name of item/folder */
+	public String name;
+    // Item/Folder Owners {@link libomv.types.UUID}
+    public UUID ownerID;
+    // Item/Folder Parent {@link libomv.types.UUID}
+    protected UUID parentID;
+	// parent of item/folder in tree hierarchy
+	protected InventoryFolder parent;
+	
+	public InventoryNode getParent()
 	{
 		return parent;
 	}
 
-	public final void setParent(InventoryNode value)
+	public UUID getParentID()
 	{
-		parent = value;
+		return parent != null ? parent.itemID : parentID;
 	}
-
-	public final UUID getParentID()
-	{
-		return parent.getData().UUID;
-	}
-
-	public final HashMap<UUID, InventoryNode> getNodes()
-	{
-		if (nodes == null)
-		{
-			nodes = new HashMap<UUID, InventoryNode>();
-		}
-		return nodes;
-	}
-
-	public final void setNodes(HashMap<UUID, InventoryNode> value)
-	{
-		nodes = value;
-	}
-
-	/*
-	 * For inventory folder nodes specifies weather the folder needs to be
-	 * refreshed from the server
-	 */
-	public final boolean getNeedsUpdate()
-	{
-		return needsUpdate;
-	}
-
-	public final void setNeedsUpdate(boolean value)
-	{
-		needsUpdate = value;
-	}
-
+	
+	public abstract InventoryType getType();
+	
 	public InventoryNode()
 	{
 	}
 
-	public InventoryNode(InventoryBase data)
+	/**
+	 * Constructor, takes an itemID as a parameter
+	 * 
+	 * @param itemID
+	 *            The {@link OpenMetaverse.UUID} of the item
+	 */
+	public InventoryNode(UUID itemID)
 	{
-		this.data = data;
+		this.itemID = itemID;
+	}
+	
+	public static InventoryNode create(InventoryType type, UUID id, UUID parentID)
+	{
+		switch (type)
+		{
+			case Folder:
+				return new InventoryFolder(id, parentID);
+			default:
+				return InventoryItem.create(type, id, parentID);
+		}
 	}
 
-	/* De-serialization constructor for the InventoryNode Class */
-	public InventoryNode(InventoryBase data, InventoryNode parent)
+	public OSDMap toOSD()
 	{
-		this.data = data;
-		this.parent = parent;
-
+		OSDMap map = new OSDMap();
+		map.put("uuid", OSD.FromUUID(itemID));
+		map.put("type", OSD.FromInteger(getType().getValue()));
+		map.put("name", OSD.FromString(name));
+		map.put("owner", OSD.FromUUID(ownerID));
 		if (parent != null)
 		{
-			// Add this node to the collection of parent nodes
-			parent.nodes.put(data.UUID, this);
+			map.put("parent", OSD.FromUUID(parent.itemID));			
 		}
+		return map;
 	}
 
-	/**
-	 * Initializes an InventoryItem object from a serialization stream
-	 * 
-	 * @param info
-	 *            serialization stream
-	 * @throws ClassNotFoundException
-	 * @throws IOException
-	 */
-	private void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
+	public static InventoryNode fromOSD(OSD osd)
+	{
+		if (osd instanceof OSDMap)
+		{
+			OSDMap map = (OSDMap) osd;
+			UUID id = map.get("uuid").AsUUID();
+			UUID parentID = null;
+			if (map.containsKey("parent"))
+				parentID = map.get("parent").AsUUID();
+			InventoryType type = InventoryType.setValue(map.get("type").AsInteger());
+			InventoryNode node = InventoryNode.create(type, id, parentID);
+			node.name = map.get("name").AsString();
+			node.ownerID =  map.get("owner").AsUUID();
+			
+			switch (type)
+			{
+				case Folder:
+					return InventoryFolder.fromOSD(node, osd);
+				default:
+					return InventoryItem.fromOSD(node, osd);
+			}
+		}
+		return null;
+	}
+
+	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
 	{
 		if (serialVersionUID != info.readLong())
-			throw new InvalidObjectException("InventoryItem serial version mismatch");
-		data = (InventoryBase) info.readObject();
-		parent = (InventoryNode) info.readObject();
-		needsUpdate = info.readBoolean();
-		Object obj = info.readObject();
-		if (obj instanceof HashMap)
-			nodes = (HashMap<UUID, InventoryNode>) obj;
-		else
-			throw new InvalidObjectException("");
+			throw new InvalidObjectException("InventoryNode serial version mismatch");
+		itemID = (UUID) info.readObject();
+		name = info.readUTF();
+		ownerID = (UUID)info.readObject();
+		parent = (InventoryFolder)info.readObject();
+	}
+
+	protected void writeObject(ObjectOutputStream info) throws IOException
+	{
+		info.writeLong(serialVersionUID);
+		info.writeObject(itemID);
+		info.writeUTF(name);
+		info.writeObject(ownerID);
+		info.writeObject(parent);
 	}
 
 	/**
-	 * Write Serilization data for this InventoryFolder object to the stream
+	 * Generates a number corresponding to the value of the object to support
+	 * the use of a hash table, suitable for use in hashing algorithms and data
+	 * structures such as a hash table
 	 * 
-	 * @param info
-	 *            serialization stream
-	 * @throws IOException
+	 * @return A Hashcode of all the combined InventoryBase fields
 	 */
-	private void writeObject(ObjectOutputStream info) throws IOException
+	@Override
+	public int hashCode()
 	{
-		info.writeLong(serialVersionUID);
-		info.writeObject(data);
-		info.writeObject(parent);
-		info.writeBoolean(needsUpdate);
-		info.writeObject(nodes);
+		return itemID.hashCode() ^ name.hashCode() ^ownerID.hashCode();
 	}
 
+	/**
+	 * Determine whether the specified {@link InventoryNode}
+	 * object is equal to the current object
+	 * 
+	 * @param o
+	 *            InventoryNode object to compare against
+	 * @return true if objects are the same
+	 */
 	@Override
-	public String toString()
+	public boolean equals(Object o)
 	{
-		if (data == null)
-		{
-			return "[Empty Node]";
-		}
-		return data.toString();
+		InventoryNode inv = (InventoryNode) ((o instanceof InventoryNode) ? o : null);
+		return inv != null && equals(inv);
+	}
+
+	/**
+	 * Determine whether the specified {@link InventoryNode}
+	 * object is equal to the current object
+	 * 
+	 * @param o
+	 *            InventoryNode object to compare against
+	 * @return true if objects are the same
+	 */
+	public boolean equals(InventoryNode o)
+	{
+		return o != null && itemID.equals(o.itemID) && name.equals(o.name) && ownerID.equals(o.ownerID);
 	}
 }
