@@ -662,10 +662,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
                         UUID folderID = res.get("folder_id").AsUUID();
 
                         // FIXME: We need to see how we can resolve the parent here
-                        folder = SafeCreateInventoryFolder(folderID, parentID);
+                        folder = SafeCreateInventoryFolder(folderID, parentID, res.get("owner_id").AsUUID());
                         folder.descendentCount = res.get("descendents").AsInteger();
                         folder.version = res.get("version").AsInteger();
-                        folder.ownerID = res.get("owner_id").AsUUID();
                         _Store.add(folder);
 
                         // Do we have any descendants
@@ -681,8 +680,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                                     OSDMap descFolder = (OSDMap)folders.get(j);
                                     parentID = descFolder.get("parent_id").AsUUID();
                                     folderID = descFolder.get("category_id").AsUUID();
-                                    category = SafeCreateInventoryFolder(folderID, parentID);
-                                    category.ownerID = descFolder.get("agent_id").AsUUID();
+                                    category = SafeCreateInventoryFolder(folderID, parentID, descFolder.get("agent_id").AsUUID());
                                     category.name = descFolder.get("name").AsString();
                                     category.version = descFolder.get("version").AsInteger();
                                     category.preferredType = AssetType.setValue(descFolder.get("type_default").AsInteger());
@@ -701,11 +699,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
                                     {
                                         type = InventoryType.Attachment;
                                     }
-                                    InventoryItem item = SafeCreateInventoryItem(type, descItem.get("item_id").AsUUID(), folder.itemID);
+                                    InventoryItem item = SafeCreateInventoryItem(type, descItem.get("item_id").AsUUID(), folder.itemID, descItem.get("agent_id").AsUUID());
 
                                     item.name = descItem.get("name").AsString();
                                     item.Description = descItem.get("desc").AsString();
-                                    item.ownerID = descItem.get("agent_id").AsUUID();
                                     item.AssetID = descItem.get("asset_id").AsUUID();
                                     item.assetType = AssetType.setValue(descItem.get("type").AsInteger());
                                     item.CreationDate =  Helpers.UnixTimeToDateTime(descItem.get("created_at").AsReal());
@@ -2908,7 +2905,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	}
 
 
-	private InventoryFolder SafeCreateInventoryFolder(UUID folderID, UUID parentID)
+	private InventoryFolder SafeCreateInventoryFolder(UUID folderID, UUID parentID, UUID ownerID)
 	{
 		synchronized (_Store)
 		{
@@ -2916,11 +2913,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			{
 				return _Store.getFolder(folderID);
 			}
-			return InventoryFolder.create(folderID, parentID);
+			return new InventoryFolder(folderID, parentID, ownerID);
 		}
 	}
 
-	private InventoryItem SafeCreateInventoryItem(InventoryType type, UUID itemID, UUID parentID)
+	private InventoryItem SafeCreateInventoryItem(InventoryType type, UUID itemID, UUID parentID, UUID ownerID)
 	{
 		synchronized (_Store)
 		{
@@ -2928,7 +2925,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			{
 				return _Store.getItem(itemID);
 			}
-			return InventoryItem.create(type, itemID, parentID);
+			return InventoryItem.create(type, itemID, parentID, ownerID);
 		}
 	}
 
@@ -3026,7 +3023,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						}
 					}
 
-					InventoryFolder folder = InventoryFolder.create(itemID, parentID);
+					InventoryFolder folder = new InventoryFolder(itemID, parentID);
 					folder.name = name;
 					folder.preferredType = assetType;
 					items.add(folder);
@@ -3230,7 +3227,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						}
 					}
 
-					InventoryItem item = InventoryItem.create(inventoryType, itemID, parentID);
+					InventoryItem item = InventoryItem.create(inventoryType, itemID, parentID, ownerID);
 					item.AssetID = assetID;
 					item.assetType = assetType;
 					item.CreationDate = creationDate;
@@ -3240,7 +3237,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					item.GroupID = groupID;
 					item.GroupOwned = groupOwned;
 					item.name = name;
-					item.ownerID = ownerID;
 					item.LastOwnerID = lastOwnerID;
 					item.Permissions = perms;
 					item.SalePrice = salePrice;
@@ -3483,13 +3479,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				Logger.DebugLog("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client);
 				synchronized (_Store)
 				{
-					_Store.setInventoryFolder(InventoryFolder.create(replyData.InventoryRoot, _Store.itemID));
+					_Store.setInventoryFolder(replyData.InventoryRoot);
 					for (int i = 0; i < replyData.InventorySkeleton.length; i++)
 					{
 						_Store.add(replyData.InventorySkeleton[i]);
 					}
 
-					_Store.setLibraryFolder(InventoryFolder.create(replyData.LibraryRoot, _Store.itemID));
+					_Store.setLibraryFolder(replyData.LibraryRoot, replyData.LibraryOwner);
 					for (int i = 0; i < replyData.LibrarySkeleton.length; i++)
 					{
 						_Store.add(replyData.LibrarySkeleton[i]);
@@ -3782,7 +3778,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					// logic is working and if the folder is stale then it should not be present.
 					else if (!_Store.containsFolder(reply.FolderData[i].FolderID))
 					{
-						InventoryFolder folder = InventoryFolder.create(reply.FolderData[i].FolderID, reply.FolderData[i].ParentID);
+						InventoryFolder folder = new InventoryFolder(reply.FolderData[i].FolderID, reply.FolderData[i].ParentID);
 						folder.name = Helpers.BytesToString(reply.FolderData[i].getName());
 						folder.ownerID = reply.AgentData.OwnerID;
 						folder.preferredType = AssetType.setValue(reply.FolderData[i].Type);
@@ -3813,15 +3809,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					if (AssetType.Object.equals(AssetType.setValue(reply.ItemData[i].Type))
 							&& InventoryType.Texture.equals(InventoryType.setValue(reply.ItemData[i].InvType)))
 					{
-						item = InventoryItem.create(InventoryType.Attachment, reply.ItemData[i].ItemID, reply.ItemData[i].FolderID);
+						item = InventoryItem.create(InventoryType.Attachment, reply.ItemData[i].ItemID, reply.ItemData[i].FolderID, reply.AgentData.OwnerID);
 					}
 					else
 					{
 						item = InventoryItem.create(InventoryType.setValue(reply.ItemData[i].InvType),
-								reply.ItemData[i].ItemID, reply.ItemData[i].FolderID);
+								reply.ItemData[i].ItemID, reply.ItemData[i].FolderID, reply.AgentData.OwnerID);
 					}
 					item.name = Helpers.BytesToString(reply.ItemData[i].getName());
-					item.ownerID = reply.AgentData.OwnerID;
 					item.CreatorID = reply.ItemData[i].CreatorID;
 					item.assetType = AssetType.setValue(reply.ItemData[i].Type);
 					item.AssetID = reply.ItemData[i].AssetID;
@@ -3944,7 +3939,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	private final void HandleUpdateCreateInventoryItem(Packet packet, Simulator simulator) throws Exception
 	{
-		UpdateCreateInventoryItemPacket reply = (UpdateCreateInventoryItemPacket)packet;
+		UpdateCreateInventoryItemPacket reply = (UpdateCreateInventoryItemPacket) packet;
 
 		for (UpdateCreateInventoryItemPacket.InventoryDataBlock dataBlock : reply.InventoryData)
 		{
@@ -3955,9 +3950,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				continue;
 			}
 
-			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID);
+			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID, dataBlock.OwnerID);
 			item.name = Helpers.BytesToString(dataBlock.getName());
-			item.ownerID = dataBlock.OwnerID;
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.AssetID = dataBlock.AssetID;
 			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
@@ -4056,9 +4050,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	private final void HandleBulkUpdateInventory(Packet packet, Simulator simulator) throws Exception
 	{
-		BulkUpdateInventoryPacket update = (BulkUpdateInventoryPacket) ((packet instanceof BulkUpdateInventoryPacket) ? packet
-				: null);
-
+		BulkUpdateInventoryPacket update = (BulkUpdateInventoryPacket) packet;
+		
 		if (update.FolderData.length > 0 && !update.FolderData[0].FolderID.equals(UUID.Zero))
 		{
 			synchronized (_Store)
@@ -4071,7 +4064,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								_Client);
 					}
 
-					InventoryFolder folder = InventoryFolder.create(dataBlock.FolderID, dataBlock.ParentID);
+					InventoryFolder folder = new InventoryFolder(dataBlock.FolderID, dataBlock.ParentID);
 					folder.name = Helpers.BytesToString(dataBlock.getName());
 					_Store.add(dataBlock.ParentID, folder);
 				}
@@ -4094,7 +4087,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								_Client);
 					}
 
-					InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID);
+					InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID, dataBlock.OwnerID);
 
 					item.assetType = AssetType.setValue(dataBlock.Type);
 					if (!dataBlock.AssetID.equals(UUID.Zero))
@@ -4154,8 +4147,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	private final void HandleFetchInventoryReply(Packet packet, Simulator simulator) throws Exception
 	{
-		FetchInventoryReplyPacket reply = (FetchInventoryReplyPacket) ((packet instanceof FetchInventoryReplyPacket) ? packet
-				: null);
+		FetchInventoryReplyPacket reply = (FetchInventoryReplyPacket) packet;
 
 		for (FetchInventoryReplyPacket.InventoryDataBlock dataBlock : reply.InventoryData)
 		{
@@ -4166,7 +4158,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				continue;
 			}
 
-			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID);
+			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID, dataBlock.FolderID, dataBlock.OwnerID);
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.AssetID = dataBlock.AssetID;
 			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);

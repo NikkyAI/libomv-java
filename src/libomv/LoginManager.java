@@ -588,11 +588,10 @@ public class LoginManager
 					if (array.get(i).getType().equals(OSDType.Map))
 					{
 						OSDMap map = (OSDMap) array.get(i);
-						folders[i] = InventoryFolder.create(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID());
+						folders[i] = new InventoryFolder(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID(), ownerID);
 						folders[i].name = map.get("name").AsString();
 						folders[i].preferredType = AssetType.setValue(map.get("type_default").AsInteger());
 						folders[i].version = map.get("version").AsInteger();
-						folders[i].ownerID = ownerID;
 					}
 				}
 				return folders;
@@ -622,11 +621,10 @@ public class LoginManager
 					{
 						@SuppressWarnings("unchecked")
 						Map<String, Object> map = (Map<String, Object>) array[i];
-						folders[i] = InventoryFolder.create(ParseUUID("folder_id", map), ParseUUID("parent_id", map));
+						folders[i] = new InventoryFolder(ParseUUID("folder_id", map), ParseUUID("parent_id", map), ownerID);
 						folders[i].name = ParseString("name", map);
 						folders[i].preferredType = AssetType.setValue(ParseUInt("type_default", map));
 						folders[i].version = ParseUInt("version", map);
-						folders[i].ownerID = ownerID;
 					}
 				}
 				return folders;

@@ -36,7 +36,10 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.types.UUID;
 
-/* Base class for Inventory Items with tree structure support */
+/**
+ * Base class for {@link libomv.inventory.InventoryItem}s and {@link libomv.inventory.InventoryFolder}s
+ * with tree structure support
+ */
 public abstract class InventoryNode implements Serializable
 {
 	private static final long serialVersionUID = 1L;
@@ -147,17 +150,12 @@ public abstract class InventoryNode implements Serializable
 	// Name of item/folder */
 	public String name;
     // Item/Folder Owners {@link libomv.types.UUID}
-    public UUID ownerID;
+    protected UUID ownerID;
     // Item/Folder Parent {@link libomv.types.UUID}
     protected UUID parentID;
 	// parent of item/folder in tree hierarchy
 	protected InventoryFolder parent;
 	
-	public InventoryNode getParent()
-	{
-		return parent;
-	}
-
 	public UUID getParentID()
 	{
 		return parent != null ? parent.itemID : parentID;
@@ -165,7 +163,12 @@ public abstract class InventoryNode implements Serializable
 	
 	public abstract InventoryType getType();
 	
-	public InventoryNode()
+	public UUID getOwnerID()
+	{
+		return ownerID;
+	}
+
+	protected InventoryNode()
 	{
 	}
 
@@ -175,7 +178,7 @@ public abstract class InventoryNode implements Serializable
 	 * @param itemID
 	 *            The {@link OpenMetaverse.UUID} of the item
 	 */
-	public InventoryNode(UUID itemID)
+	protected InventoryNode(UUID itemID)
 	{
 		this.itemID = itemID;
 	}
@@ -191,7 +194,7 @@ public abstract class InventoryNode implements Serializable
 		}
 	}
 
-	public OSDMap toOSD()
+	protected OSDMap toOSD()
 	{
 		OSDMap map = new OSDMap();
 		map.put("uuid", OSD.FromUUID(itemID));

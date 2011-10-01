@@ -910,7 +910,7 @@ public class AssetManager implements PacketCallback
 	public final void RequestInventoryAsset(InventoryItem item, boolean priority, AssetReceivedCallback callback)
 			throws Exception
 	{
-		RequestInventoryAsset(item.AssetID, item.itemID, UUID.Zero, item.ownerID, item.assetType, priority, callback);
+		RequestInventoryAsset(item.AssetID, item.itemID, UUID.Zero, item.getOwnerID(), item.assetType, priority, callback);
 	}
 
 	public final void RequestEstateAsset() throws Exception

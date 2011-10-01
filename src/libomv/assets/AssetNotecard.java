@@ -143,7 +143,7 @@ public class AssetNotecard extends AssetItem
 				output.append("\t\teveryone_mask\t" + String.format("08x", item.Permissions.EveryoneMask) + "\n");
 				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.Permissions.NextOwnerMask) + "\n");
 				output.append("\t\tcreator_id\t" + item.CreatorID + "\n");
-				output.append("\t\towner_id\t" + item.ownerID + "\n");
+				output.append("\t\towner_id\t" + item.getOwnerID() + "\n");
 				output.append("\t\tlast_owner_id\t" + item.LastOwnerID + "\n");
 				output.append("\t\tgroup_id\t" + item.GroupID + "\n");
 				if (item.GroupOwned)
@@ -402,10 +402,9 @@ public class AssetNotecard extends AssetItem
 						creationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(val));
 					}
 				}
-				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid, parentID);
+				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid, parentID, ownerID);
 
 				finalEmbedded.CreatorID = creatorID;
-				finalEmbedded.ownerID = ownerID;
 				finalEmbedded.LastOwnerID = lastOwnerID;
 				finalEmbedded.GroupID = groupID;
 				finalEmbedded.Permissions = permissions;

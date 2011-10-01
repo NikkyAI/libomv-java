@@ -42,7 +42,9 @@ import libomv.types.UUID;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-/* An Item in Inventory */
+/**
+ * A leaf node in our Inventory
+ */
 public class InventoryItem extends InventoryNode
 {
 	private static final long serialVersionUID = 1L;
@@ -213,7 +215,7 @@ public class InventoryItem extends InventoryNode
 	 *            The {@link UUID} of the newly created object
 	 * @return An {@link InventoryItem} object with the type and id passed
 	 */
-	public static InventoryItem create(InventoryType type, UUID id, UUID parentID)
+	public static InventoryItem create(InventoryType type, UUID id, UUID parentID, UUID ownerID)
 	{
 		InventoryItem item = null;
 		switch (type)
@@ -267,7 +269,11 @@ public class InventoryItem extends InventoryNode
 					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, ex);
 				}
 		}
-		if (item != null) item.parentID = parentID;
+		if (item != null)
+		{
+			item.parentID = parentID;
+			item.ownerID = ownerID;
+		}
 		return item;
 	}
 
@@ -306,7 +312,7 @@ public class InventoryItem extends InventoryNode
 	}
 
 	@Override
-	public OSDMap toOSD()
+	protected OSDMap toOSD()
 	{
 		OSDMap map = super.toOSD();
 		map.put("assetID", OSD.FromUUID(AssetID));

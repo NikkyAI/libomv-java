@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import libomv.GridClient;
+import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
@@ -45,12 +46,21 @@ import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
 /**
- * Responsible for maintaining inventory structure. Inventory constructs nodes
- * and manages node children as is necessary to maintain a coherant hirarchy.
+ * Responsible for maintaining the inventory structure. InventoryStore constructs nodes
+ * and manages node children as is necessary to maintain a coherent hierarchy.
  * Other classes should not manipulate or create InventoryNodes explicitly. When
- * A node's parent changes (when a folder is moved, for example) simply pass
- * Inventory the updated InventoryFolder and it will make the appropriate
- * changes to its internal representation.
+ * a node's parent changes (when a folder is moved, for example) simply pass
+ * InventoryStore.add(parentID, node) the updated InventoryNode without changing the
+ * parentID yet and it will make the appropriate changes to its internal representation.
+ * 
+ * We use a lazy tree linking approach in order to handle nodes that arrive before their
+ * parent has arrived. Each node also has a storage for the parentID besides the direct
+ * reference to its parent. When inserting a new node into the tree we attempt to lookup
+ * the parent folder and store its reference in our node, but don't throw an exception if
+ * that fails. So in order to make this work an external client should never directly
+ * attempt to access the parent folder in a node but instead use the getParent() method
+ * in this class. In order to enforce that, the parent node member of the InventoryNode
+ * is set to protected. 
  */
 public class InventoryStore extends InventoryFolder
 {
@@ -82,7 +92,6 @@ public class InventoryStore extends InventoryFolder
 	public class InventoryObjectRemovedCallbackArgs implements CallbackArgs
 	{
 		private final InventoryNode m_Obj;
-
 		public final InventoryNode getObj()
 		{
 			return m_Obj;
@@ -117,31 +126,9 @@ public class InventoryStore extends InventoryFolder
 
 	public CallbackHandler<InventoryObjectAddedCallbackArgs> OnInventoryObjectAdded = new CallbackHandler<InventoryObjectAddedCallbackArgs>();
 
-	// The root folder of the avatars inventory
-	public final InventoryFolder getInventoryFolder()
-	{
-		return (InventoryFolder)children.get(0);
-	}
-	public final void setInventoryFolder(InventoryFolder folder)
-	{
-		children.set(0, folder);
-	}
-	
-	// The root folder of the default shared library
-	public final InventoryFolder getLibraryFolder()
-	{
-		return (InventoryFolder)children.get(1);
-	}
-	public final void setLibraryFolder(InventoryFolder folder)
-	{
-		children.set(1, folder);
-	}
-
-	private UUID _OwnerID;
-
 	public final UUID getOwnerID()
 	{
-		return _OwnerID;
+		return ownerID;
 	}
 
 	private GridClient _Client;
@@ -157,17 +144,52 @@ public class InventoryStore extends InventoryFolder
 	public InventoryStore(GridClient client, UUID owner)
 	{
 		_Client = client;
-		_OwnerID = owner;
+
 		if (owner == null || owner.equals(UUID.Zero))
 		{
 			Logger.Log("Inventory owned by nobody!", LogLevel.Warning, _Client);
 		}
 		_Items = new HashMap<UUID, InventoryItem>();
 		_Folders = new HashMap<UUID, InventoryFolder>();
-		
+		this.
+		name = "Root";
+		ownerID = owner;
+		preferredType = AssetType.RootFolder;
 		children = new ArrayList<InventoryNode>(2);
+		children.add(new InventoryFolder());
+		children.add(new InventoryFolder());	
 	}
 	
+	// The root folder of the avatars inventory
+	public final InventoryFolder getInventoryFolder()
+	{
+		return (InventoryFolder)children.get(0);
+	}
+	public final void setInventoryFolder(UUID folderID)
+	{
+		InventoryFolder folder = new InventoryFolder(folderID, this.itemID, this.ownerID);
+		folder.parent = this;
+		folder.name = "Inventory";
+		folder.preferredType = AssetType.RootFolder;
+		children.set(0, folder);
+		_Folders.put(folderID, folder);
+	}
+	
+	// The root folder of the default shared library
+	public final InventoryFolder getLibraryFolder()
+	{
+		return (InventoryFolder)children.get(1);
+	}
+	public final void setLibraryFolder(UUID folderID, UUID ownerID)
+	{
+		InventoryFolder folder = new InventoryFolder(folderID, this.itemID, ownerID);
+		folder.parent = this;
+		folder.name = "Library";
+		folder.preferredType = AssetType.RootFolder;
+		children.set(1, folder);
+		_Folders.put(folderID, folder);
+	}
+
 	/**
 	 * Used to find out if Inventory contains the InventoryItem specified by
 	 * <code>uuid</code>.
@@ -243,8 +265,8 @@ public class InventoryStore extends InventoryFolder
 	}
 	
 	/**
-	 * Gets the parent folder of the node. If the parent folder hasn't been resolved yet it attempts
-	 * to do so from the parentID also stored in a node.
+	 * Gets the parent folder of the node. If the parent folder hasn't been resolved yet it
+	 * attempts to do so from the parentID also stored in a node.
 	 * 
 	 * @param node The node whose parent folder to return
 	 * @return The parent folder of the node
@@ -261,8 +283,8 @@ public class InventoryStore extends InventoryFolder
 	}
 
 	/**
-	 * Gets the parent ID of the node. If the parent folder hasn't been resolved yet it attempts
-	 * to do so from the parentID also stored in a node.
+	 * Gets the parent ID of the node. If the parent folder hasn't been resolved yet it
+	 * attempts to do so from the parentID also stored in a node.
 	 * 
 	 * @param node The node whose parentID to return
 	 * @return The ID of the parent folder of the node
@@ -283,7 +305,7 @@ public class InventoryStore extends InventoryFolder
 	@Override
 	public final void add(InventoryNode node)
 	{
-		// Also adds this node to the children of the parent if it can be resolved
+		// Also adds this node to the children of the parent if it can be resolved at this time
 		getParent(node);
 		
 		if (node.getType() == InventoryType.Folder)
@@ -297,7 +319,9 @@ public class InventoryStore extends InventoryFolder
 	}
 
 	/**
-	 * Adds a node to a parent, first removing it from its previous parent if present and not equal.
+	 * Adds a node to a parent if it can be resolved and stores the node in the according
+	 * HashMap for later reference and fast lookup by its ID, first removing it from its
+	 * previous parent if present and not equal.
 	 * 
 	 * @param node The node whose parentID to return
 	 */
@@ -360,7 +384,7 @@ public class InventoryStore extends InventoryFolder
 		{
 			throw new InventoryException("Unknown folder: " + folder);
 		}
-		return _Folders.get(folder).children;
+		return _Folders.get(folder).getContents();
 	}
 
 	/**
@@ -378,7 +402,7 @@ public class InventoryStore extends InventoryFolder
 			{
 				Logger.Log("Caching inventory to " + filename, LogLevel.Info);
 				out.writeLong(serialVersionUID);
-				out.writeObject(_OwnerID);				
+				out.writeObject(ownerID);				
 				super.writeObject(out);
 			}
 			finally
@@ -414,7 +438,7 @@ public class InventoryStore extends InventoryFolder
 			{
 				if (serialVersionUID != in.readLong())
 					throw new InvalidObjectException("InventoryRoot serial version mismatch");
-				_OwnerID = (UUID)in.readObject();
+				ownerID = (UUID)in.readObject();
 				super.readObject(in);
 			}
 			finally

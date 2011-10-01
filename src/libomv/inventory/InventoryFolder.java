@@ -40,7 +40,7 @@ import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
 
 /**
- * A folder contains {@link T:OpenMetaverse.InventoryItem}s and has certain
+ * A folder contains {@link libomv.inventory.InventoryNode}s and has certain
  * attributes specific to itself
  */
 public class InventoryFolder extends InventoryNode
@@ -50,17 +50,11 @@ public class InventoryFolder extends InventoryNode
 	public AssetType preferredType;
 	// The Version of this folder
 	public int version;
-
+	// The number of descendents in this folder. This value can be different to the actual
+	// number of children, if the contents of the folder hasn't been completely fetched yet. 
 	protected int descendentCount;
-	
+	// The list of children this folder contains
 	protected ArrayList<InventoryNode> children;
-	
-	protected InventoryStore root;
-	
-	public static InventoryFolder create(UUID id, UUID parentID)
-	{
-		return new InventoryFolder(id, parentID);
-	}
 	
 	public InventoryFolder()
 	{
@@ -79,6 +73,11 @@ public class InventoryFolder extends InventoryNode
 		version = 1;
 	}
 
+	public InventoryFolder(UUID itemID, UUID parentID, UUID ownerID)
+	{
+		this(itemID, parentID);
+		this.ownerID = ownerID;
+	}
 	@Override
 	public InventoryType getType()
 	{
@@ -112,13 +111,22 @@ public class InventoryFolder extends InventoryNode
 		}
 	}
 	
+	/**
+	 * Returns a copy of the arraylist of children. We return a copy so nobody can mess with
+	 * our tree structure.
+	 * 
+	 * @return an arraylist containing the children nodes of this folder or null if there is
+	 * no children list yet
+	 */
 	public ArrayList<InventoryNode> getContents()
 	{
-		return children;
+		if (children != null)
+			return new ArrayList<InventoryNode>(children);
+		return null;
 	}
 
 	@Override
-	public OSDMap toOSD()
+	protected OSDMap toOSD()
 	{
 		OSDMap map = super.toOSD();
 		map.put("preferedType", OSD.FromInteger(preferredType.getValue()));
