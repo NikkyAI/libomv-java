@@ -55,11 +55,8 @@ public class InventoryFolder extends InventoryNode
 	
 	protected ArrayList<InventoryNode> children;
 	
-	public ArrayList<InventoryNode> getNodes()
-	{
-		return children;
-	}
-
+	protected InventoryStore root;
+	
 	public static InventoryFolder create(UUID id, UUID parentID)
 	{
 		return new InventoryFolder(id, parentID);
@@ -86,6 +83,38 @@ public class InventoryFolder extends InventoryNode
 	public InventoryType getType()
 	{
 		return InventoryType.Folder;
+	}
+	
+	protected boolean contains(InventoryNode node)
+	{
+		if (children != null)
+			return children.contains(node);
+		return false;
+	}
+	
+	protected void add(InventoryNode node)
+	{
+		if (children == null)
+		{
+			children = new ArrayList<InventoryNode>();
+		}
+		if (!children.contains(node))
+		{
+			children.add(node);
+		}
+	}
+
+	protected void remove(InventoryNode node)
+	{
+		if (children != null)
+		{
+			children.remove(node);
+		}
+	}
+	
+	public ArrayList<InventoryNode> getContents()
+	{
+		return children;
 	}
 
 	@Override

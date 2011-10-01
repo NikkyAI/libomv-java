@@ -144,20 +144,6 @@ public class InventoryStore extends InventoryFolder
 		return _OwnerID;
 	}
 
-	public InventoryFolder getParent(InventoryNode node)
-	{
-		if (node.parent == null && node.parentID != null)
-		{
-			node.parent = _Folders.get(node.parentID);
-		}
-		return node.parent;
-	}
-
-	public UUID getParentID(InventoryNode node)
-	{
-		return getParent(node).itemID;
-	}
-
 	private GridClient _Client;
 
 	private HashMap<UUID, InventoryItem> _Items;
@@ -208,6 +194,7 @@ public class InventoryStore extends InventoryFolder
 		return _Folders.containsKey(uuid);
 	}
 
+	@Override
 	public final boolean contains(InventoryNode node)
 	{
 		if (node.getType() == InventoryType.Folder)
@@ -255,10 +242,49 @@ public class InventoryStore extends InventoryFolder
 		return _Items.get(uuid);	
 	}
 	
+	/**
+	 * Gets the parent folder of the node. If the parent folder hasn't been resolved yet it attempts
+	 * to do so from the parentID also stored in a node.
+	 * 
+	 * @param node The node whose parent folder to return
+	 * @return The parent folder of the node
+	 */
+	public InventoryFolder getParent(InventoryNode node)
+	{
+		if (node.parent == null && node.parentID != null)
+		{
+			node.parent = _Folders.get(node.parentID);
+			if (node.parent != null && !node.parent.contains(node))
+				node.parent.add(node);
+		}
+		return node.parent;
+	}
+
+	/**
+	 * Gets the parent ID of the node. If the parent folder hasn't been resolved yet it attempts
+	 * to do so from the parentID also stored in a node.
+	 * 
+	 * @param node The node whose parentID to return
+	 * @return The ID of the parent folder of the node
+	 */
+	public UUID getParentID(InventoryNode node)
+	{
+		if (getParent(node) != null)
+			return node.parent.itemID;
+		return node.parentID;
+	}
+
+	/**
+	 * Adds a node to its parent if it can be resolved and stores the node in the according
+	 * HashMap for later reference and fast lookup by its ID.
+	 * 
+	 * @param node The node whose parentID to return
+	 */
+	@Override
 	public final void add(InventoryNode node)
 	{
-		if (node.parent != null && !node.parent.children.contains(node))
-			node.parent.children.add(node);
+		// Also adds this node to the children of the parent if it can be resolved
+		getParent(node);
 		
 		if (node.getType() == InventoryType.Folder)
 		{
@@ -270,13 +296,23 @@ public class InventoryStore extends InventoryFolder
 		}
 	}
 
+	/**
+	 * Adds a node to a parent, first removing it from its previous parent if present and not equal.
+	 * 
+	 * @param node The node whose parentID to return
+	 */
 	public final void add(UUID parentID, InventoryNode node)
 	{
-		if (!node.parent.itemID.equals(parentID))
+		// First check if there was already a parent and if it matches with the new parent
+		if (node.parent != null)
 		{
-			node.parent.children.remove(node);
+			if (!node.parent.itemID.equals(parentID))
+			{
+				// This is a reassignment of the parent so remove us from the previous parent
+				node.parent.children.remove(node);
+			}
 		}
-		node.parent = _Folders.get(parentID);
+		node.parentID = parentID; 
 		add(node);
 	}
 
@@ -286,14 +322,18 @@ public class InventoryStore extends InventoryFolder
 	 * @param item
 	 *            The InventoryNode to remove.
 	 */
+	@Override
 	public final void remove(InventoryNode node)
 	{
 		if (node.getType() == InventoryType.Folder)
 		{
 			InventoryFolder folder = (InventoryFolder)node;
-			Iterator<InventoryNode> iter = folder.children.iterator();
-			while (iter.hasNext())
-				remove(iter.next());
+			if (folder.children != null)
+			{
+				Iterator<InventoryNode> iter = folder.children.iterator();
+				while (iter.hasNext())
+					remove(iter.next());
+			}
 			_Folders.remove(node.itemID);
 		}
 		else
@@ -302,9 +342,8 @@ public class InventoryStore extends InventoryFolder
 		}
 		
 		if (getParent(node) != null)
-			node.parent.children.remove(node);
-	}
-	
+			node.parent.remove(node);
+	}	
 
 	/**
 	 * Returns the contents of the specified folder
@@ -321,11 +360,7 @@ public class InventoryStore extends InventoryFolder
 		{
 			throw new InventoryException("Unknown folder: " + folder);
 		}
-		InventoryFolder folderNode = _Folders.get(folder);
-		synchronized (folderNode.children)
-		{
-			return new ArrayList<InventoryNode>(folderNode.children);
-		}
+		return _Folders.get(folder).children;
 	}
 
 	/**
