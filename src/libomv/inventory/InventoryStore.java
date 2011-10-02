@@ -33,8 +33,11 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Stack;
 
 import libomv.GridClient;
@@ -44,6 +47,7 @@ import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.MultiMap;
 
 /**
  * Responsible for maintaining the inventory structure. InventoryStore constructs nodes
@@ -126,15 +130,11 @@ public class InventoryStore extends InventoryFolder
 
 	public CallbackHandler<InventoryObjectAddedCallbackArgs> OnInventoryObjectAdded = new CallbackHandler<InventoryObjectAddedCallbackArgs>();
 
-	public final UUID getOwnerID()
-	{
-		return ownerID;
-	}
-
 	private GridClient _Client;
 
 	private HashMap<UUID, InventoryItem> _Items;
 	private HashMap<UUID, InventoryFolder> _Folders;
+	private MultiMap<UUID, InventoryNode> _Unresolved;
 
 	public InventoryStore(GridClient client)
 	{
@@ -151,7 +151,8 @@ public class InventoryStore extends InventoryFolder
 		}
 		_Items = new HashMap<UUID, InventoryItem>();
 		_Folders = new HashMap<UUID, InventoryFolder>();
-		this.
+		_Unresolved = new MultiMap<UUID, InventoryNode>();
+
 		name = "Root";
 		ownerID = owner;
 		preferredType = AssetType.RootFolder;
@@ -265,83 +266,74 @@ public class InventoryStore extends InventoryFolder
 	}
 	
 	/**
-	 * Gets the parent folder of the node. If the parent folder hasn't been resolved yet it
-	 * attempts to do so from the parentID also stored in a node.
-	 * 
-	 * @param node The node whose parent folder to return
-	 * @return The parent folder of the node
-	 */
-	public InventoryFolder getParent(InventoryNode node)
-	{
-		if (node.parent == null && node.parentID != null)
-		{
-			node.parent = _Folders.get(node.parentID);
-			if (node.parent != null && !node.parent.contains(node))
-				node.parent.add(node);
-		}
-		return node.parent;
-	}
-
-	/**
-	 * Gets the parent ID of the node. If the parent folder hasn't been resolved yet it
-	 * attempts to do so from the parentID also stored in a node.
-	 * 
-	 * @param node The node whose parentID to return
-	 * @return The ID of the parent folder of the node
-	 */
-	public UUID getParentID(InventoryNode node)
-	{
-		if (getParent(node) != null)
-			return node.parent.itemID;
-		return node.parentID;
-	}
-
-	/**
-	 * Adds a node to its parent if it can be resolved and stores the node in the according
-	 * HashMap for later reference and fast lookup by its ID.
+	 * Adds a node to a parent if it can be resolved and stores the node in the according
+	 * HashMap for later reference and fast lookup by its ID, first removing it from its
+	 * previous parent if present and not equal to the new parent.
 	 * 
 	 * @param node The node whose parentID to return
 	 */
 	@Override
 	public final void add(InventoryNode node)
 	{
-		// Also adds this node to the children of the parent if it can be resolved at this time
-		getParent(node);
-		
-		if (node.getType() == InventoryType.Folder)
+		synchronized (_Folders)
 		{
-			_Folders.put(node.itemID, (InventoryFolder)node);
-		}
-		else
-		{
-			_Items.put(node.itemID, (InventoryItem)node);			
-		}
-	}
-
-	/**
-	 * Adds a node to a parent if it can be resolved and stores the node in the according
-	 * HashMap for later reference and fast lookup by its ID, first removing it from its
-	 * previous parent if present and not equal.
-	 * 
-	 * @param node The node whose parentID to return
-	 */
-	public final void add(UUID parentID, InventoryNode node)
-	{
-		// First check if there was already a parent and if it matches with the new parent
-		if (node.parent != null)
-		{
-			if (!node.parent.itemID.equals(parentID))
+			// Check if there are any unresolved nodes referring to us
+			if (node.getType() == InventoryType.Folder && _Unresolved.containsKey(node.itemID))
 			{
-				// This is a reassignment of the parent so remove us from the previous parent
-				node.parent.children.remove(node);
+				InventoryFolder parent = (InventoryFolder)node;
+				Iterator<InventoryNode> iter = _Unresolved.iterator(node.itemID);
+				while (iter.hasNext())
+				{
+					InventoryNode n = iter.next();
+					n.parent = parent;
+					parent.children.add(n);
+					iter.remove();
+				}
+			}
+
+			// Check if there was already a parent and if it matches with the new parent
+			if (node.parent != null)
+			{
+				if (!node.parent.itemID.equals(node.parentID))
+				{
+					// This is a reassignment of the parent so remove us from the previous parent
+					node.parent.children.remove(node);
+				}
+			}
+			
+			// Link this node to its parent if it already exists, otherwise put it in the unresolved list
+			if (_Folders.containsKey(node.parentID))
+			{
+				node.parent = _Folders.get(node.parentID);
+				if (!node.parent.contains(node))
+				{
+					node.parent.add(node);
+				}
+
+				if (node.getType() == InventoryType.Folder)
+				{
+					_Folders.put(node.itemID, (InventoryFolder)node);
+				}
+				else
+				{
+					_Items.put(node.itemID, (InventoryItem)node);			
+				}
+			}
+			else
+			{
+				_Unresolved.put(node.parentID, node);
 			}
 		}
-		node.parentID = parentID; 
-		add(node);
 	}
 
+	public final void add(UUID parentID, InventoryNode node)
+	{
+		node.parentID = parentID;
+		add(node);
+	}
+	
 	/**
-	 * Removes the InventoryNode and all related node data from Inventory
+	 * Removes the InventoryNode and all related node data from the Inventory
 	 * 
 	 * @param item
 	 *            The InventoryNode to remove.
@@ -349,24 +341,27 @@ public class InventoryStore extends InventoryFolder
 	@Override
 	public final void remove(InventoryNode node)
 	{
-		if (node.getType() == InventoryType.Folder)
+		synchronized (_Folders)
 		{
-			InventoryFolder folder = (InventoryFolder)node;
-			if (folder.children != null)
+			if (node.getType() == InventoryType.Folder)
 			{
-				Iterator<InventoryNode> iter = folder.children.iterator();
-				while (iter.hasNext())
-					remove(iter.next());
+				InventoryFolder folder = (InventoryFolder)node;
+				if (folder.children != null)
+				{
+					Iterator<InventoryNode> iter = folder.children.iterator();
+					while (iter.hasNext())
+						remove(iter.next());
+				}
+				_Folders.remove(node.itemID);
 			}
-			_Folders.remove(node.itemID);
+			else
+			{
+				_Items.remove(node.itemID);
+			}
+			
+			if (node.parent != null)
+				node.parent.remove(node);
 		}
-		else
-		{
-			_Items.remove(node.itemID);
-		}
-		
-		if (getParent(node) != null)
-			node.parent.remove(node);
 	}	
 
 	/**
@@ -380,13 +375,40 @@ public class InventoryStore extends InventoryFolder
 	 */
 	public final ArrayList<InventoryNode> getContents(UUID folder) throws InventoryException
 	{
-		if (!_Folders.containsKey(folder))
+		synchronized (_Folders)
 		{
-			throw new InventoryException("Unknown folder: " + folder);
+			if (!_Folders.containsKey(folder))
+			{
+				throw new InventoryException("Unknown folder: " + folder);
+			}
+			return _Folders.get(folder).getContents();
 		}
-		return _Folders.get(folder).getContents();
 	}
 
+	public final void resolveList()
+	{
+		synchronized (_Folders)
+		{
+			Set<Entry<UUID, Collection<InventoryNode>>> set = _Unresolved.entrySet();
+			while (set.iterator().hasNext())
+			{
+				Entry<UUID, Collection<InventoryNode>> e = set.iterator().next();
+				if (_Folders.containsKey(e.getKey()))
+				{
+					InventoryFolder parent = _Folders.get(e.getKey());
+					Iterator<InventoryNode> iter = _Unresolved.get(e.getKey()).iterator();
+					while (iter.hasNext())
+					{
+						InventoryNode n = iter.next();
+						n.parent = parent;
+						parent.children.add(n);
+						iter.remove();
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Saves the current inventory structure to a cache file
 	 * 
@@ -394,6 +416,7 @@ public class InventoryStore extends InventoryFolder
 	 */
 	public final void saveToDisk(String filename) throws IOException
 	{
+		resolveList();
 		FileOutputStream fos = new FileOutputStream(filename);
 		try
 		{
@@ -430,6 +453,10 @@ public class InventoryStore extends InventoryFolder
 	 */
 	public final int restoreFromDisk(String filename) throws IOException
 	{
+		_Items.clear();
+		_Folders.clear();
+		_Unresolved.clear();
+		
 		FileInputStream fis = new FileInputStream(filename);
 		try
 		{

@@ -271,8 +271,8 @@ public class InventoryItem extends InventoryNode
 		}
 		if (item != null)
 		{
-			item.parentID = parentID;
 			item.ownerID = ownerID;
+			item.parentID = parentID;
 		}
 		return item;
 	}

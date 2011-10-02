@@ -66,7 +66,7 @@ public class InventoryFolder extends InventoryNode
 	 * @param itemID
 	 *            UUID of the folder
 	 */
-	public InventoryFolder(UUID itemID, UUID parentID)
+	public InventoryFolder(UUID itemID)
 	{
 		super(itemID);
 		preferredType = AssetType.Unknown;
@@ -75,9 +75,11 @@ public class InventoryFolder extends InventoryNode
 
 	public InventoryFolder(UUID itemID, UUID parentID, UUID ownerID)
 	{
-		this(itemID, parentID);
+		this(itemID);
+		this.parentID = parentID;
 		this.ownerID = ownerID;
 	}
+
 	@Override
 	public InventoryType getType()
 	{
@@ -118,7 +120,7 @@ public class InventoryFolder extends InventoryNode
 	 * @return an arraylist containing the children nodes of this folder or null if there is
 	 * no children list yet
 	 */
-	public ArrayList<InventoryNode> getContents()
+	protected ArrayList<InventoryNode> getContents()
 	{
 		if (children != null)
 			return new ArrayList<InventoryNode>(children);

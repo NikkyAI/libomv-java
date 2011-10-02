@@ -158,7 +158,7 @@ public abstract class InventoryNode implements Serializable
 	
 	public UUID getParentID()
 	{
-		return parent != null ? parent.itemID : parentID;
+		return parent.itemID;
 	}
 	
 	public abstract InventoryType getType();
@@ -183,14 +183,14 @@ public abstract class InventoryNode implements Serializable
 		this.itemID = itemID;
 	}
 	
-	public static InventoryNode create(InventoryType type, UUID id, UUID parentID)
+	public static InventoryNode create(InventoryType type, UUID id, UUID parentID, UUID ownerID)
 	{
 		switch (type)
 		{
 			case Folder:
-				return new InventoryFolder(id, parentID);
+				return new InventoryFolder(id, parentID, ownerID);
 			default:
-				return InventoryItem.create(type, id, parentID);
+				return InventoryItem.create(type, id, parentID, ownerID);
 		}
 	}
 
@@ -218,9 +218,8 @@ public abstract class InventoryNode implements Serializable
 			if (map.containsKey("parent"))
 				parentID = map.get("parent").AsUUID();
 			InventoryType type = InventoryType.setValue(map.get("type").AsInteger());
-			InventoryNode node = InventoryNode.create(type, id, parentID);
+			InventoryNode node = InventoryNode.create(type, id, parentID, map.get("owner").AsUUID());
 			node.name = map.get("name").AsString();
-			node.ownerID =  map.get("owner").AsUUID();
 			
 			switch (type)
 			{
