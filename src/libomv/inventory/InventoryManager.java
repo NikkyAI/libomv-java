@@ -38,6 +38,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.swing.tree.TreeModel;
+
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.concurrent.FutureCallback;
 
@@ -351,7 +353,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		return _Store.getInventoryFolder();
 	}
 
-	public final InventoryFolder getRoot()
+	public final TreeModel getTreeModel()
 	{
 		return _Store;
 	}
