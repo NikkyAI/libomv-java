@@ -575,7 +575,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					synchronized (_Store)
 					{
 						InventoryFolder folder = _Store.getFolder(folderID);
-						ArrayList<InventoryNode> contents = folder.children;
+						ArrayList<InventoryNode> contents = folder.getContents();
 						// FIXME: InventoryDescendentsHandler only stores correct
 						// descendendCount if both folders and items are fetched.
 						if (contents.size() >= folder.descendentCount)
@@ -3494,6 +3494,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						_Store.add(replyData.LibrarySkeleton[i]);
 					}
 				}
+				_Store.printUnresolved();
 			}
 		}
 	}

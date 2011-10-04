@@ -86,6 +86,27 @@ public class InventoryFolder extends InventoryNode
 		return InventoryType.Folder;
 	}
 	
+	protected int getChildCount()
+	{
+		if (children != null)
+			return children.size();
+		return 0;
+	}
+
+	protected InventoryNode getChild(int index)
+	{
+		if (children != null)
+			return children.get(index);
+		return null;
+	}
+
+	protected int indexOf(InventoryNode node)
+	{
+		if (children != null)
+			return children.indexOf(node);
+		return -1;
+	}
+	
 	protected boolean contains(InventoryNode node)
 	{
 		if (children != null)
@@ -97,7 +118,7 @@ public class InventoryFolder extends InventoryNode
 	{
 		if (children == null)
 		{
-			children = new ArrayList<InventoryNode>();
+			children = new ArrayList<InventoryNode>(1);
 		}
 		if (!children.contains(node))
 		{
