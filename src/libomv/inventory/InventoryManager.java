@@ -351,6 +351,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		return _Store.getInventoryFolder();
 	}
 
+	public final InventoryFolder getRoot()
+	{
+		return _Store;
+	}
+	
 	// #endregion Properties
 
 	private Callback<InstantMessageCallbackArgs> instantMessageCallback;

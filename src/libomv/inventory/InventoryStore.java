@@ -40,6 +40,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+
 import libomv.GridClient;
 import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
@@ -61,12 +67,12 @@ import libomv.utils.MultiMap;
  * parent has arrived. Each node also has a storage for the parentID besides the direct
  * reference to its parent. When inserting a new node into the tree we attempt to lookup
  * the parent folder and store its reference in our node, but don't throw an exception if
- * that fails. So in order to make this work an external client should never directly
- * attempt to access the parent folder in a node but instead use the getParent() method
- * in this class. In order to enforce that, the parent node member of the InventoryNode
- * is set to protected. 
+ * that fails. Instead we store the node and it's parentID in a list of unresolved nodes.
+ * Whenever a new node arrives, we also check this list if it has any nodes referring to us
+ * and in that case append it as a child to our node. When inserting a coherent list of
+ * tree nodes in that way we should end up with no nodes left in that list at the end.
  */
-public class InventoryStore extends InventoryFolder
+public class InventoryStore extends InventoryFolder implements TreeModel
 {
 	private static final long serialVersionUID = 1L;
 
@@ -509,4 +515,178 @@ public class InventoryStore extends InventoryFolder
 		Logger.Log("Read " + folder_count + " folders and " + item_count + " items from inventory cache file", LogLevel.Info, _Client);
 		return item_count;
 	}
+
+	/**
+	 * Tree Model implementation for use in JTree objects
+	 */
+    protected EventListenerList listenerList = new EventListenerList();
+	
+	@Override
+	public void addTreeModelListener(TreeModelListener listener)
+	{
+		listenerList.add(TreeModelListener.class, listener);
+	}
+
+	@Override
+	public InventoryNode getChild(Object parent, int idx)
+	{
+		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder)
+		{
+			return ((InventoryFolder)parent).children.get(idx);
+		}
+		return null;
+	}
+
+	@Override
+	public int getChildCount(Object parent)
+	{
+		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder)
+		{
+			return ((InventoryFolder)parent).children.size();
+		}
+		return 0;
+	}
+
+	@Override
+	public int getIndexOfChild(Object parent, Object child)
+	{
+		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder)
+		{
+			((InventoryFolder)parent).children.indexOf(child);
+		}
+		return -1;
+	}
+
+	@Override
+	public InventoryFolder getRoot()
+	{
+		return this;
+	}
+
+	@Override
+	public boolean isLeaf(Object node)
+	{
+		return ((InventoryNode)node).getType() != InventoryType.Folder;
+	}
+
+	@Override
+	public void removeTreeModelListener(TreeModelListener listener)
+	{
+		listenerList.remove(TreeModelListener.class, listener);
+	}
+
+	@Override
+	public void valueForPathChanged(TreePath path, Object value)
+	{
+		if (value instanceof InventoryNode)
+		{
+			InventoryFolder parent = (InventoryFolder)path.getPathComponent(path.getPathCount() - 2);
+			int index = parent.children.indexOf(path.getLastPathComponent());
+			InventoryNode node = (InventoryNode)value;
+			parent.children.set(index, node);
+			node.parent = parent;
+			node.parentID = parent.itemID;
+		}
+		else if (value instanceof String)
+		{
+			((InventoryNode)path.getLastPathComponent()).name = (String)value;
+		}
+	}
+	
+    /*
+     * Notify all listeners that have registered interest for notification on this event type.
+     * The event instance is lazily created using the parameters passed into the fire method.
+     * @see EventListenerList
+     */
+	protected void fireNodesChanged(Object source, Object[] path, int[] childIndices, Object[] children)
+	{
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying those that are interested in this event
+        for (int i = listeners.length - 2; i >= 0; i -= 2)
+        {
+            if (listeners[i]==TreeModelListener.class)
+            {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, childIndices, children);
+                ((TreeModelListener)listeners[i + 1]).treeNodesChanged(e);
+            }          
+        }
+	}
+
+    /*
+     * Notify all listeners that have registered interest for notification on this event type. 
+     * The event instance is lazily created using the parameters passed into the fire method.
+     * @see EventListenerList
+     */
+    protected void fireTreeNodesInserted(Object source, Object[] path, 
+                                        int[] childIndices, Object[] children)
+    {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length - 2; i >= 0; i -= 2)
+        {
+            if (listeners[i]==TreeModelListener.class)
+            {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, childIndices, children);
+                ((TreeModelListener)listeners[i + 1]).treeNodesInserted(e);
+            }          
+        }
+    }
+
+    /*
+     * Notify all listeners that have registered interest for
+     * notification on this event type.  The event instance 
+     * is lazily created using the parameters passed into 
+     * the fire method.
+     * @see EventListenerList
+     */
+    protected void fireTreeNodesRemoved(Object source, Object[] path, 
+                                        int[] childIndices, Object[] children) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length-2; i>=0; i-=2) {
+            if (listeners[i]==TreeModelListener.class) {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, childIndices, children);
+                ((TreeModelListener)listeners[i + 1]).treeNodesRemoved(e);
+            }          
+        }
+    }
+
+    /*
+     * Notify all listeners that have registered interest for notification on this event type.
+     * The event instance is lazily created using the parameters passed into the fire method.
+     * @see EventListenerList
+     */
+    protected void fireTreeStructureChanged(Object source, Object[] path, 
+                                        int[] childIndices, Object[] children)
+    {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length - 2; i >= 0; i -= 2)
+        {
+            if (listeners[i]==TreeModelListener.class)
+            {
+                // Lazily create the event:
+                if (e == null)
+                    e = new TreeModelEvent(source, path, childIndices, children);
+                ((TreeModelListener)listeners[i + 1]).treeStructureChanged(e);
+            }          
+        }
+    }
 }
