@@ -468,7 +468,7 @@ public class NetworkManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Default packet event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+						Logger.Log("Default packet event handler: " + packet.getType(), LogLevel.Error, _Client, ex);
 					}
 				}
 			}
@@ -484,7 +484,7 @@ public class NetworkManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Packet event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+						Logger.Log("Packet event handler: " + packet.getType(), LogLevel.Error, _Client, ex);
 					}
 					specialHandler = true;
 				}
@@ -515,7 +515,7 @@ public class NetworkManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("CAPS event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+						Logger.Log("CAPS event handler: " + message.getType(), LogLevel.Error, _Client, ex);
 					}
 				}
 			}
@@ -531,7 +531,7 @@ public class NetworkManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("CAPS event handler: " + ex.getMessage(), LogLevel.Error, _Client, ex);
+						Logger.Log("CAPS event handler: " + message.getType(), LogLevel.Error, _Client, ex);
 					}
 					specialHandler = true;
 				}

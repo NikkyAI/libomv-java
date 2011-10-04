@@ -1073,7 +1073,7 @@ public class Simulator extends Thread
 		}
 
 		// if (oldestUnacked != 0)
-		// Client.DebugLog("Sending ping with oldestUnacked=" + oldestUnacked);
+		//     Logger.DebugLog("Sending ping with oldestUnacked=" + oldestUnacked);
 
 		StartPingCheckPacket ping = new StartPingCheckPacket();
 		ping.PingID.PingID = Statistics.LastPingID++;

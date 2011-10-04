@@ -271,6 +271,12 @@ public class GridManager implements PacketCallback
 	{
 		return getWorldTime();
 	}
+	
+    /* Microseconds since the start of SL 4-hour day */
+    public long getTimeOfDay()
+    {
+    	return timeOfDay;
+    }
 
 	// A dictionary of all the regions, indexed by region name
 	public Hashtable<String, GridRegion> Regions;
@@ -281,6 +287,7 @@ public class GridManager implements PacketCallback
 	private float sunPhase;
 	private Vector3 sunDirection;
 	private Vector3 sunAngVelocity;
+	private long timeOfDay;
 
 	private GridClient Client;
 
@@ -769,6 +776,7 @@ public class GridManager implements PacketCallback
 		sunPhase = time.TimeInfo.SunPhase;
 		sunDirection = time.TimeInfo.SunDirection;
 		sunAngVelocity = time.TimeInfo.SunAngVelocity;
+        timeOfDay = time.TimeInfo.UsecSinceStart;
 
 		/*
 		 * TODO: Does anyone have a use for the time stuff?
