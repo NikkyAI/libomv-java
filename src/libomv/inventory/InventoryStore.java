@@ -298,40 +298,47 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 			}
 
 			// Check if there was already a parent and if it matches with the new parent
-			if (node.parent != null)
+			if (node.parentID != null && node.parent != null && !node.parent.itemID.equals(node.parentID))
 			{
-				if (!node.parent.itemID.equals(node.parentID))
-				{
-					// This is a reassignment of the parent so remove us from the previous parent
-					node.parent.children.remove(node);
-				}
+				// This is a reassignment of the parent so remove us from the previous parent
+				node.parent.children.remove(node);
+				node.parent = null;
 			}
 			
-			// Link this node to its parent if it already exists, otherwise put it in the unresolved list
-			if (_Folders.containsKey(node.parentID))
+			if (node.parent == null)
 			{
-				node.parent = _Folders.get(node.parentID);
-				if (!node.parent.contains(node))
+				// Link this node to its parent if it already exists, otherwise put it in the unresolved list
+				if (_Folders.containsKey(node.parentID))
 				{
-					node.parent.add(node);
-				}
+					node.parent = _Folders.get(node.parentID);
+					if (!node.parent.contains(node))
+					{
+						node.parent.add(node);
+					}
 
-				if (node.getType() == InventoryType.Folder)
-				{
-					_Folders.put(node.itemID, (InventoryFolder)node);
+					if (node.getType() == InventoryType.Folder)
+					{
+						_Folders.put(node.itemID, (InventoryFolder)node);
+					}
+					else
+					{
+						_Items.put(node.itemID, (InventoryItem)node);			
+					}
 				}
 				else
 				{
-					_Items.put(node.itemID, (InventoryItem)node);			
+					_Unresolved.put(node.parentID, node);
 				}
-			}
-			else
-			{
-				_Unresolved.put(node.parentID, node);
 			}
 		}
 	}
 
+	/**
+	 * Convenience method
+	 * 
+	 * @param parentID The parent ID of this node to assign the node to
+	 * @param node The node
+	 */
 	public final void add(UUID parentID, InventoryNode node)
 	{
 		node.parentID = parentID;
