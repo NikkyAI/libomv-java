@@ -175,7 +175,7 @@ public class ProtocolManager
 			MapPacket map_packet = map.mapPackets.elementAt(i);
 			if (map_packet != null)
 			{
-				System.out.format("%s %4x - %s - %s - %s\n", frequency, i, map_packet.Name,
+				System.out.format("%s %d %d %4x - %s - %s - %s\n", frequency, i, map_packet.ID, map_packet.Frequency, map_packet.Name,
 						map_packet.Trusted ? "Trusted" : "Untrusted", map_packet.Encoded ? "Unencoded" : "Zerocoded");
 
 				for (int j = 0; j < map_packet.Blocks.size(); j++)
@@ -187,13 +187,13 @@ public class ProtocolManager
 					}
 					else
 					{
-						System.out.format("\t4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
+						System.out.format("\t%4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
 					}
 
 					for (int k = 0; k < block.Fields.size(); k++)
 					{
 						MapField field = block.Fields.elementAt(k);
-						System.out.format("\t\t4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type,
+						System.out.format("\t\t%4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type,
 								field.Count);
 					}
 				}
@@ -357,7 +357,7 @@ public class ProtocolManager
 								{
 									currentPacket = new MapPacket();
 									currentPacket.ID = medium;
-									currentPacket.Frequency = PacketFrequency.Low;
+									currentPacket.Frequency = PacketFrequency.Medium;
 									currentPacket.Name = tokens[0];
 									currentPacket.Trusted = tokens[2].equals("Trusted");
 									currentPacket.Encoded = tokens[3].equals("Zerocoded");
@@ -372,7 +372,7 @@ public class ProtocolManager
 								{
 									currentPacket = new MapPacket();
 									currentPacket.ID = high;
-									currentPacket.Frequency = PacketFrequency.Low;
+									currentPacket.Frequency = PacketFrequency.High;
 									currentPacket.Name = tokens[0];
 									currentPacket.Trusted = tokens[2].equals("Trusted");
 									currentPacket.Encoded = tokens[3].equals("Zerocoded");
