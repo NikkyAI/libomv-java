@@ -1041,8 +1041,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	public class ChatCallbackArgs implements CallbackArgs
 	{
+		private ChatAudibleLevel audible;
+		private ChatType type;
+		private ChatSourceType sourcetype;
 		private String message, fromName;
-		private byte audible, type, sourcetype;
 		private UUID id;
 
 		public String getMessage()
@@ -1055,17 +1057,17 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return fromName;
 		}
 
-		public byte getAudible()
+		public ChatAudibleLevel getAudible()
 		{
 			return audible;
 		}
 
-		public byte getType()
+		public ChatType getType()
 		{
 			return type;
 		}
 
-		public byte getSourceType()
+		public ChatSourceType getSourceType()
 		{
 			return sourcetype;
 		}
@@ -1075,7 +1077,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return id;
 		}
 
-		public ChatCallbackArgs(String message, byte audible, byte type, byte sourcetype, String fromName, UUID id)
+		public ChatCallbackArgs(ChatAudibleLevel audible, ChatType type, ChatSourceType sourcetype, String fromName, String message, UUID id)
 		{
 			this.message = message;
 			this.fromName = fromName;
@@ -3837,11 +3839,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		String message = Helpers.BytesToString(chat.ChatData.getMessage());
 		String from = Helpers.BytesToString(chat.ChatData.getFromName());
-		Logger.Log("ChatFromSimulator: Type: " + chat.ChatData.ChatType + " From: " + from + " Message: " + message,
+		Logger.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType) + " From: " + from + " Message: " + message,
 				   Logger.LogLevel.Debug, _Client);
 
-		OnChat.dispatch(new ChatCallbackArgs(message, chat.ChatData.Audible, chat.ChatData.ChatType,
-				                             chat.ChatData.SourceType, from, chat.ChatData.SourceID));
+		OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType.setValue(chat.ChatData.ChatType),
+				                             ChatSourceType.setValue(chat.ChatData.SourceType), message, from, chat.ChatData.SourceID));
 	}
 
 	private void HandleMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
