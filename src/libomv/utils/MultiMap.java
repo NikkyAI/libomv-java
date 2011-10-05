@@ -127,13 +127,9 @@ public class MultiMap<K, V>
      * @return the iterator of the collection at the key, empty iterator if key not in map
      * @since Commons Collections 3.1
      */
-    public Iterator<V> iterator(Object key)
+    public Iterator<V> iterator(K key)
     {
-        Collection<V> coll = inner.get(key);
-        if (coll == null) {
-            return new EmptyIterator();
-        }
-        return coll.iterator();
+        return new MultiMapIterator(key, inner.get(key));
     }
 
     /**
@@ -397,26 +393,42 @@ public class MultiMap<K, V>
 		}
 
 	}
-	
-	private class EmptyIterator implements Iterator<V>
+	private class MultiMapIterator implements Iterator<V>
 	{
+		Iterator<V> iter;
+		K key;
+		
+		public MultiMapIterator(K key, Collection<V> coll)
+		{
+			this.iter = coll != null ? coll.iterator() : null;
+			this.key = key;
+		}
 
 		@Override
 		public boolean hasNext()
 		{
-			return false;
+			return iter != null ? iter.hasNext() : false;
 		}
 
 		@Override
 		public V next()
 		{
-			return null;
+			return iter != null ? iter.next() : null;
 		}
 
 		@Override
 		public void remove()
 		{
-		    throw new UnsupportedOperationException();
-		}		
+			if (iter != null)
+			{
+				iter.remove();
+				if (!iter.hasNext())
+					inner.remove(key);
+			}
+			else
+			{
+			    throw new UnsupportedOperationException();
+			}
+		}
 	}
 }
