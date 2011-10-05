@@ -251,6 +251,12 @@ public abstract class InventoryNode implements Serializable
 		info.writeObject(parent);
 	}
 
+	@Override
+	public String toString()
+	{
+		return getType().toString() + ": " + name; 
+	}
+	
 	/**
 	 * Generates a number corresponding to the value of the object to support
 	 * the use of a hash table, suitable for use in hashing algorithms and data
@@ -261,7 +267,7 @@ public abstract class InventoryNode implements Serializable
 	@Override
 	public int hashCode()
 	{
-		return itemID.hashCode() ^ name.hashCode() ^ownerID.hashCode();
+		return itemID.hashCode() ^ ownerID.hashCode();
 	}
 
 	/**
@@ -289,6 +295,6 @@ public abstract class InventoryNode implements Serializable
 	 */
 	public boolean equals(InventoryNode o)
 	{
-		return o != null && itemID.equals(o.itemID) && name.equals(o.name) && ownerID.equals(o.ownerID);
+		return o != null && itemID.equals(o.itemID) && ownerID.equals(o.ownerID);
 	}
 }

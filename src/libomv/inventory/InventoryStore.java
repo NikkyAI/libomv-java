@@ -142,6 +142,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	private HashMap<UUID, InventoryFolder> _Folders;
 	private MultiMap<UUID, InventoryNode> _Unresolved;
 
+	private UUID _InventoryID;
+	private UUID _LibraryID;
+	
 	public InventoryStore(GridClient client)
 	{
 		this(client, client.Self.getAgentID());
@@ -165,39 +168,47 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 		itemID = UUID.Zero;
 		ownerID = owner;
 		preferredType = AssetType.RootFolder;
-		children = new ArrayList<InventoryNode>(2);
-		children.add(new InventoryFolder());
-		children.add(new InventoryFolder());	
 	}
 	
 	// The root folder of the avatars inventory
 	public final InventoryFolder getInventoryFolder()
 	{
-		return (InventoryFolder)children.get(0);
+		if (children != null)
+		{
+			Iterator<InventoryNode> iter = children.iterator();
+			while (iter.hasNext())
+			{
+				InventoryFolder node = (InventoryFolder)iter.next();
+				if (node.itemID.equals(_InventoryID))
+					return node;
+			}
+		}
+		return null;
 	}
 	public final void setInventoryFolder(UUID folderID)
 	{
-		InventoryFolder folder = new InventoryFolder(folderID, this.itemID, this.ownerID);
-		folder.parent = this;
-		folder.name = "My Inventory";
-		folder.preferredType = AssetType.RootFolder;
-		children.set(0, folder);
-		_Folders.put(folderID, folder);
+		_InventoryID = folderID;
 	}
 	
 	// The root folder of the default shared library
 	public final InventoryFolder getLibraryFolder()
 	{
-		return (InventoryFolder)children.get(1);
+		if (children != null)
+		{
+			Iterator<InventoryNode> iter = children.iterator();
+			while (iter.hasNext())
+			{
+				InventoryFolder node = (InventoryFolder)iter.next();
+				if (node.itemID.equals(_LibraryID))
+					return node;
+			}
+		}
+		return null;
 	}
+	
 	public final void setLibraryFolder(UUID folderID, UUID ownerID)
 	{
-		InventoryFolder folder = new InventoryFolder(folderID, this.itemID, ownerID);
-		folder.parent = this;
-		folder.name = "Library";
-		folder.preferredType = AssetType.RootFolder;
-		children.set(1, folder);
-		_Folders.put(folderID, folder);
+		_LibraryID = folderID;
 	}
 
 	/**
@@ -305,7 +316,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 			{
 				// This is a reassignment of the parent so remove us from the previous parent
 				
-				if (parent.children != null)
+				if (node.parent.children != null)
 					node.parent.children.remove(node);
 				node.parent = null;
 			}
@@ -316,8 +327,8 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 				if (_Folders.containsKey(node.parentID))
 				{
 					node.parent = _Folders.get(node.parentID);
-					if (parent.children == null)
-						parent.children = new ArrayList<InventoryNode>(0);
+					if (node.parent.children == null)
+						node.parent.children = new ArrayList<InventoryNode>(1);
 
 					if (!node.parent.children.contains(node))
 					{
