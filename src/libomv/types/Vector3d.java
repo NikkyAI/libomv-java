@@ -50,6 +50,15 @@ public class Vector3d
 		Z = z;
 	}
 
+	public Vector3d(byte[] bytes, int offset)
+	{
+		X = Helpers.BytesToDoubleL(bytes, offset);
+		offset += 8;
+		Y = Helpers.BytesToDoubleL(bytes, offset);
+		offset += 8;
+		Z = Helpers.BytesToDoubleL(bytes, offset);
+	}
+
 	public Vector3d(ByteBuffer byteArray)
 	{
 		X = byteArray.getDouble();
