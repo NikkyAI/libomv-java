@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import libomv.AgentManager.EffectType;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsCallback;
@@ -41,6 +42,7 @@ import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.UUIDNameReplyPacket;
 import libomv.packets.UUIDNameRequestPacket;
+import libomv.packets.ViewerEffectPacket;
 import libomv.primitives.Avatar;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
@@ -49,6 +51,7 @@ import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
 
 public class AvatarManager implements PacketCallback, CapsCallback
 {
@@ -246,6 +249,75 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandler<DisplayNameUpdateCallbackArgs>();
 
+	
+	public class ViewerEffectCallbackArgs implements CallbackArgs
+	{
+		private EffectType type;
+		private Simulator simulator;
+		private UUID sourceAvatar;
+		private UUID targetObject;
+		private Vector3d targetPos;
+		private byte target;
+		private float duration;
+		private UUID dataID;
+
+		public EffectType getType()
+		{
+			return type;
+		}
+		
+		public Simulator getSimulator()
+		{
+			return simulator;
+		}
+		
+		public UUID getSourceAvatar()
+		{
+			return sourceAvatar;
+		}
+
+		public UUID getTargetObject()
+		{
+			return targetObject;
+		}
+
+		public Vector3d getTargetPos()
+		{
+			return targetPos;
+		}
+
+		public byte getTarget()
+		{
+			return target;
+		}
+
+		public float getDuration()
+		{
+			return duration;
+		}
+
+		public UUID getDataID()
+		{
+			return dataID;
+		}
+
+        public ViewerEffectCallbackArgs(EffectType type, Simulator simulator, UUID sourceAvatar, UUID targetObject, Vector3d targetPos,
+				                        byte target, float duration, UUID dataID)
+		{
+			this.type = type;
+			this.simulator = simulator;
+			this.sourceAvatar = sourceAvatar;
+			this.targetObject = targetObject;
+			this.targetPos = targetPos;
+			this.target = target;
+			this.duration = duration;
+			this.dataID = dataID;
+		}
+	}
+
+	public CallbackHandler<ViewerEffectCallbackArgs> OnViewerEffect = new CallbackHandler<ViewerEffectCallbackArgs>();
+
+	
 	public AvatarManager(GridClient client)
 	{
 		_Client = client;
@@ -256,8 +328,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 		// Avatar profile callbacks
 		_Client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, this);
-		// Client.Network.RegisterCallback(PacketType.AvatarStatisticsReply,
-		// AvatarStatisticsHandler);
+		// Client.Network.RegisterCallback(PacketType.AvatarStatisticsReply, this);
 		_Client.Network.RegisterCallback(PacketType.AvatarInterestsReply, this);
 
 		// Avatar group callback
@@ -272,6 +343,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
 		_Client.Network.RegisterCallback(PacketType.AvatarPickerReply, this);
 		_Client.Network.RegisterCallback(PacketType.AvatarAnimation, this);
+		_Client.Network.RegisterCallback(CapsEventType.DisplayNameUpdate, this);
 
 		// Picks callbacks
 		_Client.Network.RegisterCallback(PacketType.AvatarPicksReply, this);
@@ -280,8 +352,6 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		// Classifieds callbacks
 		_Client.Network.RegisterCallback(PacketType.AvatarClassifiedReply, this);
 		_Client.Network.RegisterCallback(PacketType.ClassifiedInfoReply, this);
-
-		_Client.Network.RegisterCallback(CapsEventType.DisplayNameUpdate, this);
 	}
 
 	@Override
@@ -302,7 +372,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				// HandleAvatarGroupsReply(packet, simulator);
 				break;
 			case ViewerEffect:
-				// HandleViewerEffect(packet, simulator);
+				HandleViewerEffect(packet, simulator);
 				break;
 			case UUIDNameReply:
 				HandleUUIDNameReply(packet, simulator);
@@ -508,4 +578,68 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
 	}
 
+    /**
+     * Process an incoming packet and raise the appropriate events</summary>
+     */
+    private void HandleViewerEffect(Packet packet, Simulator simulator)
+    {
+        ViewerEffectPacket effect = (ViewerEffectPacket)packet;
+
+        for (ViewerEffectPacket.EffectBlock block : effect.Effect)
+        {
+            EffectType type = EffectType.setValue(block.Type);
+
+            // Each ViewerEffect type uses it's own custom binary format for additional data. Fun eh?
+            switch (type)
+            {
+                case Beam:
+                case Point:
+                case Trail:
+                case Sphere:
+                case Spiral:
+                case Edit:
+                    if (block.getTypeData().length == 56)
+                    {
+                        UUID sourceAvatar = new UUID(block.getTypeData(), 0);
+                        UUID targetObject = new UUID(block.getTypeData(), 16);
+                        Vector3d targetPos = new Vector3d(block.getTypeData(), 32);
+                        OnViewerEffect.dispatch(new ViewerEffectCallbackArgs(type, simulator, sourceAvatar, targetObject, targetPos, (byte)0, block.Duration, block.ID));
+                    }
+                    else
+                    {
+                        Logger.Log("Received a " + type.toString() + " ViewerEffect with an incorrect TypeData size of " +
+                                block.getTypeData().length + " bytes", Logger.LogLevel.Warning, _Client);
+                    }
+                    break;
+                case LookAt:
+                case PointAt:
+                    if (block.getTypeData().length == 57)
+                    {
+                        UUID sourceAvatar = new UUID(block.getTypeData(), 0);
+                        UUID targetObject = new UUID(block.getTypeData(), 16);
+                        Vector3d targetPos = new Vector3d(block.getTypeData(), 32);
+
+                        OnViewerEffect.dispatch(new ViewerEffectCallbackArgs(type, simulator, sourceAvatar, targetObject, targetPos, block.getTypeData()[56], block.Duration, block.ID));
+                    }
+                    else
+                    {
+                        Logger.Log("Received a LookAt " + type.toString() + " ViewerEffect with an incorrect TypeData size of " +
+                                   block.getTypeData().length + " bytes", Logger.LogLevel.Warning, _Client);
+                    }
+                    break;
+                case Text:
+                case Icon:
+                case Connector:
+                case FlexibleObject:
+                case AnimalControls:
+                case AnimationObject:
+                case Cloth:
+                case Glow:
+                default:
+                    Logger.Log("Received a ViewerEffect with an unknown type " + type.toString() + " and length " +
+                    		   block.getTypeData().length + " bytes", Logger.LogLevel.Warning, _Client);
+                    break;
+            }
+        }
+    }
 }
