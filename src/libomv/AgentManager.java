@@ -3811,39 +3811,37 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	private void HandleInstantMessage(Packet packet, Simulator simulator) throws Exception
 	{
-		if (packet.getType() == PacketType.ImprovedInstantMessage)
-		{
-			ImprovedInstantMessagePacket im = (ImprovedInstantMessagePacket) packet;
+		ImprovedInstantMessagePacket im = (ImprovedInstantMessagePacket) packet;
 
-			InstantMessage mess = new InstantMessage();
+		InstantMessage mess = new InstantMessage();
 
-			mess.FromAgentID = im.AgentData.AgentID;
-			mess.FromAgentName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
-			mess.ToAgentID = im.MessageBlock.ToAgentID;
-			mess.ParentEstateID = im.MessageBlock.ParentEstateID;
-			mess.RegionID = im.MessageBlock.RegionID;
-			mess.Position = im.MessageBlock.Position;
-			mess.GroupIM = im.MessageBlock.FromGroup;
-			mess.IMSessionID = im.MessageBlock.ID;
-			mess.Timestamp = new Date(im.MessageBlock.Timestamp);
-			mess.Message = Helpers.BytesToString(im.MessageBlock.getMessage());
-			mess.Offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
-			mess.BinaryBucket = im.MessageBlock.getBinaryBucket();
+		mess.FromAgentID = im.AgentData.AgentID;
+		mess.FromAgentName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
+		mess.ToAgentID = im.MessageBlock.ToAgentID;
+		mess.ParentEstateID = im.MessageBlock.ParentEstateID;
+		mess.RegionID = im.MessageBlock.RegionID;
+		mess.Position = im.MessageBlock.Position;
+		mess.GroupIM = im.MessageBlock.FromGroup;
+		mess.IMSessionID = im.MessageBlock.ID;
+		mess.Timestamp = new Date(im.MessageBlock.Timestamp);
+		mess.Message = Helpers.BytesToString(im.MessageBlock.getMessage());
+		mess.Offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
+		mess.BinaryBucket = im.MessageBlock.getBinaryBucket();
 
-			OnInstantMessage.dispatch(new InstantMessageCallbackArgs(mess, simulator));
-		}
+		OnInstantMessage.dispatch(new InstantMessageCallbackArgs(mess, simulator));
 	}
 
 	private void HandleChat(Packet packet, Simulator simulator) throws Exception
 	{
-		if (packet.getType() == PacketType.ChatFromSimulator)
-		{
-			ChatFromSimulatorPacket chat = (ChatFromSimulatorPacket) packet;
+		ChatFromSimulatorPacket chat = (ChatFromSimulatorPacket) packet;
 
-			OnChat.dispatch(new ChatCallbackArgs(Helpers.BytesToString(chat.ChatData.getMessage()),
-					chat.ChatData.Audible, chat.ChatData.ChatType, chat.ChatData.SourceType, Helpers
-							.BytesToString(chat.ChatData.getFromName()), chat.ChatData.SourceID));
-		}
+		String message = Helpers.BytesToString(chat.ChatData.getMessage());
+		String from = Helpers.BytesToString(chat.ChatData.getFromName());
+		Logger.Log("ChatFromSimulator: Type: " + chat.ChatData.ChatType + " From: " + from + " Message: " + message,
+				   Logger.LogLevel.Debug, _Client);
+
+		OnChat.dispatch(new ChatCallbackArgs(message, chat.ChatData.Audible, chat.ChatData.ChatType,
+				                             chat.ChatData.SourceType, from, chat.ChatData.SourceID));
 	}
 
 	private void HandleMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
