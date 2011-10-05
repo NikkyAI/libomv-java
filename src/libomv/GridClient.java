@@ -189,15 +189,18 @@ public class GridClient
 		if (Settings.SEND_AGENT_THROTTLE)
 			Throttle = new AgentThrottle(this);
 
+		if (Settings.ENABLE_AVATAR_MANAGER)
+		    Avatars = new AvatarManager(this);
+
 		if (Settings.ENABLE_ASSET_MANAGER)
 			Assets = new AssetManager(this);
 
 		if (Settings.ENABLE_INVENTORY_MANAGER)
 			Inventory = new InventoryManager(this);
+
 		Grid = new GridManager(this);
 
 		// Parcels = new ParcelManager(this);
-		// Avatars = new AvatarManager(this);
 		// Objects = new ObjectManager(this);
 		// Directory = new DirectoryManager(this);
 		Stats = new Statistics();

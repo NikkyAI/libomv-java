@@ -56,8 +56,11 @@ public class Settings implements PacketCallback
 	/* The relative directory where external resources are kept */
 	public static String RESOURCE_DIR = "libomv_data";
 
+	/* Initialize Avatar Manager */
+	public boolean ENABLE_AVATAR_MANAGER = true;
+
 	/* Initialize Inventory Manager */
-	public boolean ENABLE_INVENTORY_MANAGER = false;
+	public boolean ENABLE_INVENTORY_MANAGER = true;
 
 	/* Initialize Asset Manager */
 	public boolean ENABLE_ASSET_MANAGER = false;
