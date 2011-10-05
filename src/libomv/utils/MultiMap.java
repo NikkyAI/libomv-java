@@ -348,6 +348,17 @@ public class MultiMap<K, V>
 		return Collections.unmodifiableCollection(entries);
 	}
 
+	@Override
+	public String toString()
+	{
+		String string = String.format("(%d keys, %d values\n", inner.size(), valueCount);
+		for (Map.Entry<K, Collection<V>> e : entrySet())
+		{
+			string = string + " " + e.getKey().toString() + ", count: " + e.getValue().size() + " " + e.getValue().toString() + "\n";
+		}
+		return string + ")";
+	}
+	
 	/**
 	 * Holds key-value pairs, used as a return type for the expandedEntries()
 	 * method.
