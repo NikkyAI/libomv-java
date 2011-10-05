@@ -159,7 +159,10 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 		_Folders = new HashMap<UUID, InventoryFolder>();
 		_Unresolved = new MultiMap<UUID, InventoryNode>();
 
+		_Folders.put(UUID.Zero, this);
+
 		name = "Root";
+		itemID = UUID.Zero;
 		ownerID = owner;
 		preferredType = AssetType.RootFolder;
 		children = new ArrayList<InventoryNode>(2);
@@ -176,7 +179,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	{
 		InventoryFolder folder = new InventoryFolder(folderID, this.itemID, this.ownerID);
 		folder.parent = this;
-		folder.name = "Inventory";
+		folder.name = "My Inventory";
 		folder.preferredType = AssetType.RootFolder;
 		children.set(0, folder);
 		_Folders.put(folderID, folder);
@@ -223,7 +226,6 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 		return _Folders.containsKey(uuid);
 	}
 
-	@Override
 	public final boolean contains(InventoryNode node)
 	{
 		if (node.getType() == InventoryType.Folder)
@@ -252,7 +254,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	 *            The UUID of the InventoryFolder to get
 	 * @return The InventoryFolder corresponding to <code>uuid</code>.
 	 */
-	public InventoryFolder getFolder(UUID uuid)
+	protected InventoryFolder getFolder(UUID uuid)
 	{
 		return _Folders.get(uuid);
 	}
@@ -264,7 +266,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	 *            The UUID of the InventoryNode to get
 	 * @return The InventoryNode corresponding to <code>uuid</code>.
 	 */
-	public final InventoryNode getNode(UUID uuid)
+	protected final InventoryNode getNode(UUID uuid)
 	{
 		if (_Folders.containsKey(uuid))
 			return _Folders.get(uuid);
@@ -278,8 +280,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	 * 
 	 * @param node The node whose parentID to return
 	 */
-	@Override
-	public final void add(InventoryNode node)
+	protected final void add(InventoryNode node)
 	{
 		synchronized (_Folders)
 		{
@@ -292,7 +293,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 				{
 					InventoryNode n = iter.next();
 					n.parent = parent;
-					parent.add(n);
+					if (parent.children == null)
+						parent.children = new ArrayList<InventoryNode>(1);
+					parent.children.add(n);						
 					iter.remove();
 				}
 			}
@@ -301,7 +304,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 			if (node.parentID != null && node.parent != null && !node.parent.itemID.equals(node.parentID))
 			{
 				// This is a reassignment of the parent so remove us from the previous parent
-				node.parent.remove(node);
+				
+				if (parent.children != null)
+					node.parent.children.remove(node);
 				node.parent = null;
 			}
 			
@@ -311,9 +316,12 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 				if (_Folders.containsKey(node.parentID))
 				{
 					node.parent = _Folders.get(node.parentID);
-					if (!node.parent.contains(node))
+					if (parent.children == null)
+						parent.children = new ArrayList<InventoryNode>(0);
+
+					if (!node.parent.children.contains(node))
 					{
-						node.parent.add(node);
+						node.parent.children.add(node);
 					}
 
 					if (node.getType() == InventoryType.Folder)
@@ -339,7 +347,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	 * @param parentID The parent ID of this node to assign the node to
 	 * @param node The node
 	 */
-	public final void add(UUID parentID, InventoryNode node)
+	protected final void add(UUID parentID, InventoryNode node)
 	{
 		node.parentID = parentID;
 		add(node);
@@ -351,8 +359,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	 * @param item
 	 *            The InventoryNode to remove.
 	 */
-	@Override
-	public final void remove(InventoryNode node)
+	protected final void remove(InventoryNode node)
 	{
 		synchronized (_Folders)
 		{
@@ -372,8 +379,8 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 				_Items.remove(node.itemID);
 			}
 			
-			if (node.parent != null)
-				node.parent.remove(node);
+			if (node.parent != null && node.parent.children != null)
+				node.parent.children.remove(node);
 		}
 	}	
 
@@ -386,7 +393,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	 * @exception InventoryException
 	 *                When <code>folder</code> does not exist in the inventory
 	 */
-	public final ArrayList<InventoryNode> getContents(UUID folder) throws InventoryException
+	protected final ArrayList<InventoryNode> getContents(UUID folder) throws InventoryException
 	{
 		synchronized (_Folders)
 		{
@@ -398,12 +405,12 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 		}
 	}
 
-	public final void printUnresolved()
+	protected final void printUnresolved()
 	{
 		System.out.println(_Unresolved.toString());
 	}
 	
-	public final void resolveList()
+	protected final void resolveList()
 	{
 		synchronized (_Folders)
 		{
@@ -419,7 +426,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 					{
 						InventoryNode n = iter.next();
 						n.parent = parent;
-						parent.add(n);
+						if (parent.children == null)
+							parent.children = new ArrayList<InventoryNode>(1);
+						parent.children.add(n);						
 						iter.remove();
 					}
 				}
@@ -542,9 +551,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	@Override
 	public InventoryNode getChild(Object parent, int idx)
 	{
-		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder)
+		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder && ((InventoryFolder)parent).children != null)
 		{
-			return ((InventoryFolder)parent).getChild(idx);
+			return ((InventoryFolder)parent).children.get(idx);
 		}
 		return null;
 	}
@@ -552,9 +561,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	@Override
 	public int getChildCount(Object parent)
 	{
-		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder)
+		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder && ((InventoryFolder)parent).children != null)
 		{
-			return ((InventoryFolder)parent).getChildCount();
+			return ((InventoryFolder)parent).children.size();
 		}
 		return 0;
 	}
@@ -562,9 +571,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 	@Override
 	public int getIndexOfChild(Object parent, Object child)
 	{
-		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder)
+		if (parent != null && ((InventoryNode)parent).getType() == InventoryType.Folder && ((InventoryFolder)parent).children != null)
 		{
-			((InventoryFolder)parent).indexOf((InventoryNode)child);
+			((InventoryFolder)parent).children.indexOf(child);
 		}
 		return -1;
 	}
@@ -593,7 +602,9 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 		if (value instanceof InventoryNode)
 		{
 			InventoryFolder parent = (InventoryFolder)path.getPathComponent(path.getPathCount() - 2);
-			int index = parent.indexOf((InventoryNode)path.getLastPathComponent());
+			if (parent.children == null)
+				parent.children = new ArrayList<InventoryNode>(1);
+			int index = parent.children.indexOf(path.getLastPathComponent());
 			InventoryNode node = (InventoryNode)value;
 			if (index >= 0)
 			{
@@ -601,7 +612,7 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 			}
 			else
 			{
-				parent.add(node);
+				parent.children.add(node);
 			}
 			node.parent = parent;
 			node.parentID = parent.itemID;

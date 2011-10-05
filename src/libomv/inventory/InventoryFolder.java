@@ -86,54 +86,6 @@ public class InventoryFolder extends InventoryNode
 		return InventoryType.Folder;
 	}
 	
-	protected int getChildCount()
-	{
-		if (children != null)
-			return children.size();
-		return 0;
-	}
-
-	protected InventoryNode getChild(int index)
-	{
-		if (children != null)
-			return children.get(index);
-		return null;
-	}
-
-	protected int indexOf(InventoryNode node)
-	{
-		if (children != null)
-			return children.indexOf(node);
-		return -1;
-	}
-	
-	protected boolean contains(InventoryNode node)
-	{
-		if (children != null)
-			return children.contains(node);
-		return false;
-	}
-	
-	protected void add(InventoryNode node)
-	{
-		if (children == null)
-		{
-			children = new ArrayList<InventoryNode>(1);
-		}
-		if (!children.contains(node))
-		{
-			children.add(node);
-		}
-	}
-
-	protected void remove(InventoryNode node)
-	{
-		if (children != null)
-		{
-			children.remove(node);
-		}
-	}
-	
 	/**
 	 * Returns a copy of the arraylist of children. We return a copy so nobody can mess with
 	 * our tree structure.
