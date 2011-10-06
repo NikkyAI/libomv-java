@@ -422,6 +422,7 @@ public class MultiMap<K, V>
 			if (iter != null)
 			{
 				iter.remove();
+				valueCount--;
 				if (!iter.hasNext())
 					inner.remove(key);
 			}
