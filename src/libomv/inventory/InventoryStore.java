@@ -418,7 +418,8 @@ public class InventoryStore extends InventoryFolder implements TreeModel
 
 	protected final void printUnresolved()
 	{
-		System.out.println(_Unresolved.toString());
+		if (_Unresolved.valueCount() > 0)
+			System.out.println(_Unresolved.toString());
 	}
 	
 	protected final void resolveList()
