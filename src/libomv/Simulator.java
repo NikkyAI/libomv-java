@@ -1169,8 +1169,7 @@ public class Simulator extends Thread
 						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
 						if (_Client.Settings.LOG_RAW_PACKET_BYTES)
 						{
-							Logger.Log("Decoded packet " + packet.getClass().getName() + packet.toString(),
-									Logger.LogLevel.Debug, _Client);
+							Logger.Log("Decoded packet " + packet.getClass().getName(), Logger.LogLevel.Debug, _Client);
 						}
 					}
 					catch (IOException ex)
@@ -1191,7 +1190,7 @@ public class Simulator extends Thread
 				if (packet == null)
 				{
 					Logger.Log("Couldn't build a message from the incoming data", LogLevel.Warning, _Client);
-					return;
+					continue;
 				}
 
 				Statistics.RecvBytes += numBytes;
@@ -1262,7 +1261,7 @@ public class Simulator extends Thread
 								+ packet.getType(), LogLevel.Warning, _Client);
 					}
 					// Avoid firing a callback twice for the same packet
-					return;
+					continue;
 				}
 
 				// Let the network manager distribute the packet to the callbacks
