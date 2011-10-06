@@ -3377,8 +3377,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		p.AgentData.SessionID = _Client.Self.getSessionID();
 		p.Info.LureType = 0;
 		p.Info.setMessage(Helpers.StringToBytes(message));
-		p.TargetData = new StartLurePacket.TargetDataBlock[1];
-		p.TargetData[0].TargetID = targetID;
+		p.TargetID = new UUID[1];
+		p.TargetID[0] = targetID;
 		_Client.Network.SendPacket(p);
 	}
 
@@ -3570,7 +3570,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		PickDeletePacket delete = new PickDeletePacket();
 		delete.AgentData.AgentID = _Client.Self.getAgentID();
 		delete.AgentData.SessionID = _Client.Self.getSessionID();
-		delete.Data.PickID = pickID;
+		delete.PickID = pickID;
 
 		_Client.Network.SendPacket(delete);
 	}
@@ -3664,7 +3664,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		classified.AgentData.AgentID = _Client.Self.getAgentID();
 		classified.AgentData.SessionID = _Client.Self.getSessionID();
 
-		classified.Data.ClassifiedID = classifiedID;
+		classified.ClassifiedID = classifiedID;
 		_Client.Network.SendPacket(classified);
 	}
 
@@ -3837,6 +3837,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		ChatFromSimulatorPacket chat = (ChatFromSimulatorPacket) packet;
 
+		try
+		{
 		String message = Helpers.BytesToString(chat.ChatData.getMessage());
 		String from = Helpers.BytesToString(chat.ChatData.getFromName());
 		Logger.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType) + " From: " + from + " Message: " + message,
@@ -3844,6 +3846,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType.setValue(chat.ChatData.ChatType),
 				                             ChatSourceType.setValue(chat.ChatData.SourceType), message, from, chat.ChatData.SourceID));
+		}
+		catch (Exception ex)
+		{
+			Logger.Log("Exception in ChatFromSimulator", Logger.LogLevel.Debug, _Client, ex);
+		}
 	}
 
 	private void HandleMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
@@ -3858,7 +3865,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	private void HandleHealthMessage(Packet packet, Simulator simulator)
 	{
-		health = ((HealthMessagePacket) packet).HealthData.Health;
+		health = ((HealthMessagePacket) packet).Health;
 	}
 
 	private void HandleTeleport(Packet packet, Simulator simulator) throws Exception
@@ -3874,7 +3881,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			teleportStatus = TeleportStatus.Start;
 			teleportMessage = "Teleport started";
-			flags = start.Info.TeleportFlags;
+			flags = start.TeleportFlags;
 
 			Logger.DebugLog("TeleportStart received, Flags: " + flags, _Client);
 		}

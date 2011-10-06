@@ -39,11 +39,11 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Set;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.ParcelManager.Parcel;
@@ -494,10 +494,10 @@ public class Simulator extends Thread
 	/* Sequence numbers of packets we've received (for duplicate checking) */
 	private IncomingPacketIDCollection _PacketArchive;
 	/* ACKs that are queued up to be sent to the simulator */
-	private ConcurrentLinkedQueue<Integer> _PendingAcks;
+	private TreeSet<Integer> _PendingAcks;
 	/* Packets we sent out that need ACKs from the simulator */
-	private HashMap<Integer, NetworkManager.OutgoingPacket> _NeedAck; // int ->
-																		// Packet
+	
+	private TreeMap<Integer, NetworkManager.OutgoingPacket> _NeedAck; // int -> Packet
 	/* Sequence number for pause/resume */
 	private AtomicInteger _PauseSerial;
 
@@ -676,7 +676,7 @@ public class Simulator extends Thread
 	// The IP address and port of the server.
 	private InetSocketAddress ipEndPoint;
 
-	/* A thread-safe dictionary containing avatars in a simulator */
+	/* A non thread-safe dictionary containing avatars in a simulator */
 	private HashMap<Integer, Avatar> ObjectsAvatars = new HashMap<Integer, Avatar>();
 
 	public HashMap<Integer, Avatar> getObjectsAvatars()
@@ -684,23 +684,23 @@ public class Simulator extends Thread
 		return ObjectsAvatars;
 	}
 
-	/* A thread-safe dictionary containing primitives in a simulator */
-	private Hashtable<Integer, Primitive> ObjectsPrimitives = new Hashtable<Integer, Primitive>();
+	/* A non thread-safe dictionary containing primitives in a simulator */
+	private HashMap<Integer, Primitive> ObjectsPrimitives = new HashMap<Integer, Primitive>();
 
-	public Hashtable<Integer, Primitive> getObjectsPrimitives()
+	public HashMap<Integer, Primitive> getObjectsPrimitives()
 	{
 		return ObjectsPrimitives;
 	}
 
 	/* Coarse locations of avatars in this simulator */
-	private Hashtable<UUID, Vector3> avatarPositions = new Hashtable<UUID, Vector3>();
+	private HashMap<UUID, Vector3> avatarPositions = new HashMap<UUID, Vector3>();
 
-	public void setAvatarPositions(Hashtable<UUID, Vector3> avatarPositions)
+	public void setAvatarPositions(HashMap<UUID, Vector3> avatarPositions)
 	{
 		this.avatarPositions = avatarPositions;
 	}
 
-	public Hashtable<UUID, Vector3> getAvatarPositions()
+	public HashMap<UUID, Vector3> getAvatarPositions()
 	{
 		return avatarPositions;
 	}
@@ -781,13 +781,12 @@ public class Simulator extends Thread
 		_InBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
 		_OutBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
 
-		// Initialize the dictionary for reliable packets waiting on ACKs from
-		// the server
-		_NeedAck = new HashMap<Integer, NetworkManager.OutgoingPacket>();
+		// Initialize the dictionary for reliable packets waiting on ACKs from the server
+		_NeedAck = new TreeMap<Integer, NetworkManager.OutgoingPacket>();
 
 		// Initialize the lists of sequence numbers we've received so far
 		_PacketArchive = new IncomingPacketIDCollection(Settings.PACKET_ARCHIVE_SIZE);
-		_PendingAcks = new ConcurrentLinkedQueue<Integer>();
+		_PendingAcks = new TreeSet<Integer>();
 
 		if (client.Settings.STORE_LAND_PATCHES)
 		{
@@ -1061,14 +1060,12 @@ public class Simulator extends Thread
 	{
 		int oldestUnacked = 0;
 
-		// Get the oldest NeedAck value, the first entry in the sorted
-		// dictionary
+		// Get the oldest NeedAck value, the first entry in the sorted dictionary
 		synchronized (_NeedAck)
 		{
 			if (!_NeedAck.isEmpty())
 			{
-				Set<Integer> keys = _NeedAck.keySet();
-				oldestUnacked = keys.iterator().next();
+				oldestUnacked = _NeedAck.firstKey();
 			}
 		}
 
@@ -1223,11 +1220,11 @@ public class Simulator extends Thread
 
 					synchronized (_NeedAck)
 					{
-						for (PacketAckPacket.PacketsBlock block : ackPacket.Packets)
+						for (int ID : ackPacket.ID)
 						{
-							if (_NeedAck.remove(block.ID) == null)
+							if (_NeedAck.remove(ID) == null)
 							{
-								Logger.Log(String.format("ACK for a packet (%d) we didn't send: %s", block.ID, packet
+								Logger.Log(String.format("ACK for a packet (%d) we didn't send: %s", ID, packet
 										.getClass().getName()), LogLevel.Warning, _Client);
 							}
 						}
@@ -1236,7 +1233,10 @@ public class Simulator extends Thread
 
 				// Add this packet to the list of ACKs that need to be sent out
 				int sequence = packet.getHeader().getSequence();
-				_PendingAcks.add(sequence);
+				synchronized (_PendingAcks)
+				{
+					_PendingAcks.add(sequence);
+				}
 
 				// Send out ACKs if we have a lot of them
 				if (_PendingAcks.size() >= _Client.Settings.MAX_PENDING_ACKS)
@@ -1281,7 +1281,7 @@ public class Simulator extends Thread
 
 	public void SendPacket(Packet packet) throws Exception
 	{
-		if (packet.hasVariableBlocks)
+		if (packet.hasVariableBlocks && packet.getLength() > Packet.MTU)
 		{
 			ByteBuffer[] datas;
 			try
@@ -1367,24 +1367,24 @@ public class Simulator extends Thread
 			if (_PendingAcks.size() > 0)
 			{
 				PacketAckPacket acks = new PacketAckPacket();
-				acks.Packets = new PacketAckPacket.PacketsBlock[_PendingAcks.size()];
+				acks.ID = new int[_PendingAcks.size()];
 				acks.getHeader().setReliable(false);
-
 				int i = 0;
-				for (int ack : _PendingAcks)
+				Iterator<Integer> iter = _PendingAcks.iterator();
+				while (iter.hasNext())
 				{
-					acks.Packets[i] = acks.createPacketsBlock();
-					acks.Packets[i].ID = ack;
-					i++;
+					acks.ID[i++] = iter.next();
 				}
+				_PendingAcks.clear();
+
 				try
 				{
 					SendPacket(acks);
 				}
 				catch (Exception ex)
 				{
+					Logger.Log("Exception when sending Ack packet", Logger.LogLevel.Error, _Client, ex);
 				}
-				_PendingAcks.clear();
 			}
 		}
 	}
@@ -1400,8 +1400,7 @@ public class Simulator extends Thread
 
 			synchronized (_NeedAck)
 			{
-				// Create a temporary copy of the outgoing packets array to
-				// iterate over
+				// Create a temporary copy of the outgoing packets array to iterate over
 				array = new ArrayList<NetworkManager.OutgoingPacket>(_NeedAck.size());
 				array.addAll(_NeedAck.values());
 			}
@@ -1468,10 +1467,13 @@ public class Simulator extends Thread
 		// Keep appending ACKs until there is no room left in the packet or
 		// there are no more ACKs to append
 		int ackCount = 0;
-		while (dataLength + 5 < buffer.capacity() && !_PendingAcks.isEmpty())
+		synchronized (_PendingAcks)
 		{
-			dataLength += Helpers.UInt32ToBytesB(_PendingAcks.poll(), bytes, dataLength);
-			++ackCount;
+			while (dataLength + 5 < buffer.capacity() && !_PendingAcks.isEmpty())
+			{
+				dataLength += Helpers.UInt32ToBytesB(_PendingAcks.pollFirst(), bytes, dataLength);
+				++ackCount;
+			}
 		}
 
 		if (ackCount > 0)

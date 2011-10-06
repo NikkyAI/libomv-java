@@ -1531,7 +1531,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		ParcelInfoRequestPacket request = new ParcelInfoRequestPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
-		request.Data.ParcelID = parcelID;
+		request.ParcelID = parcelID;
 
 		_Client.Network.SendPacket(request);
 	}
@@ -1791,7 +1791,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 
-		request.Data.LocalID = localID;
+		request.LocalID = localID;
 
 		simulator.SendPacket(request);
 	}
@@ -1835,7 +1835,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 
-		request.ParcelData.LocalID = localID;
+		request.LocalID = localID;
 		simulator.SendPacket(request);
 	}
 
@@ -1864,24 +1864,22 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.ParcelData.ReturnType = ObjectReturnType.setValue(type);
 
 		// A single null TaskID is (not) used for parcel object returns
-		request.TaskIDs = new ParcelReturnObjectsPacket.TaskIDsBlock[1];
-		request.TaskIDs[0] = request.new TaskIDsBlock();
-		request.TaskIDs[0].TaskID = UUID.Zero;
+		request.TaskID = new UUID[1];
+		request.TaskID[0] = UUID.Zero;
 
 		// Convert the list of owner UUIDs to packet blocks if a list is given
 		if (ownerIDs != null)
 		{
-			request.OwnerIDs = new ParcelReturnObjectsPacket.OwnerIDsBlock[ownerIDs.length];
+			request.OwnerID = new UUID[ownerIDs.length];
 
 			for (int i = 0; i < ownerIDs.length; i++)
 			{
-				request.OwnerIDs[i] = request.new OwnerIDsBlock();
-				request.OwnerIDs[i].OwnerID = ownerIDs[i];
+				request.OwnerID[i] = ownerIDs[i];
 			}
 		}
 		else
 		{
-			request.OwnerIDs = new ParcelReturnObjectsPacket.OwnerIDsBlock[0];
+			request.OwnerID = new UUID[0];
 		}
 
 		simulator.SendPacket(request);
@@ -2116,9 +2114,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		land.ParcelData[0].East = east;
 		land.ParcelData[0].North = north;
 
-		land.ModifyBlockExtended = new ModifyLandPacket.ModifyBlockExtendedBlock[1];
-		land.ModifyBlockExtended[0] = land.new ModifyBlockExtendedBlock();
-		land.ModifyBlockExtended[0].BrushSize = brushSize;
+		land.BrushSize = new float[1];
+		land.BrushSize[0] = brushSize;
 
 		simulator.SendPacket(land);
 	}
@@ -2146,9 +2143,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		select.ParcelData.LocalID = localID;
 		select.ParcelData.ReturnType = selectType;
 
-		select.ReturnIDs = new ParcelSelectObjectsPacket.ReturnIDsBlock[1];
-		select.ReturnIDs[0] = select.new ReturnIDsBlock();
-		select.ReturnIDs[0].ReturnID = ownerID;
+		select.ReturnID = new UUID[1];
+		select.ReturnID[0] = ownerID;
 
 		_Client.Network.SendPacket(select);
 	}
@@ -2217,7 +2213,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		ParcelReleasePacket abandon = new ParcelReleasePacket();
 		abandon.AgentData.AgentID = _Client.Self.getAgentID();
 		abandon.AgentData.SessionID = _Client.Self.getSessionID();
-		abandon.Data.LocalID = localID;
+		abandon.LocalID = localID;
 
 		simulator.SendPacket(abandon);
 	}
@@ -2603,14 +2599,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		if (OnForceSelectObjectsReply.count() > 0)
 		{
 			ForceObjectSelectPacket reply = (ForceObjectSelectPacket) packet;
-			int[] objectIDs = new int[reply.Data.length];
+			int[] objectIDs = new int[reply.LocalID.length];
 
-			for (int i = 0; i < reply.Data.length; i++)
+			for (int i = 0; i < reply.LocalID.length; i++)
 			{
-				objectIDs[i] = reply.Data[i].LocalID;
+				objectIDs[i] = reply.LocalID[i];
 			}
-			OnForceSelectObjectsReply.dispatch(new ForceSelectObjectsReplyCallbackArgs(simulator, objectIDs,
-					reply._Header.ResetList));
+			OnForceSelectObjectsReply.dispatch(new ForceSelectObjectsReplyCallbackArgs(simulator, objectIDs, reply.ResetList));
 		}
 	}
 

@@ -272,12 +272,12 @@ public class FriendsManager implements PacketCallback
 	// Triggered whenever a friend comes online or goes offline
 	public class FriendNotificationCallbackArgs implements CallbackArgs
 	{
-		private final UUID agentID;
+		private final UUID[] agentIDs;
 		private final boolean online;
 
-		public UUID getAgentID()
+		public UUID[] getAgentID()
 		{
-			return agentID;
+			return agentIDs;
 		}
 
 		public boolean getOnline()
@@ -285,9 +285,9 @@ public class FriendsManager implements PacketCallback
 			return online;
 		}
 
-		public FriendNotificationCallbackArgs(UUID agentID, boolean online)
+		public FriendNotificationCallbackArgs(UUID[] agentIDs, boolean online)
 		{
-			this.agentID = agentID;
+			this.agentIDs = agentIDs;
 			this.online = online;
 		}
 	}
@@ -564,10 +564,9 @@ public class FriendsManager implements PacketCallback
 		AcceptFriendshipPacket request = new AcceptFriendshipPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
-		request.TransactionBlock.TransactionID = imSessionID;
-		request.FolderData = new AcceptFriendshipPacket.FolderDataBlock[1];
-		request.FolderData[0] = request.new FolderDataBlock();
-		request.FolderData[0].FolderID = callingCardFolder;
+		request.TransactionID = imSessionID;
+		request.FolderID = new UUID[1];
+		request.FolderID[0] = callingCardFolder;
 
 		_Client.Network.SendPacket(request);
 
@@ -599,7 +598,7 @@ public class FriendsManager implements PacketCallback
 		DeclineFriendshipPacket request = new DeclineFriendshipPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
-		request.TransactionBlock.TransactionID = imSessionID;
+		request.TransactionID = imSessionID;
 		_Client.Network.SendPacket(request);
 
 		synchronized (_FriendRequests)
@@ -658,7 +657,7 @@ public class FriendsManager implements PacketCallback
 			TerminateFriendshipPacket request = new TerminateFriendshipPacket();
 			request.AgentData.AgentID = _Client.Self.getAgentID();
 			request.AgentData.SessionID = _Client.Self.getSessionID();
-			request.ExBlock.OtherID = agentID;
+			request.OtherID = agentID;
 
 			_Client.Network.SendPacket(request);
 		}
@@ -679,10 +678,10 @@ public class FriendsManager implements PacketCallback
 		
 		synchronized (_FriendList)
 		{
-			friend = _FriendList.remove(itsOver.ExBlock.OtherID);
+			friend = _FriendList.remove(itsOver.OtherID);
 		}
 
-		OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.ExBlock.OtherID,
+		OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.OtherID,
 				friend != null ? friend.getName() : null));
 	}
 
@@ -746,7 +745,7 @@ public class FriendsManager implements PacketCallback
 		TrackAgentPacket stalk = new TrackAgentPacket();
 		stalk.AgentData.AgentID = _Client.Self.getAgentID();
 		stalk.AgentData.SessionID = _Client.Self.getSessionID();
-		stalk.TargetData.PreyID = friendID;
+		stalk.PreyID = friendID;
 
 		_Client.Network.SendPacket(stalk);
 	}
@@ -786,15 +785,15 @@ public class FriendsManager implements PacketCallback
 	{
 		ArrayList<UUID> requestids = new ArrayList<UUID>();
 		FriendInfo friend = null;
-		UUID agentID = null;
+		UUID[] agentIDs = null;
 		boolean doNotify = false;
 
 		if (packet.getType() == PacketType.OnlineNotification)
 		{
 			OnlineNotificationPacket notification = (OnlineNotificationPacket) packet;
-			for (OnlineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
+			agentIDs = notification.AgentID;
+			for (UUID agentID : notification.AgentID)
 			{
-				agentID = block.AgentID;
 				synchronized (_FriendList)
 				{
 					if (!_FriendList.containsKey(agentID))
@@ -816,9 +815,9 @@ public class FriendsManager implements PacketCallback
 		else if (packet.getType() == PacketType.OfflineNotification)
 		{
 			OfflineNotificationPacket notification = (OfflineNotificationPacket) packet;
-			for (OfflineNotificationPacket.AgentBlockBlock block : notification.AgentBlock)
+			agentIDs = notification.AgentID;
+			for (UUID agentID : notification.AgentID)
 			{
-				agentID = block.AgentID;
 				synchronized (_FriendList)
 				{
 					if (!_FriendList.containsKey(agentID))
@@ -841,8 +840,7 @@ public class FriendsManager implements PacketCallback
 
 		// Only notify when there was a change in online status
 		if (doNotify)
-			OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentID,
-					packet.getType() == PacketType.OnlineNotification));
+			OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentIDs, packet.getType() == PacketType.OnlineNotification));
 
 		if (requestids.size() > 0)
 		{
@@ -878,9 +876,9 @@ public class FriendsManager implements PacketCallback
 					}
 					else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
 					{
-						if (_FriendList.containsKey(rights.AgentData.AgentID))
+						if (_FriendList.containsKey(rights.AgentID))
 						{
-							friend = _FriendList.get(rights.AgentData.AgentID);
+							friend = _FriendList.get(rights.AgentID);
 							friend.myRights = FriendRights.setValue(block.RelatedRights);
 
 							OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));

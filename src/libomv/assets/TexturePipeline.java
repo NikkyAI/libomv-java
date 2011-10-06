@@ -818,7 +818,7 @@ public class TexturePipeline implements PacketCallback
 	protected final void ImageNotInDatabaseHandler(Packet packet, Simulator simulator)
 	{
 		ImageNotInDatabasePacket imageNotFoundData = (ImageNotInDatabasePacket) packet;
-		TaskInfo task = GetTransferValue(imageNotFoundData.ImageID.ID);
+		TaskInfo task = GetTransferValue(imageNotFoundData.ID);
 		if (task != null)
 		{
 			// cancel active request and free up the threadpool slot
@@ -827,17 +827,17 @@ public class TexturePipeline implements PacketCallback
 				task.TimeoutEvent.set(true);
 			}
 
-			RemoveTransfer(imageNotFoundData.ImageID.ID);
+			RemoveTransfer(imageNotFoundData.ID);
 
 			// fire callback to inform the caller
-			task.CallCallback(TextureRequestState.NotFound, new AssetTexture(imageNotFoundData.ImageID.ID,
+			task.CallCallback(TextureRequestState.NotFound, new AssetTexture(imageNotFoundData.ID,
 					Helpers.EmptyBytes));
 			task.TimeoutEvent.set(true);
 		}
 		else
 		{
 			Logger.Log("Received an ImageNotFound packet for an image we did not request: "
-					+ imageNotFoundData.ImageID.ID, LogLevel.Warning);
+					+ imageNotFoundData.ID, LogLevel.Warning);
 		}
 	}
 

@@ -40,6 +40,11 @@ public class Vector4
 
 	public float S;
 
+	public Vector4()
+	{
+		X = Y = Z = S = 0;
+	}
+
 	public Vector4(float val)
 	{
 		X = Y = Z = S = val;

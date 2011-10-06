@@ -29,7 +29,8 @@ package libomv;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+//import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import org.apache.http.nio.concurrent.FutureCallback;
@@ -279,9 +280,9 @@ public class GridManager implements PacketCallback
     }
 
 	// A dictionary of all the regions, indexed by region name
-	public Hashtable<String, GridRegion> Regions;
+	public HashMap<String, GridRegion> Regions;
 	// A dictionary of all the regions, indexed by region handle
-	private Hashtable<Long, GridRegion> RegionsByHandle = new Hashtable<Long, GridRegion>();
+	private HashMap<Long, GridRegion> RegionsByHandle = new HashMap<Long, GridRegion>();
 
 	// Current direction of the sun
 	private float sunPhase;
@@ -303,7 +304,7 @@ public class GridManager implements PacketCallback
 	public GridManager(GridClient client)
 	{
 		Client = client;
-		Regions = new Hashtable<String, GridRegion>();
+		Regions = new HashMap<String, GridRegion>();
 		sunDirection = new Vector3(0.0f);
 
 		Client.Network.RegisterCallback(PacketType.MapLayerReply, this);
@@ -509,8 +510,7 @@ public class GridManager implements PacketCallback
 	public final void RequestRegionHandle(UUID regionID) throws Exception
 	{
 		RegionHandleRequestPacket request = new RegionHandleRequestPacket();
-		request.RequestBlock = request.createRequestBlockBlock();
-		request.RequestBlock.RegionID = regionID;
+		request.RegionID = regionID;
 		Client.Network.SendPacket(request);
 	}
 
@@ -679,7 +679,7 @@ public class GridManager implements PacketCallback
 		if (OnGridItems != null)
 		{
 			MapItemReplyPacket reply = (MapItemReplyPacket) packet;
-			GridItemType type = GridItemType.convert(reply.RequestData.ItemType);
+			GridItemType type = GridItemType.convert(reply.ItemType);
 			ArrayList<MapItem> items = new ArrayList<MapItem>();
 
 			for (int i = 0; i < reply.Data.length; i++)
@@ -798,23 +798,23 @@ public class GridManager implements PacketCallback
 		CoarseLocationUpdatePacket coarse = (CoarseLocationUpdatePacket) packet;
 
 		// populate a dictionary from the packet, for local use
-		Hashtable<UUID, Vector3> coarseEntries = new Hashtable<UUID, Vector3>();
-		for (int i = 0; i < coarse.AgentData.length; i++)
+		HashMap<UUID, Vector3> coarseEntries = new HashMap<UUID, Vector3>();
+		for (int i = 0; i < coarse.AgentID.length; i++)
 		{
-			if (coarse.Location.length > 0)
+			if (coarse.Location.length > i)
 			{
-				coarseEntries.put(coarse.AgentData[i].AgentID, new Vector3(coarse.Location[i].X, coarse.Location[i].Y,
+				coarseEntries.put(coarse.AgentID[i], new Vector3(coarse.Location[i].X, coarse.Location[i].Y,
 						coarse.Location[i].Z * 4));
 			}
 
 			// the friend we are tracking on radar
 			if (i == coarse.Index.Prey)
 			{
-				simulator.setPreyID(coarse.AgentData[i].AgentID);
+				simulator.setPreyID(coarse.AgentID[i]);
 			}
 		}
 
-		Hashtable<UUID, Vector3> positions;
+		HashMap<UUID, Vector3> positions;
 		ArrayList<UUID> removedEntries = new ArrayList<UUID>();
 		ArrayList<UUID> newEntries = new ArrayList<UUID>();
 

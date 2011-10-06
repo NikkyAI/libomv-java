@@ -1272,7 +1272,8 @@ public class NetworkManager implements PacketCallback
 		simulator.BillableFactor = handshake.RegionInfo.BillableFactor;
 		simulator.Access = SimAccess.setValue(handshake.RegionInfo.SimAccess);
 
-		simulator.RegionID = handshake.RegionInfo2.RegionID;
+		simulator.RegionID = handshake.RegionID;
+
 		simulator.ColoLocation = Helpers.BytesToString(handshake.RegionInfo3.getColoName());
 		simulator.CPUClass = handshake.RegionInfo3.CPUClassID;
 		simulator.CPURatio = handshake.RegionInfo3.CPURatio;
@@ -1283,7 +1284,7 @@ public class NetworkManager implements PacketCallback
 		RegionHandshakeReplyPacket reply = new RegionHandshakeReplyPacket();
 		reply.AgentData.AgentID = _Client.Self.getAgentID();
 		reply.AgentData.SessionID = _Client.Self.getSessionID();
-		reply.RegionInfo.Flags = 0;
+		reply.Flags = 0;
 		simulator.SendPacket(reply);
 
 		// We're officially connected to this sim
@@ -1305,7 +1306,7 @@ public class NetworkManager implements PacketCallback
 	{
 		StartPingCheckPacket incomingPing = (StartPingCheckPacket) packet;
 		CompletePingCheckPacket ping = new CompletePingCheckPacket();
-		ping.PingID.PingID = incomingPing.PingID.PingID;
+		ping.PingID = incomingPing.PingID.PingID;
 		ping.getHeader().setReliable(false);
 		// TODO: We can use OldestUnacked to correct transmission errors
 		// I don't think that's right. As far as I can tell, the Viewer
@@ -1324,9 +1325,9 @@ public class NetworkManager implements PacketCallback
 		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
 		simulator.Statistics.ReceivedPongs++;
 		String retval = "Pong2: " + simulator.Statistics.LastLag;
-		if ((pong.PingID.PingID - simulator.Statistics.LastPingID + 1) != 0)
+		if ((pong.PingID - simulator.Statistics.LastPingID + 1) != 0)
 		{
-			retval += " (gap of " + (pong.PingID.PingID - simulator.Statistics.LastPingID + 1) + ")";
+			retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";
 		}
 
 		Logger.Log(retval, LogLevel.Info, _Client);
@@ -1506,9 +1507,9 @@ public class NetworkManager implements PacketCallback
 			{
 				Vector<UUID> itemIDs = new Vector<UUID>();
 
-				for (LogoutReplyPacket.InventoryDataBlock InventoryData : logout.InventoryData)
+				for (UUID inventoryID : logout.ItemID)
 				{
-					itemIDs.add(InventoryData.ItemID);
+					itemIDs.add(inventoryID);
 				}
 				OnLoggedOut.dispatch(new LoggedOutCallbackArgs(itemIDs));
 			}

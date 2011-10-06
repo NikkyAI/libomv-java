@@ -1241,7 +1241,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		PurgeInventoryDescendentsPacket purge = new PurgeInventoryDescendentsPacket();
 		purge.AgentData.AgentID = _Client.Self.getAgentID();
 		purge.AgentData.SessionID = _Client.Self.getSessionID();
-		purge.InventoryData.FolderID = folderID;
+		purge.FolderID = folderID;
 		_Client.Network.SendPacket(purge);
 
 		// Update our local copy
@@ -1311,20 +1311,18 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		if (items == null || items.isEmpty())
 		{
 			// To indicate that we want no items removed:
-			rem.ItemData = new RemoveInventoryObjectsPacket.ItemDataBlock[1];
-			rem.ItemData[0] = rem.new ItemDataBlock();
-			rem.ItemData[0].ItemID = UUID.Zero;
+			rem.ItemID = new UUID[1];
+			rem.ItemID[0] = UUID.Zero;
 		}
 		else
 		{
 			synchronized (_Store)
 			{
-				rem.ItemData = new RemoveInventoryObjectsPacket.ItemDataBlock[items.size()];
+				rem.ItemID = new UUID[items.size()];
 				for (int i = 0; i < items.size(); i++)
 				{
 					UUID uuid = items.get(i);
-					rem.ItemData[i] = rem.new ItemDataBlock();
-					rem.ItemData[i].ItemID = uuid;
+					rem.ItemID[i] = uuid;
 
 					// Update local copy
 					if (_Store.containsItem(uuid))
@@ -1338,20 +1336,18 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		if (folders == null || folders.isEmpty())
 		{
 			// To indicate we want no folders removed:
-			rem.FolderData = new RemoveInventoryObjectsPacket.FolderDataBlock[1];
-			rem.FolderData[0] = rem.new FolderDataBlock();
-			rem.FolderData[0].FolderID = UUID.Zero;
+			rem.FolderID = new UUID[1];
+			rem.FolderID[0] = UUID.Zero;
 		}
 		else
 		{
 			synchronized (_Store)
 			{
-				rem.FolderData = new RemoveInventoryObjectsPacket.FolderDataBlock[folders.size()];
+				rem.FolderID = new UUID[folders.size()];
 				for (int i = 0; i < folders.size(); i++)
 				{
 					UUID uuid = folders.get(i);
-					rem.FolderData[i] = rem.new FolderDataBlock();
-					rem.FolderData[i].FolderID = uuid;
+					rem.FolderID[i] = uuid;
 
 					// Update local copy
 					if (_Store.containsFolder(uuid))
@@ -2299,9 +2295,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		take.AgentBlock.PacketNumber = 1;
 		take.AgentBlock.TransactionID = transactionID;
 
-		take.ObjectData = new DeRezObjectPacket.ObjectDataBlock[1];
-		take.ObjectData[0] = take.new ObjectDataBlock();
-		take.ObjectData[0].ObjectLocalID = objectLocalID;
+		take.ObjectLocalID = new int[1];
+		take.ObjectLocalID[0] = objectLocalID;
 
 		_Client.Network.SendPacket(take);
 	}
@@ -2605,7 +2600,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		RequestTaskInventoryPacket request = new RequestTaskInventoryPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
-		request.InventoryData.LocalID = objectLocalID;
+		request.LocalID = objectLocalID;
 
 		simulator.SendPacket(request);
 	}

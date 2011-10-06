@@ -514,12 +514,11 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		{
 			UUIDNameRequestPacket request = new UUIDNameRequestPacket();
 
-			request.UUIDNameBlock = new UUIDNameRequestPacket.UUIDNameBlockBlock[neednames.size()];
+			request.ID = new UUID[neednames.size()];
 
 			for (int i = 0; i < neednames.size(); i++)
 			{
-				request.UUIDNameBlock[i] = request.createUUIDNameBlockBlock();
-				request.UUIDNameBlock[i].ID = neednames.get(i);
+				request.ID[i] = neednames.get(i);
 			}
 			_Client.Network.SendPacket(request);
 		}

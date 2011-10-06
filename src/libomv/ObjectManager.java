@@ -1343,10 +1343,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void RequestPayPrice(Simulator simulator, UUID objectID) throws Exception
 	{
 		RequestPayPricePacket payPriceRequest = new RequestPayPricePacket();
-
-		payPriceRequest.ObjectData = payPriceRequest.new ObjectDataBlock();
-		payPriceRequest.ObjectData.ObjectID = objectID;
-
+		payPriceRequest.ObjectID = objectID;
 		simulator.SendPacket(payPriceRequest);
 	}
 
@@ -1389,8 +1386,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		select.AgentData.AgentID = Client.Self.getAgentID();
 		select.AgentData.SessionID = Client.Self.getSessionID();
 
-		select.ObjectData = new ObjectSelectPacket.ObjectDataBlock[1];
-		select.ObjectData[0].ObjectLocalID = localID;
+		select.ObjectLocalID = new int[1];
+		select.ObjectLocalID[0] = localID;
 
 		simulator.SendPacket(select);
 
@@ -1438,12 +1435,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		select.AgentData.AgentID = Client.Self.getAgentID();
 		select.AgentData.SessionID = Client.Self.getSessionID();
 
-		select.ObjectData = new ObjectSelectPacket.ObjectDataBlock[localIDs.length];
+		select.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
 		{
-			select.ObjectData[i] = select.new ObjectDataBlock();
-			select.ObjectData[i].ObjectLocalID = localIDs[i];
+			select.ObjectLocalID[i] = localIDs[i];
 		}
 
 		simulator.SendPacket(select);
@@ -1528,9 +1524,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		deselect.AgentData.AgentID = Client.Self.getAgentID();
 		deselect.AgentData.SessionID = Client.Self.getSessionID();
 
-		deselect.ObjectData = new ObjectDeselectPacket.ObjectDataBlock[1];
-		deselect.ObjectData[0] = deselect.new ObjectDataBlock();
-		deselect.ObjectData[0].ObjectLocalID = localID;
+		deselect.ObjectLocalID = new int[1];
+		deselect.ObjectLocalID[0] = localID;
 
 		simulator.SendPacket(deselect);
 	}
@@ -1551,12 +1546,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		deselect.AgentData.AgentID = Client.Self.getAgentID();
 		deselect.AgentData.SessionID = Client.Self.getSessionID();
 
-		deselect.ObjectData = new ObjectDeselectPacket.ObjectDataBlock[localIDs.length];
+		deselect.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
 		{
-			deselect.ObjectData[i] = deselect.new ObjectDataBlock();
-			deselect.ObjectData[i].ObjectLocalID = localIDs[i];
+			deselect.ObjectLocalID[i] = localIDs[i];
 		}
 
 		simulator.SendPacket(deselect);
@@ -1626,7 +1620,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		ObjectDeGrabPacket degrab = new ObjectDeGrabPacket();
 		degrab.AgentData.AgentID = Client.Self.getAgentID();
 		degrab.AgentData.SessionID = Client.Self.getSessionID();
-		degrab.ObjectData.LocalID = localID;
+		degrab.LocalID = localID;
 		degrab.SurfaceInfo = new ObjectDeGrabPacket.SurfaceInfoBlock[1];
 		degrab.SurfaceInfo[0] = degrab.new SurfaceInfoBlock();
 		degrab.SurfaceInfo[0].UVCoord = uvCoord;
@@ -2044,12 +2038,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.AgentData.AgentID = Client.Self.getAgentID();
 		packet.AgentData.SessionID = Client.Self.getSessionID();
 
-		packet.ObjectData = new ObjectLinkPacket.ObjectDataBlock[localIDs.length];
+		packet.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
 		{
-			packet.ObjectData[i] = packet.new ObjectDataBlock();
-			packet.ObjectData[i].ObjectLocalID = localIDs[i];
+			packet.ObjectLocalID[i] = localIDs[i];
 		}
 
 		simulator.SendPacket(packet);
@@ -2072,12 +2065,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.AgentData.AgentID = Client.Self.getAgentID();
 		packet.AgentData.SessionID = Client.Self.getSessionID();
 
-		packet.ObjectData = new ObjectDelinkPacket.ObjectDataBlock[localIDs.length];
+		packet.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; ++i)
 		{
-			packet.ObjectData[i] = packet.new ObjectDataBlock();
-			packet.ObjectData[i].ObjectLocalID = localIDs[i];
+			packet.ObjectLocalID[i] = localIDs[i];
 		}
 
 		simulator.SendPacket(packet);
@@ -2257,9 +2249,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		ObjectDropPacket dropit = new ObjectDropPacket();
 		dropit.AgentData.AgentID = Client.Self.getAgentID();
 		dropit.AgentData.SessionID = Client.Self.getSessionID();
-		dropit.ObjectData = new ObjectDropPacket.ObjectDataBlock[1];
-		dropit.ObjectData[0] = dropit.new ObjectDataBlock();
-		dropit.ObjectData[0].ObjectLocalID = localID;
+		dropit.ObjectLocalID = new int[1];
+		dropit.ObjectLocalID[0] = localID;
 
 		simulator.SendPacket(dropit);
 	}
@@ -2282,12 +2273,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		ObjectDetachPacket detach = new ObjectDetachPacket();
 		detach.AgentData.AgentID = Client.Self.getAgentID();
 		detach.AgentData.SessionID = Client.Self.getSessionID();
-		detach.ObjectData = new ObjectDetachPacket.ObjectDataBlock[localIDs.length];
+		detach.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
 		{
-			detach.ObjectData[i] = detach.new ObjectDataBlock();
-			detach.ObjectData[i].ObjectLocalID = localIDs[i];
+			detach.ObjectLocalID[i] = localIDs[i];
 		}
 
 		simulator.SendPacket(detach);
@@ -2475,10 +2465,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		objDeedPacket.HeaderData.OwnerID = UUID.Zero;
 		objDeedPacket.HeaderData.GroupID = groupOwner;
 
-		objDeedPacket.ObjectData = new ObjectOwnerPacket.ObjectDataBlock[1];
-		objDeedPacket.ObjectData[0] = objDeedPacket.new ObjectDataBlock();
+		objDeedPacket.ObjectLocalID = new int[1];
 
-		objDeedPacket.ObjectData[0].ObjectLocalID = localID;
+		objDeedPacket.ObjectLocalID[0] = localID;
 
 		simulator.SendPacket(objDeedPacket);
 	}
@@ -2507,12 +2496,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.HeaderData.OwnerID = UUID.Zero;
 		packet.HeaderData.GroupID = groupOwner;
 
-		packet.ObjectData = new ObjectOwnerPacket.ObjectDataBlock[localIDs.length];
+		packet.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
 		{
-			packet.ObjectData[i] = packet.new ObjectDataBlock();
-			packet.ObjectData[i].ObjectLocalID = localIDs[i];
+			packet.ObjectLocalID[i] = localIDs[i];
 		}
 		simulator.SendPacket(packet);
 	}
@@ -2543,7 +2531,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.AgentData.SessionID = Client.Self.getSessionID();
 
 		// Override can only be used by gods
-		packet.HeaderData.Override = false;
+		packet.Override = false;
 
 		packet.ObjectData = new ObjectPermissionsPacket.ObjectDataBlock[localIDs.length];
 
@@ -2623,11 +2611,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.AgentData.GroupID = groupID;
 		packet.AgentData.SessionID = Client.Self.getSessionID();
 
-		packet.ObjectData = new ObjectGroupPacket.ObjectDataBlock[localIds.length];
+		packet.ObjectLocalID = new int[localIds.length];
 		for (int i = 0; i < localIds.length; i++)
 		{
-			packet.ObjectData[i] = packet.new ObjectDataBlock();
-			packet.ObjectData[i].ObjectLocalID = localIds[i];
+			packet.ObjectLocalID[i] = localIds[i];
 		}
 
 		simulator.SendPacket(packet);
@@ -3584,9 +3571,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		// Notify first, so that handler has a chance to get a
 		// reference from the ObjectTracker to the object being killed
-		for (int i = 0; i < kill.ObjectData.length; i++)
+		for (int i = 0; i < kill.ID.length; i++)
 		{
-			OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, kill.ObjectData[i].ID));
+			OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, kill.ID[i]));
 		}
 
 		ArrayList<Integer> removeAvatars = new ArrayList<Integer>();
@@ -3597,9 +3584,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if (Client.Settings.OBJECT_TRACKING)
 			{
 				int localID;
-				for (int i = 0; i < kill.ObjectData.length; i++)
+				for (int i = 0; i < kill.ID.length; i++)
 				{
-					localID = kill.ObjectData[i].ID;
+					localID = kill.ID[i];
 
 					if (simulator.getObjectsPrimitives().containsKey(localID))
 					{
@@ -3623,9 +3610,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 				synchronized (simulator.getObjectsAvatars())
 				{
-					for (int i = 0; i < kill.ObjectData.length; i++)
+					for (int i = 0; i < kill.ID.length; i++)
 					{
-						localID = kill.ObjectData[i].ID;
+						localID = kill.ID[i];
 
 						if (simulator.getObjectsAvatars().containsKey(localID))
 						{
@@ -3814,11 +3801,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			PayPriceReplyPacket p = (PayPriceReplyPacket) packet;
 			UUID objectID = p.ObjectData.ObjectID;
 			int defaultPrice = p.ObjectData.DefaultPayPrice;
-			int[] buttonPrices = new int[p.ButtonData.length];
+			int[] buttonPrices = new int[p.PayButton.length];
 
-			for (int i = 0; i < p.ButtonData.length; i++)
+			for (int i = 0; i < p.PayButton.length; i++)
 			{
-				buttonPrices[i] = p.ButtonData[i].PayButton;
+				buttonPrices[i] = p.PayButton[i];
 			}
 
 			OnPayPriceReply.dispatch(new PayPriceReplyCallbackArgs(simulator, objectID, defaultPrice, buttonPrices));

@@ -1203,7 +1203,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.AgentData.SessionID = Client.Self.getSessionID();
 		find.AgentData.QueryID = groupID;
 
-		find.TransactionData.TransactionID = transactionID;
+		find.TransactionID = transactionID;
 
 		find.QueryData.setQueryText(Helpers.StringToBytes(searchText));
 		find.QueryData.QueryFlags = findFlags;
@@ -1295,7 +1295,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.AgentData.AgentID = Client.Self.getAgentID();
 		find.AgentData.SessionID = Client.Self.getSessionID();
 
-		find.EventData.EventID = eventID;
+		find.EventID = eventID;
 
 		Client.Network.SendPacket(find);
 	}
@@ -1469,7 +1469,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				searchData.AgentID = reply.AgentID;
 				matches.add(searchData);
 			}
-			OnDirPeople.dispatch(new DirPeopleReplyEventArgs(peopleReply.QueryData.QueryID, matches));
+			OnDirPeople.dispatch(new DirPeopleReplyEventArgs(peopleReply.QueryID, matches));
 		}
 	}
 
@@ -1496,7 +1496,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				groupsData.Members = reply.Members;
 				matches.add(groupsData);
 			}
-			OnDirGroups.dispatch(new DirGroupsReplyEventArgs(groupsReply.QueryData.QueryID, matches));
+			OnDirGroups.dispatch(new DirGroupsReplyEventArgs(groupsReply.QueryID, matches));
 		}
 	}
 
@@ -1573,7 +1573,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 				places.add(place);
 			}
-			OnPlaces.dispatch(new PlacesReplyEventArgs(placesReply.TransactionData.TransactionID, places));
+			OnPlaces.dispatch(new PlacesReplyEventArgs(placesReply.TransactionID, places));
 		}
 	}
 
@@ -1604,7 +1604,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				eventsData.Flags = EventFlags.setValue(reply.EventFlags);
 				matches.add(eventsData);
 			}
-			OnDirEvents.dispatch(new DirEventsReplyEventArgs(eventsReply.QueryData.QueryID, matches));
+			OnDirEvents.dispatch(new DirEventsReplyEventArgs(eventsReply.QueryID, matches));
 		}
 	}
 
@@ -1669,7 +1669,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				result.add(p);
 			}
 
-			OnDirPlaces.dispatch(new DirPlacesReplyEventArgs(reply.QueryData[0].QueryID, result));
+			OnDirPlaces.dispatch(new DirPlacesReplyEventArgs(reply.QueryID[0], result));
 		}
 	}
 
