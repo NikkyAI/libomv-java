@@ -1245,19 +1245,18 @@ public class Simulator extends Thread
 				}
 
 				/*
-				 * Track the sequence number for this packet if it's marked as
-				 * reliable
+				 * Track the sequence number for this packet if it's marked as reliable
 				 */
 				if (packet.getHeader().getReliable() && !_PacketArchive.tryEnqueue(sequence))
 				{
 					if (packet.getHeader().getResent())
 					{
-						Logger.DebugLog("Received a resend of already processed packet #" + sequence + ", type: "
+						Logger.DebugLog("Received a resend of already processed packet #" + Integer.toString(sequence) + ", type: "
 								+ packet.getType(), _Client);
 					}
 					else
 					{
-						Logger.Log("Received a duplicate (not marked as resend) of packet #" + sequence + ", type: "
+						Logger.Log("Received a duplicate (not marked as resend) of packet #" + Integer.toString(sequence) + ", type: "
 								+ packet.getType(), LogLevel.Warning, _Client);
 					}
 					// Avoid firing a callback twice for the same packet

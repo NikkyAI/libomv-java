@@ -106,7 +106,7 @@ public class PacketHeader
 
 	public int getSequence()
 	{
-		return ((Data[1] << 24) + (Data[2] << 16) + (Data[3] << 8) + Data[4]);
+		return (((Data[1] & 0xff) >> 24) + ((Data[2] & 0xff) << 16) + ((Data[3] & 0xff) << 8) + ((Data[4] & 0xff) << 0));
 	}
 
 	public int getExtraLength()
@@ -114,12 +114,12 @@ public class PacketHeader
 		return Data[5];
 	}
 
-	public int getID()
+	public short getID()
 	{
 		switch (frequency)
 		{
 			case PacketFrequency.Low:
-				return (((Data[8 + getExtraLength()] & 0xFF) << 8) + ((Data[9 + getExtraLength()] & 0xFF) << 0));
+				return (short)(((Data[8 + getExtraLength()] & 0xFF) << 8) + ((Data[9 + getExtraLength()] & 0xff) << 0));
 			case PacketFrequency.Medium:
 				return Data[7];
 			case PacketFrequency.High:
