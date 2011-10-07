@@ -287,6 +287,12 @@ public class mapgenerator
 	static void WriteFieldToString(PrintWriter writer, int indent, MapField field, String index)
 	{
 		String lead = spaces.substring(0, indent);
+		String index1 = Helpers.EmptyString, index2 = Helpers.EmptyString;
+		if (!index.isEmpty())
+		{
+			index1 = "[\" + " + index + " + \"]";
+			index2 = "[" + index + "]";
+		}
 		writer.write(lead);
 
 		if (field.Type == FieldType.Variable)
@@ -296,54 +302,54 @@ public class mapgenerator
 		}
 		else if (field.Type == FieldType.Fixed)
 		{
-			writer.println("output += Helpers.FieldToString(" + field.Name + ", \"" + field.Name + index
+			writer.println("output += Helpers.FieldToString(" + field.Name + ", \"" + field.Name + index2
 					+ "\") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.BOOL)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Boolean.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Boolean.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.F32)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Float.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Float.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.F64)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Double.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Double.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.S8 || field.Type == FieldType.U8)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Byte.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Byte.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.S16 || field.Type == FieldType.U16 || field.Type == FieldType.IPPORT)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Short.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Short.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.S32 || field.Type == FieldType.U32 || field.Type == FieldType.IPADDR)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Integer.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Integer.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.S64 || field.Type == FieldType.U64)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Long.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Long.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 		else if (field.Type == FieldType.UUID || field.Type == FieldType.Vector3
 				|| field.Type == FieldType.Vector3d || field.Type == FieldType.Vector4
 				|| field.Type == FieldType.Quaternion)
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + " + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + " + field.Name + index2
 					+ ".toString() + \"\\n\";");
 		}
 		else
 		{
-			writer.println("output += \"" + field.Name + index + ": \" + Helpers.toString(" + field.Name + index
+			writer.println("output += \"" + field.Name + index1 + ": \" + Helpers.toString(" + field.Name + index2
 					+ ") + \"\\n\";");
 		}
 	}
@@ -771,7 +777,7 @@ public class mapgenerator
 					else
 					{
 						writer.println("        for (int j = 0; j < count; j++)\n        {");
-						WriteFieldFromBytes(writer, 8, field, "[j]");
+						WriteFieldFromBytes(writer, 12, field, "[j]");
 						writer.println("        }");
 					}
 				}
@@ -786,7 +792,7 @@ public class mapgenerator
 					else
 					{
 						writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n        {");
-						WriteFieldFromBytes(writer, 8, field, "[j]");
+						WriteFieldFromBytes(writer, 12, field, "[j]");
 						writer.println("        }");
 					}
 				}
@@ -872,7 +878,7 @@ public class mapgenerator
 					}
 					else
 					{
-						writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n        {");
+						writer.println("        for (int j = 0; j < count; j++)\n        {");
 						WriteFieldFromBytes(writer, 12, field, "[j]");
 						writer.println("        }");
 					}
@@ -1103,14 +1109,14 @@ public class mapgenerator
 				{
 					// Variable count block
 					writer.println("        for (int j = 0; j < " + field.Name + ".length; j++)\n        {");
-					WriteFieldToString(writer, 12, field, "[j]");
+					WriteFieldToString(writer, 12, field, "j");
 					writer.println("        }");
 				}
 				else
 				{
 					// Multiple count block
 					writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n" + "        {");
-					WriteFieldToString(writer, 12, field, "[j]");
+					WriteFieldToString(writer, 12, field, "j");
 					writer.println("        }");
 				}
 				
@@ -1199,7 +1205,7 @@ public class mapgenerator
 					+ "    //<param name=\"id\">The packet ID from the header</param>\n"
 					+ "    //<param name=\"frequency\">Frequency of this packet</param>\n"
 					+ "    //<returns>The packet type, or PacketType.Default</returns>\n"
-					+ "    public static PacketType getType(short id, int frequency)\n" + "    {\n"
+					+ "    public static PacketType getType(short id, byte frequency)\n" + "    {\n"
 					+ "        switch (frequency)\n" + "        {\n" + "            case PacketFrequency.Low:\n"
 					+ "                switch (id)\n" + "                {");
 
@@ -1221,7 +1227,7 @@ public class mapgenerator
 				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
-					writer.println("                        case (short)" + packet.ID + ": return PacketType."
+					writer.println("                        case " + packet.ID + ": return PacketType."
 							+ packet.Name + ";");
 				}
 			}
@@ -1235,7 +1241,7 @@ public class mapgenerator
 				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
-					writer.println("                        case (short)" + packet.ID + ": return PacketType."
+					writer.println("                        case " + packet.ID + ": return PacketType."
 							+ packet.Name + ";");
 				}
 			}
@@ -1271,7 +1277,7 @@ public class mapgenerator
 				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
 				if (packet != null)
 				{
-					writer.println("                        case " + packet.ID + ": return new " + packet.Name
+					writer.println("                        case (short)" + packet.ID + ": return new " + packet.Name
 							+ "Packet(header,bytes);");
 				}
 			}
