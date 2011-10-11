@@ -32,6 +32,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -47,6 +48,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import libomv.GridClient;
+import libomv.GridClient.GridInfo;
 import libomv.Gui.components.InfoPanel;
 
 public class MainWindow extends JFrame
@@ -83,6 +85,7 @@ public class MainWindow extends JFrame
 		
 		_Client = client;
 		
+		getContentPane();
 		setSize(800, 640);
 		setJMenuBar(getJMbMain());
 		setPreferredSize(new Dimension(640, 480));
@@ -90,7 +93,6 @@ public class MainWindow extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(getJContentPane());
 		setTitle("Libomv-Java Client");
-		setVisible(true);
 	}
 
 	private JFrame getJMainFrame()
@@ -239,6 +241,9 @@ public class MainWindow extends JFrame
 		if (jTxtFirstName == null)
 		{
 			jTxtFirstName = new JTextField(20);
+			String text = _Client.getDefaultGrid().firstname;
+			if (text != null)
+			    jTxtLastName.setText(text);
 		}
 		return jTxtFirstName;
 	}
@@ -253,6 +258,9 @@ public class MainWindow extends JFrame
 		if (jTxtLastName == null)
 		{
 			jTxtLastName = new JTextField(20);
+			String text = _Client.getDefaultGrid().lastname;
+			if (text != null)
+			    jTxtLastName.setText(text);
 		}
 		return jTxtLastName;
 	}
@@ -267,6 +275,9 @@ public class MainWindow extends JFrame
 		if (jPwdPassword == null)
 		{
 			jPwdPassword = new JPasswordField(20);
+			String text = _Client.getDefaultGrid().getPassword();
+			if (text != null)
+				jPwdPassword.setText(text);
 		}
 		return jPwdPassword;
 	}
@@ -291,6 +302,29 @@ public class MainWindow extends JFrame
 		if (jcbGridSelector == null)
 		{
 			jcbGridSelector = new JComboBox();
+			Set<String> set = _Client.getGridNames();
+			for (String grid : set)
+			{
+				jcbGridSelector.addItem(grid);
+			}
+			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid().gridnick);
+			jcbGridSelector.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent evt)
+				{
+					String selection = (String)((JComboBox)evt.getSource()).getSelectedItem();
+					GridInfo grid = _Client.getGrid(selection);
+					if (grid.firstname != null)
+						getJTxtFirstName().setText(grid.firstname);
+					if (grid.lastname != null)
+						getJTxtLastName().setText(grid.lastname);
+					if (grid.getPassword() != null)
+						getJPwdPassword().setText(grid.getPassword());
+					getChckbxSaveDetails().setSelected(grid.saveSettings);
+					getChckbxSavePassword().setSelected(grid.savePassword);				
+				}
+			});
 		}
 		return jcbGridSelector;
 	}
@@ -318,23 +352,25 @@ public class MainWindow extends JFrame
 		return jBtnGrids;
 	}
 
-	private JCheckBox getChckbxSavePassword()
-	{
-		if (jChkSavePassword == null)
-		{
-			jChkSavePassword = new JCheckBox("Save Password");
-		}
-		return jChkSavePassword;
-	}
-
 	private JCheckBox getChckbxSaveDetails()
 	{
 		if (jChkSaveDetails == null)
 		{
 			jChkSaveDetails = new JCheckBox("Save Details");
 			jChkSaveDetails.setHorizontalAlignment(SwingConstants.CENTER);
+			jChkSaveDetails.setSelected(_Client.getDefaultGrid().saveSettings);
 		}
 		return jChkSaveDetails;
+	}
+
+	private JCheckBox getChckbxSavePassword()
+	{
+		if (jChkSavePassword == null)
+		{
+			jChkSavePassword = new JCheckBox("Save Password");
+			jChkSavePassword.setSelected(_Client.getDefaultGrid().savePassword);
+		}
+		return jChkSavePassword;
 	}
 
 	private JPanel getJInfoPanel()

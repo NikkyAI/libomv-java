@@ -42,21 +42,10 @@ public class AboutWindow extends JDialog
 	 */
 	public AboutWindow(JFrame owner)
 	{
-		// TODO Auto-generated constructor stub
 		super(owner);
 		setTitle("About Libomv-Java");
-		initialize();
-	}
-
-	/**
-	 * This method initializes this
-	 * 
-	 * @return void
-	 */
-	private void initialize()
-	{
-		this.setSize(300, 200);
-		this.setContentPane(getJContentPane());
+		setSize(300, 200);
+		setContentPane(getJContentPane());
 	}
 
 	/**

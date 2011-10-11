@@ -44,19 +44,9 @@ public class PreferenceWindow extends JDialog
 	{
 		// TODO Auto-generated constructor stub
 		super(owner);
-		setTitle("About Libomv-Java");
-		initialize();
-	}
-
-	/**
-	 * This method initializes this
-	 * 
-	 * @return void
-	 */
-	private void initialize()
-	{
-		this.setSize(300, 200);
-		this.setContentPane(getJContentPane());
+		setTitle("Preferences");
+		setSize(300, 200);
+		setContentPane(getJContentPane());
 	}
 
 	/**
