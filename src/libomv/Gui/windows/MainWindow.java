@@ -85,7 +85,6 @@ public class MainWindow extends JFrame
 		
 		_Client = client;
 		
-		getContentPane();
 		setSize(800, 640);
 		setJMenuBar(getJMbMain());
 		setPreferredSize(new Dimension(640, 480));
@@ -109,7 +108,7 @@ public class MainWindow extends JFrame
 	{
 		if (jContentPane == null)
 		{
-			jContentPane = new JPanel();
+			jContentPane = (JPanel)getContentPane();
 			BorderLayout bl_jContentPane = new BorderLayout();
 			bl_jContentPane.setHgap(10);
 			jContentPane.setLayout(bl_jContentPane);
@@ -249,7 +248,7 @@ public class MainWindow extends JFrame
 	}
 
 	/**
-	 * This method initializes textSecondName
+	 * This method initializes textLastName
 	 * 
 	 * @return JTextField
 	 */
