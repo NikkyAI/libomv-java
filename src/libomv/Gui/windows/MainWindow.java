@@ -297,7 +297,8 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					// TODO Open the Grid Selection overview panel
+					String selection = (String) getJcbGridSelector().getSelectedItem();
+					GridInfo grid = _Client.getGrid(selection);
 
 				}
 			});
@@ -330,7 +331,8 @@ public class MainWindow extends JFrame
 					if (grid.getPassword() != null)
 						getJPwdPassword().setText(grid.getPassword());
 					getChckbxSaveDetails().setSelected(grid.saveSettings);
-					getChckbxSavePassword().setSelected(grid.savePassword);				
+					getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
+					getChckbxSavePassword().setEnabled(grid.saveSettings);				
 				}
 			});
 		}
@@ -366,7 +368,24 @@ public class MainWindow extends JFrame
 		{
 			jChkSaveDetails = new JCheckBox("Save Details");
 			jChkSaveDetails.setHorizontalAlignment(SwingConstants.CENTER);
-			jChkSaveDetails.setSelected(_Client.getDefaultGrid().saveSettings);
+			GridInfo grid = _Client.getDefaultGrid();
+			jChkSaveDetails.setSelected(grid.saveSettings);
+			getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
+			getChckbxSavePassword().setEnabled(grid.saveSettings);				
+			
+			jChkSaveDetails.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent evt)
+				{
+					JCheckBox cb = (JCheckBox)evt.getSource();
+					getChckbxSavePassword().setEnabled(cb.isSelected());
+					if (!cb.isSelected())
+					{
+						getChckbxSavePassword().setEnabled(false);
+					}
+				}	
+			});
 		}
 		return jChkSaveDetails;
 	}
