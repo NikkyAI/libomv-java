@@ -293,6 +293,15 @@ public class MainWindow extends JFrame
 		{
 			jBtnLogin = new JButton();
 			jBtnLogin.setText("Login");
+			jBtnLogin.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					// TODO Open the Grid Selection overview panel
+
+				}
+			});
 		}
 		return jBtnLogin;
 	}
