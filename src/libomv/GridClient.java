@@ -149,18 +149,18 @@ public class GridClient
 	public AssetManager Assets;
 	/* Inventory subsystem */
 	public InventoryManager Inventory;
+	/* Handles sound-related networking */
+	public SoundManager Sound;
+	/* Appearance subsystem */
+	// public AppearanceManager Appearance;
 	// Parcel (subdivided simulator lots) Subsystem
 	// public ParcelManager Parcels;
 	// Object Subsystem
 	// public ObjectManager Objects;
 	/* Directory searches including classifieds, people, land sales, etc */
 	// public DirectoryManager Directory;
-	/* Appearance subsystem */
-	// public AppearanceManager Appearance;
 	/* Handles land, wind, and cloud heightmaps */
 	// public TerrainManager Terrain;
-	/* Handles sound-related networking */
-	// public SoundManager Sound;
 
 	// Packet Statistics
 	public Statistics Stats;
@@ -197,6 +197,9 @@ public class GridClient
 
 		if (Settings.ENABLE_INVENTORY_MANAGER)
 			Inventory = new InventoryManager(this);
+
+		if (Settings.ENABLE_SOUND_MANAGER)
+			Inventory = new SoundManager(this);
 
 		Grid = new GridManager(this);
 

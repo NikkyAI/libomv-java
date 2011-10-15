@@ -62,6 +62,9 @@ public class Settings implements PacketCallback
 	/* Initialize Inventory Manager */
 	public boolean ENABLE_INVENTORY_MANAGER = true;
 
+	/* Initialize Sound Manager */
+	public boolean ENABLE_SOUND_MANAGER = true;
+
 	/* Initialize Asset Manager */
 	public boolean ENABLE_ASSET_MANAGER = false;
 
