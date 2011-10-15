@@ -175,7 +175,7 @@ public class Primitive
 			return (byte) (value & _mask);
 		}
 
-		private static byte _mask = 0xFFFFFFFF;
+		private static byte _mask = (byte)0xFF;
 	}
 
 	public enum ProfileCurve
