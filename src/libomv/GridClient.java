@@ -199,7 +199,7 @@ public class GridClient
 			Inventory = new InventoryManager(this);
 
 		if (Settings.ENABLE_SOUND_MANAGER)
-			Inventory = new SoundManager(this);
+			Sound = new SoundManager(this);
 
 		Grid = new GridManager(this);
 
