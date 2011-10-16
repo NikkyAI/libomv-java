@@ -49,65 +49,6 @@ public class InventoryItem extends InventoryNode
 {
 	private static final long serialVersionUID = 1L;
 
-	/** Types of wearable assets */
-	public enum WearableType
-	{
-		/** Invalid wearable asset */
-		Invalid(-1),
-		/** Body shape */
-		Shape(0),
-		/** Skin textures and attributes */
-		Skin(1),
-		/** Hair */
-		Hair(2),
-		/** Eyes */
-		Eyes(3),
-		/** Shirt */
-		Shirt(4),
-		/** Pants */
-		Pants(5),
-		/** Shoes */
-		Shoes(6),
-		/** Socks */
-		Socks(7),
-		/** Jacket */
-		Jacket(8),
-		/** Gloves */
-		Gloves(9),
-		/** Undershirt */
-		Undershirt(10),
-		/** Underpants */
-		Underpants(11),
-		/** Skirt */
-		Skirt(12),
-		/** Alpha mask to hide parts of the avatar */
-		Alpha(13),
-		/** Tattoo */
-		Tattoo(14);
-
-		public static WearableType setValue(int value)
-		{
-			for (WearableType e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return Invalid;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		private final byte _value;
-
-		private WearableType(int value)
-		{
-			_value = (byte) value;
-		}
-	}
-
 	/* Upper half of the Flags field for inventory items */
 	// [Flags]
 	public static class InventoryItemFlags

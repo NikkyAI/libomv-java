@@ -29,7 +29,6 @@ package libomv.assets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import libomv.AppearenceManager.AvatarTextureIndex;
 import libomv.ObjectManager.SaleType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
@@ -40,67 +39,83 @@ import libomv.utils.Logger.LogLevel;
 // Represents a Wearable Asset, Clothing, Hair, Skin, Etc
 public abstract class AssetWearable extends AssetItem
 {
-	/** Types of wearable assets */
-	public enum WearableType
+	// Index of TextureEntry slots for avatar appearances
+	public enum AvatarTextureIndex
 	{
-		/** Invalid wearable asset */
-		Invalid(-1),
-		/** Body shape */
-		Shape(0),
-		/** Skin textures and attributes */
-		Skin(1),
-		/** Hair */
-		Hair(2),
-		/** Eyes */
-		Eyes(3),
-		/** Shirt */
-		Shirt(4),
-		/** Pants */
-		Pants(5),
-		/** Shoes */
-		Shoes(6),
-		/** Socks */
-		Socks(7),
-		/** Jacket */
-		Jacket(8),
-		/** Gloves */
-		Gloves(9),
-		/** Undershirt */
-		Undershirt(10),
-		/** Underpants */
-		Underpants(11),
-		/** Skirt */
-		Skirt(12),
-		/** Alpha mask to hide parts of the avatar */
-		Alpha(13),
-		/** Tattoo */
-		Tattoo(14);
+		Unknown, HeadBodypaint, UpperShirt, LowerPants, EyesIris, Hair,	UpperBodypaint, LowerBodypaint,
+		LowerShoes, HeadBaked, UpperBaked, LowerBaked, EyesBaked, LowerSocks, UpperJacket, LowerJacket,
+		UpperGloves, UpperUndershirt, LowerUnderpants, Skirt, SkirtBaked, HairBaked,
+        LowerAlpha, UpperAlpha, HeadAlpha, EyesAlpha, HairAlpha, HeadTattoo, UpperTattoo, LowerTattoo, NumberOfEntries;
 
-		public static WearableType setValue(int value)
+		public static AvatarTextureIndex setValue(int value)
 		{
-			for (WearableType e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return Invalid;
+			return values()[value + 1];
 		}
 
-		public byte getValue(WearableType value)
+		public static byte getValue(AvatarTextureIndex value)
 		{
-			return value._value;
+			return (byte) (value.ordinal() - 1);
 		}
 
 		public byte getValue()
 		{
-			return _value;
+			return (byte) (ordinal() - 1);
+		}
+	}
+
+	/** Types of wearable assets */
+	public static enum WearableType
+	{
+		/** Invalid wearable asset */
+		Invalid,
+		/** Body shape */
+		Shape,
+		/** Skin textures and attributes */
+		Skin,
+		/** Hair */
+		Hair,
+		/** Eyes */
+		Eyes,
+		/** Shirt */
+		Shirt,
+		/** Pants */
+		Pants,
+		/** Shoes */
+		Shoes,
+		/** Socks */
+		Socks,
+		/** Jacket */
+		Jacket,
+		/** Gloves */
+		Gloves,
+		/** Undershirt */
+		Undershirt,
+		/** Underpants */
+		Underpants,
+		/** Skirt */
+		Skirt,
+		/** Alpha mask to hide parts of the avatar */
+		Alpha,
+		/** Tattoo */
+		Tattoo,
+		/** Physics */
+		Physics;
+
+		public static WearableType setValue(int value)
+		{
+			if (value >= 0 && value < values().length - 1)
+			    return values()[value + 1];
+			return Invalid;
 		}
 
-		private final byte _value;
-
-		private WearableType(int value)
+		public static byte getValue(WearableType value)
 		{
-			_value = (byte) value;
+			return (byte)(value.ordinal() - 1);
+		}
+
+		public byte getValue()
+		{
+			return (byte)(ordinal() - 1);
 		}
 	}
 
@@ -376,7 +391,7 @@ public abstract class AssetWearable extends AssetItem
 		data.append(NL);
 		data.append("\t}\n");
 		data.append("type ");
-		data.append(wearableType.getValue());
+		data.append(WearableType.getValue(wearableType));
 		data.append(NL);
 
 		data.append("parameters ");

@@ -237,13 +237,13 @@ public class TexturePipeline implements PacketCallback
 		switch (packet.getType())
 		{
 			case ImageData:
-				ImageDataHandler(packet, simulator);
+				HandleImageData(packet, simulator);
 				break;
 			case ImagePacket:
-				ImagePacketHandler(packet, simulator);
+				HandleImagePacket(packet, simulator);
 				break;
 			case ImageNotInDatabase:
-				ImageNotInDatabaseHandler(packet, simulator);
+				HandleImageNotInDatabase(packet, simulator);
 				break;
 		}
 	}
@@ -815,7 +815,7 @@ public class TexturePipeline implements PacketCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void ImageNotInDatabaseHandler(Packet packet, Simulator simulator)
+	private final void HandleImageNotInDatabase(Packet packet, Simulator simulator)
 	{
 		ImageNotInDatabasePacket imageNotFoundData = (ImageNotInDatabasePacket) packet;
 		TaskInfo task = GetTransferValue(imageNotFoundData.ID);
@@ -830,8 +830,7 @@ public class TexturePipeline implements PacketCallback
 			RemoveTransfer(imageNotFoundData.ID);
 
 			// fire callback to inform the caller
-			task.CallCallback(TextureRequestState.NotFound, new AssetTexture(imageNotFoundData.ID,
-					Helpers.EmptyBytes));
+			task.CallCallback(TextureRequestState.NotFound, new AssetTexture(imageNotFoundData.ID, Helpers.EmptyBytes));
 			task.TimeoutEvent.set(true);
 		}
 		else
@@ -851,7 +850,7 @@ public class TexturePipeline implements PacketCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws InterruptedException
 	 */
-	protected final void ImagePacketHandler(Packet packet, Simulator simulator) throws InterruptedException
+	private final void HandleImagePacket(Packet packet, Simulator simulator) throws InterruptedException
 	{
 		ImagePacketPacket image = (ImagePacketPacket) packet;
 		TaskInfo task = GetTransferValue(image.ImageID.ID);
@@ -940,7 +939,7 @@ public class TexturePipeline implements PacketCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void ImageDataHandler(Packet packet, Simulator simulator)
+	private final void HandleImageData(Packet packet, Simulator simulator)
 	{
 		ImageDataPacket data = (ImageDataPacket) packet;
 		TaskInfo task = GetTransferValue(data.ImageID.ID);

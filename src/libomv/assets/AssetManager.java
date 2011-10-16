@@ -626,28 +626,28 @@ public class AssetManager implements PacketCallback
 		switch (packet.getType())
 		{
 			case TransferInfo:
-				TransferInfoHandler(packet, simulator);
+				HandleTransferInfo(packet, simulator);
 				break;
 			case TransferPacket:
-				TransferPacketHandler(packet, simulator);
+				HandleTransferPacket(packet, simulator);
 				break;
 			case RequestXfer:
-				RequestXferHandler(packet, simulator);
+				HandleRequestXfer(packet, simulator);
 				break;
 			case ConfirmXferPacket:
-				ConfirmXferPacketHandler(packet, simulator);
+				HandleConfirmXferPacket(packet, simulator);
 				break;
 			case AssetUploadComplete:
-				AssetUploadCompleteHandler(packet, simulator);
+				HandleAssetUploadComplete(packet, simulator);
 				break;
 			case SendXferPacket:
-				SendXferPacketHandler(packet, simulator);
+				HandleSendXferPacket(packet, simulator);
 				break;
 			case AbortXfer:
-				AbortXferHandler(packet, simulator);
+				HandleAbortXfer(packet, simulator);
 				break;
 			case InitiateDownload:
-				InitiateDownloadPacketHandler(packet, simulator);
+				HandleInitiateDownloadPacket(packet, simulator);
 				break;
 		}
 	}
@@ -1476,7 +1476,7 @@ public class AssetManager implements PacketCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void TransferInfoHandler(Packet packet, Simulator simulator)
+	private final void HandleTransferInfo(Packet packet, Simulator simulator)
 	{
 		TransferInfoPacket info = (TransferInfoPacket) packet;
 
@@ -1568,7 +1568,7 @@ public class AssetManager implements PacketCallback
 	 * 
 	 * @throws Exception
 	 */
-	protected final void TransferPacketHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleTransferPacket(Packet packet, Simulator simulator) throws Exception
 	{
 		TransferPacketPacket asset = (TransferPacketPacket) packet;
 		if (_Transfers.containsKey(asset.TransferData.TransferID))
@@ -1619,8 +1619,7 @@ public class AssetManager implements PacketCallback
 			}
 
 			// This assumes that every transfer packet except the last one is
-			// exactly 1000 bytes,
-			// hopefully that is a safe assumption to make
+			// exactly 1000 bytes, hopefully that is a safe assumption to make
 			try
 			{
 				System.arraycopy(asset.TransferData.getData(), 0, download.AssetData, 1000 * asset.TransferData.Packet,
@@ -1677,7 +1676,7 @@ public class AssetManager implements PacketCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void InitiateDownloadPacketHandler(Packet packet, Simulator simulator)
+	private final void HandleInitiateDownloadPacket(Packet packet, Simulator simulator)
 	{
 		InitiateDownloadPacket request = (InitiateDownloadPacket) packet;
 		try
@@ -1696,7 +1695,7 @@ public class AssetManager implements PacketCallback
 	 * 
 	 * @throws Exception
 	 */
-	protected final void RequestXferHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleRequestXfer(Packet packet, Simulator simulator) throws Exception
 	{
 		RequestXferPacket request = (RequestXferPacket) packet;
 		if (PendingUpload == null)
@@ -1723,13 +1722,12 @@ public class AssetManager implements PacketCallback
 	 * 
 	 * @throws Exception
 	 */
-	protected final void ConfirmXferPacketHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleConfirmXferPacket(Packet packet, Simulator simulator) throws Exception
 	{
 		ConfirmXferPacketPacket confirm = (ConfirmXferPacketPacket) packet;
 
 		// Building a new UUID every time an ACK is received for an upload is a
-		// horrible
-		// thing, but this whole Xfer system is horrible
+		// horrible thing, but this whole Xfer system is horrible
 		UUID transferID = new UUID(confirm.XferID.ID);
 		if (_Transfers.containsKey(transferID))
 		{
@@ -1757,7 +1755,7 @@ public class AssetManager implements PacketCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void AssetUploadCompleteHandler(Packet packet, Simulator simulator)
+	private final void HandleAssetUploadComplete(Packet packet, Simulator simulator)
 	{
 		AssetUploadCompletePacket complete = (AssetUploadCompletePacket) packet;
 
@@ -1820,7 +1818,7 @@ public class AssetManager implements PacketCallback
 	 * 
 	 * @throws Exception
 	 */
-	protected final void SendXferPacketHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleSendXferPacket(Packet packet, Simulator simulator) throws Exception
 	{
 		SendXferPacketPacket xfer = (SendXferPacketPacket) packet;
 
@@ -1911,7 +1909,7 @@ public class AssetManager implements PacketCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void AbortXferHandler(Packet packet, Simulator simulator)
+	private final void HandleAbortXfer(Packet packet, Simulator simulator)
 	{
 		AbortXferPacket abort = (AbortXferPacket) packet;
 		XferDownload download = null;

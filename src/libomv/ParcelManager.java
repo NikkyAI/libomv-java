@@ -1480,25 +1480,25 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case ParcelInfoReply:
-				ParcelInfoReplyHandler(packet, simulator);
+				HandleParcelInfoReply(packet, simulator);
 				break;
 			case ParcelDwellReply:
-				ParcelDwellReplyHandler(packet, simulator);
+				HandleParcelDwellReply(packet, simulator);
 				break;
 			case ParcelAccessListReply:
-				ParcelAccessListReplyHandler(packet, simulator);
+				HandleParcelAccessListReply(packet, simulator);
 				break;
 			case ForceObjectSelect:
-				SelectParcelObjectsReplyHandler(packet, simulator);
+				HandleSelectParcelObjectsReply(packet, simulator);
 				break;
 			case ParcelMediaUpdate:
-				ParcelMediaUpdateHandler(packet, simulator);
+				HandleParcelMediaUpdate(packet, simulator);
 				break;
 			case ParcelOverlay:
-				ParcelOverlayHandler(packet, simulator);
+				HandleParcelOverlay(packet, simulator);
 				break;
 			case ParcelMediaCommandMessage:
-				ParcelMediaCommandMessagePacketHandler(packet, simulator);
+				HandleParcelMediaCommandMessagePacket(packet, simulator);
 				break;
 		}
 	}
@@ -1509,10 +1509,10 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case ParcelObjectOwnersReply:
-				ParcelObjectOwnersReplyHandler(message, simulator);
+				HandleParcelObjectOwnersReply(message, simulator);
 				break;
 			case ParcelProperties:
-				ParcelPropertiesReplyHandler(message, simulator);
+				HandleParcelPropertiesReply(message, simulator);
 				break;
 		}
 	}
@@ -2351,7 +2351,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 	}
 
-	private void ParcelDwellReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleParcelDwellReply(Packet packet, Simulator simulator)
 	{
 		ParcelDwellReplyPacket dwell = (ParcelDwellReplyPacket) packet;
 
@@ -2366,7 +2366,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				dwell.Data.Dwell));
 	}
 
-	protected final void ParcelPropertiesReplyHandler(IMessage message, Simulator simulator) throws Exception
+	private final void HandleParcelPropertiesReply(IMessage message, Simulator simulator) throws Exception
 	{
 		if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true)
 		{
@@ -2496,7 +2496,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void ParcelInfoReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleParcelInfoReply(Packet packet, Simulator simulator) throws Exception
 	{
 		ParcelInfoReplyPacket info = (ParcelInfoReplyPacket) packet;
 
@@ -2526,7 +2526,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * 
 	 * Raises the <see cref="ParcelAccessListReply"/> event
 	 */
-	protected final void ParcelAccessListReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleParcelAccessListReply(Packet packet, Simulator simulator)
 	{
 		if (OnParcelAccessListReply.count() > 0 || _Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
 		{
@@ -2566,7 +2566,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	protected final void ParcelObjectOwnersReplyHandler(IMessage message, Simulator simulator)
+	private final void HandleParcelObjectOwnersReply(IMessage message, Simulator simulator)
 	{
 		if (OnParcelObjectOwnersReply.count() > 0)
 		{
@@ -2594,7 +2594,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * 
 	 * Raises the <see cref="ForceSelectObjectsReply"/> event
 	 */
-	protected final void SelectParcelObjectsReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleSelectParcelObjectsReply(Packet packet, Simulator simulator)
 	{
 		if (OnForceSelectObjectsReply.count() > 0)
 		{
@@ -2616,7 +2616,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * 
 	 * @throws Exception
 	 */
-	protected final void ParcelMediaUpdateHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleParcelMediaUpdate(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnParcelMediaUpdateReply != null)
 		{
@@ -2636,7 +2636,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	protected final void ParcelOverlayHandler(Packet packet, Simulator simulator)
+	private final void HandleParcelOverlay(Packet packet, Simulator simulator)
 	{
 		final int OVERLAY_COUNT = 4;
 		ParcelOverlayPacket overlay = (ParcelOverlayPacket) packet;
@@ -2669,7 +2669,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * 
 	 * Raises the <see cref="ParcelMediaCommand"/> event
 	 */
-	protected final void ParcelMediaCommandMessagePacketHandler(Packet packet, Simulator simulator)
+	private final void HandleParcelMediaCommandMessagePacket(Packet packet, Simulator simulator)
 	{
 		if (OnParcelMediaCommand != null)
 		{

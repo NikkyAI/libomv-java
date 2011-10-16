@@ -26,6 +26,7 @@
  */
 package libomv.inventory;
 
+import libomv.assets.AssetWearable.WearableType;
 import libomv.types.UUID;
 
 /** InventoryWearable Class, details on a clothing item or body part */
@@ -59,6 +60,6 @@ public class InventoryWearable extends InventoryItem
 
 	public final void setWearableType(WearableType value)
 	{
-		ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
+		ItemFlags = WearableType.getValue(value) | (ItemFlags & ~0xFF);
 	}
 }

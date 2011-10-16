@@ -59,6 +59,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.XferReceivedCallbackArgs;
+import libomv.assets.AssetWearable.WearableType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
 import libomv.capabilities.CapsMessage.CapsEventType;
@@ -67,7 +68,6 @@ import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
 import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
 import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryFolder;
-import libomv.inventory.InventoryItem.WearableType;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
@@ -1489,7 +1489,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		create.InventoryBlock.NextOwnerMask = nextOwnerMask;
 		create.InventoryBlock.Type = type.getValue();
 		create.InventoryBlock.InvType = invType.getValue();
-		create.InventoryBlock.WearableType = wearableType.getValue();
+		create.InventoryBlock.WearableType = WearableType.getValue(wearableType);
 		create.InventoryBlock.setName(Helpers.StringToBytes(name));
 		create.InventoryBlock.setDescription(Helpers.StringToBytes(description));
 
