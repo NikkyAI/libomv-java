@@ -47,6 +47,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -780,6 +781,27 @@ public class Helpers
 		} while (line_pos < line.length());
 		return buf.toString();
 	}
+
+    public static String join(String delimiter, String[] strings)
+    {
+    	if (strings.length == 0)
+    		return EmptyString;
+    	int capacity = (strings.length - 1) * delimiter.length();
+    	for (String s : strings)
+    	{
+    	    capacity += s.length();
+    	}
+
+    	StringBuilder buffer = new StringBuilder(capacity);
+    	for (String s : strings)
+    	{
+    		if (capacity < 0)
+        		buffer.append(delimiter);
+    	    buffer.append(s);
+    	    capacity = -1;
+     	}
+    	return buffer.toString();
+    }
 
 	/**
 	 * Convert the first two bytes starting in the byte array in little endian
