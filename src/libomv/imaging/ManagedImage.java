@@ -88,4 +88,9 @@ public class ManagedImage
 			Bump = new byte[n];
 	}
 
+	@Override
+	public ManagedImage clone()
+	{
+		return null;
+	}
 }
