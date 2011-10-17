@@ -700,9 +700,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 								Client.Self.getSimPosition(), UUID.Zero, new byte[] { 0 });
 					}
 				}
-				catch (Exception e1)
-				{
-				}
+				catch (Exception ex) { }
 			}
 		}
 	}
@@ -753,9 +751,9 @@ public class GroupManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case AgentGroupDataUpdate:
-				AgentGroupDataUpdateMessageHandler(message, simulator);
+				HandleAgentGroupDataUpdateMessage(message, simulator);
 			case AgentDropGroup:
-				AgentDropGroupMessageHandler(message, simulator);
+				HandleAgentDropGroupMessage(message, simulator);
 		}
 	}
 
@@ -765,58 +763,58 @@ public class GroupManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case AgentGroupDataUpdate:
-				AgentGroupDataUpdateHandler(packet, simulator);
+				HandleAgentGroupDataUpdate(packet, simulator);
 				break;
 			case AgentDropGroup:
-				AgentDropGroupHandler(packet, simulator);
+				HandleAgentDropGroup(packet, simulator);
 				break;
 			case GroupTitlesReply:
-				GroupTitlesReplyHandler(packet, simulator);
+				HandleGroupTitlesReply(packet, simulator);
 				break;
 			case GroupProfileReply:
-				GroupProfileReplyHandler(packet, simulator);
+				HandleGroupProfileReply(packet, simulator);
 				break;
 			case GroupMembersReply:
-				GroupMembersHandler(packet, simulator);
+				HandleGroupMembers(packet, simulator);
 				break;
 			case GroupRoleDataReply:
-				GroupRoleDataReplyHandler(packet, simulator);
+				HandleGroupRoleDataReply(packet, simulator);
 				break;
 			case GroupRoleMembersReply:
-				GroupRoleMembersReplyHandler(packet, simulator);
+				HandleGroupRoleMembersReply(packet, simulator);
 				break;
 			case GroupActiveProposalItemReply:
-				GroupActiveProposalItemHandler(packet, simulator);
+				HandleGroupActiveProposalItem(packet, simulator);
 				break;
 			case GroupVoteHistoryItemReply:
-				GroupVoteHistoryItemHandler(packet, simulator);
+				HandleGroupVoteHistoryItem(packet, simulator);
 				break;
 			case GroupAccountSummaryReply:
-				GroupAccountSummaryReplyHandler(packet, simulator);
+				HandleGroupAccountSummaryReply(packet, simulator);
 				break;
 			case GroupAccountDetailsReply:
-				GroupAccountDetailsHandler(packet, simulator);
+				HandleGroupAccountDetails(packet, simulator);
 				break;
 			case GroupAccountTransactionsReply:
-				GroupAccountTransactionsHandler(packet, simulator);
+				HandleGroupAccountTransactions(packet, simulator);
 				break;
 			case CreateGroupReply:
-				CreateGroupReplyHandler(packet, simulator);
+				HandleCreateGroupReply(packet, simulator);
 				break;
 			case JoinGroupReply:
-				JoinGroupReplyHandler(packet, simulator);
+				HandleJoinGroupReply(packet, simulator);
 				break;
 			case LeaveGroupReply:
-				LeaveGroupReplyHandler(packet, simulator);
+				HandleLeaveGroupReply(packet, simulator);
 				break;
 			case EjectGroupMemberReply:
-				EjectGroupMemberReplyHandler(packet, simulator);
+				HandleEjectGroupMemberReply(packet, simulator);
 				break;
 			case GroupNoticesListReply:
-				GroupNoticesListReplyHandler(packet, simulator);
+				HandleGroupNoticesListReply(packet, simulator);
 				break;
 			case UUIDGroupNameReply:
-				UUIDGroupNameReplyHandler(packet, simulator);
+				HandleUUIDGroupNameReply(packet, simulator);
 				break;
 		}
 	}
@@ -1517,7 +1515,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// #endregion
 
 	// #region Packet Handlers
-	protected final void AgentGroupDataUpdateMessageHandler(IMessage message, Simulator simulator)
+	private final void HandleAgentGroupDataUpdateMessage(IMessage message, Simulator simulator)
 	{
 		if (OnCurrentGroups.count() > 0)
 		{
@@ -1548,7 +1546,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void AgentGroupDataUpdateHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnCurrentGroups.count() > 0)
 		{
@@ -1581,7 +1579,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void AgentDropGroupMessageHandler(IMessage message, Simulator simulator)
+	private final void HandleAgentDropGroupMessage(IMessage message, Simulator simulator)
 	{
 		if (OnGroupDropped.count() > 0)
 		{
@@ -1593,12 +1591,9 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	protected final void AgentDropGroupHandler(Packet packet, Simulator simulator)
+	private final void HandleAgentDropGroup(Packet packet, Simulator simulator)
 	{
-		if (OnGroupDropped.count() > 0)
-		{
-			OnGroupDropped.dispatch(new GroupDroppedCallbackArgs(((AgentDropGroupPacket) packet).AgentData.GroupID));
-		}
+		OnGroupDropped.dispatch(new GroupDroppedCallbackArgs(((AgentDropGroupPacket) packet).AgentData.GroupID));
 	}
 
 	/**
@@ -1610,7 +1605,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupProfileReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupProfileReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		if (OnGroupProfile.count() > 0)
@@ -1647,7 +1642,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupNoticesListReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupNoticesListReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		if (OnGroupNoticesListReply.count() > 0)
@@ -1681,7 +1676,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupTitlesReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupTitlesReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		if (OnGroupTitles.count() > 0)
@@ -1714,7 +1709,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupMembersHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+	private final void HandleGroupMembers(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
 		GroupMembersReplyPacket members = (GroupMembersReplyPacket) packet;
 		Hashtable<UUID, GroupMember> groupMemberCache = null;
@@ -1774,7 +1769,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupRoleDataReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupRoleDataReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		GroupRoleDataReplyPacket roles = (GroupRoleDataReplyPacket) packet;
@@ -1836,7 +1831,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void GroupRoleMembersReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupRoleMembersReply(Packet packet, Simulator simulator)
 	{
 		GroupRoleMembersReplyPacket members = (GroupRoleMembersReplyPacket) packet;
 		ArrayList<Entry<UUID, UUID>> groupRoleMemberCache = null;
@@ -1891,7 +1886,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupActiveProposalItemHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupActiveProposalItem(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		GroupActiveProposalItemReplyPacket proposal = (GroupActiveProposalItemReplyPacket) packet;
@@ -1928,7 +1923,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void GroupVoteHistoryItemHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupVoteHistoryItem(Packet packet, Simulator simulator)
 	{
 		@SuppressWarnings("unused")
 		GroupVoteHistoryItemReplyPacket history = (GroupVoteHistoryItemReplyPacket) packet;
@@ -1957,7 +1952,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void GroupAccountSummaryReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleGroupAccountSummaryReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		if (OnGroupAccountSummaryReply.count() > 0)
@@ -1999,7 +1994,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void CreateGroupReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleCreateGroupReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		CreateGroupReplyPacket reply = (CreateGroupReplyPacket) packet;
@@ -2017,7 +2012,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void JoinGroupReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleJoinGroupReply(Packet packet, Simulator simulator)
 	{
 		JoinGroupReplyPacket reply = (JoinGroupReplyPacket) packet;
 
@@ -2032,7 +2027,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void LeaveGroupReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleLeaveGroupReply(Packet packet, Simulator simulator)
 	{
 		LeaveGroupReplyPacket reply = (LeaveGroupReplyPacket) packet;
 
@@ -2048,7 +2043,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	private void UUIDGroupNameReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+	private void HandleUUIDGroupNameReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
 		UUIDGroupNameReplyPacket reply = (UUIDGroupNameReplyPacket) packet;
 		UUIDGroupNameReplyPacket.UUIDNameBlockBlock[] blocks = reply.UUIDNameBlock;
@@ -2075,7 +2070,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void EjectGroupMemberReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleEjectGroupMemberReply(Packet packet, Simulator simulator)
 	{
 		EjectGroupMemberReplyPacket reply = (EjectGroupMemberReplyPacket) packet;
 
@@ -2086,7 +2081,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 	// #endregion Packet Handlers
 
-	private final void GroupAccountDetailsHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleGroupAccountDetails(Packet packet, Simulator simulator) throws Exception
 	{
 		GroupAccountDetailsReplyPacket details = (GroupAccountDetailsReplyPacket) packet;
 
@@ -2109,7 +2104,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private final void GroupAccountTransactionsHandler(Packet packet, Simulator simulator) throws Exception
+	private final void HandleGroupAccountTransactions(Packet packet, Simulator simulator) throws Exception
 	{
 		GroupAccountTransactionsReplyPacket transactions = (GroupAccountTransactionsReplyPacket) packet;
 
@@ -2567,22 +2562,22 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 */
 	public class GroupInvitationCallbackArgs implements CallbackArgs
 	{
-		private final UUID m_FromAgentID;
-		private final String m_FromAgentName;
+		private final UUID m_GroupID;
+		private final String m_FromName;
 		private final String m_Message;
 		private final Simulator m_Simulator;
 		private boolean m_Accept;
 
 		// The ID of the Avatar sending the group invitation
-		public final UUID getAgentID()
+		public final UUID getGroupID()
 		{
-			return m_FromAgentID;
+			return m_GroupID;
 		}
 
 		// The name of the Avatar sending the group invitation
 		public final String getFromName()
 		{
-			return m_FromAgentName;
+			return m_FromName;
 		}
 
 		// A message containing the request information which includes the name
@@ -2609,11 +2604,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 			m_Accept = value;
 		}
 
-		public GroupInvitationCallbackArgs(Simulator simulator, UUID agentID, String agentName, String message)
+		public GroupInvitationCallbackArgs(Simulator simulator, UUID groupID, String fromName, String message)
 		{
 			this.m_Simulator = simulator;
-			this.m_FromAgentID = agentID;
-			this.m_FromAgentName = agentName;
+			this.m_GroupID = groupID;
+			this.m_FromName = fromName;
 			this.m_Message = message;
 		}
 	}
