@@ -74,69 +74,69 @@ public final class LLSDXml
 	 * private static String LastXmlErrors = Helpers.EmptyString; private static
 	 * Object XmlValidationLock = new Object();
 	 * 
-	 * "\r\n" + "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\r\n" +
+	 * "\r\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
 	 * "<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
 	 * + "\r\n" +
 	 * "  <xs:import schemaLocation=\"xml.xsd\" namespace=\"http://www.w3.org/XML/1998/namespace\" />"
-	 * + "\r\n" + "  <xs:element name=\"uri\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"uuid\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"KEYDATA\">" + "\r\n" + "    <xs:complexType>" +
-	 * "\r\n" + "      <xs:sequence>" + "\r\n" +
-	 * "        <xs:element ref=\"key\" />" + "\r\n" +
-	 * "        <xs:element ref=\"DATA\" />" + "\r\n" + "      </xs:sequence>" +
-	 * "\r\n" + "    </xs:complexType>" + "\r\n" + "  </xs:element>" + "\r\n" +
-	 * "  <xs:element name=\"date\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"key\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"boolean\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"undef\">" + "\r\n" + "    <xs:complexType>" +
-	 * "\r\n" + "      <xs:sequence>" + "\r\n" +
-	 * "        <xs:element ref=\"EMPTY\" />" + "\r\n" + "      </xs:sequence>"
-	 * + "\r\n" + "    </xs:complexType>" + "\r\n" + "  </xs:element>" + "\r\n"
-	 * + "  <xs:element name=\"map\">" + "\r\n" + "    <xs:complexType>" +
-	 * "\r\n" + "      <xs:sequence>" + "\r\n" +
+	 * + "\r\n  <xs:element name=\"uri\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"uuid\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"KEYDATA\">\r\n    <xs:complexType>" +
+	 * "\r\n      <xs:sequence>\r\n" +
+	 * "        <xs:element ref=\"key\" />\r\n" +
+	 * "        <xs:element ref=\"DATA\" />\r\n      </xs:sequence>" +
+	 * "\r\n    </xs:complexType>\r\n  </xs:element>\r\n" +
+	 * "  <xs:element name=\"date\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"key\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"boolean\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"undef\">\r\n    <xs:complexType>" +
+	 * "\r\n      <xs:sequence>\r\n" +
+	 * "        <xs:element ref=\"EMPTY\" />\r\n      </xs:sequence>"
+	 * + "\r\n    </xs:complexType>\r\n  </xs:element>\r\n"
+	 * + "  <xs:element name=\"map\">\r\n    <xs:complexType>" +
+	 * "\r\n      <xs:sequence>\r\n" +
 	 * "        <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" ref=\"KEYDATA\" />"
-	 * + "\r\n" + "      </xs:sequence>" + "\r\n" + "    </xs:complexType>" +
-	 * "\r\n" + "  </xs:element>" + "\r\n" +
-	 * "  <xs:element name=\"real\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"ATOMIC\">" + "\r\n" + "    <xs:complexType>" +
-	 * "\r\n" + "      <xs:choice>" + "\r\n" +
-	 * "        <xs:element ref=\"undef\" />" + "\r\n" +
-	 * "        <xs:element ref=\"boolean\" />" + "\r\n" +
-	 * "        <xs:element ref=\"integer\" />" + "\r\n" +
-	 * "        <xs:element ref=\"real\" />" + "\r\n" +
-	 * "        <xs:element ref=\"uuid\" />" + "\r\n" +
-	 * "        <xs:element ref=\"string\" />" + "\r\n" +
-	 * "        <xs:element ref=\"date\" />" + "\r\n" +
-	 * "        <xs:element ref=\"uri\" />" + "\r\n" +
-	 * "        <xs:element ref=\"binary\" />" + "\r\n" + "      </xs:choice>" +
-	 * "\r\n" + "    </xs:complexType>" + "\r\n" + "  </xs:element>" + "\r\n" +
-	 * "  <xs:element name=\"DATA\">" + "\r\n" + "    <xs:complexType>" + "\r\n"
-	 * + "      <xs:choice>" + "\r\n" + "        <xs:element ref=\"ATOMIC\" />"
-	 * + "\r\n" + "        <xs:element ref=\"map\" />" + "\r\n" +
-	 * "        <xs:element ref=\"array\" />" + "\r\n" + "      </xs:choice>" +
-	 * "\r\n" + "    </xs:complexType>" + "\r\n" + "  </xs:element>" + "\r\n" +
-	 * "  <xs:element name=\"llsd\">" + "\r\n" + "    <xs:complexType>" + "\r\n"
-	 * + "      <xs:sequence>" + "\r\n" + "        <xs:element ref=\"DATA\" />"
-	 * + "\r\n" + "      </xs:sequence>" + "\r\n" + "    </xs:complexType>" +
-	 * "\r\n" + "  </xs:element>" + "\r\n" + "  <xs:element name=\"binary\">" +
-	 * "\r\n" + "    <xs:complexType>" + "\r\n" + "      <xs:simpleContent>" +
-	 * "\r\n" + "        <xs:extension base=\"xs:string\">" + "\r\n" +
+	 * + "\r\n      </xs:sequence>\r\n    </xs:complexType>" +
+	 * "\r\n  </xs:element>\r\n" +
+	 * "  <xs:element name=\"real\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"ATOMIC\">\r\n    <xs:complexType>" +
+	 * "\r\n      <xs:choice>\r\n" +
+	 * "        <xs:element ref=\"undef\" />\r\n" +
+	 * "        <xs:element ref=\"boolean\" />\r\n" +
+	 * "        <xs:element ref=\"integer\" />\r\n" +
+	 * "        <xs:element ref=\"real\" />\r\n" +
+	 * "        <xs:element ref=\"uuid\" />\r\n" +
+	 * "        <xs:element ref=\"string\" />\r\n" +
+	 * "        <xs:element ref=\"date\" />\r\n" +
+	 * "        <xs:element ref=\"uri\" />\r\n" +
+	 * "        <xs:element ref=\"binary\" />\r\n      </xs:choice>" +
+	 * "\r\n    </xs:complexType>\r\n  </xs:element>\r\n" +
+	 * "  <xs:element name=\"DATA\">\r\n    <xs:complexType>\r\n"
+	 * + "      <xs:choice>\r\n        <xs:element ref=\"ATOMIC\" />"
+	 * + "\r\n        <xs:element ref=\"map\" />\r\n" +
+	 * "        <xs:element ref=\"array\" />\r\n      </xs:choice>" +
+	 * "\r\n    </xs:complexType>\r\n  </xs:element>\r\n" +
+	 * "  <xs:element name=\"llsd\">\r\n    <xs:complexType>\r\n"
+	 * + "      <xs:sequence>\r\n        <xs:element ref=\"DATA\" />"
+	 * + "\r\n      </xs:sequence>\r\n    </xs:complexType>" +
+	 * "\r\n  </xs:element>\r\n  <xs:element name=\"binary\">" +
+	 * "\r\n    <xs:complexType>\r\n      <xs:simpleContent>" +
+	 * "\r\n        <xs:extension base=\"xs:string\">\r\n" +
 	 * "          <xs:attribute default=\"base64\" name=\"encoding\" type=\"xs:string\" />"
-	 * + "\r\n" + "        </xs:extension>" + "\r\n" +
-	 * "      </xs:simpleContent>" + "\r\n" + "    </xs:complexType>" + "\r\n" +
-	 * "  </xs:element>" + "\r\n" + "  <xs:element name=\"array\">" + "\r\n" +
-	 * "    <xs:complexType>" + "\r\n" + "      <xs:sequence>" + "\r\n" +
+	 * + "\r\n        </xs:extension>\r\n" +
+	 * "      </xs:simpleContent>\r\n    </xs:complexType>\r\n" +
+	 * "  </xs:element>\r\n  <xs:element name=\"array\">\r\n" +
+	 * "    <xs:complexType>\r\n      <xs:sequence>\r\n" +
 	 * "        <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" ref=\"DATA\" />"
-	 * + "\r\n" + "      </xs:sequence>" + "\r\n" + "    </xs:complexType>" +
-	 * "\r\n" + "  </xs:element>" + "\r\n" +
-	 * "  <xs:element name=\"integer\" type=\"xs:string\" />" + "\r\n" +
-	 * "  <xs:element name=\"string\">" + "\r\n" + "    <xs:complexType>" +
-	 * "\r\n" + "      <xs:simpleContent>" + "\r\n" +
-	 * "        <xs:extension base=\"xs:string\">" + "\r\n" +
-	 * "          <xs:attribute ref=\"xml:space\" />" + "\r\n" +
-	 * "        </xs:extension>" + "\r\n" + "      </xs:simpleContent>" + "\r\n"
-	 * + "    </xs:complexType>" + "\r\n" + "  </xs:element>" + "\r\n" +
-	 * "</xs:schema>" + "\r\n" + \"; MemoryStream stream = new
+	 * + "\r\n      </xs:sequence>\r\n    </xs:complexType>" +
+	 * "\r\n  </xs:element>\r\n" +
+	 * "  <xs:element name=\"integer\" type=\"xs:string\" />\r\n" +
+	 * "  <xs:element name=\"string\">\r\n    <xs:complexType>" +
+	 * "\r\n      <xs:simpleContent>\r\n" +
+	 * "        <xs:extension base=\"xs:string\">\r\n" +
+	 * "          <xs:attribute ref=\"xml:space\" />\r\n" +
+	 * "        </xs:extension>\r\n      </xs:simpleContent>\r\n"
+	 * + "    </xs:complexType>\r\n  </xs:element>\r\n" +
+	 * "</xs:schema>\r\n" + \"; MemoryStream stream = new
 	 * MemoryStream(Encoding.ASCII.GetBytes(schemaText)); XmlSchema = new
 	 * XmlSchema(); XmlSchema = XmlSchema.Read(stream, new
 	 * ValidationEventHandler(LLSDXmlSchemaValidationHandler)); } } private
