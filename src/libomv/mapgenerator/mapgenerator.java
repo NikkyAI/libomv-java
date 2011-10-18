@@ -416,7 +416,7 @@ public class mapgenerator
 	{
 		boolean variableFields = false;
 
-		writer.println("    public class " + block.Name + "Block\n" + "    {");
+		writer.println("    public class " + block.Name + "Block\n    {");
 
 		for (int k = 0; k < block.Fields.size(); k++)
 		{
@@ -464,7 +464,7 @@ public class mapgenerator
 		writer.println("        public " + block.Name + "Block() { }");
 
 		// Constructor for building the class from bytes
-		writer.println("        public " + block.Name + "Block(ByteBuffer bytes)" + "\n" + "        {");
+		writer.println("        public " + block.Name + "Block(ByteBuffer bytes)\n        {");
 
 		// Declare a length variable if we need it for variable fields in this
 		// constructor
@@ -482,7 +482,7 @@ public class mapgenerator
 		writer.println("        }\n");
 
 		// ToBytes() function
-		writer.println("        public void ToBytes(ByteBuffer bytes) throws Exception\n" + "        {");
+		writer.println("        public void ToBytes(ByteBuffer bytes) throws Exception\n        {");
 
 		for (int k = 0; k < block.Fields.size(); k++)
 		{
@@ -493,7 +493,7 @@ public class mapgenerator
 		writer.println("        }\n");
 
 		// toString() function
-		writer.println("        @Override\n" + "        public String toString()\n" + "        {");
+		writer.println("        @Override\n        public String toString()\n        {");
 		writer.println("            String output = \"-- " + block.Name + " --\\n\";");
 		writer.println("            try {");
 
@@ -634,7 +634,7 @@ public class mapgenerator
 		writer.println("");
 
 		// Default constructor
-		writer.println("    public " + packet.Name + "Packet()\n" + "    {");
+		writer.println("    public " + packet.Name + "Packet()\n    {");
 		writer.println("        hasVariableBlocks = " + (hasVariableBlocks ? "true" : "false") + ";");
 		writer.println("        header = new PacketHeader(PacketFrequency." + PacketFrequency.Names[packet.Frequency]
 				+ ");");
@@ -980,7 +980,7 @@ public class mapgenerator
 			}
 		}
 
-		writer.println("        return length;\n" + "    }\n");
+		writer.println("        return length;\n    }\n");
 
 		// ToBytes() function
 		writer.println("    @Override");
@@ -1060,11 +1060,11 @@ public class mapgenerator
 			}
 		}
 
-		writer.println("        return bytes;\n" + "    }\n");
+		writer.println("        return bytes;\n    }\n");
 
 		// toString() function
 		writer.println("    @Override");
-		writer.println("    public String toString()\n" + "    {");
+		writer.println("    public String toString()\n    {");
 		writer.println("        String output = \"--- " + packet.Name + " ---\\n\";");
 
 		for (int k = 0; k < packet.Blocks.size(); k++)
@@ -1084,8 +1084,8 @@ public class mapgenerator
 				if (block.Count == -1)
 				{
 					// Variable count block
-					writer.println("        for (int j = 0; j < " + sanitizedName + ".length; j++)\n" + "        {");
-					writer.println("            output += " + sanitizedName + "[j].toString() + \"\\n\";\n" + "        }");
+					writer.println("        for (int j = 0; j < " + sanitizedName + ".length; j++)\n        {");
+					writer.println("            output += " + sanitizedName + "[j].toString() + \"\\n\";\n        }");
 				}
 				else if (block.Count == 1)
 				{
@@ -1094,8 +1094,8 @@ public class mapgenerator
 				else
 				{
 					// Multiple count block
-					writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n" + "        {");
-					writer.println("            output += " + sanitizedName + "[j].toString() + \"\\n\";\n" + "        }");
+					writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n        {");
+					writer.println("            output += " + sanitizedName + "[j].toString() + \"\\n\";\n        }");
 				}
 			}
 			else
@@ -1115,7 +1115,7 @@ public class mapgenerator
 				else
 				{
 					// Multiple count block
-					writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n" + "        {");
+					writer.println("        for (int j = 0; j < " + block.Count + "; j++)\n        {");
 					WriteFieldToString(writer, 12, field, "j");
 					writer.println("        }");
 				}
@@ -1123,7 +1123,7 @@ public class mapgenerator
 			}
 		}
 
-		writer.println("        return output;\n" + "    }");
+		writer.println("        return output;\n    }");
 
 		// Closing function bracket
 		writer.println("}");
@@ -1154,8 +1154,7 @@ public class mapgenerator
 			PrintWriter packettype_writer = new PrintWriter(new FileWriter(new File(packets_dir, "PacketType.java")));
 
 			// Write the PacketType enum
-			packettype_writer.println("package libomv.packets;\n " + "public enum PacketType\n" + "{\n"
-					+ "    Default,");
+			packettype_writer.println("package libomv.packets;\npublic enum PacketType\n{\n    Default,");
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
 				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
@@ -1199,15 +1198,15 @@ public class mapgenerator
 					+ "    // Serializes the packet in to a byte array\n"
 					+ "    // return A byte array containing the serialized packet payload, ready to be sent across the wire\n"
 					+ "    public abstract ByteBuffer ToBytes() throws Exception;\n\n"
-					+ "    public ByteBuffer[] ToBytesMultiple()\n" + "    {\n"
-					+ "         throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n" + "    }\n"
+					+ "    public ByteBuffer[] ToBytesMultiple()\n    {\n"
+					+ "         throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n    }\n"
 					+ "    //Get the PacketType for a given packet id and packet frequency\n"
 					+ "    //<param name=\"id\">The packet ID from the header</param>\n"
 					+ "    //<param name=\"frequency\">Frequency of this packet</param>\n"
 					+ "    //<returns>The packet type, or PacketType.Default</returns>\n"
-					+ "    public static PacketType getType(short id, byte frequency)\n" + "    {\n"
-					+ "        switch (frequency)\n" + "        {\n" + "            case PacketFrequency.Low:\n"
-					+ "                switch (id)\n" + "                {");
+					+ "    public static PacketType getType(short id, byte frequency)\n    {\n"
+					+ "        switch (frequency)\n        {\n            case PacketFrequency.Low:\n"
+					+ "                switch (id)\n                {");
 
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
@@ -1232,8 +1231,8 @@ public class mapgenerator
 				}
 			}
 
-			writer.println("                    }\n" + "                    break;\n"
-					+ "                case PacketFrequency.High:\n" + "                    switch (id)\n"
+			writer.println("                    }\n                    break;\n"
+					+ "                case PacketFrequency.High:\n                    switch (id)\n"
 					+ "                    {");
 
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
@@ -1257,7 +1256,7 @@ public class mapgenerator
 					+ "         * @returns The native packet class for this type of packet, typecasted to the generic Packet\n"
 					+ "         */\n"
 					+ "        public static Packet BuildPacket(CapsEventType capsKey,  OSDMap map) throws Exception\n"
-					+ "        {\n" + "            return null;\n" + "        }\n\n");
+					+ "        {\n            return null;\n        }\n\n");
 
 			writer.println("        /**\n"
 					+ "         * Construct a packet in it's native class from a byte array\n"
@@ -1265,12 +1264,12 @@ public class mapgenerator
 					+ "         * @param bytes Byte array containing the packet, starting at position 0\n"
 					+ "         * @param packetEnd The last byte of the packet. If the packet was 76 bytes long, packetEnd would be 75\n"
 					+ "         * @returns The native packet class for this type of packet, typecasted to the generic Packet\n"
-					+ "         */\n" + "        public static Packet BuildPacket(ByteBuffer bytes) throws Exception\n"
-					+ "        {\n" + "            PacketHeader header = new PacketHeader(bytes);\n"
+					+ "         */\n        public static Packet BuildPacket(ByteBuffer bytes) throws Exception\n"
+					+ "        {\n            PacketHeader header = new PacketHeader(bytes);\n"
 					+ "            bytes.order(ByteOrder.LITTLE_ENDIAN);\n"
 					+ "            bytes.position(header.getLength());\n\n"
-					+ "            switch (header.getFrequency())" + "            {\n"
-					+ "                case PacketFrequency.Low:\n" + "                    switch (header.getID())\n"
+					+ "            switch (header.getFrequency())            {\n"
+					+ "                case PacketFrequency.Low:\n                    switch (header.getID())\n"
 					+ "                    {");
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
@@ -1281,8 +1280,8 @@ public class mapgenerator
 							+ "Packet(header,bytes);");
 				}
 			}
-			writer.println("                    }\n" + "                case PacketFrequency.Medium:\n"
-					+ "                    switch (header.getID())\n" + "                    {");
+			writer.println("                    }\n                case PacketFrequency.Medium:\n"
+					+ "                    switch (header.getID())\n                    {");
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
 				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
@@ -1292,8 +1291,8 @@ public class mapgenerator
 							+ "Packet(header, bytes);");
 				}
 			}
-			writer.println("                    }\n" + "                case PacketFrequency.High:\n"
-					+ "                    switch (header.getID())\n" + "                    {");
+			writer.println("                    }\n                case PacketFrequency.High:\n"
+					+ "                    switch (header.getID())\n                    {");
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
 				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
@@ -1303,8 +1302,8 @@ public class mapgenerator
 							+ "Packet(header, bytes);");
 				}
 			}
-			writer.println("                    }\n" + "            }\n"
-					+ "            throw new Exception(\"Unknown packet ID\");\n" + "        }\n");
+			writer.println("                    }\n            }\n"
+					+ "            throw new Exception(\"Unknown packet ID\");\n        }\n");
 
 			// Write the packet classes
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
