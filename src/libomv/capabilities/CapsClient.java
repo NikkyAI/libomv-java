@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Timer;
@@ -60,7 +61,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
@@ -107,11 +107,24 @@ public class CapsClient
 		Address = address;
 		Client = new DefaultHttpAsyncClient();
 
-		if (address.getScheme().equals("https") && address.getHost().contains("linden"))
+		if (address.getScheme().equals("https"))
 		{
 			try
 			{
-				register(new Scheme("https", 443, new SSLLayeringStrategy(Helpers.GetExtendedKeyStore(cert))));
+				String name;
+				if (cert == null && address.getHost().contains("linden"))
+				{
+					cert = Helpers.GetLindenCertificate();
+					name = "lindenlab";
+				}
+				else
+				{
+					name = "user_certificate";
+				}
+
+				KeyStore store = Helpers.GetExtendedKeyStore();
+				store.setCertificateEntry(name, cert);
+				register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 			}
 			catch (Exception ex)
 			{
@@ -140,7 +153,7 @@ public class CapsClient
 	 */
 	public OSD GetResponse(long timeout) throws InterruptedException, ExecutionException, TimeoutException
 	{
-		Future<OSD> result = BeginGetResponse(-1);
+		Future<OSD> result = BeginGetResponse("", -1);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
@@ -159,20 +172,35 @@ public class CapsClient
 	}
 
 	/**
-	 * Request a response from the
+	 * Do a HTTP Get Request from the server
 	 * 
-	 * @param timeout
-	 * @return
-	 * @throws ClientProtocolException
+	 * @param acceptHeader The content type to add as Accept: header or null
+	 * @param timeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @return A Future that can be used to retrieve the data
 	 */
-	public Future<OSD> BeginGetResponse(long timeout)
+	public Future<OSD> BeginGetResponse(String acceptHeader, long timeout)
 	{
-		return GetResponseAsync(new HttpGet(), timeout, null);
+		return BeginGetResponse(acceptHeader, timeout, null);
 	}
 
-	public Future<OSD> BeginGetResponse(long timeout, FutureCallback<OSD> callback)
+	/**
+	 * Do a HTTP Get Request from the server
+	 * 
+	 * @param acceptHeader The content type to add as Accept: header or null
+	 * @param timeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @param callback The callback to call for reporting about the result of the get request
+	 * @return A Future that can be used to retrieve the data
+	 */
+	public Future<OSD> BeginGetResponse(String acceptHeader, long timeout, FutureCallback<OSD> callback)
 	{
-		return GetResponseAsync(new HttpGet(), timeout, callback);
+		HttpRequest request = new HttpGet();
+		if (acceptHeader != null && !acceptHeader.isEmpty())
+		{
+			request.addHeader("Accept", acceptHeader);
+		}
+		return GetResponseAsync(request, timeout, callback);
 	}
 
 	public Future<OSD> BeginGetResponse(IMessage message, long timeout) throws IOException

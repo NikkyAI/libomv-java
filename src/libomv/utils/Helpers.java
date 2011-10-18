@@ -47,7 +47,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -2290,8 +2289,8 @@ public class Helpers
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static KeyStore GetExtendedKeyStore(X509Certificate cert) throws IOException, KeyStoreException,
-			CertificateException, NoSuchAlgorithmException
+	public static KeyStore GetExtendedKeyStore() throws KeyStoreException, IOException,
+	                                                                        NoSuchAlgorithmException, CertificateException
 	{
 		KeyStore ks = null;
 
@@ -2330,25 +2329,27 @@ public class Helpers
 			in.close();
 		}
 
-		if (cert == null)
-		{
-			InputStream fis = Helpers.class.getResourceAsStream("/res/linden.cert");
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			try
-			{
-				CertificateFactory cf = CertificateFactory.getInstance("X.509");
-				cert = (X509Certificate) cf.generateCertificate(bis);
-			}
-			catch (CertificateException ex)
-			{
-				throw ex;
-			}
-			finally
-			{
-				fis.close();
-			}
-		}
-		ks.setCertificateEntry("lindenlabca", cert);
 		return ks;
+	}
+
+	public static X509Certificate GetLindenCertificate() throws CertificateException, IOException
+	{
+		X509Certificate cert;
+		InputStream fis = Helpers.class.getResourceAsStream("/res/linden.cert");
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		try
+		{
+			CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			cert = (X509Certificate) cf.generateCertificate(bis);
+		}
+		catch (CertificateException ex)
+		{
+			throw ex;
+		}
+		finally
+		{
+			fis.close();
+		}
+		return cert;
 	}
 }

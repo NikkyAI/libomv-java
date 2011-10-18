@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.security.KeyStore;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1051,7 +1052,9 @@ public class LoginManager
 
 				if (loginUri.getScheme().equals("https") && loginUri.getHost().contains("linden"))
 				{
-					client.register(new Scheme("https", 443, new SSLSocketFactory(Helpers.GetExtendedKeyStore(null))));
+					KeyStore ks = Helpers.GetExtendedKeyStore();
+					ks.setCertificateEntry("lindenlab", Helpers.GetLindenCertificate());
+					client.register(new Scheme("https", 443, new SSLSocketFactory(ks)));
 				}
 
 				// Start the request
