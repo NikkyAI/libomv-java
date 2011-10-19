@@ -151,9 +151,9 @@ public class CapsClient
 	 * @throws TimeoutException
 	 * @throws ClientProtocolException
 	 */
-	public OSD GetResponse(long timeout) throws InterruptedException, ExecutionException, TimeoutException
+	public OSD GetResponse(String acceptHeader, long timeout) throws InterruptedException, ExecutionException, TimeoutException
 	{
-		Future<OSD> result = BeginGetResponse("", -1);
+		Future<OSD> result = BeginGetResponse(acceptHeader, -1, null);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
@@ -305,8 +305,8 @@ public class CapsClient
 
 		try
 		{
-			final Future<OSD> result = Client.execute(new CapsHttpAsyncRequestProducer(determineTarget(Address),
-					request), new CapsHttpAsyncResponseConsumer(), new CapsHttpAsyncCallback(callback));
+			final Future<OSD> result = Client.execute(new CapsHttpAsyncRequestProducer(determineTarget(Address), request),
+					                                  new CapsHttpAsyncResponseConsumer(), new CapsHttpAsyncCallback(callback));
 
 			if (timeout >= 0)
 			{
@@ -465,6 +465,7 @@ public class CapsClient
 	private class CapsHttpAsyncResponseConsumer implements HttpAsyncResponseConsumer<OSD>
 	{
 		private volatile Charset charset;
+		private volatile long length;
 		private volatile OSD result;
 		private volatile Exception ex;
 		private volatile boolean completed;
@@ -500,6 +501,7 @@ public class CapsClient
 				{
 					charset = HTTP.DEFAULT_CONTENT_CHARSET;
 				}
+				this.length = entity.getContentLength();
 				this.charset = Charset.forName(charset);
 			}
 		}
@@ -587,11 +589,13 @@ public class CapsClient
 		{
 			private final ContentDecoder decoder;
 			private final ByteBuffer buffer;
+			private volatile long pos;
 
 			public ContentDecoderStream(ContentDecoder decoder)
 			{
 				this.decoder = decoder;
 				this.buffer = ByteBuffer.allocate(1024);
+				this.pos = 0;
 			}
 
 			@Override
@@ -611,13 +615,17 @@ public class CapsClient
 					this.decoder.read(this.buffer);
 					this.buffer.flip();
 				}
+				progress(1);
 				return this.buffer.get();
 			}
 
 			@Override
 			public int read(byte[] b) throws IOException
 			{
-				return read(b, 0, b.length);
+				int bytes = read(b, 0, b.length);
+				if (bytes > 0)
+					progress(bytes);
+				return bytes;
 			}
 
 			/**
@@ -697,6 +705,7 @@ public class CapsClient
 					// requested bytes
 					if (this.decoder.isCompleted() || length == 0)
 					{
+						progress(bytes);
 						return bytes == 0 ? -1 : bytes;
 					}
 
@@ -705,7 +714,14 @@ public class CapsClient
 					this.decoder.read(this.buffer);
 					this.buffer.flip();
 				}
+				progress(bytes);
 				return bytes;
+			}
+			
+			private void progress(int bytes)
+			{
+				pos += bytes;
+//				callback.progress(pos, length);
 			}
 		}
 	}

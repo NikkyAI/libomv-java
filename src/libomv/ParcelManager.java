@@ -2317,14 +2317,14 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				LandResourcesMessage response = _Client.Messages.new LandResourcesMessage();
 				response.Deserialize((OSDMap) result);
 				CapsClient summaryRequest = new CapsClient(response.ScriptResourceSummary);
-				OSD osd = summaryRequest.GetResponse(_Client.Settings.CAPS_TIMEOUT);
+				OSD osd = summaryRequest.GetResponse(Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 
 				LandResourcesInfo info = _Client.Messages.new LandResourcesInfo();
 				info.Deserialize((OSDMap) osd);
 				if (response.ScriptResourceDetails != null && getDetails)
 				{
 					CapsClient detailRequest = new CapsClient(response.ScriptResourceDetails);
-					osd = detailRequest.GetResponse(_Client.Settings.CAPS_TIMEOUT);
+					osd = detailRequest.GetResponse(Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 					info.Deserialize((OSDMap) osd);
 				}
 				callback.callback(true, info);
@@ -2338,7 +2338,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		@Override
 		public void cancelled()
 		{
-			Logger.Log("Fetching land resources was cacelled", LogLevel.Error, _Client);
+			Logger.Log("Fetching land resources was cancelled", LogLevel.Error, _Client);
 			callback.callback(false, null);
 		}
 
