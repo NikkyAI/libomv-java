@@ -42,6 +42,7 @@ import org.apache.http.nio.concurrent.FutureCallback;
 import net.xmlrpc.XMLRPCClient;
 
 import libomv.GridClient;
+import libomv.GridClient.GridInfo;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
@@ -171,6 +172,20 @@ public class LoginManager
 			this.Version = Settings.APPLICATION_VERSION;
 		}
 
+
+		public LoginParams(GridClient client)
+		{
+			this();
+			this.Timeout = client.Settings.LOGIN_TIMEOUT;
+			GridInfo gridInfo = client.getDefaultGrid();
+			this.URI = gridInfo.loginuri;
+			this.FirstName = gridInfo.firstname;
+			this.LastName = gridInfo.lastname;
+			this.Password = gridInfo.getPassword();
+			if (gridInfo.startLocation != null)
+				this.Start = gridInfo.startLocation;
+		}
+		
 		/**
 		 * Instantiates new LoginParams object and fills in the values
 		 * 

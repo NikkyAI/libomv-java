@@ -66,6 +66,7 @@ public class MainWindow extends JFrame
 	private JPasswordField jPwdPassword;
 	private JButton jBtnLogin;
 	private JComboBox jcbGridSelector;
+	private JComboBox jcbLocation;
 	private JButton jBtnGrids;
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
@@ -226,6 +227,8 @@ public class MainWindow extends JFrame
 			gridBagConstraints.gridx = 6;
 			gridBagConstraints.gridy = 1;
 			jLoginPanel.add(getChckbxSavePassword(), gridBagConstraints);
+			
+			initializeLoginPanel(_Client.getDefaultGrid());
 		}
 		return jLoginPanel;
 	}
@@ -240,9 +243,6 @@ public class MainWindow extends JFrame
 		if (jTxtFirstName == null)
 		{
 			jTxtFirstName = new JTextField(20);
-			String text = _Client.getDefaultGrid().firstname;
-			if (text != null)
-			    jTxtLastName.setText(text);
 		}
 		return jTxtFirstName;
 	}
@@ -257,9 +257,6 @@ public class MainWindow extends JFrame
 		if (jTxtLastName == null)
 		{
 			jTxtLastName = new JTextField(20);
-			String text = _Client.getDefaultGrid().lastname;
-			if (text != null)
-			    jTxtLastName.setText(text);
 		}
 		return jTxtLastName;
 	}
@@ -274,9 +271,6 @@ public class MainWindow extends JFrame
 		if (jPwdPassword == null)
 		{
 			jPwdPassword = new JPasswordField(20);
-			String text = _Client.getDefaultGrid().getPassword();
-			if (text != null)
-				jPwdPassword.setText(text);
 		}
 		return jPwdPassword;
 	}
@@ -297,9 +291,32 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					String selection = (String) getJcbGridSelector().getSelectedItem();
-					GridInfo grid = _Client.getGrid(selection);
+					String string = (String) getJcbGridSelector().getSelectedItem();
+					_Client.setDefaultGrid(string);
+					GridInfo grid = _Client.getDefaultGrid();
 
+					grid.saveSettings = getChckbxSaveDetails().isSelected();
+					grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
+					grid.startLocation = (String) getJcbStartLocation().getSelectedItem();
+
+					string = getJTxtFirstName().getText(); 
+					if (string != null)
+						grid.firstname = string;
+					string = getJTxtLastName().getText();
+					if (string != null)
+						grid.lastname = string;
+					string = getJPwdPassword().getPassword().toString();
+					if (string != null)
+						grid.setPassword(string);
+					
+					try
+					{
+						_Client.Login.Login(_Client.Login.new LoginParams(_Client));
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 			});
 		}
@@ -317,28 +334,47 @@ public class MainWindow extends JFrame
 				jcbGridSelector.addItem(grid);
 			}
 			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid().gridnick);
-			jcbGridSelector.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent evt)
-				{
-					String selection = (String)((JComboBox)evt.getSource()).getSelectedItem();
-					GridInfo grid = _Client.getGrid(selection);
-					if (grid.firstname != null)
-						getJTxtFirstName().setText(grid.firstname);
-					if (grid.lastname != null)
-						getJTxtLastName().setText(grid.lastname);
-					if (grid.getPassword() != null)
-						getJPwdPassword().setText(grid.getPassword());
-					getChckbxSaveDetails().setSelected(grid.saveSettings);
-					getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
-					getChckbxSavePassword().setEnabled(grid.saveSettings);				
-				}
-			});
+			jcbGridSelector.addActionListener(new GridSelectionListener());
 		}
 		return jcbGridSelector;
 	}
 
+	private JComboBox getJcbStartLocation()
+	{
+		if (jcbLocation == null)
+		{
+			jcbLocation = new JComboBox();
+			jcbLocation.setEditable(true);
+			jcbLocation.addItem("Last");
+			jcbLocation.addItem("Home");
+			String start = _Client.getDefaultGrid().startLocation.toLowerCase();
+			if (start == null || start.isEmpty() || start.equalsIgnoreCase("last"))
+			{
+				jcbLocation.setSelectedIndex(0);
+			}
+			else if (start.equalsIgnoreCase("home"))
+			{
+				jcbLocation.setSelectedIndex(1);
+			}
+			else
+			{
+				jcbLocation.addItem(start);
+				jcbLocation.setSelectedItem(start);
+			}
+
+		}
+		return jcbLocation;
+	}
+	private class GridSelectionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent evt)
+		{
+			String selection = (String)((JComboBox)evt.getSource()).getSelectedItem();
+			initializeLoginPanel(_Client.getGrid(selection));
+		}
+	}
+	
 	/**
 	 * This method initializes our Grid button
 	 * 
@@ -368,10 +404,6 @@ public class MainWindow extends JFrame
 		{
 			jChkSaveDetails = new JCheckBox("Save Details");
 			jChkSaveDetails.setHorizontalAlignment(SwingConstants.CENTER);
-			GridInfo grid = _Client.getDefaultGrid();
-			jChkSaveDetails.setSelected(grid.saveSettings);
-			getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
-			getChckbxSavePassword().setEnabled(grid.saveSettings);				
 			
 			jChkSaveDetails.addActionListener(new ActionListener()
 			{
@@ -382,7 +414,7 @@ public class MainWindow extends JFrame
 					getChckbxSavePassword().setEnabled(cb.isSelected());
 					if (!cb.isSelected())
 					{
-						getChckbxSavePassword().setEnabled(false);
+						getChckbxSavePassword().setSelected(false);
 					}
 				}	
 			});
@@ -395,7 +427,6 @@ public class MainWindow extends JFrame
 		if (jChkSavePassword == null)
 		{
 			jChkSavePassword = new JCheckBox("Save Password");
-			jChkSavePassword.setSelected(_Client.getDefaultGrid().savePassword);
 		}
 		return jChkSavePassword;
 	}
@@ -450,5 +481,22 @@ public class MainWindow extends JFrame
 			jMbMain.add(help);
 		}
 		return jMbMain;
+	}
+	
+	private void initializeLoginPanel(GridInfo grid)
+	{
+		if (grid.startLocation != null)
+		{
+			getJcbStartLocation().setSelectedItem(grid.startLocation);
+		}
+		if (grid.firstname != null)
+			getJTxtFirstName().setText(grid.firstname);
+		if (grid.lastname != null)
+			getJTxtLastName().setText(grid.lastname);
+		if (grid.getPassword() != null)
+			getJPwdPassword().setText(grid.getPassword());
+		getChckbxSaveDetails().setSelected(grid.saveSettings);
+		getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
+		getChckbxSavePassword().setEnabled(grid.saveSettings);				
 	}
 }
