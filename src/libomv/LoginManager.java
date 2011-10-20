@@ -1009,7 +1009,8 @@ public class LoginManager
 
 				// Make the CAPS POST for login
 				CapsClient loginRequest = new CapsClient(loginUri);
-				loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout, new LoginReplyLLSDHandler(loginParams));
+				loginRequest.setResultCallback(new LoginReplyLLSDHandler(loginParams));
+				loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout);
 				// #endregion
 			}
 			else

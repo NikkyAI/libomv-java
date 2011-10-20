@@ -2281,8 +2281,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			CapsClient request = new CapsClient(url);
 			LandResourcesRequest req = _Client.Messages.new LandResourcesRequest();
 			req.ParcelID = parcelID;
-			request.BeginGetResponse(req, _Client.Settings.CAPS_TIMEOUT, new LandResourcesMessageHandler(getDetails,
-					callback));
+			request.setResultCallback(new LandResourcesMessageHandler(getDetails, callback));
+			request.BeginGetResponse(req, _Client.Settings.CAPS_TIMEOUT);
 
 		}
 		catch (Exception ex)

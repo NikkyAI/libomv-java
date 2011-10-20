@@ -1103,8 +1103,8 @@ public class AssetManager implements PacketCallback
 								{
 									// POST the asset data
 									CapsClient upload = new CapsClient(uploadUrl);
-									upload.BeginGetResponse(textureData, "application/octet-stream",
-											_Client.Settings.CAPS_TIMEOUT, new RequestUploadBakedTextureComplete());
+									upload.setResultCallback(new RequestUploadBakedTextureComplete());
+									upload.BeginGetResponse(textureData, "application/octet-stream", _Client.Settings.CAPS_TIMEOUT);
 								}
 								catch (IOException ex)
 								{
@@ -1133,8 +1133,8 @@ public class AssetManager implements PacketCallback
 					callback.callback(UUID.Zero);
 				}
 			}
-			request.BeginGetResponse(new OSDMap(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new RequestUploadBakedTextureComplete());
+			request.setResultCallback(new RequestUploadBakedTextureComplete());
+			request.BeginGetResponse(new OSDMap(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{

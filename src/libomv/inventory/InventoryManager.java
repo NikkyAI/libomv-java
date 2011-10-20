@@ -765,7 +765,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
             OSDMap req = new OSDMap(1);
             req.put("folders", requestedFolders);
 
-            request.BeginGetResponse(req, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT, new CapsCallback());
+            request.setResultCallback(new CapsCallback());
+            request.BeginGetResponse(req, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
         }
         catch (Exception ex)
         {
@@ -1642,8 +1643,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 			// Make the request
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new CreateItemFromAssetResponse(callback, data, _Client.Settings.CAPS_TIMEOUT, query));
+			request.setResultCallback(new CreateItemFromAssetResponse(callback, data, _Client.Settings.CAPS_TIMEOUT, query));
+			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -1871,7 +1872,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			message.ObjectID = objectID;
 
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(message, _Client.Settings.CAPS_TIMEOUT, null);
+			request.BeginGetResponse(message, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -1988,8 +1989,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 			// Make the request
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new UploadInventoryAssetComplete(callback, data, notecardID));
+			request.setResultCallback(new UploadInventoryAssetComplete(callback, data, notecardID));
+			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -2022,8 +2023,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 			// Make the request
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new UploadInventoryAssetComplete(callback, data, notecardID));
+			request.setResultCallback(new UploadInventoryAssetComplete(callback, data, notecardID));
+			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);		
 		}
 		else
 		{
@@ -2053,8 +2054,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 			// Make the request
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new UploadInventoryAssetComplete(callback, data, gestureID));
+			request.setResultCallback(new UploadInventoryAssetComplete(callback, data, gestureID));
+			request.BeginGetResponse(query, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);				
 		}
 		else
 		{
@@ -2086,8 +2087,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			map.put("target", OSD.FromString(mono ? "mono" : "lsl2"));
 
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(map, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new UpdateScriptAgentInventoryResponse(callback, data, itemID));
+			request.setResultCallback(new UpdateScriptAgentInventoryResponse(callback, data, itemID));
+			request.BeginGetResponse(map, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+					
 		}
 		else
 		{
@@ -2125,8 +2127,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			msg.Target = mono ? "mono" : "lsl2";
 
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT,
-					new UpdateScriptAgentInventoryResponse(callback, data, itemID));
+			request.setResultCallback(new UpdateScriptAgentInventoryResponse(callback, data, itemID));
+			request.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -3403,8 +3405,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				try
 				{
 					CapsClient upload = new CapsClient(new URI(uploadURL));
-					upload.BeginGetResponse(itemData, "application/octet-stream", timeout,
-							new CreateItemFromAssetResponse(callback, itemData, timeout, request));
+					upload.setResultCallback(new CreateItemFromAssetResponse(callback, itemData, timeout, request));
+					upload.BeginGetResponse(itemData, "application/octet-stream", timeout);
 				}
 				catch (Exception ex)
 				{
@@ -3555,9 +3557,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						try
 						{
 							CapsClient upload = new CapsClient(uploadURL);
-							upload.BeginGetResponse(itemData, "application/octet-stream",
-									_Client.Settings.CAPS_TIMEOUT, new UploadInventoryAssetComplete(callback, itemData,
-											assetID));
+							upload.setResultCallback(new UploadInventoryAssetComplete(callback, itemData, assetID));
+							upload.BeginGetResponse(itemData, "application/octet-stream", _Client.Settings.CAPS_TIMEOUT);
 						}
 						catch (Exception ex)
 						{
@@ -3682,8 +3683,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				try
 				{
 					CapsClient upload = new CapsClient(new URI(uploadURL));
-					upload.BeginGetResponse(itemData, "application/octet-stream", _Client.Settings.CAPS_TIMEOUT,
-							new UpdateScriptAgentInventoryResponse(callback, itemData, scriptID));
+					upload.setResultCallback(new UpdateScriptAgentInventoryResponse(callback, itemData, scriptID));
+					upload.BeginGetResponse(itemData, "application/octet-stream", _Client.Settings.CAPS_TIMEOUT);		
 				}
 				catch (Exception ex)
 				{

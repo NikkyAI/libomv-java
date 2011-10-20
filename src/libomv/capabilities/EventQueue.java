@@ -109,8 +109,9 @@ public class EventQueue extends CapsClient
 		try
 		{
 			byte[] postData = osdRequest.serializeToBytes(OSD.OSDFormat.Xml);
-			// Start or resume the connection.
-			Request = BeginGetResponse(postData, "application/xml", REQUEST_TIMEOUT, new EventClientCallback(first));
+			// Start or resume the connection
+			setResultCallback(new EventClientCallback(first));
+			Request = BeginGetResponse(postData, "application/xml", REQUEST_TIMEOUT);
 		}
 		catch (IOException e)
 		{
@@ -224,7 +225,7 @@ public class EventQueue extends CapsClient
 					{
 						Request = null;
 					}
-					Logger.Log(String.format("Closing event queue at %s due to missing caps URI", Address.toString()),
+					Logger.Log(String.format("Closing event queue at %s due to missing caps URI", getAddress().toString()),
 							LogLevel.Info, Simulator.getClient());
 					return;
 				}
@@ -247,18 +248,18 @@ public class EventQueue extends CapsClient
 					if (status != HttpStatus.SC_OK)
 					{
 						Logger.Log(String.format("Unrecognized caps connection problem from %s: %d",
-								Address.toString(), status), LogLevel.Warning, Simulator.getClient());
+								getAddress().toString(), status), LogLevel.Warning, Simulator.getClient());
 					}
 					else if (ex.getCause() != null)
 					{
 						Logger.Log(String.format("Unrecognized internal caps exception from %s: %s",
-								Address.toString(), ex.getCause().getMessage()), LogLevel.Warning, Simulator
+								getAddress().toString(), ex.getCause().getMessage()), LogLevel.Warning, Simulator
 								.getClient());
 					}
 					else
 					{
 						Logger.Log(
-								String.format("Unrecognized caps exception from %s: %s", Address.toString(),
+								String.format("Unrecognized caps exception from %s: %s", getAddress().toString(),
 										ex.getMessage()), LogLevel.Warning, Simulator.getClient());
 					}
 				}

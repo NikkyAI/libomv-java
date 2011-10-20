@@ -3715,7 +3715,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (url != null)
 		{
 			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT, new AttachmentResourceReplyHandler(callback));
+			request.setResultCallback(new AttachmentResourceReplyHandler(callback));
+			request.BeginGetResponse(Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 		}
 	}
 
