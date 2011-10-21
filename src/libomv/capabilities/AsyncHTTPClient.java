@@ -112,7 +112,7 @@ public abstract class AsyncHTTPClient<T>
 		}
 	}
 	
-	protected void shutdown() throws InterruptedException
+	public void shutdown() throws InterruptedException
 	{
 		cancel();
 		client.shutdown();
