@@ -1008,9 +1008,9 @@ public class LoginManager
 				loginLLSD.put("options", optionsOSD);
 
 				// Make the CAPS POST for login
-				CapsClient loginRequest = new CapsClient(loginUri);
+				CapsClient loginRequest = new CapsClient();
 				loginRequest.setResultCallback(new LoginReplyLLSDHandler(loginParams));
-				loginRequest.BeginGetResponse(loginLLSD, OSDFormat.Xml, loginParams.Timeout);
+				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, loginParams.Timeout);
 				// #endregion
 			}
 			else

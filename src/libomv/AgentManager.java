@@ -2166,11 +2166,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (uri != null)
 		{
 			ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
-
 			acceptInvite.SessionID = session_id;
-
-			CapsClient request = new CapsClient(uri);
-			request.BeginGetResponse(acceptInvite.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(uri, acceptInvite.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 
 			synchronized (GroupChatSessions)
 			{
@@ -2210,9 +2207,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				startConference.AgentsBlock[i] = participants[i];
 			}
 			startConference.SessionID = tmp_session_id;
-
-			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(startConference.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(url, startConference.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -3714,9 +3709,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 		URI url = _Client.Network.getCapabilityURI("AttachmentResources");
 		if (url != null)
 		{
-			CapsClient request = new CapsClient(url);
+			CapsClient request = new CapsClient();
 			request.setResultCallback(new AttachmentResourceReplyHandler(callback));
-			request.BeginGetResponse(Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+			request.executeHttpGet(url, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 		}
 	}
 
@@ -3731,8 +3726,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public void SetDisplayName(String oldName, String newName) throws IOException
 	{
-		URI uri = _Client.Network.getCapabilityURI("SetDisplayName");
-		if (uri == null)
+		URI url = _Client.Network.getCapabilityURI("SetDisplayName");
+		if (url == null)
 		{
 			Logger.Log("Unable to invoke SetDisplyName capability at this time", LogLevel.Warning, _Client);
 			return;
@@ -3742,8 +3737,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		msg.OldDisplayName = oldName;
 		msg.NewDisplayName = newName;
 
-		CapsClient cap = new CapsClient(uri);
-		cap.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+		new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 	}
 
 	/**
@@ -3764,8 +3758,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			msg.LanguagePublic = isPublic;
 
 			URI url = _Client.Network.getCapabilityURI("UpdateAgentLanguage");
-			CapsClient request = new CapsClient(url);
-			request.BeginGetResponse(msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception ex)
 		{
