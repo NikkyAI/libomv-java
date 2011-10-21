@@ -54,7 +54,6 @@ public class AssetAnimation extends AssetItem
 	public AssetAnimation(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		AssetData = assetData;
 	}
 
 	@Override

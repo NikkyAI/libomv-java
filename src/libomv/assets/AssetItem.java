@@ -27,6 +27,7 @@
 package libomv.assets;
 
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 /** Base class for all Asset types */
 public abstract class AssetItem
@@ -104,13 +105,61 @@ public abstract class AssetItem
 		OutfitFolder(47),
 		/** Root folder for the folders of type OutfitFolder */
 		MyOutfitsFolder(48),
-		/** */
-		InboxFolder(49);
+		/** Linden mesh format */
+        Mesh(49);
 
-		private static final String[] _AssetTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
-				"script", "clothing", "object", "notecard", "category", "root", "lsltext", "lslbyte", "txtr_tga",
-				"bodypart", "trash", "snapshot", "lstndfnd", "snd_wav", "img_tga", "jpeg", "animatn", "gesture",
-				"simstate", "favorites", "link", "linkfldr" };
+		private static final String[] _AssetTypeNames = new String[] {
+			"texture",    // 0
+			"sound",      // 1
+			"callcard",   // 2
+			"landmark",   // 3
+			"script",     // 4
+			"clothing",   // 5
+			"object",     // 6
+			"notecard",   // 7
+			"category",   // 8
+			"root",       // 9
+			"lsltext",    // 10
+			"lslbyte",    // 11
+			"txtr_tga",   // 12
+			"bodypart",   // 13
+			"trash",      // 14
+			"snapshot",   // 15
+			"lstndfnd",   // 16
+			"snd_wav",    // 17
+			"img_tga",    // 18
+			"jpeg",       // 19
+			"animatn",    // 20
+			"gesture",    // 21
+			"simstate",   // 22
+			"favorites",  // 23
+			"link",       // 24
+			"linkfldr",   // 25
+			Helpers.EmptyString, // 26
+	        Helpers.EmptyString, // 27
+	        Helpers.EmptyString, // 28
+	        Helpers.EmptyString, // 29
+	        Helpers.EmptyString, // 30
+	        Helpers.EmptyString, // 31
+	        Helpers.EmptyString, // 32
+	        Helpers.EmptyString, // 33
+	        Helpers.EmptyString, // 34
+	        Helpers.EmptyString, // 35
+	        Helpers.EmptyString, // 36
+	        Helpers.EmptyString, // 37
+	        Helpers.EmptyString, // 38
+	        Helpers.EmptyString, // 39
+	        Helpers.EmptyString, // 40
+	        Helpers.EmptyString, // 41
+	        Helpers.EmptyString, // 42
+	        Helpers.EmptyString, // 43
+	        Helpers.EmptyString, // 44
+	        Helpers.EmptyString, // 45
+	        "curoutfit",  // 46
+	        "outfit",     // 47
+	        "myoutfits",  // 48
+	        "mesh",       // 49
+ };
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
