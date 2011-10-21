@@ -1,5 +1,6 @@
 /**
- * Portions Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2007-2008, openmetaverse.org
+ * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -27,7 +28,6 @@ package libomv.capabilities;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -41,14 +41,9 @@ import libomv.utils.Logger;
 
 public class CapsClient extends AsyncHTTPClient<OSD>
 {
-	public CapsClient(URI address) throws IOReactorException
+	public CapsClient() throws IOReactorException
 	{
-		super(address, null);
-	}
-
-	public CapsClient(URI address, X509Certificate cert) throws IOReactorException
-	{
-		super(address, cert);
+		super();
 	}
 
 	/**
@@ -64,32 +59,32 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 * @throws TimeoutException
 	 * @throws ClientProtocolException
 	 */
-	public OSD GetResponse(String acceptHeader, long timeout) throws InterruptedException, ExecutionException, TimeoutException
+	public OSD GetResponse(URI address, String acceptHeader, long timeout) throws InterruptedException, ExecutionException, TimeoutException
 	{
-		Future<OSD> result = BeginGetResponse(acceptHeader, -1);
+		Future<OSD> result = executeHttpGet(address, acceptHeader, -1);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public OSD GetResponse(OSD data, OSD.OSDFormat format, long timeout) throws InterruptedException,
+	public OSD GetResponse(URI address, OSD data, OSD.OSDFormat format, long timeout) throws InterruptedException,
 			ExecutionException, TimeoutException, IOException
 	{
-		Future<OSD> result = BeginGetResponse(data, format, -1);
+		Future<OSD> result = executeHttpPost(address, data, format, -1);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public OSD GetResponse(byte[] postData, String contentType, long timeout) throws InterruptedException,
+	public OSD GetResponse(URI address, byte[] postData, String contentType, long timeout) throws InterruptedException,
 			ExecutionException, TimeoutException
 	{
-		Future<OSD> result = BeginGetResponse(postData, contentType, -1);
+		Future<OSD> result = executeHttpPost(address, postData, contentType, -1);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public Future<OSD> BeginGetResponse(IMessage message, long timeout) throws IOException
+	public Future<OSD> executeHttpPost(URI address, IMessage message, long timeout) throws IOException
 	{
-		return BeginGetResponse(message.Serialize(), OSD.OSDFormat.Xml, timeout);
+		return executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, timeout);
 	}
 
-	public Future<OSD> BeginGetResponse(OSD data, OSD.OSDFormat format, long timeout) throws IOException
+	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, long timeout) throws IOException
 	{
 		byte[] postData = null;
 		String contentType;
@@ -110,7 +105,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 				contentType = "application/llsd+json";
 				break;
 		}
-		return BeginGetResponse(postData, contentType, timeout);
+		return executeHttpPost(address, postData, contentType, timeout);
 	}
 
 	@Override

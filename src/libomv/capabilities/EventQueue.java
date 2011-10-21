@@ -1,29 +1,29 @@
-//
-// * Copyright (c) 2007-2008, openmetaverse.org
-// * All rights reserved.
-// *
-// * - Redistribution and use in source and binary forms, with or without
-// *   modification, are permitted provided that the following conditions are met:
-// *
-// * - Redistributions of source code must retain the above copyright notice, this
-// *   list of conditions and the following disclaimer.
-// * - Neither the name of the openmetaverse.org nor the names
-// *   of its contributors may be used to endorse or promote products derived from
-// *   this software without specific prior written permission.
-// *
-// * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-// * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// * POSSIBILITY OF SUCH DAMAGE.
-//
-
+/**
+ * Copyright (c) 2007-2008, openmetaverse.org
+ * Copyright (c) 2009-2011, Frederick Martian
+ * All rights reserved.
+ *
+ * - Redistribution and use in source and binary forms, with or without
+ *   modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * - Neither the name of the openmetaverse.org nor the names
+ *   of its contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 package libomv.capabilities;
 
 import java.io.IOException;
@@ -50,6 +50,7 @@ public class EventQueue extends CapsClient
 {
 	public final int REQUEST_TIMEOUT = 1000 * 120;
 
+	private URI address;
 	private static Random random = new Random();
 	private int errorCount;
 	private boolean Done;
@@ -68,7 +69,8 @@ public class EventQueue extends CapsClient
 
 	public EventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
 	{
-		super(eventQueueLocation, null);
+		super();
+		this.address = eventQueueLocation;
 		this.Simulator = sim;
 	}
 
@@ -111,7 +113,7 @@ public class EventQueue extends CapsClient
 			byte[] postData = osdRequest.serializeToBytes(OSD.OSDFormat.Xml);
 			// Start or resume the connection
 			setResultCallback(new EventClientCallback(first));
-			Request = BeginGetResponse(postData, "application/xml", REQUEST_TIMEOUT);
+			Request = executeHttpPost(address, postData, "application/xml", REQUEST_TIMEOUT);
 		}
 		catch (IOException e)
 		{
@@ -225,7 +227,7 @@ public class EventQueue extends CapsClient
 					{
 						Request = null;
 					}
-					Logger.Log(String.format("Closing event queue at %s due to missing caps URI", getAddress().toString()),
+					Logger.Log(String.format("Closing event queue at %s due to missing caps URI", address),
 							LogLevel.Info, Simulator.getClient());
 					return;
 				}
@@ -248,18 +250,17 @@ public class EventQueue extends CapsClient
 					if (status != HttpStatus.SC_OK)
 					{
 						Logger.Log(String.format("Unrecognized caps connection problem from %s: %d",
-								getAddress().toString(), status), LogLevel.Warning, Simulator.getClient());
+								address, status), LogLevel.Warning, Simulator.getClient());
 					}
 					else if (ex.getCause() != null)
 					{
 						Logger.Log(String.format("Unrecognized internal caps exception from %s: %s",
-								getAddress().toString(), ex.getCause().getMessage()), LogLevel.Warning, Simulator
-								.getClient());
+								address, ex.getCause().getMessage()), LogLevel.Warning, Simulator.getClient());
 					}
 					else
 					{
 						Logger.Log(
-								String.format("Unrecognized caps exception from %s: %s", getAddress().toString(),
+								String.format("Unrecognized caps exception from %s: %s", address,
 										ex.getMessage()), LogLevel.Warning, Simulator.getClient());
 					}
 				}

@@ -1,5 +1,5 @@
 /**
- * Portions Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -76,12 +76,12 @@ public abstract class AsyncHTTPClient<T>
 {
 	public interface ProgressCallback
 	{
-		public void progress(long bytes, long length);
+		public void progress(long bytesReceived, long totalBytes);
 	}
 	
-	private final URI Address;
-	private Timer Timeout;
-	private final HttpAsyncClient Client;
+	private final HttpAsyncClient client;
+	private X509Certificate certificate;
+	private Timer timeout;
 	private FutureCallback<T> callback;
 	private ProgressCallback progress;
 
@@ -95,71 +95,51 @@ public abstract class AsyncHTTPClient<T>
 		this.progress = callback;
 	}
 	
-	public URI getAddress()
+	public void setCertificate(X509Certificate cert)
 	{
-		return Address;
+		this.certificate = cert;
 	}
-
-	protected void cancel()
+	
+	private void cancel()
 	{
-		if (Timeout != null)
+		if (timeout != null)
 		{
-			synchronized (Timeout)
+			synchronized (timeout)
 			{
-				Timeout.cancel();
-				Timeout = null;
+				timeout.cancel();
+				timeout = null;
 			}
 		}
 	}
-
-	public AsyncHTTPClient(URI address, X509Certificate cert) throws IOReactorException
+	
+	protected void shutdown() throws InterruptedException
 	{
-		Address = address;
-		Client = new DefaultHttpAsyncClient();
+		cancel();
+		client.shutdown();
+	}
 
-		if (address.getScheme().equals("https"))
-		{
-			try
-			{
-				String name;
-				if (cert == null && address.getHost().contains("linden"))
-				{
-					cert = Helpers.GetLindenCertificate();
-					name = "lindenlab";
-				}
-				else
-				{
-					name = "user_certificate";
-				}
-
-				KeyStore store = Helpers.GetExtendedKeyStore();
-				store.setCertificateEntry(name, cert);
-				Client.getConnectionManager().getSchemeRegistry().register(
-						       new Scheme("https", 443, new SSLLayeringStrategy(store)));
-			}
-			catch (Exception ex)
-			{
-			}
-		}
-		Client.start();
+	public AsyncHTTPClient() throws IOReactorException
+	{
+		client = new DefaultHttpAsyncClient();
+		client.start();
 	}
 
 	/**
 	 * Do a HTTP Get Request from the server
 	 * 
 	 * @param acceptHeader The content type to add as Accept: header or null
-	 * @param timeout The timeout to wait for a response or -1 if no timeout should be used
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data
 	 */
-	public Future<T> BeginGetResponse(String acceptHeader, long timeout)
+	public Future<T> executeHttpGet(URI address, String acceptHeader, long millisecondTimeout)
 	{
 		HttpRequest request = new HttpGet();
 		if (acceptHeader != null && !acceptHeader.isEmpty())
 		{
 			request.addHeader("Accept", acceptHeader);
 		}
-		return GetResponseAsync(request, timeout);
+		return executeHttp(address, request, millisecondTimeout);
 	}
 
 	/**
@@ -167,11 +147,11 @@ public abstract class AsyncHTTPClient<T>
 	 * 
 	 * @param data The string data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
-	 * @param timeout The timeout to wait for a response or -1 if no timeout should be used
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data
 	 */
-	public Future<T> BeginGetResponse(String data, String contentType, long timeout)
+	public Future<T> executeHttpPost(URI address, String data, String contentType, long millisecondTimeout)
 			throws UnsupportedEncodingException
 	{
 		// Create the request
@@ -183,7 +163,7 @@ public abstract class AsyncHTTPClient<T>
 
 		// set POST body
 		request.setEntity(new StringEntity(data));
-		return GetResponseAsync(request, timeout);
+		return executeHttp(address, request, millisecondTimeout);
 	}
 
 	/**
@@ -191,11 +171,11 @@ public abstract class AsyncHTTPClient<T>
 	 * 
 	 * @param data The binary data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
-	 * @param timeout The timeout to wait for a response or -1 if no timeout should be used
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data
 	 */
-	public Future<T> BeginGetResponse(byte[] data, String contentType, long timeout)
+	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, long millisecondTimeout)
 	{
 		// Create the request
 		HttpPost request = new HttpPost();
@@ -206,14 +186,41 @@ public abstract class AsyncHTTPClient<T>
 
 		// set POST body
 		request.setEntity(new ByteArrayEntity(data));
-		return GetResponseAsync(request, timeout);
+		return executeHttp(address, request, millisecondTimeout);
 	}
 
-	private HttpHost determineTarget(final URI address) throws ClientProtocolException
+	private HttpHost determineTarget(URI address) throws ClientProtocolException
 	{
 		// A null target may be acceptable if there is a default target.
 		// Otherwise, the null target is detected in the director.
 		HttpHost target = null;
+
+		if (address.getScheme().equals("https"))
+		{
+			try
+			{
+				String name;
+				if (certificate == null && address.getHost().contains("linden"))
+				{
+					certificate = Helpers.GetLindenCertificate();
+					name = "lindenlab";
+				}
+				else
+				{
+					name = "user_certificate";
+				}
+
+				if (certificate != null)
+				{
+					KeyStore store = Helpers.GetExtendedKeyStore();
+					store.setCertificateEntry(name, certificate);
+					client.getConnectionManager().getSchemeRegistry().register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
+				}
+			}
+			catch (Exception ex)
+			{
+			}
+		}
 
 		if (address.isAbsolute())
 		{
@@ -227,11 +234,11 @@ public abstract class AsyncHTTPClient<T>
 		return target;
 	}
 
-	private Future<T> GetResponseAsync(HttpRequest request, long timeout)
+	private Future<T> executeHttp(URI address, HttpRequest request, long millisecondTimeout)
 	{
-		synchronized (Timeout)
+		synchronized (timeout)
 		{
-			if (Timeout != null)
+			if (timeout != null)
 			{
 				Logger.Log("This Capability Client is already waiting for a response", Logger.LogLevel.Error);
 				return null;
@@ -240,22 +247,22 @@ public abstract class AsyncHTTPClient<T>
 
 		try
 		{
-			final Future<T> result = Client.execute(new CapsHttpAsyncRequestProducer(determineTarget(Address), request),
-					                                  new CapsHttpAsyncResponseConsumer(), new AsyncHttpResultCallback());
+			final Future<T> result = client.execute(new CapsHttpAsyncRequestProducer(determineTarget(address), request),
+					                                new CapsHttpAsyncResponseConsumer(), new AsyncHttpResultCallback());
 
-			if (timeout >= 0)
+			if (millisecondTimeout >= 0)
 			{
-				synchronized (Timeout)
+				synchronized (timeout)
 				{
-					Timeout = new Timer();
-					Timeout.schedule(new TimerTask()
+					timeout = new Timer();
+					timeout.schedule(new TimerTask()
 					{
 						@Override
 						public void run()
 						{
 							result.cancel(false);
 						}
-					}, timeout);
+					}, millisecondTimeout);
 				}
 			}
 			return result;
@@ -268,7 +275,7 @@ public abstract class AsyncHTTPClient<T>
 		}
 	}
 
-	protected class AsyncHttpResultCallback implements FutureCallback<T>
+	private class AsyncHttpResultCallback implements FutureCallback<T>
 	{
 		@Override
 		public void completed(T result)
@@ -294,7 +301,7 @@ public abstract class AsyncHTTPClient<T>
 			cancel();
 		}
 	}
-	class CapsHttpAsyncRequestProducer implements HttpAsyncRequestProducer
+	private class CapsHttpAsyncRequestProducer implements HttpAsyncRequestProducer
 	{
 		private final HttpHost target;
 		private final HttpRequest request;
