@@ -26,17 +26,28 @@
 package libomv.Gui.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -44,18 +55,20 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.JTextComponent;
 
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
-import libomv.Gui.components.InfoPanel;
 
 public class MainWindow extends JFrame
 {
 	private static final long serialVersionUID = 1L;
-
-	private JPanel jContentPane;
 
 	private JPanel jLoginPanel;
 	private JLabel jLblFirstName;
@@ -65,13 +78,16 @@ public class MainWindow extends JFrame
 	private JLabel jLblPassword;
 	private JPasswordField jPwdPassword;
 	private JButton jBtnLogin;
+	private JLabel jLblGridSelector;
 	private JComboBox jcbGridSelector;
+	private JLabel jLblLocation;
 	private JComboBox jcbLocation;
 	private JButton jBtnGrids;
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
 
-	private JPanel jInfoPanel;
+	private JScrollPane jInfoPane;
+	private JEditorPane jHtmlPane;
 
 	private JMenuBar jMbMain;
 	
@@ -83,16 +99,35 @@ public class MainWindow extends JFrame
 	public MainWindow(GridClient client)
 	{
 		super();
+		addWindowListener(new ExitListener());
+		try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error setting native LAF: " + e);
+		}
 		
 		_Client = client;
 		
+		setTitle("Libomv-Java Client");
 		setSize(800, 640);
 		setJMenuBar(getJMbMain());
 		setPreferredSize(new Dimension(640, 480));
 		setMinimumSize(new Dimension(640, 480));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setContentPane(getJContentPane());
-		setTitle("Libomv-Java Client");
+		getContentPane().add(getJInfoPanel(), BorderLayout.CENTER);
+		getContentPane().add(getJLoginPanel(), BorderLayout.SOUTH);
+	}
+
+	public class ExitListener extends WindowAdapter
+	{
+		@Override
+		public void windowClosing(WindowEvent event)
+		{
+		    System.exit(0);
+		}
 	}
 
 	private JFrame getJMainFrame()
@@ -100,26 +135,6 @@ public class MainWindow extends JFrame
 		return this;
 	}
 	
-	/**
-	 * This method initializes jContentPane
-	 * 
-	 * @return the content pane JPanel
-	 */
-	private JPanel getJContentPane()
-	{
-		if (jContentPane == null)
-		{
-			jContentPane = (JPanel)getContentPane();
-			BorderLayout bl_jContentPane = new BorderLayout();
-			bl_jContentPane.setHgap(10);
-			jContentPane.setLayout(bl_jContentPane);
-
-			jContentPane.add(getJLoginPanel(), BorderLayout.SOUTH);
-			jContentPane.add(getJInfoPanel(), BorderLayout.NORTH);
-		}
-		return jContentPane;
-	}
-
 	/**
 	 * This method initializes jLoginInformation
 	 * 
@@ -137,14 +152,15 @@ public class MainWindow extends JFrame
 
 			jLoginPanel = new JPanel();
 			jLoginPanel.setLayout(gridBagLayout);
+			// Create a border around the edge
+			jLoginPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.gridx = 1;
 			gridBagConstraints.gridy = 0;
-			jLblFirstName = new JLabel("First Name:");
-			jLoginPanel.add(jLblFirstName, gridBagConstraints);
+			jLoginPanel.add(getJLblFirstName(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -158,8 +174,7 @@ public class MainWindow extends JFrame
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.gridx = 3;
 			gridBagConstraints.gridy = 0;
-			jLblLastName = new JLabel("Last Name:");
-			jLoginPanel.add(jLblLastName, gridBagConstraints);
+			jLoginPanel.add(getJLblLastName(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -173,8 +188,7 @@ public class MainWindow extends JFrame
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.gridx = 5;
 			gridBagConstraints.gridy = 0;
-			jLblPassword = new JLabel("Password:");
-			jLoginPanel.add(jLblPassword, gridBagConstraints);
+			jLoginPanel.add(getJLblPassword(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -187,21 +201,15 @@ public class MainWindow extends JFrame
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.gridx = 7;
 			gridBagConstraints.gridy = 0;
-			jLoginPanel.add(getJbtnLogin(), gridBagConstraints);
-
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
-			gridBagConstraints.fill = GridBagConstraints.BOTH;
-			gridBagConstraints.gridx = 8;
-			gridBagConstraints.gridy = 0;
-			jLoginPanel.add(new JPanel(), gridBagConstraints);
+			jLoginPanel.add(getJBtnLogin(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
 			gridBagConstraints.gridx = 1;
 			gridBagConstraints.gridy = 1;
-			jLoginPanel.add(new JLabel("Grid:"), gridBagConstraints);
+			jLblGridSelector = new JLabel("Grid:");
+			jLoginPanel.add(jLblGridSelector, gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
@@ -218,19 +226,61 @@ public class MainWindow extends JFrame
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.anchor = GridBagConstraints.WEST;
+			gridBagConstraints.gridx = 1;
+			gridBagConstraints.gridy = 2;
+			jLblLocation = new JLabel("Location:");
+			jLoginPanel.add(jLblLocation, gridBagConstraints);
+
+			gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints.gridx = 2;
+			gridBagConstraints.gridy = 2;
+			jLoginPanel.add(getJcbStartLocation(), gridBagConstraints);
+
+			gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.gridx = 4;
-			gridBagConstraints.gridy = 1;
+			gridBagConstraints.gridy = 2;
 			jLoginPanel.add(getChckbxSaveDetails(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints.gridx = 6;
-			gridBagConstraints.gridy = 1;
+			gridBagConstraints.gridy = 2;
 			jLoginPanel.add(getChckbxSavePassword(), gridBagConstraints);
 			
 			initializeLoginPanel(_Client.getDefaultGrid());
 		}
 		return jLoginPanel;
+	}
+
+	private JLabel getJLblFirstName()
+	{
+		if (jLblFirstName == null)
+		{
+			jLblFirstName = new JLabel("First Name:");
+		}
+		return jLblFirstName;
+	}
+
+	private JLabel getJLblLastName()
+	{
+		if (jLblLastName == null)
+		{
+			jLblLastName = new JLabel("Last Name:");
+		}
+		return jLblLastName;
+	}
+
+	private JLabel getJLblPassword()
+	{
+		if (jLblPassword == null)
+		{
+			jLblPassword = new JLabel("Password:");			
+		}
+		return jLblPassword;
 	}
 
 	/**
@@ -243,6 +293,58 @@ public class MainWindow extends JFrame
 		if (jTxtFirstName == null)
 		{
 			jTxtFirstName = new JTextField(20);
+			// Add a caret listener
+			jTxtFirstName.addCaretListener(new CaretListener()
+			{
+				/**
+				 * Called when the caret is updated
+				 * 
+				 * @param e
+				 *            The CaretEvent
+				 */
+				@Override
+				public void caretUpdate(CaretEvent e)
+				{
+					// Validate
+					validateSettings();
+				}
+			});
+
+			// Add a focus listener
+			jTxtFirstName.addFocusListener(new FocusAdapter()
+			{
+				/**
+				 * Called when focus is gained
+				 * 
+				 * @param e
+				 *            The FocusEvent
+				 */
+				@Override
+				public void focusGained(FocusEvent e)
+				{
+					// Select all
+					getJTxtFirstName().selectAll();
+				}
+			});
+
+			// Add a key listener
+			jTxtFirstName.addKeyListener(new KeyAdapter()
+			{
+				/**
+				 * Called when a key is pressed
+				 * 
+				 * @param e
+				 *            The KeyEvent
+				 */
+				@Override
+				public void keyPressed(KeyEvent e)
+				{
+					if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					{
+						getJTxtLastName().requestFocus();
+					}
+				}
+			});
 		}
 		return jTxtFirstName;
 	}
@@ -257,6 +359,58 @@ public class MainWindow extends JFrame
 		if (jTxtLastName == null)
 		{
 			jTxtLastName = new JTextField(20);
+			// Add a caret listener
+			jTxtLastName.addCaretListener(new CaretListener()
+			{
+				/**
+				 * Called when the caret is updated
+				 * 
+				 * @param e
+				 *            The CaretEvent
+				 */
+				@Override
+				public void caretUpdate(CaretEvent e)
+				{
+					// Validate
+					validateSettings();
+				}
+			});
+
+			// Add a focus listener
+			jTxtLastName.addFocusListener(new FocusAdapter()
+			{
+				/**
+				 * Called when focus is gained
+				 * 
+				 * @param e
+				 *            The FocusEvent
+				 */
+				@Override
+				public void focusGained(FocusEvent e)
+				{
+					// Select all
+					getJTxtLastName().selectAll();
+				}
+			});
+
+			// Add a key listener
+			jTxtLastName.addKeyListener(new KeyAdapter()
+			{
+				/**
+				 * Called when a key is pressed
+				 * 
+				 * @param e
+				 *            The KeyEvent
+				 */
+				@Override
+				public void keyPressed(KeyEvent e)
+				{
+					if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					{
+						getJPwdPassword().requestFocus();
+					}
+				}
+			});
 		}
 		return jTxtLastName;
 	}
@@ -271,6 +425,58 @@ public class MainWindow extends JFrame
 		if (jPwdPassword == null)
 		{
 			jPwdPassword = new JPasswordField(20);
+			// Add a caret listener
+			jPwdPassword.addCaretListener(new CaretListener()
+			{
+				/**
+				 * Called when the caret is updated
+				 * 
+				 * @param e
+				 *            The CaretEvent
+				 */
+				@Override
+				public void caretUpdate(CaretEvent e)
+				{
+					// Validate input
+					validateSettings();
+				}
+			});
+
+			// Add a focus listener
+			jPwdPassword.addFocusListener(new FocusAdapter()
+			{
+				/**
+				 * Called when focus is gained
+				 * 
+				 * @param e
+				 *            The FocusEvent
+				 */
+				@Override
+				public void focusGained(FocusEvent e)
+				{
+					// Select all
+					getJPwdPassword().selectAll();
+				}
+			});
+
+			// Add a key listener
+			jPwdPassword.addKeyListener(new KeyAdapter()
+			{
+				/**
+				 * Called when a key is pressed
+				 * 
+				 * @param e
+				 *            The KeyEvent
+				 */
+				@Override
+				public void keyPressed(KeyEvent e)
+				{
+					if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					{
+						doLogin();
+					}
+				}
+			});
 		}
 		return jPwdPassword;
 	}
@@ -280,7 +486,7 @@ public class MainWindow extends JFrame
 	 * 
 	 * @return Login JButton
 	 */
-	private JButton getJbtnLogin()
+	private JButton getJBtnLogin()
 	{
 		if (jBtnLogin == null)
 		{
@@ -291,32 +497,7 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					String string = (String) getJcbGridSelector().getSelectedItem();
-					_Client.setDefaultGrid(string);
-					GridInfo grid = _Client.getDefaultGrid();
-
-					grid.saveSettings = getChckbxSaveDetails().isSelected();
-					grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
-					grid.startLocation = (String) getJcbStartLocation().getSelectedItem();
-
-					string = getJTxtFirstName().getText(); 
-					if (string != null)
-						grid.firstname = string;
-					string = getJTxtLastName().getText();
-					if (string != null)
-						grid.lastname = string;
-					string = getJPwdPassword().getPassword().toString();
-					if (string != null)
-						grid.setPassword(string);
-					
-					try
-					{
-						_Client.Login.Login(_Client.Login.new LoginParams(_Client));
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
+					doLogin();
 				}
 			});
 		}
@@ -334,7 +515,15 @@ public class MainWindow extends JFrame
 				jcbGridSelector.addItem(grid);
 			}
 			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid().gridnick);
-			jcbGridSelector.addActionListener(new GridSelectionListener());
+			jcbGridSelector.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent evt)
+				{
+					String selection = ((JComboBox)evt.getSource()).getSelectedItem().toString();
+					initializeLoginPanel(_Client.getGrid(selection));
+				}
+			});
 		}
 		return jcbGridSelector;
 	}
@@ -347,7 +536,8 @@ public class MainWindow extends JFrame
 			jcbLocation.setEditable(true);
 			jcbLocation.addItem("Last");
 			jcbLocation.addItem("Home");
-			String start = _Client.getDefaultGrid().startLocation.toLowerCase();
+			
+			String start = _Client.getDefaultGrid().startLocation;
 			if (start == null || start.isEmpty() || start.equalsIgnoreCase("last"))
 			{
 				jcbLocation.setSelectedIndex(0);
@@ -358,21 +548,11 @@ public class MainWindow extends JFrame
 			}
 			else
 			{
-				jcbLocation.addItem(start);
 				jcbLocation.setSelectedItem(start);
 			}
 
 		}
 		return jcbLocation;
-	}
-	private class GridSelectionListener implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent evt)
-		{
-			String selection = (String)((JComboBox)evt.getSource()).getSelectedItem();
-			initializeLoginPanel(_Client.getGrid(selection));
-		}
 	}
 	
 	/**
@@ -431,14 +611,25 @@ public class MainWindow extends JFrame
 		return jChkSavePassword;
 	}
 
-	private JPanel getJInfoPanel()
+	private JScrollPane getJInfoPanel()
 	{
-		if (jInfoPanel == null)
+		if (jInfoPane == null)
 		{
-			jInfoPanel = new InfoPanel(_Client);
+			jInfoPane = new JScrollPane(getJHtmlPane());
 		}
-		return jInfoPanel;
+		return jInfoPane;
 	}
+	
+	private JEditorPane getJHtmlPane()
+	{
+		if (jHtmlPane == null)
+		{
+			jHtmlPane = new JEditorPane();
+			jHtmlPane.setEditable(false);
+		}
+		return jHtmlPane;
+	}
+	
 	/**
 	 * This method initializes mainJMenuBar
 	 * 
@@ -483,8 +674,114 @@ public class MainWindow extends JFrame
 		return jMbMain;
 	}
 	
+	private void doLogin()
+	{
+		String string = (String) getJcbGridSelector().getSelectedItem();
+		_Client.setDefaultGrid(string);
+		GridInfo grid = _Client.getDefaultGrid();
+
+		grid.saveSettings = getChckbxSaveDetails().isSelected();
+		grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
+		grid.startLocation = getJcbStartLocation().getSelectedItem().toString().toLowerCase();
+
+		string = getJTxtFirstName().getText(); 
+		if (string != null)
+			grid.firstname = string;
+		string = getJTxtLastName().getText();
+		if (string != null)
+			grid.lastname = string;
+		string = String.valueOf(getJPwdPassword().getPassword());
+		if (string != null)
+			grid.setPassword(string);
+		
+		try
+		{
+			_Client.Login.Login(_Client.Login.new LoginParams(_Client));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Validate all settings
+	 */
+	private boolean validateSettings()
+	{
+		boolean valid = true;
+
+		// Validate the first name
+		if (!validateField(getJTxtFirstName(), getJLblFirstName()))
+		{
+			valid = false;
+		}
+
+		// Validate the last name
+		if (!validateField(getJTxtLastName(), getJLblLastName()))
+		{
+			valid = false;
+		}
+
+		// Validate the password
+		if (!validateField(getJPwdPassword(), getJLblPassword()))
+		{
+			valid = false;
+		}
+
+		// Set the login button enabled state based on the result (and if we're
+		// not connecting)
+		getJBtnLogin().setEnabled(valid);
+
+		return valid;
+	}
+
+	/**
+	 * Validate a text component
+	 * 
+	 * @param component
+	 *            The component to validate
+	 * @param associatedLabel
+	 *            The label associated with the component
+	 * @return True if valid, otherwise false
+	 */
+	private boolean validateField(JTextComponent component, JLabel associatedLabel)
+	{
+		// If this is a text field..
+		if (component instanceof JTextField)
+		{
+			// Invalid
+			if (component.getText() == null || component.getText().trim().length() <= 0
+					|| component.getText().contains(" "))
+			{
+				associatedLabel.setForeground(Color.RED);
+				return false;
+			}
+		}
+		// If this is a password field..
+		else if (component instanceof JPasswordField)
+		{
+			// Invalid
+			if (((JPasswordField) component).getPassword().length <= 0)
+			{
+				associatedLabel.setForeground(Color.RED);
+				return false;
+			}
+		}
+
+		// Valid
+		associatedLabel.setForeground(SystemColor.textText);
+		return true;
+	}
+
 	private void initializeLoginPanel(GridInfo grid)
 	{
+		try
+		{
+			getJHtmlPane().setPage(new URL(grid.loginpage));
+		}
+		catch (Exception ex) { }
+		
 		if (grid.startLocation != null)
 		{
 			getJcbStartLocation().setSelectedItem(grid.startLocation);
@@ -497,6 +794,6 @@ public class MainWindow extends JFrame
 			getJPwdPassword().setText(grid.getPassword());
 		getChckbxSaveDetails().setSelected(grid.saveSettings);
 		getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
-		getChckbxSavePassword().setEnabled(grid.saveSettings);				
+		getChckbxSavePassword().setEnabled(grid.saveSettings);
 	}
 }
