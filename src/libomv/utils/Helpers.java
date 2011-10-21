@@ -1681,10 +1681,10 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
+		for (; bytes[offset + length - 1] == 0; length--);
+
 		if (length == 0)
 			return EmptyString;
-
-		for (; bytes[offset + length - 1] == 0; length--);
 		
 		return new String(bytes, offset, length, UTF8_ENCODING);
 	}
