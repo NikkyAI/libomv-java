@@ -190,9 +190,9 @@ public class CapsManager
 
 		try
 		{
-			CapsClient request = new CapsClient(new URI(_SeedCapsURI));
+			CapsClient request = new CapsClient();
 			request.setResultCallback(new SeedRequestHandler());
-			_SeedRequest = request.BeginGetResponse(req, OSD.OSDFormat.Xml, _Simulator.getClient().Settings.CAPS_TIMEOUT);
+			_SeedRequest = request.executeHttpPost(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml, _Simulator.getClient().Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception e)
 		{
