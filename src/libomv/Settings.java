@@ -76,6 +76,8 @@ public class Settings implements PacketCallback
 	/* Use XML-RPC Login or LLSD Login, default is XML-RPC Login */
 	public boolean USE_LLSD_LOGIN = false;
 
+	/* Use Http downloads for texture requests */
+	public boolean USE_HTTP_TEXTURES = true;
 	/*
 	 * InventoryManager requests inventory information on login, GridClient
 	 * initializes an Inventory store for main inventory.
