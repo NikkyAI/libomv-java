@@ -1690,6 +1690,7 @@ public class Helpers
 	{
 		if (length < 0)
 		{
+			/* Search for the null terminating byte */
 			for (length = 0; bytes[offset + length] != 0; length++);
 		}
 		else
