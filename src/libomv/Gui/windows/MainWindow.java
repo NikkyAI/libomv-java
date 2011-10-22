@@ -65,6 +65,7 @@ import javax.swing.text.JTextComponent;
 
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
+import libomv.Gui.dialogs.GridEditor;
 
 public class MainWindow extends JFrame
 {
@@ -570,8 +571,8 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					// TODO Open the Grid Selection overview panel
-
+					GridEditor gridEdit = new GridEditor(_Client, getJMainFrame(), "Grid List", true);
+					gridEdit.setVisible(true);
 				}
 			});
 		}
