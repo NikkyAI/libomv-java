@@ -99,10 +99,15 @@ public class GridClient
 			this.password = password;
 		}
 
+		public String dump()
+		{
+			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n", gridnick, gridname, platform, version);	
+		}
+		
 		@Override
 		public String toString()
 		{
-			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n", gridnick, gridname, platform, version);
+			return gridname;
 		}
 	}
 
@@ -540,7 +545,12 @@ public class GridClient
 
 	public String dumpGridlist()
 	{
-		return String.format("Version: %d, Default: %s\n%s", listversion, defaultGrid, gridlist);
+		String string = String.format("Version: %d, Default: %s\n", listversion, defaultGrid);
+		for (GridInfo info : gridlist.values())
+		{
+			string += info.dump(); 
+		}
+		return string;
 	}
 
 	// <returns>Client Avatar's Full Name</returns>

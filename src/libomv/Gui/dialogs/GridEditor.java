@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -34,6 +36,10 @@ public class GridEditor extends JDialog
 
 	private GridClient _Client;
 
+	private JButton jBtnSetup;
+	private JButton jBtnCancel;
+	private JButton jBtnOk;
+	
 	private JList jLsGridNames;
 	private JScrollPane jSpGridNames;
 	private JTextField jTxtName;
@@ -56,169 +62,232 @@ public class GridEditor extends JDialog
 		_Client = client;
 		
 		// Do not allow resizing
-		setResizable(true);
+		setResizable(false);
+		setSize(new Dimension(640, 400));
+		setLocationByPlatform(true);
 		
 		getContentPane().add(getJSpGridNames(), BorderLayout.WEST);
 		
 		JPanel jEditPanel = new JPanel();
 		getContentPane().add(jEditPanel, BorderLayout.CENTER);
 
-		GridBagLayout gbl_jEditPanel = new GridBagLayout();
-		gbl_jEditPanel.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gbl_jEditPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_jEditPanel.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_jEditPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		jEditPanel.setLayout(gbl_jEditPanel);
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{1, 2, 3, 1, 0};
+		gridBagLayout.rowHeights = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		jEditPanel.setLayout(gridBagLayout);
 		
 		JLabel jLblName = new JLabel("Name");
-		GridBagConstraints gbc_jLblName = new GridBagConstraints();
-		gbc_jLblName.anchor = GridBagConstraints.WEST;
-		gbc_jLblName.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblName.gridx = 1;
-		gbc_jLblName.gridy = 1;
-		jEditPanel.add(jLblName, gbc_jLblName);
+		GridBagConstraints gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 1;
+		jEditPanel.add(jLblName, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtName = new GridBagConstraints();
-		gbc_jTxtName.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtName.gridx = 2;
-		gbc_jTxtName.gridy = 1;
-		jEditPanel.add(getJTxtName(), gbc_jTxtName);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 1;
+		jEditPanel.add(getJTxtName(), gbConstraints);
 		
 		JLabel jLblNick = new JLabel("Nick");
-		GridBagConstraints gbc_jLblNick = new GridBagConstraints();
-		gbc_jLblNick.anchor = GridBagConstraints.WEST;
-		gbc_jLblNick.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblNick.gridx = 1;
-		gbc_jLblNick.gridy = 2;
-		jEditPanel.add(jLblNick, gbc_jLblNick);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 2;
+		jEditPanel.add(jLblNick, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtNick = new GridBagConstraints();
-		gbc_jTxtNick.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtNick.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtNick.gridx = 2;
-		gbc_jTxtNick.gridy = 2;
-		jEditPanel.add(getJTxtNick(), gbc_jTxtNick);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 2;
+		jEditPanel.add(getJTxtNick(), gbConstraints);
 		
 		JLabel jLblStartUrl = new JLabel("Start URL");
-		GridBagConstraints gbc_jLblStartUrl = new GridBagConstraints();
-		gbc_jLblStartUrl.anchor = GridBagConstraints.WEST;
-		gbc_jLblStartUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblStartUrl.gridx = 1;
-		gbc_jLblStartUrl.gridy = 3;
-		jEditPanel.add(jLblStartUrl, gbc_jLblStartUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 3;
+		jEditPanel.add(jLblStartUrl, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtStartUrl = new GridBagConstraints();
-		gbc_jTxtStartUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtStartUrl.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtStartUrl.gridx = 2;
-		gbc_jTxtStartUrl.gridy = 3;
-		jEditPanel.add(getJTxtStartUrl(), gbc_jTxtStartUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 3;
+		jEditPanel.add(getJTxtStartUrl(), gbConstraints);
 		
 		JLabel jLblLoginUrl = new JLabel("Login URL");
-		GridBagConstraints gbc_jLblLoginUrl = new GridBagConstraints();
-		gbc_jLblLoginUrl.anchor = GridBagConstraints.WEST;
-		gbc_jLblLoginUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblLoginUrl.gridx = 1;
-		gbc_jLblLoginUrl.gridy = 4;
-		jEditPanel.add(jLblLoginUrl, gbc_jLblLoginUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 4;
+		jEditPanel.add(jLblLoginUrl, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtLoginUrl = new GridBagConstraints();
-		gbc_jTxtLoginUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtLoginUrl.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtLoginUrl.gridx = 2;
-		gbc_jTxtLoginUrl.gridy = 4;
-		jEditPanel.add(getJTxtLoginUrl(), gbc_jTxtLoginUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 4;
+		jEditPanel.add(getJTxtLoginUrl(), gbConstraints);
 		
-		JButton btnSetup = new JButton("Setup");
-		GridBagConstraints gbc_btnSetup = new GridBagConstraints();
-		gbc_btnSetup.insets = new Insets(0, 0, 5, 0);
-		gbc_btnSetup.gridx = 3;
-		gbc_btnSetup.gridy = 4;
-		jEditPanel.add(btnSetup, gbc_btnSetup);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(0, 0, 5, 0);
+		gbConstraints.gridx = 3;
+		gbConstraints.gridy = 4;
+		jEditPanel.add(getJBtnSetup(), gbConstraints);
 		
 		JLabel jLblHelperUrl = new JLabel("Helper URL");
-		GridBagConstraints gbc_jLblHelperUrl = new GridBagConstraints();
-		gbc_jLblHelperUrl.anchor = GridBagConstraints.WEST;
-		gbc_jLblHelperUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblHelperUrl.gridx = 1;
-		gbc_jLblHelperUrl.gridy = 5;
-		jEditPanel.add(jLblHelperUrl, gbc_jLblHelperUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 5;
+		jEditPanel.add(jLblHelperUrl, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtHelperUrl = new GridBagConstraints();
-		gbc_jTxtHelperUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtHelperUrl.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtHelperUrl.gridx = 2;
-		gbc_jTxtHelperUrl.gridy = 5;
-		jEditPanel.add(getJTxtHelperUrl(), gbc_jTxtHelperUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 5;
+		jEditPanel.add(getJTxtHelperUrl(), gbConstraints);
 		
 		JLabel jLblWebsite = new JLabel("Website");
-		GridBagConstraints gbc_jLblWebsite = new GridBagConstraints();
-		gbc_jLblWebsite.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblWebsite.anchor = GridBagConstraints.WEST;
-		gbc_jLblWebsite.gridx = 1;
-		gbc_jLblWebsite.gridy = 6;
-		jEditPanel.add(jLblWebsite, gbc_jLblWebsite);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 6;
+		jEditPanel.add(jLblWebsite, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtWebsiteUrl = new GridBagConstraints();
-		gbc_jTxtWebsiteUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtWebsiteUrl.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtWebsiteUrl.gridx = 2;
-		gbc_jTxtWebsiteUrl.gridy = 6;
-		jEditPanel.add(getJTxtWebsiteUrl(), gbc_jTxtWebsiteUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 6;
+		jEditPanel.add(getJTxtWebsiteUrl(), gbConstraints);
 		
 		JLabel jLblSupportUrl = new JLabel("Support URL");
-		GridBagConstraints gbc_jLblSupportUrl = new GridBagConstraints();
-		gbc_jLblSupportUrl.anchor = GridBagConstraints.WEST;
-		gbc_jLblSupportUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblSupportUrl.gridx = 1;
-		gbc_jLblSupportUrl.gridy = 7;
-		jEditPanel.add(jLblSupportUrl, gbc_jLblSupportUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 7;
+		jEditPanel.add(jLblSupportUrl, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtSupportUrl = new GridBagConstraints();
-		gbc_jTxtSupportUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtSupportUrl.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtSupportUrl.gridx = 2;
-		gbc_jTxtSupportUrl.gridy = 7;
-		jEditPanel.add(getJTxtSupportUrl(), gbc_jTxtSupportUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 7;
+		jEditPanel.add(getJTxtSupportUrl(), gbConstraints);
 		
 		JLabel jLblRegisterUrl = new JLabel("Register URL");
-		GridBagConstraints gbc_jLblRegisterUrl = new GridBagConstraints();
-		gbc_jLblRegisterUrl.anchor = GridBagConstraints.WEST;
-		gbc_jLblRegisterUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jLblRegisterUrl.gridx = 1;
-		gbc_jLblRegisterUrl.gridy = 8;
-		jEditPanel.add(jLblRegisterUrl, gbc_jLblRegisterUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 8;
+		jEditPanel.add(jLblRegisterUrl, gbConstraints);
 		
-		GridBagConstraints gbc_jTxtRegisterUrl = new GridBagConstraints();
-		gbc_jTxtRegisterUrl.insets = new Insets(0, 0, 5, 5);
-		gbc_jTxtRegisterUrl.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTxtRegisterUrl.gridx = 2;
-		gbc_jTxtRegisterUrl.gridy = 8;
-		jEditPanel.add(getJTxtRegisterUrl(), gbc_jTxtRegisterUrl);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 8;
+		jEditPanel.add(getJTxtRegisterUrl(), gbConstraints);
 		
-		JButton btnOk = new JButton("OK");
-		GridBagConstraints gbc_btnOk = new GridBagConstraints();
-		gbc_btnOk.insets = new Insets(0, 0, 0, 5);
-		gbc_btnOk.gridx = 2;
-		gbc_btnOk.gridy = 12;
-		jEditPanel.add(btnOk, gbc_btnOk);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 0, 5);
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 12;
+		jEditPanel.add(getJBtnOk(), gbConstraints);
 		
-		JButton btnCancel = new JButton("Cancel");
-		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-		gbc_btnCancel.gridx = 3;
-		gbc_btnCancel.gridy = 12;
-		jEditPanel.add(btnCancel, gbc_btnCancel);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 0, 5);
+		gbConstraints.gridx = 3;
+		gbConstraints.gridy = 12;
+		jEditPanel.add(getJBtnCancel(), gbConstraints);
 		
-		updateGridProperties(_Client.getDefaultGrid());
+		getRootPane().setDefaultButton(getJBtnOk());
+		updateGridProperties(_Client.getDefaultGrid(), false);
 	}
 	
+	private JButton getJBtnSetup()
+	{
+		if (jBtnSetup == null)
+		{
+			jBtnSetup = new JButton("Setup");
+			jBtnSetup.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					try
+					{
+						updateGridProperties(_Client.queryGridInfo(((GridInfo)(getJLsGridNames().getSelectedValue())).loginuri), false);
+					}
+					catch (Exception e)	{ }
+				}
+			});
+		}
+		return jBtnSetup;
+	}
+	
+	private JButton getJBtnOk()
+	{
+		if (jBtnOk == null)
+		{
+			jBtnOk = new JButton("Ok");
+			jBtnOk.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					// Get number of items in the list
+					int size = getJLsGridNames().getModel().getSize(); // 4
+					// Get all item objects
+					for (int i=0; i<size; i++)
+					{
+						_Client.addGrid((GridInfo)getJLsGridNames().getModel().getElementAt(i));
+					}					
+					dispose();
+				}
+			});
+		}
+		return jBtnOk;
+	}
+
+	private JButton getJBtnCancel()
+	{
+		if (jBtnCancel == null)
+		{
+			jBtnCancel = new JButton("Cancel");
+			jBtnCancel.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					dispose();
+				}
+			});
+		}
+		return jBtnCancel;
+	}
+
 	private JTextField getJTxtName()
 	{
 		if (jTxtName == null)
 		{
 			jTxtName = new JTextField();
-			jTxtName.setColumns(10);
+			jTxtName.setColumns(20);
 			// Add a focus listener
 			jTxtName.addFocusListener(new FocusAdapter()
 			{
@@ -263,7 +332,7 @@ public class GridEditor extends JDialog
 		if (jTxtNick == null)
 		{
 			jTxtNick = new JTextField();
-			jTxtNick.setColumns(10);
+			jTxtNick.setColumns(20);
 			// Add a focus listener
 			jTxtNick.addFocusListener(new FocusAdapter()
 			{
@@ -308,7 +377,7 @@ public class GridEditor extends JDialog
 		if (jTxtStartUrl == null)
 		{
 			jTxtStartUrl = new JTextField();
-			jTxtStartUrl.setColumns(10);
+			jTxtStartUrl.setColumns(20);
 			// Add a focus listener
 			jTxtStartUrl.addFocusListener(new FocusAdapter()
 			{
@@ -353,7 +422,7 @@ public class GridEditor extends JDialog
 		if (jTxtLoginUrl == null)
 		{
 			jTxtLoginUrl = new JTextField();
-			jTxtLoginUrl.setColumns(10);
+			jTxtLoginUrl.setColumns(20);
 			// Add a focus listener
 			jTxtLoginUrl.addFocusListener(new FocusAdapter()
 			{
@@ -398,7 +467,7 @@ public class GridEditor extends JDialog
 		if (jTxtHelperUrl == null)
 		{
 			jTxtHelperUrl = new JTextField();
-			jTxtHelperUrl.setColumns(10);
+			jTxtHelperUrl.setColumns(20);
 			// Add a focus listener
 			jTxtHelperUrl.addFocusListener(new FocusAdapter()
 			{
@@ -443,7 +512,7 @@ public class GridEditor extends JDialog
 		if (jTxtWebsiteUrl == null)
 		{
 			jTxtWebsiteUrl = new JTextField();
-			jTxtWebsiteUrl.setColumns(10);
+			jTxtWebsiteUrl.setColumns(20);
 			// Add a focus listener
 			jTxtWebsiteUrl.addFocusListener(new FocusAdapter()
 			{
@@ -488,7 +557,7 @@ public class GridEditor extends JDialog
 		if (jTxtSupportUrl == null)
 		{
 			jTxtSupportUrl = new JTextField();
-			jTxtSupportUrl.setColumns(10);
+			jTxtSupportUrl.setColumns(20);
 			// Add a focus listener
 			jTxtSupportUrl.addFocusListener(new FocusAdapter()
 			{
@@ -533,7 +602,7 @@ public class GridEditor extends JDialog
 		if (jTxtRegisterUrl == null)
 		{
 			jTxtRegisterUrl = new JTextField();
-			jTxtRegisterUrl.setColumns(10);
+			jTxtRegisterUrl.setColumns(20);
 			// Add a focus listener
 			jTxtRegisterUrl.addFocusListener(new FocusAdapter()
 			{
@@ -573,6 +642,8 @@ public class GridEditor extends JDialog
 		return jTxtRegisterUrl;
 	}
 
+	private GridInfo lastSelection;
+	
 	private JList getJLsGridNames()
 	{
 		if (jLsGridNames == null)
@@ -584,17 +655,21 @@ public class GridEditor extends JDialog
 			{
 				grids[i++] = _Client.getGrid(nick);
 			}
+			
+			lastSelection = _Client.getDefaultGrid();
 			jLsGridNames = new JList(grids);
 			jLsGridNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jLsGridNames.setLayoutOrientation(JList.VERTICAL);
 			jLsGridNames.setVisibleRowCount(-1);
-			jLsGridNames.setSelectedValue(_Client.getDefaultGrid(), true);
+			jLsGridNames.setSelectedValue(lastSelection, true);
 			jLsGridNames.addListSelectionListener(new ListSelectionListener()
 			{
 				@Override
 				public void valueChanged(ListSelectionEvent e)
 				{
-					updateGridProperties((GridInfo)((JList)e.getSource()).getSelectedValue());				
+					updateGridProperties(lastSelection, true);
+					lastSelection = (GridInfo)((JList)e.getSource()).getSelectedValue();
+					updateGridProperties(lastSelection, false);				
 				}
 			});
 		}
@@ -606,20 +681,34 @@ public class GridEditor extends JDialog
 		if (jSpGridNames == null)
 		{
 			jSpGridNames = new JScrollPane(getJLsGridNames());
-			jSpGridNames.setPreferredSize(new Dimension(150, 100));
+			jSpGridNames.setPreferredSize(new Dimension(200, 100));
 		}
 		return jSpGridNames;
 	}
 
-	private void updateGridProperties(GridInfo grid)
+	private void updateGridProperties(GridInfo grid, boolean set)
 	{
-		getJTxtName().setText(grid.gridname);
-		getJTxtNick().setText(grid.gridnick);
-		getJTxtStartUrl().setText(grid.loginpage);
-		getJTxtLoginUrl().setText(grid.loginuri);
-		getJTxtHelperUrl().setText(grid.helperuri);
-		getJTxtWebsiteUrl().setText(grid.website);
-		getJTxtSupportUrl().setText(grid.support);
-		getJTxtRegisterUrl().setText(grid.register);
+		if (set)
+		{
+			grid.gridname = getJTxtName().getText();
+			grid.gridnick = getJTxtNick().getText();
+			grid.loginpage = getJTxtStartUrl().getText();
+			grid.loginuri = getJTxtLoginUrl().getText();
+			grid.helperuri = getJTxtHelperUrl().getText();
+			grid.website = getJTxtWebsiteUrl().getText();
+			grid.support = getJTxtSupportUrl().getText();
+			grid.register = getJTxtRegisterUrl().getText();
+		}
+		else
+		{
+			getJTxtName().setText(grid.gridname);
+			getJTxtNick().setText(grid.gridnick);
+			getJTxtStartUrl().setText(grid.loginpage);
+			getJTxtLoginUrl().setText(grid.loginuri);
+			getJTxtHelperUrl().setText(grid.helperuri);
+			getJTxtWebsiteUrl().setText(grid.website);
+			getJTxtSupportUrl().setText(grid.support);
+			getJTxtRegisterUrl().setText(grid.register);
+		}
 	}
 }

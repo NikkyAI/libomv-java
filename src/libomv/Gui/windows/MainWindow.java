@@ -93,6 +93,7 @@ public class MainWindow extends JFrame
 	private JMenuBar jMbMain;
 	
 	GridClient _Client;
+	private GridBagConstraints gridBagConstraints_1;
 
 	/**
 	 * This is the default constructor
@@ -158,54 +159,54 @@ public class MainWindow extends JFrame
 
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 			gridBagConstraints.gridx = 1;
 			gridBagConstraints.gridy = 0;
 			jLoginPanel.add(getJLblFirstName(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints.gridx = 2;
 			gridBagConstraints.gridy = 0;
 			jLoginPanel.add(getJTxtFirstName(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints.gridx = 3;
 			gridBagConstraints.gridy = 0;
 			jLoginPanel.add(getJLblLastName(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints.gridx = 4;
 			gridBagConstraints.gridy = 0;
 			jLoginPanel.add(getJTxtLastName(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints.gridx = 5;
 			gridBagConstraints.gridy = 0;
 			jLoginPanel.add(getJLblPassword(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 			gridBagConstraints.gridx = 6;
 			gridBagConstraints.gridy = 0;
 			jLoginPanel.add(getJPwdPassword(), gridBagConstraints);
 
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
-			gridBagConstraints.gridx = 7;
-			gridBagConstraints.gridy = 0;
-			jLoginPanel.add(getJBtnLogin(), gridBagConstraints);
+			gridBagConstraints_1 = new GridBagConstraints();
+			gridBagConstraints_1.insets = new Insets(5, 0, 5, 5);
+			gridBagConstraints_1.gridx = 7;
+			gridBagConstraints_1.gridy = 0;
+			jLoginPanel.add(getJBtnLogin(), gridBagConstraints_1);
 
 			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(0, 5, 5, 5);
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
 			gridBagConstraints.gridx = 1;
 			gridBagConstraints.gridy = 1;
@@ -226,7 +227,7 @@ public class MainWindow extends JFrame
 			jLoginPanel.add(getBtnGrids(), gridBagConstraints);
 
 			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints.insets = new Insets(0, 5, 5, 5);
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
 			gridBagConstraints.gridx = 1;
 			gridBagConstraints.gridy = 2;
