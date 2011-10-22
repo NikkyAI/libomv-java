@@ -1682,14 +1682,22 @@ public class Helpers
 	 *            The offset into the byte array from which to start
 	 * @param length
 	 *            The number of bytes to consume
+	 *            < 0 will search for null terminating byte starting from offset
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
-		for (; bytes[offset + length - 1] == 0; length--)
-			;
-
+		if (length < 0)
+		{
+			for (length = 0; bytes[offset + length] != 0; length++);
+		}
+		else
+		{
+			/* Backtrack possible null terminating bytes */
+			for (; bytes[offset + length - 1] == 0; length--);
+		}
+		
 		if (length == 0)
 			return EmptyString;
 
