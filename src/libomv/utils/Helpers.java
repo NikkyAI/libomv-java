@@ -28,6 +28,7 @@ package libomv.utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -52,6 +55,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import libomv.types.UUID;
+
 
 public class Helpers
 {
@@ -122,7 +126,9 @@ public class Helpers
 			}
 			return "$1$" + digest.toString();
 		}
-		catch (Exception e) { }
+		catch (Exception e)
+		{
+		}
 		return EmptyString;
 	}
 
@@ -781,26 +787,26 @@ public class Helpers
 		return buf.toString();
 	}
 
-    public static String join(String delimiter, String[] strings)
-    {
-    	if (strings.length == 0)
-    		return EmptyString;
-    	int capacity = (strings.length - 1) * delimiter.length();
-    	for (String s : strings)
-    	{
-    	    capacity += s.length();
-    	}
+	public static String join(String delimiter, String[] strings)
+	{
+		if (strings.length == 0)
+			return EmptyString;
+		int capacity = (strings.length - 1) * delimiter.length();
+		for (String s : strings)
+		{
+			capacity += s.length();
+		}
 
-    	StringBuilder buffer = new StringBuilder(capacity);
-    	for (String s : strings)
-    	{
-    		if (capacity < 0)
-        		buffer.append(delimiter);
-    	    buffer.append(s);
-    	    capacity = -1;
-     	}
-    	return buffer.toString();
-    }
+		StringBuilder buffer = new StringBuilder(capacity);
+		for (String s : strings)
+		{
+			if (capacity < 0)
+				buffer.append(delimiter);
+			buffer.append(s);
+			capacity = -1;
+		}
+		return buffer.toString();
+	}
 
 	/**
 	 * Convert the first two bytes starting in the byte array in little endian
@@ -1681,11 +1687,12 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
-		for (; bytes[offset + length - 1] == 0; length--);
+		for (; bytes[offset + length - 1] == 0; length--)
+			;
 
 		if (length == 0)
 			return EmptyString;
-		
+
 		return new String(bytes, offset, length, UTF8_ENCODING);
 	}
 
@@ -2289,8 +2296,8 @@ public class Helpers
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static KeyStore GetExtendedKeyStore() throws KeyStoreException, IOException,
-	                                                                        NoSuchAlgorithmException, CertificateException
+	public static KeyStore GetExtendedKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
+			CertificateException
 	{
 		KeyStore ks = null;
 
@@ -2328,27 +2335,54 @@ public class Helpers
 		{
 			in.close();
 		}
-
 		return ks;
 	}
 
-	public static X509Certificate GetLindenCertificate() throws CertificateException, IOException
+
+	public static X509Certificate GetCertificate(final String hostname) throws CertificateException, IOException, URISyntaxException
 	{
-		X509Certificate cert;
-		InputStream fis = Helpers.class.getResourceAsStream("/res/linden.cert");
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		try
+		URL dirURL = Helpers.class.getClassLoader().getResource("res/");
+		if (dirURL == null || !dirURL.getProtocol().equals("file"))
 		{
-			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-			cert = (X509Certificate) cf.generateCertificate(bis);
+			// not dealing with URL paths for now
+			return null;
 		}
-		catch (CertificateException ex)
+
+		// File filter checking the file names to be part of the hostname
+		FileFilter filter = new FileFilter()
 		{
-			throw ex;
-		}
-		finally
+			@Override
+			public boolean accept(File file)
+			{
+				String name = file.getName();
+				if (file.isDirectory() || !name.endsWith(".cert"))
+					return false;
+				return hostname.contains(name.subSequence(0, name.length() - 5));
+			}
+		};
+		
+		/* A file path: easy enough */
+		File[] files = new File(dirURL.toURI()).listFiles(filter);
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		X509Certificate cert = null;
+		
+		for (File file : files)
 		{
-			fis.close();
+			FileInputStream fis = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			try
+			{
+				cert = (X509Certificate) cf.generateCertificate(bis);
+			}
+			catch (CertificateException ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				bis.close();
+				fis.close();
+			}
 		}
 		return cert;
 	}

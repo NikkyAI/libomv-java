@@ -1066,10 +1066,10 @@ public class LoginManager
 				final XMLRPCClient client = new XMLRPCClient(loginUri);
 				final Object[] request = new Object[] { loginXmlRpc };
 
-				if (loginUri.getScheme().equals("https") && loginUri.getHost().contains("linden"))
+				if (loginUri.getScheme().equals("https"))
 				{
 					KeyStore ks = Helpers.GetExtendedKeyStore();
-					ks.setCertificateEntry("lindenlab", Helpers.GetLindenCertificate());
+					ks.setCertificateEntry(loginUri.getHost(), Helpers.GetCertificate(loginUri.getHost()));
 					client.register(new Scheme("https", 443, new SSLSocketFactory(ks)));
 				}
 

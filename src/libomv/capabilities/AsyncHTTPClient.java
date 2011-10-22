@@ -199,15 +199,10 @@ public abstract class AsyncHTTPClient<T>
 		{
 			try
 			{
-				String name;
-				if (certificate == null && address.getHost().contains("linden"))
+				String name = address.getHost();
+				if (certificate == null)
 				{
-					certificate = Helpers.GetLindenCertificate();
-					name = "lindenlab";
-				}
-				else
-				{
-					name = "user_certificate";
+					certificate = Helpers.GetCertificate(address.getHost());
 				}
 
 				if (certificate != null)
