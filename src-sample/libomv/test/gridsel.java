@@ -25,6 +25,7 @@
 package libomv.test;
 
 import libomv.GridClient;
+import libomv.GridClient.GridInfo;
 
 public class gridsel
 {
@@ -45,5 +46,7 @@ public class gridsel
 	{
 		GridClient client = new GridClient();
 		System.out.println(client.dumpGridlist());
+		GridInfo info = client.queryGridInfo(client.getDefaultGrid());
+		System.out.println(info.dump());
 	}
 }
