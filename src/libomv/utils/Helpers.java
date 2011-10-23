@@ -491,10 +491,13 @@ public class Helpers
 		return output;
 	}
 
-	// Convert a UTF8 String to a byte array
-	//
-	// <param name="str">The String to convert to a byte array</param>
-	// <returns>A null-terminated byte array</returns>
+	/**
+	 * Convert a UTF8 String to a byte array
+	 *
+	 * @param str The String to convert to a byte array
+	 * @return A null-terminated byte array
+	 * @throws Exception
+	 */
 	public static byte[] StringToField(String str) throws Exception
 	{
 		if (!str.endsWith("\0"))
