@@ -232,7 +232,7 @@ public class GridEditor extends JDialog
 				{
 					try
 					{
-						updateGridProperties(_Client.queryGridInfo(((GridInfo)(getJLsGridNames().getSelectedValue())).loginuri), false);
+						updateGridProperties(_Client.queryGridInfo(((GridInfo)(getJLsGridNames().getSelectedValue()))), false);
 					}
 					catch (Exception e)	{ }
 				}
@@ -653,7 +653,7 @@ public class GridEditor extends JDialog
 			GridInfo[] grids = new GridInfo[nicks.size()];
 			for (String nick : nicks)
 			{
-				grids[i++] = _Client.getGrid(nick);
+				grids[i++] = _Client.getGrid(nick).clone();
 			}
 			
 			lastSelection = _Client.getDefaultGrid();

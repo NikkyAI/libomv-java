@@ -61,7 +61,7 @@ import libomv.utils.Helpers;
 /* Main class to expose the functionality of a particular grid to clients. All of the
  * classes needed for sending and receiving data are accessible throug this class.
  */
-public class GridClient
+public class GridClient implements Cloneable
 {
 	// #region gridlist definitions
 	public class GridInfo
@@ -99,6 +99,17 @@ public class GridClient
 			this.password = password;
 		}
 
+		@Override
+		public GridInfo clone()
+		{
+			try
+			{
+				return (GridInfo)super.clone();
+			}
+			catch (CloneNotSupportedException e) { }
+			return null;
+		}
+		
 		/**
 		 * Merge in the grid info for all null fields in our record
 		 * 
