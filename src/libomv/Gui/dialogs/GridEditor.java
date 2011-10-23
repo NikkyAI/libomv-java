@@ -1,5 +1,7 @@
 package libomv.Gui.dialogs;
 
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -11,7 +13,9 @@ import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -30,23 +34,24 @@ import javax.swing.event.ListSelectionListener;
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
 import libomv.utils.Helpers;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.factories.FormFactory;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import javax.swing.border.MatteBorder;
+import java.awt.Color;
+import java.awt.SystemColor;
+import javax.swing.border.EmptyBorder;
 
 public class GridEditor extends JDialog
 {
 	private static final long serialVersionUID = 1L;
 
 	private GridClient _Client;
-	private GridInfo lastSelection;
 
 	private JButton jBtnSetup;
 	private JButton jBtnCancel;
 	private JButton jBtnOk;
-	
+
+	private DefaultListModel jLsModel;
 	private JList jLsGridNames;
 	private JScrollPane jSpGridNames;
 	private JTextField jTxtName;
@@ -64,6 +69,7 @@ public class GridEditor extends JDialog
 	private JButton jBtnApply;
 	private JButton jBtnAdd;
 	private JButton jBtnRemove;
+	private JButton jBtnSetDefault;
 
 	public GridEditor(GridClient client, JFrame parent, String title, boolean modal)
 	{
@@ -74,26 +80,28 @@ public class GridEditor extends JDialog
 		super.setTitle(title);
 
 		_Client = client;
-		
+
 		// Do not allow resizing
 		setResizable(false);
-		setSize(new Dimension(663, 464));
+		setSize(new Dimension(680, 480));
 		setLocationByPlatform(true);
-		
+
 		getContentPane().add(getJSpGridNames(), BorderLayout.WEST);
-		
+
 		JPanel jEditPanel = new JPanel();
+		jEditPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(jEditPanel, BorderLayout.CENTER);
 
 		getContentPane().add(getButtonPanel(), BorderLayout.SOUTH);
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{1, 2, 3, 0, 1, 0};
-		gridBagLayout.rowHeights = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] { 1, 2, 3, 0, 1, 0 };
+		gridBagLayout.rowHeights = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+				Double.MIN_VALUE };
 		jEditPanel.setLayout(gridBagLayout);
-		
+
 		JLabel jLblName = new JLabel("Name");
 		GridBagConstraints gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -101,14 +109,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 1;
 		jEditPanel.add(jLblName, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 1;
 		jEditPanel.add(getJTxtName(), gbConstraints);
-		
+
 		JLabel jLblNick = new JLabel("Nick");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -116,14 +124,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 2;
 		jEditPanel.add(jLblNick, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 2;
 		jEditPanel.add(getJTxtNick(), gbConstraints);
-		
+
 		JLabel jLblLoginUrl = new JLabel("Login URL");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -131,7 +139,7 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 3;
 		jEditPanel.add(jLblLoginUrl, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -140,12 +148,12 @@ public class GridEditor extends JDialog
 		jEditPanel.add(getJTxtLoginUrl(), gbConstraints);
 
 		gbConstraints = new GridBagConstraints();
-		gbConstraints.insets = new Insets(0, 0, 5, 5);
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.BOTH;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 4;
 		jEditPanel.add(getGridBtnPanel(), gbConstraints);
-		
+
 		JLabel jLblStartUrl = new JLabel("Login Page:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -153,14 +161,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 5;
 		jEditPanel.add(jLblStartUrl, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 5;
 		jEditPanel.add(getJTxtStartUrl(), gbConstraints);
-		
+
 		JLabel jLblHelperUrl = new JLabel("Helper URI:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -168,14 +176,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 6;
 		jEditPanel.add(jLblHelperUrl, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 6;
 		jEditPanel.add(getJTxtHelperUrl(), gbConstraints);
-		
+
 		JLabel jLblWebsite = new JLabel("Website:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 5, 5, 5);
@@ -183,14 +191,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 7;
 		jEditPanel.add(jLblWebsite, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 7;
 		jEditPanel.add(getJTxtWebsiteUrl(), gbConstraints);
-		
+
 		JLabel jLblSupportUrl = new JLabel("Support:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -198,14 +206,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 8;
 		jEditPanel.add(jLblSupportUrl, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 8;
 		jEditPanel.add(getJTxtSupportUrl(), gbConstraints);
-		
+
 		JLabel jLblRegisterUrl = new JLabel("Account:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -213,14 +221,14 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 9;
 		jEditPanel.add(jLblRegisterUrl, gbConstraints);
-		
+
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 9;
 		jEditPanel.add(getJTxtRegisterUrl(), gbConstraints);
-		
+
 		JLabel jLblPasswrodUrl = new JLabel("Password:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
@@ -235,11 +243,11 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 10;
 		jEditPanel.add(getJTxtPasswordUrl(), gbConstraints);
-		
+
 		getRootPane().setDefaultButton(getJBtnOk());
 		updateGridProperties(_Client.getDefaultGrid(), false);
 	}
-	
+
 	private JButton getJBtnSetup()
 	{
 		if (jBtnSetup == null)
@@ -252,17 +260,22 @@ public class GridEditor extends JDialog
 				{
 					try
 					{
-						updateGridProperties(_Client.queryGridInfo(((GridInfo)(getJLsGridNames().getSelectedValue()))), false);
+						updateGridProperties(
+								_Client.queryGridInfo(((GridInfo) (getJLsGridNames().getSelectedValue()))), false);
 					}
-					catch (Exception e)	{ }
+					catch (Exception e)
+					{
+					}
 				}
 			});
 		}
 		return jBtnSetup;
 	}
 
-	private JButton getJBtnClearGridInfo() {
-		if (jBtnClearGridInfo == null) {
+	private JButton getJBtnClearGridInfo()
+	{
+		if (jBtnClearGridInfo == null)
+		{
 			jBtnClearGridInfo = new JButton("Clear Grid Info");
 			jBtnClearGridInfo.addActionListener(new ActionListener()
 			{
@@ -276,24 +289,31 @@ public class GridEditor extends JDialog
 		return jBtnClearGridInfo;
 	}
 
-	private JButton getJBtnApply() {
-		if (jBtnApply == null) {
+	private JButton getJBtnApply()
+	{
+		if (jBtnApply == null)
+		{
 			jBtnApply = new JButton("Apply");
 			jBtnApply.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					updateGridProperties((GridInfo)(getJLsGridNames().getSelectedValue()), true);
+					updateGridProperties((GridInfo) (getJLsGridNames().getSelectedValue()), true);
 				}
 			});
 		}
 		return jBtnApply;
 	}
 
-	private JPanel getGridBtnPanel() {
-		if (jPaneGridBtnPanel == null) {
+	private JPanel getGridBtnPanel()
+	{
+		if (jPaneGridBtnPanel == null)
+		{
 			jPaneGridBtnPanel = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) jPaneGridBtnPanel.getLayout();
+			flowLayout.setVgap(0);
+			flowLayout.setHgap(0);
 			jPaneGridBtnPanel.add(getJBtnSetup());
 			jPaneGridBtnPanel.add(getJBtnClearGridInfo());
 			jPaneGridBtnPanel.add(getJBtnApply());
@@ -301,36 +321,59 @@ public class GridEditor extends JDialog
 		return jPaneGridBtnPanel;
 	}
 
-	private JButton getJBtnAdd() {
-		if (jBtnAdd == null) {
+	private JButton getJBtnAdd()
+	{
+		if (jBtnAdd == null)
+		{
 			jBtnAdd = new JButton("Add Grid");
 			jBtnAdd.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					dispose();
+					getJLsModel().add(getJLsGridNames().getSelectedIndex(),
+							updateGridProperties(_Client.new GridInfo(), true));
 				}
 			});
 		}
 		return jBtnAdd;
 	}
-	
-	private JButton getBtnNewButton() {
-		if (jBtnRemove == null) {
+
+	private JButton getJBtnRemove()
+	{
+		if (jBtnRemove == null)
+		{
 			jBtnRemove = new JButton("Remove Grid");
 			jBtnRemove.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					dispose();
+					getJLsModel().remove(getJLsGridNames().getSelectedIndex());
 				}
 			});
 		}
 		return jBtnRemove;
 	}
-	
+
+	private JButton getJBtnSetDefault()
+	{
+		if (jBtnSetDefault == null)
+		{
+			jBtnSetDefault = new JButton("Set Default");
+			jBtnSetDefault.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					_Client.setDefaultGrid((GridInfo)getJLsGridNames().getSelectedValue());
+					jLsGridNames.setCellRenderer(new MyListCellRenderer(_Client.getDefaultGrid()));
+				}
+			});
+		}
+		return jBtnSetDefault;
+	}
+
 	private JButton getJBtnOk()
 	{
 		if (jBtnOk == null)
@@ -345,10 +388,10 @@ public class GridEditor extends JDialog
 					// Get number of items in the list
 					int size = getJLsGridNames().getModel().getSize();
 					// Get all item objects
-					for (int i=0; i<size; i++)
+					for (int i = 0; i < size; i++)
 					{
-						_Client.addGrid((GridInfo)getJLsGridNames().getModel().getElementAt(i));
-					}					
+						_Client.addGrid((GridInfo) getJLsGridNames().getModel().getElementAt(i));
+					}
 					dispose();
 				}
 			});
@@ -373,59 +416,19 @@ public class GridEditor extends JDialog
 		return jBtnCancel;
 	}
 
-	private JPanel getButtonPanel() {
-		if (jBtnPanel == null) {
+	private JPanel getButtonPanel()
+	{
+		if (jBtnPanel == null)
+		{
 			jBtnPanel = new JPanel();
-			jBtnPanel.setLayout(new FormLayout(new ColumnSpec[] {
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.RELATED_GAP_COLSPEC,
-					FormFactory.DEFAULT_COLSPEC,},
-				new RowSpec[] {
-					FormFactory.RELATED_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,}));
-			jBtnPanel.add(getJBtnAdd(), "2, 2");
-			jBtnPanel.add(getBtnNewButton(), "6, 2, default, center");
-			jBtnPanel.add(getJBtnCancel(), "20, 2");
-			jBtnPanel.add(getJBtnOk(), "24, 2");
+			jBtnPanel.setBorder(new MatteBorder(5, 5, 5, 5, (Color) SystemColor.control));
+			jBtnPanel.setLayout(new GridLayout(1, 6, 10, 0));
+			jBtnPanel.add(getJBtnRemove());
+			jBtnPanel.add(getJBtnAdd());
+			jBtnPanel.add(getJBtnSetDefault());
+			jBtnPanel.add(new JLabel(""));
+			jBtnPanel.add(getJBtnOk());
+			jBtnPanel.add(getJBtnCancel());
 		}
 		return jBtnPanel;
 	}
@@ -474,7 +477,7 @@ public class GridEditor extends JDialog
 		}
 		return jTxtName;
 	}
-	
+
 	private JTextField getJTxtNick()
 	{
 		if (jTxtNick == null)
@@ -790,55 +793,91 @@ public class GridEditor extends JDialog
 		return jTxtRegisterUrl;
 	}
 
-	private JTextField getJTxtPasswordUrl() {
-		if (jTxtPasswordUrl == null) {
+	private JTextField getJTxtPasswordUrl()
+	{
+		if (jTxtPasswordUrl == null)
+		{
 			jTxtPasswordUrl = new JTextField();
 			jTxtPasswordUrl.setColumns(10);
 		}
 		return jTxtPasswordUrl;
 	}
-	
+
+	private DefaultListModel getJLsModel()
+	{
+		if (jLsModel == null)
+		{
+			int i = 0;
+			jLsModel = new DefaultListModel();
+			Set<String> nicks = _Client.getGridNames();
+			for (String nick : nicks)
+			{
+				jLsModel.add(i, _Client.getGrid(nick).clone());
+			}
+		}
+		return jLsModel;
+	}
+
+	private class MyListCellRenderer extends DefaultListCellRenderer
+	{
+		private static final long serialVersionUID = 1L;
+		private GridInfo defaultItem;
+
+		MyListCellRenderer(GridInfo defaultItem)
+		{
+			this.defaultItem = defaultItem;
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+				boolean cellHasFocus)
+		{
+			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			if (defaultItem.equals(value))
+			{
+				label.setFont(list.getFont().deriveFont(Font.BOLD));
+			}
+			else
+			{
+				label.setFont(list.getFont());
+			}
+			return label;
+		}
+	}
+
 	private JList getJLsGridNames()
 	{
 		if (jLsGridNames == null)
 		{
-			int i = 0;
-			Set<String> nicks = _Client.getGridNames();
-			GridInfo[] grids = new GridInfo[nicks.size()];
-			for (String nick : nicks)
-			{
-				grids[i++] = _Client.getGrid(nick).clone();
-			}
-			
-			lastSelection = _Client.getDefaultGrid();
-			jLsGridNames = new JList(grids);
+			jLsGridNames = new JList(getJLsModel());
 			jLsGridNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jLsGridNames.setLayoutOrientation(JList.VERTICAL);
 			jLsGridNames.setVisibleRowCount(-1);
-			jLsGridNames.setSelectedValue(lastSelection, true);
+			jLsGridNames.setCellRenderer(new MyListCellRenderer(_Client.getDefaultGrid()));
+			jLsGridNames.setSelectedValue(_Client.getDefaultGrid(), true);
 			jLsGridNames.addListSelectionListener(new ListSelectionListener()
 			{
 				@Override
 				public void valueChanged(ListSelectionEvent e)
 				{
-					updateGridProperties((GridInfo)((JList)e.getSource()).getSelectedValue(), false);				
+					updateGridProperties((GridInfo) getJLsGridNames().getSelectedValue(), false);
 				}
 			});
 		}
 		return jLsGridNames;
 	}
-	
+
 	private JScrollPane getJSpGridNames()
 	{
 		if (jSpGridNames == null)
 		{
 			jSpGridNames = new JScrollPane(getJLsGridNames());
-			jSpGridNames.setPreferredSize(new Dimension(200, 100));
+			jSpGridNames.setPreferredSize(new Dimension(250, 100));
 		}
 		return jSpGridNames;
 	}
 
-	private void updateGridProperties(GridInfo grid, boolean set)
+	private GridInfo updateGridProperties(GridInfo grid, boolean set)
 	{
 		if (set)
 		{
@@ -854,9 +893,12 @@ public class GridEditor extends JDialog
 		}
 		else
 		{
-			getJTxtName().setText(grid == null ? Helpers.EmptyString : grid.gridname);
-			getJTxtNick().setText(grid == null ? Helpers.EmptyString : grid.gridnick);
-			getJTxtStartUrl().setText(grid == null ? Helpers.EmptyString : grid.loginpage);
+			if (grid != null)
+			{
+				getJTxtName().setText(grid.gridname);
+				getJTxtNick().setText(grid.gridnick);
+				getJTxtStartUrl().setText(grid.loginpage);
+			}
 			getJTxtLoginUrl().setText(grid == null ? Helpers.EmptyString : grid.loginuri);
 			getJTxtHelperUrl().setText(grid == null ? Helpers.EmptyString : grid.helperuri);
 			getJTxtWebsiteUrl().setText(grid == null ? Helpers.EmptyString : grid.website);
@@ -864,5 +906,6 @@ public class GridEditor extends JDialog
 			getJTxtRegisterUrl().setText(grid == null ? Helpers.EmptyString : grid.register);
 			getJTxtPasswordUrl().setText(grid == null ? Helpers.EmptyString : grid.passworduri);
 		}
+		return grid;
 	}
 }

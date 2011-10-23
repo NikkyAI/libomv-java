@@ -41,7 +41,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -101,7 +100,6 @@ public class MainWindow extends JFrame
 	public MainWindow(GridClient client)
 	{
 		super();
-		addWindowListener(new ExitListener());
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -114,22 +112,13 @@ public class MainWindow extends JFrame
 		_Client = client;
 		
 		setTitle("Libomv-Java Client");
-		setSize(800, 640);
+		setSize(1024, 800);
 		setJMenuBar(getJMbMain());
 		setPreferredSize(new Dimension(640, 480));
 		setMinimumSize(new Dimension(640, 480));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().add(getJInfoPanel(), BorderLayout.CENTER);
 		getContentPane().add(getJLoginPanel(), BorderLayout.SOUTH);
-	}
-
-	public class ExitListener extends WindowAdapter
-	{
-		@Override
-		public void windowClosing(WindowEvent event)
-		{
-		    System.exit(0);
-		}
 	}
 
 	private JFrame getJMainFrame()
@@ -510,20 +499,14 @@ public class MainWindow extends JFrame
 	{
 		if (jcbGridSelector == null)
 		{
-			jcbGridSelector = new JComboBox();
-			Set<String> set = _Client.getGridNames();
-			for (String grid : set)
-			{
-				jcbGridSelector.addItem(grid);
-			}
-			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid().gridnick);
+			jcbGridSelector = new JComboBox(_Client.getGridInfos());
+			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid());
 			jcbGridSelector.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent evt)
 				{
-					String selection = ((JComboBox)evt.getSource()).getSelectedItem().toString();
-					initializeLoginPanel(_Client.getGrid(selection));
+					initializeLoginPanel((GridInfo)((JComboBox)evt.getSource()).getSelectedItem());
 				}
 			});
 		}
@@ -678,15 +661,14 @@ public class MainWindow extends JFrame
 	
 	private void doLogin()
 	{
-		String string = (String) getJcbGridSelector().getSelectedItem();
-		_Client.setDefaultGrid(string);
-		GridInfo grid = _Client.getDefaultGrid();
+		GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
+		_Client.setDefaultGrid(grid);
 
 		grid.saveSettings = getChckbxSaveDetails().isSelected();
 		grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
 		grid.startLocation = getJcbStartLocation().getSelectedItem().toString().toLowerCase();
 
-		string = getJTxtFirstName().getText(); 
+		String string = getJTxtFirstName().getText(); 
 		if (string != null)
 			grid.firstname = string;
 		string = getJTxtLastName().getText();

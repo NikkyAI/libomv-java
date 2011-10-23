@@ -375,6 +375,12 @@ public class GridClient
 		Stats = new Statistics();
 	}
 
+	public GridInfo[] getGridInfos()
+	{
+		GridInfo[] grids = new GridInfo[gridlist.size()];
+		return gridlist.values().toArray(grids);
+	}
+
 	public Set<String> getGridNames()
 	{
 		return gridlist.keySet();
@@ -387,16 +393,21 @@ public class GridClient
 
 	public GridInfo getDefaultGrid()
 	{
-		if (defaultGrid == null | defaultGrid.isEmpty())
-			setDefaultGrid(null);
+		if (defaultGrid == null || defaultGrid.isEmpty())
+			setDefaultGrid((String)null);
 		return gridlist.get(defaultGrid);
 	}
 
-	public void setDefaultGrid(String name)
+	public void setDefaultGrid(GridInfo grid)
 	{
-		if (name != null && gridlist.containsKey(name))
+		setDefaultGrid(grid != null ? grid.gridnick : null);
+	}
+	
+	public void setDefaultGrid(String gridnick)
+	{
+		if (gridnick != null && gridlist.containsKey(gridnick))
 		{
-			defaultGrid = name;
+			defaultGrid = gridnick;
 		}
 		else if (gridlist.containsKey(DEFAULT_GRID_NAME1))
 		{
@@ -429,7 +440,7 @@ public class GridClient
 			if (grid.equals(defaultGrid))
 			{
 				// sets first grid if map is not empty
-				setDefaultGrid(Helpers.EmptyString);
+				setDefaultGrid((String)null);
 			}
 		}
 		return info;
