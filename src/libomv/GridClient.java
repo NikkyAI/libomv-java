@@ -260,6 +260,25 @@ public class GridClient
 		return gridlist.put(info.gridnick, info);
 	}
 
+	public GridInfo removeGrid(String grid)
+	{
+		GridInfo info = gridlist.remove(grid);
+		if (info != null)
+		{
+			if (grid.equals(defaultGrid))
+			{
+				// sets first grid if map is not empty
+				setDefaultGrid(Helpers.EmptyString);
+			}
+		}
+		return info;
+	}
+
+	public void clearGrids()
+	{
+		gridlist.clear();
+	}
+
 	/**
 	 * Retrieves the GridInfo settings from the grid user server, when the
 	 * server supports the GridInfo protocol.
@@ -376,20 +395,6 @@ public class GridClient
 				}
 			}
 		} while (parser.nextTag() == XmlPullParser.START_TAG);
-		return info;
-	}
-
-	public GridInfo deleteGrid(String grid)
-	{
-		GridInfo info = gridlist.remove(grid);
-		if (info != null)
-		{
-			if (grid.equals(defaultGrid))
-			{
-				// sets first grid if map is not empty
-				setDefaultGrid(Helpers.EmptyString);
-			}
-		}
 		return info;
 	}
 
