@@ -99,11 +99,159 @@ public class GridClient
 			this.password = password;
 		}
 
-		public String dump()
+		/**
+		 * Merge in the grid info for all null fields in our record
+		 * 
+		 * @param info The info to merge in
+		 */
+		public void merge(GridInfo info)
 		{
-			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n", gridnick, gridname, platform, version);	
+			saveSettings |= info.saveSettings;
+			savePassword = saveSettings && (info.savePassword || savePassword);
+			if (firstname == null)
+				firstname = info.firstname;
+			if (lastname == null)
+				lastname = info.lastname;
+			if (password == null)
+				password = info.password;
+			if (startLocation == null)
+				startLocation = info.startLocation;
+
+			if (gridnick == null)
+				gridnick = info.gridnick;
+			if (gridname == null)
+				gridname = info.gridname;
+			if (platform == null)
+				platform = info.platform;
+			if (loginuri == null)
+				loginuri = info.loginuri;
+			if (loginpage == null)
+				loginpage = info.loginpage;
+			if (helperuri == null)
+				helperuri = info.helperuri;
+			if (website == null)
+				website = info.website;
+			if (support == null)
+				support = info.support;
+			if (register == null)
+				register = info.register;
+			
+			if (version <= info.version)
+			{
+				version = info.version;
+				if (!equals(info))
+					version++;
+			}
 		}
 		
+		public String dump()
+		{
+			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n" +
+					             "loginuri: %s, loginpage: %s, website: %s, support: %s\n",
+					             gridnick, gridname, platform, version, loginuri, loginpage, website, support);	
+		}
+		
+		@Override
+		public int hashCode()
+		{
+			int hash = 0;
+			String string = null;
+			for (int i = 0; i < 9; i++)
+			{
+				switch (i)
+				{
+					case 0:
+						string = gridnick;
+						break;
+					case 1:
+						string = gridname;
+						break;
+					case 2:
+						string = loginuri;
+						break;
+					case 3:
+						string = loginpage;
+						break;
+					case 4:
+						string = helperuri;
+						break;
+					case 5:
+						string = website;
+						break;
+					case 6:
+						string = support;
+						break;
+					case 7:
+						string = register;
+						break;
+					case 8:
+						string = platform;
+						break;
+				}
+				if (string != null)
+					hash ^= string.hashCode();
+			}
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object info)
+		{
+			return (info != null && info instanceof GridInfo) ? equals((GridInfo)info) : false;
+		}
+
+		public boolean equals(GridInfo info)
+		{
+			String string1 = null, string2 = null;
+			for (int i = 0; i < 9; i++)
+			{
+				switch (i)
+				{
+					case 0:
+						string1 = gridnick;
+						string2 = info.gridnick;
+						break;
+					case 1:
+						string1 = gridname;
+						string2 = info.gridname;
+						break;
+					case 2:
+						string1 = loginuri;
+						string2 = info.loginuri;
+						break;
+					case 3:
+						string1 = loginpage;
+						string2 = info.loginpage;
+						break;
+					case 4:
+						string1 = helperuri;
+						string2 = info.helperuri;
+						break;
+					case 5:
+						string1 = website;
+						string2 = info.website;
+						break;
+					case 6:
+						string1 = support;
+						string2 = info.support;
+						break;
+					case 7:
+						string1 = register;
+						string2 = info.register;
+						break;
+					case 8:
+						string1 = platform;
+						string2 = info.platform;
+						break;
+				}
+				if (string1 == null || !string1.equals(string2))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
 		@Override
 		public String toString()
 		{
@@ -288,31 +436,57 @@ public class GridClient
 	 * @return a filled in GridInfo if the call was successful, null otherwise
 	 * @throws Exception
 	 */
-	public GridInfo queryGridInfo(String loginuri) throws Exception
+	public GridInfo queryGridInfo(GridInfo grid) throws Exception
 	{
 		GridInfo info = null;
 		HttpClient client = new DefaultHttpClient();
-		HttpGet getMethod = new HttpGet(new URI(loginuri + GRID_INFO_PROTOCOL));
+		HttpGet getMethod = new HttpGet(new URI(grid.loginuri + GRID_INFO_PROTOCOL));
 		try
 		{
 			HttpResponse response = client.execute(getMethod);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
 			{
 				HttpEntity entity = response.getEntity();
-				XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-				parser.setInput(entity.getContent(), entity.getContentEncoding().getValue());
-				parser.nextTag();
-				parser.require(XmlPullParser.START_TAG, null, GRIDINFO);
-				if (!parser.isEmptyElementTag())
+				if (entity != null)
 				{
+					InputStream stream = entity.getContent();
+					String charset = null;
+					if (entity.getContentType() != null)
+					{
+						HeaderElement values[] = entity.getContentType().getElements();
+						if (values.length > 0)
+						{
+							NameValuePair param = values[0].getParameterByName("charset");
+							if (param != null)
+							{
+								charset = param.getValue();
+							}
+						}
+					}
+					if (charset == null)
+					{
+						charset = HTTP.DEFAULT_CONTENT_CHARSET;
+					}
+					XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+					parser.setInput(stream, charset);
 					parser.nextTag();
-					info = parseRecord(parser);
+					parser.require(XmlPullParser.START_TAG, null, GRIDINFO);
+					if (!parser.isEmptyElementTag())
+					{
+						parser.nextTag();
+						info = parseRecord(parser);
+					}
 				}
 			}
 		}
 		finally
 		{
 			getMethod.abort();
+		}
+		
+		if (info != null)
+		{
+			info.merge(grid);
 		}
 		return info;
 	}
