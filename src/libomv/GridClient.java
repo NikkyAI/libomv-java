@@ -75,6 +75,7 @@ public class GridClient implements Cloneable
 		public String website; // about, website
 		public String support; // help, support
 		public String register; // register, account
+		public String passworduri; // password
 		public int version;
 
 		public transient boolean saveSettings;
@@ -554,6 +555,10 @@ public class GridClient implements Cloneable
 				{
 					info.register = parser.nextText().trim();
 				}
+				else if (name.equals("password"))
+				{
+					info.passworduri = parser.nextText().trim();
+				}
 				else if (name.equals("firstname"))
 				{
 					info.firstname = parser.nextText().trim();
@@ -568,7 +573,7 @@ public class GridClient implements Cloneable
 				{
 					info.startLocation = parser.nextText().trim();
 				}
-				else if (name.equals("password"))
+				else if (name.equals("userpassword"))
 				{
 					info.password = parser.nextText().trim();
 					info.savePassword = true;
@@ -653,7 +658,7 @@ public class GridClient implements Cloneable
 				members.put("startLocation", OSDString.FromString(info.startLocation));
 				if (info.savePassword)
 				{
-					members.put("password", OSDString.FromString(info.password));
+					members.put("userpassword", OSDString.FromString(info.password));
 				}
 			}
 			array.add(members);
