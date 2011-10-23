@@ -35,6 +35,7 @@ public class GridEditor extends JDialog
 	private static final long serialVersionUID = 1L;
 
 	private GridClient _Client;
+	private GridInfo lastSelection;
 
 	private JButton jBtnSetup;
 	private JButton jBtnCancel;
@@ -50,6 +51,7 @@ public class GridEditor extends JDialog
 	private JTextField jTxtWebsiteUrl;
 	private JTextField jTxtSupportUrl;
 	private JTextField jTxtRegisterUrl;
+	private JTextField jTxtPasswordUrl;
 
 	public GridEditor(GridClient client, JFrame parent, String title, boolean modal)
 	{
@@ -63,7 +65,7 @@ public class GridEditor extends JDialog
 		
 		// Do not allow resizing
 		setResizable(false);
-		setSize(new Dimension(640, 400));
+		setSize(new Dimension(640, 464));
 		setLocationByPlatform(true);
 		
 		getContentPane().add(getJSpGridNames(), BorderLayout.WEST);
@@ -73,9 +75,9 @@ public class GridEditor extends JDialog
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{1, 2, 3, 1, 0};
-		gridBagLayout.rowHeights = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
+		gridBagLayout.rowHeights = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		jEditPanel.setLayout(gridBagLayout);
 		
 		JLabel jLblName = new JLabel("Name");
@@ -108,115 +110,130 @@ public class GridEditor extends JDialog
 		gbConstraints.gridy = 2;
 		jEditPanel.add(getJTxtNick(), gbConstraints);
 		
-		JLabel jLblStartUrl = new JLabel("Start URL");
-		gbConstraints = new GridBagConstraints();
-		gbConstraints.anchor = GridBagConstraints.WEST;
-		gbConstraints.insets = new Insets(5, 5, 5, 5);
-		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 3;
-		jEditPanel.add(jLblStartUrl, gbConstraints);
-		
-		gbConstraints = new GridBagConstraints();
-		gbConstraints.insets = new Insets(5, 0, 5, 5);
-		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-		gbConstraints.gridx = 2;
-		gbConstraints.gridy = 3;
-		jEditPanel.add(getJTxtStartUrl(), gbConstraints);
-		
 		JLabel jLblLoginUrl = new JLabel("Login URL");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
 		gbConstraints.insets = new Insets(5, 5, 5, 5);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 4;
+		gbConstraints.gridy = 3;
 		jEditPanel.add(jLblLoginUrl, gbConstraints);
 		
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
-		gbConstraints.gridy = 4;
+		gbConstraints.gridy = 3;
 		jEditPanel.add(getJTxtLoginUrl(), gbConstraints);
 		
 		gbConstraints = new GridBagConstraints();
-		gbConstraints.insets = new Insets(0, 0, 5, 0);
-		gbConstraints.gridx = 3;
+		gbConstraints.insets = new Insets(0, 0, 5, 5);
+		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 4;
 		jEditPanel.add(getJBtnSetup(), gbConstraints);
 		
-		JLabel jLblHelperUrl = new JLabel("Helper URL");
+		JLabel jLblStartUrl = new JLabel("Login Page:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
 		gbConstraints.insets = new Insets(5, 5, 5, 5);
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 5;
+		jEditPanel.add(jLblStartUrl, gbConstraints);
+		
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 5;
+		jEditPanel.add(getJTxtStartUrl(), gbConstraints);
+		
+		JLabel jLblHelperUrl = new JLabel("Helper URI:");
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 6;
 		jEditPanel.add(jLblHelperUrl, gbConstraints);
 		
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
-		gbConstraints.gridy = 5;
+		gbConstraints.gridy = 6;
 		jEditPanel.add(getJTxtHelperUrl(), gbConstraints);
 		
-		JLabel jLblWebsite = new JLabel("Website");
+		JLabel jLblWebsite = new JLabel("Website:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 5, 5, 5);
 		gbConstraints.anchor = GridBagConstraints.WEST;
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 6;
+		gbConstraints.gridy = 7;
 		jEditPanel.add(jLblWebsite, gbConstraints);
 		
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
-		gbConstraints.gridy = 6;
+		gbConstraints.gridy = 7;
 		jEditPanel.add(getJTxtWebsiteUrl(), gbConstraints);
 		
-		JLabel jLblSupportUrl = new JLabel("Support URL");
+		JLabel jLblSupportUrl = new JLabel("Support:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
 		gbConstraints.insets = new Insets(5, 5, 5, 5);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 7;
+		gbConstraints.gridy = 8;
 		jEditPanel.add(jLblSupportUrl, gbConstraints);
 		
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
-		gbConstraints.gridy = 7;
+		gbConstraints.gridy = 8;
 		jEditPanel.add(getJTxtSupportUrl(), gbConstraints);
 		
-		JLabel jLblRegisterUrl = new JLabel("Register URL");
+		JLabel jLblRegisterUrl = new JLabel("Account:");
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.WEST;
 		gbConstraints.insets = new Insets(5, 5, 5, 5);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 8;
+		gbConstraints.gridy = 9;
 		jEditPanel.add(jLblRegisterUrl, gbConstraints);
 		
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.insets = new Insets(5, 0, 5, 5);
 		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
-		gbConstraints.gridy = 8;
+		gbConstraints.gridy = 9;
 		jEditPanel.add(getJTxtRegisterUrl(), gbConstraints);
 		
+		JLabel jLblPasswrodUrl = new JLabel("Password:");
 		gbConstraints = new GridBagConstraints();
-		gbConstraints.insets = new Insets(5, 0, 0, 5);
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 10;
+		jEditPanel.add(jLblPasswrodUrl, gbConstraints);
+
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 10;
+		jEditPanel.add(getJTxtPasswordUrl(), gbConstraints);
+		
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 12;
 		jEditPanel.add(getJBtnOk(), gbConstraints);
 		
+		getRootPane().setDefaultButton(getJBtnOk());
+		
 		gbConstraints = new GridBagConstraints();
-		gbConstraints.insets = new Insets(5, 0, 0, 5);
-		gbConstraints.gridx = 3;
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 12;
 		jEditPanel.add(getJBtnCancel(), gbConstraints);
-		
-		getRootPane().setDefaultButton(getJBtnOk());
 		updateGridProperties(_Client.getDefaultGrid(), false);
 	}
 	
@@ -224,7 +241,7 @@ public class GridEditor extends JDialog
 	{
 		if (jBtnSetup == null)
 		{
-			jBtnSetup = new JButton("Setup");
+			jBtnSetup = new JButton("Get Grid Info");
 			jBtnSetup.addActionListener(new ActionListener()
 			{
 				@Override
@@ -251,8 +268,9 @@ public class GridEditor extends JDialog
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
+					_Client.clearGrids();
 					// Get number of items in the list
-					int size = getJLsGridNames().getModel().getSize(); // 4
+					int size = getJLsGridNames().getModel().getSize();
 					// Get all item objects
 					for (int i=0; i<size; i++)
 					{
@@ -642,7 +660,13 @@ public class GridEditor extends JDialog
 		return jTxtRegisterUrl;
 	}
 
-	private GridInfo lastSelection;
+	private JTextField getJTxtPasswordUrl() {
+		if (jTxtPasswordUrl == null) {
+			jTxtPasswordUrl = new JTextField();
+			jTxtPasswordUrl.setColumns(10);
+		}
+		return jTxtPasswordUrl;
+	}
 	
 	private JList getJLsGridNames()
 	{
@@ -698,6 +722,7 @@ public class GridEditor extends JDialog
 			grid.website = getJTxtWebsiteUrl().getText();
 			grid.support = getJTxtSupportUrl().getText();
 			grid.register = getJTxtRegisterUrl().getText();
+			grid.passworduri = getJTxtPasswordUrl().getText();
 		}
 		else
 		{
@@ -709,6 +734,7 @@ public class GridEditor extends JDialog
 			getJTxtWebsiteUrl().setText(grid.website);
 			getJTxtSupportUrl().setText(grid.support);
 			getJTxtRegisterUrl().setText(grid.register);
+			getJTxtPasswordUrl().setText(grid.passworduri);
 		}
 	}
 }
