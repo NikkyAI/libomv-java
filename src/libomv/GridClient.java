@@ -61,10 +61,10 @@ import libomv.utils.Helpers;
 /* Main class to expose the functionality of a particular grid to clients. All of the
  * classes needed for sending and receiving data are accessible throug this class.
  */
-public class GridClient implements Cloneable
+public class GridClient
 {
 	// #region gridlist definitions
-	public class GridInfo
+	public class GridInfo implements Cloneable
 	{
 		public String gridnick; // gridnick
 		public String gridname; // gridname
@@ -107,8 +107,10 @@ public class GridClient implements Cloneable
 			{
 				return (GridInfo)super.clone();
 			}
-			catch (CloneNotSupportedException e) { }
-			return null;
+			catch (CloneNotSupportedException e)
+			{
+	            throw new Error("This should not occur since we implement Cloneable");
+			}
 		}
 		
 		/**
@@ -129,31 +131,30 @@ public class GridClient implements Cloneable
 			if (startLocation == null)
 				startLocation = info.startLocation;
 
-			if (gridnick == null)
-				gridnick = info.gridnick;
-			if (gridname == null)
-				gridname = info.gridname;
-			if (platform == null)
-				platform = info.platform;
-			if (loginuri == null)
-				loginuri = info.loginuri;
-			if (loginpage == null)
-				loginpage = info.loginpage;
-			if (helperuri == null)
-				helperuri = info.helperuri;
-			if (website == null)
-				website = info.website;
-			if (support == null)
-				support = info.support;
-			if (register == null)
-				register = info.register;
-			
-			if (version <= info.version)
+			if (version < info.version)
 			{
+				if (gridnick == null || version >= 0)
+					gridnick = info.gridnick;
+				if (gridname == null || version >= 0)
+					gridname = info.gridname;
+				if (platform == null || version >= 0)
+					platform = info.platform;
+				if (loginuri == null || version >= 0)
+					loginuri = info.loginuri;
+				if (loginpage == null || version >= 0)
+					loginpage = info.loginpage;
+				if (helperuri == null || version >= 0)
+					helperuri = info.helperuri;
+				if (website == null || version >= 0)
+					website = info.website;
+				if (support == null || version >= 0)
+					support = info.support;
+				if (register == null || version >= 0)
+					register = info.register;
 				version = info.version;
-				if (!equals(info))
-					version++;
 			}
+			if (!equals(info))
+				version++;
 		}
 		
 		public String dump()
@@ -267,7 +268,7 @@ public class GridClient implements Cloneable
 		@Override
 		public String toString()
 		{
-			return gridname;
+			return gridname + " (" + gridnick + ")";
 		}
 	}
 
