@@ -29,7 +29,6 @@ import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 
@@ -56,10 +55,7 @@ public class CommWindow extends JFrame
 		
 		setTitle("Communication");
 		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
-		
-		JPanel jPnl = new JPanel();
-		jPnl.add(getJTpComm());
-		setContentPane(jPnl);				
+		getContentPane().add(getJTpComm());				
 	}
 	
 	private JTabbedPane getJTpComm()

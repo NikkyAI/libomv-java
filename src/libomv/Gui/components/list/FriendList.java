@@ -50,6 +50,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import libomv.FriendsManager.FriendInfo;
@@ -64,9 +65,14 @@ import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import java.awt.BorderLayout;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import javax.swing.border.EmptyBorder;
 
 // List to display the friends
-public class FriendList extends JScrollPane
+public class FriendList extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 
@@ -75,7 +81,16 @@ public class FriendList extends JScrollPane
 
 	private GridClient _Client;
 
+	private JScrollPane jScrollPane;
 	private JList jLFriendsList;
+	private JPanel jButtonPanel;
+	private JButton jBtnSendMessage;
+	private JButton jBtnProfile;
+	private JButton jBtnMoney;
+	private JButton jBtnTpOffer;
+	private JButton jBtnRemove;
+	private JButton jBtnTeleportTo;
+	private JButton jBtnAutopilotTo;
 
 	/**
 	 * Constructs a list to display
@@ -92,11 +107,71 @@ public class FriendList extends JScrollPane
 		_Client.Friends.OnFriendshipTerminated.add(new FriendshipTerminated());
 
 		// Choose a sensible minimum size.
-		setPreferredSize(new Dimension(200, 0));
-		// Add the friends list to the viewport.
-		setViewportView(getJFriendsList());
+		setPreferredSize(new Dimension(640, 480));
+		setLayout(new BorderLayout(0, 0));
+
+		add(getJScrollPane(), BorderLayout.WEST);
+		add(getButtonPanel(), BorderLayout.EAST);
+		
+	}
+	
+	private JPanel getButtonPanel()
+	{
+		if (jButtonPanel == null)
+		{
+			jButtonPanel = new JPanel();
+			jButtonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
+			jBtnSendMessage = new JButton("Send message");
+			jBtnSendMessage.addActionListener(new SendIMActionListener());
+			jButtonPanel.setLayout(new GridLayout(15, 1, 0, 10));
+			jButtonPanel.add(jBtnSendMessage);
+			
+			jBtnProfile = new JButton("Profile ..");
+			jBtnProfile.addActionListener(new ProfileActionListener());
+			jButtonPanel.add(jBtnProfile);
+
+			JLabel lblSpacer1 = new JLabel("");
+			jButtonPanel.add(lblSpacer1);
+
+			jBtnMoney = new JButton("Pay ..");
+			jBtnMoney.addActionListener(new MoneyActionListener());
+			jButtonPanel.add(jBtnMoney);
+
+			jBtnTpOffer = new JButton("Offer Teleport ..");
+			jBtnTpOffer.addActionListener(new OfferTeleportActionListener());
+			jButtonPanel.add(jBtnTpOffer);
+
+			jBtnRemove = new JButton("Remove ..");
+			jBtnRemove.addActionListener(new RemoveFriendActionListener());
+			jButtonPanel.add(jBtnRemove);		
+
+			JLabel lblSpacer2 = new JLabel("");
+			jButtonPanel.add(lblSpacer2);
+
+			jBtnTeleportTo = new JButton("Teleport to ..");
+			jBtnTeleportTo.addActionListener(new TeleportActionListener());
+			jButtonPanel.add(jBtnTeleportTo);
+
+			jBtnAutopilotTo = new JButton("Autopilot to ..");
+			jBtnAutopilotTo.addActionListener(new AutopilotActionListener());
+			jButtonPanel.add(jBtnAutopilotTo);
+		}
+		return jButtonPanel;
+	}
+	
+	private JScrollPane getJScrollPane()
+	{
+		if (jScrollPane == null)
+		{
+			jScrollPane = new JScrollPane(getJFriendsList(),
+					                      ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+					                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		}
+		return jScrollPane;
 	}
 
+	
 	private final JList getJFriendsList()
 	{
 		if (jLFriendsList == null)
@@ -170,6 +245,8 @@ public class FriendList extends JScrollPane
 			return arg1.equals(arg2) ? 0 : 1;
 		}
 	};
+	private JLabel lblNewLabel;
+	private JLabel label;
 
 	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs>
 	{
@@ -496,20 +573,7 @@ public class FriendList extends JScrollPane
 			{
 				jmiSendMessage = new JMenuItem("Send message");
 				// Add an ActionListener
-				jmiSendMessage.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: Open a private chat with the friend
-					}
-				});
+				jmiSendMessage.addActionListener(new SendIMActionListener());
 			}
 			if (_Info.getName() == null || _Info.getName().isEmpty())
 				jmiSendMessage.setEnabled(false);
@@ -527,20 +591,7 @@ public class FriendList extends JScrollPane
 			{
 				jmiProfile = new JMenuItem("Profile ..");
 				// add an ActionListener
-				jmiProfile.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: open avatar profile dialog
-					}
-				});
+				jmiProfile.addActionListener(new ProfileActionListener());
 			}
 			return jmiProfile;
 		}
@@ -556,20 +607,7 @@ public class FriendList extends JScrollPane
 			{
 				jmiMoneyTransfer = new JMenuItem("Pay ..");
 				// add an ActionListener
-				jmiMoneyTransfer.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: open a money transfer dialog
-					}
-				});
+				jmiMoneyTransfer.addActionListener(new MoneyActionListener());
 			}
 			return jmiMoneyTransfer;
 		}
@@ -585,29 +623,7 @@ public class FriendList extends JScrollPane
 			{
 				jmiOfferTeleport = new JMenuItem("Offer Teleport ..");
 				// Add an action listener.
-				jmiOfferTeleport.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-
-						// Offer teleportation.
-						try
-						{
-							_Client.Self.SendTeleportLure(_Info.getID());
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("SendTeleportLure failed", LogLevel.Error, _Client, ex);
-						}
-					}
-				});
+				jmiOfferTeleport.addActionListener(new OfferTeleportActionListener());
 			}
 			return jmiOfferTeleport;
 		}
@@ -623,29 +639,7 @@ public class FriendList extends JScrollPane
 			{
 				jmiRemoveAsFriend = new JMenuItem("Remove ..");
 				// Add an action listener
-				jmiRemoveAsFriend.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// Terminate the friendship
-						try
-						{
-							_Client.Friends.TerminateFriendship(_Info.getID());
-							removeFriend(_Info);
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("TerminateFriendship failed", LogLevel.Error, _Client, ex);
-						}
-					}
-				});
+				jmiRemoveAsFriend.addActionListener(new RemoveFriendActionListener());
 			}
 			return jmiRemoveAsFriend;
 		}
@@ -661,29 +655,7 @@ public class FriendList extends JScrollPane
 			{
 				jmiTeleportTo = new JMenuItem("Teleport to");
 				// Add an ActionListener
-				jmiTeleportTo.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// Teleport
-						try
-						{
-							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getID());
-							_Client.Self.Teleport(_Client.Network.getCurrentSim().Name, pos);
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("Teleporting to " + _Info.getName() + " failed", LogLevel.Error, _Client, ex);
-						}
-					}
-				});
+				jmiTeleportTo.addActionListener(new TeleportActionListener());
 			}
 			return jmiTeleportTo;
 		}
@@ -700,31 +672,157 @@ public class FriendList extends JScrollPane
 			{
 				jmiAutopilotTo = new JMenuItem("Autopilot to");
 				// Add an ActionListener.
-				jmiAutopilotTo.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed.
-					 * 
-					 * @param e
-					 *            The ActionEvent.
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// Autopilot
-						try
-						{
-							Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(_Info.getID());
-							_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("Autopiloting to " + _Info.getName() + " failed", LogLevel.Error, _Client, ex);
-						}
-					}
-				});
+				jmiAutopilotTo.addActionListener(new AutopilotActionListener());
 			}
 			return jmiAutopilotTo;
+		}
+	}
+	
+	private class SendIMActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// TODO: Open a private chat with the friend
+		}
+	}
+
+
+	private class ProfileActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// TODO: open avatar profile dialog
+		}
+	}
+
+	private class MoneyActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// TODO: open a money transfer dialog
+		}
+	}
+
+	private class OfferTeleportActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// Offer teleportation.
+			try
+			{
+				_Client.Self.SendTeleportLure(info.getID());
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("SendTeleportLure failed", LogLevel.Error, _Client, ex);
+			}
+		}
+	}
+
+	private class RemoveFriendActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// Terminate the friendship
+			try
+			{
+				_Client.Friends.TerminateFriendship(info.getID());
+				removeFriend(info);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("TerminateFriendship failed", LogLevel.Error, _Client, ex);
+			}
+		}
+	}
+
+	private class TeleportActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// Teleport
+			try
+			{
+				Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
+				_Client.Self.Teleport(_Client.Network.getCurrentSim().Name, pos);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Teleporting to " + info.getName() + " failed", LogLevel.Error, _Client, ex);
+			}
+		}
+	}
+	
+	private class AutopilotActionListener implements ActionListener
+	{
+		/**
+		 * Called when an action is performed.
+		 * 
+		 * @param e
+		 *            The ActionEvent.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// Autopilot
+			try
+			{
+				Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
+				_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Autopiloting to " + info.getName() + " failed", LogLevel.Error, _Client, ex);
+			}
 		}
 	}
 }

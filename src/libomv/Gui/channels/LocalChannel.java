@@ -159,7 +159,6 @@ public class LocalChannel extends AbstractChannel
 	@Override
 	public StyledDocument getDocument()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return getTxPane().getStyledDocument();
 	}
 }
