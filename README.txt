@@ -4,8 +4,10 @@ libomv-java
 This is the Java port of the OpenMetaverse (http://www.OpenMetaverse.org) library originally written in C#.
 
 The initial port was performed by Simon Whiteside (http://www.larts.co.uk).
+
 Many modifications to the original Java port and additions from newer OpenMetaverse source code were done
 by Frederick Martian.
+
 
 Building the library and examples
 ---------------------------------
@@ -15,13 +17,22 @@ The library can be built using Eclipse.
 You will need various existing Java libraries installed - more details to follow. Most non-standard Java
 libraries are provided in the lib directory of this project download.
 
+While building with ant should be possible, it's not what I use for the moment, so whoever wants to do
+that will be on its own and should understand the ant specific issues.
+
+
 LindenLabs server certificate
 -----------------------------
 
 There seems to be issues with the SSL certificate used by the linden labs server, since it is not traceable
 to any standard root certification agency. The current library will install a modified KeyStore with an added
-lindenlab root certificate, loaded from the res directory, when attempting to open an https connection to
-a server having "lindenlab" in its URI. 
+Linden Lab root certificate, loaded from the res directory, when attempting to open an https connection to
+a server having "lindenlab" in its URI. It actually appears that they use different root certificates for
+the aditi (beta) and agni (release) grid. So the certificate handling for https is now trying to match the
+certificates in the res directory to the URI and if loads it into the keystore for that connection. If no
+stored certificate can be found the Java default keystore will be used, which contains certificates for
+most standard root CAs.
+
 
 Running examples
 ----------------
@@ -31,6 +42,7 @@ You can run examples directly from within Eclipse.
 For example to run the "sldump" test application select the src-sample/libomv.test/sldump entry and select
 Run as Java Application from the context menu.
 
+
 Rebuilding packet classes
 -------------------------
 
@@ -38,13 +50,14 @@ The UDP packet classes, which are used when communicating with the secondlife or
 are generated from the current protocol definition using an application called mapgenerator, which has
 also been ported.
 
-You can obtain the latest protocol definition files (called message_template.msg and keywords.txt) from
-the libsecondlife site.
+You can obtain the latest protocol definition file (called message_template.msg) directly from
+https://bitbucket.org/lindenlab/master-message-template, any recent old style Secondlife client, or the
+libsecondlife site.
 
-Put these files into the libsecondlife/mapgenerator/ directory, and rerun the code generator by right
-clicking src/libomv.mapgenerator/mapgenerator and selecting Run as Java Application. Don't forget to
-refresh the src/libomv.packets directory in the Eclipse Package Explorer pane before compiling the
-library or opening one of the generated packet files in that directory.
+Put this file into the libomv/mapgenerator/ directory, and rerun the code generator by right clicking
+src/libomv.mapgenerator/mapgenerator and selecting "Run as Java Application". Don't forget to refresh
+the src/libomv.packets directory in the Eclipse Package Explorer pane after generation and before
+compiling the library or opening one of the generated packet files in that directory.
 
 
 Porting Information
@@ -69,7 +82,22 @@ and CAPS messages, implement agent and avatar operations including display names
 messaging, teleporting, friends and groups, as well as basic inventory, asset, object and parcel
 management.
 
-There is currently no image handling at all, and also no voice chat support. While image handling
-will be required to implement proper baking (de-clouding) of the avatar, voice chat is not likely
+There is currently no image handling at all, and also no voice chat support.
+
+While image handling will be required to implement proper baking (de-clouding) of the avatar, I'm
+still trying to figure out what image handling interface to use for that functionality as I would
+like to try to avoid Swing or other GUI framework dependencies in the core library (anything in
+src.libomv.* except src.libomv.GUI.*). Preliminary plans are to use a somewhat enhanced version
+of the j2k library as most of the baking is actually happening with jpeg2k formated files.
+Additional extensions to import/export other file formats such as tga, jpg, png, etc. will be
+added as needed, using the generic j2k image file classes as appropriate.
+
+Voice chat is also a challenge since it uses SIP and although there are many Java SIP libraries out
+there, most of them have their quirks and limitations or are not free to use. So it's not very likely
 to be added anytime soon, unless someone else provides an implementation of this.
 
+3D Rendering would be an interesting challenge to implement but it is unlikely to happen anytime
+soon either, since it requires a whole 3D rendering java infrastructure. OpenGL or OpenGL ES alone
+is to basic for this and other higher level 3D rendering libraries are usually to different for what
+we would need here, to platform specific, and to incomplete and if at all available in a free version,
+mostly abandoned. An interesting library for this might be oglio but it seems also abandoned.
