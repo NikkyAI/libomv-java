@@ -739,6 +739,11 @@ public class TextureEntry
 		FromBytes(data, pos, length);
 	}
 
+	public TextureEntry(byte[] data)
+	{
+		FromBytes(data, 0, data.length);
+	}
+
 	public TextureEntry(OSD osd)
 	{
 		fromOSD(osd);
