@@ -37,7 +37,6 @@ import libomv.utils.Helpers;
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
 import javax.swing.border.MatteBorder;
-import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.border.EmptyBorder;
 
@@ -421,7 +420,7 @@ public class GridEditor extends JDialog
 		if (jBtnPanel == null)
 		{
 			jBtnPanel = new JPanel();
-			jBtnPanel.setBorder(new MatteBorder(5, 5, 5, 5, (Color) SystemColor.control));
+			jBtnPanel.setBorder(new MatteBorder(5, 5, 5, 5, SystemColor.control));
 			jBtnPanel.setLayout(new GridLayout(1, 6, 10, 0));
 			jBtnPanel.add(getJBtnRemove());
 			jBtnPanel.add(getJBtnAdd());
