@@ -238,6 +238,10 @@ public class Avatar extends Primitive
 			}
 		}
 
+		public AvatarProperties()
+		{
+		}
+
 		public OSD Serialize()
 		{
 			OSDMap tex = new OSDMap(9);
@@ -283,6 +287,10 @@ public class Avatar extends Primitive
 		public int WantToMask;
 		//
 		public String WantToText;
+
+		public Interests()
+		{
+		}
 
 		public OSD Serialize()
 		{
