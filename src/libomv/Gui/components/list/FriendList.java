@@ -66,7 +66,6 @@ import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.GridLayout;
 import javax.swing.border.EmptyBorder;
@@ -245,8 +244,6 @@ public class FriendList extends JPanel
 			return arg1.equals(arg2) ? 0 : 1;
 		}
 	};
-	private JLabel lblNewLabel;
-	private JLabel label;
 
 	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs>
 	{
