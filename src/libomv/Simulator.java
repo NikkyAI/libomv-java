@@ -684,6 +684,21 @@ public class Simulator extends Thread
 		return ObjectsAvatars;
 	}
 
+	public Avatar findAvatar(UUID id)
+	{
+		synchronized (ObjectsAvatars)
+		{
+			for (Avatar av : ObjectsAvatars.values())
+			{
+				if (av.ID.equals(id))
+					return av;
+			}
+		}
+		return null;
+	}
+	
+	
+	
 	/* A non thread-safe dictionary containing primitives in a simulator */
 	private HashMap<Integer, Primitive> ObjectsPrimitives = new HashMap<Integer, Primitive>();
 
