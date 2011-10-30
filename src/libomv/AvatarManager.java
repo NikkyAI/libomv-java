@@ -38,12 +38,18 @@ import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.DisplayNameUpdateMessage;
 import libomv.capabilities.IMessage;
+import libomv.packets.AvatarAnimationPacket;
+import libomv.packets.AvatarAppearancePacket;
+import libomv.packets.AvatarInterestsReplyPacket;
+import libomv.packets.AvatarPropertiesReplyPacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.UUIDNameReplyPacket;
 import libomv.packets.UUIDNameRequestPacket;
 import libomv.packets.ViewerEffectPacket;
 import libomv.primitives.Avatar;
+import libomv.primitives.Avatar.ProfileFlags;
+import libomv.primitives.TextureEntry;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
 import libomv.types.Vector3d;
@@ -249,6 +255,122 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandler<DisplayNameUpdateCallbackArgs>();
 
+
+	public class AvatarAnimationCallbackArgs implements CallbackArgs
+	{
+		private UUID agentID;
+		private ArrayList<Animation> animations;
+
+		public UUID getAgentID()
+		{
+			return agentID;
+		}
+
+		public ArrayList<Animation> getAnimations()
+		{
+			return animations;
+		}
+
+		public AvatarAnimationCallbackArgs(UUID agentID, ArrayList<Animation> animations)
+		{
+			this.agentID = agentID;
+			this.animations = animations;
+		}
+	}
+
+	public CallbackHandler<AvatarAnimationCallbackArgs> OnAvatarAnimation = new CallbackHandler<AvatarAnimationCallbackArgs>();
+
+	
+	
+	public class AvatarAppearanceCallbackArgs implements  CallbackArgs
+	{
+		private Simulator simulator;
+		private UUID id;
+		private boolean isTrial;
+		private TextureEntry.TextureEntryFace defaultTexture;
+		private TextureEntry.TextureEntryFace[] faceTextures;
+		private byte[] parameters;
+
+		public Simulator getSimulator()
+		{
+			return simulator;
+		}
+		
+		public UUID getId()
+		{
+			return id;
+		}
+		
+		public boolean getIsTrial()
+		{
+			return isTrial;
+		}
+		
+		public TextureEntry.TextureEntryFace getDefaultTexture()
+		{
+			return defaultTexture;
+		}
+		
+		public TextureEntry.TextureEntryFace[] getFaceTextures()
+		{
+			return faceTextures;
+		}
+		
+		public byte[] getVisualParameters()
+		{
+			return parameters;
+		}
+		
+		public AvatarAppearanceCallbackArgs(Simulator simulator, UUID id, boolean isTrial,
+	    		TextureEntry.TextureEntryFace defaultTexture, TextureEntry.TextureEntryFace[] faceTextures, byte[] parameters)
+	    {
+	    	this.simulator = simulator;
+	    	this.id = id;
+	    	this.isTrial = isTrial;
+	    	this.defaultTexture = defaultTexture;
+	    	this.faceTextures = faceTextures;
+	    	this.parameters = parameters;
+	    }
+	}
+	
+	public CallbackHandler<AvatarAppearanceCallbackArgs> OnAvatarAppearance = new CallbackHandler<AvatarAppearanceCallbackArgs>();
+	
+	
+	public class AvatarInterestsReplyCallbackArgs implements  CallbackArgs
+	{
+		private Avatar avatar;
+		
+		public Avatar getAvatar()
+		{
+			return avatar;
+		}
+
+		public AvatarInterestsReplyCallbackArgs(Avatar avatar)
+		{
+			this.avatar = avatar;
+		}
+	}
+	
+	public CallbackHandler<AvatarInterestsReplyCallbackArgs> OnAvatarInterestsReply = new CallbackHandler<AvatarInterestsReplyCallbackArgs>();
+
+	
+	public class AvatarPropertiesReplyCallbackArgs implements  CallbackArgs
+	{
+		private Avatar avatar;
+		
+		public Avatar getAvatar()
+		{
+			return avatar;
+		}
+		
+		public AvatarPropertiesReplyCallbackArgs(Avatar avatar)
+		{
+			this.avatar = avatar;
+		}
+	}
+	
+	public CallbackHandler<AvatarPropertiesReplyCallbackArgs> OnAvatarPropertiesReply = new CallbackHandler<AvatarPropertiesReplyCallbackArgs>();
+	
 	
 	public class ViewerEffectCallbackArgs implements CallbackArgs
 	{
@@ -360,13 +482,13 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case AvatarAppearance:
-				// HandleAvatarAppearance(packet, simulator);
+				HandleAvatarAppearance(packet, simulator);
 				break;
 			case AvatarPropertiesReply:
-				// HandleAvatarProperties(packet, simulator);
+				HandleAvatarProperties(packet, simulator);
 				break;
 			case AvatarInterestsReply:
-				// HandleAvatarInterests(packet, simulator);
+				HandleAvatarInterests(packet, simulator);
 				break;
 			case AvatarGroupsReply:
 				// HandleAvatarGroupsReply(packet, simulator);
@@ -381,7 +503,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				// HandleAvatarPickerReply(packet, simulator);
 				break;
 			case AvatarAnimation:
-				// HandleAvatarAnimation(packet, simulator);
+				HandleAvatarAnimation(packet, simulator);
 				break;
 			case AvatarPicksReply:
 				// HandleAvatarPicksReply(packet, simulator);
@@ -559,7 +681,115 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
 	}
 
-	/**
+    private void HandleAvatarAnimation(Packet packet, Simulator simulator) throws Exception
+    {
+        if (OnAvatarAnimation.count() > 0)
+        {
+            AvatarAnimationPacket data = (AvatarAnimationPacket)packet;
+
+            ArrayList<Animation> signaledAnimations = new ArrayList<Animation>(data.AnimationList.length);
+
+            for (int i = 0; i < data.AnimationList.length; i++)
+            {
+                Animation animation = new Animation();
+                animation.AnimationID = data.AnimationList[i].AnimID;
+                animation.AnimationSequence = data.AnimationList[i].AnimSequenceID;
+                if (i < data.ObjectID.length)
+                {
+                    animation.AnimationSourceObjectID = data.ObjectID[i];
+                }
+
+                signaledAnimations.add(animation);
+            }
+
+            OnAvatarAnimation.dispatch(new AvatarAnimationCallbackArgs(data.ID, signaledAnimations));
+        }
+    }
+	    
+    private void HandleAvatarAppearance(Packet packet, Simulator simulator) throws Exception
+    {
+        if (OnAvatarAppearance.count() > 0 || _Client.Settings.AVATAR_TRACKING)
+        {
+            AvatarAppearancePacket appearance = (AvatarAppearancePacket)packet;
+
+            TextureEntry textureEntry = new TextureEntry(appearance.ObjectData.getTextureEntry());
+
+            TextureEntry.TextureEntryFace defaultTexture = textureEntry.defaultTexture;
+            TextureEntry.TextureEntryFace[] faceTextures = textureEntry.faceTextures;
+
+            Avatar av = simulator.findAvatar(appearance.Sender.ID);
+           	if (av != null)
+        	{
+                av.Textures = textureEntry;
+                av.VisualParameters = appearance.ParamValue;
+            }
+
+            OnAvatarAppearance.dispatch(new AvatarAppearanceCallbackArgs(simulator, appearance.Sender.ID, appearance.Sender.IsTrial,
+                defaultTexture, faceTextures, appearance.ParamValue));
+        }
+    }
+
+    private void HandleAvatarProperties(Packet packet, Simulator simulator) throws Exception
+    {
+        if (OnAvatarPropertiesReply.count() > 0)
+        {
+            AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)packet;
+            Avatar av = simulator.findAvatar(reply.AgentData.AvatarID);
+            if (av == null)
+            	av = _Avatars.get(reply.AgentData.AvatarID);
+            av.ProfileProperties = av.new AvatarProperties();
+
+            av.ProfileProperties.ProfileImage = reply.PropertiesData.ImageID;
+            av.ProfileProperties.FirstLifeImage = reply.PropertiesData.FLImageID;
+            av.ProfileProperties.Partner = reply.PropertiesData.PartnerID;
+            av.ProfileProperties.AboutText = Helpers.BytesToString(reply.PropertiesData.getAboutText());
+            av.ProfileProperties.FirstLifeText = Helpers.BytesToString(reply.PropertiesData.getFLAboutText());
+            av.ProfileProperties.BornOn = Helpers.BytesToString(reply.PropertiesData.getBornOn());
+            long charter = Helpers.BytesToUInt32L(reply.PropertiesData.getCharterMember());
+            if (charter == 0)
+            {
+            	av.ProfileProperties.CharterMember = "Resident";
+            }
+            else if (charter == 2)
+            {
+            	av.ProfileProperties.CharterMember = "Charter";
+            }
+            else if (charter == 3)
+            {
+            	av.ProfileProperties.CharterMember = "Linden";
+            }
+            else
+            {
+            	av.ProfileProperties.CharterMember = Helpers.BytesToString(reply.PropertiesData.getCharterMember());
+            }
+            av.ProfileProperties.Flags = ProfileFlags.setValue(reply.PropertiesData.Flags);
+            av.ProfileProperties.ProfileURL = Helpers.BytesToString(reply.PropertiesData.getProfileURL());
+
+            OnAvatarPropertiesReply.dispatch(new AvatarPropertiesReplyCallbackArgs(av));
+        }
+    }
+
+    private void HandleAvatarInterests(Packet packet, Simulator simulator) throws Exception
+    {
+        if (OnAvatarInterestsReply.count() > 0)
+        {
+            AvatarInterestsReplyPacket airp = (AvatarInterestsReplyPacket)packet;
+            Avatar av = simulator.findAvatar(airp.AgentData.AvatarID);
+            if (av == null)
+            	av = _Avatars.get(airp.AgentData.AvatarID);
+            av.ProfileInterests = av.new Interests();
+
+            av.ProfileInterests.WantToMask = airp.PropertiesData.WantToMask;
+            av.ProfileInterests.WantToText = Helpers.BytesToString(airp.PropertiesData.getWantToText());
+            av.ProfileInterests.SkillsMask = airp.PropertiesData.SkillsMask;
+            av.ProfileInterests.SkillsText = Helpers.BytesToString(airp.PropertiesData.getSkillsText());
+            av.ProfileInterests.LanguagesText = Helpers.BytesToString(airp.PropertiesData.getLanguagesText());
+
+            OnAvatarInterestsReply.dispatch(new AvatarInterestsReplyCallbackArgs(av));
+        }
+    }
+
+    /**
 	 * EQ Message fired when someone nearby changes their display name
 	 */
 	private void HandleDisplayNameUpdate(IMessage message, Simulator simulator)
