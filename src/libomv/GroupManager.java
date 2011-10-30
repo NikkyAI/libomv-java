@@ -689,13 +689,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 				{
 					if (args.getAccept())
 					{
-						Client.Self.InstantMessage("name", e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
+						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
 								InstantMessageDialog.GroupInvitationAccept, InstantMessageOnline.Online,
 								Client.Self.getSimPosition(), UUID.Zero, Helpers.EmptyBytes);
 					}
 					else
 					{
-						Client.Self.InstantMessage("name", e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
+						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
 								InstantMessageDialog.GroupInvitationDecline, InstantMessageOnline.Online,
 								Client.Self.getSimPosition(), UUID.Zero, new byte[] { 0 });
 					}
@@ -2564,8 +2564,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 	{
 		private final UUID m_GroupID;
 		private final String m_FromName;
-		private final String m_Message;
 		private final Simulator m_Simulator;
+		private String m_Message;
 		private boolean m_Accept;
 
 		// The ID of the Avatar sending the group invitation
@@ -2585,6 +2585,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public final String getMessage()
 		{
 			return m_Message;
+		}
+
+		public final void setMessage(String message)
+		{
+			m_Message = message;
 		}
 
 		// The Simulator

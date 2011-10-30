@@ -144,7 +144,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		public UUID AnimationID;
 		// A number to indicate start order of currently playing animations
 		// On Linden Grids this number is unique per region, with OpenSim it is
-		// per client</remarks>
+		// per client
 		public int AnimationSequence;
 		//
 		public UUID AnimationSourceObjectID;
