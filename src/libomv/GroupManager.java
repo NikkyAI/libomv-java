@@ -689,13 +689,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 				{
 					if (args.getAccept())
 					{
-						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
+						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, Helpers.EmptyString, e.getIM().IMSessionID,
 								InstantMessageDialog.GroupInvitationAccept, InstantMessageOnline.Online,
 								Client.Self.getSimPosition(), UUID.Zero, Helpers.EmptyBytes);
 					}
 					else
 					{
-						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
+						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, Helpers.EmptyString, e.getIM().IMSessionID,
 								InstantMessageDialog.GroupInvitationDecline, InstantMessageOnline.Online,
 								Client.Self.getSimPosition(), UUID.Zero, new byte[] { 0 });
 					}
