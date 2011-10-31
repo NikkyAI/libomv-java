@@ -26,7 +26,12 @@
  */
 package libomv.types;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.utils.Helpers;
 
@@ -66,6 +71,42 @@ public class Vector3d
 		Z = byteArray.getDouble();
 	}
 
+    /**
+	 * Constructor, builds a vector from an XML reader
+	 * 
+	 * @param parser
+	 *            XML pull parser reader
+	 */
+    public Vector3d(XmlPullParser parser) throws XmlPullParserException, IOException
+    {
+    	if (parser.nextTag() != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
+		do
+		{
+			if (!parser.isEmptyElementTag())
+			{
+				String name = parser.getName();
+				if (name.equals("X"))
+				{
+					X = Helpers.TryParseDouble(parser.nextText().trim());
+				}
+				else if (name.equals("Y"))
+				{
+					Y = Helpers.TryParseDouble(parser.nextText().trim());
+				}
+				else if (name.equals("Z"))
+				{
+					Z = Helpers.TryParseDouble(parser.nextText().trim());
+				}
+				else
+				{
+					Helpers.skipElement(parser);
+				}
+			}
+		}
+        while (parser.nextTag() == XmlPullParser.START_TAG);
+    }
+
 	public void GetBytes(ByteBuffer byteArray)
 	{
 		byteArray.putDouble(X);
@@ -73,7 +114,7 @@ public class Vector3d
 		byteArray.putDouble(Z);
 	}
 
-	/**
+    /**
 	 * Writes the raw bytes for this UUID to a byte array
 	 * 
 	 * @param dest
@@ -104,6 +145,18 @@ public class Vector3d
 		return 24;
 	}
 
+	static public Vector3d parse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		return new Vector3d(parser);
+	}
+	
+	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(null, "X").text(Double.toString(X)).endTag(null, "X");
+		writer.startTag(null, "Y").text(Double.toString(Y)).endTag(null, "Y");
+		writer.startTag(null, "Z").text(Double.toString(Z)).endTag(null, "Z");
+	}
+	
 	@Override
 	public String toString()
 	{

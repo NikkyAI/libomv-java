@@ -26,7 +26,12 @@
  */
 package libomv.types;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.types.Matrix4;
 import libomv.types.Quaternion;
@@ -68,7 +73,43 @@ public class Vector3
 		Z = byteArray.getFloat();
 	}
 
-	/**
+    /**
+	 * Constructor, builds a vector from an XML reader
+	 * 
+	 * @param parser
+	 *            XML pull parser reader
+	 */
+    public Vector3(XmlPullParser parser) throws XmlPullParserException, IOException
+    {
+    	if (parser.nextTag() != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
+		do
+		{
+			if (!parser.isEmptyElementTag())
+			{
+				String name = parser.getName();
+				if (name.equals("X"))
+				{
+					X = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("Y"))
+				{
+					Y = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("Z"))
+				{
+					Z = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else
+				{
+					Helpers.skipElement(parser);
+				}
+			}
+		}
+        while (parser.nextTag() == XmlPullParser.START_TAG);
+    }
+
+    /**
 	 * Constructor, builds a vector from a byte array
 	 * 
 	 * @param byteArray
@@ -119,6 +160,18 @@ public class Vector3
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
 		byteArray.putFloat(Z);
+	}
+
+	static public Vector3 parse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		return new Vector3(parser);
+	}
+	
+	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(null, "X").text(Float.toString(X)).endTag(null, "X");
+		writer.startTag(null, "Y").text(Float.toString(Y)).endTag(null, "Y");
+		writer.startTag(null, "Z").text(Float.toString(Z)).endTag(null, "Z");
 	}
 
 	@Override

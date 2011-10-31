@@ -26,7 +26,12 @@
  */
 package libomv.types;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.utils.Helpers;
 
@@ -65,6 +70,46 @@ public class Vector4
 		Z = z;
 		S = s;
 	}
+
+    /**
+	 * Constructor, builds a vector from an XML reader
+	 * 
+	 * @param parser
+	 *            XML pull parser reader
+	 */
+    public Vector4(XmlPullParser parser) throws XmlPullParserException, IOException
+    {
+    	if (parser.nextTag() != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
+		do
+		{
+			if (!parser.isEmptyElementTag())
+			{
+				String name = parser.getName();
+				if (name.equals("X"))
+				{
+					X = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("Y"))
+				{
+					Y = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("Z"))
+				{
+					Z = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("S"))
+				{
+					S = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else
+				{
+					Helpers.skipElement(parser);
+				}
+			}
+		}
+        while (parser.nextTag() == XmlPullParser.START_TAG);
+    }
 
 	public Vector4(byte[] objectData, int pos)
 	{
@@ -141,11 +186,24 @@ public class Vector4
 	 */
 	public int ToBytes(byte[] dest, int pos)
 	{
-		pos = +Helpers.FloatToBytesL(X, dest, pos);
-		pos = +Helpers.FloatToBytesL(Y, dest, pos);
-		pos = +Helpers.FloatToBytesL(Z, dest, pos);
-		pos = +Helpers.FloatToBytesL(S, dest, pos);
+		pos += Helpers.FloatToBytesL(X, dest, pos);
+		pos += Helpers.FloatToBytesL(Y, dest, pos);
+		pos += Helpers.FloatToBytesL(Z, dest, pos);
+		pos += Helpers.FloatToBytesL(S, dest, pos);
 		return 16;
+	}
+
+	static public Vector4 parse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		return new Vector4(parser);
+	}
+	
+	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(null, "X").text(Float.toString(X)).endTag(null, "X");
+		writer.startTag(null, "Y").text(Float.toString(Y)).endTag(null, "Y");
+		writer.startTag(null, "Z").text(Float.toString(Z)).endTag(null, "Z");
+		writer.startTag(null, "S").text(Float.toString(S)).endTag(null, "S");
 	}
 
 	@Override

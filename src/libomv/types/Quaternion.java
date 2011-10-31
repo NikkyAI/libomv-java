@@ -26,7 +26,12 @@
  */
 package libomv.types;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.types.Matrix4;
 import libomv.types.Quaternion;
@@ -125,7 +130,47 @@ public class Quaternion
 		}
 	}
 
-	public Quaternion(Quaternion q)
+    /**
+	 * Constructor, builds a quaternion from an XML reader
+	 * 
+	 * @param parser
+	 *            XML pull parser reader
+	 */
+    public Quaternion(XmlPullParser parser) throws XmlPullParserException, IOException
+    {
+    	if (parser.nextTag() != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
+		do
+		{
+			if (!parser.isEmptyElementTag())
+			{
+				String name = parser.getName();
+				if (name.equals("X"))
+				{
+					X = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("Y"))
+				{
+					Y = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("Z"))
+				{
+					Z = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("W"))
+				{
+					W = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else
+				{
+					Helpers.skipElement(parser);
+				}
+			}
+		}
+        while (parser.nextTag() == XmlPullParser.START_TAG);
+    }
+
+    public Quaternion(Quaternion q)
 	{
 		X = q.X;
 		Y = q.Y;
@@ -209,6 +254,19 @@ public class Quaternion
 		{
 			throw new Exception("Quaternion <" + X + "," + Y + "," + Z + "," + W + "> normalized to zero");
 		}
+	}
+
+	static public Quaternion parse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		return new Quaternion(parser);
+	}
+	
+	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(null, "X").text(Float.toString(X)).endTag(null, "X");
+		writer.startTag(null, "Y").text(Float.toString(Y)).endTag(null, "Y");
+		writer.startTag(null, "Z").text(Float.toString(Z)).endTag(null, "Z");
+		writer.startTag(null, "W").text(Float.toString(W)).endTag(null, "W");
 	}
 
 	/**

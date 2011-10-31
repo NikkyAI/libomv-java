@@ -26,11 +26,15 @@
  */
 package libomv.types;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
@@ -144,6 +148,21 @@ public class UUID implements Serializable
 		{
 			data = new byte[16];
 		}
+	}
+
+	public UUID(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		parser.nextTag();
+		parser.require(XmlPullParser.START_TAG, null, null);
+		if (!parser.isEmptyElementTag())
+		{
+			String name = parser.getName();
+			if (name.equals("Guid") || name.equals("UUID"))
+			{
+				FromString(parser.nextText());
+			}
+		}
+		parser.nextTag();
 	}
 
 	/**

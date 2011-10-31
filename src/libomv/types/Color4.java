@@ -27,7 +27,12 @@ package libomv.types;
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.io.IOException;
 import java.lang.IllegalArgumentException;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.utils.Helpers;
 
@@ -88,6 +93,46 @@ public final class Color4
 		B = Helpers.Clamp(b, 0f, 1f);
 		A = Helpers.Clamp(a, 0f, 1f);
 	}
+
+    /**
+	 * Constructor, builds a Color4 from an XML reader
+	 * 
+	 * @param parser
+	 *            XML pull parser reader
+	 */
+    public Color4(XmlPullParser parser) throws XmlPullParserException, IOException
+    {
+    	if (parser.nextTag() != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
+		do
+		{
+			if (!parser.isEmptyElementTag())
+			{
+				String name = parser.getName();
+				if (name.equals("R"))
+				{
+					R = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("G"))
+				{
+					G = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("B"))
+				{
+					B = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else if (name.equals("A"))
+				{
+					A = Helpers.TryParseFloat(parser.nextText().trim());
+				}
+				else
+				{
+					Helpers.skipElement(parser);
+				}
+			}
+		}
+        while (parser.nextTag() == XmlPullParser.START_TAG);
+    }
 
 	/**
 	 * Builds a color from a byte array
@@ -485,6 +530,19 @@ public final class Color4
 	{
 		return new Color4(Helpers.Lerp(value1.R, value2.R, amount), Helpers.Lerp(value1.G, value2.G, amount),
 				Helpers.Lerp(value1.B, value2.B, amount), Helpers.Lerp(value1.A, value2.A, amount));
+	}
+
+	static public Color4 parse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		return new Color4(parser);
+	}
+	
+	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(null, "R").text(Float.toString(R)).endTag(null, "R");
+		writer.startTag(null, "G").text(Float.toString(G)).endTag(null, "G");
+		writer.startTag(null, "B").text(Float.toString(B)).endTag(null, "B");
+		writer.startTag(null, "A").text(Float.toString(A)).endTag(null, "A");
 	}
 
 	@Override
