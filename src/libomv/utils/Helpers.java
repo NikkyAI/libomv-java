@@ -54,6 +54,9 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import libomv.types.UUID;
 
 
@@ -1607,7 +1610,7 @@ public class Helpers
 			return 8;
 		}
 	}
-
+	
 	/**
 	 * Packs two 32-bit unsigned integers in to a 64-bit unsigned integer
 	 * 
@@ -2020,6 +2023,36 @@ public class Helpers
 		return bytes[pos] / 255.0f;
 	}
 
+	public static void skipElement(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		int depth = 1;
+		do
+		{
+			int tag = parser.next();
+			if (tag == XmlPullParser.START_TAG)
+			{
+				depth++;
+			}
+			else if (tag == XmlPullParser.END_TAG)
+			{
+				depth--;
+			}
+		} while (depth > 0);
+	}
+
+	public static boolean TryParseBoolean(String s)
+	{
+		if (s != null && !s.isEmpty())
+		{
+			try
+			{
+				return Boolean.parseBoolean(s);
+			}
+			catch (Throwable t) { }
+		}
+		return false;
+	}
+	
 	public static int TryParseInt(String s)
 	{
 		if (s == null || s.isEmpty())
