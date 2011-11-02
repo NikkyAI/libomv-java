@@ -72,7 +72,7 @@ public class Bot implements Callback<DisconnectedCallbackArgs>
 			Kill();
 		}
 
-		LoginParams loginParams = Client.Login.DefaultLoginParams(FirstName, LastName, Password);
+		LoginParams loginParams = Client.Login.DefaultLoginParams(FirstName, LastName, Password, "last");
 		loginParams.URI = LOGIN_SERVER;
 		loggedIn = Client.Login.Login(loginParams);
 		return loggedIn;
