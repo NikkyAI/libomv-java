@@ -35,6 +35,7 @@ import java.util.Random;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
@@ -301,6 +302,16 @@ public class UUID implements Serializable
 	public static UUID GenerateUUID()
 	{
 		return new UUID(makeNewGuid());
+	}
+	
+	static public UUID parse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		return new UUID(parser);
+	}
+	
+	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+	    writer.startTag(null, "UUID").text(toString()).endTag(null, "UUID");
 	}
 
 	/**
