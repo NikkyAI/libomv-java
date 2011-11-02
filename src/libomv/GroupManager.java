@@ -437,7 +437,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Struct representing a member of a group chat session and their settings
-	public final class ChatSessionMember
+	static public final class ChatSessionMember
 	{
 		// The <see cref="UUID"/> of the Avatar
 		public UUID AvatarKey;
