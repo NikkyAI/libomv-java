@@ -25,6 +25,7 @@
  */
 package libomv.imaging;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -152,8 +153,8 @@ public class Baker
             if (textures.get(i).Texture == null) continue;
 
             // Is this Alpha wearable and does it have an alpha channel?
-            if (textures.get(i).TextureIndex >= AvatarTextureIndex.LowerAlpha &&
-                textures.get(i).TextureIndex <= AvatarTextureIndex.HairAlpha)
+            if (textures.get(i).TextureIndex.getValue() >= AvatarTextureIndex.LowerAlpha.getValue() &&
+                textures.get(i).TextureIndex.getValue() <= AvatarTextureIndex.HairAlpha.getValue())
             {
                 if (textures.get(i).Texture.Image.Alpha != null)
                 {
@@ -290,20 +291,14 @@ public class Baker
         //File.WriteAllBytes(bakeType + ".tga", bakedTexture.Image.ExportTGA());
     }
 
-    private static Object ResourceSync = new Object();
-
     public static ManagedImage LoadResourceLayer(String fileName)
     {
         try
         {
-            Bitmap bitmap = null;
-            synchronized (ResourceSync)
-            {
-                using (Stream stream = Helpers.GetResourceStream(fileName, Settings.RESOURCE_DIR))
-                {
-                    bitmap = LoadTGAClass.LoadTGA(stream);
-                }
-            }
+            BufferedImage bitmap = null;
+                
+            String resource = Helpers.GetResourceStream(fileName, Settings.);
+            bitmap = TGALoader.getImage(resource);
             if (bitmap == null)
             {
                 Logger.Log(String.format("Failed loading resource file: %s", fileName), LogLevel.Error);
@@ -317,7 +312,7 @@ public class Baker
         catch (Exception ex)
         {
             Logger.Log(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()),
-                LogLevel.Error, e);
+                LogLevel.Error, ex);
             return null;
         }
     }
@@ -443,19 +438,20 @@ public class Baker
         return true;
     }
 
-    // 
-    /// Make sure images exist, resize source if needed to match the destination
-    /// 
-    /// <param name="dest">Destination image</param>
-    /// <param name="src">Source image</param>
-    /// <returns>Sanitization was succefull</returns>
+    /** 
+     * Make sure images exist, resize source if needed to match the destination
+     * 
+     * @param dest Destination image
+     * @param src Source image
+     * @returns Sanitization was succefull
+     */
     private boolean SanitizeLayers(ManagedImage dest, ManagedImage src)
     {
         if (dest == null || src == null) return false;
 
         if ((dest.Channels & ManagedImage.ImageChannels.Alpha) == 0)
         {
-            dest.ConvertChannels(dest.Channels | ManagedImage.ImageChannels.Alpha);
+            dest.ConvertChannels((byte)(dest.Channels | ManagedImage.ImageChannels.Alpha));
         }
 
         if (dest.Width != src.Width || dest.Height != src.Height)
@@ -476,7 +472,7 @@ public class Baker
 
         if ((dest.Channels & ManagedImage.ImageChannels.Alpha) == 0)
         {
-            dest.ConvertChannels(ManagedImage.ImageChannels.Alpha | dest.Channels);
+            dest.ConvertChannels((byte)(ManagedImage.ImageChannels.Alpha | dest.Channels));
         }
 
         if (dest.Width != src.Width || dest.Height != src.Height)

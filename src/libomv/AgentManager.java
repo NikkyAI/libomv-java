@@ -29,6 +29,7 @@ package libomv;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +37,11 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import libomv.AvatarManager.AgentDisplayName;
 import libomv.DirectoryManager.ClassifiedCategories;
@@ -60,12 +66,19 @@ import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.AssetDownload;
 import libomv.assets.AssetManager.AssetReceivedCallback;
+import libomv.assets.AssetManager.XferReceivedCallbackArgs;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
 import libomv.capabilities.CapsMessage.AttachmentResourcesMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ChatSessionAcceptInvitation;
+import libomv.capabilities.CapsMessage.ChatSessionRequestMuteUpdate;
 import libomv.capabilities.CapsMessage.ChatSessionRequestStartConference;
+import libomv.capabilities.CapsMessage.ChatterBoxInvitationMessage;
+import libomv.capabilities.CapsMessage.ChatterBoxSessionAgentListUpdatesMessage;
+import libomv.capabilities.CapsMessage.ChatterBoxSessionEventReplyMessage;
+import libomv.capabilities.CapsMessage.ChatterBoxSessionStartReplyMessage;
+import libomv.capabilities.CapsMessage.CrossedRegionMessage;
 import libomv.capabilities.CapsMessage.SetDisplayNameMessage;
 import libomv.capabilities.CapsMessage.SetDisplayNameReplyMessage;
 import libomv.capabilities.CapsMessage.TeleportFailedMessage;
@@ -80,17 +93,24 @@ import libomv.packets.AgentMovementCompletePacket;
 import libomv.packets.AgentRequestSitPacket;
 import libomv.packets.AgentSitPacket;
 import libomv.packets.AgentUpdatePacket;
+import libomv.packets.AlertMessagePacket;
+import libomv.packets.AvatarAnimationPacket;
+import libomv.packets.AvatarSitResponsePacket;
+import libomv.packets.CameraConstraintPacket;
 import libomv.packets.ChatFromSimulatorPacket;
 import libomv.packets.ChatFromViewerPacket;
 import libomv.packets.ClassifiedDeletePacket;
 import libomv.packets.ClassifiedInfoUpdatePacket;
 import libomv.packets.CompleteAgentMovementPacket;
+import libomv.packets.CrossedRegionPacket;
 import libomv.packets.DeactivateGesturesPacket;
 import libomv.packets.GenericMessagePacket;
 import libomv.packets.HealthMessagePacket;
 import libomv.packets.ImprovedInstantMessagePacket;
+import libomv.packets.MeanCollisionAlertPacket;
 import libomv.packets.MoneyBalanceReplyPacket;
 import libomv.packets.MoneyTransferRequestPacket;
+import libomv.packets.MuteListUpdatePacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.PickDeletePacket;
@@ -98,6 +118,7 @@ import libomv.packets.PickInfoUpdatePacket;
 import libomv.packets.RetrieveInstantMessagesPacket;
 import libomv.packets.ScriptAnswerYesPacket;
 import libomv.packets.ScriptDialogReplyPacket;
+import libomv.packets.ScriptSensorReplyPacket;
 import libomv.packets.ScriptSensorRequestPacket;
 import libomv.packets.SetAlwaysRunPacket;
 import libomv.packets.StartLurePacket;
@@ -337,7 +358,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		Shout(2),
 		/*
 		 * Say chat (10/20m radius) - The official viewer will print
-		 * "[4:15] You say, hey" instead of "[4:15] You: hey"</summary>
+		 * "[4:15] You say, hey" instead of "[4:15] You: hey"
 		 */
 		// Say = 3,
 		/* Event message when an Avatar has begun to type */
@@ -942,6 +963,65 @@ public class AgentManager implements PacketCallback, CapsCallback
 		private static final byte _mask = 0xF;
 	}
 
+    /**
+     * Type of mute entry
+     */
+    public enum MuteType
+    {
+        // Object muted by name
+        ByName,
+        // Muted resident
+        Resident,
+        // Object muted by UUID
+        Object,
+        // Muted group
+        Group,
+        // Muted external entry
+        External;
+        
+		public static MuteType setValue(int value)
+		{
+			return values()[value];
+		}
+
+		public byte getValue()
+		{
+			return (byte) ordinal();
+		}
+    }
+
+    /**
+     * Flags of mute entry
+     */
+    // [Flags]
+    public static class MuteFlags
+    {
+        // No exceptions
+        public static final byte Default = 0x0;
+        // Don't mute text chat
+        public static final byte TextChat = 0x1;
+        // Don't mute voice chat
+        public static final byte VoiceChat = 0x2;
+        // Don't mute particles
+        public static final byte Particles = 0x4;
+        // Don't mute sounds
+        public static final byte ObjectSounds = 0x8;
+        // Don't mute
+        public static final byte All = 0xf;
+	
+        public static byte setValue(int value)
+		{
+			return (byte)(value & _mask);
+		}
+
+		public static int getValue(byte value)
+		{
+			return value & _mask;
+		}
+
+		private static final byte _mask = 0xf;
+    }
+
 	/* Instant Message */
 	public final class InstantMessage
 	{
@@ -985,24 +1065,78 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	// Transaction detail sent with MoneyBalanceReply message
+    // Represents muted object or resident
+    public class MuteEntry
+    {
+        // Type of the mute entry
+        public MuteType Type;
+        // UUID of the mute etnry
+        public UUID ID;
+        // Mute entry name
+        public String Name;
+        // Mute flags
+        public byte Flags;
+    }
+
+    // Transaction detail sent with MoneyBalanceReply message
 	public class TransactionInfo
 	{
-		// Type of the transaction</summary>
+		// Type of the transaction
 		public int TransactionType; // FIXME: this should be an enum
-		// UUID of the transaction source</summary>
+		// UUID of the transaction source
 		public UUID SourceID;
-		// Is the transaction source a group</summary>
+		// Is the transaction source a group
 		public boolean IsSourceGroup;
-		// UUID of the transaction destination</summary>
+		// UUID of the transaction destination
 		public UUID DestID;
-		// Is transaction destination a group</summary>
+		// Is transaction destination a group
 		public boolean IsDestGroup;
-		// Transaction amount</summary>
+		// Transaction amount
 		public int Amount;
-		// Transaction description</summary>
+		// Transaction description
 		public String ItemDescription;
 	}
+
+	public class GroupChatJoinedCallbackArgs implements CallbackArgs
+	{
+		private final UUID m_SessionID;
+		private final String m_SessionName;
+		private final UUID m_tmpSessionID;
+		private final boolean m_Success;
+		
+		// Get the ID of the chat session
+		public UUID getSessionID()
+		{
+			return m_SessionID;
+		}
+
+		// Get the name of the chat session
+		public String getSessionName()
+		{
+			return m_SessionName;
+		}
+
+		// Get the ID of the agent that joined
+		public UUID getTempSessionID()
+		{
+			return m_tmpSessionID;
+		}
+
+		public boolean getSucess()
+		{
+			return m_Success;
+		}
+
+		public GroupChatJoinedCallbackArgs(UUID sessionID, String name, UUID tmpSessionID, boolean success)
+		{
+			m_SessionID = sessionID;
+			m_SessionName = name;
+			m_tmpSessionID = tmpSessionID;
+			m_Success = success; 
+		}
+	}
+
+	public CallbackHandler<GroupChatJoinedCallbackArgs> OnGroupChatJoined = new CallbackHandler<GroupChatJoinedCallbackArgs>();
 
 	// Data sent when an agent joins or leaves a chat session your agent is
 	// currently participating in
@@ -1038,6 +1172,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	public CallbackHandler<ChatSessionMemberCallbackArgs> OnChatSessionMember = new CallbackHandler<ChatSessionMemberCallbackArgs>();
+
+	public CallbackHandler<ChatSessionMemberCallbackArgs> OnGroupSessionMember = new CallbackHandler<ChatSessionMemberCallbackArgs>();
 
 	public class ChatCallbackArgs implements CallbackArgs
 	{
@@ -1151,6 +1287,30 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<TeleportCallbackArgs> OnTeleport = new CallbackHandler<TeleportCallbackArgs>();
 
+	
+	public class RegionCrossedCallbackArgs implements CallbackArgs
+	{
+		private final Simulator oldSim, newSim;
+		
+		public Simulator getOldSim()
+		{
+			return oldSim;
+		}
+		
+		public Simulator getNewSim()
+		{
+			return newSim;
+		}
+
+		public RegionCrossedCallbackArgs(Simulator oldSim, Simulator newSim)
+		{
+			this.oldSim = oldSim;
+			this.newSim = newSim;
+		}
+	}
+	
+	public CallbackHandler<RegionCrossedCallbackArgs>OnRegionCrossed = new CallbackHandler<RegionCrossedCallbackArgs>();
+
 	/* The date received from an ImprovedInstantMessage */
 	public class BalanceCallbackArgs
 	{
@@ -1189,7 +1349,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	// Event arguments with the result of setting display name
-	// operation</summary>
+	// operation
 	public class SetDisplayNameReplyCallbackArgs implements CallbackArgs
 	{
 		private final int m_Status;
@@ -1224,15 +1384,316 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandler<SetDisplayNameReplyCallbackArgs>();
 
-	public class AgentDataReplyCallbackArgs implements CallbackArgs
+	
+    // Data containing script sensor requests which allow an agent to know the specific details
+    // of a primitive sending script sensor requests
+    public class ScriptSensorReplyCallbackArgs implements CallbackArgs
+    {
+        private final UUID m_RequestorID;
+        private final UUID m_GroupID;
+        private final String m_Name;
+        private final UUID m_ObjectID;
+        private final UUID m_OwnerID;
+        private final Vector3 m_Position;
+        private final float m_Range;
+        private final Quaternion m_Rotation;
+        private final byte m_Type;
+        private final Vector3 m_Velocity;
+
+        //Get the ID of the primitive sending the sensor
+        public UUID getRequestorID()
+        {
+        	return m_RequestorID;
+        }
+        //Get the ID of the group associated with the primitive
+        public UUID getGroupID()
+        {
+        	return m_GroupID;
+        }
+        //Get the name of the primitive sending the s ensor
+        public String getName()
+        {
+        	return m_Name;
+        }
+        //Get the ID of the primitive sending the sensor
+        public UUID getObjectID()
+        {
+        	return m_ObjectID;
+        }
+        //Get the ID of the owner of the primitive sending the sensor
+        public UUID getOwnerID()
+        {
+        	return m_OwnerID;
+        }
+        // Get the position of the primitive sending the sensor
+        public Vector3 getPosition()
+        {
+        	return m_Position;
+        }
+        // Get the range the primitive specified to scan
+        public float getRange()
+        {
+        	return m_Range;
+        }
+        // Get the rotation of the primitive sending the sensor
+        public Quaternion getRotation()
+        {
+        	return m_Rotation;
+        }
+        // Get the type of sensor the primitive sent
+        public byte getType()
+        {
+        	return m_Type;
+        }
+        // Get the velocity of the primitive sending the sensor
+        public Vector3 getVelocity()
+        {
+        	return m_Velocity;
+        }
+
+        /**
+         * Construct a new instance of the ScriptSensorReplyEventArgs
+         *
+         * @param requestorID The ID of the primitive sending the sensor
+         * @param groupID The ID of the group associated with the primitive
+         * @param name The name of the primitive sending the sensor
+         * @param objectID The ID of the primitive sending the sensor
+         * @param ownerID The ID of the owner of the primitive sending the sensor
+         * @param position The position of the primitive sending the sensor
+         * @param range The range the primitive specified to scan
+         * @param rotation The rotation of the primitive sending the sensor
+         * @param type The type of sensor the primitive sent
+         * @param velocity The velocity of the primitive sending the sensor
+         */
+        public ScriptSensorReplyCallbackArgs(UUID requestorID, UUID groupID, String name,
+            UUID objectID, UUID ownerID, Vector3 position, float range, Quaternion rotation,
+            byte type, Vector3 velocity)
+        {
+            this.m_RequestorID = requestorID;
+            this.m_GroupID = groupID;
+            this.m_Name = name;
+            this.m_ObjectID = objectID;
+            this.m_OwnerID = ownerID;
+            this.m_Position = position;
+            this.m_Range = range;
+            this.m_Rotation = rotation;
+            this.m_Type = type;
+            this.m_Velocity = velocity;
+        }
+    }
+
+	public CallbackHandler<ScriptSensorReplyCallbackArgs> OnScriptSensorReply = new CallbackHandler<ScriptSensorReplyCallbackArgs>();
+
+	
+	public class AlertMessageCallbackArgs implements CallbackArgs
 	{
-		String m_FirstName;
-		String m_LastName;
-		UUID m_ActiveGroup;
-		String m_GroupName;
-		String m_GroupTitle;
-		long m_ActiveGroupPowers;
+		private final String alert;
 		
+		public String getAlert()
+		{
+			return alert;
+		}
+		
+		public AlertMessageCallbackArgs(String alert)
+		{
+			this.alert = alert;
+		}
+	}
+    
+	public CallbackHandler<AlertMessageCallbackArgs> OnAlertMessage = new CallbackHandler<AlertMessageCallbackArgs>();
+	
+
+	public class CameraConstraintCallbackArgs implements CallbackArgs
+	{
+		private final Vector4 constraints;
+		
+		public Vector4 getConstraints()
+		{
+			return constraints;
+		}
+		
+		public CameraConstraintCallbackArgs(Vector4 constraints)
+		{
+			this.constraints = constraints;
+		}
+	}
+
+    public CallbackHandler<CameraConstraintCallbackArgs> OnCameraConstraint = new CallbackHandler<CameraConstraintCallbackArgs>();
+
+
+    // Data sent from a simulator indicating a collision with your agent
+    public class MeanCollisionCallbackArgs implements CallbackArgs
+    {
+        private final MeanCollisionType m_Type;
+        private final UUID m_Aggressor;
+        private final UUID m_Victim;
+        private final float m_Magnitude;
+        private final Date m_Time;
+
+        // Get the Type of collision 
+        public MeanCollisionType getType()
+        {
+        	return m_Type;
+        }
+        // Get the ID of the agent or object that collided with your agent 
+        public UUID getAggressor()
+        {
+        	return m_Aggressor;
+        }
+        // Get the ID of the agent that was attacked 
+        public UUID getVictim()
+        {
+        	return m_Victim;
+        }
+        // A value indicating the strength of the collision 
+        public float getMagnitude()
+        {
+        	return m_Magnitude;
+        }
+        // Get the time the collision occurred 
+        public Date getTime()
+        {
+        	return m_Time;
+        }
+
+        /** 
+         * Construct a new instance of the MeanCollisionEventArgs class
+         *
+         * @param type The type of collision that occurred
+         * @param perp The ID of the agent or object that perpetrated the agression
+         * @param victim The ID of the Victim
+         * @param magnitude The strength of the collision
+         * @param time The Time the collision occurred
+         */
+        public MeanCollisionCallbackArgs(MeanCollisionType type, UUID perp, UUID victim, float magnitude, Date time)
+        {
+            this.m_Type = type;
+            this.m_Aggressor = perp;
+            this.m_Victim = victim;
+            this.m_Magnitude = magnitude;
+            this.m_Time = time;
+        }
+    }
+
+	public CallbackHandler<MeanCollisionCallbackArgs> OnMeanCollision = new CallbackHandler<MeanCollisionCallbackArgs>();
+
+    
+    // Contains the response data returned from the simulator in response to a <see cref="RequestSit"/>
+    public class AvatarSitResponseCallbackArgs implements CallbackArgs
+    {
+        private final UUID m_ObjectID;
+        private final boolean m_Autopilot;
+        private final Vector3 m_CameraAtOffset;
+        private final Vector3 m_CameraEyeOffset;
+        private final boolean m_ForceMouselook;
+        private final Vector3 m_SitPosition;
+        private final Quaternion m_SitRotation;
+
+        /// <summary>Get the ID of the primitive the agent will be sitting on</summary>
+        public UUID getObjectID()
+        {
+             return m_ObjectID;
+        }
+        /// <summary>True if the simulator Autopilot functions were involved</summary>
+        public boolean getAutopilot()
+        {
+             return m_Autopilot;
+        }
+        /// <summary>Get the camera offset of the agent when seated</summary>
+        public Vector3 getCameraAtOffset()
+        {
+             return m_CameraAtOffset;
+        }
+        /// <summary>Get the camera eye offset of the agent when seated</summary>
+        public Vector3 getCameraEyeOffset()
+        {
+             return m_CameraEyeOffset;
+        }
+        /// <summary>True of the agent will be in mouselook mode when seated</summary>
+        public boolean getForceMouselook()
+        {
+             return m_ForceMouselook;
+        }
+        /// <summary>Get the position of the agent when seated</summary>
+        public Vector3 getSitPosition()
+        {
+             return m_SitPosition;
+        }
+        /// <summary>Get the rotation of the agent when seated</summary>
+        public Quaternion getSitRotation()
+        {
+             return m_SitRotation;
+        }
+
+        // Construct a new instance of the AvatarSitResponseEventArgs object
+        public AvatarSitResponseCallbackArgs(UUID objectID, boolean autoPilot, Vector3 cameraAtOffset,
+            Vector3 cameraEyeOffset, boolean forceMouselook, Vector3 sitPosition, Quaternion sitRotation)
+        {
+            this.m_ObjectID = objectID;
+            this.m_Autopilot = autoPilot;
+            this.m_CameraAtOffset = cameraAtOffset;
+            this.m_CameraEyeOffset = cameraEyeOffset;
+            this.m_ForceMouselook = forceMouselook;
+            this.m_SitPosition = sitPosition;
+            this.m_SitRotation = sitRotation;
+        }
+    }
+
+	public CallbackHandler<AvatarSitResponseCallbackArgs> OnAvatarSitResponse = new CallbackHandler<AvatarSitResponseCallbackArgs>();
+    
+    
+    public class AnimationsChangedCallbackArgs implements CallbackArgs
+	{
+    	private final HashMap<UUID, Integer> m_Animations;
+		
+    	public HashMap<UUID, Integer> getAnimations()
+    	{
+    		return m_Animations;
+    	}
+    	
+		public AnimationsChangedCallbackArgs(HashMap<UUID, Integer> animations)
+		{
+			m_Animations = animations;
+		}
+	}
+
+    public CallbackHandler<AnimationsChangedCallbackArgs> OnAnimationsChanged = new CallbackHandler<AnimationsChangedCallbackArgs>();
+
+	
+    public class AgentDataReplyCallbackArgs implements CallbackArgs
+	{
+    	private final String m_FirstName;
+    	private final String m_LastName;
+    	private final UUID m_ActiveGroup;
+    	private final String m_GroupName;
+    	private final String m_GroupTitle;
+    	private final long m_ActiveGroupPowers;
+	
+    	public String getFristName()
+    	{
+    		return m_FirstName;
+    	}
+    	public String getLastName()
+    	{
+    		return m_LastName;
+    	}
+    	public UUID getActiveGroup()
+    	{
+    		return m_ActiveGroup;
+    	}
+    	public String getGroupName()
+    	{
+    		return m_GroupName;
+    	}
+    	public String getGroupTitle()
+    	{
+    		return m_GroupTitle;
+    	}
+    	public long getActiveGroupPowers()
+    	{
+    		return m_ActiveGroupPowers;
+    	}
+    	
 		public AgentDataReplyCallbackArgs(String firstName, String lastName, UUID activeGroup, String groupTitle, long activeGroupPowers, String groupName)
 		{
 			this.m_FirstName = firstName;
@@ -1245,7 +1706,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 	
 	public CallbackHandler<AgentDataReplyCallbackArgs> OnAgentData = new CallbackHandler<AgentDataReplyCallbackArgs>();
-			
+
+	
 	// Contains the transaction summary when an item is purchased, money is
 	// given, or land is purchased
 	public class MoneyBalanceReplyCallbackArgs implements CallbackArgs
@@ -1331,6 +1793,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<MoneyBalanceReplyCallbackArgs> OnMoneyBalanceReply = new CallbackHandler<MoneyBalanceReplyCallbackArgs>();
 
+	public CallbackHandler<CallbackArgs> OnMuteListUpdated = new CallbackHandler<CallbackArgs>();
+
+	
 	private UUID agentID;
 	// A temporary UUID assigned to this session, used for secure transactions
 	private UUID sessionID;
@@ -1677,14 +2142,18 @@ public class AgentManager implements PacketCallback, CapsCallback
 	/* Used for movement and camera tracking */
 	private final AgentMovement _Movement;
 
+	private ExecutorService _ThreadPool;
+
 	/*
 	 * Currently playing animations for the agent. Can be used to check the
 	 * current movement status such as walking, hovering, aiming, etc. by
 	 * checking against system animations found in the Animations class
 	 */
 	public HashMap<UUID, Integer> SignaledAnimations = new HashMap<UUID, Integer>();
-	/* Dictionary containing current Group Chat sessions and members */
+	// Dictionary containing current Group Chat sessions and members
 	public HashMap<UUID, ArrayList<ChatSessionMember>> GroupChatSessions = new HashMap<UUID, ArrayList<ChatSessionMember>>();
+    // Dictionary containing mute list keyead on mute name and key
+    public HashMap<String, MuteEntry> MuteList = new HashMap<String, MuteEntry>();
 
 	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
 	{
@@ -1722,14 +2191,18 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	// 'CallBack Central' - Setup callbacks for packets related to our avatar
-	// <param name="client"></param>
+	/**
+	 * 'CallBack Central' - Setup callbacks for packets related to our avatar
+	 *
+	 * @param client
+	 */
 	public AgentManager(GridClient client)
 	{
 		_Client = client;
 
 		_Movement = new AgentMovement(client);
 		teleportTimeout = new TimeoutEvent<TeleportStatus>();
+		_ThreadPool = Executors.newCachedThreadPool();
 
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
 		// Login
@@ -1753,12 +2226,19 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.ImprovedInstantMessage, this);
 		// Chat callback
 		_Client.Network.RegisterCallback(PacketType.ChatFromSimulator, this);
+		
+		_Client.Network.RegisterCallback(PacketType.MuteListUpdate, this);
 		// Script dialog callback
 		_Client.Network.RegisterCallback(PacketType.ScriptDialog, this);
 		// Script question callback
 		_Client.Network.RegisterCallback(PacketType.ScriptQuestion, this);
 		// Script URL callback
 		_Client.Network.RegisterCallback(PacketType.LoadURL, this);
+		// script control change messages, ie: when an in-world LSL script wants
+		// to take control of your agent.
+		_Client.Network.RegisterCallback(PacketType.ScriptControlChange, this);
+
+		_Client.Network.RegisterCallback(PacketType.ScriptSensorReply, this);
 		// Movement complete callback
 		_Client.Network.RegisterCallback(PacketType.AgentMovementComplete, this);
 		// Health callback
@@ -1769,6 +2249,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.AgentDataUpdate, this);
 		// Animation callback
 		_Client.Network.RegisterCallback(PacketType.AvatarAnimation, this);
+
+		_Client.Network.RegisterCallback(PacketType.AvatarSitResponse, this);
 		// Object colliding into our agent callback
 		_Client.Network.RegisterCallback(PacketType.MeanCollisionAlert, this);
 		// Region Crossing
@@ -1785,13 +2267,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(CapsEventType.ChatterBoxSessionAgentListUpdates, this);
 		// Alert Messages
 		_Client.Network.RegisterCallback(PacketType.AlertMessage, this);
-		// script control change messages, ie: when an in-world LSL script wants
-		// to take control of your agent.
-		_Client.Network.RegisterCallback(PacketType.ScriptControlChange, this);
 		// Camera Constraint (probably needs to move to AgentManagerCamera TODO:
 		_Client.Network.RegisterCallback(PacketType.CameraConstraint, this);
-		_Client.Network.RegisterCallback(PacketType.ScriptSensorReply, this);
-		_Client.Network.RegisterCallback(PacketType.AvatarSitResponse, this);
 	}
 
 	@Override
@@ -1806,20 +2283,28 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HandleTeleportFinish(message, simulator);
 				break;
 			case CrossedRegion:
+				HandleCrossedRegion(message, simulator);
 				break;
 			case EstablishAgentCommunication:
+				// TODO: 
 				break;
 			case ChatterBoxInvitation:
+				HandleChatterBoxInvitation(message, simulator);
 				break;
 			case ChatterBoxSessionEventReply:
+				HandleChatterBoxSessionEventReply(message, simulator);
 				break;
 			case ChatterBoxSessionStartReply:
+				HandleChatterBoxSessionStartReply(message, simulator);
 				break;
 			case ChatterBoxSessionAgentListUpdates:
+				HandleChatterBoxSessionAgentListUpdates(message, simulator);
 				break;
 			case SetDisplayNameReply:
 				HandleSetDisplayNameReply(message, simulator);
 				break;
+			default:
+				Logger.Log("AgentManager: Unhandled message" + message.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -1845,18 +2330,44 @@ public class AgentManager implements PacketCallback, CapsCallback
 			case ChatFromSimulator:
 				HandleChat(packet, simulator);
 				break;
+			case MuteListUpdate:
+				HandleMuteListUpdate(packet, simulator);
+				break;
 			case CoarseLocationUpdate:
 				HandleCoarseLocation(packet, simulator);
 				break;
+			case MeanCollisionAlert:
+				HandleMeanCollisionAlert(packet, simulator);
+				break;
 			case AgentMovementComplete:
-				HandleMovementComplete(packet, simulator);
+				HandleAgentMovementComplete(packet, simulator);
 				break;
 			case AgentDataUpdate:
 			    HandleAgentDataUpdate(packet, simulator);
 				break;
+			case CrossedRegion:
+				HandleCrossedRegion(packet, simulator);
+				break;
 			case HealthMessage:
 				HandleHealthMessage(packet, simulator);
 				break;
+			case ScriptSensorReply:
+				HandleScriptSensorReply(packet, simulator);
+				break;
+			case AlertMessage:
+				HandleAlertMessage(packet, simulator);
+				break;
+			case AvatarAnimation:
+				HandleAvatarAnimation(packet, simulator);
+				break;
+			case AvatarSitResponse:
+				HandleAvatarSitResponse(packet, simulator);
+				break;
+			case CameraConstraint:
+				HandleCameraConstraint(packet, simulator);
+				break;
+			default:
+				Logger.Log("AgentManager: Unhandled packet" + packet.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -3143,17 +3654,35 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * handler to wait for any message or the returned timeoutEvent to abort the
 	 * request prematurely if desired.
 	 * 
-	 * <example> // Using a callback handler final
-	 * CallbackHandler<TeleportCallbackArgs> handler = new
-	 * CallbackHandler<TeleportCallbackArgs>() { public void
-	 * callback(TeleportCallbackArgs args) { // Do something with the callback
-	 * args: args.status, args.message, args.flags switch (args.status) { case
-	 * Start: case Progress: break; case Canceled: case Failed: case Finished:
-	 * break; } } } BeginTeleport(handle, pos, handler);
+	 * <example>
+	 * // Using a callback handler
+	 * final Callback<TeleportCallbackArgs> handler = new Callback<TeleportCallbackArgs>()
+	 * {
+	 *     public void callback(TeleportCallbackArgs args)
+	 *     {
+	 *         // Do something with the callback
+	 *         args: args.status, args.message, args.flags
+	 *         switch (args.status)
+	 *         {
+	 *         	   case Start:
+	 *             case Progress:
+	 *                 break;
+	 *             case Canceled:
+	 *             case Failed:
+	 *             case Finished:
+	 *                 break;
+	 *         }
+	 *     }
+	 * }
+	 * BeginTeleport(handle, pos, handler);
 	 * 
-	 * // Using the timeout event TimeoutEvent<TeleportStatus> timo =
-	 * BeginTeleport(handle, pos, null); TeleportStatus stat =
-	 * timo.waitms(timeout); if (stat == null) { // The timeout occured }
+	 * // Using the timeout event
+	 * TimeoutEvent<TeleportStatus> timo = BeginTeleport(handle, pos, null);
+	 * TeleportStatus stat = timo.waitms(timeout);
+	 * if (stat == null)
+	 * {
+	 *    // The timeout occured
+	 * }
 	 * </example>
 	 * 
 	 * @param regionHandle
@@ -3719,7 +4248,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * Initates request to set a new display name
 	 * 
 	 * @param oldName
-	 *            Previous display name</param>
+	 *            Previous display name
 	 * @param newName
 	 *            Desired new display name
 	 * @throws IOException
@@ -3847,7 +4376,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void HandleMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+	private void HandleAgentMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
 		AgentMovementCompletePacket movement = (AgentMovementCompletePacket) packet;
 
@@ -3855,6 +4384,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Movement.Camera.LookDirection(movement.Data.LookAt);
 		simulator.setHandle(movement.Data.RegionHandle);
 		simulator.SimVersion = Helpers.BytesToString(movement.SimData.getChannelVersion());
+        simulator.AgentMovementComplete = true;
 	}
 
 	private void HandleHealthMessage(Packet packet, Simulator simulator)
@@ -3919,7 +4449,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			Logger.DebugLog("TeleportFinish received, Flags: " + flags, _Client);
 
-			// Connect to the new sim
+            // Connect to the new sim
+            _Client.Network.getCurrentSim().AgentMovementComplete = false; // we're not there anymore
 			InetAddress addr = InetAddress.getByAddress(Helpers.Int32ToBytesB(finish.Info.SimIP));
 			Simulator newSimulator = _Client.Network.Connect(addr, finish.Info.SimPort, finish.Info.RegionHandle, true,
 					seedcaps);
@@ -4075,6 +4606,432 @@ public class AgentManager implements PacketCallback, CapsCallback
 		OnSetDisplayNameReply.dispatch(new SetDisplayNameReplyCallbackArgs(msg.Status, msg.Reason, msg.DisplayName));
 	}
 
+    private void HandleAvatarAnimation(Packet packet, Simulator simulator) throws Exception
+    {
+        AvatarAnimationPacket animation = (AvatarAnimationPacket)packet;
+
+        if (animation.ID.equals(_Client.Self.getAgentID()))
+        {
+            synchronized (SignaledAnimations)
+            {
+                // Reset the signaled animation list
+                SignaledAnimations.clear();
+
+                for (int i = 0; i < animation.AnimationList.length; i++)
+                {
+                    UUID animID = animation.AnimationList[i].AnimID;
+                    int sequenceID = animation.AnimationList[i].AnimSequenceID;
+
+                    // Add this animation to the list of currently signaled animations
+                    SignaledAnimations.put(animID, sequenceID);
+
+                    if (i < animation.ObjectID.length)
+                    {
+                        // FIXME: The server tells us which objects triggered our animations,
+                        // we should store this info
+
+                        //animation.ObjectID[i]
+                    }
+
+                    if (i < animation.PhysicalAvatarEventList.length)
+                    {
+                    	AvatarAnimationPacket.PhysicalAvatarEventListBlock block = animation.PhysicalAvatarEventList[i];
+                    	block.getTypeData();
+                        // FIXME: What is this?
+                    }
+
+                    if (_Client.Settings.SEND_AGENT_UPDATES)
+                    {
+                        // We have to manually tell the server to stop playing some animations
+                        if (animID.equals(Animations.STANDUP) ||
+                            animID.equals(Animations.PRE_JUMP) ||
+                            animID.equals(Animations.LAND) ||
+                            animID.equals(Animations.MEDIUM_LAND))
+                        {
+                            _Movement.setFinishAnim(true);
+                            _Movement.SendUpdate(true);
+                            _Movement.setFinishAnim(false);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (OnAnimationsChanged.count() > 0)
+        {
+            _ThreadPool.execute(new Runnable()
+            {
+				@Override
+				public void run()
+				{
+	            	OnAnimationsChanged.dispatch(new AnimationsChangedCallbackArgs(SignaledAnimations));
+				}
+            });
+        }
+
+    }
+
+    private void HandleMeanCollisionAlert(Packet packet, Simulator simulator)
+    {
+        if (OnMeanCollision.count() > 0)
+        {
+            MeanCollisionAlertPacket collision = (MeanCollisionAlertPacket)packet;
+
+            for (int i = 0; i < collision.MeanCollision.length; i++)
+            {
+                MeanCollisionAlertPacket.MeanCollisionBlock block = collision.MeanCollision[i];
+
+                Date time = Helpers.UnixTimeToDateTime(block.Time);
+                MeanCollisionType type = MeanCollisionType.setValue(block.Type);
+
+                OnMeanCollision.dispatch(new MeanCollisionCallbackArgs(type, block.Perp, block.Victim, block.Mag, time));
+            }
+        }
+    }
+
+    /**
+     * Crossed region handler for message that comes across the EventQueue. Sent to an agent
+     * when the agent crosses a sim border into a new region.
+     *
+     * @param message IMessage object containing the deserialized data sent from the simulator
+     * @param simulator The <see cref="Simulator"/> which originated the packet
+     * @throws Exception 
+     */
+    private void HandleCrossedRegion(IMessage message, Simulator simulator) throws Exception
+    {
+        CrossedRegionMessage crossed = (CrossedRegionMessage)message;
+        HandleCrossedRegion(new InetSocketAddress(crossed.IP, crossed.Port), crossed.RegionHandle, crossed.SeedCapability.toString());
+    }
+
+    private void HandleCrossedRegion(Packet packet, Simulator simulator) throws Exception
+    {
+        CrossedRegionPacket crossing = (CrossedRegionPacket)packet;
+        InetSocketAddress endPoint = new InetSocketAddress(InetAddress.getByAddress(Helpers.Int32ToBytesB(crossing.RegionData.SimIP)), crossing.RegionData.SimPort);
+        HandleCrossedRegion(endPoint, crossing.RegionData.RegionHandle, Helpers.BytesToString(crossing.RegionData.getSeedCapability()));
+    }
+    
+    private void HandleCrossedRegion(InetSocketAddress endPoint, long regionHandle, String seedCap) throws Exception
+    {
+        Logger.DebugLog("Crossed in to new region area, attempting to connect to " + endPoint.toString(), _Client);
+
+        Simulator oldSim = _Client.Network.getCurrentSim();
+        Simulator newSim = _Client.Network.Connect(endPoint, regionHandle, true, seedCap);
+
+        if (newSim != null)
+        {
+            Logger.Log("Finished crossing over in to region " + newSim.toString(), LogLevel.Info, _Client);
+            oldSim.AgentMovementComplete = false; // We're no longer there
+            OnRegionCrossed.dispatch(new RegionCrossedCallbackArgs(oldSim, newSim));
+        }
+        else
+        {
+            // The old simulator will still (poorly) handle our movement, so the connection isn't completely shot yet
+            Logger.Log("Failed to connect to new region " + endPoint.toString() + " after crossing over", LogLevel.Warning, _Client);
+        } 	
+    }
+
+    /**
+     * Group Chat event handler
+     *
+     * @param message IMessage object containing the deserialized data sent from the simulator
+     * @param simulator The <see cref="Simulator"/> which originated the packet
+     * @throws Exception 
+     */
+    private void HandleChatterBoxSessionEventReply(IMessage message, Simulator simulator) throws Exception
+    {
+        ChatterBoxSessionEventReplyMessage msg = (ChatterBoxSessionEventReplyMessage)message;
+
+        if (!msg.Success)
+        {
+            RequestJoinGroupChat(msg.SessionID);
+            Logger.Log("Attempt to send group chat to non-existant session for group " + msg.SessionID, LogLevel.Info, _Client);
+        }
+    }
+
+    /**
+     * Response from request to join a group chat
+     *
+     * @param message IMessage object containing the deserialized data sent from the simulator
+     * @param simulator The <see cref="Simulator"/> which originated the packet
+     */
+    private void HandleChatterBoxSessionStartReply(IMessage message, Simulator simulator)
+    {
+        ChatterBoxSessionStartReplyMessage msg = (ChatterBoxSessionStartReplyMessage)message;
+
+        if (msg.Success)
+        {
+            synchronized (GroupChatSessions)
+            {
+                if (!GroupChatSessions.containsKey(msg.SessionID))
+                    GroupChatSessions.put(msg.SessionID, new ArrayList<ChatSessionMember>());
+            }
+        }
+        OnGroupChatJoined.dispatch(new GroupChatJoinedCallbackArgs(msg.SessionID, msg.SessionName, msg.TempSessionID, msg.Success));
+    }
+
+    /**
+     * Someone joined or left group chat
+     *
+     * @param message IMessage object containing the deserialized data sent from the simulator
+     * @param simulator The <see cref="Simulator"/> which originated the packet
+     */
+    private void HandleChatterBoxSessionAgentListUpdates(IMessage message, Simulator simulator)
+    {
+        ChatterBoxSessionAgentListUpdatesMessage msg = (ChatterBoxSessionAgentListUpdatesMessage)message;
+
+        synchronized (GroupChatSessions)
+        {
+            if (!GroupChatSessions.containsKey(msg.SessionID))
+                GroupChatSessions.put(msg.SessionID, new ArrayList<ChatSessionMember>());
+        }
+        
+        for (int i = 0; i < msg.Updates.length; i++)
+        {
+        	ChatSessionMember fndMbr = null;
+            synchronized (GroupChatSessions)
+            {
+            	for (ChatSessionMember member : GroupChatSessions.get(msg.SessionID))
+            	{
+                    if (member.AvatarKey.equals(msg.Updates[i].AgentID))
+                    	fndMbr = member;
+                }
+            }
+
+            if (msg.Updates[i].Transition != null)
+            {
+                if (msg.Updates[i].Transition.equals("ENTER"))
+                {
+                    if (fndMbr == null || fndMbr.AvatarKey.equals(UUID.Zero))
+                    {
+                        fndMbr = new ChatSessionMember();
+                        fndMbr.AvatarKey = msg.Updates[i].AgentID;
+
+                        synchronized (GroupChatSessions)
+                        {
+                            GroupChatSessions.get(msg.SessionID).add(fndMbr);
+                        }
+                        OnChatSessionMember.dispatch(new ChatSessionMemberCallbackArgs(msg.SessionID, msg.Updates[i].AgentID, true));
+                    }
+                }
+                else if (msg.Updates[i].Transition.equals("LEAVE"))
+                {
+                    if (fndMbr != null && !fndMbr.AvatarKey.equals(UUID.Zero))
+                    {
+                    	synchronized (GroupChatSessions)
+                        {
+                            GroupChatSessions.get(msg.SessionID).remove(fndMbr);
+                        }
+                    	fndMbr = null;
+                    }
+                    OnChatSessionMember.dispatch(new ChatSessionMemberCallbackArgs(msg.SessionID, msg.Updates[i].AgentID, false));
+                }
+            }
+
+            if (fndMbr != null)
+            {
+            	// update existing member record
+            	synchronized (GroupChatSessions)
+            	{
+            		fndMbr.MuteText = msg.Updates[i].MuteText;
+            		fndMbr.MuteVoice = msg.Updates[i].MuteVoice;
+
+            		fndMbr.CanVoiceChat = msg.Updates[i].CanVoiceChat;
+            		fndMbr.IsModerator = msg.Updates[i].IsModerator;
+            	}
+            }
+        }
+    }
+
+    /**
+     * Handle a group chat Invitation
+     *
+     * @param message IMessage object containing the deserialized data sent from the simulator
+     * @param simulator The <see cref="Simulator"/> which originated the packet
+     */
+    private void HandleChatterBoxInvitation(IMessage message, Simulator simulator)
+    {
+        if (OnInstantMessage.count() > 0)
+        {
+            ChatterBoxInvitationMessage msg = (ChatterBoxInvitationMessage)message;
+
+            //TODO: do something about invitations to voice group chat/friends conference
+            //Skip for now
+            if (msg.Voice)
+            	return;
+
+            InstantMessage im = new InstantMessage();
+
+            im.FromAgentID = msg.FromAgentID;
+            im.FromAgentName = msg.FromAgentName;
+            im.ToAgentID = msg.ToAgentID;
+            im.ParentEstateID = msg.ParentEstateID;
+            im.RegionID = msg.RegionID;
+            im.Position = msg.Position;
+            im.Dialog = msg.Dialog;
+            im.GroupIM = msg.GroupIM;
+            im.IMSessionID = msg.IMSessionID;
+            im.Timestamp = msg.Timestamp;
+            im.Message = msg.Message;
+            im.Offline = msg.Offline;
+            im.BinaryBucket = msg.BinaryBucket;
+            try
+            {
+                ChatterBoxAcceptInvite(msg.IMSessionID);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Failed joining IM:", LogLevel.Warning, _Client, ex);
+            }
+            OnInstantMessage.dispatch(new InstantMessageCallbackArgs(im, simulator));
+        }
+    }
+
+
+    /**
+     * Moderate a chat session
+     *
+     * @param sessionID the <see cref="UUID"/> of the session to moderate, for group chats this will be the groups UUID
+     * @param memberID the <see cref="UUID"/> of the avatar to moderate
+     * @param key Either "voice" to moderate users voice, or "text" to moderate users text session
+     * @param moderate true to moderate (silence user), false to allow avatar to speak
+     * @throws Exception
+     */
+    public void ModerateChatSessions(UUID sessionID, UUID memberID, String key, boolean moderate) throws Exception
+    {
+        URI url = _Client.Network.getCapabilityURI("ChatSessionRequest");
+
+        if (url != null)
+        {
+            ChatSessionRequestMuteUpdate req = _Client.Messages.new ChatSessionRequestMuteUpdate();
+
+            req.RequestKey = key;
+            req.RequestValue = moderate;
+            req.SessionID = sessionID;
+            req.AgentID = memberID;
+
+            CapsClient request = new CapsClient();
+            request.GetResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+        }
+        else
+        {
+            throw new Exception("ChatSessionRequest capability is not currently available");
+        }
+    }
+
+    private void HandleAlertMessage(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+        AlertMessagePacket alert = (AlertMessagePacket)packet;
+        OnAlertMessage.dispatch(new AlertMessageCallbackArgs(Helpers.BytesToString(alert.AlertData.getMessage())));
+    }
+
+    private void HandleCameraConstraint(Packet packet, Simulator simulator)
+    {
+        CameraConstraintPacket camera = (CameraConstraintPacket)packet;
+        OnCameraConstraint.dispatch(new CameraConstraintCallbackArgs(camera.Plane));
+    }
+
+    private void HandleScriptSensorReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+        if (OnScriptSensorReply.count() > 0)
+        {
+            ScriptSensorReplyPacket reply = (ScriptSensorReplyPacket)packet;
+
+            for (int i = 0; i < reply.SensedData.length; i++)
+            {
+                ScriptSensorReplyPacket.SensedDataBlock block = reply.SensedData[i];
+
+                OnScriptSensorReply.dispatch(new ScriptSensorReplyCallbackArgs(reply.SourceID, block.GroupID, Helpers.BytesToString(block.getName()),
+                  block.ObjectID, block.OwnerID, block.Position, block.Range, block.Rotation, ScriptSensorTypeFlags.setValue(block.Type), block.Velocity));
+            }
+        }
+
+    }
+
+    private void HandleAvatarSitResponse(Packet packet, Simulator simulator)
+    {
+        if (OnAvatarSitResponse.count() > 0)
+        {
+            AvatarSitResponsePacket sit = (AvatarSitResponsePacket)packet;
+
+            OnAvatarSitResponse.dispatch(new AvatarSitResponseCallbackArgs(sit.ID, sit.SitTransform.AutoPilot, sit.SitTransform.CameraAtOffset,
+              sit.SitTransform.CameraEyeOffset, sit.SitTransform.ForceMouselook, sit.SitTransform.SitPosition,
+              sit.SitTransform.SitRotation));
+        }
+    }
+
+    private void HandleMuteListUpdate(Packet packet, Simulator simulator) throws Exception
+    {
+        MuteListUpdatePacket data = (MuteListUpdatePacket)packet;
+        if (data.MuteData.AgentID.equals(_Client.Self.getAgentID()))
+        {
+            return;
+        }
+
+        String fileName = Helpers.BytesToString(data.MuteData.getFilename());
+        final TimeoutEvent<byte[]> gotMuteList = new TimeoutEvent<byte[]>();
+        final AtomicLong xferID = new AtomicLong();
+
+        Callback<XferReceivedCallbackArgs> xferCallback = new Callback<XferReceivedCallbackArgs>()
+        {
+          	@Override
+			public void callback(XferReceivedCallbackArgs xe)
+           	{
+                if (xe.getXfer().XferID == xferID.get())
+                {
+                    gotMuteList.set(xe.getXfer().AssetData);
+                }
+         	}
+        };
+        	
+        _Client.Assets.OnXferReceived.add(xferCallback, true);
+        xferID.set(_Client.Assets.RequestAssetXfer(fileName, true, false, UUID.Zero, AssetType.Unknown, true));
+
+        byte[] assetData = gotMuteList.waitOne(60 * 1000);
+        if (assetData != null)
+        {
+        	String muteList = Helpers.BytesToString(assetData);
+
+            synchronized (MuteList)
+            {
+                MuteList.clear();
+                for (String line : muteList.split("\n"))
+                {
+                    if (line.trim().isEmpty()) continue;
+
+
+                    try
+                   {
+                    	Matcher m;
+                        if ((m = Pattern.compile("(?<MyteType>\\d+)\\s+(?<Key>[a-zA-Z0-9-]+)\\s+(?<Name>[^|]+)|(?<Flags>.+)").matcher(line)).matches())
+                        {
+                            MuteEntry me = new MuteEntry();
+                            me.Type = MuteType.setValue(Integer.valueOf(m.group(1)));
+                            me.ID = new UUID(m.group(2));
+                            me.Name = m.group(3);
+                            me.Flags = MuteFlags.setValue(Helpers.TryParseInt(m.group(4)));
+                            MuteList.put(String.format("%s|%s", me.ID, me.Name), me);
+                        }
+                        else
+                        {
+                            throw new IllegalArgumentException("Invalid mutelist entry line");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log("Failed to parse the mute list line: " + line, LogLevel.Warning, _Client, ex);
+                    }
+                }
+            }
+            OnMuteListUpdated.dispatch(null);
+        }
+        else
+        {
+            Logger.Log("Timed out waiting for mute list download", LogLevel.Warning, _Client);
+        }
+        _Client.Assets.OnXferReceived.remove(xferCallback);
+    }
+	
+	
 	private static final int CONTROL_AT_POS_INDEX = 0;
 	private static final int CONTROL_AT_NEG_INDEX = 1;
 	private static final int CONTROL_LEFT_POS_INDEX = 2;
@@ -5094,30 +6051,22 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 *            Simulator to send the update to
 		 * @throws Exception
 		 */
-		private boolean disableUpdate = true;
-
 		public final void SendUpdate(boolean reliable, Simulator simulator) throws Exception
 		{
-			if (simulator == null || (!simulator.handshakeComplete))
-			{
-				return;
-			}
-
-			// Since version 1.40.4 of the Linden simulator, sending this update
-			// causes corruption of the agent position in the simulator
-			if (disableUpdate)
-				return;
+            // Since version 1.40.4 of the Linden simulator, sending this update
+            // causes corruption of the agent position in the simulator
+            if (simulator != null && (!simulator.AgentMovementComplete))
+                return;
 
 			Vector3 origin = Camera.getPosition();
 			Vector3 xAxis = Camera.getLeftAxis();
 			Vector3 yAxis = Camera.getAtAxis();
 			Vector3 zAxis = Camera.getUpAxis();
 
-			// Attempted to sort these in a rough order of how often they might
-			// change
-			if (agentControls == 0 && yAxis == LastCameraYAxis && origin == LastCameraCenter && State == lastState
-					&& HeadRotation == LastHeadRotation && BodyRotation == LastBodyRotation && xAxis == LastCameraXAxis
-					&& Camera.Far == LastFar && zAxis == LastCameraZAxis)
+			// Attempted to sort these in a rough order of how often they might change
+			if (agentControls == 0 && yAxis.equals(LastCameraYAxis) && origin.equals(LastCameraCenter) && State == lastState
+					&& HeadRotation.equals(LastHeadRotation) && BodyRotation.equals(LastBodyRotation) && xAxis.equals(LastCameraXAxis)
+					&& Camera.Far == LastFar && zAxis.equals(LastCameraZAxis))
 			{
 				++duplicateCount;
 			}
@@ -5138,24 +6087,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				LastFar = Camera.Far;
 				lastState = State;
 
-				// Build the AgentUpdate packet and send it
-				AgentUpdatePacket update = new AgentUpdatePacket();
-				update.getHeader().setReliable(reliable);
-
-				update.AgentData.AgentID = _Client.Self.getAgentID();
-				update.AgentData.SessionID = _Client.Self.getSessionID();
-				update.AgentData.HeadRotation = HeadRotation;
-				update.AgentData.BodyRotation = BodyRotation;
-				update.AgentData.CameraAtAxis = yAxis;
-				update.AgentData.CameraCenter = origin;
-				update.AgentData.CameraLeftAxis = xAxis;
-				update.AgentData.CameraUpAxis = zAxis;
-				update.AgentData.Far = Camera.Far;
-				update.AgentData.State = State;
-				update.AgentData.ControlFlags = agentControls;
-				update.AgentData.Flags = Flags.getValue();
-
-				simulator.SendPacket(update);
+				SendUpdate(simulator, agentControls, origin, yAxis, xAxis, zAxis, BodyRotation, HeadRotation, Camera.Far, Flags, State, reliable);
 
 				if (autoResetControls)
 				{
@@ -5185,13 +6117,21 @@ public class AgentManager implements PacketCallback, CapsCallback
 				Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags,
 				byte state, boolean reliable) throws Exception
 		{
+			Simulator simulator = _Client.Network.getCurrentSim();
+			
 			// Since version 1.40.4 of the Linden simulator, sending this update
 			// causes corruption of the agent position in the simulator
-			if (_Client.Network.getCurrentSim() != null && (!_Client.Network.getCurrentSim().handshakeComplete))
+			if (simulator == null || (!simulator.AgentMovementComplete))
 			{
 				return;
 			}
+			SendUpdate(simulator, controlFlags, position, forwardAxis, leftAxis, upAxis, bodyRotation, headRotation, farClip, flags, state, reliable);
+		}
 
+		private final void SendUpdate(Simulator simulator, int controlFlags, Vector3 position, Vector3 forwardAxis, Vector3 leftAxis,
+				Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags,
+				byte state, boolean reliable) throws Exception
+		{
 			AgentUpdatePacket update = new AgentUpdatePacket();
 
 			update.AgentData.AgentID = _Client.Self.getAgentID();
@@ -5209,9 +6149,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			update.getHeader().setReliable(reliable);
 
-			_Client.Network.SendPacket(update);
+			simulator.SendPacket(update);
 		}
-
+	
+		
 		private boolean GetControlFlag(int flag)
 		{
 			return ((agentControls & flag) != 0);

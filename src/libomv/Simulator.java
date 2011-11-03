@@ -501,8 +501,6 @@ public class Simulator extends Thread
 	/* Sequence number for pause/resume */
 	private AtomicInteger _PauseSerial;
 
-	/* Indicates if UDP connection to the sim is fully established */
-	public boolean handshakeComplete;
 	public final TerrainPatch[] Terrain;
 
 	public final Vector2[] WindSpeeds;
@@ -576,7 +574,8 @@ public class Simulator extends Thread
 		return true;
 	}
 
-    // Is it safe to send agent updates to this sim AgentMovementComplete message received
+    // Is it safe to send agent updates to this sim
+	// AgentMovementComplete message received
 	public boolean AgentMovementComplete;
 
 	/*
@@ -828,8 +827,6 @@ public class Simulator extends Thread
 	 */
 	public final boolean Connect(boolean moveToSim) throws Exception
 	{
-		handshakeComplete = false;
-
 		if (_Connected)
 		{
 			UseCircuitCode();

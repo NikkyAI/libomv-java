@@ -978,16 +978,13 @@ public class NetworkManager implements PacketCallback
 		else if (setDefault)
 		{
 			// Move in to this simulator
-			simulator.handshakeComplete = false;
 			simulator.UseCircuitCode();
 			_Client.Self.CompleteAgentMovement(simulator);
 
-			// We're already connected to this server, but need to set it to the
-			// default
+			// We're already connected to this server, but need to set it to the default
 			SetCurrentSim(simulator, seedcaps);
 
-			// Send an initial AgentUpdate to complete our movement in to the
-			// sim
+			// Send an initial AgentUpdate to complete our movement in to the sim
 			if (_Client.Settings.SEND_AGENT_UPDATES)
 			{
 				_Client.Self.SendMovementUpdate(true, simulator);
@@ -996,8 +993,7 @@ public class NetworkManager implements PacketCallback
 		else
 		{
 			// Already connected to this simulator and wasn't asked to set it as
-			// the default,
-			// just return a reference to the existing object
+			// the default, just return a reference to the existing object
 		}
 		return simulator;
 	}
@@ -1286,9 +1282,6 @@ public class NetworkManager implements PacketCallback
 		reply.AgentData.SessionID = _Client.Self.getSessionID();
 		reply.Flags = 0;
 		simulator.SendPacket(reply);
-
-		// We're officially connected to this sim
-		simulator.handshakeComplete = true;
 
 		Logger.Log("Received a region handshake for " + simulator.Name, LogLevel.Info, _Client);
 	}
