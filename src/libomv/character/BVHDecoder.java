@@ -24,6 +24,8 @@
  */
 package libomv.character;
 
+import java.io.InputStream;
+
 public class BVHDecoder
 {
 	public static final int EOF = 0;
@@ -56,4 +58,13 @@ public class BVHDecoder
 			"\"FRAME\"", "\"TIME\"", "\"Xposition\"", "\"Yposition\"", "\"Zposition\"", "\"Xrotation\"",
 			"\"Yrotation\"", "\"Zrotation\"", "<INTEGER>", "<FLOATING>", "<ID>", "\"{\"", "\"}\"", "\":\"", };
 
+	public BVHDecoder(InputStream stream)
+	{
+		
+	}
+	
+	public LLAnimation parse()
+	{
+		return null;
+	}
 }
