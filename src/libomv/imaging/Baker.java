@@ -42,7 +42,7 @@ import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-// A set of textures that are layered on texture of each other and "baked" in to a single texture, for avatar appearances
+// A set of textures that are layered on each other and "baked" in to a single texture, for avatar appearances
 public class Baker
 {
     // #region Properties

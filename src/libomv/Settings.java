@@ -54,7 +54,7 @@ public class Settings implements PacketCallback
 	public static final String APPLICATION_VERSION = "0.6.1";
 
 	/* The relative directory where external resources are kept */
-	public static String RESOURCE_DIR = "libomv_data";
+	public static String RESOURCE_DIR = "character";
 
 	/* Initialize Avatar Manager */
 	public boolean ENABLE_AVATAR_MANAGER = true;
