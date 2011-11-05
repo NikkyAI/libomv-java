@@ -315,10 +315,8 @@ public class RegistrationApi
             query.put("start_look_at_z", OSD.FromReal(user.StartLookAt.Z));
         }
 
-        //byte[] postData = OSDParser.SerializeXmlBytes(query);
-
         // Make the request
-        Future<OSD> future = new CapsClient().executeHttpGet(_caps.CreateUser, null, -1);
+        Future<OSD> future = new CapsClient().executeHttpPost(_caps.CreateUser, query, OSDFormat.Xml, -1);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {
