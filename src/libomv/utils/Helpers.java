@@ -38,6 +38,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -50,15 +51,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import libomv.types.UUID;
-
 
 public class Helpers
 {
@@ -496,8 +500,9 @@ public class Helpers
 
 	/**
 	 * Convert a UTF8 String to a byte array
-	 *
-	 * @param str The String to convert to a byte array
+	 * 
+	 * @param str
+	 *            The String to convert to a byte array
 	 * @return A null-terminated byte array
 	 * @throws Exception
 	 */
@@ -1610,7 +1615,7 @@ public class Helpers
 			return 8;
 		}
 	}
-	
+
 	/**
 	 * Packs two 32-bit unsigned integers in to a 64-bit unsigned integer
 	 * 
@@ -1687,8 +1692,8 @@ public class Helpers
 	 * @param offset
 	 *            The offset into the byte array from which to start
 	 * @param length
-	 *            The number of bytes to consume
-	 *            < 0 will search for null terminating byte starting from offset
+	 *            The number of bytes to consume < 0 will search for null
+	 *            terminating byte starting from offset
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
@@ -1697,14 +1702,16 @@ public class Helpers
 		if (length < 0)
 		{
 			/* Search for the null terminating byte */
-			for (length = 0; bytes[offset + length] != 0; length++);
+			for (length = 0; bytes[offset + length] != 0; length++)
+				;
 		}
 		else
 		{
 			/* Backtrack possible null terminating bytes */
-			for (; bytes[offset + length - 1] == 0; length--);
+			for (; bytes[offset + length - 1] == 0; length--)
+				;
 		}
-		
+
 		if (length == 0)
 			return EmptyString;
 
@@ -2048,11 +2055,13 @@ public class Helpers
 			{
 				return Boolean.parseBoolean(s);
 			}
-			catch (Throwable t) { }
+			catch (Throwable t)
+			{
+			}
 		}
 		return false;
 	}
-	
+
 	public static int TryParseInt(String s)
 	{
 		if (s == null || s.isEmpty())
@@ -2266,9 +2275,7 @@ public class Helpers
 	}
 
 	/**
-	 * <p>
 	 * Checks if a String is empty ("") or null.
-	 * </p>
 	 * 
 	 * @param str
 	 *            the String to check, may be null
@@ -2330,12 +2337,93 @@ public class Helpers
 	}
 
 	/**
-	 * Retrieves the default keystore and appends the Linden Lab public
-	 * certificate to it
+	 * List directory contents for a resource folder. Not recursive. This is
+	 * basically a brute-force implementation. Works for regular files and also JARs.
 	 * 
-	 * @param cert
-	 *            The certificate to add to the key store. If this is null, the
-	 *            default LindenLab certificate will be added.
+	 * @author Greg Briggs
+	 * @param clazz Any java class that lives in the same place as the resources you want.
+	 * @param regex A regex which the resource names must match or null to return all file names 
+	 * @param excludeDirs If true only file entries will be returned	
+	 * @param path The relative directory path to enumerate. Should end with "/", but not start with one.
+	 * @return Just the name of each member item, not the full paths.
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	public static String[] getResourceListing(Class<?> clazz, final String regex, final boolean excludeDirs, String path) throws URISyntaxException, IOException
+	{
+		// File filter checking the file names to be part of the hostname
+		FileFilter filter = new FileFilter()
+		{
+			@Override
+			public boolean accept(File file)
+			{
+				if (excludeDirs && file.isDirectory())
+					return false;
+				return regex == null || file.getName().matches(regex);
+			}
+		};
+
+		URL dirURL = clazz.getClassLoader().getResource(path);
+		if (dirURL != null && dirURL.getProtocol().equals("file"))
+		{
+			/* A file path: easy enough */
+			if (excludeDirs && regex == null)
+				return new File(dirURL.toURI()).list();
+			
+			File[] files = new File(dirURL.toURI()).listFiles(filter);
+			String[] names = new String[files.length];
+			for (int i = 0; i < files.length; i++)
+			{
+				names[i] = files[i].getName();
+			}
+			return names;
+		}
+
+		if (dirURL == null)
+		{
+			/*
+			 * In case of a jar file, we can't actually find a directory. Have
+			 * to assume the same jar as clazz.
+			 */
+			String me = clazz.getName().replace(".", "/") + ".class";
+			dirURL = clazz.getClassLoader().getResource(me);
+		}
+
+		if (dirURL.getProtocol().equals("jar"))
+		{
+			/* A JAR path, strip out only the JAR file */
+			String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); 
+			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+			Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
+			Set<String> result = new HashSet<String>();    // avoid duplicates in case it is a subdirectory
+			while (entries.hasMoreElements())
+			{
+				String name = entries.nextElement().getName();
+				if (name.startsWith(path))
+				{ // filter according to the path
+					String entry = name.substring(path.length());
+					int checkSubdir = entry.indexOf("/");
+					if (checkSubdir >= 0)
+					{
+						if (excludeDirs)
+							continue;
+						
+						// if it is a subdirectory, we just return the directory name
+						entry = entry.substring(0, checkSubdir);
+					}
+					if (regex == null || entry.matches(regex))
+						result.add(entry);
+				}
+			}
+			return result.toArray(new String[result.size()]);
+		}
+		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
+
+	/**
+	 * Retrieves the default keystore
+	 * 
+	 * @return The current KeyStore
 	 * @throws IOException
 	 * @throws KeyStoreException
 	 * @throws CertificateException
@@ -2383,50 +2471,33 @@ public class Helpers
 		return ks;
 	}
 
-
-	public static X509Certificate GetCertificate(final String hostname) throws CertificateException, IOException, URISyntaxException
+	public static X509Certificate GetCertificate(final String hostname) throws CertificateException, IOException,
+			URISyntaxException
 	{
-		URL dirURL = Helpers.class.getClassLoader().getResource("res/");
-		if (dirURL == null || !dirURL.getProtocol().equals("file"))
-		{
-			// not dealing with URL paths for now
-			return null;
-		}
-
-		// File filter checking the file names to be part of the hostname
-		FileFilter filter = new FileFilter()
-		{
-			@Override
-			public boolean accept(File file)
-			{
-				String name = file.getName();
-				if (file.isDirectory() || !name.endsWith(".cert"))
-					return false;
-				return hostname.contains(name.subSequence(0, name.length() - 5));
-			}
-		};
-		
-		/* A file path: easy enough */
-		File[] files = new File(dirURL.toURI()).listFiles(filter);
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		X509Certificate cert = null;
-		
-		for (File file : files)
+		String[] names = getResourceListing(Helpers.class, ".+\\.cert", true, "res/");
+
+		for (String name : names)
 		{
-			FileInputStream fis = new FileInputStream(file);
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			try
+			if (hostname.contains(name.substring(0, name.length() - 5)))
 			{
-				cert = (X509Certificate) cf.generateCertificate(bis);
-			}
-			catch (CertificateException ex)
-			{
-				throw ex;
-			}
-			finally
-			{
-				bis.close();
-				fis.close();
+				InputStream is = Helpers.class.getClassLoader().getResourceAsStream("res/" + name);
+				BufferedInputStream bis = new BufferedInputStream(is);
+				try
+				{
+					cert = (X509Certificate) cf.generateCertificate(bis);
+				}
+				catch (CertificateException ex)
+				{
+					throw ex;
+				}
+				finally
+				{
+					bis.close();
+					is.close();
+				}
+				break;
 			}
 		}
 		return cert;
