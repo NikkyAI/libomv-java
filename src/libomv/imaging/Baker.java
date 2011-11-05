@@ -295,24 +295,18 @@ public class Baker
     {
         try
         {
-            BufferedImage bitmap = null;
-                
-            String resource = Helpers.GetResourceStream(fileName, Settings.);
-            bitmap = TGALoader.getImage(resource);
-            if (bitmap == null)
+            String resource = Helpers.GetResourceStream(fileName, Settings.RESOURCE_DIR);
+            ManagedImage image = TGALoader.getImage(resource);
+            if (image == null)
             {
                 Logger.Log(String.format("Failed loading resource file: %s", fileName), LogLevel.Error);
                 return null;
             }
-            else
-            {
-                return new ManagedImage(bitmap);
-            }
+            return image;
         }
         catch (Exception ex)
         {
-            Logger.Log(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()),
-                LogLevel.Error, ex);
+            Logger.Log(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()), LogLevel.Error, ex);
             return null;
         }
     }

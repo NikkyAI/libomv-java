@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2007-2008, openmetaverse.org
- * Portions Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -211,6 +211,72 @@ public class ManagedImage
 	{
 		return null;
 	}
+
+    /**
+     * Export the image to a tga file for debugging purposes
+     */
+    public byte[] exportTGA()
+    {
+        byte[] tga = new byte[Width * Height * ((Channels & ImageChannels.Alpha) == 0 ? 3 : 4) + 32];
+        int di = 0;
+        tga[di++] = 0; // idlength
+        tga[di++] = 0; // colormaptype = 0: no colormap
+        tga[di++] = 2; // image type = 2: uncompressed RGB
+        tga[di++] = 0; // color map spec is five zeroes for no color map
+        tga[di++] = 0; // color map spec is five zeroes for no color map
+        tga[di++] = 0; // color map spec is five zeroes for no color map
+        tga[di++] = 0; // color map spec is five zeroes for no color map
+        tga[di++] = 0; // color map spec is five zeroes for no color map
+        tga[di++] = 0; // x origin = two bytes
+        tga[di++] = 0; // x origin = two bytes
+        tga[di++] = 0; // y origin = two bytes
+        tga[di++] = 0; // y origin = two bytes
+        tga[di++] = (byte)(Width & 0xFF); // width - low byte
+        tga[di++] = (byte)(Width >> 8); // width - hi byte
+        tga[di++] = (byte)(Height & 0xFF); // height - low byte
+        tga[di++] = (byte)(Height >> 8); // height - hi byte
+        tga[di++] = (byte)((Channels & ImageChannels.Alpha) == 0 ? 24 : 32); // 24/32 bits per pixel
+        tga[di++] = (byte)((Channels & ImageChannels.Alpha) == 0 ? 32 : 40); // image descriptor byte
+
+        int n = Width * Height;
+
+        if ((Channels & ImageChannels.Alpha) != 0)
+        {
+            if ((Channels & ImageChannels.Color) != 0)
+            {
+                // RGBA
+                for (int i = 0; i < n; i++)
+                {
+                    tga[di++] = Blue[i];
+                    tga[di++] = Green[i];
+                    tga[di++] = Red[i];
+                    tga[di++] = Alpha[i];
+                }
+            }
+            else
+            {
+                // Alpha only
+                for (int i = 0; i < n; i++)
+                {
+                    tga[di++] = Alpha[i];
+                    tga[di++] = Alpha[i];
+                    tga[di++] = Alpha[i];
+                    tga[di++] = Byte.MAX_VALUE;
+                }
+            }
+        }
+        else
+        {
+            // RGB
+            for (int i = 0; i < n; i++)
+            {
+                tga[di++] = Blue[i];
+                tga[di++] = Green[i];
+                tga[di++] = Red[i];
+            }
+        }
+        return tga;
+    }
 
     private static void fillArray(byte[] array, byte value)
     {

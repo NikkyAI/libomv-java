@@ -1,5 +1,5 @@
 /**
- * Portions Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2011, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,8 @@ public class J2KWrap
 {
 	public class J2KLayerInfo
 	{
-
+        public int Start;
+        public int End;
 	}
 
 	private class PixelScale
@@ -72,6 +73,9 @@ public class J2KWrap
         if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0) components++;
         if ((image.Channels & ManagedImage.ImageChannels.Bump) != 0) components++;
 
+        
+        
+        
 
         return encoded;
     }
@@ -79,14 +83,19 @@ public class J2KWrap
     /**
      * Encode a <seealso cref="ManagedImage"/> object into a byte array
      *
-     * @param image The <seealso cref="ManagedImage"/> object to encode c
+     * @param image The <seealso cref="ManagedImage"/> object to encode
      */
     public static byte[] encode(ManagedImage image)
     {
         return encode(image, false);
     }
 
-	public static ManagedImage decode(byte[] data) throws IOException, ICCProfileException
+    /**
+     * Decode a byte array into a <seealso cref="ManagedImage"/> object
+     *
+     * @param data The raw byte data to decode
+     */
+	public static ManagedImage decode(byte[] data) throws IOException, ICCProfileException, IllegalArgumentException
 	{
 		BlkImgDataSrc dataSrc = decodeInternal(data);
 		
@@ -213,9 +222,9 @@ public class J2KWrap
 	}
 
 
-	public static J2KLayerInfo[] decodeLayerBoundaries(byte[] encoded)
+	public static int decodeLayerBoundaries(byte[] encoded, J2KLayerInfo[] layers)
 	{
-		return null;
+		return 0;
 	}
 	
 	private static BlkImgDataSrc decodeInternal(byte[] data) throws IOException, ICCProfileException
