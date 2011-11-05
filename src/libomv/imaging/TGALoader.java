@@ -7,11 +7,10 @@ import java.io.IOException;
 
 public class TGALoader
 {
-	public static ManagedImage getImage(String fileName) throws IOException
+	public static ManagedImage getImage(File file) throws IOException
 	{
-		File f = new File(fileName);
-		byte[] buf = new byte[(int) f.length()];
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
+		byte[] buf = new byte[(int) file.length()];
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		bis.read(buf);
 		bis.close();
 		return decode(buf);
@@ -30,7 +29,7 @@ public class TGALoader
 		return btoi(buf[offset++]);
 	}
 
-	public static ManagedImage decode(byte[] buf) throws IOException
+	public static ManagedImage decode(byte[] buf)
 	{
 		offset = 0;
 
@@ -111,8 +110,6 @@ public class TGALoader
 			}
 		}
 
-		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		bimg.setRGB(0, 0, width, height, pixels, 0, width);
-		return bimg;
+		return image;
 	}
 }

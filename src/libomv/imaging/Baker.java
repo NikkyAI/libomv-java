@@ -25,7 +25,7 @@
  */
 package libomv.imaging;
 
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -295,8 +295,7 @@ public class Baker
     {
         try
         {
-            String resource = Helpers.GetResourceStream(fileName, Settings.RESOURCE_DIR);
-            ManagedImage image = TGALoader.getImage(resource);
+            ManagedImage image = TGALoader.getImage(new File(Settings.RESOURCE_DIR + "/" + fileName));
             if (image == null)
             {
                 Logger.Log(String.format("Failed loading resource file: %s", fileName), LogLevel.Error);
