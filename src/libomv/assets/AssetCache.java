@@ -39,6 +39,7 @@ import libomv.GridClient;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
+import libomv.Settings;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.ImageDownload;
 import libomv.types.UUID;
@@ -177,8 +178,17 @@ public class AssetCache
 		try
 		{
 			String fileName = FileName(assetID);
-			Logger.DebugLog("Reading " + fileName + " from asset cache.");
 			File file = new File(fileName);
+			if (file.exists())
+			{
+				Logger.DebugLog("Reading " + fileName + " from asset cache.");
+			}
+			else
+			{
+				fileName = StaticFileName(assetID);
+				file = new File(fileName);
+                Logger.DebugLog("Reading " + fileName + " from static asset cache.");
+			}
 			byte[] assetData = new byte[(int) file.length()];
 			FileInputStream fis = new FileInputStream(file);
 			try
@@ -234,7 +244,7 @@ public class AssetCache
 	 * 
 	 * @param assetID
 	 *            UUID of the asset
-	 * @return String with the file name of the cahced asset
+	 * @return String with the file name of the cached asset
 	 */
 	private String FileName(UUID assetID)
 	{
@@ -245,7 +255,19 @@ public class AssetCache
 		return Client.Settings.ASSET_CACHE_DIR + File.separatorChar + assetID.toString();
 	}
 
-	/**
+    /**
+     * Constructs a file name of the static cached asset
+     *
+	 * @param assetID
+	 *            UUID of the asset
+	 * @return String with the file name of the static cached asset
+     */
+    private String StaticFileName(UUID assetID)
+    {
+        return Settings.RESOURCE_DIR + File.separatorChar + "static_assets" + File.separatorChar + assetID.toString();
+    }
+
+    /**
 	 * Saves an asset to the local cache
 	 * 
 	 * @param assetID
@@ -289,7 +311,7 @@ public class AssetCache
 	}
 
 	/**
-	 * Get the file name of the asset stored with gived UUID
+	 * Get the file name of the asset stored with given UUID
 	 * 
 	 * @param assetID
 	 *            UUID of the asset
@@ -314,6 +336,7 @@ public class AssetCache
 
 	/**
 	 * Checks if the asset exists in the local cache
+	 * Note: libOpenMetaverse: HasAsset()
 	 * 
 	 * @param assetID
 	 *            UUID of the asset
@@ -321,7 +344,19 @@ public class AssetCache
 	 */
 	public final boolean containsKey(UUID assetID)
 	{
-		return AssetFileName(assetID) != null;
+		if (!Operational())
+		{
+			return false;
+		}
+
+		String fileName = FileName(assetID);
+		File file = new File(fileName);
+		if (file.exists())
+		{
+			return true;
+		}
+		file = new File(StaticFileName(assetID));
+		return file.exists();
 	}
 
 	private File[] ListCacheFiles()
