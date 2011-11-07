@@ -4053,13 +4053,18 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			{
 				for (BulkUpdateInventoryPacket.FolderDataBlock dataBlock : update.FolderData)
 				{
+                    InventoryFolder folder;
 					if (!_Store.containsFolder(dataBlock.FolderID))
 					{
 						Logger.Log("Received BulkUpdate for unknown folder: " + dataBlock.FolderID, LogLevel.Debug, _Client);
-					}
-
-					InventoryFolder folder = new InventoryFolder(dataBlock.FolderID, dataBlock.ParentID, update.AgentData.AgentID);
-					folder.name = Helpers.BytesToString(dataBlock.getName());
+                        folder = new InventoryFolder(dataBlock.FolderID, dataBlock.ParentID, update.AgentData.AgentID);
+                    }
+                    else
+                    {
+                        folder = _Store.getFolder(dataBlock.FolderID);
+                    }
+					if (dataBlock.getName() != null)
+						folder.name = Helpers.BytesToString(dataBlock.getName());
 					_Store.add(folder);
 				}
 			}
