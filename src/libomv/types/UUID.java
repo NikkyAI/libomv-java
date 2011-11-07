@@ -209,19 +209,23 @@ public class UUID implements Serializable
 	 */
 	public boolean FromString(String string)
 	{
-		if (string.length() == 38 && string.charAt(0) == '{')
+		if (string.length() >= 38 && string.charAt(0) == '{' && string.charAt(37) == '}')
 		{
 			string = string.substring(1, 37);
+		}
+		else if (string.length() > 36)
+		{
+			string = string.substring(0, 36);
 		}
 
 		if (string.length() == 36)
 		{
-			string = string.replaceAll("-", "");
+			string = string.substring(0, 36).replaceAll("-", "");
 		}
 
 		if (string.length() != 32)
 		{
-			return false;
+			string = string.substring(0, 32);
 		}
 
 		// Always create new data array to prevent overwriting byref data
