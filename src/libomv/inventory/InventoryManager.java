@@ -62,6 +62,7 @@ import libomv.assets.AssetManager.XferReceivedCallbackArgs;
 import libomv.assets.AssetWearable.WearableType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
+import libomv.capabilities.CapsMessage.BulkUpdateInventoryMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.CopyInventoryFromNotecardMessage;
 import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
@@ -386,6 +387,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.UpdateCreateInventoryItem, this);
 		_Client.Network.RegisterCallback(PacketType.SaveAssetIntoInventory, this);
 		_Client.Network.RegisterCallback(PacketType.BulkUpdateInventory, this);
+        _Client.Network.RegisterCallback(CapsEventType.BulkUpdateInventory, this);
 		_Client.Network.RegisterCallback(PacketType.MoveInventoryItem, this);
 		_Client.Network.RegisterCallback(PacketType.InventoryDescendents, this);
 		_Client.Network.RegisterCallback(PacketType.FetchInventoryReply, this);
@@ -437,7 +439,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case ScriptRunningReply:
-				HandleScriptRunningReplyMessage(message, simulator);
+				HandleScriptRunningReply(message, simulator);
+			case BulkUpdateInventory:
+				HandleBulkUpdateInventory(message, simulator);
 		}
 	}
 
@@ -4134,6 +4138,87 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		}
 	}
 
+	private final void HandleBulkUpdateInventory(IMessage message, Simulator simulator)
+	{
+		BulkUpdateInventoryMessage msg = (BulkUpdateInventoryMessage) message;
+
+		for (BulkUpdateInventoryMessage.FolderDataInfo newFolder : msg.FolderData)
+        {
+            if (newFolder.FolderID == UUID.Zero) continue;
+
+            InventoryFolder folder;
+            if (!_Store.containsFolder(newFolder.FolderID))
+            {
+                folder = new InventoryFolder(newFolder.FolderID);
+            }
+            else
+            {
+                folder = _Store.getFolder(newFolder.FolderID);
+            }
+
+            folder.name = newFolder.Name;
+            folder.parentID = newFolder.ParentID;
+            folder.preferredType = newFolder.Type;
+            _Store.add(folder);
+        }
+
+        for (BulkUpdateInventoryMessage.ItemDataInfo newItem : msg.ItemData)
+        {
+            if (newItem.ItemID == UUID.Zero) continue;
+
+			InventoryItem item = SafeCreateInventoryItem(newItem.InvType, newItem.ItemID, newItem.FolderID, newItem.OwnerID);
+
+            item.assetType = newItem.Type;
+            item.AssetID = newItem.AssetID;
+            item.CreationDate = newItem.CreationDate;
+            item.CreatorID = newItem.CreatorID;
+            item.Description = newItem.Description;
+            item.ItemFlags = newItem.Flags;
+            item.GroupID = newItem.GroupID;
+            item.GroupOwned = newItem.GroupOwned;
+            item.name = newItem.Name;
+            item.Permissions.BaseMask = newItem.BaseMask;
+            item.Permissions.EveryoneMask = newItem.EveryoneMask;
+            item.Permissions.GroupMask = newItem.GroupMask;
+            item.Permissions.NextOwnerMask = newItem.NextOwnerMask;
+            item.Permissions.OwnerMask = newItem.OwnerMask;
+            item.SalePrice = newItem.SalePrice;
+            item.saleType = newItem.saleType;
+
+            _Store.add(item);
+
+			// Look for an "item created" callback
+			if (_ItemCreatedCallbacks.containsKey(newItem.CallbackID))
+			{
+				Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(newItem.CallbackID);
+
+				try
+				{
+					callback.callback(new ItemCreatedCallbackArgs(true, item));
+				}
+				catch (Throwable ex)
+				{
+					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+				}
+			}
+
+			// Look for an "item copied" callback
+			if (_ItemCopiedCallbacks.containsKey(newItem.CallbackID))
+			{
+				Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(newItem.CallbackID);
+
+				try
+				{
+					callback.callback(new ItemCopiedCallbackArgs(item));
+				}
+				catch (Throwable ex)
+				{
+					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+				}
+			}
+        }
+	}
+
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
@@ -4183,7 +4268,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				reply.InventoryData.Serial, Helpers.BytesToString(reply.InventoryData.getFilename())));
 	}
 
-	private final void HandleScriptRunningReplyMessage(IMessage message, Simulator simulator)
+	private final void HandleScriptRunningReply(IMessage message, Simulator simulator)
 	{
 		ScriptRunningReplyMessage msg = (ScriptRunningReplyMessage) message;
 		OnScriptRunningReply.dispatch(new ScriptRunningReplyCallbackArgs(msg.ObjectID, msg.ItemID, msg.Mono,
