@@ -296,7 +296,9 @@ public class Primitive
 		// Whether this object has light parameters
 		Light(0x20),
 		// Whether this object is a sculpted prim
-		Sculpt(0x30);
+		Sculpt(0x30),
+        // Whether this object is a mesh</summary>
+        Mesh(0x60);
 
 		public static ExtraParamType setValue(int value)
 		{
@@ -1522,6 +1524,7 @@ public class Primitive
 					Light = new LightData(data, i);
 					break;
 				case Sculpt:
+				case Mesh:
 					Sculpt = new SculptData(data, i);
 					break;
 			}
@@ -1564,7 +1567,7 @@ public class Primitive
 		buffer[0] = count;
 		++pos;
 
-		if (Flexible != null)
+		if (_Flexible != null)
 		{
 			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()), 0, buffer, pos, 2);
 			pos += 2;
@@ -1572,10 +1575,10 @@ public class Primitive
 			System.arraycopy(Helpers.UInt32ToBytesL(_Flexible.length), 0, buffer, pos, 4);
 			pos += 4;
 
-			System.arraycopy(Flexible, 0, buffer, pos, _Flexible.length);
+			System.arraycopy(_Flexible, 0, buffer, pos, _Flexible.length);
 			pos += _Flexible.length;
 		}
-		if (Light != null)
+		if (_Light != null)
 		{
 			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Light.getValue()), 0, buffer, pos, 2);
 			pos += 2;
@@ -1583,18 +1586,25 @@ public class Primitive
 			System.arraycopy(Helpers.UInt32ToBytesL(_Light.length), 0, buffer, pos, 4);
 			pos += 4;
 
-			System.arraycopy(Light, 0, buffer, pos, _Light.length);
+			System.arraycopy(_Light, 0, buffer, pos, _Light.length);
 			pos += _Light.length;
 		}
-		if (Sculpt != null)
+		if (_Sculpt != null)
 		{
-			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Sculpt.getValue()), 0, buffer, pos, 2);
+            if (Sculpt.getType() == SculptType.Mesh)
+            {
+    			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Mesh.getValue()), 0, buffer, pos, 2);
+            }
+            else
+            {
+    			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Sculpt.getValue()), 0, buffer, pos, 2);
+            }
 			pos += 2;
 
 			System.arraycopy(Helpers.UInt32ToBytesL(_Sculpt.length), 0, buffer, pos, 4);
 			pos += 4;
 
-			System.arraycopy(Sculpt, 0, buffer, pos, _Sculpt.length);
+			System.arraycopy(_Sculpt, 0, buffer, pos, _Sculpt.length);
 			pos += _Sculpt.length;
 		}
 		return buffer;
