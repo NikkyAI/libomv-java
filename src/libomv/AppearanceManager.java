@@ -111,6 +111,8 @@ public class AppearanceManager implements PacketCallback
 	}
 
     // #region Constants
+    // Mask for multiple attachments</summary>
+    public static final byte ATTACHMENT_ADD = (byte) 0x80;
     // Mapping between BakeType and AvatarTextureIndex
     public static final byte[] BakeIndexToTextureIndex = new byte[] { 8, 9, 10, 11, 19, 20 };
     // Maximum number of concurrent downloads for wearable assets and textures 
@@ -830,6 +832,19 @@ public class AppearanceManager implements PacketCallback
      */
     public void AddAttachments(List<InventoryItem> attachments, boolean removeExistingFirst) throws Exception
     {
+        AddAttachments(attachments, removeExistingFirst, true);
+    }
+
+    /**
+     * Adds a list of attachments to our agent
+     * 
+     * @param attachments A List containing the attachments to add
+     * @param removeExistingFirst If true, tells simulator to remove existing attachment first
+     * @param replace If true replace existing attachment on this attachment point, otherwise add to it (multi-attachments)
+     * @throws Exception 
+     */
+    public void AddAttachments(List<InventoryItem> attachments, boolean removeExistingFirst, boolean replace) throws Exception
+    {
         // Use RezMultipleAttachmentsFromInv to clear out current attachments, and attach new ones
         RezMultipleAttachmentsFromInvPacket attachmentsPacket = new RezMultipleAttachmentsFromInvPacket();
         attachmentsPacket.AgentData.AgentID = _Client.Self.getAgentID();
@@ -859,7 +874,7 @@ public class AppearanceManager implements PacketCallback
             else if (attachments.get(i) instanceof InventoryObject)
             {
                 attachmentsPacket.ObjectData[i] = attachmentsPacket.new ObjectDataBlock();
-                attachmentsPacket.ObjectData[i].AttachmentPt = 0;
+                attachmentsPacket.ObjectData[i].AttachmentPt = (byte)0;
                 attachmentsPacket.ObjectData[i].EveryoneMask = attachment.Permissions.EveryoneMask;
                 attachmentsPacket.ObjectData[i].GroupMask = attachment.Permissions.GroupMask;
                 attachmentsPacket.ObjectData[i].ItemFlags = attachment.ItemFlags;
@@ -873,6 +888,8 @@ public class AppearanceManager implements PacketCallback
             {
                 Logger.Log("Cannot attach inventory item " + attachment.name, LogLevel.Warning, _Client);
             }
+            if (!replace)
+            	attachmentsPacket.ObjectData[i].AttachmentPt |= ATTACHMENT_ADD;
         }
         _Client.Network.SendPacket(attachmentsPacket);
     }
@@ -886,7 +903,20 @@ public class AppearanceManager implements PacketCallback
      */
     public void Attach(InventoryItem item, AttachmentPoint attachPoint) throws Exception
     {
-        Attach(item.itemID, item.getOwnerID(), item.name, item.Description, item.Permissions, item.ItemFlags, attachPoint);
+        Attach(item.itemID, item.getOwnerID(), item.name, item.Description, item.Permissions, item.ItemFlags, attachPoint, true);
+    }
+
+    /** 
+     * Attach an item to our agent at a specific attach point
+     * 
+     * @param item A <seealso cref="OpenMetaverse.InventoryItem"/> to attach
+     * @param attachPoint the <seealso cref="OpenMetaverse.AttachmentPoint"/> on the avatar to attach the item to
+     * @param replace If true replace existing attachment on this attachment point, otherwise add to it (multi-attachments)
+     * @throws Exception 
+     */
+    public void Attach(InventoryItem item, AttachmentPoint attachPoint, boolean replace) throws Exception
+    {
+        Attach(item.itemID, item.getOwnerID(), item.name, item.Description, item.Permissions, item.ItemFlags, attachPoint, replace);
     }
 
     /** 
@@ -904,6 +934,25 @@ public class AppearanceManager implements PacketCallback
     public void Attach(UUID itemID, UUID ownerID, String name, String description,
         Permissions perms, int itemFlags, AttachmentPoint attachPoint) throws Exception
     {
+        Attach(itemID, ownerID, name, description, perms, itemFlags, attachPoint, true);
+    }
+
+    /** 
+     * Attach an item to our agent specifying attachment details
+     * 
+     * @param itemID The <seealso cref="OpenMetaverse.UUID"/> of the item to attach
+     * @param ownerID The <seealso cref="OpenMetaverse.UUID"/> attachments owner
+     * @param name The name of the attachment
+     * @param description The description of the attahment
+     * @param perms The <seealso cref="OpenMetaverse.Permissions"/> to apply when attached
+     * @param itemFlags The <seealso cref="OpenMetaverse.InventoryItemFlags"/> of the attachment
+     * @param attachPoint The <seealso cref="OpenMetaverse.AttachmentPoint"/> on the agent to attach the item to
+     * @param replace If true replace existing attachment on this attachment point, otherwise add to it (multi-attachments)
+     * @throws Exception 
+     */
+    public void Attach(UUID itemID, UUID ownerID, String name, String description,
+        Permissions perms, int itemFlags, AttachmentPoint attachPoint, boolean replace) throws Exception
+    {
         // TODO: At some point it might be beneficial to have AppearanceManager track what we
         // are currently wearing for attachments to make enumeration and detachment easier
         RezSingleAttachmentFromInvPacket attach = new RezSingleAttachmentFromInvPacket();
@@ -911,7 +960,7 @@ public class AppearanceManager implements PacketCallback
         attach.AgentData.AgentID = _Client.Self.getAgentID();
         attach.AgentData.SessionID = _Client.Self.getSessionID();
 
-        attach.ObjectData.AttachmentPt = attachPoint.getValue();
+        attach.ObjectData.AttachmentPt = replace ? attachPoint.getValue() : (byte)(attachPoint.getValue() | ATTACHMENT_ADD);
         attach.ObjectData.setDescription(Helpers.StringToBytes(description));
         attach.ObjectData.EveryoneMask = perms.EveryoneMask;
         attach.ObjectData.GroupMask = perms.GroupMask;
