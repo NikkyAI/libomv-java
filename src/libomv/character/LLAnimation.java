@@ -232,20 +232,26 @@ public class LLAnimation
 
         // int32: number of key frames 
         int keycount = Helpers.BytesToInt32L(data, i); i += 4; // How many rotation keyframes
-        // ... n Keyframe data blocks
-        // Read in keyframes
-        JointKey[] m_keys = new JointKey[keycount];
-        for (int j = 0; j < keycount; j++)
+        
+        // Sanity check how many position keys there are
+        if (keycount > 0 && keycount * 8 <= data.length - i)
         {
-            JointKey pJKey = new JointKey();
+        	// ... n Keyframe data blocks
+        	// Read in keyframes
+        	JointKey[] m_keys = new JointKey[keycount];
+        	for (int j = 0; j < keycount; j++)
+        	{
+        		JointKey pJKey = new JointKey();
             
-            pJKey.time = Helpers.UInt16ToFloatL(data, i, InPoint, OutPoint); i += 2;
-            x = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
-            y = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
-            z = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
-            pJKey.key_element = new Vector3(x, y, z);
-            m_keys[j] = pJKey;
+        		pJKey.time = Helpers.UInt16ToFloatL(data, i, InPoint, OutPoint); i += 2;
+        		x = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
+        		y = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
+        		z = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
+        		pJKey.key_element = new Vector3(x, y, z);
+        		m_keys[j] = pJKey;
+        	}
+            return m_keys;
         }
-        return m_keys;
+        return new JointKey[0];
     }
 }
