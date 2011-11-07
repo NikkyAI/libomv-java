@@ -1066,6 +1066,8 @@ public class CapsMessage implements IMessage
 		//
 		public int PassPrice;
 		//
+        public boolean Privacy;
+		//
 		public int SalePrice;
 		//
 		public UUID SnapshotID;
@@ -1114,6 +1116,7 @@ public class CapsMessage implements IMessage
 			map.put("parcel_flags", OSD.FromUInteger(ParcelFlags));
 			map.put("pass_hours", OSD.FromReal(PassHours));
 			map.put("pass_price", OSD.FromInteger(PassPrice));
+            map.put("privacy", OSD.FromBoolean(Privacy));
 			map.put("sale_price", OSD.FromInteger(SalePrice));
 			map.put("snapshot_id", OSD.FromUUID(SnapshotID));
 			map.put("user_location", OSD.FromVector3(UserLocation));
@@ -1152,6 +1155,7 @@ public class CapsMessage implements IMessage
 			ParcelFlags = ParcelManager.ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
 			PassHours = (float) map.get("pass_hours").AsReal();
 			PassPrice = map.get("pass_price").AsUInteger();
+            Privacy = map.get("privacy").AsBoolean();
 			SalePrice = map.get("sale_price").AsUInteger();
 			SnapshotID = map.get("snapshot_id").AsUUID();
 			UserLocation = map.get("user_location").AsVector3();
