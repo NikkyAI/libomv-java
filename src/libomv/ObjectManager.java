@@ -356,7 +356,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		private final Simulator m_Simulator;
 		private final boolean m_IsNew;
-		private final boolean m_IsAttachment;
 		private final Primitive m_Prim;
 		private final short m_TimeDilation;
 
@@ -379,13 +378,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			return m_IsNew;
 		}
 
-		// true if the <see cref="Primitive"/> is attached to an <see
-		// cref="Avatar"/>
-		public final boolean getIsAttachment()
-		{
-			return m_IsAttachment;
-		}
-
 		// Get the simulator Time Dilation
 		public final short getTimeDilation()
 		{
@@ -403,15 +395,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		 *            The simulator time dilation
 		 * @param isNew
 		 *            The prim was not in the dictionary before this update
-		 * @param isAttachment
-		 *            true if the primitive represents an attachment to an agent
 		 */
-		public PrimCallbackArgs(Simulator simulator, Primitive prim, short timeDilation, boolean isNew,
-				boolean isAttachment)
+		public PrimCallbackArgs(Simulator simulator, Primitive prim, short timeDilation, boolean isNew)
 		{
 			this.m_Simulator = simulator;
 			this.m_IsNew = isNew;
-			this.m_IsAttachment = isAttachment;
 			this.m_Prim = prim;
 			this.m_TimeDilation = timeDilation;
 		}
@@ -2624,12 +2612,16 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Find the object with localID in the simulator and add it with fullID if it is not there
+	 * Find the object with localID in the simulator and add it with fullID if
+	 * it is not there
 	 * 
-	 * @param simulator The simulator in which the object is located
-	 * @param localID The simulator localID for this object
-	 * @param fullID The full object ID used to add a new object to the simulator list,
-	 *               when the object could not be found.
+	 * @param simulator
+	 *            The simulator in which the object is located
+	 * @param localID
+	 *            The simulator localID for this object
+	 * @param fullID
+	 *            The full object ID used to add a new object to the simulator
+	 *            list, when the object could not be found.
 	 * @return the object that corresponds to the localID
 	 */
 	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
@@ -2658,12 +2650,16 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Find the avatar with localID in the simulator and add it with fullID if it is not there
+	 * Find the avatar with localID in the simulator and add it with fullID if
+	 * it is not there
 	 * 
-	 * @param simulator The simulator in which the avatar is located
-	 * @param localID The simulator localID for this avatar
-	 * @param fullID The full avatar ID used to add a new avatar object to the simulator list,
-	 *               when the avatar could not be found.
+	 * @param simulator
+	 *            The simulator in which the avatar is located
+	 * @param localID
+	 *            The simulator localID for this avatar
+	 * @param fullID
+	 *            The full avatar ID used to add a new avatar object to the
+	 *            simulator list, when the avatar could not be found.
 	 * @return the avatar object that corresponds to the localID
 	 */
 	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
@@ -2991,6 +2987,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 								LogLevel.Warning, e);
 					}
 					prim.TextColor = new Color4(block.TextColor, 0, false, true);
+					prim.IsAttachment = attachment;
 
 					// Sound information
 					prim.SoundID = block.Sound;
@@ -3049,7 +3046,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					// #endregion
 
 					OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation,
-							isNewObject, attachment));
+							isNewObject));
 
 					break;
 				// #endregion Prim and Foliage
@@ -3441,6 +3438,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim.Text = Helpers.EmptyString;
 			}
 
+			prim.IsAttachment = (((flags & CompressedFlags.HasNameValues) != 0) && prim.ParentID != 0);
+
 			// Media URL
 			if ((flags & CompressedFlags.MediaURL) != 0)
 			{
@@ -3548,12 +3547,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			// #endregion
 
-			// #region Raise Events
-			boolean isAttachment = (((flags & CompressedFlags.HasNameValues) != 0) && prim.ParentID != 0);
-
-			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNew,
-					isAttachment));
-			// #endregion
+			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNew));
 		}
 	}
 

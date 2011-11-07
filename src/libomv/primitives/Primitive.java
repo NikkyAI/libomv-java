@@ -1256,6 +1256,8 @@ public class Primitive
 	public ObjectProperties Properties;
 	public PhysicsProperties PhysicsProps;
 
+	public boolean IsAttachment;
+
 	public TextureEntry Textures;
 	public TextureAnimation TextureAnim;
 
