@@ -38,6 +38,8 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 	private static final long serialVersionUID = 1L;
 	// The the agent offering the teleportation
 	private UUID _AgentID;
+	// The the agent offering the teleportation
+	private UUID _LureID;
 	// Out grid client for the current session
 	private GridClient _Client;
 
@@ -52,15 +54,18 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 	 *            The name of the Avatar offering teleportation
 	 * @param agentID
 	 *            The UID of the agent offering teleportation
+	 * @param lureID
+	 *            The session UID of the message
 	 * @param message
 	 *            The message sent from the Avatar
 	 */
-	public TeleportOfferDialog(GridClient client, JFrame parent, String agentName, UUID agentID, String message)
+	public TeleportOfferDialog(GridClient client, JFrame parent, String agentName, UUID agentID, UUID lureID, String message)
 	{
 		super(parent, "Teleportation Offer", agentName + " has offered you a teleport with the following message: '"
 				+ message + "'. Do you wish to accept?", "Accept", "Decline");
 		this._Client = client;
 		this._AgentID = agentID;
+		this._LureID = lureID;
 	}
 
 	/**
@@ -81,7 +86,7 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 				try
 				{
 					// Accept the request
-					_Client.Self.TeleportLureRespond(_AgentID, true);
+					_Client.Self.TeleportLureRespond(_AgentID, _LureID, true);
 				}
 				catch (Exception ex)
 				{
@@ -114,7 +119,7 @@ public class TeleportOfferDialog extends PopupQuestionDialog
 				try
 				{
 					// Decline the request
-					_Client.Self.TeleportLureRespond(_AgentID, false);
+					_Client.Self.TeleportLureRespond(_AgentID, _LureID, false);
 				}
 				catch (Exception ex)
 				{

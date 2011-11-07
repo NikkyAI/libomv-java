@@ -2370,8 +2370,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		itemID.ToBytes(bucket, 1);
 
 		_Client.Self.InstantMessage(_Client.Self.getName(), recipient, itemName, new UUID(),
-				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, _Client.Self.getSimPosition(),
-				_Client.Network.getCurrentSim().ID, bucket);
+				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, null, null, 0, bucket);
 
 		if (doEffect)
 		{
@@ -2420,8 +2419,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			folderContents.get(i - 1).itemID.ToBytes(bucket, i * 17 + 1);
 		}
 		_Client.Self.InstantMessage(_Client.Self.getName(), recipient, folderName, new UUID(),
-				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, _Client.Self.getSimPosition(),
-				_Client.Network.getCurrentSim().ID, bucket);
+				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, null, null, 0, bucket);
 
 		if (doEffect)
 		{

@@ -681,23 +681,28 @@ public class GroupManager implements PacketCallback, CapsCallback
 		{
 			if (OnGroupInvitation.count() > 0 && e.getIM().Dialog == InstantMessageDialog.GroupInvitation)
 			{
+				byte[] bucket = e.getIM().BinaryBucket;
+				int fee = -1;
+				if (bucket.length == 20)
+				{
+					fee = Helpers.BytesToInt32B(bucket);
+				}
+				
 				GroupInvitationCallbackArgs args = new GroupInvitationCallbackArgs(e.getSimulator(),
-						e.getIM().FromAgentID, e.getIM().FromAgentName, e.getIM().Message);
+						e.getIM().FromAgentID, e.getIM().FromAgentName, e.getIM().Message, fee);
 				OnGroupInvitation.dispatch(args);
 
 				try
 				{
 					if (args.getAccept())
 					{
-						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, Helpers.EmptyString, e.getIM().IMSessionID,
-								InstantMessageDialog.GroupInvitationAccept, InstantMessageOnline.Online,
-								Client.Self.getSimPosition(), UUID.Zero, Helpers.EmptyBytes);
+						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
+								InstantMessageDialog.GroupInvitationAccept, InstantMessageOnline.Online);
 					}
 					else
 					{
-						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, Helpers.EmptyString, e.getIM().IMSessionID,
-								InstantMessageDialog.GroupInvitationDecline, InstantMessageOnline.Online,
-								Client.Self.getSimPosition(), UUID.Zero, new byte[] { 0 });
+						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
+								InstantMessageDialog.GroupInvitationDecline, InstantMessageOnline.Online);
 					}
 				}
 				catch (Exception ex) { }
@@ -1469,7 +1474,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	public final void SendGroupNotice(UUID group, GroupNotice notice) throws Exception
 	{
 		Client.Self.InstantMessage(Client.Self.getName(), group, notice.Subject + "|" + notice.Message, UUID.Zero,
-				InstantMessageDialog.GroupNotice, InstantMessageOnline.Online, Vector3.Zero, UUID.Zero,
+				InstantMessageDialog.GroupNotice, InstantMessageOnline.Online, Vector3.Zero, UUID.Zero, 0,
 				notice.SerializeAttachment());
 	}
 
@@ -2565,6 +2570,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		private final UUID m_GroupID;
 		private final String m_FromName;
 		private final Simulator m_Simulator;
+		private final int m_Fee;
 		private String m_Message;
 		private boolean m_Accept;
 
@@ -2578,6 +2584,12 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public final String getFromName()
 		{
 			return m_FromName;
+		}
+
+		// The fee joining this group costs
+		public final int getFee()
+		{
+			return m_Fee;
 		}
 
 		// A message containing the request information which includes the name
@@ -2609,12 +2621,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 			m_Accept = value;
 		}
 
-		public GroupInvitationCallbackArgs(Simulator simulator, UUID groupID, String fromName, String message)
+		public GroupInvitationCallbackArgs(Simulator simulator, UUID groupID, String fromName, String message, int fee)
 		{
 			this.m_Simulator = simulator;
 			this.m_GroupID = groupID;
 			this.m_FromName = fromName;
 			this.m_Message = message;
+			this.m_Fee = fee;
 		}
 	}
 	// #endregion CallbackArgs

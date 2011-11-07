@@ -630,9 +630,9 @@ public class FriendsManager implements PacketCallback
 	 */
 	public final void OfferFriendship(UUID agentID, String message) throws Exception
 	{
-		_Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, UUID.GenerateUUID(),
-				InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Offline, _Client.Self.getSimPosition(),
-				_Client.Network.getCurrentSim().ID, null);
+		UUID folderID = _Client.Inventory.FindFolderForType(AssetType.CallingCard).itemID;
+		_Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, folderID,
+				InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Online);
 	}
 
 	/**

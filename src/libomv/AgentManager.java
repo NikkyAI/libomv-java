@@ -110,17 +110,20 @@ import libomv.packets.ImprovedInstantMessagePacket;
 import libomv.packets.MeanCollisionAlertPacket;
 import libomv.packets.MoneyBalanceReplyPacket;
 import libomv.packets.MoneyTransferRequestPacket;
+import libomv.packets.MuteListRequestPacket;
 import libomv.packets.MuteListUpdatePacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.PickDeletePacket;
 import libomv.packets.PickInfoUpdatePacket;
+import libomv.packets.RemoveMuteListEntryPacket;
 import libomv.packets.RetrieveInstantMessagesPacket;
 import libomv.packets.ScriptAnswerYesPacket;
 import libomv.packets.ScriptDialogReplyPacket;
 import libomv.packets.ScriptSensorReplyPacket;
 import libomv.packets.ScriptSensorRequestPacket;
 import libomv.packets.SetAlwaysRunPacket;
+import libomv.packets.SetStartLocationRequestPacket;
 import libomv.packets.StartLurePacket;
 import libomv.packets.TeleportFailedPacket;
 import libomv.packets.TeleportFinishPacket;
@@ -130,6 +133,7 @@ import libomv.packets.TeleportLocationRequestPacket;
 import libomv.packets.TeleportLureRequestPacket;
 import libomv.packets.TeleportProgressPacket;
 import libomv.packets.TeleportStartPacket;
+import libomv.packets.UpdateMuteListEntryPacket;
 import libomv.packets.ViewerEffectPacket;
 import libomv.primitives.Primitive;
 import libomv.types.Color4;
@@ -215,28 +219,28 @@ public class AgentManager implements PacketCallback, CapsCallback
 	/** Special commands used in Instant Messages */
 	public enum InstantMessageDialog
 	{
-		/* Indicates a regular IM from another agent */
+		/* Indicates a regular IM from another agent, ID is meaningless, nothing in the binary bucket.*/
 		MessageFromAgent, // 0
 		/* Simple notification box with an OK button */
 		MessageBox, // 1
-		/*
-		 * Used to show a countdown notification with an OK button, deprecated
-		 * now
-		 */
+		/* Used to show a countdown notification with an OK button, deprecated now */
 		Deprecated_MessageBoxCountdown, // 2
-		/* You've been invited to join a group. */
+		/* You've been invited to join a group. ID is the group id.
+		 * The binary bucket contains a null terminated string representation of the officer/member status
+		 * and join cost for the invitee. The format is 1 byte for officer/member (O for officer, M for member),
+		 * and as many bytes as necessary for cost. */
 		GroupInvitation, // 3
-		/* Inventory offer */
+		/* Inventory offer, ID is the transaction id, binary bucket is a list of inventory uuid and type. */
 		InventoryOffered, // 4
 		/* Accepted inventory offer */
 		InventoryAccepted, // 5
 		/* Declined inventory offer */
 		InventoryDeclined, // 6
-		/* Group vote */
+		/* Group vote, Name is name of person who called vote, ID is vote ID used for internal tracking */
 		GroupVote, // 7
 		/* A message to everyone in the agent's group, no longer used */
 		Deprecated_GroupMessage, // 8
-		/* An object is offering its inventory */
+		/* An object is offering its inventory, ID is the transaction id, Binary bucket is a (mostly) complete packed inventory item */
 		TaskInventoryOffered, // 9
 		/* Accept an inventory offer from an object */
 		TaskInventoryAccepted, // 10
@@ -274,14 +278,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 		CurrentlyUnused, // 26
 		/* Notification of a new group election, this is depreciated */
 		Deprecated_GroupElection, // 27
-		/* IM to tell the user to go to an URL */
+		/* IM to tell the user to go to an URL. Put a text message in the message field, and put the
+		 * url with a trailing \0 in the binary bucket. */
 		GotoUrl, // 28
 		/* IM for help */
 		Session911Start, // 29
-		/*
-		 * IM sent automatically on call for help, sends a lure to each Helper
-		 * reached
-		 */
+		/* IM sent automatically on call for help, sends a lure to each Helper reached */
 		Lure911, // 30
 		/* Like an IM but won't go to email */
 		FromTaskAsAlert, // 31
@@ -1070,7 +1072,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     {
         // Type of the mute entry
         public MuteType Type;
-        // UUID of the mute etnry
+        // UUID of the mute entry
         public UUID ID;
         // Mute entry name
         public String Name;
@@ -1078,6 +1080,14 @@ public class AgentManager implements PacketCallback, CapsCallback
         public byte Flags;
     }
 
+    public class LureLocation
+    {
+    	public long regionHandle;
+    	public Vector3 position;
+    	public Vector3 lookAt;
+    	public String maturity;
+    }
+    
     // Transaction detail sent with MoneyBalanceReply message
 	public class TransactionInfo
 	{
@@ -1286,6 +1296,56 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	public CallbackHandler<TeleportCallbackArgs> OnTeleport = new CallbackHandler<TeleportCallbackArgs>();
+
+	
+	public class TeleportLureCallbackArgs implements CallbackArgs
+	{
+		private final UUID fromID;
+		private final String fromName;
+		private final UUID lureID;
+		private final String message;
+		private final LureLocation location; // if null, it's a godlike lure request
+		private boolean accepted;
+		
+		public UUID getFromID()
+		{
+			return fromID;
+		}
+		public String getFromName()
+		{
+			return fromName;
+		}
+		public UUID getLureID()
+		{
+			return lureID;
+		}
+		public String getMessage()
+		{
+			return message;
+		}
+		public LureLocation getLocation()
+		{
+			return location;
+		}
+		public boolean getAccepted()
+		{
+			return accepted;
+		}
+		public void setAccepted(boolean value)
+		{
+			accepted = value;
+		}
+		public TeleportLureCallbackArgs(UUID fromID, String fromName, UUID lureID, String message, LureLocation location)
+		{
+			this.fromID = fromID;
+			this.fromName = fromName;
+			this.lureID = lureID;
+			this.location = location;
+			this.message = message;
+		}
+	}
+	
+	public CallbackHandler<TeleportLureCallbackArgs> OnTeleportLure = new CallbackHandler<TeleportLureCallbackArgs>();
 
 	
 	public class RegionCrossedCallbackArgs implements CallbackArgs
@@ -1816,6 +1876,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	private HashMap<UUID, AssetGesture> gestureCache = new HashMap<UUID, AssetGesture>();
 
+	private boolean isBusy;
+
 	private float health;
 	private int balance;
 	private UUID activeGroup;
@@ -1994,6 +2056,19 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return balance;
 	}
 
+	/*
+	 * Gets the busy status of the agent
+	 */
+	public final boolean getIsBusy()
+	{
+		return isBusy;
+	}
+
+	public final void setIsBusy(boolean value)
+	{
+		isBusy = value;
+	}
+	
 	/*
 	 * Gets the local ID of the prim the agent is sitting on, zero if the avatar
 	 * is not currently sitting
@@ -2422,7 +2497,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public void InstantMessage(UUID target, String message) throws Exception
 	{
 		InstantMessage(getName(), target, message, UUID.Zero, InstantMessageDialog.MessageFromAgent,
-				InstantMessageOnline.Offline, null, null, null);
+				InstantMessageOnline.Online, null, null, 0, null);
 	}
 
 	/**
@@ -2438,7 +2513,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public void InstantMessage(UUID target, String message, UUID imSessionID) throws Exception
 	{
 		InstantMessage(getName(), target, message, imSessionID, InstantMessageDialog.MessageFromAgent,
-				InstantMessageOnline.Offline, null, null, null);
+				InstantMessageOnline.Online, null, null, 0, null);
+	}
+
+	public final void InstantMessage(String fromName, UUID target, String message, UUID imSessionID,
+			InstantMessageDialog dialog, InstantMessageOnline offline) throws Exception
+	{
+		InstantMessage(getName(), target, message, imSessionID, dialog, offline, null, null, 0, null);
 	}
 
 	/**
@@ -2472,7 +2553,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		// Send the message
 		InstantMessage(fromName, target, message, imSessionID, InstantMessageDialog.MessageFromAgent,
-				InstantMessageOnline.Offline, null, null, binaryBucket);
+				InstantMessageOnline.Online, null, null, 0, binaryBucket);
 	}
 
 	/**
@@ -2491,9 +2572,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * @param offline
 	 *            Whether to IM offline avatars as well
 	 * @param position
-	 *            Senders Position
+	 *            Senders Position, if null use the current agent location
 	 * @param regionID
-	 *            RegionID Sender is In
+	 *            RegionID Sender is In, if null use the current simulator ID
+	 * @param timestamp
+	 * 			  timestamp of message or 0
 	 * @param binaryBucket
 	 *            Packed binary data that is specific to the dialog type
 	 * 
@@ -2502,7 +2585,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void InstantMessage(String fromName, UUID target, String message, UUID imSessionID,
 			InstantMessageDialog dialog, InstantMessageOnline offline, Vector3 position, UUID regionID,
-			byte[] binaryBucket) throws Exception
+			long timestamp, byte[] binaryBucket) throws Exception
 	{
 		if (!target.equals(UUID.Zero))
 		{
@@ -2516,26 +2599,28 @@ public class AgentManager implements PacketCallback, CapsCallback
 			im.AgentData.AgentID = getAgentID();
 			im.AgentData.SessionID = getSessionID();
 
-			im.MessageBlock.Dialog = dialog.getValue();
-			;
-			im.MessageBlock.setFromAgentName(Helpers.StringToBytes(fromName));
 			im.MessageBlock.FromGroup = false;
-			im.MessageBlock.ID = imSessionID;
+			im.MessageBlock.ToAgentID = target;
+			im.MessageBlock.setFromAgentName(Helpers.StringToBytes(fromName));
 			im.MessageBlock.setMessage(Helpers.StringToBytes(message));
 			im.MessageBlock.Offline = offline.getValue();
-			im.MessageBlock.ToAgentID = target;
+			im.MessageBlock.Dialog = dialog.getValue();
+			im.MessageBlock.ID = imSessionID;
+			im.MessageBlock.ParentEstateID = 0;
+
+			im.MessageBlock.Timestamp = (int) ((timestamp % 1000) & 0xFFFFFFFF);
 
 			// These fields are mandatory, even if we don't have valid values
+			// Allow region id to be correctly set by caller or fetched from _Client.
+			if (regionID == null)
+				regionID = _Client.Network.getCurrentSim().RegionID;
+			im.MessageBlock.RegionID = regionID;
+
 			// for them
 			if (position == null)
 				position = getSimPosition();
 			im.MessageBlock.Position = position;
 
-			// Allow region id to be correctly set by caller or fetched from
-			// _Client.
-			if (regionID == null)
-				regionID = _Client.Network.getCurrentSim().RegionID;
-			im.MessageBlock.RegionID = regionID;
 
 			if (binaryBucket != null)
 			{
@@ -2588,8 +2673,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		{
 			if (GroupChatSessions.containsKey(groupID))
 			{
-				InstantMessage(fromName, groupID, message, groupID, InstantMessageDialog.SessionSend,
-						InstantMessageOnline.Online, Vector3.Zero, UUID.Zero, Helpers.StringToBytes("\0"));
+				InstantMessage(fromName, groupID, message, groupID, InstantMessageDialog.SessionSend, InstantMessageOnline.Online);
 			}
 			else
 			{
@@ -2600,6 +2684,23 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/**
+	 * Send an typing status update
+	 * 
+	 * @param otherID
+	 *            {@link UUID} of the group to send the status update to
+	 * @param sessionID
+	 *            {@link UUID} of the communication session this status is for
+	 * @param typing
+	 *            typing status to send
+	 * @throws Exception
+	 */
+	public final void SendTypingState(UUID otherID, UUID sessionID, boolean typing) throws Exception
+	{
+		InstantMessage(getName(), otherID, "typing", sessionID,
+				       typing ? InstantMessageDialog.StartTyping : InstantMessageDialog.StopTyping, InstantMessageOnline.Online);
+	}
+	
+	/**
 	 * Send a request to join a group chat session
 	 * 
 	 * @param groupID
@@ -2608,7 +2709,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public final void RequestJoinGroupChat(UUID groupID) throws Exception
 	{
 		InstantMessage(getName(), groupID, Helpers.EmptyString, groupID, InstantMessageDialog.SessionGroupStart,
-				InstantMessageOnline.Online, null, UUID.Zero, null);
+				InstantMessageOnline.Online);
 	}
 
 	/**
@@ -2622,7 +2723,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public final void RequestLeaveGroupChat(UUID groupID) throws Exception
 	{
 		InstantMessage(getName(), groupID, Helpers.EmptyString, groupID, InstantMessageDialog.SessionDrop,
-				InstantMessageOnline.Online, Vector3.Zero, UUID.Zero, null);
+				InstantMessageOnline.Online);
 
 		synchronized (GroupChatSessions)
 		{
@@ -3912,30 +4013,155 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * 
 	 * @param requesterID
 	 *            {@link UUID} of the avatar sending the lure
+	 * @param lureID
+	 *            {@link UUID} of the lure ID received on the 
 	 * @param accept
 	 *            true to accept the lure, false to decline it
 	 * @throws Exception
 	 */
-	public final void TeleportLureRespond(UUID requesterID, boolean accept) throws Exception
+	public final void TeleportLureRespond(UUID requesterID, UUID lureID, boolean accept) throws Exception
 	{
-		InstantMessage(getName(), requesterID, Helpers.EmptyString, new UUID(),
-				accept ? InstantMessageDialog.AcceptTeleport : InstantMessageDialog.DenyTeleport,
-				InstantMessageOnline.Offline, this.getSimPosition(), UUID.Zero, Helpers.EmptyBytes);
-
+		TeleportLureRespond(requesterID, lureID, accept, false);
+	}
+	
+	private final void TeleportLureRespond(UUID requesterID, UUID lureID, boolean accept, boolean godlike) throws Exception
+	{
 		if (accept)
 		{
 			TeleportLureRequestPacket lure = new TeleportLureRequestPacket();
 
 			lure.Info.AgentID = getAgentID();
 			lure.Info.SessionID = getSessionID();
-			lure.Info.LureID = getAgentID();
-			lure.Info.TeleportFlags = TeleportFlags.ViaLure;
-
+			lure.Info.LureID = lureID;
+			if (godlike)
+			{	
+				lure.Info.TeleportFlags = TeleportFlags.ViaGodlikeLure | TeleportFlags.DisableCancel;
+			}
+			else
+			{
+				lure.Info.TeleportFlags = TeleportFlags.ViaLure;
+			}
 			_Client.Network.SendPacket(lure);
+		}
+		else
+		{
+			InstantMessage(getName(), requesterID, Helpers.EmptyString, lureID, InstantMessageDialog.DenyTeleport, InstantMessageOnline.Online);			
 		}
 	}
 
-	/**
+    /**
+     * Request the list of muted objects and avatars for this agent
+     * @throws Exception 
+     */
+    public void RequestMuteList() throws Exception
+    {
+        MuteListRequestPacket mute = new MuteListRequestPacket();
+        mute.AgentData.AgentID = _Client.Self.getAgentID();
+        mute.AgentData.SessionID = _Client.Self.getSessionID();
+        mute.MuteCRC = 0;
+
+        _Client.Network.SendPacket(mute);
+    }
+
+    /**
+     * Mute an object, resident, etc.
+     *
+     * @param type Mute type
+     * @param id Mute UUID
+     * @param name Mute name
+     * @throws Exception 
+	 */
+    public void UpdateMuteListEntry(MuteType type, UUID id, String name) throws Exception
+    {
+        UpdateMuteListEntry(type, id, name, MuteFlags.Default);
+    }
+
+    /**
+     * Mute an object, resident, etc.
+     *
+     * @param type Mute type
+     * @param id Mute UUID
+     * @param name Mute name
+     * @param flags Mute flags
+     * @throws Exception 
+	 */
+    public void UpdateMuteListEntry(MuteType type, UUID id, String name, byte flags) throws Exception
+    {
+        UpdateMuteListEntryPacket p = new UpdateMuteListEntryPacket();
+        p.AgentData.AgentID = _Client.Self.getAgentID();
+        p.AgentData.SessionID = _Client.Self.getSessionID();
+
+        p.MuteData.MuteType = type.getValue();
+        p.MuteData.MuteID = id;
+        p.MuteData.setMuteName(Helpers.StringToBytes(name));
+        p.MuteData.MuteFlags = flags;
+
+        _Client.Network.SendPacket(p);
+
+        MuteEntry me = new MuteEntry();
+        me.Type = type;
+        me.ID = id;
+        me.Name = name;
+        me.Flags = flags;
+        synchronized (MuteList)
+        {
+            MuteList.put(String.format("%s|%s", me.ID, me.Name), me);
+        }
+        OnMuteListUpdated.dispatch(null);
+
+    }
+
+    /**
+     * Unmute an object, resident, etc.
+     *
+     * @param id Mute UUID
+     * @param name Mute name
+     * @throws Exception 
+     */
+    public void RemoveMuteListEntry(UUID id, String name) throws Exception
+    {
+        RemoveMuteListEntryPacket p = new RemoveMuteListEntryPacket();
+        p.AgentData.AgentID = _Client.Self.getAgentID();
+        p.AgentData.SessionID = _Client.Self.getSessionID();
+
+        p.MuteData.MuteID = id;
+        p.MuteData.setMuteName(Helpers.StringToBytes(name));
+        
+        _Client.Network.SendPacket(p);
+
+        String listKey = String.format("%s|%s", id, name);
+        if (MuteList.containsKey(listKey))
+        {
+            synchronized (MuteList)
+            {
+                MuteList.remove(listKey);
+            }
+            OnMuteListUpdated.dispatch(null);
+        }
+    }
+
+    /**
+     * Sets home location to agents current position
+     * Will fire an AlertMessage (<seealso cref="E:OpenMetaverse.AgentManager.OnAlertMessage"/>)
+     * with success or failure message
+     * 
+     * @throws Exception 
+     */
+    public void SetHome() throws Exception
+    {
+        SetStartLocationRequestPacket s = new SetStartLocationRequestPacket();
+        s.AgentData = s.new AgentDataBlock();
+        s.AgentData.AgentID = getAgentID();
+        s.AgentData.SessionID = getSessionID();
+        s.StartLocationData = s.new StartLocationDataBlock();
+        s.StartLocationData.LocationPos = getSimPosition();
+        s.StartLocationData.LocationID = 1;
+        s.StartLocationData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
+        s.StartLocationData.LocationLookAt = _Movement.Camera.getAtAxis();
+        _Client.Network.SendPacket(s);
+    }
+
+    /**
 	 * Acknowledge agent movement complete
 	 * 
 	 * @param simulator
@@ -4001,7 +4227,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		InstantMessage(getName(), groupID, Helpers.EmptyString, imSessionID,
 				accept ? InstantMessageDialog.GroupInvitationAccept : InstantMessageDialog.GroupInvitationDecline,
-				InstantMessageOnline.Offline, Vector3.Zero, UUID.Zero, Helpers.EmptyBytes);
+				InstantMessageOnline.Offline);
 	}
 
 	/**
@@ -4333,15 +4559,91 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		// TODO: This will be useful one day
 	}
+	
+	private UUID computeSessionID(InstantMessageDialog dialog, UUID fromID)
+	{
+		UUID sessionID = fromID;
+		switch (dialog)
+		{
+			case RequestTeleport:
+			case GroupInvitation:
+			
+		}
+		return sessionID;
+	}
 
 	private void HandleInstantMessage(Packet packet, Simulator simulator) throws Exception
 	{
 		ImprovedInstantMessagePacket im = (ImprovedInstantMessagePacket) packet;
 
-		InstantMessage mess = new InstantMessage();
+		InstantMessageDialog dialog = InstantMessageDialog.setValue(im.MessageBlock.Dialog);
+		String fromName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
+		String message = Helpers.BytesToString(im.MessageBlock.getMessage());
+		boolean isMuted = MuteList.containsKey(String.format("%s|%s", im.AgentData.AgentID, fromName)); // MuteFlags.TextChat
+		UUID sessionID = computeSessionID(dialog, im.AgentData.AgentID);
+			
+		if (dialog == InstantMessageDialog.RequestTeleport)
+		{		
+			/* A user sent us a teleport lure */
+			if (isMuted)
+			{
+				return;
+			}
+			else if (isBusy)
+			{
+//				busyMessage(im.AgentData.AgentID);
+			}
+			else if (OnTeleportLure.count() > 0)
+			{
+				String[] strings = Helpers.BytesToString(im.MessageBlock.getBinaryBucket()).split("|");
+				LureLocation info = new LureLocation();
+				info.regionHandle = Helpers.GlobalPosToRegionHandle(Float.valueOf(strings[0]), Float.valueOf(strings[1]), null);
+				info.position = new Vector3(Float.valueOf(strings[2]), Float.valueOf(strings[3]), Float.valueOf(strings[4]));
+				info.lookAt = null;
+				if (strings.length >= 8)
+					info.lookAt = new Vector3(Float.valueOf(strings[5]), Float.valueOf(strings[6]), Float.valueOf(strings[7]));
+				info.maturity = Helpers.EmptyString;
+				if (strings.length >= 9)
+					info.maturity = strings[8];
+				
+				TeleportLureCallbackArgs args = new TeleportLureCallbackArgs(im.AgentData.AgentID, fromName, sessionID, message, info);
+				OnTeleportLure.dispatch(args);
+				TeleportLureRespond(im.AgentData.AgentID, sessionID, args.getAccepted());
+				/* We handled the lure request, so return */
+				return;
+			}
+		}
+		if (dialog == InstantMessageDialog.GodLikeRequestTeleport)
+		{	
+			/* A godlike teleport lure. Typically just teleport but we pass it to the callback anyhow, but ignore getAccepted() */
+			OnTeleportLure.dispatch(new TeleportLureCallbackArgs(im.AgentData.AgentID, fromName, sessionID, message, null));
+			TeleportLureRespond(im.AgentData.AgentID, sessionID, true, true);
+			return;
+		}
+		if (dialog == InstantMessageDialog.GotoUrl)
+		{
+			/* An URL sent form the system, not a script */
+			String url = Helpers.BytesToString(im.MessageBlock.getBinaryBucket());
+			if (url.length() <= 0)
+				Logger.Log("No URL in binary bucket for GotoURL IM", LogLevel.Warning, _Client);
+			return;
+/*          TODO:
+  			if (OnGotoURL.count() > 0)
+ 			{
+                OnGotoURL.dispatch(new GotoURLCallbackArgs(message, url);
+                return;
+            } */
+		}
+		else if (dialog == InstantMessageDialog.GroupInvitation)
+		{
+			/* A user sent us a group invite, Handled by GroupManager in standard callback below */
+		}
 
+		InstantMessage mess = new InstantMessage();
+		mess.Dialog = dialog;
+		mess.Offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
 		mess.FromAgentID = im.AgentData.AgentID;
-		mess.FromAgentName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
+		mess.FromAgentName = fromName;
 		mess.ToAgentID = im.MessageBlock.ToAgentID;
 		mess.ParentEstateID = im.MessageBlock.ParentEstateID;
 		mess.RegionID = im.MessageBlock.RegionID;
@@ -4349,10 +4651,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		mess.GroupIM = im.MessageBlock.FromGroup;
 		mess.IMSessionID = im.MessageBlock.ID;
 		mess.Timestamp = new Date(im.MessageBlock.Timestamp);
-		mess.Message = Helpers.BytesToString(im.MessageBlock.getMessage());
-		mess.Offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
+		mess.Message = message;
 		mess.BinaryBucket = im.MessageBlock.getBinaryBucket();
-
 		OnInstantMessage.dispatch(new InstantMessageCallbackArgs(mess, simulator));
 	}
 
@@ -4362,13 +4662,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		try
 		{
-		String message = Helpers.BytesToString(chat.ChatData.getMessage());
-		String from = Helpers.BytesToString(chat.ChatData.getFromName());
-		Logger.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType) + " From: " + from + " Message: " + message,
-				   Logger.LogLevel.Debug, _Client);
+			String message = Helpers.BytesToString(chat.ChatData.getMessage());
+			String from = Helpers.BytesToString(chat.ChatData.getFromName());
+			Logger.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType) + " From: " + from
+					+ " Message: " + message, Logger.LogLevel.Debug, _Client);
 
-		OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType.setValue(chat.ChatData.ChatType),
-				                             ChatSourceType.setValue(chat.ChatData.SourceType), message, from, chat.ChatData.SourceID));
+			OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType
+					.setValue(chat.ChatData.ChatType), ChatSourceType.setValue(chat.ChatData.SourceType), message,
+					from, chat.ChatData.SourceID));
 		}
 		catch (Exception ex)
 		{
