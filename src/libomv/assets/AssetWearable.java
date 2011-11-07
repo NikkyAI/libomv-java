@@ -199,7 +199,7 @@ public abstract class AssetWearable extends AssetItem
 				{
 					String versionstring = lines[stri];
 					version = Integer.parseInt(versionstring.split(" ")[2]);
-					if (version != 22 && version != 18)
+					if (version != 22 && version != 18 && version != 16 && version != 15)
 						return false;
 				}
 				else if (stri == 1)
@@ -323,6 +323,12 @@ public abstract class AssetWearable extends AssetItem
 						else if (fields[0].equals("sale_info"))
 						{
 							// Container for sale_type and sale_price, ignore
+						}
+						else if (fields[0].equals("perm_mask"))
+						{
+							// Deprecated, apply this as the next owner mask
+							Permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
+							break;
 						}
 						else
 							return false;
