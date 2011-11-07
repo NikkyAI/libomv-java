@@ -347,6 +347,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		ForSale(4),
 		// Land is being auctioned
 		Auction(5),
+        // Land is private
+        Private(32),
 		// To the west of this area is a parcel border
 		BorderWest(64),
 		// To the south of this area is a parcel border
