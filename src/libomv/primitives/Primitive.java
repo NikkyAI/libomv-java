@@ -270,7 +270,7 @@ public class Primitive
 	// Used in a helper function to roughly determine prim shape
 	public enum PrimType
 	{
-		Unknown, Box, Cylinder, Prism, Sphere, Torus, Tube, Ring, Sculpt;
+		Unknown, Box, Cylinder, Prism, Sphere, Torus, Tube, Ring, Sculpt, Mesh;
 
 		public static PrimType setValue(int value)
 		{
@@ -345,7 +345,7 @@ public class Primitive
 
 	public enum SculptType
 	{
-		None(0), Sphere(1), Torus(2), Plane(3), Cylinder(4), Invert(64), Mirror(128);
+		None(0), Sphere(1), Torus(2), Plane(3), Cylinder(4), Mesh(5), Invert(64), Mirror(128);
 
 		public static SculptType setValues(int value)
 		{
@@ -1278,6 +1278,14 @@ public class Primitive
 	{
 		if (Sculpt != null && Sculpt.getType() != SculptType.None)
 			return PrimType.Sculpt;
+ 
+		if (Sculpt != null && Sculpt.getType() != SculptType.None && !Sculpt.SculptTexture.equals(UUID.Zero))
+        {
+            if (Sculpt.getType() == SculptType.Mesh)
+                return PrimType.Mesh;
+            else
+                return PrimType.Sculpt;
+        }
 
 		boolean linearPath = (PrimData.PathCurve == PathCurve.Line || PrimData.PathCurve == PathCurve.Flexible);
 		float scaleY = PrimData.PathScaleY;
