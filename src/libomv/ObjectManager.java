@@ -1203,25 +1203,28 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case ObjectUpdate:
-				ObjectUpdateHandler(packet, simulator);
+				HandleObjectUpdate(packet, simulator);
 				break;
 			case ImprovedTerseObjectUpdate:
-				TerseObjectUpdateHandler(packet, simulator);
+				HandleTerseObjectUpdate(packet, simulator);
 				break;
 			case ObjectUpdateCompressed:
-				ObjectUpdateCompressedHandler(packet, simulator);
+				HandleObjectUpdateCompressed(packet, simulator);
 				break;
 			case ObjectUpdateCached:
-				ObjectUpdateCachedHandler(packet, simulator);
+				HandleObjectUpdateCached(packet, simulator);
 				break;
 			case KillObject:
-				KillObjectHandler(packet, simulator);
+				HandleKillObject(packet, simulator);
 				break;
 			case ObjectPropertiesFamily:
+				HandleObjectPropertiesFamily(packet, simulator);
 				break;
 			case ObjectProperties:
+				HandleObjectProperties(packet, simulator);
 				break;
 			case PayPriceReply:
+				HandlePayPriceReply(packet, simulator);
 				break;
 		}
 	}
@@ -1232,7 +1235,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case ObjectPhysicsProperties:
-				ObjectPhysicsPropertiesHandler(message, simulator);
+				HandleObjectPhysicsProperties(message, simulator);
 				break;
 		}
 	}
@@ -2620,6 +2623,15 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		simulator.SendPacket(packet);
 	}
 
+	/**
+	 * Find the object with localID in the simulator and add it with fullID if it is not there
+	 * 
+	 * @param simulator The simulator in which the object is located
+	 * @param localID The simulator localID for this object
+	 * @param fullID The full object ID used to add a new object to the simulator list,
+	 *               when the object could not be found.
+	 * @return the object that corresponds to the localID
+	 */
 	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
 	{
 		if (Client.Settings.OBJECT_TRACKING)
@@ -2645,6 +2657,15 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		return new Primitive();
 	}
 
+	/**
+	 * Find the avatar with localID in the simulator and add it with fullID if it is not there
+	 * 
+	 * @param simulator The simulator in which the avatar is located
+	 * @param localID The simulator localID for this avatar
+	 * @param fullID The full avatar ID used to add a new avatar object to the simulator list,
+	 *               when the avatar could not be found.
+	 * @return the avatar object that corresponds to the localID
+	 */
 	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
 	{
 		if (Client.Settings.AVATAR_TRACKING)
@@ -2716,7 +2737,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		return data;
 	}
 
-	private void ObjectUpdateHandler(Packet packet, Simulator simulator)
+	private void HandleObjectUpdate(Packet packet, Simulator simulator)
 	{
 		ObjectUpdatePacket update = (ObjectUpdatePacket) packet;
 
@@ -3172,7 +3193,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * velocity/acceleration for an object changes but nothing else
 	 * (scale/position/rotation/acceleration/velocity)
 	 */
-	protected final void TerseObjectUpdateHandler(Packet packet, Simulator simulator)
+	private final void HandleTerseObjectUpdate(Packet packet, Simulator simulator)
 	{
 		ImprovedTerseObjectUpdatePacket terse = (ImprovedTerseObjectUpdatePacket) packet;
 		UpdateDilation(simulator, terse.RegionData.TimeDilation);
@@ -3286,7 +3307,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * 
 	 * 
 	 */
-	protected final void ObjectUpdateCompressedHandler(Packet packet, Simulator simulator)
+	private final void HandleObjectUpdateCompressed(Packet packet, Simulator simulator)
 	{
 		ObjectUpdateCompressedPacket update = (ObjectUpdateCompressedPacket) packet;
 
@@ -3539,7 +3560,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void ObjectUpdateCachedHandler(Packet packet, Simulator simulator)
+	private final void HandleObjectUpdateCached(Packet packet, Simulator simulator)
 	{
 		if (Client.Settings.ALWAYS_REQUEST_OBJECTS)
 		{
@@ -3565,7 +3586,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void KillObjectHandler(Packet packet, Simulator simulator)
+	private final void HandleKillObject(Packet packet, Simulator simulator)
 	{
 		KillObjectPacket kill = (KillObjectPacket) packet;
 
@@ -3662,7 +3683,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void ObjectPropertiesHandler(Packet packet, Simulator simulator)
+	private final void HandleObjectProperties(Packet packet, Simulator simulator)
 	{
 		ObjectPropertiesPacket op = (ObjectPropertiesPacket) packet;
 		ObjectPropertiesPacket.ObjectDataBlock[] datablocks = op.ObjectData;
@@ -3739,7 +3760,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void ObjectPropertiesFamilyHandler(Packet packet, Simulator simulator)
+	private final void HandleObjectPropertiesFamily(Packet packet, Simulator simulator)
 	{
 		ObjectPropertiesFamilyPacket op = (ObjectPropertiesFamilyPacket) packet;
 		ObjectProperties props = new ObjectProperties();
@@ -3794,7 +3815,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	protected final void PayPriceReplyHandler(Packet packet, Simulator simulator)
+	private final void HandlePayPriceReply(Packet packet, Simulator simulator)
 	{
 		if (OnPayPriceReply.count() > 0)
 		{
@@ -3812,7 +3833,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	protected void ObjectPhysicsPropertiesHandler(IMessage message, Simulator simulator)
+	private void HandleObjectPhysicsProperties(IMessage message, Simulator simulator)
 	{
 		ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage) message;
 
