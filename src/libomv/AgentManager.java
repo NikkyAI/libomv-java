@@ -2140,7 +2140,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (sim.getObjectsPrimitives().containsKey(sittingOn))
 		{
 			p = sim.getObjectsPrimitives().get(sittingOn);
-			fullPosition.add(p.Position);
+			fullPosition.add(Vector3.add(p.Position, Vector3.multiply(relativePosition, p.Rotation)));
 		}
 
 		// go up the hiearchy trying to find the root prim
@@ -2684,7 +2684,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Send an typing status update
+	 * Send a typing status update
 	 * 
 	 * @param otherID
 	 *            {@link UUID} of the group to send the status update to
