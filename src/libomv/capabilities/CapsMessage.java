@@ -775,6 +775,8 @@ public class CapsMessage implements IMessage
 		public int PassPrice;
 		//
 		public int PublicCount;
+        // Disallows people outside the parcel from being able to see in
+        public bool Privacy;
 		//
 		public boolean RegionDenyAnonymous;
 		//
@@ -885,6 +887,7 @@ public class CapsMessage implements IMessage
 			parcelDataMap.put("PassHours", OSD.FromReal(PassHours));
 			parcelDataMap.put("PassPrice", OSD.FromInteger(PassPrice));
 			parcelDataMap.put("PublicCount", OSD.FromInteger(PublicCount));
+            parcelDataMap.put("Privacy", OSD.FromBoolean(Privacy));
 			parcelDataMap.put("RegionDenyAnonymous", OSD.FromBoolean(RegionDenyAnonymous));
 			parcelDataMap.put("RegionPushOverride", OSD.FromBoolean(RegionPushOverride));
 			parcelDataMap.put("RentPrice", OSD.FromInteger(RentPrice));
@@ -978,6 +981,7 @@ public class CapsMessage implements IMessage
 			PassHours = (float) parcelDataMap.get("PassHours").AsReal();
 			PassPrice = parcelDataMap.get("PassPrice").AsInteger();
 			PublicCount = parcelDataMap.get("PublicCount").AsInteger();
+            Privacy = parcelDataMap.get("Privacy").AsBoolean();
 			RegionDenyAnonymous = parcelDataMap.get("RegionDenyAnonymous").AsBoolean();
 			RegionPushOverride = parcelDataMap.get("RegionPushOverride").AsBoolean();
 			RentPrice = parcelDataMap.get("RentPrice").AsInteger();
