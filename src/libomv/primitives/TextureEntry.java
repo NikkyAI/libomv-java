@@ -182,7 +182,7 @@ public class TextureEntry
 
 	// A single textured face. Don't instantiate this class yourself, use the
 	// methods in TextureEntry
-	public class TextureEntryFace
+	public class TextureEntryFace implements Cloneable
 	{
 		// +----------+ S = Shiny
 		// | SSFBBBBB | F = Fullbright
@@ -502,6 +502,25 @@ public class TextureEntry
 				setGlow((float) map.get("glow").AsReal());
 				setTextureID(map.get("imageid").AsUUID());
 			}
+		}
+
+		
+		@Override
+		public TextureEntryFace clone()
+		{
+            TextureEntryFace ret = new TextureEntryFace(this.defaultTexture == null ? null : (TextureEntryFace)this.defaultTexture.clone());
+            ret.rgba = rgba;
+            ret.repeatU = repeatU;
+            ret.repeatV = repeatV;
+            ret.offsetU = offsetU;
+            ret.offsetV = offsetV;
+            ret.rotation = rotation;
+            ret.glow = glow;
+            ret.material = material;
+            ret.media = media;
+            ret.hasAttribute = hasAttribute;
+            ret.textureID = textureID;
+            return ret;
 		}
 
 		@Override
