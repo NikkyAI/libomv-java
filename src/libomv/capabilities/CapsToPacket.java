@@ -33,6 +33,7 @@ import java.lang.reflect.Modifier;
 import java.text.ParseException;
 
 import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.LLSD.LLSDBinary;
@@ -248,6 +249,10 @@ public class CapsToPacket
 					Quaternion quat = ((OSDArray) blockData.get(field.getName())).AsQuaternion();
 					field.set(block, quat);
 				}
+                else if (fieldType == byte[].class && blockData.get(field.getName()).getType() == OSDType.String)
+                {
+                    field.set(block, Helpers.StringToBytes(blockData.get(field.getName()).AsString()));
+                }
 			}
 		}
 		return block;
