@@ -4055,8 +4055,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				{
 					if (!_Store.containsFolder(dataBlock.FolderID))
 					{
-						Logger.Log("Received BulkUpdate for unknown folder: " + dataBlock.FolderID, LogLevel.Warning,
-								_Client);
+						Logger.Log("Received BulkUpdate for unknown folder: " + dataBlock.FolderID, LogLevel.Debug, _Client);
 					}
 
 					InventoryFolder folder = new InventoryFolder(dataBlock.FolderID, dataBlock.ParentID, update.AgentData.AgentID);
@@ -4073,14 +4072,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				for (int i = 0; i < update.ItemData.length; i++)
 				{
 					BulkUpdateInventoryPacket.ItemDataBlock dataBlock = update.ItemData[i];
-
-					// If we are given a folder of items, the item information
-					// might arrive before the folder (parent) is in the store
-					if (!_Store.containsItem(dataBlock.ItemID))
-					{
-						Logger.Log("Received BulkUpdate for unknown item: " + dataBlock.ItemID, LogLevel.Warning,
-								_Client);
-					}
 
 					InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID,
 							                                     dataBlock.FolderID, dataBlock.OwnerID);
