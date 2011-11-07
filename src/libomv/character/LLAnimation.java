@@ -117,6 +117,8 @@ public class LLAnimation
     // Contains an array of joints
     public Joint[] joints;
 
+    // Custom application data that can be attached to a joint
+    public Object Tag;
     /**
      * Serialize an animation asset binary data into it's joints/keyframes/meta data
      * 
@@ -193,7 +195,7 @@ public class LLAnimation
      * @param data animation asset byte array
      * @param i Byte Offset of the start of the joint
      * @param pJoint The Joint structure to serialized the data into
-     * @return Byte Offset of after the end of the joint
+     * @return Byte Offset after the end of the joint
      */
     public int readJoint(byte[] data, int i, Joint pJoint)
     {
