@@ -617,7 +617,7 @@ public class AppearanceManager implements PacketCallback
 
         if (attachments.size() > 0)
         {
-            AddAttachments(attachments, false);
+            AddAttachments(attachments, false, false);
         }
 
         if (wearables.size() > 0)
@@ -759,7 +759,7 @@ public class AppearanceManager implements PacketCallback
             SetAppearanceSerialNum.incrementAndGet();
         }
         ReplaceWearables(wearables);
-        AddAttachments(attachments, true);
+        AddAttachments(attachments, true, false);
         SendAgentIsNowWearing();
         DelayedRequestSetAppearance();
     }
