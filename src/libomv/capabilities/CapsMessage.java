@@ -5942,227 +5942,174 @@ public class CapsMessage implements IMessage
 		{
 			case AgentGroupDataUpdate:
 				message = new AgentGroupDataUpdateMessage();
-				message.Deserialize(map);
 				break;
-			case AvatarGroupsReply: // OpenSim sends the above with the wrong?
-									// key
+			case AvatarGroupsReply: // OpenSim sends the above with the wrong key
 				message = new AgentGroupDataUpdateMessage();
-				message.Deserialize(map);
 				break;
 			case ParcelProperties:
 				message = new ParcelPropertiesMessage();
-				message.Deserialize(map);
 				break;
 			case ParcelObjectOwnersReply:
 				message = new ParcelObjectOwnersReplyMessage();
-				message.Deserialize(map);
 				break;
 			case TeleportFinish:
 				message = new TeleportFinishMessage();
-				message.Deserialize(map);
 				break;
 			case EnableSimulator:
 				message = new EnableSimulatorMessage();
-				message.Deserialize(map);
 				break;
 			case ParcelPropertiesUpdate:
 				message = new ParcelPropertiesUpdateMessage();
-				message.Deserialize(map);
 				break;
 			case EstablishAgentCommunication:
 				message = new EstablishAgentCommunicationMessage();
-				message.Deserialize(map);
 				break;
 			case ChatterBoxInvitation:
 				message = new ChatterBoxInvitationMessage();
-				message.Deserialize(map);
 				break;
 			case ChatterBoxSessionEventReply:
 				message = new ChatterBoxSessionEventReplyMessage();
-				message.Deserialize(map);
 				break;
 			case ChatterBoxSessionStartReply:
 				message = new ChatterBoxSessionStartReplyMessage();
-				message.Deserialize(map);
 				break;
 			case ChatterBoxSessionAgentListUpdates:
 				message = new ChatterBoxSessionAgentListUpdatesMessage();
-				message.Deserialize(map);
 				break;
 			case RequiredVoiceVersion:
 				message = new RequiredVoiceVersionMessage();
-				message.Deserialize(map);
 				break;
 			case MapLayer:
 				message = new MapLayerMessage();
-				message.Deserialize(map);
 				break;
 			case ChatSessionRequest:
 				message = new ChatSessionRequestMessage();
-				message.Deserialize(map);
 				break;
 			case CopyInventoryFromNotecard:
 				message = new CopyInventoryFromNotecardMessage();
-				message.Deserialize(map);
 				break;
 			case ProvisionVoiceAccountRequest:
 				message = new ProvisionVoiceAccountRequestMessage();
-				message.Deserialize(map);
 				break;
 			case Viewerstats:
 				message = new ViewerStatsMessage();
-				message.Deserialize(map);
 				break;
 			case UpdateAgentLanguage:
 				message = new UpdateAgentLanguageMessage();
-				message.Deserialize(map);
 				break;
 			case RemoteParcelRequest:
 				message = new RemoteParcelRequestMessage();
-				message.Deserialize(map);
 				break;
 			case UpdateScriptTask:
 				message = new UpdateScriptTaskMessage();
-				message.Deserialize(map);
 				break;
 			case UpdateScriptAgent:
 				message = new UpdateScriptAgentMessage();
-				message.Deserialize(map);
 				break;
 			case SendPostcard:
 				message = new SendPostcardMessage();
-				message.Deserialize(map);
 				break;
 			case UpdateGestureAgentInventory:
 				message = new UpdateGestureAgentInventoryMessage();
-				message.Deserialize(map);
 				break;
 			case UpdateNotecardAgentInventory:
 				message = new UpdateNotecardAgentInventoryMessage();
-				message.Deserialize(map);
 				break;
 			case LandStatReply:
 				message = new LandStatReplyMessage();
-				message.Deserialize(map);
 				break;
 			case ParcelVoiceInfoRequest:
 				message = new ParcelVoiceInfoRequestMessage();
-				message.Deserialize(map);
 				break;
 			case ViewerStats:
 				message = new ViewerStatsMessage();
-				message.Deserialize(map);
 				break;
 			case EventQueueGet:
 				message = new EventQueueGetMessage();
-				message.Deserialize(map);
 				break;
 			case CrossedRegion:
 				message = new CrossedRegionMessage();
-				message.Deserialize(map);
 				break;
 			case TeleportFailed:
 				message = new TeleportFailedMessage();
-				message.Deserialize(map);
 				break;
 			case PlacesReply:
 				message = new PlacesReplyMessage();
-				message.Deserialize(map);
 				break;
 			case UpdateAgentInformation:
 				message = new UpdateAgentInformationMessage();
-				message.Deserialize(map);
 				break;
 			case DirLandReply:
 				message = new DirLandReplyMessage();
-				message.Deserialize(map);
 				break;
 			case ScriptRunningReply:
 				message = new ScriptRunningReplyMessage();
-				message.Deserialize(map);
 				break;
 			case SearchStatRequest:
 				message = new SearchStatRequestMessage();
-				message.Deserialize(map);
 				break;
 			case AgentDropGroup:
 				message = new AgentDropGroupMessage();
-				message.Deserialize(map);
 				break;
 			case ForceCloseChatterBoxSession:
 				message = new ForceCloseChatterBoxSessionMessage();
-				message.Deserialize(map);
 				break;
 			case UploadBakedTexture:
 				message = new UploadBakedTextureMessage();
-				message.Deserialize(map);
 				break;
 			case WebFetchInventoryDescendents:
 				message = new WebFetchInventoryDescendentsMessage();
-				message.Deserialize(map);
 				break;
 			case RegionInfo:
 				message = new RegionInfoMessage();
-				message.Deserialize(map);
 				break;
 			case UploadObjectAsset:
 				message = new UploadObjectAssetMessage();
-				message.Deserialize(map);
 				break;
 			case ObjectPhysicsProperties:
 				message = new ObjectPhysicsPropertiesMessage();
-				message.Deserialize(map);
 				break;
 			case ObjectMediaNavigate:
 				message = new ObjectMediaNavigateMessage();
-				message.Deserialize(map);
 				break;
 			case ObjectMedia:
 				message = new ObjectMediaMessage();
-				message.Deserialize(map);
 				break;
 			case AttachmentResources:
 				message = new AttachmentResourcesMessage();
-				message.Deserialize(map);
 				break;
 			case LandResources:
 				if (map.containsKey("parcel_id"))
 				{
 					message = new LandResourcesRequest();
-					message.Deserialize(map);
 				}
 				else if (map.containsKey("ScriptResourceSummary"))
 				{
 					message = new LandResourcesMessage();
-					message.Deserialize(map);
 				}
 				else if (map.containsKey("summary"))
 				{
 					message = new LandResourcesInfo();
-					message.Deserialize(map);
 				}
 				break;
 			case ProductInfoRequest:
 				message = new ProductInfoRequestMessage();
-				message.Deserialize(map);
 				break;
-
 			case GetDisplayNames:
 				message = new GetDisplayNamesMessage();
-				message.Deserialize(map);
 				break;
 			case SetDisplayName:
 				message = new SetDisplayNameMessage();
-				message.Deserialize(map);
 				break;
 			case SetDisplayNameReply:
 				message = new SetDisplayNameReplyMessage();
-				message.Deserialize(map);
 				break;
 			case DisplayNameUpdate:
 				message = new DisplayNameUpdateMessage();
-				message.Deserialize(map);
 				break;
+			case BulkUpdateInventory:
+				message = new BulkUpdateInventoryMessage();
+				break; 
 
 			// Capabilities TODO:
 			case DispatchRegionInfo:
@@ -6181,9 +6128,11 @@ public class CapsMessage implements IMessage
 			case UpdateNotecardTaskInventory:
 			case ViewerStartAuction:
 			case UntrustedSimulatorMessage:
+			default:
+				Logger.Log("Unimplemented event " + eventType.toString(), LogLevel.Error);
 		}
-
-		Logger.Log("Unimplemented event " + eventType.toString(), LogLevel.Error);
+		if (message != null)
+			message.Deserialize(map);
 		return message;
 	}
 
