@@ -39,6 +39,7 @@ import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.AgentManager.TeleportFlags;
 import libomv.AvatarManager.AgentDisplayName;
+import libomv.ObjectManager.SaleType;
 import libomv.ParcelManager;
 import libomv.ParcelManager.LandingTypeEnum;
 import libomv.ParcelManager.ParcelCategory;
@@ -49,7 +50,9 @@ import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem;
+import libomv.assets.AssetItem.AssetType;
 import libomv.inventory.InventoryItem;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.primitives.MediaEntry;
 import libomv.primitives.PhysicsProperties;
 import libomv.primitives.Primitive.AttachmentPoint;
@@ -58,6 +61,7 @@ import libomv.primitives.Primitive.Material;
 import libomv.primitives.Primitive.SculptType;
 import libomv.primitives.TextureEntry.Bumpiness;
 import libomv.types.Color4;
+import libomv.types.Permissions.PermissionMask;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
 import libomv.types.Vector3;
@@ -70,7 +74,7 @@ public class CapsMessage implements IMessage
 {
 	public enum CapsEventType
 	{
-		Default, AgentGroupDataUpdate, AvatarGroupsReply, ParcelProperties, ParcelObjectOwnersReply, TeleportFinish, EnableSimulator, ParcelPropertiesUpdate, EstablishAgentCommunication, ChatterBoxInvitation, ChatterBoxSessionEventReply, ChatterBoxSessionStartReply, ChatterBoxSessionAgentListUpdates, RequiredVoiceVersion, MapLayer, ChatSessionRequest, CopyInventoryFromNotecard, ProvisionVoiceAccountRequest, Viewerstats, UpdateAgentLanguage, RemoteParcelRequest, UpdateScriptTask, UploadScriptTask, UpdateScriptAgent, SendPostcard, UpdateGestureAgentInventory, UpdateNotecardAgentInventory, LandStatReply, ParcelVoiceInfoRequest, ViewerStats, EventQueueGet, CrossedRegion, TeleportFailed, PlacesReply, UpdateAgentInformation, DirLandReply, ScriptRunningReply, SearchStatRequest, AgentDropGroup, ForceCloseChatterBoxSession, UploadBakedTexture, WebFetchInventoryDescendents, RegionInfo, UploadObjectAsset, ObjectPhysicsProperties, ObjectMediaNavigate, ObjectMedia, AttachmentResources, LandResources, ProductInfoRequest, DispatchRegionInfo, EstateChangeInfo, FetchInventoryDescendents, GroupProposalBallot, MapLayerGod, NewFileAgentInventory, RequestTextureDownload, SearchStatTracking, SendUserReport, SendUserReportWithScreenshot, ServerReleaseNotes, StartGroupProposal, UpdateGestureTaskInventory, UpdateNotecardTaskInventory, ViewerStartAuction, UntrustedSimulatorMessage, GetDisplayNames, SetDisplayName, SetDisplayNameReply, DisplayNameUpdate,
+		Default, AgentGroupDataUpdate, AvatarGroupsReply, ParcelProperties, ParcelObjectOwnersReply, TeleportFinish, EnableSimulator, ParcelPropertiesUpdate, EstablishAgentCommunication, ChatterBoxInvitation, ChatterBoxSessionEventReply, ChatterBoxSessionStartReply, ChatterBoxSessionAgentListUpdates, RequiredVoiceVersion, MapLayer, ChatSessionRequest, CopyInventoryFromNotecard, ProvisionVoiceAccountRequest, Viewerstats, UpdateAgentLanguage, RemoteParcelRequest, UpdateScriptTask, UploadScriptTask, UpdateScriptAgent, SendPostcard, UpdateGestureAgentInventory, UpdateNotecardAgentInventory, LandStatReply, ParcelVoiceInfoRequest, ViewerStats, EventQueueGet, CrossedRegion, TeleportFailed, PlacesReply, UpdateAgentInformation, DirLandReply, ScriptRunningReply, SearchStatRequest, AgentDropGroup, ForceCloseChatterBoxSession, UploadBakedTexture, WebFetchInventoryDescendents, RegionInfo, UploadObjectAsset, ObjectPhysicsProperties, ObjectMediaNavigate, ObjectMedia, AttachmentResources, LandResources, ProductInfoRequest, DispatchRegionInfo, EstateChangeInfo, FetchInventoryDescendents, GroupProposalBallot, MapLayerGod, NewFileAgentInventory, BulkUpdateInventory, RequestTextureDownload, SearchStatTracking, SendUserReport, SendUserReportWithScreenshot, ServerReleaseNotes, StartGroupProposal, UpdateGestureTaskInventory, UpdateNotecardTaskInventory, ViewerStartAuction, UntrustedSimulatorMessage, GetDisplayNames, SetDisplayName, SetDisplayNameReply, DisplayNameUpdate,
 	}
 
 	@Override
@@ -1349,7 +1353,141 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class WebFetchInventoryDescendentsMessage implements IMessage
+    public class BulkUpdateInventoryMessage implements IMessage
+    {
+        public class FolderDataInfo
+        {
+            public UUID FolderID;
+            public UUID ParentID;
+            public String Name;
+            public AssetType Type;
+
+            public FolderDataInfo(OSDMap map)
+            {
+                FolderID = map.get("FolderID").AsUUID();
+                ParentID = map.get("ParentID").AsUUID();
+                Name = map.get("Name").AsString();
+                Type = AssetType.setValue(map.get("Type").AsInteger());
+             }
+        }
+
+        public class ItemDataInfo
+        {
+            public UUID ItemID;
+            public int CallbackID;
+            public UUID FolderID;
+            public UUID CreatorID;
+            public UUID OwnerID;
+            public UUID GroupID;
+            public int BaseMask;
+            public int OwnerMask;
+            public int GroupMask;
+            public int EveryoneMask;
+            public int NextOwnerMask;
+            public boolean GroupOwned;
+            public UUID AssetID;
+            public AssetType Type;
+            public InventoryType InvType;
+            public int Flags;
+            public SaleType saleType;
+            public int SalePrice;
+            public String Name;
+            public String Description;
+            public Date CreationDate;
+            public int CRC;
+
+    		public ItemDataInfo(OSDMap map)
+            {
+                ItemID = map.get("ItemID").AsUUID();
+                CallbackID = map.get("CallbackID").AsUInteger();
+                FolderID = map.get("FolderID").AsUUID();
+                CreatorID = map.get("CreatorID").AsUUID();
+                OwnerID = map.get("OwnerID").AsUUID();
+                GroupID = map.get("GroupID").AsUUID();
+                BaseMask = PermissionMask.setValue(map.get("BaseMask").AsUInteger());
+                OwnerMask = PermissionMask.setValue(map.get("OwnerMask").AsUInteger());
+                GroupMask = PermissionMask.setValue(map.get("GroupMask").AsUInteger());
+                EveryoneMask = PermissionMask.setValue(map.get("EveryoneMask").AsUInteger());
+                NextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").AsUInteger());
+                GroupOwned = map.get("GroupOwned").AsBoolean();
+                AssetID = map.get("AssetID").AsUUID();
+                Type = AssetType.setValue(map.get("Type").AsInteger());
+                InvType = InventoryType.setValue(map.get("InvType").AsInteger());
+                Flags = map.get("Flags").AsUInteger();
+                saleType = SaleType.setValue(map.get("SaleType").AsInteger());
+                SalePrice = map.get("SaleType").AsInteger();
+                Name = map.get("Name").AsString();
+                Description = map.get("Description").AsString();
+                CreationDate = Helpers.UnixTimeToDateTime(map.get("CreationDate").AsReal());
+                CRC = map.get("CRC").AsUInteger();
+            }
+        }
+
+        public UUID AgentID;
+        public UUID TransactionID;
+        public FolderDataInfo[] FolderData;
+        public ItemDataInfo[] ItemData;
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.BulkUpdateInventory;
+		}
+
+		@Override
+		public OSDMap Serialize()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+		public void Deserialize(OSDMap map)
+        {
+            if (map.get("AgentData") instanceof OSDArray)
+            {
+                OSDArray array = (OSDArray)map.get("AgentData");
+                if (array.size() > 0)
+                {
+                    OSDMap adata = (OSDMap)array.get(0);
+                    AgentID = adata.get("AgentID").AsUUID();
+                    TransactionID = adata.get("TransactionID").AsUUID();
+                }
+            }
+            
+            if (map.get("FolderData") instanceof OSDArray)
+            {
+                OSDArray array = (OSDArray)map.get("FolderData");
+                FolderData =  new FolderDataInfo[array.size()];
+                for (int i = 0; i < array.size(); i++)
+                {
+                    FolderData[i] = new FolderDataInfo((OSDMap)array.get(i));
+                }
+            }
+            else
+            {
+                FolderData = new FolderDataInfo[0];
+            }
+
+            if (map.get("ItemData") instanceof OSDArray)
+            {
+                OSDArray array = (OSDArray)map.get("ItemData");
+                ItemData = new ItemDataInfo[array.size()];
+                for (int i = 0; i < array.size(); i++)
+                {
+                    ItemData[i] = new ItemDataInfo((OSDMap)array.get(i));
+                }
+            }
+            else
+            {
+                ItemData = new ItemDataInfo[0];
+            }
+        }
+    }
+
+    public class WebFetchInventoryDescendentsMessage implements IMessage
 	{
 
 		// public class Folder implements InventoryBase
