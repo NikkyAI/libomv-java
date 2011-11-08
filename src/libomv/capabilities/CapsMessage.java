@@ -776,7 +776,7 @@ public class CapsMessage implements IMessage
 		//
 		public int PublicCount;
         // Disallows people outside the parcel from being able to see in
-        public bool Privacy;
+        public boolean Privacy;
 		//
 		public boolean RegionDenyAnonymous;
 		//
