@@ -1672,6 +1672,21 @@ public class Helpers
 	}
 
 	/**
+	 * read a variable length UTF8 byte array to a string, consuming  len characters
+	 * 
+	 * @param bytes
+	 *            The UTF8 encoded byte array to convert
+	 * @return The decoded string
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String readString(InputStream is, int len) throws IOException
+	{
+		byte[] bytes = new byte[len];
+		is.read(bytes);
+		return BytesToString(bytes, 0, len);
+	}
+	
+	/**
 	 * Convert a variable length UTF8 byte array to a string
 	 * 
 	 * @param bytes
