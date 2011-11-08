@@ -861,12 +861,11 @@ public class Primitive
 		@Override
 		public int hashCode()
 		{
-			return Material.hashCode() ^ (int) PathBegin ^ PathCurve.hashCode() ^ (int) PathEnd
+			return Material != null ? Material.hashCode() : 0 ^ (int) PathBegin ^ PathCurve.hashCode() ^ (int) PathEnd
 					^ (int) PathRadiusOffset ^ (int) PathRevolutions ^ (int) PathScaleX ^ (int) PathScaleY
 					^ (int) PathShearX ^ (int) PathShearY ^ (int) PathSkew ^ (int) PathTaperX ^ (int) PathTaperY
 					^ (int) PathTwist ^ (int) PathTwistBegin ^ PCode.hashCode() ^ (int) ProfileBegin
 					^ ProfileCurve.hashCode() ^ (int) ProfileEnd ^ (int) ProfileHollow ^ State;
-
 		}
 
 		@Override
@@ -877,7 +876,8 @@ public class Primitive
 
 		public boolean equals(ConstructionData o)
 		{
-			return o != null && Material == null ? Material == o.Material : Material.equals(o.Material)
+			if (o == null) return false;
+			return Material == null ? Material == o.Material : Material.equals(o.Material)
 					&& PathBegin == o.PathBegin && PathCurve.getValue() == o.PathCurve.getValue()
 					&& PathEnd == o.PathEnd && PathRadiusOffset == o.PathRadiusOffset
 					&& PathRevolutions == o.PathRevolutions && PathScaleX == o.PathScaleX && PathScaleY == o.PathScaleY
@@ -959,7 +959,7 @@ public class Primitive
 			data[i++] = (byte) ((Gravity + 10.0f) * 10.01f);
 			data[i++] = (byte) (Wind * 10.01f);
 
-			Force.ToBytes(data, i);
+			Force.toBytes(data, i);
 
 			return data;
 		}
@@ -1285,8 +1285,7 @@ public class Primitive
         {
             if (Sculpt.getType() == SculptType.Mesh)
                 return PrimType.Mesh;
-            else
-                return PrimType.Sculpt;
+			return PrimType.Sculpt;
         }
 
 		boolean linearPath = (PrimData.PathCurve == PathCurve.Line || PrimData.PathCurve == PathCurve.Flexible);
