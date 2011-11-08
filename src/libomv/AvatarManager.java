@@ -26,6 +26,7 @@
  */
 package libomv;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,12 +36,15 @@ import libomv.AgentManager.EffectType;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsCallback;
+import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.DisplayNameUpdateMessage;
 import libomv.capabilities.IMessage;
 import libomv.packets.AvatarAnimationPacket;
 import libomv.packets.AvatarAppearancePacket;
+import libomv.packets.AvatarGroupsReplyPacket;
 import libomv.packets.AvatarInterestsReplyPacket;
+import libomv.packets.AvatarPickerReplyPacket;
 import libomv.packets.AvatarPropertiesReplyPacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
@@ -58,6 +62,7 @@ import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 public class AvatarManager implements PacketCallback, CapsCallback
 {
@@ -372,6 +377,55 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	public CallbackHandler<AvatarPropertiesReplyCallbackArgs> OnAvatarPropertiesReply = new CallbackHandler<AvatarPropertiesReplyCallbackArgs>();
 	
 	
+	public class AvatarGroupsReplyCallbackArgs implements CallbackArgs
+	{
+		private UUID avatarID;
+		private ArrayList<AvatarGroup> avatarGroups;
+		
+		public UUID getAvatarID()
+		{
+			return avatarID;
+		}
+		
+		public ArrayList<AvatarGroup> getAvatarGroups()
+		{
+			return avatarGroups;
+		}
+		
+		public AvatarGroupsReplyCallbackArgs(UUID avatarID, ArrayList<AvatarGroup> avatarGroups)
+		{
+			this.avatarID = avatarID;
+			this.avatarGroups = avatarGroups;
+		}
+	}
+	
+	public CallbackHandler<AvatarGroupsReplyCallbackArgs> OnAvatarGroupsReply = new CallbackHandler<AvatarGroupsReplyCallbackArgs>();
+
+
+	public class AvatarPickerReplyCallbackArgs implements CallbackArgs
+	{
+    	private UUID queryID;
+        private HashMap<UUID, String> avatars;
+        
+        public UUID getQueryID()
+        {
+        	return queryID;
+        }
+
+        public HashMap<UUID, String> getAvatars()
+        {
+        	return avatars;
+        }
+        
+        public AvatarPickerReplyCallbackArgs(UUID queryID, HashMap<UUID, String> avatars)
+        {
+        	this.queryID = queryID;
+        	this.avatars = avatars;
+        }
+	}
+        
+	public CallbackHandler<AvatarPickerReplyCallbackArgs> OnAvatarPickerReply = new CallbackHandler<AvatarPickerReplyCallbackArgs>();
+	
 	public class ViewerEffectCallbackArgs implements CallbackArgs
 	{
 		private EffectType type;
@@ -491,7 +545,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				HandleAvatarInterests(packet, simulator);
 				break;
 			case AvatarGroupsReply:
-				// HandleAvatarGroupsReply(packet, simulator);
+				HandleAvatarGroupsReply(packet, simulator);
 				break;
 			case ViewerEffect:
 				HandleViewerEffect(packet, simulator);
@@ -500,23 +554,25 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				HandleUUIDNameReply(packet, simulator);
 				break;
 			case AvatarPickerReply:
-				// HandleAvatarPickerReply(packet, simulator);
+				HandleAvatarPickerReply(packet, simulator);
 				break;
 			case AvatarAnimation:
 				HandleAvatarAnimation(packet, simulator);
 				break;
-			case AvatarPicksReply:
-				// HandleAvatarPicksReply(packet, simulator);
-				break;
-			case PickInfoReply:
-				// HandlePickInfoReply(packet, simulator);
-				break;
-			case AvatarClassifiedReply:
-				// HandleAvatarClassifiedReply(packet, simulator);
-				break;
-			case ClassifiedInfoReply:
-				// HandleClassifiedInfoReply(packet, simulator);
-				break;
+//			case AvatarPicksReply:
+//				// HandleAvatarPicksReply(packet, simulator);
+//				break;
+//			case PickInfoReply:
+//				// HandlePickInfoReply(packet, simulator);
+//				break;
+//			case AvatarClassifiedReply:
+//				// HandleAvatarClassifiedReply(packet, simulator);
+//				break;
+//			case ClassifiedInfoReply:
+//				// HandleClassifiedInfoReply(packet, simulator);
+//				break;
+			default:
+				Logger.Log("AvatarManager: Unhandled packet" + packet.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -528,12 +584,14 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			case DisplayNameUpdate:
 				HandleDisplayNameUpdate(message, simulator);
 				break;
-			case AgentGroupDataUpdate:
-				// HandleAgentGroupDataUpdate(message, simulator);
-				break;
+//			case AgentGroupDataUpdate:
+//				// HandleAgentGroupDataUpdate(message, simulator);
+//				break;
 			case AvatarGroupsReply:
-				// HandleAvatarGroupsReply(message, simulator);
+				HandleAvatarGroupsReply(message, simulator);
 				break;
+			default:
+				Logger.Log("AvatarManager: Unhandled message" + message.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -806,6 +864,70 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		}
 		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
 	}
+
+    private void HandleAvatarGroupsReply(IMessage message, Simulator simulator)
+    {
+        if (OnAvatarGroupsReply.count() > 0)
+        {
+            AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage)message;
+            ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(msg.GroupDataBlock.length);
+            for (int i = 0; i < msg.GroupDataBlock.length; i++)
+            {
+                AvatarGroup avatarGroup = new AvatarGroup();
+                avatarGroup.AcceptNotices = msg.GroupDataBlock[i].AcceptNotices;
+                avatarGroup.GroupID = msg.GroupDataBlock[i].GroupID;
+                avatarGroup.GroupInsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
+                avatarGroup.GroupName = msg.GroupDataBlock[i].GroupName;
+                avatarGroup.GroupPowers = msg.GroupDataBlock[i].GroupPowers;
+                avatarGroup.ListInProfile = msg.NewGroupDataBlock[i].ListInProfile;
+
+                avatarGroups.add(avatarGroup);
+            }
+
+            OnAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(msg.AgentID, avatarGroups));
+        }
+    }
+
+    private void HandleAvatarGroupsReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+        if (OnAvatarGroupsReply.count() > 0)
+        {
+            AvatarGroupsReplyPacket groups = (AvatarGroupsReplyPacket)packet;
+            ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(groups.GroupData.length);
+
+            for (int i = 0; i < groups.GroupData.length; i++)
+            {
+                AvatarGroup avatarGroup = new AvatarGroup();
+
+                avatarGroup.AcceptNotices = groups.GroupData[i].AcceptNotices;
+                avatarGroup.GroupID = groups.GroupData[i].GroupID;
+                avatarGroup.GroupInsigniaID = groups.GroupData[i].GroupInsigniaID;
+                avatarGroup.GroupName = Helpers.BytesToString(groups.GroupData[i].getGroupName());
+                avatarGroup.GroupPowers = groups.GroupData[i].GroupPowers;
+                avatarGroup.GroupTitle = Helpers.BytesToString(groups.GroupData[i].getGroupTitle());
+                avatarGroup.ListInProfile = groups.ListInProfile;
+
+                avatarGroups.add(avatarGroup);
+            }
+            OnAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(groups.AgentData.AvatarID, avatarGroups));
+        }
+    }
+
+    private void HandleAvatarPickerReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+        if (OnAvatarPickerReply.count() > 0)
+        {
+            AvatarPickerReplyPacket reply = (AvatarPickerReplyPacket)packet;
+            HashMap<UUID, String> avatars = new HashMap<UUID, String>();
+
+            for (AvatarPickerReplyPacket.DataBlock block : reply.Data)
+            {
+                avatars.put(block.AvatarID, Helpers.BytesToString(block.getFirstName()) +
+                    " " + Helpers.BytesToString(block.getLastName()));
+            }
+            OnAvatarPickerReply.dispatch(new AvatarPickerReplyCallbackArgs(reply.AgentData.QueryID, avatars));
+        }
+    }
 
     /**
      * Process an incoming packet and raise the appropriate events</summary>
