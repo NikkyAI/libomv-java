@@ -28,10 +28,8 @@ package libomv.types;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.input.SwappedDataInputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
