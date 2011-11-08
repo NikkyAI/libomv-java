@@ -26,9 +26,13 @@
  */
 package libomv.types;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.apache.commons.io.EndianUtils;
+import org.apache.commons.io.input.SwappedDataInputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -110,6 +114,25 @@ public class Vector3
     }
 
     /**
+	 * Constructor, builds a vector from a data stream
+	 * 
+	 * @param is
+	 *            Data stream to read the binary data from
+     * @throws IOException 
+	 */
+    public Vector3(DataInputStream is) throws IOException
+    {
+		X = Y = Z = 0f;
+		fromBytes(is);
+    }
+    
+    public Vector3(SwappedDataInputStream is) throws IOException
+    {
+		X = Y = Z = 0f;
+		fromBytes(is);
+    }
+
+    /**
 	 * Constructor, builds a vector from a byte array
 	 * 
 	 * @param byteArray
@@ -122,13 +145,13 @@ public class Vector3
 	public Vector3(byte[] byteArray, int pos)
 	{
 		X = Y = Z = 0f;
-		FromBytes(byteArray, pos, false);
+		fromBytes(byteArray, pos, false);
 	}
 
 	public Vector3(byte[] byteArray, int pos, boolean le)
 	{
 		X = Y = Z = 0f;
-		FromBytes(byteArray, pos, le);
+		fromBytes(byteArray, pos, le);
 	}
 
 	public Vector3(float x, float y, float z)
@@ -151,7 +174,7 @@ public class Vector3
 	public byte[] GetBytes()
 	{
 		byte[] byteArray = new byte[12];
-		ToBytes(byteArray, 0, false);
+		toBytes(byteArray, 0, false);
 		return byteArray;
 	}
 
@@ -200,7 +223,7 @@ public class Vector3
 	 * @param le
 	 *            is the byte array in little endian format
 	 */
-	public void FromBytes(byte[] bytes, int pos, boolean le)
+	public void fromBytes(byte[] bytes, int pos, boolean le)
 	{
 		if (le)
 		{
@@ -218,6 +241,27 @@ public class Vector3
 	}
 
 	/**
+	 * Builds a vector from a data stream
+	 * 
+	 * @param is
+	 *            DataInputStream to read the vector from
+	 * @throws IOException 
+	 */
+	public void fromBytes(DataInputStream is) throws IOException
+	{
+		X = is.readFloat();
+		Y = is.readFloat();
+		Z = is.readFloat();
+	}
+
+	public void fromBytes(SwappedDataInputStream is) throws IOException
+	{
+		X = is.readFloat();
+		Y = is.readFloat();
+		Z = is.readFloat();
+	}
+	
+	/**
 	 * Writes the raw bytes for this vector to a byte array
 	 * 
 	 * @param dest
@@ -226,12 +270,12 @@ public class Vector3
 	 *            Position in the destination array to start writing. Must be at
 	 *            least 12 bytes before the end of the array
 	 */
-	public void ToBytes(byte[] dest, int pos)
+	public void toBytes(byte[] dest, int pos)
 	{
-		ToBytes(dest, pos, false);
+		toBytes(dest, pos, false);
 	}
 
-	public void ToBytes(byte[] dest, int pos, boolean le)
+	public void toBytes(byte[] dest, int pos, boolean le)
 	{
 		if (le)
 		{
