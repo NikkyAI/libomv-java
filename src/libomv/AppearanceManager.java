@@ -2027,7 +2027,7 @@ public class AppearanceManager implements PacketCallback
                     if (Wearables.containsKey(WearableType.setValue(block.WearableType)))
                     {
                         WearableData wearable = Wearables.get(WearableType.setValue(block.WearableType));
-                        if (wearable.AssetID != block.AssetID || wearable.ItemID != block.ItemID)
+                        if (!wearable.AssetID.equals(block.AssetID) || !wearable.ItemID.equals(block.ItemID))
                         {
                             // A different wearable is now set for this index
                             changed = true;
