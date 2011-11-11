@@ -1761,12 +1761,17 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// #region Copy
 
 	/**
-	 * 
+	 * Copy an item to a new location (folder)
 	 * 
 	 * @param item
+	 *            The UUID of the item to copy
 	 * @param newParent
+	 *            The UUID of the folder to copy the item to
 	 * @param newName
+	 *            An optional name to assign to the new item
+	 *            Can be null if the existing name should be used.
 	 * @param callback
+	 *            The callback to call on completion
 	 * @throws Exception
 	 */
 	public final void RequestCopyItem(UUID item, UUID newParent, String newName,
@@ -1776,13 +1781,19 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * 
+	 * Copy an item to a new location (folder)
 	 * 
 	 * @param item
+	 *            The UUID of the item to copy
 	 * @param newParent
+	 *            The UUID of the folder to copy the item to
 	 * @param newName
+	 *            An optional name to assign to the new item
+	 *            Can be null if the existing name should be used.
 	 * @param oldOwnerID
+	 *            The previous owner of the item
 	 * @param callback
+	 *            The callback to call on completion
 	 * @throws Exception
 	 */
 	public final void RequestCopyItem(UUID item, UUID newParent, String newName, UUID oldOwnerID,
@@ -1794,31 +1805,70 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		ArrayList<UUID> folders = new ArrayList<UUID>(1);
 		folders.add(newParent);
 
-		ArrayList<String> names = new ArrayList<String>(1);
-		names.add(newName);
+		if (newName != null)
+		{
+			ArrayList<String> newNames = new ArrayList<String>(1);
+			newNames.add(newName);
 
-		RequestCopyItems(items, folders, names, oldOwnerID, callback);
+			RequestCopyItems(items, folders, newNames, oldOwnerID, callback);
+		}
+		else
+		{
+			RequestCopyItems(items, folders, null, oldOwnerID, callback);
+		}
 	}
 
 	/**
-	 * 
+	 * Copy one or more items to a new location (folder)
 	 * 
 	 * @param items
-	 * @param targetFolders
-	 * @param newName
+	 *            The UUIDs of the items to copy
+	 * @param newParent
+	 *            The UUID of the folder to copy the item to
+	 * @param newNames
+	 *            An optional array of names to assign to the new items.
+	 *            Can be null if the existing name should be used.
 	 * @param oldOwnerID
+	 *            The previous owner of the items
 	 * @param callback
+	 *            The callback to call on completion
+	 * @throws Exception
+	 */
+	public final void RequestCopyItems(ArrayList<UUID> items, UUID newParent, ArrayList<String> newNames,
+			UUID oldOwnerID, Callback<ItemCopiedCallbackArgs> callback) throws Exception
+	{
+		ArrayList<UUID> folders = new ArrayList<UUID>(1);
+		folders.add(newParent);
+
+		RequestCopyItems(items, folders, newNames, oldOwnerID, callback);
+	}
+
+	/**
+	 * Copy one or more items to new locations (folders)
+	 * 
+	 * @param items
+	 *            The UUIDs of the items to copy
+	 * @param targetFolders
+	 *            The UUIDs of the folders to copy the items to
+	 * @param newNames
+	 *            An optional array of names to assign to the new items
+	 *            Can be null if the existing name should be used.
+	 * @param oldOwnerID
+	 *            The previous owner of the items
+	 * @param callback
+	 *            The callback to call on completion
 	 * @throws Exception
 	 */
 	public final void RequestCopyItems(ArrayList<UUID> items, ArrayList<UUID> targetFolders,
 			ArrayList<String> newNames, UUID oldOwnerID, Callback<ItemCopiedCallbackArgs> callback) throws Exception
 	{
-		if (items.size() != targetFolders.size() || (newNames != null && items.size() != newNames.size()))
+		if (newNames != null && items.size() != newNames.size())
 		{
 			throw new IllegalArgumentException("All list arguments must have an equal number of entries");
 		}
 
 		int callbackID = RegisterItemsCopiedCallback(callback);
+		int lastTarget = targetFolders.size() - 1;
 
 		CopyInventoryItemPacket copy = new CopyInventoryItemPacket();
 		copy.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1829,7 +1879,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		{
 			copy.InventoryData[i] = copy.new InventoryDataBlock();
 			copy.InventoryData[i].CallbackID = callbackID;
-			copy.InventoryData[i].NewFolderID = targetFolders.get(i);
+			copy.InventoryData[i].NewFolderID = targetFolders.get(lastTarget > i ? i : lastTarget);
 			copy.InventoryData[i].OldAgentID = oldOwnerID;
 			copy.InventoryData[i].OldItemID = items.get(i);
 
