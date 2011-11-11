@@ -3315,10 +3315,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			byte[] data = block.getData();
 
 			// UUID
-			UUID FullID = new UUID(data, 0);
-			i += 16;
+			UUID FullID = new UUID(data, 0); i += 16;
 			// Local ID
-			long localid = Helpers.BytesToUInt32L(data, 0);
+			int localid = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 			// PCode
 			PCode pcode = PCode.setValue(data[i++]);
 
@@ -3346,9 +3345,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				isNew = simulator.getObjectsPrimitives().containsKey(localid);
 			}
 
-			Primitive prim = GetPrimitive(simulator, (int) localid, FullID);
+			Primitive prim = GetPrimitive(simulator, localid, FullID);
 
-			prim.LocalID = (int) localid;
+			prim.LocalID = localid;
 			prim.ID = FullID;
 			prim.Flags = PrimFlags.setValue(block.UpdateFlags);
 			prim.PrimData.PCode = pcode;
@@ -3364,33 +3363,26 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Click action
 			prim.clickAction = ClickAction.setValue(data[i++]);
 			// Scale
-			prim.Scale = new Vector3(data, i);
-			i += 12;
+			prim.Scale = new Vector3(data, i); i += 12;
 			// Position
-			prim.Position = new Vector3(data, i);
-			i += 12;
+			prim.Position = new Vector3(data, i); i += 12;
 			// Rotation
-			prim.Rotation = new Quaternion(data, i, true);
-			i += 12;
+			prim.Rotation = new Quaternion(data, i, true); i += 12;
 			// Compressed flags
-			int flags = (int) Helpers.BytesToUInt32L(data, i);
-			i += 4;
+			int flags = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 
-			prim.OwnerID = new UUID(data, i);
-			i += 16;
+			prim.OwnerID = new UUID(data, i); i += 16;
 
 			// Angular velocity
 			if ((flags & CompressedFlags.HasAngularVelocity) != 0)
 			{
-				prim.AngularVelocity = new Vector3(data, i);
-				i += 12;
+				prim.AngularVelocity = new Vector3(data, i); i += 12;
 			}
 
 			// Parent ID
 			if ((flags & CompressedFlags.HasParent) != 0)
 			{
-				prim.ParentID = (int) Helpers.BytesToUInt32L(data, i);
-				i += 4;
+				prim.ParentID = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 			}
 			else
 			{
@@ -3401,7 +3393,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if ((flags & CompressedFlags.Tree) != 0)
 			{
 				prim.TreeSpecies = Tree.setValue(data[i++]);
-				// prim.ScratchPad = Utils.EmptyBytes;
+				prim.ScratchPad = Helpers.EmptyBytes;
 			}
 			// Scratch pad
 			else if ((flags & CompressedFlags.ScratchPad) != 0)
@@ -3409,11 +3401,16 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim.TreeSpecies = Tree.setValue((byte) 0);
 
 				int size = data[i++];
-				// prim.ScratchPad = new byte[size];
-				// Buffer.BlockCopy(block.Data, i, prim.ScratchPad, 0, size);
+				prim.ScratchPad = new byte[size];
+				System.arraycopy(data, i, prim.ScratchPad, 0, size);
 				i += size;
 			}
-			prim.ScratchPad = Helpers.EmptyBytes;
+			else
+			{
+				prim.TreeSpecies = Tree.setValue((byte) 0);
+				prim.ScratchPad = Helpers.EmptyBytes;
+			}
+			
 
 			// Floating text
 			if ((flags & CompressedFlags.HasText) != 0)
@@ -3421,8 +3418,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				String text = Helpers.EmptyString;
 				while (data[i] != 0)
 				{
-					text += (char) data[i];
-					i++;
+					text += (char) data[i++];
 				}
 				i++;
 
@@ -3430,8 +3426,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim.Text = text;
 
 				// Text color
-				prim.TextColor = new Color4(data, i, false);
-				i += 4;
+				prim.TextColor = new Color4(data, i, false); i += 4;
 			}
 			else
 			{
@@ -3446,8 +3441,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				String text = Helpers.EmptyString;
 				while (data[i] != 0)
 				{
-					text += (char) data[i];
-					i++;
+					text += (char) data[i++];
 				}
 				i++;
 
@@ -3457,8 +3451,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Particle system
 			if ((flags & CompressedFlags.HasParticles) != 0)
 			{
-				prim.ParticleSys = new ParticleSystem(data, i);
-				i += 86;
+				prim.ParticleSys = new ParticleSystem(data, i); i += 86;
 			}
 
 			// Extra parameters
@@ -3467,14 +3460,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Sound data
 			if ((flags & CompressedFlags.HasSound) != 0)
 			{
-				prim.SoundID = new UUID(data, i);
-				i += 16;
+				prim.SoundID = new UUID(data, i); i += 16;
 
-				prim.SoundGain = Helpers.BytesToFloatL(data, i);
-				i += 4;
+				prim.SoundGain = Helpers.BytesToFloatL(data, i); i += 4;
 				prim.SoundFlags = SoundFlags.setValue(data[i++]);
-				prim.SoundRadius = Helpers.BytesToFloatL(data, i);
-				i += 4;
+				prim.SoundRadius = Helpers.BytesToFloatL(data, i); i += 4;
 			}
 
 			// Name values
@@ -3483,8 +3473,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				String text = Helpers.EmptyString;
 				while (data[i] != 0)
 				{
-					text += (char) data[i];
-					i++;
+					text += (char) data[i++];
 				}
 				i++;
 
@@ -3506,11 +3495,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 
 			prim.PrimData.PathCurve = PathCurve.setValue(data[i++]);
-			short pathBegin = (short) Helpers.BytesToUInt16L(data, i);
-			i += 2;
+			short pathBegin = (short) Helpers.BytesToUInt16L(data, i); i += 2;
 			prim.PrimData.PathBegin = Primitive.UnpackBeginCut(pathBegin);
-			short pathEnd = (short) Helpers.BytesToUInt16L(data, i);
-			i += 2;
+			short pathEnd = (short) Helpers.BytesToUInt16L(data, i); i += 2;
 			prim.PrimData.PathEnd = Primitive.UnpackEndCut(pathEnd);
 			prim.PrimData.PathScaleX = Primitive.UnpackPathScale(data[i++]);
 			prim.PrimData.PathScaleY = Primitive.UnpackPathScale(data[i++]);
@@ -3525,23 +3512,19 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			prim.PrimData.PathSkew = Primitive.UnpackPathTwist(data[i++]);
 
 			prim.PrimData.ProfileCurve = ProfileCurve.setValue(data[i++]);
-			prim.PrimData.ProfileBegin = Primitive.UnpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
-			i += 2;
-			prim.PrimData.ProfileEnd = Primitive.UnpackEndCut((short) Helpers.BytesToUInt16L(data, i));
-			i += 2;
-			prim.PrimData.ProfileHollow = Primitive.UnpackProfileHollow((short) Helpers.BytesToUInt16L(data, i));
-			i += 2;
+			prim.PrimData.ProfileBegin = Primitive.UnpackBeginCut((short) Helpers.BytesToUInt16L(data, i)); i += 2;
+			prim.PrimData.ProfileEnd = Primitive.UnpackEndCut((short) Helpers.BytesToUInt16L(data, i)); i += 2;
+			prim.PrimData.ProfileHollow = Primitive.UnpackProfileHollow((short) Helpers.BytesToUInt16L(data, i)); i += 2;
 
 			// TextureEntry
-			int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i);
-			i += 4;
+			int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 			prim.Textures = new TextureEntry(data, i, textureEntryLength);
 			i += textureEntryLength;
 
 			// Texture animation
 			if ((flags & CompressedFlags.TextureAnimation) != 0)
 			{
-				// int textureAnimLength = (int)Helpers.BytesToUInt32(data, i);
+				// int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
 				i += 4;
 				prim.TextureAnim = prim.Textures.new TextureAnimation(data, i);
 			}

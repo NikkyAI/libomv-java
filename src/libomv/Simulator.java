@@ -1162,14 +1162,14 @@ public class Simulator extends Thread
 							DebugDumpBuffer(byteBuffer, numBytes, "<=============== Received packet length = ");
 						}
 
-						if ((byteBuffer[0] & Helpers.MSG_ZEROCODED) != 0)
+						if ((RecvBuffer[0] & Helpers.MSG_ZEROCODED) != 0)
 						{
 							int bodylen = numBytes;
-							if ((byteBuffer[0] & Helpers.MSG_APPENDED_ACKS) != 0)
+							if ((RecvBuffer[0] & Helpers.MSG_APPENDED_ACKS) != 0)
 							{
-								bodylen -= (byteBuffer[numBytes - 1] * 4 + 1);
+								bodylen -= (RecvBuffer[numBytes - 1] * 4 + 1);
 							}
-							byteBuffer = new byte[numBytes > 1000 ? 2000 : numBytes * 4];
+							byteBuffer = new byte[numBytes <= 1000 ? 4000 : numBytes * 4];
 							numBytes = ZeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
 							if (_Client.Settings.LOG_RAW_PACKET_BYTES)
 							{
@@ -1600,6 +1600,8 @@ public class Simulator extends Thread
 	 * @param src
 	 *            The byte array to decode
 	 * @param srclen
+	 *            The length of the input byte array
+	 * @param bodylen
 	 *            The length of the byte array to decode
 	 * @param dest
 	 *            The output byte array to decode to
@@ -1608,36 +1610,32 @@ public class Simulator extends Thread
 	 */
 	private static int ZeroDecode(byte[] src, int srclen, int bodylen, byte[] dest) throws Exception
 	{
-		int i, zerolen = 6 + src[5];
+		int i, destlen = 6 + src[5];
 
 		/* Copy the first 6 + extra header bytes as they are never compressed */
-		System.arraycopy(src, 0, dest, 0, zerolen);
-		for (i = zerolen; i < bodylen; i++)
+		System.arraycopy(src, 0, dest, 0, destlen);
+		for (i = destlen; i < bodylen; i++)
 		{
 			if (src[i] == 0x00)
 			{
 				for (byte j = 0; j < src[i + 1]; j++)
 				{
-					dest[zerolen++] = 0x00;
+					dest[destlen++] = 0x00;
 				}
 				i++;
 			}
 			else
 			{
-				dest[zerolen++] = src[i];
+				dest[destlen++] = src[i];
 			}
 		}
-		// HACK: Fix truncated zerocoded messages
-		// for (int j = zerolen; j < zerolen + 16; j++) {
-		// dest[j] = 0;
-		// }
-		// zerolen += 16;
 
-		// copy appended ACKs
-		for (; i < srclen; i++)
+		if (srclen > bodylen)
 		{
-			dest[zerolen++] = src[i];
+			/* Copy the appended ack data as they are never compressed */
+			System.arraycopy(src, bodylen, dest, destlen, srclen - bodylen);
+			destlen += srclen - bodylen;
 		}
-		return zerolen;
+		return destlen;
 	}
 }
