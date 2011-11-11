@@ -95,6 +95,8 @@ import libomv.packets.AgentSitPacket;
 import libomv.packets.AgentUpdatePacket;
 import libomv.packets.AlertMessagePacket;
 import libomv.packets.AvatarAnimationPacket;
+import libomv.packets.AvatarInterestsUpdatePacket;
+import libomv.packets.AvatarPropertiesUpdatePacket;
 import libomv.packets.AvatarSitResponsePacket;
 import libomv.packets.CameraConstraintPacket;
 import libomv.packets.ChatFromSimulatorPacket;
@@ -135,6 +137,7 @@ import libomv.packets.TeleportProgressPacket;
 import libomv.packets.TeleportStartPacket;
 import libomv.packets.UpdateMuteListEntryPacket;
 import libomv.packets.ViewerEffectPacket;
+import libomv.primitives.Avatar;
 import libomv.primitives.Primitive;
 import libomv.types.Color4;
 import libomv.types.Matrix4;
@@ -3260,7 +3263,48 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	// #endregion Movement actions
 
-	/**
+    /**
+     * Update agent profile
+     *
+     * @param profile <seealso cref="libomv.Avatar.AvatarProperties"/> struct containing updated profile information
+     * @throws Exception 
+     */
+    public void UpdateProfile(Avatar.AvatarProperties profile) throws Exception
+    {
+        AvatarPropertiesUpdatePacket apup = new AvatarPropertiesUpdatePacket();
+        apup.AgentData.AgentID = this.agentID;
+        apup.AgentData.SessionID = this.sessionID;
+        apup.PropertiesData.setAboutText(Helpers.StringToBytes(profile.AboutText));
+        apup.PropertiesData.AllowPublish = profile.getAllowPublish();
+        apup.PropertiesData.setFLAboutText(Helpers.StringToBytes(profile.FirstLifeText));
+        apup.PropertiesData.FLImageID = profile.FirstLifeImage;
+        apup.PropertiesData.ImageID = profile.ProfileImage;
+        apup.PropertiesData.MaturePublish = profile.getMaturePublish();
+        apup.PropertiesData.setProfileURL(Helpers.StringToBytes(profile.ProfileURL));
+
+        _Client.Network.SendPacket(apup);
+    }
+
+    /**
+     * Update agents profile interests
+     *
+     * @param interests selection of interests from <seealso cref="libomv.Avatar.Interests"/> struct
+     */
+    public void UpdateInterests(Avatar.Interests interests) throws Exception
+    {
+        AvatarInterestsUpdatePacket aiup = new AvatarInterestsUpdatePacket();
+        aiup.AgentData.AgentID = this.agentID;
+        aiup.AgentData.SessionID = this.sessionID;
+        aiup.PropertiesData.setLanguagesText(Helpers.StringToBytes(interests.LanguagesText));
+        aiup.PropertiesData.SkillsMask = interests.SkillsMask;
+        aiup.PropertiesData.setSkillsText(Helpers.StringToBytes(interests.SkillsText));
+        aiup.PropertiesData.WantToMask = interests.WantToMask;
+        aiup.PropertiesData.setWantToText(Helpers.StringToBytes(interests.WantToText));
+
+        _Client.Network.SendPacket(aiup);
+    }
+
+    /**
 	 * Set the height and the width of your avatar. This is used to scale
 	 * 
 	 * @param height
