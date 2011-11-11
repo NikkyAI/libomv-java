@@ -1805,12 +1805,9 @@ public class AssetManager implements PacketCallback
 				}
 			}
 
-			// This assumes that every transfer packet except the last one is
-			// exactly 1000 bytes, hopefully that is a safe assumption to make
 			try
 			{
-				System.arraycopy(asset.TransferData.getData(), 0, download.AssetData, 1000 * asset.TransferData.Packet,
-						asset.TransferData.getData().length);
+				System.arraycopy(asset.TransferData.getData(), 0, download.AssetData, download.Transferred, asset.TransferData.getData().length);
 				download.Transferred += asset.TransferData.getData().length;
 			}
 			catch (Exception t)
