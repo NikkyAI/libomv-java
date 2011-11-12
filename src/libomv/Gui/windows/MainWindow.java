@@ -39,6 +39,7 @@ import javax.swing.UIManager;
 
 import libomv.GridClient;
 import libomv.Gui.components.LoginPanel;
+import libomv.Gui.components.OnlinePanel;
 
 public class MainWindow extends JFrame
 {
@@ -86,6 +87,11 @@ public class MainWindow extends JFrame
 				// Create the online panel and display it
 				initializeOnlinePanel();
 			}
+			else if (command != null && command.equals("logout"))
+			{
+				// Create the online panel and display it
+				initializeLoginPanel();
+			}
 		}
 	}
 
@@ -102,7 +108,7 @@ public class MainWindow extends JFrame
 	{
 		if (jPSouth != null)
 			remove(jPSouth);
-//		jPSouth = new OnlinePanel(_Client, this, new PanelActionListener());
+		jPSouth = new OnlinePanel(_Client, this, new PanelActionListener());
 		add(jPSouth, BorderLayout.SOUTH);
 		validate();		
 	}
