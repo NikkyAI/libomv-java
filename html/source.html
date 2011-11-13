@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr" lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Contact Information | libomv-java</title>
+  <title>Thanks | libomv-java</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="shortcut icon" href="resources/favicon.ico" type="image/x-icon">
 <link type="text/css" rel="stylesheet" media="all" href="resources/content-module.css">
@@ -14,7 +14,7 @@
 <link type="text/css" rel="stylesheet" media="all" href="resources/fieldgroup.css">
 <link type="text/css" rel="stylesheet" media="all" href="resources/views.css">
 <link type="text/css" rel="stylesheet" media="all" href="resources/style.css">
-<script type="text/javascript"> </script>
+<script type="text/javascript"></script>
 </head>
 
 <body>
@@ -32,8 +32,8 @@
 <div class="content"><ul class="menu">
 <li class="leaf first"><a href="about.html" title="About this project">About libomv-java</a></li>
 <li class="leaf"><a href="thanks.html" title="Thanks">Thanks</a></li>
-<li class="leaf"><a href="source.html" title="Source code">Source code</a></li>
-<li class="leaf last active-trail"><a href="contact-information.html" title="Contact Information" class="active">Contact</a></li>
+<li class="leaf active-trial"><a href="source.html" title="Source code" class="active">Source code</a></li>
+<li class="leaf last"><a href="contact-information.html" title="Contact Information">Contact</a></li>
 </ul></div>
  </div>
   <div class="block block-menu" id="block-menu-secondary-links">
@@ -52,12 +52,32 @@
     </div>
 
         <div id="main">
-                    <h1 class="title">Contact Information</h1>
+                    <h1 class="title">Source code</h1>
             <div class="tabs"></div>
                   <div class="node">
             <span class="submitted"></span>
     <div class="taxonomy"></div>
-    <div class="content"><p>Please direct all queries to <a href="mailto:omf@openmetaverse.org">fredmartian@gmail.com</a>.</p>
+    <div class="content"><p>The libomv-java project consists of several subprojects. There is the actual core library libomv-core
+	which provides the entire network and resource handling for the <a href="http://wiki.secondlife.com/wiki/Protocol"
+	title="SL network protocol">SL network protocol</a>, which is used by OpenSim and Secondlife servers.</p>
+	<p>This library makes use of various other libraries which are provided in the distribution as precompiled libraries.
+	One of them is a modified version of the jj2000 library. The modified source code of this library is provided in the
+	libomv-jj2k subproject. You don't necessarily need to download the source code of this library, since the libomv-core
+	subproject contains a precompiled binary archive of this library in its classpath.</p>
+	<p>The libomv-gui subproject contains various gui components which use the awt/swing library. It will provide a text chat
+	client and various other GUI based tools, derived from the OpenMetaverse project library. This subproject requires either
+	the libomv-core binary archive and all its dependencies in the classpath, or the libomv-core subproject added to the
+	libomv-gui project as dependent project. In Eclipse you can easily add another project as dependencies to a project.</p>
+	<p>The source code for all these subprojects is provided in the SubVersion repository of this project on sourceforge.net
+	in separate subdirectories of the project. While it's possible to retrieve everything in one go from the root directory
+	of the repositiory it is much better to retrieve each subproject separately, especially when you develop from an IDE such
+	as Eclipse.</p>
+	
+	<p>They can be extracted with following svn URLs:
+<li class="expanded">libomv-core: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-core/trunk libomv-java</li>
+<li class="expanded">libomv-jj2K: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-jj2K/trunk libomv-jj2K</li>
+<li class="expanded">libomv-gui: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-gui/trunk libomv-gui</li>
+	</p>
 </div>
       </div>
         </div>
