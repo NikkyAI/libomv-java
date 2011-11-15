@@ -29,6 +29,8 @@ package libomv.rendering;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -48,7 +50,16 @@ public class LindenMesh
 
     public class Face
     {
-        public short[] Indices;
+        public short Indices1;
+        public short Indices2;
+        public short Indices3;
+        
+        public Face(ShortBuffer indices, int idx)
+        {
+        	Indices1 = indices.get(idx++);
+        	Indices2 = indices.get(idx++);
+        	Indices3 = indices.get(idx++);
+        }
     }
 
     public class Vertex
@@ -121,7 +132,7 @@ public class LindenMesh
         protected byte _rotationOrder;
         protected Vector3 _scale;
         protected short _numFaces;
-        protected Face[] _faces;
+        protected ShortBuffer Indices;
 
         public void LoadMesh(String filename) throws IOException
         {
@@ -144,12 +155,20 @@ public class LindenMesh
             _scale = new Vector3(fis);
             _numFaces = fis.readShort();
 
-            _faces = new Face[_numFaces];
-
+            Indices = ShortBuffer.allocate(3 * _numFaces);
             for (int i = 0; i < _numFaces; i++)
             {
-                _faces[i].Indices = new short[] { fis.readShort(), fis.readShort(), fis.readShort() };
+                Indices.put(fis.readShort());
+                Indices.put(fis.readShort());
+                Indices.put(fis.readShort());
             }
+        }
+        
+        public Face getFace(int index)
+        {
+        	if (index >= _numFaces)
+        		return null;
+    		return new Face(Indices, index * 3);
         }
     }
 
@@ -164,9 +183,41 @@ public class LindenMesh
     //public byte RotationOrder
     public Vector3 getScale() { return _scale; }
     public short getNumVertices() { return _numVertices; }
-    public Vertex[] getVertices() { return _vertices; }
+
+    public Vector3 getVerticeCoord(int index)
+    {
+    	if (index >= _numVertices)
+    		return null;
+    	index *= 3;
+    	return new Vector3(Vertices.get(index), Vertices.get(index + 1), Vertices.get(index + 2));
+    }
+
+    public Vertex getVertex(int index)
+    {
+    	if (index >= _numVertices)
+    		return null;
+
+    	Vertex vertex = new Vertex();
+    	int offset = index * 3;
+    	vertex.Coord = new Vector3(Vertices.get(offset), Vertices.get(offset + 1), Vertices.get(offset + 2));
+    	vertex.Normal = new Vector3(Normals.get(offset), Normals.get(offset + 1), Normals.get(offset + 2));
+    	vertex.BiNormal = new Vector3(BiNormals.get(offset), BiNormals.get(offset + 1), BiNormals.get(offset + 2));
+    	offset = index * 2;
+    	vertex.TexCoord = new Vector2(TexCoords.get(offset), TexCoords.get(offset + 1));
+    	vertex.DetailTexCoord = new Vector2(DetailTexCoords.get(offset), DetailTexCoords.get(offset + 1));
+    	vertex.Weight = Weights.get(index);
+    	return vertex;
+    }
+    
     public short getNumFaces() { return _numFaces; }
-    public Face[] getFaces() { return _faces; }
+
+    public Face getFace(int index)
+    {
+    	if (index >= _numFaces)
+    		return null;
+    	return new Face(Indices, index);
+    }
+    
     public short getNumSkinJoints() { return _numSkinJoints; }
     public String[] getSkinJoints() { return _skinJoints; }
     public Morph[] getMorphs() { return _morphs; }
@@ -183,9 +234,16 @@ public class LindenMesh
     protected byte _rotationOrder;
     protected Vector3 _scale;
     protected short _numVertices;
-    protected Vertex[] _vertices;
+    public FloatBuffer Vertices;
+    public FloatBuffer Normals;
+    public FloatBuffer BiNormals;
+    public FloatBuffer TexCoords;
+    public FloatBuffer DetailTexCoords;
+    public FloatBuffer Weights;
+    public Vector3 Center;
+   
     protected short _numFaces;
-    protected Face[] _faces;
+    public ShortBuffer Indices;
     protected short _numSkinJoints;
     protected String[] _skinJoints;
     protected Morph[] _morphs;
@@ -221,51 +279,88 @@ public class LindenMesh
 
         _numVertices = fis.readShort();
 
+        float temp;
+        float minX, minY, minZ;
+        minX = minY = minZ = Float.MAX_VALUE;
+        float maxX, maxY, maxZ;
+        maxX = maxY = maxZ = Float.MIN_VALUE;
+        
         // Populate the vertex array
-        _vertices = new Vertex[_numVertices];
-
+        Vertices = FloatBuffer.allocate(3 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
         {
-            _vertices[i].Coord = new Vector3(fis);
+        	temp = fis.readFloat();
+            if (temp < minX)
+                minX = temp;
+            else if (temp > maxX)
+                maxX = temp;
+            Vertices.put(temp);
+        	temp = fis.readFloat();
+            if (temp < minY)
+                minY = temp;
+            else if (temp > maxY)
+                maxY = temp;
+            Vertices.put(temp);
+        	temp = fis.readFloat();
+            if (temp < minZ)
+                minZ = temp;
+            else if (temp > maxZ)
+                maxZ = temp;
+            Vertices.put(temp);
+        }
+        // Calculate the center-point from the bounding box edges
+        Center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+        
+        Normals = FloatBuffer.allocate(3 * _numVertices);
+        for (int i = 0; i < _numVertices; i++)
+        {
+        	Normals.put(fis.readFloat());
+        	Normals.put(fis.readFloat());
+        	Normals.put(fis.readFloat());
         }
         
+        BiNormals = FloatBuffer.allocate(3 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
         {
-        	_vertices[i].Normal = new Vector3(fis);
+        	BiNormals.put(fis.readFloat());
+        	BiNormals.put(fis.readFloat());
+        	BiNormals.put(fis.readFloat());
         }
         
+        TexCoords = FloatBuffer.allocate(2 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
         {
-            _vertices[i].BiNormal = new Vector3(fis);
-        }
-        
-        for (int i = 0; i < _numVertices; i++)
-        {
-            _vertices[i].TexCoord = new Vector2(fis);
+            TexCoords.put(fis.readFloat());
+            TexCoords.put(fis.readFloat());
         }
         
         if (_hasDetailTexCoords)
         {
+            DetailTexCoords = FloatBuffer.allocate(2 * _numVertices);
             for (int i = 0; i < _numVertices; i++)
             {
-            	_vertices[i].DetailTexCoord = new Vector2(fis);
+            	DetailTexCoords.put(fis.readFloat());
+            	DetailTexCoords.put(fis.readFloat());
             }
         }
 
         if (_hasWeights)
         {
+        	Weights = FloatBuffer.allocate(_numVertices);
             for (int i = 0; i < _numVertices; i++)
             {
-                _vertices[i].Weight = fis.readFloat();
+                Weights.put(fis.readFloat());
             }
         }
 
         _numFaces = fis.readShort();
-        _faces = new Face[_numFaces];
 
+        Indices = ShortBuffer.allocate(3 * _numFaces);
         for (int i = 0; i < _numFaces; i++)
         {
-            _faces[i].Indices = new short[] { fis.readShort(), fis.readShort(), fis.readShort() };
+            Indices.put(fis.readShort());
+            Indices.put(fis.readShort());
+            Indices.put(fis.readShort());
         }
     
         if (_hasWeights)
@@ -334,7 +429,7 @@ public class LindenMesh
         	fis.close();
         }
     }
-
+    
     public void LoadLODMesh(int level, String filename) throws IOException
     {
         LODMesh lod = new LODMesh();
