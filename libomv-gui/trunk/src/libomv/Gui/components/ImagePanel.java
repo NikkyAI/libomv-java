@@ -29,14 +29,25 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
+import libomv.GridClient;
 import libomv.Gui.Resources;
+import libomv.assets.AssetTexture;
+import libomv.assets.TexturePipeline.TextureDownloadCallback;
+import libomv.assets.TexturePipeline.TextureRequestState;
+import libomv.types.UUID;
 
 // Panel to display an image loaded from a resource or other buffered image 
 public class ImagePanel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
-	/** The image to draw. */
-	private Image image = null;
+	// The image to draw
+	private Image _Image = null;
+	// The UUID of the image
+	private UUID _TextureID;
+	// Flag to determine if the image is resolved
+	private boolean _Resolved = false;
+	// Our grid client for the current session
+	private GridClient _Client;
 
 	/**
 	 * Constructor to intialize the contained image from a resource
@@ -47,7 +58,7 @@ public class ImagePanel extends JPanel
 	 */
 	public ImagePanel(String name)
 	{
-		this.image = Resources.loadImage(name);
+		this._Image = Resources.loadImage(name);
 	}
 
 	/**
@@ -58,22 +69,21 @@ public class ImagePanel extends JPanel
 	 */
 	public ImagePanel(Image image)
 	{
-		this.image = image;
+		setImage(image, true);
 	}
 
-	public void setImagePanel(Image image)
+	/**
+	 * Constructor
+	 * 
+	 * @param client
+	 * 			  The grid client to download the image through
+	 * @param textureID
+	 *            The UUID of the image
+	 */
+	public ImagePanel(GridClient client, UUID textureID)
 	{
-		this.image = image;
-	}
-
-	@Override
-	public void paintComponent(Graphics g)
-	{
-		// Call the super class.
-		super.paintComponent(g);
-
-		// Draw the image image.
-		g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), this);
+		this._Client = client;
+		this._TextureID = textureID;
 	}
 
 	/**
@@ -83,6 +93,86 @@ public class ImagePanel extends JPanel
 	 */
 	public Image getImage()
 	{
-		return image;
+		return _Image;
+	}
+
+	public void setImage(Image image)
+	{
+		setImage(image, true);
+	}
+
+	public void setImage(Image image, boolean resolved)
+	{
+		this._Image = image;
+		this._Resolved = resolved;
+		this.repaint();
+	}
+
+	/**
+	 * Determine whether the image has been resolved
+	 * 
+	 * @return True if resolved, otherwise false
+	 */
+	public boolean isResolved()
+	{
+		return _Resolved;
+	}
+	
+	/**
+	 * Request the image from the server
+	 * 
+	 * @return if request was possible
+	 */
+	public boolean request()
+	{
+		if (_Client == null || _TextureID == null)
+		    return false;
+	    
+		_Client.Assets.RequestImage(_TextureID, new ImageDownloadCallback());
+		return true;
+	}
+
+	/**
+	 * Callback receiving the texture download result
+	 * 
+	 */
+	private class ImageDownloadCallback implements TextureDownloadCallback
+	{
+		@Override
+		public void callback(TextureRequestState state, AssetTexture assetTexture)
+		{
+			if (state == TextureRequestState.Finished)
+			{
+				// TODO: Convert the Texture into an AWT Image
+				Image image = null /* assetTexture.Image */;
+				setImage(image, true);
+			}
+		}
+	}
+
+	/**
+	 * Called to update the component
+	 * 
+	 * @param g
+	 *            The graphics to update
+	 */
+	@Override
+	public void update(Graphics g)
+	{
+		// Call to the super class
+		super.update(g);
+
+		// Draw the image image
+		g.drawImage(_Image, 0, 0, this.getWidth(), this.getHeight(), this);
+	}
+
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		// Call the super class.
+		super.paintComponent(g);
+
+		// Draw the image image.
+		g.drawImage(_Image, 0, 0, this.getWidth(), this.getHeight(), this);
 	}
 }
