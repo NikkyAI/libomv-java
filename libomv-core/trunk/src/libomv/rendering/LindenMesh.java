@@ -26,6 +26,7 @@
  */
 package libomv.rendering;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,6 +140,11 @@ public class LindenMesh
         	LoadMesh(new FileInputStream(filename));
         }
         
+        public void LoadMesh(File file) throws IOException
+        {
+        	LoadMesh(new FileInputStream(file));
+        }
+
         public void LoadMesh(InputStream stream) throws IOException
         {
         	SwappedDataInputStream fis = new SwappedDataInputStream(stream);
@@ -262,6 +268,11 @@ public class LindenMesh
     	LoadMesh(new FileInputStream(filename));
     }
     
+    public void LoadMesh(File file) throws IOException
+    {
+    	LoadMesh(new FileInputStream(file));
+    }
+
     public void LoadMesh(InputStream stream) throws IOException
     {
     	SwappedDataInputStream fis = new SwappedDataInputStream(stream);
@@ -434,6 +445,13 @@ public class LindenMesh
     {
         LODMesh lod = new LODMesh();
         lod.LoadMesh(filename);
+        _lodMeshes.put(level, lod);
+    }
+
+    public void LoadLODMesh(int level, File file) throws IOException
+    {
+        LODMesh lod = new LODMesh();
+        lod.LoadMesh(file);
         _lodMeshes.put(level, lod);
     }
 }
