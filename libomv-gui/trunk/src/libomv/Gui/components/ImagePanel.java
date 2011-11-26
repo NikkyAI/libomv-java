@@ -27,7 +27,7 @@ package libomv.Gui.components;
 import java.awt.Graphics;
 import java.awt.Image;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import libomv.GridClient;
 import libomv.Gui.Resources;
@@ -36,8 +36,8 @@ import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
 import libomv.types.UUID;
 
-// Panel to display an image loaded from a resource or other buffered image 
-public class ImagePanel extends JPanel
+// Component to display an image loaded from a resource or other buffered image 
+public class ImagePanel extends JComponent
 {
 	private static final long serialVersionUID = 1L;
 	// The image to draw
@@ -49,15 +49,19 @@ public class ImagePanel extends JPanel
 	// Our grid client for the current session
 	private GridClient _Client;
 
+	public ImagePanel()
+	{
+		super();
+	}
 	/**
 	 * Constructor to intialize the contained image from a resource
 	 * 
 	 * @param name
 	 *            Resource name to load the image from
-	 * @wbp.parser.constructor
 	 */
 	public ImagePanel(String name)
 	{
+		super();
 		this._Image = Resources.loadImage(name);
 	}
 
@@ -69,6 +73,7 @@ public class ImagePanel extends JPanel
 	 */
 	public ImagePanel(Image image)
 	{
+		super();
 		setImage(image, true);
 	}
 
@@ -82,6 +87,7 @@ public class ImagePanel extends JPanel
 	 */
 	public ImagePanel(GridClient client, UUID textureID)
 	{
+		super();
 		this._Client = client;
 		this._TextureID = textureID;
 	}
