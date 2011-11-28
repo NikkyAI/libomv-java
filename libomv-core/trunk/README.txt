@@ -9,6 +9,40 @@ Many modifications to the original Java port and additions from newer OpenMetave
 by Frederick Martian.
 
 
+Installing the library
+----------------------
+
+The libomv-java project consists of several subprojects. There is the actual core library libomv-core
+which provides the entire network and resource handling for SL network protocol, which is used by 
+penSim and Secondlife servers.
+
+This library makes use of various other libraries which are provided in the distribution as precompiled
+libraries. One of them is a modified version of the jj2000 library. The modified source code of this
+library is provided in the libomv-jj2k subproject. You don't necessarily need to download the source
+code of this library, since the libomv-core subproject contains a precompiled binary archive of this
+library in its classpath.
+
+The libomv-gui subproject contains various gui components which use the awt/swing library. It will
+provide a text chat client and various other GUI based tools, derived from the OpenMetaverse project
+library. This subproject requires either the libomv-core binary archive and all its dependencies in
+the classpath, or the libomv-core subproject added to the libomv-gui project as dependent project.
+In Eclipse you can easily add another project as dependencies to a project.
+
+The source code for all these subprojects is provided in the SubVersion repository of this project
+on sourceforge.net in separate subdirectories of the project. While it's possible to retrieve
+everything in one go from the root directory of the repository it is much better to retrieve each
+subproject separately, especially when you develop from an IDE such as Eclipse.
+	
+They can be extracted with following svn URLs:
+libomv-core: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-core/trunk libomv-java
+libomv-jj2K: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-jj2K/trunk libomv-jj2K
+libomv-gui: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-gui/trunk libomv-gui
+
+libomv-gui has an extra dependency for the jogl libraries that get best installed as user libraries in the
+Eclipse Environment. More details to follow. For now jogl is not a critical part as the only program
+(AvatarViewer) that needs it not yet functional.
+
+
 Building the library and examples
 ---------------------------------
 
