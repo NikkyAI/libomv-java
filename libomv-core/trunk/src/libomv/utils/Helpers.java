@@ -104,7 +104,7 @@ public class Helpers
 	public static final byte[] EmptyBytes = new byte[0];
 	public static final String EmptyString = new String();
 
-	public static final String NewLine = "\n";
+	public static final String NewLine = System.getProperty("line.separator");
 	/** UNIX epoch in DateTime format */
 	public static final Date Epoch = new Date(0);
 
