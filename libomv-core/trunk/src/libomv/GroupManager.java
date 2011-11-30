@@ -30,26 +30,28 @@ import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.GroupManager.GroupAccountTransactions.TransactionEntry;
+import libomv.GroupManager.GroupMember;
+import libomv.GroupManager.GroupRole;
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.AgentDropGroupMessage;
 import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.IMessage;
-import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.packets.ActivateGroupPacket;
 import libomv.packets.AgentDataUpdateRequestPacket;
-import libomv.packets.AgentGroupDataUpdatePacket;
 import libomv.packets.AgentDropGroupPacket;
+import libomv.packets.AgentGroupDataUpdatePacket;
 import libomv.packets.CreateGroupReplyPacket;
 import libomv.packets.CreateGroupRequestPacket;
 import libomv.packets.EjectGroupMemberReplyPacket;
@@ -90,11 +92,11 @@ import libomv.packets.StartGroupProposalPacket;
 import libomv.packets.UUIDGroupNameReplyPacket;
 import libomv.packets.UUIDGroupNameRequestPacket;
 import libomv.packets.UpdateGroupInfoPacket;
-import libomv.types.UUID;
 import libomv.types.PacketCallback;
+import libomv.types.UUID;
 import libomv.types.Vector3;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.HashMapInt;
 import libomv.utils.Helpers;
@@ -632,13 +634,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// Currently-active group role-member requests
 	private ArrayList<UUID> GroupRolesMembersRequests;
 	// Dictionary keeping group members while request is in progress
-	private Hashtable<UUID, Hashtable<UUID, GroupMember>> TempGroupMembers;
+	private HashMap<UUID, HashMap<UUID, GroupMember>> TempGroupMembers;
 	// Dictionary keeping member/role mapping while request is in progress
-	private Hashtable<UUID, ArrayList<Entry<UUID, UUID>>> TempGroupRolesMembers;
+	private HashMap<UUID, ArrayList<Entry<UUID, UUID>>> TempGroupRolesMembers;
 	// Dictionary keeping GroupRole information while request is in progress
-	private Hashtable<UUID, Hashtable<UUID, GroupRole>> TempGroupRoles;
+	private HashMap<UUID, HashMap<UUID, GroupRole>> TempGroupRoles;
 	// Caches group name lookups
-	public Hashtable<UUID, String> GroupName2KeyCache;
+	public HashMap<UUID, String> GroupName2KeyCache;
 
 	public CallbackHandler<CurrentGroupsCallbackArgs> OnCurrentGroups = new CallbackHandler<CurrentGroupsCallbackArgs>();
 
@@ -670,9 +672,9 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<GroupInvitationCallbackArgs> OnGroupInvitation = new CallbackHandler<GroupInvitationCallbackArgs>();
 
-	public Hashtable<UUID, Callback<GroupAccountDetails>> OnGroupAccountDetailsCallbacks = new Hashtable<UUID, Callback<GroupAccountDetails>>();
+	public HashMap<UUID, Callback<GroupAccountDetails>> OnGroupAccountDetailsCallbacks = new HashMap<UUID, Callback<GroupAccountDetails>>();
 
-	public Hashtable<UUID, Callback<GroupAccountTransactions>> OnGroupAccountTransactionsCallbacks = new Hashtable<UUID, Callback<GroupAccountTransactions>>();
+	public HashMap<UUID, Callback<GroupAccountTransactions>> OnGroupAccountTransactionsCallbacks = new HashMap<UUID, Callback<GroupAccountTransactions>>();
 
 	private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs>
 	{
@@ -714,13 +716,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 	{
 		Client = client;
 
-		TempGroupMembers = new Hashtable<UUID, Hashtable<UUID, GroupMember>>();
+		TempGroupMembers = new HashMap<UUID, HashMap<UUID, GroupMember>>();
 		GroupMembersRequests = new ArrayList<UUID>();
-		TempGroupRoles = new Hashtable<UUID, Hashtable<UUID, GroupRole>>();
+		TempGroupRoles = new HashMap<UUID, HashMap<UUID, GroupRole>>();
 		GroupRolesRequests = new ArrayList<UUID>();
-		TempGroupRolesMembers = new Hashtable<UUID, ArrayList<Entry<UUID, UUID>>>();
+		TempGroupRolesMembers = new HashMap<UUID, ArrayList<Entry<UUID, UUID>>>();
 		GroupRolesMembersRequests = new ArrayList<UUID>();
-		GroupName2KeyCache = new Hashtable<UUID, String>();
+		GroupName2KeyCache = new HashMap<UUID, String>();
 
 		Client.Self.OnInstantMessage.add(new InstantMessageCallback());
 
@@ -855,7 +857,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// making a request
 		if (GroupName2KeyCache.containsKey(groupID))
 		{
-			Hashtable<UUID, String> groupNames = new Hashtable<UUID, String>();
+			HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
 			synchronized (GroupName2KeyCache)
 			{
 				groupNames.put(groupID, GroupName2KeyCache.get(groupID));
@@ -881,7 +883,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 */
 	public final void RequestGroupNames(ArrayList<UUID> groupIDs) throws Exception
 	{
-		Hashtable<UUID, String> groupNames = new Hashtable<UUID, String>();
+		HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
 		synchronized (GroupName2KeyCache)
 		{
 			for (UUID groupID : groupIDs)
@@ -1526,7 +1528,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		{
 			AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 
-			Hashtable<UUID, Group> currentGroups = new Hashtable<UUID, Group>();
+			HashMap<UUID, Group> currentGroups = new HashMap<UUID, Group>();
 			for (int i = 0; i < msg.GroupDataBlock.length; i++)
 			{
 				Group group = new Group(msg.GroupDataBlock[i].GroupID);
@@ -1557,7 +1559,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		{
 			AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
 
-			Hashtable<UUID, Group> currentGroups = new Hashtable<UUID, Group>();
+			HashMap<UUID, Group> currentGroups = new HashMap<UUID, Group>();
 
 			for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData)
 			{
@@ -1687,7 +1689,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		if (OnGroupTitles.count() > 0)
 		{
 			GroupTitlesReplyPacket titles = (GroupTitlesReplyPacket) packet;
-			java.util.Hashtable<UUID, GroupTitle> groupTitleCache = new java.util.Hashtable<UUID, GroupTitle>();
+			java.util.HashMap<UUID, GroupTitle> groupTitleCache = new java.util.HashMap<UUID, GroupTitle>();
 
 			for (GroupTitlesReplyPacket.GroupDataBlock block : titles.GroupData)
 			{
@@ -1717,7 +1719,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	private final void HandleGroupMembers(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
 		GroupMembersReplyPacket members = (GroupMembersReplyPacket) packet;
-		Hashtable<UUID, GroupMember> groupMemberCache = null;
+		HashMap<UUID, GroupMember> groupMemberCache = null;
 
 		synchronized (GroupMembersRequests)
 		{
@@ -1732,7 +1734,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 					}
 					else
 					{
-						groupMemberCache = new java.util.Hashtable<UUID, GroupMember>();
+						groupMemberCache = new java.util.HashMap<UUID, GroupMember>();
 						TempGroupMembers.put(members.GroupData.RequestID, groupMemberCache);
 					}
 
@@ -1778,7 +1780,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			throws UnsupportedEncodingException
 	{
 		GroupRoleDataReplyPacket roles = (GroupRoleDataReplyPacket) packet;
-		Hashtable<UUID, GroupRole> groupRoleCache = null;
+		HashMap<UUID, GroupRole> groupRoleCache = null;
 
 		synchronized (GroupRolesRequests)
 		{
@@ -1789,13 +1791,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 				synchronized (TempGroupRoles)
 				{
-					if (TempGroupRoles.contains(roles.GroupData.RequestID))
+					if (TempGroupRoles.containsKey(roles.GroupData.RequestID))
 					{
 						groupRoleCache = TempGroupRoles.get(roles.GroupData.RequestID);
 					}
 					else
 					{
-						groupRoleCache = new java.util.Hashtable<UUID, GroupRole>();
+						groupRoleCache = new java.util.HashMap<UUID, GroupRole>();
 						TempGroupRoles.put(roles.GroupData.RequestID, groupRoleCache);
 					}
 
@@ -1848,7 +1850,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			{
 				synchronized (TempGroupRolesMembers)
 				{
-					if (TempGroupRolesMembers.contains(members.AgentData.RequestID))
+					if (TempGroupRolesMembers.containsKey(members.AgentData.RequestID))
 					{
 						groupRoleMemberCache = TempGroupRolesMembers.get(members.AgentData.RequestID);
 					}
@@ -2053,7 +2055,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		UUIDGroupNameReplyPacket reply = (UUIDGroupNameReplyPacket) packet;
 		UUIDGroupNameReplyPacket.UUIDNameBlockBlock[] blocks = reply.UUIDNameBlock;
 
-		java.util.Hashtable<UUID, String> groupNames = new java.util.Hashtable<UUID, String>();
+		java.util.HashMap<UUID, String> groupNames = new java.util.HashMap<UUID, String>();
 
 		for (UUIDGroupNameReplyPacket.UUIDNameBlockBlock block : blocks)
 		{
@@ -2143,10 +2145,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// Contains the current groups your agent is a member of
 	public class CurrentGroupsCallbackArgs implements CallbackArgs
 	{
-		private final java.util.Hashtable<UUID, Group> m_Groups;
+		private final java.util.HashMap<UUID, Group> m_Groups;
 
 		// Get the current groups your agent is a member of
-		public final java.util.Hashtable<UUID, Group> getGroups()
+		public final java.util.HashMap<UUID, Group> getGroups()
 		{
 			return m_Groups;
 		}
@@ -2157,7 +2159,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param groups
 		 *            The current groups your agent is a member of
 		 */
-		public CurrentGroupsCallbackArgs(java.util.Hashtable<UUID, Group> groups)
+		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, Group> groups)
 		{
 			this.m_Groups = groups;
 		}
@@ -2167,10 +2169,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// is the groups name
 	public class GroupNamesCallbackArgs implements CallbackArgs
 	{
-		private final Hashtable<UUID, String> m_GroupNames;
+		private final HashMap<UUID, String> m_GroupNames;
 
 		// Get the Group Names dictionary
-		public final Hashtable<UUID, String> getGroupNames()
+		public final HashMap<UUID, String> getGroupNames()
 		{
 			return m_GroupNames;
 		}
@@ -2181,7 +2183,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param groupNames
 		 *            The Group names dictionary
 		 */
-		public GroupNamesCallbackArgs(Hashtable<UUID, String> groupNames)
+		public GroupNamesCallbackArgs(HashMap<UUID, String> groupNames)
 		{
 			this.m_GroupNames = groupNames;
 		}
@@ -2192,7 +2194,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	{
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
-		private final Hashtable<UUID, GroupMember> m_Members;
+		private final HashMap<UUID, GroupMember> m_Members;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
@@ -2208,7 +2210,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 
 		// Get the dictionary of members
-		public final Hashtable<UUID, GroupMember> getMembers()
+		public final HashMap<UUID, GroupMember> getMembers()
 		{
 			return m_Members;
 		}
@@ -2223,7 +2225,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param members
 		 *            The membership list of the group
 		 */
-		public GroupMembersReplyCallbackArgs(UUID requestID, UUID groupID, Hashtable<UUID, GroupMember> members)
+		public GroupMembersReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupMember> members)
 		{
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
@@ -2236,7 +2238,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	{
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
-		private final Hashtable<UUID, GroupRole> m_Roles;
+		private final HashMap<UUID, GroupRole> m_Roles;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
@@ -2252,7 +2254,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 
 		// Get the dictionary containing the roles
-		public final java.util.Hashtable<UUID, GroupRole> getRoles()
+		public final java.util.HashMap<UUID, GroupRole> getRoles()
 		{
 			return m_Roles;
 		}
@@ -2268,7 +2270,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param roles
 		 *            The dictionary containing the roles
 		 */
-		public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, java.util.Hashtable<UUID, GroupRole> roles)
+		public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, java.util.HashMap<UUID, GroupRole> roles)
 		{
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
@@ -2328,7 +2330,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	{
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
-		private final Hashtable<UUID, GroupTitle> m_Titles;
+		private final HashMap<UUID, GroupTitle> m_Titles;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
@@ -2344,7 +2346,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 
 		// Get the titles
-		public final Hashtable<UUID, GroupTitle> getTitles()
+		public final HashMap<UUID, GroupTitle> getTitles()
 		{
 			return m_Titles;
 		}
@@ -2360,7 +2362,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param titles
 		 *            The titles
 		 */
-		public GroupTitlesReplyCallbackArgs(UUID requestID, UUID groupID, Hashtable<UUID, GroupTitle> titles)
+		public GroupTitlesReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupTitle> titles)
 		{
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
