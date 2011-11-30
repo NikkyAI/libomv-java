@@ -145,7 +145,7 @@ public final class LLSDXml
 	 * String.format("Line: %d - Position: %d - %s", XmlTextReader.LineNumber,
 	 * XmlTextReader.LinePosition, args.Message); if
 	 * (LastXmlErrors.equals(String.Empty)) LastXmlErrors = error; else
-	 * LastXmlErrors += Environment.NewLine + error; }
+	 * LastXmlErrors += Helpers.NewLine + error; }
 	 */
 
 	/**

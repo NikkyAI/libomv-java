@@ -68,6 +68,9 @@ public class Settings implements PacketCallback
 	/* Initialize Asset Manager */
 	public boolean ENABLE_ASSET_MANAGER = false;
 
+	/* Initialize Directory Manager */
+	public boolean ENABLE_DIRECTORY_MANAGER = false;
+
 	// #region Login/Networking Settings
 
 	/* IP Address the client will bind to */

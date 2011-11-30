@@ -673,14 +673,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// /#region callback handlers
-	public CallbackHandler<EventInfoReplyEventArgs> OnEventInfo;
-	public CallbackHandler<DirEventsReplyEventArgs> OnDirEvents;
-	public CallbackHandler<PlacesReplyEventArgs> OnPlaces;
-	public CallbackHandler<DirPlacesReplyEventArgs> OnDirPlaces;
-	public CallbackHandler<DirClassifiedsReplyEventArgs> OnDirClassifieds;
-	public CallbackHandler<DirGroupsReplyEventArgs> OnDirGroups;
-	public CallbackHandler<DirPeopleReplyEventArgs> OnDirPeople;
-	public CallbackHandler<DirLandReplyEventArgs> OnDirLand;
+	public CallbackHandler<EventInfoReplyCallbackArgs> OnEventInfo;
+	public CallbackHandler<DirEventsReplyCallbackArgs> OnDirEvents;
+	public CallbackHandler<PlacesReplyCallbackArgs> OnPlaces;
+	public CallbackHandler<DirPlacesReplyCallbackArgs> OnDirPlaces;
+	public CallbackHandler<DirClassifiedsReplyCallbackArgs> OnDirClassifieds;
+	public CallbackHandler<DirGroupsReplyCallbackArgs> OnDirGroups;
+	public CallbackHandler<DirPeopleReplyCallbackArgs> OnDirPeople;
+	public CallbackHandler<DirLandReplyCallbackArgs> OnDirLand;
 
 	// /#region Private Members
 	private GridClient Client;
@@ -1306,7 +1306,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	public final ArrayList<AgentSearchData> PeopleSearch(DirFindFlags findFlags, String searchText, int queryStart,
 			int timeoutMS) throws Exception
 	{
-		class DirPeopleCallbackHandler implements Callback<DirPeopleReplyEventArgs>
+		class DirPeopleCallbackHandler implements Callback<DirPeopleReplyCallbackArgs>
 		{
 			private ArrayList<AgentSearchData> people = null;
 			private UUID uuid;
@@ -1317,7 +1317,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			}
 
 			@Override
-			public void callback(DirPeopleReplyEventArgs e)
+			public void callback(DirPeopleReplyCallbackArgs e)
 			{
 				if (uuid == e.getQueryID())
 				{
@@ -1374,7 +1374,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 				classifieds.add(classified);
 			}
-			OnDirClassifieds.dispatch(new DirClassifiedsReplyEventArgs(classifieds));
+			OnDirClassifieds.dispatch(new DirClassifiedsReplyCallbackArgs(classifieds));
 		}
 	}
 
@@ -1407,7 +1407,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 				parcelsForSale.add(dirParcel);
 			}
-			OnDirLand.dispatch(new DirLandReplyEventArgs(parcelsForSale));
+			OnDirLand.dispatch(new DirLandReplyCallbackArgs(parcelsForSale));
 		}
 	}
 
@@ -1439,7 +1439,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 				parcelsForSale.add(dirParcel);
 			}
-			OnDirLand.dispatch(new DirLandReplyEventArgs(parcelsForSale));
+			OnDirLand.dispatch(new DirLandReplyCallbackArgs(parcelsForSale));
 		}
 	}
 
@@ -1469,7 +1469,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				searchData.AgentID = reply.AgentID;
 				matches.add(searchData);
 			}
-			OnDirPeople.dispatch(new DirPeopleReplyEventArgs(peopleReply.QueryID, matches));
+			OnDirPeople.dispatch(new DirPeopleReplyCallbackArgs(peopleReply.QueryID, matches));
 		}
 	}
 
@@ -1496,7 +1496,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				groupsData.Members = reply.Members;
 				matches.add(groupsData);
 			}
-			OnDirGroups.dispatch(new DirGroupsReplyEventArgs(groupsReply.QueryID, matches));
+			OnDirGroups.dispatch(new DirGroupsReplyCallbackArgs(groupsReply.QueryID, matches));
 		}
 	}
 
@@ -1534,7 +1534,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				place.SKU = block.ProductSku;
 				places.add(place);
 			}
-			OnPlaces.dispatch(new PlacesReplyEventArgs(replyMessage.QueryID, places));
+			OnPlaces.dispatch(new PlacesReplyCallbackArgs(replyMessage.QueryID, places));
 		}
 	}
 
@@ -1573,7 +1573,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 				places.add(place);
 			}
-			OnPlaces.dispatch(new PlacesReplyEventArgs(placesReply.TransactionID, places));
+			OnPlaces.dispatch(new PlacesReplyCallbackArgs(placesReply.TransactionID, places));
 		}
 	}
 
@@ -1604,7 +1604,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				eventsData.Flags = EventFlags.setValue(reply.EventFlags);
 				matches.add(eventsData);
 			}
-			OnDirEvents.dispatch(new DirEventsReplyEventArgs(eventsReply.QueryID, matches));
+			OnDirEvents.dispatch(new DirEventsReplyCallbackArgs(eventsReply.QueryID, matches));
 		}
 	}
 
@@ -1637,7 +1637,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			evinfo.SimName = Helpers.BytesToString(eventReply.EventData.getSimName());
 			evinfo.GlobalPos = eventReply.EventData.GlobalPos;
 
-			OnEventInfo.dispatch(new EventInfoReplyEventArgs(evinfo));
+			OnEventInfo.dispatch(new EventInfoReplyCallbackArgs(evinfo));
 		}
 	}
 
@@ -1669,7 +1669,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				result.add(p);
 			}
 
-			OnDirPlaces.dispatch(new DirPlacesReplyEventArgs(reply.QueryID[0], result));
+			OnDirPlaces.dispatch(new DirPlacesReplyCallbackArgs(reply.QueryID[0], result));
 		}
 	}
 
@@ -1679,7 +1679,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 * Contains the Event data returned from the data server from an
 	 * EventInfoRequest
 	 */
-	public class EventInfoReplyEventArgs implements CallbackArgs
+	public class EventInfoReplyCallbackArgs implements CallbackArgs
 	{
 		private final DirectoryManager.EventInfo m_MatchedEvent;
 
@@ -1696,14 +1696,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 *            A single EventInfo object containing the details of an
 		 *            event
 		 */
-		public EventInfoReplyEventArgs(DirectoryManager.EventInfo matchedEvent)
+		public EventInfoReplyCallbackArgs(DirectoryManager.EventInfo matchedEvent)
 		{
 			this.m_MatchedEvent = matchedEvent;
 		}
 	}
 
 	/** Contains the "Event" detail data returned from the data server */
-	public class DirEventsReplyEventArgs implements CallbackArgs
+	public class DirEventsReplyCallbackArgs implements CallbackArgs
 	{
 		private final UUID m_QueryID;
 
@@ -1732,7 +1732,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 *            A list containing the "Events" returned by the search
 		 *            query
 		 */
-		public DirEventsReplyEventArgs(UUID queryID, ArrayList<DirectoryManager.EventsSearchData> matchedEvents)
+		public DirEventsReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.EventsSearchData> matchedEvents)
 		{
 			this.m_QueryID = queryID;
 			this.m_matchedEvents = matchedEvents;
@@ -1740,7 +1740,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// Contains the "Event" list data returned from the data server
-	public class PlacesReplyEventArgs implements CallbackArgs
+	public class PlacesReplyCallbackArgs implements CallbackArgs
 	{
 		private final UUID m_QueryID;
 
@@ -1769,7 +1769,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 *            A list containing the "Places" returned by the data server
 		 *            query
 		 */
-		public PlacesReplyEventArgs(UUID queryID, ArrayList<DirectoryManager.PlacesSearchData> matchedPlaces)
+		public PlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.PlacesSearchData> matchedPlaces)
 		{
 			this.m_QueryID = queryID;
 			this.m_MatchedPlaces = matchedPlaces;
@@ -1777,7 +1777,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// Contains the places data returned from the data server
-	public class DirPlacesReplyEventArgs implements CallbackArgs
+	public class DirPlacesReplyCallbackArgs implements CallbackArgs
 	{
 		private final UUID m_QueryID;
 
@@ -1806,7 +1806,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 * @param matchedParcels
 		 *            A list containing land data returned by the data server
 		 */
-		public DirPlacesReplyEventArgs(UUID queryID, ArrayList<DirectoryManager.DirectoryParcel> matchedParcels)
+		public DirPlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.DirectoryParcel> matchedParcels)
 		{
 			this.m_QueryID = queryID;
 			this.m_MatchedParcels = matchedParcels;
@@ -1814,7 +1814,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// Contains the classified data returned from the data server
-	public class DirClassifiedsReplyEventArgs implements CallbackArgs
+	public class DirClassifiedsReplyCallbackArgs implements CallbackArgs
 	{
 		private final ArrayList<DirectoryManager.Classified> m_Classifieds;
 
@@ -1830,14 +1830,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 * @param classifieds
 		 *            A list of classified ad data returned from the data server
 		 */
-		public DirClassifiedsReplyEventArgs(ArrayList<DirectoryManager.Classified> classifieds)
+		public DirClassifiedsReplyCallbackArgs(ArrayList<DirectoryManager.Classified> classifieds)
 		{
 			this.m_Classifieds = classifieds;
 		}
 	}
 
 	// Contains the group data returned from the data server
-	public class DirGroupsReplyEventArgs implements CallbackArgs
+	public class DirGroupsReplyCallbackArgs implements CallbackArgs
 	{
 		private final UUID m_QueryID;
 
@@ -1865,7 +1865,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 * @param matchedGroups
 		 *            A list of groups data returned by the data server
 		 */
-		public DirGroupsReplyEventArgs(UUID queryID, ArrayList<DirectoryManager.GroupSearchData> matchedGroups)
+		public DirGroupsReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.GroupSearchData> matchedGroups)
 		{
 			this.m_QueryID = queryID;
 			this.m_matchedGroups = matchedGroups;
@@ -1873,7 +1873,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// Contains the people data returned from the data server
-	public class DirPeopleReplyEventArgs implements CallbackArgs
+	public class DirPeopleReplyCallbackArgs implements CallbackArgs
 	{
 		private final UUID m_QueryID;
 
@@ -1901,7 +1901,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 * @param matchedPeople
 		 *            A list of people data returned by the data server
 		 */
-		public DirPeopleReplyEventArgs(UUID queryID, ArrayList<DirectoryManager.AgentSearchData> matchedPeople)
+		public DirPeopleReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.AgentSearchData> matchedPeople)
 		{
 			this.m_QueryID = queryID;
 			this.m_MatchedPeople = matchedPeople;
@@ -1909,7 +1909,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// Contains the land sales data returned from the data server
-	public class DirLandReplyEventArgs implements CallbackArgs
+	public class DirLandReplyCallbackArgs implements CallbackArgs
 	{
 		private final ArrayList<DirectoryManager.DirectoryParcel> m_DirParcels;
 
@@ -1925,7 +1925,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		 * @param dirParcels
 		 *            A list of parcels for sale returned by the data server
 		 */
-		public DirLandReplyEventArgs(ArrayList<DirectoryManager.DirectoryParcel> dirParcels)
+		public DirLandReplyCallbackArgs(ArrayList<DirectoryManager.DirectoryParcel> dirParcels)
 		{
 			this.m_DirParcels = dirParcels;
 		}

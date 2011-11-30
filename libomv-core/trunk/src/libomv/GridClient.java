@@ -324,7 +324,7 @@ public class GridClient
 	// Object Subsystem
 	// public ObjectManager Objects;
 	/* Directory searches including classifieds, people, land sales, etc */
-	// public DirectoryManager Directory;
+	public DirectoryManager Directory;
 	/* Handles land, wind, and cloud heightmaps */
 	// public TerrainManager Terrain;
 
@@ -371,7 +371,9 @@ public class GridClient
 
 		// Parcels = new ParcelManager(this);
 		// Objects = new ObjectManager(this);
-		// Directory = new DirectoryManager(this);
+		if (Settings.ENABLE_DIRECTORY_MANAGER)
+			Directory = new DirectoryManager(this);
+
 		Stats = new Statistics();
 	}
 
