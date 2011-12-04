@@ -45,7 +45,13 @@ import libomv.utils.Logger.LogLevel;
  */
 public class Settings implements PacketCallback
 {
-	// #region Application Settings
+    /* Main grid login server */
+    public static String AGNI_LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
+
+    /* Beta grid login server */
+    public static String ADITI_LOGIN_SERVER = "https://login.aditi.lindenlab.com/cgi-bin/login.cgi";
+
+    // #region Application Settings
 
 	/* Application name */
 	public static final String APPLICATION_NAME = "libomv 0.6.1 123 / Second Life 1.23.5.136262";
@@ -70,6 +76,12 @@ public class Settings implements PacketCallback
 
 	/* Initialize Directory Manager */
 	public boolean ENABLE_DIRECTORY_MANAGER = false;
+
+	/* Initialize Object Manager */
+	public boolean ENABLE_OBJECT_MANAGER = false;
+
+	/* Initialize Parcel Manager */
+	public boolean ENABLE_PARCEL_MANAGER = false;
 
 	// #region Login/Networking Settings
 

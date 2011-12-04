@@ -318,11 +318,11 @@ public class GridClient
 	/* Handles sound-related networking */
 	public SoundManager Sound;
 	/* Appearance subsystem */
-	// public AppearanceManager Appearance;
-	// Parcel (subdivided simulator lots) Subsystem
-	// public ParcelManager Parcels;
-	// Object Subsystem
-	// public ObjectManager Objects;
+	public AppearanceManager Appearance;
+	/* Parcel (subdivided simulator lots) Subsystem */
+	public ParcelManager Parcels;
+	/* Object Subsystem */
+	public ObjectManager Objects;
 	/* Directory searches including classifieds, people, land sales, etc */
 	public DirectoryManager Directory;
 	/* Handles land, wind, and cloud heightmaps */
@@ -351,6 +351,7 @@ public class GridClient
 		Self = new AgentManager(this);
 		Friends = new FriendsManager(this);
 		Groups = new GroupManager(this);
+		Grid = new GridManager(this);
 
 		if (Settings.SEND_AGENT_THROTTLE)
 			Throttle = new AgentThrottle(this);
@@ -367,10 +368,13 @@ public class GridClient
 		if (Settings.ENABLE_SOUND_MANAGER)
 			Sound = new SoundManager(this);
 
-		Grid = new GridManager(this);
 
-		// Parcels = new ParcelManager(this);
-		// Objects = new ObjectManager(this);
+		if (Settings.ENABLE_PARCEL_MANAGER)
+		    Parcels = new ParcelManager(this);
+
+		if (Settings.ENABLE_OBJECT_MANAGER)
+		    Objects = new ObjectManager(this);
+
 		if (Settings.ENABLE_DIRECTORY_MANAGER)
 			Directory = new DirectoryManager(this);
 
