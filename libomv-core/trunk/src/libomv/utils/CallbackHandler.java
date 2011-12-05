@@ -1,6 +1,8 @@
 package libomv.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import libomv.utils.Callback;
@@ -81,8 +83,10 @@ public class CallbackHandler<T>
 		{
 			synchronized (callbackHandlers)
 			{
-				for (Entry<Callback<T>, Boolean> entry : callbackHandlers.entrySet())
+				Iterator<Entry<Callback<T>, Boolean>> iter = callbackHandlers.entrySet().iterator();
+				while (iter.hasNext())
 				{
+					Entry<Callback<T>, Boolean> entry = iter.next();
 					Callback<T> handler = entry.getKey();
 					synchronized (handler)
 					{
@@ -90,7 +94,7 @@ public class CallbackHandler<T>
 						handler.notifyAll();
 					}
 					if (entry.getValue())
-						remove(handler);
+						iter.remove();
 					count++;
 				}
 			}
