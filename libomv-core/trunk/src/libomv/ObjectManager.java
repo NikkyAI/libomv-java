@@ -1074,22 +1074,25 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						// Only do movement interpolation (extrapolation) when
 						// there is a non-zero velocity but no acceleration
 						// #endregion Linear Motion
-						for (Avatar avatar : sim.getObjectsAvatars().values())
+						synchronized (sim.getObjectsAvatars())
 						{
-							if (avatar.Acceleration != Vector3.Zero && avatar.Velocity == Vector3.Zero)
+							for (Avatar avatar : sim.getObjectsAvatars().values())
 							{
-								// avatar.Position += (avatar.Velocity +
-								// avatar.Acceleration * (0.5f * (adjSeconds -
-								// HAVOK_TIMESTEP))) * adjSeconds;
-								// avatar.Velocity += avatar.Acceleration *
-								// adjSeconds;
-								avatar.Position.add(Vector3.multiply(Vector3.add(avatar.Velocity,
-										Vector3.multiply(avatar.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
-										adjSeconds));
-								avatar.Velocity.add(Vector3.multiply(avatar.Acceleration, adjSeconds));
+								if (avatar.Acceleration != Vector3.Zero && avatar.Velocity == Vector3.Zero)
+								{
+									// avatar.Position += (avatar.Velocity +
+									// avatar.Acceleration * (0.5f * (adjSeconds -
+									// HAVOK_TIMESTEP))) * adjSeconds;
+									// avatar.Velocity += avatar.Acceleration *
+									// adjSeconds;
+									avatar.Position.add(Vector3.multiply(Vector3.add(avatar.Velocity,
+											Vector3.multiply(avatar.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
+											adjSeconds));
+									avatar.Velocity.add(Vector3.multiply(avatar.Acceleration, adjSeconds));
+								}
 							}
 						}
-
+						
 						// Iterate through all of this sims primitives
 						// #region Angular Velocity
 
@@ -1102,42 +1105,45 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						// #endregion Linear Motion
 						// FIXME: Hinge movement extrapolation
 						// FIXME: Point movement extrapolation
-						for (Primitive prim : sim.getObjectsPrimitives().values())
+						synchronized (sim.getObjectsPrimitives())
 						{
-							switch (prim.Joint)
+							for (Primitive prim : sim.getObjectsPrimitives().values())
 							{
-								case Invalid:
-									Vector3 angVel = prim.AngularVelocity;
-									float omega = angVel.LengthSquared();
-									if (omega > 0.00001f)
-									{
-										omega = (float) Math.sqrt(omega);
-										float angle = omega * adjSeconds;
-										angVel = Vector3.multiply(angVel, 1.0f / omega);
-										Quaternion dQ = Quaternion.CreateFromAxisAngle(angVel, angle);
-										prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
-									}
-									if (prim.Acceleration != Vector3.Zero && prim.Velocity == Vector3.Zero)
-									{
-										// prim.Position += (prim.Velocity +
-										// prim.Acceleration * (0.5f *
-										// (adjSeconds - HAVOK_TIMESTEP))) *
-										// adjSeconds;
-										// prim.Velocity += prim.Acceleration *
-										// adjSeconds;
-										prim.Position
-												.add(Vector3.multiply(Vector3.add(prim.Velocity, Vector3.multiply(
-														prim.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
-														adjSeconds));
-										prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
-									}
-									break;
-								case Hinge:
-								case Point:
-									break;
-								default:
-									Logger.Log("Unhandled joint type " + prim.Joint, LogLevel.Warning, Client);
-									break;
+								switch (prim.Joint)
+								{
+									case Invalid:
+										Vector3 angVel = prim.AngularVelocity;
+										float omega = angVel.LengthSquared();
+										if (omega > 0.00001f)
+										{
+											omega = (float) Math.sqrt(omega);
+											float angle = omega * adjSeconds;
+											angVel = Vector3.multiply(angVel, 1.0f / omega);
+											Quaternion dQ = Quaternion.CreateFromAxisAngle(angVel, angle);
+											prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
+										}
+										if (prim.Acceleration != Vector3.Zero && prim.Velocity == Vector3.Zero)
+										{
+											// prim.Position += (prim.Velocity +
+											// prim.Acceleration * (0.5f *
+											// (adjSeconds - HAVOK_TIMESTEP))) *
+											// adjSeconds;
+											// prim.Velocity += prim.Acceleration *
+											// adjSeconds;
+											prim.Position
+													.add(Vector3.multiply(Vector3.add(prim.Velocity, Vector3.multiply(
+															prim.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
+															adjSeconds));
+											prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
+										}
+										break;
+									case Hinge:
+									case Point:
+										break;
+									default:
+										Logger.Log("Unhandled joint type " + prim.Joint, LogLevel.Warning, Client);
+										break;
+								}
 							}
 						}
 					}
@@ -3712,21 +3718,20 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 			if (Client.Settings.OBJECT_TRACKING)
 			{
-				for (Primitive prim : simulator.getObjectsPrimitives().values())
+				synchronized (simulator.getObjectsPrimitives())
 				{
-					if (prim.ID == props.ObjectID)
+					for (Primitive prim : simulator.getObjectsPrimitives().values())
 					{
-						OnObjectPropertiesUpdated.dispatch(new ObjectPropertiesUpdatedCallbackArgs(simulator, prim,
-								props));
-
-						synchronized (simulator.getObjectsPrimitives())
+						if (prim.ID.equals(props.ObjectID))
 						{
+							OnObjectPropertiesUpdated.dispatch(new ObjectPropertiesUpdatedCallbackArgs(simulator, prim, props));
+
 							if (simulator.getObjectsPrimitives().containsKey(prim.LocalID))
 							{
 								simulator.getObjectsPrimitives().get(prim.LocalID).Properties = props;
 							}
+							break;
 						}
-						break;
 					}
 				}
 			}
@@ -3767,11 +3772,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		if (Client.Settings.OBJECT_TRACKING)
 		{
-			for (Primitive prim : simulator.getObjectsPrimitives().values())
+			synchronized (simulator.getObjectsPrimitives())
 			{
-				if (prim.ID == op.ObjectData.ObjectID)
+				for (Primitive prim : simulator.getObjectsPrimitives().values())
 				{
-					synchronized (simulator.getObjectsPrimitives())
+					if (prim.ID.equals(op.ObjectData.ObjectID))
 					{
 						if (simulator.getObjectsPrimitives().containsKey(prim.LocalID))
 						{
@@ -3781,8 +3786,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 							}
 							simulator.getObjectsPrimitives().get(prim.LocalID).Properties.SetFamilyProperties(props);
 						}
+						break;
 					}
-					break;
 				}
 			}
 		}
