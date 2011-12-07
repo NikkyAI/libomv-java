@@ -114,6 +114,9 @@ import libomv.packets.MoneyBalanceReplyPacket;
 import libomv.packets.MoneyTransferRequestPacket;
 import libomv.packets.MuteListRequestPacket;
 import libomv.packets.MuteListUpdatePacket;
+import libomv.packets.ObjectDeGrabPacket;
+import libomv.packets.ObjectGrabPacket;
+import libomv.packets.ObjectGrabUpdatePacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.PickDeletePacket;
@@ -2140,24 +2143,30 @@ public class AgentManager implements PacketCallback, CapsCallback
 		Vector3 fullPosition = relativePosition;
 
 		Simulator sim = _Client.Network.getCurrentSim();
-		if (sim.getObjectsPrimitives().containsKey(sittingOn))
+		synchronized (sim.getObjectsPrimitives())
 		{
-			p = sim.getObjectsPrimitives().get(sittingOn);
-			fullPosition.add(Vector3.add(p.Position, Vector3.multiply(relativePosition, p.Rotation)));
+			if (sim.getObjectsPrimitives().containsKey(sittingOn))
+			{
+				p = sim.getObjectsPrimitives().get(sittingOn);
+				fullPosition.add(Vector3.add(p.Position, Vector3.multiply(relativePosition, p.Rotation)));
+			}
 		}
 
 		// go up the hiearchy trying to find the root prim
 		while (p != null && p.ParentID != 0)
 		{
-			if (sim.getObjectsAvatars().containsKey(p.ParentID))
+			synchronized (sim.getObjectsPrimitives())
 			{
-				p = sim.getObjectsAvatars().get(p.ParentID);
-				fullPosition.add(p.Position);
-			}
-			else if (sim.getObjectsPrimitives().containsKey(p.ParentID))
-			{
-				p = sim.getObjectsPrimitives().get(p.ParentID);
-				fullPosition.add(p.Position);
+				if (sim.getObjectsAvatars().containsKey(p.ParentID))
+				{
+					p = sim.getObjectsAvatars().get(p.ParentID);
+					fullPosition.add(p.Position);
+				}
+				else if (sim.getObjectsPrimitives().containsKey(p.ParentID))
+				{
+					p = sim.getObjectsPrimitives().get(p.ParentID);
+					fullPosition.add(p.Position);
+				}
 			}
 		}
 
@@ -2184,11 +2193,16 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (sittingOn != 0)
 		{
 			Primitive parent;
-			if (_Client.Network.getCurrentSim() != null
-					&& _Client.Network.getCurrentSim().getObjectsPrimitives().containsKey(sittingOn))
+			if (_Client.Network.getCurrentSim() != null)
 			{
-				parent = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn);
-				return Quaternion.multiply(relativeRotation, parent.Rotation);
+				synchronized (_Client.Network.getCurrentSim().getObjectsPrimitives())
+				{
+					if (_Client.Network.getCurrentSim().getObjectsPrimitives().containsKey(sittingOn))
+					{
+						parent = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn);
+						return Quaternion.multiply(relativeRotation, parent.Rotation);
+					}
+				}
 			}
 
 			Logger.Log("Currently sitting on object " + sittingOn
@@ -3262,6 +3276,170 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	// #endregion Movement actions
+
+    // #region Touch and grab
+
+    /**
+     * Grabs an object
+     *
+     * @param objectLocalID an integer of the objects ID within the simulator
+     * @see cref="Simulator.ObjectsPrimitives
+     * @throws Exception 
+     */
+    public void Grab(int objectLocalID) throws Exception
+    {
+        Grab(objectLocalID, Vector3.Zero, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
+    }
+
+    /**
+     * Overload: Grab a simulated object
+     *
+     * @param objectLocalID an unsigned integer of the objects ID within the simulator
+     * @param grabOffset
+     * @param uvCoord The texture coordinates to grab
+     * @param stCoord The surface coordinates to grab
+     * @param faceIndex The face of the position to grab
+     * @param position The region coordinates of the position to grab
+     * @param normal The surface normal of the position to grab (A normal is a vector perpindicular to the surface)
+     * @param binormal The surface binormal of the position to grab (A binormal is a vector tangen to the surface
+     * pointing along the U direction of the tangent space
+     * @throws Exception 
+     */
+    public void Grab(int objectLocalID, Vector3 grabOffset, Vector3 uvCoord, Vector3 stCoord, int faceIndex,
+    		         Vector3 position, Vector3 normal, Vector3 binormal) throws Exception
+    {
+        ObjectGrabPacket grab = new ObjectGrabPacket();
+
+        grab.AgentData.AgentID = agentID;
+        grab.AgentData.SessionID = sessionID;
+
+        grab.ObjectData.LocalID = objectLocalID;
+        grab.ObjectData.GrabOffset = grabOffset;
+
+        grab.SurfaceInfo = new ObjectGrabPacket.SurfaceInfoBlock[1];
+        grab.SurfaceInfo[0] = grab.new SurfaceInfoBlock();
+        grab.SurfaceInfo[0].UVCoord = uvCoord;
+        grab.SurfaceInfo[0].STCoord = stCoord;
+        grab.SurfaceInfo[0].FaceIndex = faceIndex;
+        grab.SurfaceInfo[0].Position = position;
+        grab.SurfaceInfo[0].Normal = normal;
+        grab.SurfaceInfo[0].Binormal = binormal;
+
+        _Client.Network.SendPacket(grab);
+    }
+
+    /**
+     * Drag an object
+     *
+     * @param objectID @see cref="UUID" of the object to drag
+     * @param grabPosition Drag target in region coordinates
+     * @throws Exception 
+     */
+    public void GrabUpdate(UUID objectID, Vector3 grabPosition) throws Exception
+    {
+        GrabUpdate(objectID, grabPosition, Vector3.Zero, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
+    }
+
+    /**
+     * Overload: Drag an object
+     *
+     * @param objectID @see cref="UUID" of the object to drag
+     * @param grabPosition Drag target in region coordinates
+     * @param grabOffset
+     * @param uvCoord The texture coordinates to grab
+     * @param stCoord The surface coordinates to grab
+     * @param faceIndex The face of the position to grab
+     * @param position The region coordinates of the position to grab
+     * @param normal The surface normal of the position to grab (A normal is a vector perpindicular to the surface)
+     * @param binormal The surface binormal of the position to grab (A binormal is a vector tangen to the surface
+     *			pointing along the U direction of the tangent space
+     * @throws Exception 
+     */
+    public void GrabUpdate(UUID objectID, Vector3 grabPosition, Vector3 grabOffset, Vector3 uvCoord, Vector3 stCoord, int faceIndex, Vector3 position,
+        Vector3 normal, Vector3 binormal) throws Exception
+    {
+        ObjectGrabUpdatePacket grab = new ObjectGrabUpdatePacket();
+        grab.AgentData.AgentID = agentID;
+        grab.AgentData.SessionID = sessionID;
+
+        grab.ObjectData.ObjectID = objectID;
+        grab.ObjectData.GrabOffsetInitial = grabOffset;
+        grab.ObjectData.GrabPosition = grabPosition;
+        grab.ObjectData.TimeSinceLast = 0;
+
+        grab.SurfaceInfo = new ObjectGrabUpdatePacket.SurfaceInfoBlock[1];
+        grab.SurfaceInfo[0] = grab.new SurfaceInfoBlock();
+        grab.SurfaceInfo[0].UVCoord = uvCoord;
+        grab.SurfaceInfo[0].STCoord = stCoord;
+        grab.SurfaceInfo[0].FaceIndex = faceIndex;
+        grab.SurfaceInfo[0].Position = position;
+        grab.SurfaceInfo[0].Normal = normal;
+        grab.SurfaceInfo[0].Binormal = binormal;
+
+        _Client.Network.SendPacket(grab);
+    }
+
+    /**
+     * Release a grabbed object
+     *
+     * @param objectLocalID">The Objects Simulator Local ID</param>
+     * @see cref="Simulator.ObjectsPrimitives"
+     * @see cref="Grab"
+     * @see cref="GrabUpdate"
+     * @throws Exception 
+     */
+    public void DeGrab(int objectLocalID) throws Exception
+    {
+        DeGrab(objectLocalID, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
+    }
+
+    /**
+     * Release a grabbed object
+     *
+     * @param objectLocalID The Objects Simulator Local ID
+     * @param uvCoord The texture coordinates to grab
+     * @param stCoord The surface coordinates to grab
+     * @param faceIndex The face of the position to grab
+     * @param position The region coordinates of the position to grab
+     * @param normal The surface normal of the position to grab (A normal is a vector perpindicular to the surface)
+     * @param binormal The surface binormal of the position to grab (A binormal is a vector tangen to the surface
+     *			pointing along the U direction of the tangent space
+     * @throws Exception 
+     */
+    public void DeGrab(int objectLocalID, Vector3 uvCoord, Vector3 stCoord, int faceIndex, Vector3 position,
+        Vector3 normal, Vector3 binormal) throws Exception
+    {
+        ObjectDeGrabPacket degrab = new ObjectDeGrabPacket();
+        degrab.AgentData.AgentID = agentID;
+        degrab.AgentData.SessionID = sessionID;
+
+        degrab.LocalID = objectLocalID;
+
+        degrab.SurfaceInfo = new ObjectDeGrabPacket.SurfaceInfoBlock[1];
+        degrab.SurfaceInfo[0] = degrab.new SurfaceInfoBlock();
+        degrab.SurfaceInfo[0].UVCoord = uvCoord;
+        degrab.SurfaceInfo[0].STCoord = stCoord;
+        degrab.SurfaceInfo[0].FaceIndex = faceIndex;
+        degrab.SurfaceInfo[0].Position = position;
+        degrab.SurfaceInfo[0].Normal = normal;
+        degrab.SurfaceInfo[0].Binormal = binormal;
+
+        _Client.Network.SendPacket(degrab);
+    }
+
+    /**
+     * Touches an object
+     *
+     * @param objectLocalID an integer of the objects ID within the simulator
+     * @see cref="Simulator.ObjectsPrimitives"
+     * @throws Exception 
+     */
+    public void Touch(int objectLocalID) throws Exception
+    {
+        _Client.Self.Grab(objectLocalID);
+        _Client.Self.DeGrab(objectLocalID);
+    }
+    // #endregion Touch and grab
 
     /**
      * Update agent profile
@@ -6333,15 +6511,18 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 				if (_Client.Self.sittingOn > 0)
 				{
-					if (_Client.Network.getCurrentSim().getObjectsPrimitives().containsKey(sittingOn))
+					synchronized(_Client.Network.getCurrentSim().getObjectsPrimitives())
 					{
-						parentRot = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn).Rotation;
-					}
-					else
-					{
-						Logger.Log("Attempted TurnToward but parent prim is not in dictionary", LogLevel.Warning,
-								Client);
-						return false;
+						if (_Client.Network.getCurrentSim().getObjectsPrimitives().containsKey(sittingOn))
+						{
+							parentRot = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn).Rotation;
+						}
+						else
+						{
+							Logger.Log("Attempted TurnToward but parent prim is not in dictionary", LogLevel.Warning,
+									Client);
+							return false;
+						}
 					}
 				}
 
