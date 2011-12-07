@@ -368,7 +368,6 @@ public class GridClient
 		if (Settings.ENABLE_SOUND_MANAGER)
 			Sound = new SoundManager(this);
 
-
 		if (Settings.ENABLE_PARCEL_MANAGER)
 		    Parcels = new ParcelManager(this);
 
