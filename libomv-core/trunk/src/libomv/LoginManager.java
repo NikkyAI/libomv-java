@@ -939,7 +939,7 @@ public class LoginManager
 		// #endregion
 
 		if (callback != null)
-			RegisterLoginProgressCallback(callback, loginParams.Options, true);
+			RegisterLoginProgressCallback(callback, loginParams.Options, false);
 
 		URI loginUri;
 		try
