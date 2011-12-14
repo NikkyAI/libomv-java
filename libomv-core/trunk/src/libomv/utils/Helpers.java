@@ -1720,7 +1720,7 @@ public class Helpers
 			for (length = 0; bytes[offset + length] != 0; length++)
 				;
 		}
-		else
+		else if (length > 0)
 		{
 			/* Backtrack possible null terminating bytes */
 			for (; bytes[offset + length - 1] == 0; length--)
