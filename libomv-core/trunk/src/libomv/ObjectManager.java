@@ -1021,7 +1021,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
 	{
 		@Override
-		public void callback(DisconnectedCallbackArgs args)
+		public boolean callback(DisconnectedCallbackArgs args)
 		{
 			if (InterpolationTimer != null)
 			{
@@ -1029,13 +1029,14 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				InterpolationTimer = null;
 				InterpolationTask = null;
 			}
+			return false;
 		}
 	}
 
 	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs args)
+		public boolean callback(LoginProgressCallbackArgs args)
 		{
 			if (Client.Settings.USE_INTERPOLATION_TIMER)
 			{
@@ -1043,6 +1044,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				InterpolationTask = new InterpolationTimer_Elapsed();
 				InterpolationTimer.schedule(InterpolationTask, Settings.INTERPOLATION_INTERVAL);
 			}
+			return false;
 		}
 	}
 

@@ -251,21 +251,23 @@ public class TexturePipeline implements PacketCallback
 	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
 				Startup();
 			}
+			return false;
 		}
 	}
 
 	private class Network_Disconnected implements Callback<DisconnectedCallbackArgs>
 	{
 		@Override
-		public void callback(DisconnectedCallbackArgs e)
+		public boolean callback(DisconnectedCallbackArgs e)
 		{
 			Shutdown();
+			return false;
 		}
 	}
 

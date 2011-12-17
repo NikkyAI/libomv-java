@@ -1317,13 +1317,13 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			}
 
 			@Override
-			public void callback(DirPeopleReplyCallbackArgs e)
+			public boolean callback(DirPeopleReplyCallbackArgs e)
 			{
 				if (uuid == e.getQueryID())
 				{
 					people = e.getMatchedPeople();
 				}
-
+				return false;
 			}
 
 			public DirPeopleCallbackHandler(UUID uuid)

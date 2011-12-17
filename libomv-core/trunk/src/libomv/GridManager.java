@@ -547,12 +547,13 @@ public class GridManager implements PacketCallback
 			private String Name;
 
 			@Override
-			public void callback(GridRegionEventArgs args)
+			public boolean callback(GridRegionEventArgs args)
 			{
 				if (args.getRegion().Name.equals(Name))
 				{
 					Name.notifyAll();
 				}
+				return false;
 			}
 
 			public OnGridRegionCallback(String name)

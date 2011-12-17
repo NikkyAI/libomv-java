@@ -2250,7 +2250,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.ConnectingToSim)
 			{
@@ -2268,18 +2268,20 @@ public class AgentManager implements PacketCallback, CapsCallback
 				homePosition = reply.HomePosition;
 				homeLookAt = reply.HomeLookAt;
 			}
+			return false;
 		}
 	}
 
 	private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
 	{
 		@Override
-		public void callback(DisconnectedCallbackArgs e)
+		public boolean callback(DisconnectedCallbackArgs e)
 		{
 			// Null out the cached fullName since it can change after logging
 			// in again (with a different account name or different login
 			// server but using the same GridClient object
 			fullName = null;
+			return false;
 		}
 	}
 
@@ -5497,12 +5499,13 @@ public class AgentManager implements PacketCallback, CapsCallback
         Callback<XferReceivedCallbackArgs> xferCallback = new Callback<XferReceivedCallbackArgs>()
         {
           	@Override
-			public void callback(XferReceivedCallbackArgs xe)
+			public boolean callback(XferReceivedCallbackArgs xe)
            	{
                 if (xe.getXfer().XferID == xferID.get())
                 {
                     gotMuteList.set(xe.getXfer().AssetData);
                 }
+                return false;
          	}
         };
         	
@@ -6441,9 +6444,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
 		{
 			@Override
-			public void callback(DisconnectedCallbackArgs e)
+			public boolean callback(DisconnectedCallbackArgs e)
 			{
 				CleanupTimer();
+				return false;
 			}
 		}
 

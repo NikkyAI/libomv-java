@@ -2,5 +2,5 @@ package libomv.utils;
 
 public interface Callback<T>
 {
-	public void callback(T params);
+	public boolean callback(T params);
 }

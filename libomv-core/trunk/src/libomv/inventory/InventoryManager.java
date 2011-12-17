@@ -469,12 +469,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		final class FetchedItemsCallback implements Callback<ItemReceivedCallbackArgs>
 		{
 			@Override
-			public void callback(ItemReceivedCallbackArgs e)
+			public boolean callback(ItemReceivedCallbackArgs e)
 			{
 				if (e.getItem().itemID.equals(itemID))
 				{
 					fetchEvent.set(e.getItem());
 				}
+				return false;
 			}
 		}
 
@@ -572,7 +573,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		Callback<FolderUpdatedCallbackArgs> callback = new Callback<FolderUpdatedCallbackArgs>()
 		{
 			@Override
-			public void callback(FolderUpdatedCallbackArgs e)
+			public boolean callback(FolderUpdatedCallbackArgs e)
 			{
 				if (e.getFolderID().equals(folderID))
 				{
@@ -585,10 +586,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						if (contents.size() >= folder.descendentCount)
 						{
 							fetchEvent.set(contents);
-							return;
+							return false;
 						}
 					}
 				}
+				return false;
 			}
 		};
 
@@ -856,12 +858,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		Callback<FindObjectByPathReplyCallbackArgs> callback = new Callback<FindObjectByPathReplyCallbackArgs>()
 		{
 			@Override
-			public void callback(FindObjectByPathReplyCallbackArgs e)
+			public boolean callback(FindObjectByPathReplyCallbackArgs e)
 			{
 				if (e.getPath() == path)
 				{
 					findEvent.set(e.getInventoryObjectID());
 				}
+				return false;
 			}
 		};
 
@@ -2565,12 +2568,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		Callback<TaskInventoryReplyCallbackArgs> callback = new Callback<TaskInventoryReplyCallbackArgs>()
 		{
 			@Override
-			public void callback(TaskInventoryReplyCallbackArgs e)
+			public boolean callback(TaskInventoryReplyCallbackArgs e)
 			{
 				if (e.getItemID().equals(objectID))
 				{
 					taskReplyEvent.set(e.getAssetFilename());
 				}
+				return false;
 			}
 		};
 		OnTaskInventoryReply.add(callback, true);
@@ -2588,7 +2592,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				Callback<XferReceivedCallbackArgs> xferCallback = new Callback<XferReceivedCallbackArgs>()
 				{
 					@Override
-					public void callback(XferReceivedCallbackArgs e)
+					public boolean callback(XferReceivedCallbackArgs e)
 					{
 						if (e.getXfer().XferID == xferID)
 						{
@@ -2601,6 +2605,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								taskDownloadEvent.set(Helpers.EmptyString);
 							}
 						}
+						return false;
 					}
 				};
 				// Start the actual asset xfer
@@ -3312,7 +3317,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	private class Self_InstantMessage implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
-		public void callback(InstantMessageCallbackArgs e)
+		public boolean callback(InstantMessageCallbackArgs e)
 		{
 			// TODO: MainAvatar.InstantMessageDialog.GroupNotice can also be an
 			// inventory offer, should we handle it here?
@@ -3335,7 +3340,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					else
 					{
 						Logger.Log("Malformed inventory offer from agent", LogLevel.Warning, _Client);
-						return;
+						return false;
 					}
 				}
 				else if (e.getIM().Dialog == InstantMessageDialog.TaskInventoryOffered)
@@ -3348,7 +3353,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					else
 					{
 						Logger.Log("Malformed inventory offer from object", LogLevel.Warning, _Client);
-						return;
+						return false;
 					}
 				}
 
@@ -3418,6 +3423,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 				}
 			}
+			return false;
 		}
 	}
 
@@ -3519,7 +3525,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
@@ -3544,6 +3550,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				_Store.printUnresolved();
 			}
+			return false;
 		}
 	}
 

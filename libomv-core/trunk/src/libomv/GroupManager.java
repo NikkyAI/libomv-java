@@ -37,8 +37,6 @@ import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.GroupManager.GroupAccountTransactions.TransactionEntry;
-import libomv.GroupManager.GroupMember;
-import libomv.GroupManager.GroupRole;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.LLSD.LLSDXml;
@@ -679,7 +677,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
-		public void callback(InstantMessageCallbackArgs e)
+		public boolean callback(InstantMessageCallbackArgs e)
 		{
 			if (OnGroupInvitation.count() > 0 && e.getIM().Dialog == InstantMessageDialog.GroupInvitation)
 			{
@@ -709,6 +707,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 				}
 				catch (Exception ex) { }
 			}
+			return false;
 		}
 	}
 

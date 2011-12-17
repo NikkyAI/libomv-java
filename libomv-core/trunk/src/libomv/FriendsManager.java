@@ -295,7 +295,7 @@ public class FriendsManager implements PacketCallback
 	public abstract class FriendNotificationCallback implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
-		public abstract void callback(FriendNotificationCallbackArgs params);
+		public abstract boolean callback(FriendNotificationCallbackArgs params);
 	}
 
 	public final CallbackHandler<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandler<FriendNotificationCallbackArgs>();
@@ -319,7 +319,7 @@ public class FriendsManager implements PacketCallback
 	public abstract class FriendRightsCallback implements Callback<FriendRightsCallbackArgs>
 	{
 		@Override
-		public abstract void callback(FriendRightsCallbackArgs params);
+		public abstract boolean callback(FriendRightsCallbackArgs params);
 	}
 
 	public final CallbackHandler<FriendRightsCallbackArgs> OnFriendRights = new CallbackHandler<FriendRightsCallbackArgs>();
@@ -357,7 +357,7 @@ public class FriendsManager implements PacketCallback
 	public abstract class FriendFoundReplyCallback implements Callback<FriendFoundReplyCallbackArgs>
 	{
 		@Override
-		public abstract void callback(FriendFoundReplyCallbackArgs params);
+		public abstract boolean callback(FriendFoundReplyCallbackArgs params);
 	}
 
 	public CallbackHandler<FriendFoundReplyCallbackArgs> OnFriendFoundReply = new CallbackHandler<FriendFoundReplyCallbackArgs>();
@@ -395,7 +395,7 @@ public class FriendsManager implements PacketCallback
 	public abstract class FriendshipOfferedCallback implements Callback<FriendshipOfferedCallbackArgs>
 	{
 		@Override
-		public abstract void callback(FriendshipOfferedCallbackArgs params);
+		public abstract boolean callback(FriendshipOfferedCallbackArgs params);
 	}
 
 	public CallbackHandler<FriendshipOfferedCallbackArgs> OnFriendshipOffered = new CallbackHandler<FriendshipOfferedCallbackArgs>();
@@ -433,7 +433,7 @@ public class FriendsManager implements PacketCallback
 	public abstract class FriendshipResponseCallback implements Callback<FriendshipResponseCallbackArgs>
 	{
 		@Override
-		public abstract void callback(FriendshipResponseCallbackArgs params);
+		public abstract boolean callback(FriendshipResponseCallbackArgs params);
 	}
 
 	public CallbackHandler<FriendshipResponseCallbackArgs> OnFriendshipResponse = new CallbackHandler<FriendshipResponseCallbackArgs>();
@@ -464,7 +464,7 @@ public class FriendsManager implements PacketCallback
 	public abstract class FriendshipTerminatedCallback implements Callback<FriendshipTerminatedCallbackArgs>
 	{
 		@Override
-		public abstract void callback(FriendshipTerminatedCallbackArgs params);
+		public abstract boolean callback(FriendshipTerminatedCallbackArgs params);
 	}
 
 	public CallbackHandler<FriendshipTerminatedCallbackArgs> OnFriendshipTerminated = new CallbackHandler<FriendshipTerminatedCallbackArgs>();
@@ -950,7 +950,7 @@ public class FriendsManager implements PacketCallback
 	private class Self_OnInstantMessage implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
-		public void callback(InstantMessageCallbackArgs e)
+		public boolean callback(InstantMessageCallbackArgs e)
 		{
 			UUID friendID = e.getIM().FromAgentID;
 			String name = e.getIM().FromAgentName;
@@ -985,6 +985,7 @@ public class FriendsManager implements PacketCallback
 				case FriendshipDeclined:
 					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
 			}
+			return false;
 		}
 	}
 
@@ -995,7 +996,7 @@ public class FriendsManager implements PacketCallback
 	private class Network_OnConnect implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
@@ -1041,6 +1042,7 @@ public class FriendsManager implements PacketCallback
 					}
 				}
 			}
+			return false;
 		}
 	}
 }

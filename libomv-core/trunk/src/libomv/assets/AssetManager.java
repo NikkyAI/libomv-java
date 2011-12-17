@@ -1165,13 +1165,14 @@ public class AssetManager implements PacketCallback
 					Callback<AssetUploadCallbackArgs> udpCallback = new Callback<AssetUploadCallbackArgs>()
 					{
 						@Override
-						public void callback(AssetUploadCallbackArgs e)
+						public boolean callback(AssetUploadCallbackArgs e)
 						{
 							if (transactionID.equals(e.getUpload().ID))
 							{
 								uploadEvent.set(true);
 								callback.callback(e.getUpload().Success ? e.getUpload().AssetID : UUID.Zero);
 							}
+							return false;
 						}
 					};
 

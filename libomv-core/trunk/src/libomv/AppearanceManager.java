@@ -1196,9 +1196,10 @@ public class AppearanceManager implements PacketCallback
         Callback<AgentWearablesReplyCallbackArgs> wearablesCallback = new Callback<AgentWearablesReplyCallbackArgs>()
         {
         	@Override
-			public void callback(AgentWearablesReplyCallbackArgs e)
+			public boolean callback(AgentWearablesReplyCallbackArgs e)
         	{
         		wearablesEvent.set(true);
+        		return false;
         	}
         };
         
@@ -1225,9 +1226,10 @@ public class AppearanceManager implements PacketCallback
         Callback<AgentCachedBakesReplyCallbackArgs> cacheCallback = new Callback<AgentCachedBakesReplyCallbackArgs>()
         {
         	@Override
-			public void callback(AgentCachedBakesReplyCallbackArgs e)
+			public boolean callback(AgentCachedBakesReplyCallbackArgs e)
         	{
         		cacheCheckEvent.set(true);
+        		return false;
         	}
         };
 
@@ -2136,20 +2138,21 @@ public class AppearanceManager implements PacketCallback
     private class Network_OnEventQueueRunning implements Callback<EventQueueRunningCallbackArgs>
     {
 		@Override
-		public void callback(EventQueueRunningCallbackArgs e)
+		public boolean callback(EventQueueRunningCallbackArgs e)
 		{
 	        if (e.getSimulator() == _Client.Network.getCurrentSim() && _Client.Settings.SEND_AGENT_APPEARANCE)
 	        {
 	            // Update appearance each time we enter a new sim and capabilities have been retrieved
 	            RequestSetAppearance();
 	        }
+            return false;
 		}
     }
 
 	private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
 	{
 		@Override
-		public void callback(DisconnectedCallbackArgs e)
+		public boolean callback(DisconnectedCallbackArgs e)
 		{
 	        if (RebakeScheduleTimer != null)
 	        {
@@ -2166,6 +2169,7 @@ public class AppearanceManager implements PacketCallback
 	            AppearanceThread = null;
 	            AppearanceThreadRunning.set(false);
 	        }
+	        return false;
 		}
     }
 
