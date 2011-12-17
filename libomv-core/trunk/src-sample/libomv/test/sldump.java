@@ -141,7 +141,7 @@ public class sldump implements PacketCallback
 	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
@@ -157,13 +157,14 @@ public class sldump implements PacketCallback
 			{
 				System.out.println("sldump: Error logging in: " + e.getReason());
 			}
+			return false;
 		}
 	}
 
 	public class DisconnectedHandler implements Callback<DisconnectedCallbackArgs>
 	{
 		@Override
-		public void callback(DisconnectedCallbackArgs e)
+		public boolean callback(DisconnectedCallbackArgs e)
 		{
 			DisconnectType type = e.getDisconnectType();
 			if (type == DisconnectType.NetworkTimeout)
@@ -175,6 +176,7 @@ public class sldump implements PacketCallback
 				System.out.println("sldump: Server disconnected us: " + e.getMessage());
 			}
 			disconnected = true;
+			return false;
 		}
 	}
 }

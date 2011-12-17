@@ -150,7 +150,7 @@ public class TestClient extends GridClient implements PacketCallback
 	private class Self_IM implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
-		public void callback(InstantMessageCallbackArgs e)
+		public boolean callback(InstantMessageCallbackArgs e)
 		{
 			boolean groupIM = e.getIM().GroupIM && GroupMembers != null && GroupMembers.containsKey(e.getIM().FromAgentID) ? true
 					: false;
@@ -184,8 +184,8 @@ public class TestClient extends GridClient implements PacketCallback
 				// Received an IM from someone that is not the bot's master, ignore
 				System.out.println(String.format("<%s (%s)> %s (not master): %s (@%s:%s)", e.getIM().GroupIM ? "GroupIM" : "IM",
 						e.getIM().Dialog, e.getIM().FromAgentName, e.getIM().Message, e.getIM().RegionID, e.getIM().Position));
-				return;
 			}
+			return false;
 		}
 	}
 
@@ -198,13 +198,14 @@ public class TestClient extends GridClient implements PacketCallback
 	private class LoginHandler implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
 				// Start in the inventory root folder.
 				CurrentDirectory = Inventory.getRootNode(true);
 			}
+			return false;
 		}
 	}
 	
@@ -252,7 +253,7 @@ public class TestClient extends GridClient implements PacketCallback
 	private class Groups_CurrentGroups implements Callback<CurrentGroupsCallbackArgs>
 	{
 		@Override
-		public void callback(CurrentGroupsCallbackArgs e)
+		public boolean callback(CurrentGroupsCallbackArgs e)
 		{
 			if (null == GroupsCache)
 				GroupsCache = e.getGroups();
@@ -264,38 +265,40 @@ public class TestClient extends GridClient implements PacketCallback
 				}
 			}
 			GroupsEvent.set(true);
+			return false;
 		}
 	}
 
 	private class GroupMembersHandler implements Callback<GroupMembersReplyCallbackArgs>
 	{
 		@Override
-		public void callback(GroupMembersReplyCallbackArgs e)
+		public boolean callback(GroupMembersReplyCallbackArgs e)
 		{
-			if (!e.getRequestID().equals(GroupMembersRequestID))
-				return;
-
-			GroupMembers = e.getMembers();
+			if (e.getRequestID().equals(GroupMembersRequestID))
+			{
+				GroupMembers = e.getMembers();
+			}
+			return false;
 		}
 	}
 	
 	private class Inventory_OnInventoryObjectReceived implements Callback<InventoryObjectOfferedCallbackArgs>
 	{
 		@Override
-		public void callback(InventoryObjectOfferedCallbackArgs e)
+		public boolean callback(InventoryObjectOfferedCallbackArgs e)
 		{
 			if (MasterKey != UUID.Zero)
 			{
 				if (e.getOffer().FromAgentID != MasterKey)
-					return;
+					return false;
 			}
 			else if (GroupMembers != null && !GroupMembers.containsKey(e.getOffer().FromAgentID))
 			{
-				return;
+				return false;
 			}
 
 			e.setAccept(true);
-			return;
+			return false;
 		}
 	}
 

@@ -85,7 +85,9 @@ public class Bot implements Callback<DisconnectedCallbackArgs>
 	}
 
 	@Override
-	public void callback(DisconnectedCallbackArgs params) {
+	public boolean callback(DisconnectedCallbackArgs params)
+	{
 		KillHandler.botKilledHandler(this);
+		return false;
 	}
 }

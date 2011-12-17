@@ -181,11 +181,9 @@ public class ClientManager
 		Callback<LoginProgressCallbackArgs> loginCallback = new Callback<LoginProgressCallbackArgs>()
 		{
 			@Override
-			public void callback(LoginProgressCallbackArgs e)
+			public boolean callback(LoginProgressCallbackArgs e)
 			{
 				Logger.Log(String.format("Login %s: %s", e.getStatus(), e.getMessage()), LogLevel.Info, client);
-
-				client.Login.UnregisterLoginProgressCallback(this);
 
 				if (e.getStatus() == LoginStatus.Success)
 				{
@@ -198,7 +196,7 @@ public class ClientManager
 						Callback<DirPeopleReplyCallbackArgs> peopleDirCallback = new Callback<DirPeopleReplyCallbackArgs>()
 						{
 							@Override
-							public void callback(DirPeopleReplyCallbackArgs dpe)
+							public boolean callback(DirPeopleReplyCallbackArgs dpe)
 							{
 								if (dpe.getQueryID().equals(query))
 								{
@@ -213,6 +211,7 @@ public class ClientManager
 										Logger.Log("Master key resolved to " + client.MasterKey, LogLevel.Info);
 									}
 								}
+								return false;
 							}
 						};
 
@@ -229,16 +228,16 @@ public class ClientManager
 
 					Logger.Log("Logged in " + client.toString(), LogLevel.Info);
 					--PendingLogins;
+					return true;
 				}
 				else if (e.getStatus() == LoginStatus.Failed)
 				{
 					Logger.Log("Failed to login " + account.FirstName + " " + account.LastName + ": " + e.getMessage(),
 							LogLevel.Warning);
-
-					client.Login.UnregisterLoginProgressCallback(this);
-					
 					--PendingLogins;
+					return true;
 				}
+				return false;
 			}
 		};
 		
