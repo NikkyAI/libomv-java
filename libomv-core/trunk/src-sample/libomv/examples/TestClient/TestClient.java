@@ -218,7 +218,7 @@ public class TestClient extends GridClient implements PacketCallback
             {
                 if (supClass != null && supClass.equals(Command.class))
                 {
-                    Constructor<Command> ctor = (Constructor<Command>) supClass.getDeclaredConstructor(new Class[] {TestClient.class});
+                    Constructor<Command> ctor = (Constructor<Command>) clazz.getDeclaredConstructor(new Class[] {TestClient.class});
                     Command command = ctor.newInstance(new Object[] {this});
                     RegisterCommand(command);
                 }
@@ -360,9 +360,9 @@ public class TestClient extends GridClient implements PacketCallback
 	    // Get a File object for the package
 	    File directory = null;
 	    String relPath = pkgname.replace('.', '/');
-	    System.out.println("ClassDiscovery: Package: " + pkgname + " becomes Path:" + relPath);
+//	    System.out.println("ClassDiscovery: Package: " + pkgname + " becomes Path:" + relPath);
 	    URL resource = ClassLoader.getSystemClassLoader().getResource(relPath);
-	    System.out.println("ClassDiscovery: Resource = " + resource);
+//	    System.out.println("ClassDiscovery: Resource = " + resource);
 	    if (resource == null) {
 	        throw new RuntimeException("No resource for " + relPath);
 	    }
@@ -374,7 +374,7 @@ public class TestClient extends GridClient implements PacketCallback
 	    } catch (IllegalArgumentException e) {
 	        directory = null;
 	    }
-	    System.out.println("ClassDiscovery: Directory = " + directory);
+//	    System.out.println("ClassDiscovery: Directory = " + directory);
 
 	    if (directory != null && directory.exists())
 	    {
@@ -385,7 +385,7 @@ public class TestClient extends GridClient implements PacketCallback
 	        try
 	        {
 	    	    String fullPath = resource.getFile();
-	    	    System.out.println("ClassDiscovery: FullPath = " + resource);
+//	    	    System.out.println("ClassDiscovery: FullPath = " + resource);
 	            String jarPath = fullPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
 	            JarFile jarFile = new JarFile(jarPath);         
 	            Enumeration<JarEntry> entries = jarFile.entries();
@@ -395,9 +395,9 @@ public class TestClient extends GridClient implements PacketCallback
 	                String entryName = entry.getName();
 	                if(entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length()))
 	                {
-	                    System.out.println("ClassDiscovery: JarEntry: " + entryName);
+//	                    System.out.println("ClassDiscovery: JarEntry: " + entryName);
 	                    String className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
-	                    System.out.println("ClassDiscovery: className = " + className);
+//	                    System.out.println("ClassDiscovery: className = " + className);
 	                    try
 	                    {
 	                    	Class<?> clazz = Class.forName(className);
@@ -437,7 +437,7 @@ public class TestClient extends GridClient implements PacketCallback
             	{
 	                // removes the .class extension
 	                String className = pkgname + '.' + fileName.substring(0, fileName.length() - 6);
-	                System.out.println("ClassDiscovery: className = " + className);
+//	                System.out.println("ClassDiscovery: className = " + className);
 	                try
 	                {
                     	Class<?> clazz = Class.forName(className);
