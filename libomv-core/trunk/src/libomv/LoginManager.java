@@ -1108,9 +1108,6 @@ public class LoginManager
 
 	private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply)
 	{
-		Logger.DebugLog("Login status: " + status.toString() + ", Message: " + message
-				+ (reason != null ? ", Reason: " + reason : ""), _Client);
-
 		// If we reached a login resolution trigger the event
 		if (status == LoginStatus.Success || status == LoginStatus.Failed)
 		{
