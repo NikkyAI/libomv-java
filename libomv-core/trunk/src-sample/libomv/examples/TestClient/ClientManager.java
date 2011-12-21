@@ -39,6 +39,7 @@ import libomv.LoginManager;
 import libomv.LoginManager.LoginParams;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
+import libomv.Settings;
 import libomv.Simulator;
 import libomv.examples.TestClient.Commands.Inventory.ScriptCommand;
 import libomv.examples.TestClient.Commands.System.WaitForLoginCommand;
@@ -176,7 +177,9 @@ public class ClientManager
 
 		++PendingLogins;
 
-		final TestClient client = new TestClient(this);
+		Settings settings = new Settings();
+		settings.ENABLE_OBJECT_MANAGER = true;
+		final TestClient client = new TestClient(this, settings);
 
 		Callback<LoginProgressCallbackArgs> loginCallback = new Callback<LoginProgressCallbackArgs>()
 		{
