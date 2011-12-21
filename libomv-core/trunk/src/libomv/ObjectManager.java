@@ -1027,7 +1027,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			{
 				InterpolationTimer.cancel();
 				InterpolationTimer = null;
-				InterpolationTask = null;
 			}
 			return false;
 		}
@@ -1041,8 +1040,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if (Client.Settings.USE_INTERPOLATION_TIMER)
 			{
 				InterpolationTimer = new Timer();
-				InterpolationTask = new InterpolationTimer_Elapsed();
-				InterpolationTimer.schedule(InterpolationTask, Settings.INTERPOLATION_INTERVAL);
+				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), Settings.INTERPOLATION_INTERVAL);
 			}
 			return false;
 		}
@@ -1162,7 +1160,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			int delay = Math.max(50, (int) (Settings.INTERPOLATION_INTERVAL - elapsed));
 			if (InterpolationTimer != null)
 			{
-				InterpolationTimer.schedule(InterpolationTask, delay);
+				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), delay);
 			}
 		}
 	}
@@ -1171,7 +1169,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	// Does periodic dead reckoning calculation to convert
 	// velocity and acceleration to new positions for objects
 	private Timer InterpolationTimer;
-	private TimerTask InterpolationTask;
 	private long lastInterpolation;
 
 	public ObjectManager(GridClient client)
@@ -1276,10 +1273,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		for (int i = 0; i < localIDs.length; i++)
 		{
+			request.ObjectData[i] = request.new ObjectDataBlock();
 			request.ObjectData[i].ID = localIDs[i];
 			request.ObjectData[i].CacheMissType = 0;
 		}
-
 		simulator.SendPacket(request);
 	}
 
@@ -2615,7 +2612,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			packet.ObjectLocalID[i] = localIds[i];
 		}
-
 		simulator.SendPacket(packet);
 	}
 
@@ -3069,7 +3065,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 
 					// Update some internals if this is our avatar
-					if (block.FullID == Client.Self.getAgentID() && simulator == Client.Network.getCurrentSim())
+					if (block.FullID.equals(Client.Self.getAgentID()) && simulator.equals(Client.Network.getCurrentSim()))
 					{
 						// #region Update Client.Self
 
@@ -3295,6 +3291,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					obj.CollisionPlane = update.CollisionPlane;
 					obj.Acceleration = update.Acceleration;
 					obj.AngularVelocity = update.AngularVelocity;
+					obj.PrimData = obj.new ConstructionData();
 					obj.PrimData.State = update.State;
 					obj.Textures = update.Textures;
 				}
@@ -3358,6 +3355,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			prim.LocalID = localid;
 			prim.ID = FullID;
 			prim.Flags = PrimFlags.setValue(block.UpdateFlags);
+			prim.PrimData = prim.new ConstructionData();
 			prim.PrimData.PCode = pcode;
 
 			// /#region Decode block and update Prim
