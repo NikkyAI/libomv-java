@@ -1723,8 +1723,7 @@ public class Helpers
 		else if (length > 0)
 		{
 			/* Backtrack possible null terminating bytes */
-			for (; bytes[offset + length - 1] == 0; length--)
-				;
+			for (; length > 0 && bytes[offset + length - 1] == 0; length--);
 		}
 
 		if (length == 0)
