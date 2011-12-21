@@ -2300,7 +2300,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
 		// Login
-		_Client.Login.RegisterLoginProgressCallback(new Network_OnLoginProgress(), null, false);
+		_Client.Login.OnLoginProgress.add(new Network_OnLoginProgress(), false);
 
 		// Coarse location callback
 		_Client.Network.RegisterCallback(PacketType.CoarseLocationUpdate, this);
@@ -6356,6 +6356,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
 				if (updateTimer != null)
 				{
+					updateTask.cancel();
+					updateTask = new UpdateTimer();
 					updateTimer.scheduleAtFixedRate(updateTask, updateInterval, updateInterval);
 				}
 				updateInterval = value;
@@ -6364,7 +6366,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
 				if (updateTimer != null)
 				{
-					updateTimer.cancel();
+					updateTask.cancel();
+					updateTask = null;
 				}
 				updateInterval = 0;
 			}
@@ -6456,7 +6459,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			@Override
 			public void run()
 			{
-				if (_Client.Network.getConnected() && _Client.Settings.SEND_AGENT_UPDATES)
+				if (_Client.Network.getConnected() && _Client.Settings.SEND_AGENT_UPDATES && _Client.Network.getCurrentSim() != null)
 				{
 					// Send an AgentUpdate packet
 					try
