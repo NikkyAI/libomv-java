@@ -9,8 +9,8 @@ Many modifications to the original Java port and additions from newer OpenMetave
 by Frederick Martian.
 
 
-Installing the library
-----------------------
+Installing the source code
+--------------------------
 
 The libomv-java project consists of several subprojects. There is the actual core library libomv-core
 which provides the entire network and resource handling for SL network protocol, which is used by 
@@ -50,6 +50,9 @@ The library can be built using Eclipse.
 
 You will need various existing Java libraries installed - more details to follow. Most non-standard Java
 libraries are provided in the lib directory of this project download.
+
+Before you can build the library itself, you need to generate the packet classes in the packets subdirectory.
+Refer to the subheading "Rebuilding packet classes" below for more details.
 
 While building with ant should be possible, it's not what I use for the moment, so whoever wants to do
 that will be on its own and should understand the ant specific issues.
