@@ -1192,7 +1192,7 @@ public class LoginManager
 				}
 				catch (Exception ex)
 				{
-					UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
+					ex.printStackTrace();
 				}
 			}
 			else
