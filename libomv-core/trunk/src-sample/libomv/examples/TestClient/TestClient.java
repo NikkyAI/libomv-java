@@ -220,7 +220,8 @@ public class TestClient extends GridClient implements PacketCallback
             {
                 if (supClass != null && supClass.equals(Command.class))
                 {
-                    Constructor<Command> ctor = (Constructor<Command>) clazz.getDeclaredConstructor(new Class[] {TestClient.class});
+                    @SuppressWarnings("unchecked")
+					Constructor<Command> ctor = (Constructor<Command>) clazz.getDeclaredConstructor(new Class[] {TestClient.class});
                     Command command = ctor.newInstance(new Object[] {this});
                     RegisterCommand(command);
                 }
