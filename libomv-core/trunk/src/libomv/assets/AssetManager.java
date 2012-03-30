@@ -1608,10 +1608,8 @@ public class AssetManager implements PacketCallback
 
 		if (send.XferID.Packet == 0)
 		{
-			// The first packet reserves the first four bytes of the data for
-			// the
-			// total length of the asset and appends 1000 bytes of data after
-			// that
+			// The first packet reserves the first four bytes of the data for the
+			// total length of the asset and appends 1000 bytes of data after that
 			byte[] data = new byte[1004];
 			Helpers.Int32ToBytesL(upload.Size, data, 0);
 			System.arraycopy(upload.AssetData, 0, data, 4, 1000);

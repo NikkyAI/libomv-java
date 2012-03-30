@@ -252,7 +252,6 @@ public class Simulator extends Thread
 		PendingLocalUploads,
 		UnAckedBytes,
 		
-		
 		PhysicsPinnedTasks,
 		PhysicsLODTasks,
 		PhysicsStepMS,
@@ -264,7 +263,6 @@ public class Simulator extends Thread
 		SimSpareTime,
 		SimSleepTime,
 		SimIOPumpTime;
-
 
 		public static SimStatType setValue(int value)
 		{
