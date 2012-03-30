@@ -45,7 +45,6 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -54,6 +53,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
@@ -81,6 +81,7 @@ public abstract class AsyncHTTPClient<T>
 	
 	private final HttpAsyncClient client;
 	private X509Certificate certificate;
+	Boolean executing = new Boolean(false);
 	private Timer timeout;
 	private FutureCallback<T> callback;
 	private ProgressCallback progress;
@@ -102,13 +103,14 @@ public abstract class AsyncHTTPClient<T>
 	
 	private void cancel()
 	{
-		if (timeout != null)
+		synchronized (executing)
 		{
-			synchronized (timeout)
+			if (timeout != null)
 			{
 				timeout.cancel();
 				timeout = null;
 			}
+			executing = false;
 		}
 	}
 	
@@ -134,12 +136,12 @@ public abstract class AsyncHTTPClient<T>
 	 */
 	public Future<T> executeHttpGet(URI address, String acceptHeader, long millisecondTimeout)
 	{
-		HttpRequest request = new HttpGet();
+		HttpGet request = new HttpGet(address);
 		if (acceptHeader != null && !acceptHeader.isEmpty())
 		{
 			request.addHeader("Accept", acceptHeader);
 		}
-		return executeHttp(address, request, millisecondTimeout);
+		return executeHttp(request, millisecondTimeout);
 	}
 
 	/**
@@ -155,7 +157,7 @@ public abstract class AsyncHTTPClient<T>
 			throws UnsupportedEncodingException
 	{
 		// Create the request
-		HttpPost request = new HttpPost();
+		HttpPost request = new HttpPost(address);
 		if (contentType != null && !contentType.isEmpty())
 		{
 			request.addHeader("Content-Type", contentType);
@@ -163,7 +165,7 @@ public abstract class AsyncHTTPClient<T>
 
 		// set POST body
 		request.setEntity(new StringEntity(data));
-		return executeHttp(address, request, millisecondTimeout);
+		return executeHttp(request, millisecondTimeout);
 	}
 
 	/**
@@ -178,7 +180,7 @@ public abstract class AsyncHTTPClient<T>
 	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, long millisecondTimeout)
 	{
 		// Create the request
-		HttpPost request = new HttpPost();
+		HttpPost request = new HttpPost(address);
 		if (contentType != null && !contentType.isEmpty())
 		{
 			request.addHeader("Content-Type", contentType);
@@ -186,7 +188,7 @@ public abstract class AsyncHTTPClient<T>
 
 		// set POST body
 		request.setEntity(new ByteArrayEntity(data));
-		return executeHttp(address, request, millisecondTimeout);
+		return executeHttp(request, millisecondTimeout);
 	}
 
 	private HttpHost determineTarget(URI address) throws ClientProtocolException
@@ -195,20 +197,20 @@ public abstract class AsyncHTTPClient<T>
 		// Otherwise, the null target is detected in the director.
 		HttpHost target = null;
 
+		String host = address.getHost();
 		if (address.getScheme().equals("https"))
 		{
 			try
 			{
-				String name = address.getHost();
 				if (certificate == null)
 				{
-					certificate = Helpers.GetCertificate(address.getHost());
+					certificate = Helpers.GetCertificate(host);
 				}
 
 				if (certificate != null)
 				{
 					KeyStore store = Helpers.GetExtendedKeyStore();
-					store.setCertificateEntry(name, certificate);
+					store.setCertificateEntry(host, certificate);
 					client.getConnectionManager().getSchemeRegistry().register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 				}
 			}
@@ -219,35 +221,32 @@ public abstract class AsyncHTTPClient<T>
 
 		if (address.isAbsolute())
 		{
-			if (address.getHost() == null)
+			if (host == null)
 			{
 				throw new ClientProtocolException("URI does not specify a valid host name: " + address);
 			}
-			target = new HttpHost(address.getHost(), address.getPort(), address.getScheme());
+			target = new HttpHost(host, address.getPort(), address.getScheme());
 			// TODO use URIUtils#extractTarget once it becomes available
 		}
 		return target;
 	}
 
-	private Future<T> executeHttp(URI address, HttpRequest request, long millisecondTimeout)
+	private Future<T> executeHttp(HttpRequestBase request, long millisecondTimeout)
 	{
-		synchronized (timeout)
+		synchronized (executing)
 		{
 			if (timeout != null)
 			{
 				Logger.Log("This Capability Client is already waiting for a response", Logger.LogLevel.Error);
 				return null;
 			}
-		}
 
-		try
-		{
-			final Future<T> result = client.execute(new CapsHttpAsyncRequestProducer(determineTarget(address), request),
-					                                new CapsHttpAsyncResponseConsumer(), new AsyncHttpResultCallback());
-
-			if (millisecondTimeout >= 0)
+			try
 			{
-				synchronized (timeout)
+				final Future<T> result = client.execute(new CapsHttpAsyncRequestProducer(determineTarget(request.getURI()), request),
+					                                	new CapsHttpAsyncResponseConsumer(), new AsyncHttpResultCallback());
+
+				if (millisecondTimeout >= 0)
 				{
 					timeout = new Timer();
 					timeout.schedule(new TimerTask()
@@ -255,18 +254,18 @@ public abstract class AsyncHTTPClient<T>
 						@Override
 						public void run()
 						{
-							result.cancel(false);
+							result.cancel(true);
 						}
 					}, millisecondTimeout);
-				}
+				}	
+				return result;
 			}
-			return result;
-		}
-		catch (Exception ex)
-		{
-			BasicFuture<T> failed = new BasicFuture<T>(callback);
-			failed.failed(ex);
-			return failed;
+			catch (Exception ex)
+			{
+				BasicFuture<T> failed = new BasicFuture<T>(callback);
+				failed.failed(ex);
+				return failed;
+			}
 		}
 	}
 
@@ -299,10 +298,10 @@ public abstract class AsyncHTTPClient<T>
 	private class CapsHttpAsyncRequestProducer implements HttpAsyncRequestProducer
 	{
 		private final HttpHost target;
-		private final HttpRequest request;
+		private final HttpRequestBase request;
 		private final ProducingNHttpEntity producer;
 
-		public CapsHttpAsyncRequestProducer(final HttpHost target, final HttpRequest request) throws IOException
+		public CapsHttpAsyncRequestProducer(final HttpHost target, final HttpRequestBase request) throws IOException
 		{
 			super();
 			if (target == null)
@@ -338,7 +337,7 @@ public abstract class AsyncHTTPClient<T>
 		}
 
 		@Override
-		public HttpRequest generateRequest()
+		public HttpRequestBase generateRequest()
 		{
 			return this.request;
 		}
