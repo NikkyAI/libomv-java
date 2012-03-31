@@ -24,15 +24,15 @@
  */
 package libomv.utils;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import libomv.utils.Callback;
 
 public class CallbackHandler<T>
 {
-	private HashMap<Callback<T>, Boolean> callbackHandlers = null;
+	private LinkedHashMap<Callback<T>, Boolean> callbackHandlers = null;
 
 	public int count()
 	{
@@ -61,7 +61,7 @@ public class CallbackHandler<T>
 	public boolean add(Callback<T> handler, boolean autoremove)
 	{
 		if (callbackHandlers == null)
-			callbackHandlers = new HashMap<Callback<T>, Boolean>();
+			callbackHandlers = new LinkedHashMap<Callback<T>, Boolean>();
 
 		synchronized (callbackHandlers)
 		{
