@@ -1094,24 +1094,15 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						}
 						
 						// Iterate through all of this sims primitives
-						// #region Angular Velocity
-
-						// #endregion Angular Velocity
-
-						// #region Linear Motion
-						// Only do movement interpolation (extrapolation) when
-						// there is a non-zero velocity but no acceleration
-
-						// #endregion Linear Motion
-						// FIXME: Hinge movement extrapolation
-						// FIXME: Point movement extrapolation
 						synchronized (sim.getObjectsPrimitives())
 						{
 							for (Primitive prim : sim.getObjectsPrimitives().values())
 							{
-								switch (prim.Joint)
+								if (prim.Joint != null)
 								{
-									case Invalid:
+		                            if (prim.Joint == JointType.Invalid)
+		                            {
+										// #region Angular Velocity
 										Vector3 angVel = prim.AngularVelocity;
 										float omega = angVel.LengthSquared();
 										if (omega > 0.00001f)
@@ -1122,27 +1113,32 @@ public class ObjectManager implements PacketCallback, CapsCallback
 											Quaternion dQ = Quaternion.CreateFromAxisAngle(angVel, angle);
 											prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
 										}
+										// #endregion Angular Velocity
+										
+			                            // #region Linear Motion
+			                            // Only do movement interpolation (extrapolation) when there is a non-zero velocity but 
+			                            // no acceleration
 										if (prim.Acceleration != Vector3.Zero && prim.Velocity == Vector3.Zero)
 										{
-											// prim.Position += (prim.Velocity +
-											// prim.Acceleration * (0.5f *
-											// (adjSeconds - HAVOK_TIMESTEP))) *
-											// adjSeconds;
-											// prim.Velocity += prim.Acceleration *
-											// adjSeconds;
-											prim.Position
-													.add(Vector3.multiply(Vector3.add(prim.Velocity, Vector3.multiply(
-															prim.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
-															adjSeconds));
-											prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
+											prim.Position.add(Vector3.multiply(Vector3.add(prim.Velocity, Vector3.multiply(
+															  prim.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))), adjSeconds));
+										    prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
 										}
-										break;
-									case Hinge:
-									case Point:
-										break;
-									default:
+	                                    // #endregion Linear Motion
+		                            }
+		                            else if (prim.Joint == JointType.Hinge)
+	                                {
+	                                    //FIXME: Hinge movement extrapolation
+	                                }
+	                                else if (prim.Joint == JointType.Point)
+	                                {
+	                                    //FIXME: Point movement extrapolation
+	                                }
+	                                else
+	                                {
 										Logger.Log("Unhandled joint type " + prim.Joint, LogLevel.Warning, Client);
 										break;
+									}
 								}
 							}
 						}
