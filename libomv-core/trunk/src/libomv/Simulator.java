@@ -262,7 +262,8 @@ public class Simulator extends Thread
 		ScriptEPS,
 		SimSpareTime,
 		SimSleepTime,
-		SimIOPumpTime;
+		SimIOPumpTime,
+		SimUnknown;    // 35
 
 		public static SimStatType setValue(int value)
 		{
@@ -371,6 +372,18 @@ public class Simulator extends Thread
 		/* Unacknowledged bytes in queue */
 		public int UnackedBytes;
 
+		public int PhysicsPinnedTasks;
+		public int PhysicsLODTasks;
+		public int PhysicsStepMS;
+		public int PhysicsShapeMS;
+		public int PhysicsOtherMS;
+		public int PhysicsMemory;
+		public int ScriptEPS;
+		public int SimSpareTime;
+		public int SimSleepTime;
+		public int SimIOPumpTime;
+		public int SimUnknown;
+		
 		public SimStats()
 		{
 		}

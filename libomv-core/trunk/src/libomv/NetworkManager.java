@@ -1423,15 +1423,37 @@ public class NetworkManager implements PacketCallback
 					simulator.Statistics.UnackedBytes = (int)s.StatValue;
 					break;
 				case PhysicsPinnedTasks:
+					simulator.Statistics.PhysicsPinnedTasks = (int)s.StatValue;
+					break;
 				case PhysicsLODTasks:
+					simulator.Statistics.PhysicsLODTasks = (int)s.StatValue;
+					break;
 				case PhysicsStepMS:
+					simulator.Statistics.PhysicsStepMS = (int)s.StatValue;
+					break;
 				case PhysicsShapeMS:
+					simulator.Statistics.PhysicsShapeMS = (int)s.StatValue;
+					break;
 				case PhysicsOtherMS:
+					simulator.Statistics.PhysicsOtherMS = (int)s.StatValue;
+					break;
 				case PhysicsMemory:
+					simulator.Statistics.PhysicsMemory = (int)s.StatValue;
+					break;
 				case ScriptEPS:
+					simulator.Statistics.ScriptEPS = (int)s.StatValue;
+					break;
 				case SimSpareTime:
+					simulator.Statistics.SimSpareTime = (int)s.StatValue;
+					break;
 				case SimSleepTime:
+					simulator.Statistics.SimSleepTime = (int)s.StatValue;
+					break;
 				case SimIOPumpTime:
+					simulator.Statistics.SimIOPumpTime = (int)s.StatValue;
+					break;
+				case SimUnknown:
+					simulator.Statistics.SimUnknown = (int)s.StatValue;
 					break;
 				default:
 					Logger.Log("Unhandled Sim Stats ID: " + s.StatID, LogLevel.Debug, _Client);
