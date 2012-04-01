@@ -32,6 +32,10 @@ import libomv.utils.Callback;
 
 public class CallbackHandler<T>
 {
+	/* This hash list needs to be of a type that guarantees the same iteration
+	 * order than in which the items were inserted. Otherwise we get race situations
+	 * with user callbacks being added after the library callbacks but depending on
+	 * information in the library that has been inserted by the library callback. */
 	private LinkedHashMap<Callback<T>, Boolean> callbackHandlers = null;
 
 	public int count()
