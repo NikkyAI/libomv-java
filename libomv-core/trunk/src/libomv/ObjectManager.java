@@ -1103,16 +1103,23 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		                            if (prim.Joint == JointType.Invalid)
 		                            {
 										// #region Angular Velocity
-										Vector3 angVel = prim.AngularVelocity;
-										float omega = angVel.LengthSquared();
-										if (omega > 0.00001f)
-										{
-											omega = (float) Math.sqrt(omega);
-											float angle = omega * adjSeconds;
-											angVel = Vector3.multiply(angVel, 1.0f / omega);
-											Quaternion dQ = Quaternion.CreateFromAxisAngle(angVel, angle);
-											prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
-										}
+		                            	if (prim.AngularVelocity != null)
+		                            	{
+		                            		Vector3 angVel = prim.AngularVelocity;
+		                            		float omega = angVel.LengthSquared();
+		                            		if (omega > 0.00001f)
+		                            		{
+		                            			omega = (float) Math.sqrt(omega);
+		                            			float angle = omega * adjSeconds;
+		                            			angVel = Vector3.multiply(angVel, 1.0f / omega);
+		                            			Quaternion dQ = Quaternion.CreateFromAxisAngle(angVel, angle);
+		                            			prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
+		                            		}
+		                            	}
+		                            	else
+		                            	{
+											Logger.Log("null angular velocity " + prim.toString(), LogLevel.Warning, Client);		                            		
+		                            	}
 										// #endregion Angular Velocity
 										
 			                            // #region Linear Motion
