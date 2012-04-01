@@ -25,6 +25,11 @@
  */
 package libomv.utils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 import libomv.GridClient;
 import libomv.Settings;
 
@@ -32,34 +37,50 @@ import libomv.Settings;
 public final class Logger
 {
 	// Passed to Logger.Log() to identify the severity of a log entry
-	//
-	// Non-noisy useful information, may be helpful in debugging a problem
 	public interface LogLevel
 	{
 		public final static int None = 0;
 
+		// Non-noisy useful information, may be helpful in debugging a problem
 		public final static int Info = 1;
 
 		// A non-critical error occurred. A warning will not prevent the rest of
-		// libomv from
-		// operating as usual, although it may be indicative of an underlying
-		// issue
+		// libomv from operating as usual, although it may be indicative of an
+		// underlying issue
 		public final static int Warning = 2;
 
 		// A critical error has occurred. Generally this will be followed by the
-		// network layer
-		// shutting down, although the stability of libomv after an error is
-		// uncertain
+		// network layer shutting down, although the stability of libomv after an
+		// error is uncertain
 		public final static int Error = 3;
 
 		public final static int Debug = 4;
 	}
 
+	public static File debugFile = null;
+	
 	private static class Log
 	{
 		private void output(String level, Object message, Throwable ex)
 		{
-			System.out.println(level + ": " + message + (ex != null ? " Exception: " + ex.toString() : ""));
+			if (debugFile != null)
+			{
+				try
+				{
+					Writer write = new FileWriter(debugFile);
+					write.write(level + ": " + message + (ex != null ? " Exception: " + ex.toString() : ""));
+					write.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+			}
+			else
+			{
+				System.out.println(level + ": " + message + (ex != null ? " Exception: " + ex.toString() : ""));
+			}
 		}
 
 		public void info(Object message, Throwable ex)
@@ -85,12 +106,12 @@ public final class Logger
 
 	public interface LogCallback
 	{
-		public void callback(Object message, int level);
+		public void callback(Object message, int level, Throwable exception);
 	}
 
 	/**
 	 * Callback used for client apps to receive log messages from the library.
-	 * Tyiggered whenever a message is logged. If this is left null, log
+	 * Triggered whenever a message is logged. If this is left null, log
 	 * messages will go to the console.
 	 * 
 	 * @param message
@@ -172,39 +193,41 @@ public final class Logger
 
 		if (OnLogMessage != null)
 		{
-			OnLogMessage.callback(message, level);
+			OnLogMessage.callback(message, level, exception);
 		}
-
-		switch (level)
+		else
 		{
-			case LogLevel.Debug:
-				if (Settings.LOG_LEVEL == LogLevel.Debug)
-				{
-					LogInstance.debug(message, exception);
-				}
-				break;
-			case LogLevel.Info:
-				if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info)
-				{
-					LogInstance.info(message, exception);
-				}
-				break;
-			case LogLevel.Warning:
-				if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
+			switch (level)
+			{
+				case LogLevel.Debug:
+					if (Settings.LOG_LEVEL == LogLevel.Debug)
+					{
+						LogInstance.debug(message, exception);
+					}
+					break;
+				case LogLevel.Info:
+					if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info)
+					{
+						LogInstance.info(message, exception);
+					}
+					break;
+				case LogLevel.Warning:
+					if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
 						|| Settings.LOG_LEVEL == LogLevel.Warning)
-				{
-					LogInstance.warn(message, exception);
-				}
-				break;
-			case LogLevel.Error:
-				if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
+					{
+						LogInstance.warn(message, exception);
+					}
+					break;
+				case LogLevel.Error:
+					if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
 						|| Settings.LOG_LEVEL == LogLevel.Warning || Settings.LOG_LEVEL == LogLevel.Error)
-				{
-					LogInstance.error(message, exception);
-				}
-				break;
-			default:
-				break;
+					{
+						LogInstance.error(message, exception);
+					}
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -219,7 +242,7 @@ public final class Logger
 	 */
 	public static void DebugLog(Object message)
 	{
-		DebugLog(message, null);
+		DebugLog(message, null, null);
 	}
 
 	/**
@@ -235,6 +258,24 @@ public final class Logger
 	 */
 	public static void DebugLog(Object message, GridClient client)
 	{
+		DebugLog(message, client, null);
+	}
+	
+	/**
+	 * If <code>GridClient.Settings.DEBUG</code> is true, an event will be fired
+	 * if an <code>OnLogMessage</code> handler is registered and the message
+	 * will be sent to the logging engine
+	 * 
+	 * @param message
+	 *            The message to log at the DEBUG level to the current logging
+	 *            engine
+	 * @param client
+	 *            Instance of the client
+	 * @param exception
+	 *            the exception that goes with the debug message
+	 */
+	public static void DebugLog(Object message, GridClient client, Throwable exception)
+	{
 		if (Settings.LOG_LEVEL == LogLevel.Debug)
 		{
 			if (client != null && client.Settings.LOG_NAMES)
@@ -244,10 +285,12 @@ public final class Logger
 
 			if (OnLogMessage != null)
 			{
-				OnLogMessage.callback(message, LogLevel.Debug);
+				OnLogMessage.callback(message, LogLevel.Debug, exception);
 			}
-
-			LogInstance.debug(message, null);
+			else
+			{
+				LogInstance.debug(message, exception);
+			}
 		}
 	}
 }
