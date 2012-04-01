@@ -29,6 +29,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import libomv.GridClient;
 import libomv.Settings;
@@ -63,23 +66,23 @@ public final class Logger
 	{
 		private void output(String level, Object message, Throwable ex)
 		{
+			String str =  Calendar.getInstance().getTime().toString() + level + ": " + message + (ex != null ? " Exception: " + ex.toString() : "");
 			if (debugFile != null)
 			{
 				try
 				{
 					Writer write = new FileWriter(debugFile);
-					write.write(level + ": " + message + (ex != null ? " Exception: " + ex.toString() : ""));
+					write.write(str);
 					write.close();
 				}
 				catch (IOException e)
 				{
 					e.printStackTrace();
 				}
-				
 			}
 			else
 			{
-				System.out.println(level + ": " + message + (ex != null ? " Exception: " + ex.toString() : ""));
+				System.out.println(str);
 			}
 		}
 
