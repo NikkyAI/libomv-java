@@ -346,8 +346,9 @@ public class GridClient
 		Login = new LoginManager(this);
 		Network = new NetworkManager(this);
 		Messages = new CapsMessage();
-		Settings = settings;
-		Settings.Startup(this);
+		/* This needs to come after the creation of the Network
+		 * manager as it registers a packetCallback */
+		Settings = settings.Startup(this);
 		Self = new AgentManager(this);
 		Friends = new FriendsManager(this);
 		Groups = new GroupManager(this);

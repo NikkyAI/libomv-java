@@ -408,9 +408,10 @@ public class Settings implements PacketCallback
 	 * @param client
 	 *            Reference to a GridClient object
 	 */
-	public void Startup(GridClient client)
+	public Settings Startup(GridClient client)
 	{
 		client.Network.RegisterCallback(PacketType.EconomyData, this);
+		return this;
 	}
 
 	@Override
