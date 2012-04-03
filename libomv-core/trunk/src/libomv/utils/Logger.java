@@ -29,9 +29,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import libomv.GridClient;
 import libomv.Settings;
