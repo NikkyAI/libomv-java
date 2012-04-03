@@ -402,7 +402,7 @@ public abstract class AsyncHTTPClient<T>
 		@Override
 		public synchronized void responseReceived(final HttpResponse response) throws IOException
 		{
-			Logger.Log("HTTP response: " + response.getStatusLine(), LogLevel.Info);
+			Logger.Log("HTTP response: " + response.getStatusLine(), LogLevel.Debug);
 
 			StatusLine status = response.getStatusLine();
 			if (status.getStatusCode() != HttpStatus.SC_OK)
