@@ -192,7 +192,9 @@ public class ClientManager
 				{
 					Clients.put(client.Self.getAgentID(), client);
 
-					if (client.MasterKey == null || client.MasterKey.equals(UUID.Zero))
+					/* if the MasterKey hasn't been provided and we do have the directory service
+					 * available then try to resolve it for our account name */
+					if (client.Directory != null && (client.MasterKey == null || client.MasterKey.equals(UUID.Zero)))
 					{
 						final UUID query = new UUID();
 
