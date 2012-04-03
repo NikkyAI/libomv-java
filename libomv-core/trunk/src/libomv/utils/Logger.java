@@ -66,7 +66,7 @@ public final class Logger
 	{
 		private void output(String level, Object message, Throwable ex)
 		{
-			String str =  Calendar.getInstance().getTime().toString() + level + ": " + message + (ex != null ? " Exception: " + ex.toString() : "");
+			String str =  Calendar.getInstance().getTime().toString() + " " + level + ": " + message + (ex != null ? " Exception: " + ex.toString() : "");
 			if (debugFile != null)
 			{
 				try
