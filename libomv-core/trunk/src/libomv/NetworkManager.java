@@ -453,6 +453,7 @@ public class NetworkManager implements PacketCallback
 	private void FirePacketCallbacks(Packet packet, Simulator simulator)
 	{
 		boolean specialHandler = false;
+		PacketType type = packet.getType();
 
 		synchronized (simCallbacks)
 		{
@@ -468,12 +469,12 @@ public class NetworkManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Default packet event handler: " + packet.getType(), LogLevel.Error, _Client, ex);
+						Logger.Log("Default packet event handler: " + type, LogLevel.Error, _Client, ex);
 					}
 				}
 			}
 			// Fire any registered callbacks
-			callbackArray = simCallbacks.get(packet.getType());
+			callbackArray = simCallbacks.get(type);
 			if (callbackArray != null)
 			{
 				for (PacketCallback callback : callbackArray)
@@ -484,16 +485,16 @@ public class NetworkManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Packet event handler: " + packet.getType(), LogLevel.Error, _Client, ex);
+						Logger.Log("Packet event handler: " + type, LogLevel.Error, _Client, ex);
 					}
 					specialHandler = true;
 				}
 			}
 		}
 
-		if (!specialHandler && packet.getType() != PacketType.Default && packet.getType() != PacketType.PacketAck)
+		if (!specialHandler && type != PacketType.Default && type != PacketType.PacketAck)
 		{
-			Logger.Log("No handler registered for packet event " + packet.getType(), LogLevel.Warning, _Client);
+			Logger.Log("No handler registered for packet event " + type, LogLevel.Warning, _Client);
 		}
 	}
 
