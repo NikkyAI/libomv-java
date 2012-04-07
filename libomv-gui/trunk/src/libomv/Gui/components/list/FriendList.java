@@ -248,29 +248,31 @@ public class FriendList extends JPanel
 	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs>
 	{
 		@Override
-		public void callback(FriendRightsCallbackArgs e)
+		public boolean callback(FriendRightsCallbackArgs e)
 		{
 			changeFriend(e.getFriendInfo());
+			return false;
 		}
 	}
 
 	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
-		public void callback(FriendNotificationCallbackArgs e)
+		public boolean callback(FriendNotificationCallbackArgs e)
 		{
 			FriendInfo info = _Client.Friends.getFriendList().get(e.getAgentID());
 			if (info != null)
 			{
 				addFriend(info);
 			}
+			return false;
 		}
 	}
 
 	private class FriendshipResponse implements Callback<FriendshipResponseCallbackArgs>
 	{
 		@Override
-		public void callback(FriendshipResponseCallbackArgs e)
+		public boolean callback(FriendshipResponseCallbackArgs e)
 		{
 			FriendInfo info =  _Client.Friends.getFriendList().get(e.getAgentID());
 			if (info != null)
@@ -284,19 +286,21 @@ public class FriendList extends JPanel
 					removeFriend(info);
 				}
 			}
+			return false;
 		}
 	}
 
 	private class FriendshipTerminated implements Callback<FriendshipTerminatedCallbackArgs>
 	{
 		@Override
-		public void callback(FriendshipTerminatedCallbackArgs e)
+		public boolean callback(FriendshipTerminatedCallbackArgs e)
 		{
 			FriendInfo info = findFriend(e.getOtherID());
 			if (info != null)
 			{
 				removeFriend(info);
 			}
+			return false;
 		}
 	}
 	

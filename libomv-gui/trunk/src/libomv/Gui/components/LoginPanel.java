@@ -557,13 +557,14 @@ public class LoginPanel extends JPanel
 	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
 	{
 		@Override
-		public void callback(LoginProgressCallbackArgs e)
+		public boolean callback(LoginProgressCallbackArgs e)
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
 				// Login was successful
 				System.out.println("sldump: Message of the day: " + e.getMessage());
 				doReturn(true);
+				return true;
 			}
 			else if (e.getStatus() == LoginStatus.Redirecting)
 			{
@@ -573,7 +574,10 @@ public class LoginPanel extends JPanel
 			else if (e.getStatus() == LoginStatus.Failed)
 			{
 				System.out.println("sldump: Error logging in: " + e.getReason());
+				doReturn(false);
+				return true;
 			}
+			return false;
 		}
 	}
 
