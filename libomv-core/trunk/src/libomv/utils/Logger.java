@@ -32,7 +32,6 @@ import java.io.Writer;
 import java.util.Calendar;
 
 import libomv.GridClient;
-import libomv.Settings;
 
 /* Singleton logging class for the entire library */
 public final class Logger
@@ -57,6 +56,9 @@ public final class Logger
 
 		public final static int Debug = 4;
 	}
+
+	/* Get or set the minimum log level to output to the console by default */
+	public static int LOG_LEVEL = LogLevel.Debug;
 
 	public static File debugFile = null;
 	
@@ -201,27 +203,27 @@ public final class Logger
 			switch (level)
 			{
 				case LogLevel.Debug:
-					if (Settings.LOG_LEVEL == LogLevel.Debug)
+					if (LOG_LEVEL == LogLevel.Debug)
 					{
 						LogInstance.debug(message, exception);
 					}
 					break;
 				case LogLevel.Info:
-					if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info)
+					if (LOG_LEVEL == LogLevel.Debug || LOG_LEVEL == LogLevel.Info)
 					{
 						LogInstance.info(message, exception);
 					}
 					break;
 				case LogLevel.Warning:
-					if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
-						|| Settings.LOG_LEVEL == LogLevel.Warning)
+					if (LOG_LEVEL == LogLevel.Debug || LOG_LEVEL == LogLevel.Info
+						|| LOG_LEVEL == LogLevel.Warning)
 					{
 						LogInstance.warn(message, exception);
 					}
 					break;
 				case LogLevel.Error:
-					if (Settings.LOG_LEVEL == LogLevel.Debug || Settings.LOG_LEVEL == LogLevel.Info
-						|| Settings.LOG_LEVEL == LogLevel.Warning || Settings.LOG_LEVEL == LogLevel.Error)
+					if (LOG_LEVEL == LogLevel.Debug || LOG_LEVEL == LogLevel.Info
+						|| LOG_LEVEL == LogLevel.Warning || LOG_LEVEL == LogLevel.Error)
 					{
 						LogInstance.error(message, exception);
 					}
@@ -277,7 +279,7 @@ public final class Logger
 	 */
 	public static void DebugLog(Object message, GridClient client, Throwable exception)
 	{
-		if (Settings.LOG_LEVEL == LogLevel.Debug)
+		if (LOG_LEVEL == LogLevel.Debug)
 		{
 			if (client != null && client.Settings.LOG_NAMES)
 			{
