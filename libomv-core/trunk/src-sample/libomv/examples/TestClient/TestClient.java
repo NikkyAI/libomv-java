@@ -97,7 +97,8 @@ public class TestClient extends GridClient implements PacketCallback
 
 		RegisterAllCommands(this.getClass());
 
-		Settings.LOG_LEVEL = LogLevel.Debug;
+		Logger.LOG_LEVEL = LogLevel.Warning;
+
 		Settings.LOG_RESENDS = false;
 		Settings.STORE_LAND_PATCHES = true;
 		Settings.ALWAYS_DECODE_OBJECTS = true;
