@@ -27,6 +27,6 @@ What needs to be attacked:
 - Character (Avatar) renderer
 
 For 3D implementation we should probably look at what ogoglio could offer in that respect.
-It's Apache license seems compatibile enough to use in this project.
+It's Apache license seems compatible enough to use in this project.
 
 
