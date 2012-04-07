@@ -383,15 +383,6 @@ public class Settings implements PacketCallback
 	public int PIPELINE_REQUEST_TIMEOUT = 45 * 1000;
 	// /#region Logging Configuration
 
-	/*
-	 * Get or set the minimum log level to output to the console by default
-	 * 
-	 * If the library is not compiled with DEBUG defined and this level is set
-	 * to DEBUG You will get no output on the console. This behavior can be
-	 * overriden by creating a logger configuration file for log4net
-	 */
-	public static int LOG_LEVEL = LogLevel.Debug;
-
 	/* Attach avatar names to log messages */
 	public boolean LOG_NAMES = true;
 
