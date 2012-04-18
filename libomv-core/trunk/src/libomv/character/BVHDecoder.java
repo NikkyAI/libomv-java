@@ -24,7 +24,11 @@
  */
 package libomv.character;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public class BVHDecoder
 {
@@ -58,13 +62,45 @@ public class BVHDecoder
 			"\"FRAME\"", "\"TIME\"", "\"Xposition\"", "\"Yposition\"", "\"Zposition\"", "\"Xrotation\"",
 			"\"Yrotation\"", "\"Zrotation\"", "<INTEGER>", "<FLOATING>", "<ID>", "\"{\"", "\"}\"", "\":\"", };
 
-	public BVHDecoder(InputStream stream)
+	public BVHDecoder(BufferedReader reader) throws IOException
 	{
-		
+		int status = loadTranslationTable("anim.ini");
+		if (status == 0)
+		{
+			status = loadBVHFile(reader);
+		}
+	}
+	
+	private int loadTranslationTable(String filename) throws IOException
+	{
+		InputStream st = getClass().getResourceAsStream("/res/" + filename);
+		BufferedReader br = new BufferedReader(new InputStreamReader(st));
+		try
+		{
+			
+		}
+		catch (Exception ex)
+		{
+			
+		}
+		finally
+		{
+			br.close();
+			st.close();
+		}
+		return 0;
+	}
+	
+	private int loadBVHFile(BufferedReader reader)
+	{
+		return 0;		
 	}
 	
 	public LLAnimation parse()
 	{
+
+		
+		
 		return null;
 	}
 }
