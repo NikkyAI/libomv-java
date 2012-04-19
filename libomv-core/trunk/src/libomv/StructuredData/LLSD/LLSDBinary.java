@@ -57,8 +57,9 @@ public final class LLSDBinary
 	private static final int int32Length = 4;
 	private static final int doubleLength = 8;
 
-	private static final byte[] llsdBinaryHead = { '<', '?', 'l', 'l', 's', 'd', '/', 'b', 'i', 'n', 'a', 'r', 'y',
-			'?', '>', '\n' };
+	private static final byte[] llsdBinaryHead = { '<','?','l','l','s','d','/','b','i','n','a','r','y','?','>'};
+    private static final byte[] llsdBinaryHead2 = { '<','?',' ','l','l','s','d','/','b','i','n','a','r','y',' ','?','>'};
+
 	private static final byte undefBinaryValue = (byte) '!';
 	private static final byte trueBinaryValue = (byte) '1';
 	private static final byte falseBinaryValue = (byte) '0';
@@ -96,7 +97,11 @@ public final class LLSDBinary
 		boolean result = find(stream, llsdBinaryHead);
 		if (!result)
 		{
-			throw new ParseException("Failed to decode binary LLSD", 0);
+			result = find(stream, llsdBinaryHead2);
+			if (!result)
+			{
+				throw new ParseException("Failed to decode binary LLSD", 0);
+			}
 		}
 		return parseElement(stream);
 	}
@@ -104,6 +109,7 @@ public final class LLSDBinary
 	public static void serialize(OutputStream stream, OSD osd) throws IOException
 	{
 		stream.write(llsdBinaryHead);
+		stream.write('\n');
 		serializeLLSDBinaryElement(stream, osd);
 	}
 
@@ -311,8 +317,7 @@ public final class LLSDBinary
 	{
 		int bt;
 		while (((bt = stream.read()) > 0)
-				&& ((byte) bt == ' ' || (byte) bt == '\t' || (byte) bt == '\n' || (byte) bt == '\r'))
-			;
+				&& ((byte) bt == ' ' || (byte) bt == '\t' || (byte) bt == '\n' || (byte) bt == '\r'));
 		stream.unread(bt);
 	}
 
