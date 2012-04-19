@@ -106,7 +106,13 @@ public abstract class AssetItem
 		/** Root folder for the folders of type OutfitFolder */
 		MyOutfitsFolder(48),
 		/** Linden mesh format */
-        Mesh(49);
+        Mesh(49),
+        /** Marketplace direct delivery inbox ("Received Items") */
+        Inbox(50),
+        /** Marketplace direct delivery outbox */
+        Outbox(51),
+        /** */
+        BasicRoot(52);
 
 		private static final String[] _AssetTypeNames = new String[] {
 			"texture",    // 0
@@ -159,7 +165,10 @@ public abstract class AssetItem
 	        "outfit",     // 47
 	        "myoutfits",  // 48
 	        "mesh",       // 49
- };
+	        "inbox",      // 50
+	        "outbox",  	  // 51
+	        "basicroot",  // 52
+		};
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
