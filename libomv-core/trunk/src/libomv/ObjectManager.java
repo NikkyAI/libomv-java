@@ -3350,7 +3350,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			boolean isNew;
 			synchronized (simulator.getObjectsPrimitives())
 			{
-				isNew = simulator.getObjectsPrimitives().containsKey(localid);
+				isNew = !simulator.getObjectsPrimitives().containsKey(localid);
 			}
 
 			Primitive prim = GetPrimitive(simulator, localid, FullID);
