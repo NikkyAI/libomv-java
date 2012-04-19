@@ -4113,15 +4113,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     InventoryFolder folder;
 					if (!_Store.containsFolder(dataBlock.FolderID))
 					{
-						Logger.Log("Received BulkUpdate for unknown folder: " + dataBlock.FolderID, LogLevel.Debug, _Client);
                         folder = new InventoryFolder(dataBlock.FolderID, dataBlock.ParentID, update.AgentData.AgentID);
                     }
                     else
                     {
                         folder = _Store.getFolder(dataBlock.FolderID);
+                        folder.parentID = dataBlock.ParentID;
                     }
 					if (dataBlock.getName() != null)
 						folder.name = Helpers.BytesToString(dataBlock.getName());
+					folder.preferredType = AssetType.setValue(dataBlock.Type);
 					_Store.add(folder);
 				}
 			}
@@ -4129,62 +4130,58 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		if (update.ItemData.length > 0 && !update.ItemData[0].ItemID.equals(UUID.Zero))
 		{
-			synchronized (_Store)
+			for (int i = 0; i < update.ItemData.length; i++)
 			{
-				for (int i = 0; i < update.ItemData.length; i++)
+				BulkUpdateInventoryPacket.ItemDataBlock dataBlock = update.ItemData[i];
+				InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID,
+						                                     dataBlock.FolderID, dataBlock.OwnerID);
+
+				item.assetType = AssetType.setValue(dataBlock.Type);
+				if (!dataBlock.AssetID.equals(UUID.Zero))
 				{
-					BulkUpdateInventoryPacket.ItemDataBlock dataBlock = update.ItemData[i];
+					item.AssetID = dataBlock.AssetID;
+				}
+				item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
+				item.CreatorID = dataBlock.CreatorID;
+				item.Description = Helpers.BytesToString(dataBlock.getDescription());
+				item.ItemFlags = dataBlock.Flags;
+				item.GroupID = dataBlock.GroupID;
+				item.GroupOwned = dataBlock.GroupOwned;
+				item.name = Helpers.BytesToString(dataBlock.getName());
+				item.Permissions = new Permissions(dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
+						dataBlock.NextOwnerMask, dataBlock.OwnerMask);
+				item.SalePrice = dataBlock.SalePrice;
+				item.saleType = SaleType.setValue(dataBlock.SaleType);
 
-					InventoryItem item = SafeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID,
-							                                     dataBlock.FolderID, dataBlock.OwnerID);
+				_Store.add(item);
 
-					item.assetType = AssetType.setValue(dataBlock.Type);
-					if (!dataBlock.AssetID.equals(UUID.Zero))
+				// Look for an "item created" callback
+				if (_ItemCreatedCallbacks.containsKey(dataBlock.CallbackID))
+				{
+					Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
+
+					try
 					{
-						item.AssetID = dataBlock.AssetID;
+						callback.callback(new ItemCreatedCallbackArgs(true, item));
 					}
-					item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-					item.CreatorID = dataBlock.CreatorID;
-					item.Description = Helpers.BytesToString(dataBlock.getDescription());
-					item.ItemFlags = dataBlock.Flags;
-					item.GroupID = dataBlock.GroupID;
-					item.GroupOwned = dataBlock.GroupOwned;
-					item.name = Helpers.BytesToString(dataBlock.getName());
-					item.Permissions = new Permissions(dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
-							dataBlock.NextOwnerMask, dataBlock.OwnerMask);
-					item.SalePrice = dataBlock.SalePrice;
-					item.saleType = SaleType.setValue(dataBlock.SaleType);
-
-					_Store.add(item);
-
-					// Look for an "item created" callback
-					if (_ItemCreatedCallbacks.containsKey(dataBlock.CallbackID))
+					catch (Throwable ex)
 					{
-						Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(dataBlock.CallbackID);
-
-						try
-						{
-							callback.callback(new ItemCreatedCallbackArgs(true, item));
-						}
-						catch (Throwable ex)
-						{
-							Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-						}
+						Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 					}
+				}
 
-					// Look for an "item copied" callback
-					if (_ItemCopiedCallbacks.containsKey(dataBlock.CallbackID))
+				// Look for an "item copied" callback
+				if (_ItemCopiedCallbacks.containsKey(dataBlock.CallbackID))
+				{
+					Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
+
+					try
 					{
-						Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(dataBlock.CallbackID);
-
-						try
-						{
-							callback.callback(new ItemCopiedCallbackArgs(item));
-						}
-						catch (Throwable ex)
-						{
-							Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-						}
+						callback.callback(new ItemCopiedCallbackArgs(item));
+					}
+					catch (Throwable ex)
+					{
+						Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 					}
 				}
 			}
@@ -4199,20 +4196,24 @@ public class InventoryManager implements PacketCallback, CapsCallback
         {
             if (newFolder.FolderID == UUID.Zero) continue;
 
-            InventoryFolder folder;
-            if (!_Store.containsFolder(newFolder.FolderID))
+            synchronized (_Store)
             {
-                folder = new InventoryFolder(newFolder.FolderID);
-            }
-            else
-            {
-                folder = _Store.getFolder(newFolder.FolderID);
-            }
+            	InventoryFolder folder;
+        
+            	if (!_Store.containsFolder(newFolder.FolderID))
+            	{
+            		folder = new InventoryFolder(newFolder.FolderID, newFolder.ParentID, msg.AgentID);
+            	}
+            	else
+            	{
+            		folder = _Store.getFolder(newFolder.FolderID);
+                	folder.parentID = newFolder.ParentID;
+            	}
 
-            folder.name = newFolder.Name;
-            folder.parentID = newFolder.ParentID;
-            folder.preferredType = newFolder.Type;
-            _Store.add(folder);
+            	folder.name = newFolder.Name;
+            	folder.preferredType = newFolder.Type;
+            	_Store.add(folder);
+            }
         }
 
         for (BulkUpdateInventoryMessage.ItemDataInfo newItem : msg.ItemData)
