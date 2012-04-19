@@ -634,36 +634,37 @@ public class GridManager implements PacketCallback
 	 */
 	private void MapBlockReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		GridRegion region;
 		MapBlockReplyPacket map = (MapBlockReplyPacket) packet;
 
 		for (MapBlockReplyPacket.DataBlock block : map.Data)
 		{
-			region = new GridRegion(Helpers.BytesToString(block.getName()));
+            if (block.X != 0 || block.Y != 0)
+            {
+            	GridRegion region = new GridRegion(Helpers.BytesToString(block.getName()));
 
-			region.X = block.X;
-			region.Y = block.Y;
-			region.RegionFlags = block.RegionFlags;
-			region.WaterHeight = block.WaterHeight;
-			region.Agents = block.Agents;
-			region.Access = block.Access;
-			region.MapImageID = block.MapImageID;
-			region.RegionHandle = Helpers.IntsToLong(region.X * 256, region.Y * 256);
+            	region.X = block.X;
+            	region.Y = block.Y;
+                region.Name = Helpers.BytesToString(block.getName());
+                // RegionFlags seems to always be zero here?
+                region.RegionFlags = block.RegionFlags;
+            	region.WaterHeight = block.WaterHeight;
+            	region.Agents = block.Agents;
+            	region.Access = block.Access;
+            	region.MapImageID = block.MapImageID;
+            	region.RegionHandle = Helpers.IntsToLong(region.X * 256, region.Y * 256);
 
-			if (region.Name != "" && region.X != 0 && region.Y != 0)
-			{
-				Regions.put(region.Name.toLowerCase(), region);
-			}
-			synchronized (Regions)
-			{
-				Regions.put(region.Name, region);
-				RegionsByHandle.put(region.RegionHandle, region);
-			}
+            	synchronized (Regions)
+            	{
+            		if (region.Name != null)
+            			Regions.put(region.Name, region);
+            		RegionsByHandle.put(region.RegionHandle, region);
+            	}
 
-			if (OnGridRegion.count() > 0)
-			{
-				OnGridRegion.dispatch(new GridRegionEventArgs(region));
-			}
+            	if (OnGridRegion.count() > 0)
+            	{
+            		OnGridRegion.dispatch(new GridRegionEventArgs(region));
+            	}
+            }
 		}
 	}
 
