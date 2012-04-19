@@ -163,9 +163,9 @@ public class Baker
                 continue;
             }
 
-            // Don't draw skin on head bake first
-            // For head bake skin texture is drawn last, go figure
-            if (bakeType == BakeType.Head && i == 0) continue;
+            // Don't draw skin and tattoo on head bake first
+            // For head bake the skin and texture are drawn last, go figure
+            if (bakeType == BakeType.Head && (i == 0 || i == 1)) continue;
 
             ManagedImage texture = textures.get(i).Texture.Image.clone();
             //File.WriteAllBytes(bakeType + "-texture-layer-" + i + ".tga", texture.ExportTGA());
@@ -180,8 +180,8 @@ public class Baker
 
             // Special case for hair layer for the head bake
             // If we don't have skin texture, we discard hair alpha
-            // and apply hair pattern over the texture
-            if (!SkinTexture && bakeType == BakeType.Head && i == 1)
+            // and apply hair(i == 2) pattern over the texture
+            if (!SkinTexture && bakeType == BakeType.Head && i == 2)
             {
                 if (texture.Alpha != null)
                 {
@@ -268,7 +268,7 @@ public class Baker
             //File.WriteAllBytes(bakeType + "-layer-" + i + ".tga", texture.ExportTGA());
         }
 
-        // For head, we add skin last
+        // For head and tattoo, we add skin last
         if (SkinTexture && bakeType == BakeType.Head)
         {
             ManagedImage texture = textures.get(0).Texture.Image.clone();
@@ -278,6 +278,21 @@ public class Baker
                 catch (Exception ex) { }
             }
             DrawLayer(texture, false);
+            
+            // Add head tattoo here (if available, order dependant)
+            if (textures.size() > 1 && textures.get(1).Texture != null)
+            {
+            	texture = textures.get(1).Texture.Image.clone();
+            	if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            	{
+            		try
+            		{ 
+            			texture.ResizeNearestNeighbor(bakeWidth, bakeHeight);
+            		}
+            		catch (Exception ex) { };
+            	}
+            	DrawLayer(texture, false);
+            }
         }
 
         // Apply any alpha wearable textures to make parts of the avatar disappear
