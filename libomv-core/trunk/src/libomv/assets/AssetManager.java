@@ -1806,6 +1806,11 @@ public class AssetManager implements PacketCallback
 
 			try
 			{
+				/* FIXME: Since the UDP packets can arrive out of order we can not assume that the data that has arrived
+				 * can be appended to the last sent packet. But assuming fixed packet size sounds also quite like a hack!
+				 * Instead we should add the packets into a sorted Hashlist with the asset.TransferData.Packet as hash code.
+				 * Then when the last packet has arrived we should assemble the packets into the data stream.
+				 */
 				System.arraycopy(asset.TransferData.getData(), 0, download.AssetData, download.Transferred, asset.TransferData.getData().length);
 				download.Transferred += asset.TransferData.getData().length;
 			}
