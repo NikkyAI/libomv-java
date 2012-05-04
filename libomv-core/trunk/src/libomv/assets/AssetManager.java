@@ -309,14 +309,17 @@ public class AssetManager implements PacketCallback
 	{
 		public UUID ID;
 		public int Size;
+		public int Packet;
 		public byte[] AssetData;
 		public int Transferred;
 		public boolean Success;
 		public libomv.assets.AssetItem.AssetType AssetType;
+		public HashMap<Integer, byte[]> delayed;
 
 		public Transfer()
 		{
 			AssetData = Helpers.EmptyBytes;
+			delayed = new HashMap<Integer, byte[]>();
 		}
 	}
 
@@ -1625,8 +1628,7 @@ public class AssetManager implements PacketCallback
 		else if ((send.XferID.Packet + 1) * 1000 < upload.Size)
 		{
 			// This packet is somewhere in the middle of the transfer, or a
-			// perfectly
-			// aligned packet at the end of the transfer
+			// perfectly aligned packet at the end of the transfer
 			byte[] data = new byte[1000];
 			System.arraycopy(upload.AssetData, upload.Transferred, data, 0, 1000);
 			send.DataPacket.setData(data);
@@ -1690,12 +1692,10 @@ public class AssetManager implements PacketCallback
 					_Transfers.remove(download.ID);
 				}
 
-				// No data could have been received before the TransferInfo
-				// packet
+				// No data could have been received before the TransferInfo packet
 				download.AssetData = null;
 
-				// Fire the event with our transfer that contains Success =
-				// false;
+				// Fire the event with our transfer that contains Success = false;
 				try
 				{
 					download.Callback.callback(download, null);
@@ -1764,8 +1764,7 @@ public class AssetManager implements PacketCallback
 			{
 				Logger.DebugLog("TransferPacket received ahead of the transfer header, blocking...", _Client);
 
-				// We haven't received the header yet, block until it's received
-				// or times out
+				// We haven't received the header yet, block until it's received or times out
 				download.HeaderReceivedEvent.waitOne(TRANSFER_HEADER_TIMEOUT);
 
 				if (download.Size == 0)
@@ -1786,8 +1785,7 @@ public class AssetManager implements PacketCallback
 						_Transfers.remove(download.ID);
 					}
 
-					// Fire the event with our transfer that contains Success =
-					// false
+					// Fire the event with our transfer that contains Success = false
 					if (download.Callback != null)
 					{
 						try
@@ -1804,29 +1802,29 @@ public class AssetManager implements PacketCallback
 				}
 			}
 
-			try
+			/* If the received packet is in order then add it and try to add already received packets that follow
+			 * directly this packet, otherwise add the packet to the delayed hashmap to be added later.
+			 */
+			if (download.Packet == asset.TransferData.Packet)
 			{
-				/* FIXME: Since the UDP packets can arrive out of order we can not assume that the data that has arrived
-				 * can be appended to the last sent packet. But assuming fixed packet size sounds also quite like a hack!
-				 * Instead we should add the packets into a sorted Hashlist with the asset.TransferData.Packet as hash code.
-				 * Then when the last packet has arrived we should assemble the packets into the data stream.
-				 */
-				System.arraycopy(asset.TransferData.getData(), 0, download.AssetData, download.Transferred, asset.TransferData.getData().length);
-				download.Transferred += asset.TransferData.getData().length;
+				byte[] data = asset.TransferData.getData();
+				do
+				{
+					System.arraycopy(data, 0, download.AssetData, download.Transferred, data.length);
+					download.Transferred += data.length;
+					download.Packet++;
+					data = download.delayed.get(download.Packet);
+				}
+				while (data != null);
 			}
-			catch (Exception t)
+			else
 			{
-				Logger.Log(
-						String.format(
-								"TransferPacket handling failed. TransferData.Data.Length = %d, AssetData.Length = %d, TransferData.Packet = %d",
-								asset.TransferData.getData().length, download.AssetData.length,
-								asset.TransferData.Packet), LogLevel.Error);
-				return;
+				download.delayed.put(asset.TransferData.Packet, asset.TransferData.getData());
 			}
 
-			// Logger.DebugLog(String.Format("Transfer packet %d, received %d/%d/%d bytes for asset %s",
-			// asset.TransferData.Packet, asset.TransferData.Data.Length,
-			// transfer.Transferred, transfer.Size, transfer.AssetID));
+			Logger.DebugLog(String.format("Transfer packet %d, received %d/%d/%d bytes for asset %s",
+			                              asset.TransferData.Packet, asset.TransferData.getData().length,
+			                              download.Transferred, download.Size, download.AssetID));
 
 			// Check if we downloaded the full asset
 			if (download.Transferred >= download.Size)
