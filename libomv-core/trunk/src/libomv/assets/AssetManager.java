@@ -1802,7 +1802,7 @@ public class AssetManager implements PacketCallback
 				}
 			}
 
-			/* If the received packet is in order then add it and try to add already received packets that follow
+			/* If the received packet is in order, then add it and try to add already received packets that follow
 			 * directly this packet, otherwise add the packet to the delayed hashmap to be added later.
 			 */
 			if (download.Packet == asset.TransferData.Packet)
@@ -1813,7 +1813,7 @@ public class AssetManager implements PacketCallback
 					System.arraycopy(data, 0, download.AssetData, download.Transferred, data.length);
 					download.Transferred += data.length;
 					download.Packet++;
-					data = download.delayed.get(download.Packet);
+					data = download.delayed.remove(download.Packet);
 				}
 				while (data != null);
 			}
