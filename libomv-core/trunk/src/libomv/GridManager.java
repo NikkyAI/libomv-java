@@ -701,7 +701,7 @@ public class GridManager implements PacketCallback
 						break;
 					case Classified:
 						// FIXME:
-						Logger.Log("FIXME", LogLevel.Error);
+						Logger.Log("FIXME: Classified MapItem", LogLevel.Error);
 						break;
 					case LandForSale:
 						MapLandForSale landsale = new MapLandForSale();
@@ -731,7 +731,7 @@ public class GridManager implements PacketCallback
 						break;
 					case Popular:
 						// FIXME:
-						Logger.Log("FIXME", LogLevel.Error);
+						Logger.Log("FIXME: Popular MapItem", LogLevel.Error);
 						break;
 					case Telehub:
 						MapTelehub teleHubItem = new MapTelehub();
