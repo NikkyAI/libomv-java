@@ -56,6 +56,7 @@ import libomv.packets.ObjectGrabPacket;
 import libomv.packets.ObjectGroupPacket;
 import libomv.packets.ObjectImagePacket;
 import libomv.packets.ObjectLinkPacket;
+import libomv.packets.ObjectMaterialPacket;
 import libomv.packets.ObjectNamePacket;
 import libomv.packets.ObjectOwnerPacket;
 import libomv.packets.ObjectPermissionsPacket;
@@ -91,6 +92,7 @@ import libomv.primitives.Primitive.Material;
 import libomv.primitives.Primitive.ObjectCategory;
 import libomv.primitives.Primitive.PathCurve;
 import libomv.primitives.Primitive.PrimFlags;
+import libomv.primitives.Primitive.PrimType;
 import libomv.primitives.Primitive.ProfileCurve;
 import libomv.primitives.Primitive.PCode;
 import libomv.primitives.Primitive.SculptData;
@@ -2618,95 +2620,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		simulator.SendPacket(packet);
 	}
 
-	/**
-	 * Find the object with localID in the simulator and add it with fullID if
-	 * it is not there
-	 * 
-	 * @param simulator
-	 *            The simulator in which the object is located
-	 * @param localID
-	 *            The simulator localID for this object
-	 * @param fullID
-	 *            The full object ID used to add a new object to the simulator
-	 *            list, when the object could not be found.
-	 * @return the object that corresponds to the localID
-	 */
-	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
-	{
-		if (Client.Settings.OBJECT_TRACKING)
-		{
-			synchronized (simulator.getObjectsPrimitives())
-			{
-				Primitive prim = simulator.getObjectsPrimitives().get(localID);
-				if (prim != null)
-				{
-					return prim;
-				}
-
-				prim = new Primitive();
-				prim.LocalID = localID;
-				prim.ID = fullID;
-				prim.RegionHandle = simulator.getHandle();
-
-				simulator.getObjectsPrimitives().put(localID, prim);
-
-				return prim;
-			}
-		}
-		return new Primitive();
-	}
-
-	/**
-	 * Find the avatar with localID in the simulator and add it with fullID if
-	 * it is not there
-	 * 
-	 * @param simulator
-	 *            The simulator in which the avatar is located
-	 * @param localID
-	 *            The simulator localID for this avatar
-	 * @param fullID
-	 *            The full avatar ID used to add a new avatar object to the
-	 *            simulator list, when the avatar could not be found.
-	 * @return the avatar object that corresponds to the localID
-	 */
-	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
-	{
-		if (Client.Settings.AVATAR_TRACKING)
-		{
-			synchronized (simulator.getObjectsAvatars())
-			{
-				Avatar avatar = simulator.getObjectsAvatars().get(localID);
-
-				if (avatar != null)
-				{
-					return avatar;
-				}
-
-				avatar = new Avatar();
-				avatar.LocalID = localID;
-				avatar.ID = fullID;
-				avatar.RegionHandle = simulator.getHandle();
-
-				simulator.getObjectsAvatars().put(localID, avatar);
-
-				return avatar;
-			}
-		}
-		return new Avatar();
-	}
-
-	protected final void SetAvatarSittingOn(Simulator sim, Avatar av, int localid, int oldSeatID)
-	{
-		if (Client.Network.getCurrentSim() == sim && av.LocalID == Client.Self.getLocalID())
-		{
-			Client.Self.setSittingOn(localid);
-		}
-
-		av.ParentID = localid;
-
-		OnAvatarSitChanged.dispatch(new AvatarSitChangedCallbackArgs(sim, av, localid, oldSeatID));
-	}
-
 	protected final void UpdateDilation(Simulator s, int dilation)
 	{
 		s.Statistics.Dilation = dilation / 65535.0f;
@@ -3840,10 +3753,182 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			for (int i = 0; i < msg.ObjectPhysicsProperties.length; i++)
 			{
-				OnPhysicsProperties.dispatch(new PhysicsPropertiesCallbackArgs(simulator,
-						msg.ObjectPhysicsProperties[i]));
+				OnPhysicsProperties.dispatch(new PhysicsPropertiesCallbackArgs(simulator, msg.ObjectPhysicsProperties[i]));
 			}
 		}
 	}
 	// #endregion Packet Handlers
+
+    // #region Utility Functions
+    /**
+     * 
+     *
+     * @param sim
+     * @param av
+     * @param localid
+     * @param oldSeatID
+     */
+	protected final void SetAvatarSittingOn(Simulator sim, Avatar av, int localid, int oldSeatID)
+	{
+		if (Client.Network.getCurrentSim() == sim && av.LocalID == Client.Self.getLocalID())
+		{
+			Client.Self.setSittingOn(localid);
+		}
+
+		av.ParentID = localid;
+
+        if (OnAvatarSitChanged.count() > 0 && oldSeatID != localid)
+        {
+            OnAvatarSitChanged.dispatch(new AvatarSitChangedCallbackArgs(sim, av, localid, oldSeatID));
+        }
+	}
+
+    /**
+     * Set the Shape data of an object
+     *
+     * @param simulator A reference to the <seealso cref="OpenMetaverse.Simulator"/> object where the object resides
+     * @param localID The objects ID which is local to the simulator the object is in
+     * @param prim Data describing the prim shape
+     * @throws Exception 
+     */
+    public void SetShape(Simulator simulator, int localID, Primitive.ConstructionData prim) throws Exception
+    {
+        ObjectShapePacket shape = new ObjectShapePacket();
+
+        shape.AgentData.AgentID = Client.Self.getAgentID();
+        shape.AgentData.SessionID = Client.Self.getSessionID();
+
+        shape.ObjectData = new ObjectShapePacket.ObjectDataBlock[1];
+        shape.ObjectData[0] = shape.new ObjectDataBlock();
+
+        shape.ObjectData[0].ObjectLocalID = localID;
+
+        shape.ObjectData[0].PathCurve = prim.PathCurve.getValue();
+        shape.ObjectData[0].PathBegin = Primitive.PackBeginCut(prim.PathBegin);
+        shape.ObjectData[0].PathEnd = Primitive.PackEndCut(prim.PathEnd);
+        shape.ObjectData[0].PathScaleX = Primitive.PackPathScale(prim.PathScaleX);
+        shape.ObjectData[0].PathScaleY = Primitive.PackPathScale(prim.PathScaleY);
+        shape.ObjectData[0].PathShearX = Primitive.PackPathShear(prim.PathShearX);
+        shape.ObjectData[0].PathShearY = Primitive.PackPathShear(prim.PathShearY);
+        shape.ObjectData[0].PathTwist = Primitive.PackPathTwist(prim.PathTwist);
+        shape.ObjectData[0].PathTwistBegin = Primitive.PackPathTwist(prim.PathTwistBegin);
+        shape.ObjectData[0].PathRadiusOffset = Primitive.PackPathTwist(prim.PathRadiusOffset);
+        shape.ObjectData[0].PathTaperX = Primitive.PackPathTaper(prim.PathTaperX);
+        shape.ObjectData[0].PathTaperY = Primitive.PackPathTaper(prim.PathTaperY);
+        shape.ObjectData[0].PathRevolutions = Primitive.PackPathRevolutions(prim.PathRevolutions);
+        shape.ObjectData[0].PathSkew = Primitive.PackPathTwist(prim.PathSkew);
+
+        shape.ObjectData[0].ProfileCurve = prim.ProfileCurve.getValue();
+        shape.ObjectData[0].ProfileBegin = Primitive.PackBeginCut(prim.ProfileBegin);
+        shape.ObjectData[0].ProfileEnd = Primitive.PackEndCut(prim.ProfileEnd);
+        shape.ObjectData[0].ProfileHollow = Primitive.PackProfileHollow(prim.ProfileHollow);
+
+        simulator.SendPacket(shape);
+    }
+
+    /**
+     * Set the Material data of an object
+     *
+     * @param simulator A reference to the <seealso cref="OpenMetaverse.Simulator"/> object where the object resides
+     * @param localID The objects ID which is local to the simulator the object is in
+     * @param material The new material of the object
+     * @throws Exception 
+     */
+    public void SetMaterial(Simulator simulator, int localID, Material material) throws Exception
+    {
+        ObjectMaterialPacket matPacket = new ObjectMaterialPacket();
+
+        matPacket.AgentData.AgentID = Client.Self.getAgentID();
+        matPacket.AgentData.SessionID = Client.Self.getSessionID();
+
+        matPacket.ObjectData = new ObjectMaterialPacket.ObjectDataBlock[1];
+        matPacket.ObjectData[0] = matPacket.new ObjectDataBlock();
+
+        matPacket.ObjectData[0].ObjectLocalID = localID;
+        matPacket.ObjectData[0].Material = material.getValue();
+
+        simulator.SendPacket(matPacket);
+    }
+    // #endregion Utility Functions
+
+    // #region Object Tracking Link
+
+	/**
+	 * Find the object with localID in the simulator and add it with fullID if
+	 * it is not there
+	 * 
+	 * @param simulator
+	 *            The simulator in which the object is located
+	 * @param localID
+	 *            The simulator localID for this object
+	 * @param fullID
+	 *            The full object ID used to add a new object to the simulator
+	 *            list, when the object could not be found.
+	 * @return the object that corresponds to the localID
+	 */
+	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
+	{
+		if (Client.Settings.OBJECT_TRACKING)
+		{
+			synchronized (simulator.getObjectsPrimitives())
+			{
+				Primitive prim = simulator.getObjectsPrimitives().get(localID);
+				if (prim != null)
+				{
+					return prim;
+				}
+
+				prim = new Primitive();
+				prim.LocalID = localID;
+				prim.ID = fullID;
+				prim.RegionHandle = simulator.getHandle();
+
+				simulator.getObjectsPrimitives().put(localID, prim);
+
+				return prim;
+			}
+		}
+		return new Primitive();
+	}
+
+	/**
+	 * Find the avatar with localID in the simulator and add it with fullID if
+	 * it is not there
+	 * 
+	 * @param simulator
+	 *            The simulator in which the avatar is located
+	 * @param localID
+	 *            The simulator localID for this avatar
+	 * @param fullID
+	 *            The full avatar ID used to add a new avatar object to the
+	 *            simulator list, when the avatar could not be found.
+	 * @return the avatar object that corresponds to the localID
+	 */
+	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
+	{
+		if (Client.Settings.AVATAR_TRACKING)
+		{
+			synchronized (simulator.getObjectsAvatars())
+			{
+				Avatar avatar = simulator.getObjectsAvatars().get(localID);
+
+				if (avatar != null)
+				{
+					return avatar;
+				}
+
+				avatar = new Avatar();
+				avatar.LocalID = localID;
+				avatar.ID = fullID;
+				avatar.RegionHandle = simulator.getHandle();
+
+				simulator.getObjectsAvatars().put(localID, avatar);
+
+				return avatar;
+			}
+		}
+		return new Avatar();
+	}
+
+    // #endregion Object Tracking Link
 }
