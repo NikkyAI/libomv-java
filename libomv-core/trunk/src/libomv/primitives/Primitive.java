@@ -668,6 +668,7 @@ public class Primitive
 		public ProfileCurve ProfileCurve;
 		public HoleType ProfileHole;
 		public PathCurve PathCurve;
+		public float PathBegin;
 		public float PathEnd;
 		public float PathRadiusOffset;
 		public float PathSkew;
@@ -677,7 +678,6 @@ public class Primitive
 		public float PathShearY;
 		public float PathTaperX;
 		public float PathTaperY;
-		public float PathBegin;
 		public float PathTwist;
 		public float PathTwistBegin;
 		public float PathRevolutions;
@@ -691,7 +691,32 @@ public class Primitive
 
 		public ConstructionData()
 		{
+			ProfileCurve = Primitive.ProfileCurve.Square;
+			ProfileBegin = 0f;
+			ProfileEnd = 1f;
+			ProfileHollow = 0f;
+			PathCurve = Primitive.PathCurve.Line;
+			PathBegin = 0f;
+			PathEnd = 1f;
+			PathRadiusOffset = 0f;
+			PathSkew = 0f;
+			PathScaleX = 1f;
+			PathScaleY = 1f;
+			PathShearX = 0f;
+			PathShearY = 0f;
+			PathTaperX = 0f;
+			PathTaperY = 0f;
+			PathTwist = 0f;
+			PathTwistBegin = 0f;
+			PathRevolutions = 1f;
+/*
+ 			ProfileHole = primData.ProfileHole;
+ 
 
+			Material = primData.Material;
+			State = primData.State;
+			PCode = primData.PCode;
+*/
 		}
 
 		public ConstructionData(OSD osd)
@@ -706,6 +731,7 @@ public class Primitive
 			ProfileCurve = primData.ProfileCurve;
 			ProfileHole = primData.ProfileHole;
 			PathCurve = primData.PathCurve;
+			PathBegin = primData.PathBegin;
 			PathEnd = primData.PathEnd;
 			PathRadiusOffset = primData.PathRadiusOffset;
 			PathSkew = primData.PathSkew;
@@ -715,9 +741,8 @@ public class Primitive
 			PathShearY = primData.PathShearY;
 			PathTaperX = primData.PathTaperX;
 			PathTaperY = primData.PathTaperY;
-			PathBegin = primData.PathBegin;
-			PathTwist = primData.PathTwist;
 			PathTwistBegin = primData.PathTwistBegin;
+			PathTwist = primData.PathTwist;
 			PathRevolutions = primData.PathRevolutions;
 			ProfileBegin = primData.ProfileBegin;
 			ProfileEnd = primData.ProfileEnd;
@@ -727,6 +752,96 @@ public class Primitive
 			State = primData.State;
 			PCode = primData.PCode;
 		}
+
+	    /**
+	     * Setup construction data for a basic primitive shape
+	     *
+	     * @param type Primitive shape to construct
+	     * @returns Construction data that can be plugged into a <seealso cref="Primitive"/>
+	     */
+	    public ConstructionData(PrimType type)
+	    {
+            PCode = Primitive.PCode.Prim;
+	        Material = Primitive.Material.Wood;
+
+	        switch (type)
+	        {
+	            case Box:
+	                ProfileCurve = Primitive.ProfileCurve.Square;
+	                PathCurve = Primitive.PathCurve.Line;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 1f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Cylinder:
+	                ProfileCurve = Primitive.ProfileCurve.Circle;
+	                PathCurve = Primitive.PathCurve.Line;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 1f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Prism:
+	                ProfileCurve = Primitive.ProfileCurve.EqualTriangle;
+	                PathCurve = Primitive.PathCurve.Line;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 0f;
+	                PathScaleY = 0f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Ring:
+	                ProfileCurve = Primitive.ProfileCurve.EqualTriangle;
+	                PathCurve = Primitive.PathCurve.Circle;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 0.25f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Sphere:
+	                ProfileCurve = Primitive.ProfileCurve.HalfCircle;
+	                PathCurve = Primitive.PathCurve.Circle;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 1f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Torus:
+	                ProfileCurve = Primitive.ProfileCurve.Circle;
+	                PathCurve = Primitive.PathCurve.Circle;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 0.25f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Tube:
+	                ProfileCurve = Primitive.ProfileCurve.Square;
+	                PathCurve = Primitive.PathCurve.Circle;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 0.25f;
+	                PathRevolutions = 1f;
+	                break;
+	            case Sculpt:
+	                ProfileCurve = Primitive.ProfileCurve.Circle;
+	                PathCurve = Primitive.PathCurve.Circle;
+	                ProfileEnd = 1f;
+	                PathEnd = 1f;
+	                PathScaleX = 1f;
+	                PathScaleY = 0.5f;
+	                PathRevolutions = 1f;
+	                break;
+	            default:
+	                throw new UnsupportedOperationException("Unsupported shape: " + type.toString());
+	        }
+	    }
 
 		// Attachment point to an avatar
 		public AttachmentPoint getAttachmentPoint()
