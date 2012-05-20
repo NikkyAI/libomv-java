@@ -23,14 +23,14 @@ import java.util.List;
 public class BVHMotion
 {
 	private int frames;
-	private double frameTime;
+	private float frameTime;
 	
 	public int getFrames()
 	{
 		return frames;
 	}
 	
-	public double[] getFrameAt(int index)
+	public float[] getFrameAt(int index)
 	{
 		return motions.get(index);
 	}
@@ -50,19 +50,19 @@ public class BVHMotion
 		return frameTime;
 	}
 	
-	public void setFrameTime(double frameTime)
+	public void setFrameTime(float frameTime)
 	{
 		this.frameTime = frameTime;
 	}
 	
-	public List<double[]> getMotions()
+	public List<float[]> getMotions()
 	{
 		return motions;
 	}
 	
-	private List<double[]> motions = new ArrayList<double[]>();
+	private List<float[]> motions = new ArrayList<float[]>();
 	
-	public void add(double[] motion)
+	public void add(float[] motion)
 	{
 		motions.add(motion);
 	}

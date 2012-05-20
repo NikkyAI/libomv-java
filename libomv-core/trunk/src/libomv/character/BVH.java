@@ -98,13 +98,13 @@ public class BVH
 		return f * skips;
 	}
 
-	public double[] getFrameAt(int index)
+	public float[] getFrameAt(int index)
 	{
 		if (skips == 0)
 		{
 			return motion.getMotions().get(index);
 		}
-		return motion.getMotions().get(index*skips);
+		return motion.getMotions().get(index * skips);
 	}
 
 	public List<BVHNode> getNodeList()

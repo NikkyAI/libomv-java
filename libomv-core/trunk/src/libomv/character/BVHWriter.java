@@ -19,14 +19,11 @@ package libomv.character;
 
 public class BVHWriter
 {
-	private String text;
 	public String writeToString(BVH bvh)
 	{
-		text = "";
 		StringBuilder buffer = new StringBuilder();
 		//hierachy
 		buffer.append("HIERARCHY\n");
-		//text += ("HIERARCHY"+"\n");
 		writeTo(bvh.getHiearchy(),buffer,0);
 
 		//MOTION
@@ -34,12 +31,6 @@ public class BVHWriter
 		buffer.append("MOTION\n");
 		buffer.append("Frames: " + frames + "\n");
 		buffer.append("Frame Time: " + bvh.getFrameTime() + "\n");
-
-		/*
-		text += ("MOTION"+"\n");
-		text += ("Frames: "+frames+"\n");
-		text += ("Frame Time: "+bvh.getFrameTime()+"\n");
-		*/
 
 		for(int i = 0; i < frames; i++)
 		{
@@ -53,50 +44,12 @@ public class BVHWriter
 					v += " ";
 				}
 			}
-			//text+=v+"\n";
 			buffer.append(v+"\n");
 		}
 		//return text;
 		return buffer.toString();
 	}
 	
-	/*
-	private void writeTo(BVHNode node, StringBuilder buffer, int indent)
-	{
-		String indentText="";
-		for(int i = 0; i < indent; i++)
-		{
-			indentText += "\t";
-		}
-		if (indent == 0)
-		{
-			text += "ROOT " + node.getName() + "\n";
-		}
-		else
-		{
-			text += indentText + "JOINT " + node.getName()) + "\n";
-		}
-		text += indentText + "{" + "\n";
-		//offset
-		text += "\t"+indentText + node.getOffset().toString()) + "\n";
-		//channel
-		text += "\t"+indentText + node.getChannels().toString()) + "\n";
-		//joint
-		for (int i = 0; i < node.getJoints().size(); i++)
-		{
-			writeTo(node.getJoints().get(i), buffer, indent + 1);
-		}
-		//endsite
-		if (node.getEndSite() != null)
-		{
-			text += "\t" + indentText + "End Site" + "\n";
-			text += "\t" + indentText + "{" + "\n";
-			text += "\t" + indentText + "\t" + node.getEndSite().toString() + "\n";
-			text += "\t" + indentText + "}" + "\n";
-		}
-		text += indentText + "}" + "\n";
-	}*/
-
 	private void writeTo(BVHNode node, StringBuilder buffer, int indent)
 	{
 		String indentText = "";

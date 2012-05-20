@@ -21,40 +21,37 @@ package libomv.character;
 import java.util.ArrayList;
 import java.util.List;
 
-import libomv.types.Vector3d;
+import libomv.types.Vector3;
 
 public class BVHNode
 {
-	private Vector3d offset;
+	private Vector3 offset;
 	
-	public Vector3d getOffset()
+	public Vector3 getOffset()
 	{
 		return offset;
 	}
 	
-	public void setOffset(Vector3d offset)
+	public void setOffset(Vector3 offset)
 	{
 		this.offset = offset;
 	}
 	
-	public Vector3d getEndSite()
+	public Vector3 getEndSite()
 	{
 		if (endSites.size() > 0)
 		{
 			return endSites.get(0);
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
-	public List<Vector3d> getEndSites()
+	public List<Vector3> getEndSites()
 	{
 		return endSites;
 	}
 
-	public void addEndSite(Vector3d endSite)
+	public void addEndSite(Vector3 endSite)
 	{
 		this.endSites.add(endSite);
 	}
@@ -79,7 +76,7 @@ public class BVHNode
 		this.channels = channels;
 	}
 	
-	private List<Vector3d> endSites = new ArrayList<Vector3d>();
+	private List<Vector3> endSites = new ArrayList<Vector3>();
 	private String name;
 	private Channels channels;
 	private List<BVHNode> joints = new ArrayList<BVHNode>();
@@ -105,4 +102,16 @@ public class BVHNode
 	{
 		this.parentName = parentName;
 	}
+	
+	private BVHTranslation translation;
+	public BVHTranslation getTranslation()
+	{
+		return translation;
+	}
+	
+	public void setTranslation(BVHTranslation translation)
+	{
+		this.translation = translation;
+	}
+	
 }

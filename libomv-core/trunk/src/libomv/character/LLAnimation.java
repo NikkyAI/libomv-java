@@ -119,6 +119,7 @@ public class LLAnimation
 
     // Custom application data that can be attached to a joint
     public Object Tag;
+
     /**
      * Serialize an animation asset binary data into it's joints/keyframes/meta data
      * 

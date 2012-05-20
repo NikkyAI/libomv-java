@@ -22,12 +22,70 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-import libomv.types.Vector3d;
+import libomv.types.Matrix4;
+import libomv.types.Vector3;
 
 public class BVHDecoder
 {
+
+/*
+	public class Joint
+	{
+		// Include aligned members first
+		Matrix4		mFrameMatrix;
+		Matrix4		mOffsetMatrix;
+*		Vector3		mRelativePosition;
+		//
+*		String		mName;
+*		boolean		mIgnore;
+*		boolean		mIgnorePositions;
+*		boolean		mRelativePositionKey;
+*		boolean		mRelativeRotationKey;
+*		String		mOutName;
+*		String		mMergeParentName;
+*		String		mMergeChildName;
+*		char		mOrder[4];			/* Flawfinder: ignore
+*		KeyVector	mKeys;
+*		int			mNumPosKeys;
+*		int			mNumRotKeys;
+		int			mChildTreeMaxDepth;
+		int			mPriority;
+	}
+*/
+
+	enum EConstraintType
+	{
+		CONSTRAINT_TYPE_POINT,
+		CONSTRAINT_TYPE_PLANE,
+		NUM_CONSTRAINT_TYPES
+	}
+
+	enum EConstraintTargetType
+	{
+		CONSTRAINT_TARGET_TYPE_BODY,
+		CONSTRAINT_TARGET_TYPE_GROUND,
+		NUM_CONSTRAINT_TARGET_TYPES
+	}
+	
+	public class Constraint
+	{
+		String		mSourceJointName;
+		String		mTargetJointName;
+		int			mChainLength;
+		Vector3		mSourceOffset;
+		Vector3		mTargetOffset;
+		Vector3		mTargetDir;
+		float		mEaseInStart;
+		float		mEaseInStop;
+		float		mEaseOutStart;
+		float		mEaseOutStop;
+		EConstraintType mConstraintType;
+	};
+
 	private final int HIERARCHY = 0;
 	private final int ROOT = 1;
 	private final int JOINT_OPEN = 2;
@@ -45,38 +103,308 @@ public class BVHDecoder
 	private int mode;
 	List<BVHNode> nodes = new ArrayList<BVHNode>();
 	private BVH bvh;
+	
+	int			mLineNumber;
+
+	// Translation values
+	int			mNumFrames;
+	float		mFrameTime;
+
+	ArrayList<Constraint>	mConstraints = new ArrayList<Constraint>();
+	HashMap<String, BVHTranslation> mTranslations = new HashMap<String, BVHTranslation>();
+
+	int		mPriority;
+	boolean	mLoop;
+	float	mLoopInPoint;
+	float	mLoopOutPoint;
+	float	mEaseIn;
+	float	mEaseOut;
+	int		mHand;
+	String	mEmoteName;
+
+	boolean	mInitialized;
+//	Status	mStatus;
+	// computed values
+	float	mDuration;
 
 	public BVHDecoder(BufferedReader reader) throws IOException, InvalidLineException
 	{
-		int status = loadTranslationTable("anim.ini");
-		if (status == 0)
-		{
-			mode = HIERARCHY;
-			status = loadBVHFile(reader);
-		}
+		mode = HIERARCHY;
+		loadTranslationTable("anim.ini");
+		loadBVHFile(reader);
+		optimize();
 	}
 	
-	private int loadTranslationTable(String filename) throws IOException
+	private void loadTranslationTable(String filename) throws IOException
 	{
+		mTranslations.clear();
+		mConstraints.clear();
 		InputStream st = getClass().getResourceAsStream("/res/" + filename);
 		BufferedReader br = new BufferedReader(new InputStreamReader(st));
 		try
 		{
+			String line = br.readLine();
 			
-		}
-		catch (Exception ex)
-		{
-			
+			if (!line.startsWith("Translations 1.0"))
+			{
+				throw new IOException("Invalid Translation file header");
+			}
+			boolean loadingGlobals = false;
+			BVHTranslation trans = null;
+			while ((line = br.readLine().trim()) != null)
+			{
+				/* if the line is empty or a comment ignore it */
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+				
+				if (line.startsWith("["))
+				{
+					if (line.startsWith("[GLOBALS]"))
+					{
+						loadingGlobals = true;
+					}
+					else
+					{
+						loadingGlobals = false;
+						trans = new BVHTranslation();
+						mTranslations.put(line.substring(1, line.indexOf("]") - 1), trans);
+					}
+					continue;
+				}
+				
+				int offset = line.indexOf("=");
+				String vals[], token = line.substring(0,  offset - 1).trim();
+				line = line.substring(offset + 1).trim();
+				
+				if (loadingGlobals)
+				{
+					if (token.compareToIgnoreCase("emote") == 0)
+					{
+						mEmoteName = line;
+					}
+					else if (token.compareToIgnoreCase("priority") == 0)
+					{
+						mPriority = Integer.parseInt(line);
+					}
+					else if (token.compareToIgnoreCase("loop") == 0)
+					{
+						vals = line.split(" ");
+						float loop_in = 0.f;
+						float loop_out = 1.f;
+						if (vals.length >= 2)
+						{
+							mLoop = true;
+							loop_in = Float.parseFloat(vals[0]);
+							loop_out = Float.parseFloat(vals[1]);
+						}
+						else if (vals.length == 1)
+						{
+						    mLoop = vals[0].compareToIgnoreCase("true") == 0;
+						}
+						mLoopInPoint = loop_in * mDuration;
+						mLoopOutPoint = loop_out * mDuration;
+					}
+					else if (token.compareToIgnoreCase("easein") == 0)
+					{
+						mEaseIn = Float.parseFloat(line);
+					}
+					else if (token.compareToIgnoreCase("easeout") == 0)
+					{
+						mEaseOut = Float.parseFloat(line);
+					}
+					else if (token.compareToIgnoreCase("hand") == 0)
+					{
+						mHand = Integer.parseInt(line);
+					}
+					else if (token.compareToIgnoreCase("constraint") == 0)
+					{
+						Constraint constraint = new Constraint();
+						vals = line.split(" ");
+						if (vals.length >= 13)
+						{
+							constraint.mChainLength = Integer.parseInt(vals[0]);
+							constraint.mEaseInStart = Float.parseFloat(vals[1]);
+							constraint.mEaseInStop = Float.parseFloat(vals[2]);
+							constraint.mEaseOutStart = Float.parseFloat(vals[3]);
+							constraint.mEaseOutStop = Float.parseFloat(vals[4]);
+							constraint.mSourceJointName = vals[5];
+							constraint.mSourceOffset.X = Float.parseFloat(vals[6]);
+							constraint.mSourceOffset.Y = Float.parseFloat(vals[7]);
+							constraint.mSourceOffset.Z = Float.parseFloat(vals[8]);
+							constraint.mTargetJointName = vals[9];
+							constraint.mTargetOffset.X = Float.parseFloat(vals[10]);
+							constraint.mTargetOffset.Y = Float.parseFloat(vals[11]);
+							constraint.mTargetOffset.Z = Float.parseFloat(vals[12]);
+							if (vals.length >= 16)
+							{
+								constraint.mTargetDir.X = Float.parseFloat(vals[13]);
+								constraint.mTargetDir.Y = Float.parseFloat(vals[14]);
+								constraint.mTargetDir.Z = Float.parseFloat(vals[15]);
+								constraint.mTargetDir.Normalize();
+							}
+						}
+						else
+						{
+							throw new IOException("Invalid constraint entry");							
+						}
+						constraint.mConstraintType = EConstraintType.CONSTRAINT_TYPE_POINT;
+						mConstraints.add(constraint);
+					}
+					else if (token.compareToIgnoreCase("planar_constraint") == 0)
+					{
+						Constraint constraint = new Constraint();
+						vals = line.split(" ");
+						if (vals.length >= 13)
+						{
+							constraint.mChainLength = Integer.parseInt(vals[0]);
+							constraint.mEaseInStart = Float.parseFloat(vals[1]);
+							constraint.mEaseInStop = Float.parseFloat(vals[2]);
+							constraint.mEaseOutStart = Float.parseFloat(vals[3]);
+							constraint.mEaseOutStop = Float.parseFloat(vals[4]);
+							constraint.mSourceJointName = vals[5];
+							constraint.mSourceOffset.X = Float.parseFloat(vals[6]);
+							constraint.mSourceOffset.Y = Float.parseFloat(vals[7]);
+							constraint.mSourceOffset.Z = Float.parseFloat(vals[8]);
+							constraint.mTargetJointName = vals[9];
+							constraint.mTargetOffset.X = Float.parseFloat(vals[10]);
+							constraint.mTargetOffset.Y = Float.parseFloat(vals[11]);
+							constraint.mTargetOffset.Z = Float.parseFloat(vals[12]);
+							if (vals.length >= 16)
+							{
+								constraint.mTargetDir.X = Float.parseFloat(vals[13]);
+								constraint.mTargetDir.Y = Float.parseFloat(vals[14]);
+								constraint.mTargetDir.Z = Float.parseFloat(vals[15]);
+								constraint.mTargetDir.Normalize();
+							}
+						}
+						else
+						{
+							throw new IOException("Invalid constraint entry");							
+						}
+						constraint.mConstraintType = EConstraintType.CONSTRAINT_TYPE_PLANE;
+						mConstraints.add(constraint);
+					}
+				}
+				else if (trans == null)
+				{
+					throw new IOException("Invalid Translation file format");
+				}
+				else if (token.compareToIgnoreCase("ignore") == 0)
+				{
+					trans.mIgnore = line.compareToIgnoreCase("true") == 0;
+				}
+				else if (token.compareToIgnoreCase("relativepos") == 0)
+				{
+					vals = line.split(" ");
+					if (vals.length >= 3)
+					{
+						trans.mRelativePosition = new Vector3(
+								Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]));
+					}
+					else if (vals.length >= 1 && vals[0].compareToIgnoreCase("firstkey") == 0)
+					{
+						trans.mRelativePositionKey = true;
+					}
+					else
+					{
+						throw new IOException("No relative key");
+					}
+				}
+				else if (token.compareToIgnoreCase("relativerot") == 0)
+				{
+					if (line.compareToIgnoreCase("firstkey") == 0)
+					{
+						trans.mRelativePositionKey = true;
+					}
+					else
+					{
+						throw new IOException("No relative key");
+					}
+				}
+				else if (token.compareToIgnoreCase("outname") == 0)
+				{
+					if (!line.isEmpty())
+					{
+						trans.mOutName = line;
+					}
+					else
+					{
+						throw new IOException("No valid outname");
+					}
+				}
+				else if (token.compareToIgnoreCase("frame") == 0)
+				{
+					vals = line.split("[, ]+");
+					if (vals.length >= 9)
+					{
+						trans.mFrameMatrix = new Matrix4(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]), 0,
+								                         Float.parseFloat(vals[3]), Float.parseFloat(vals[4]), Float.parseFloat(vals[5]), 0,
+								                         Float.parseFloat(vals[6]), Float.parseFloat(vals[7]), Float.parseFloat(vals[8]), 0,
+								                         0, 0, 0, 0);
+					}
+					else
+					{
+						throw new IOException("No valid matrix");
+					}
+				}
+				else if (token.compareToIgnoreCase("offset") == 0)
+				{
+					vals = line.split("[, ]+");
+					if (vals.length >= 9)
+					{
+						trans.mOffsetMatrix = new Matrix4(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]), 0,
+								                          Float.parseFloat(vals[3]), Float.parseFloat(vals[4]), Float.parseFloat(vals[5]), 0,
+								                          Float.parseFloat(vals[6]), Float.parseFloat(vals[7]), Float.parseFloat(vals[8]), 0,
+								                          0, 0, 0, 0);
+					}
+					else
+					{
+						throw new IOException("No valid matrix");
+					}
+				}
+				else if (token.compareToIgnoreCase("mergeparent") == 0)
+				{
+					if (!line.isEmpty())
+					{
+						trans.mMergeParentName = line;
+					}
+					else
+					{
+						throw new IOException("No valid merge parent");
+					}
+				}
+				else if (token.compareToIgnoreCase("mergechild") == 0)
+				{
+					if (!line.isEmpty())
+					{
+						trans.mMergeChildName = line;
+					}
+					else
+					{
+						throw new IOException("No valid merge parent");
+					}
+				}
+				else if (token.compareToIgnoreCase("priority") == 0)
+				{
+					if (!line.isEmpty())
+					{
+						trans.mPriorityModifier = Integer.parseInt(line);
+					}
+					else
+					{
+						throw new IOException("No valid priority");
+					}
+				}
+			}
 		}
 		finally
 		{
 			br.close();
 			st.close();
 		}
-		return 0;
 	}
 	
-	private int loadBVHFile(BufferedReader reader) throws InvalidLineException, IOException
+	private void loadBVHFile(BufferedReader reader) throws InvalidLineException, IOException
 	{
 		int i = -1;
 		String line;
@@ -104,6 +432,7 @@ public class BVHDecoder
 		    			BVHNode node = new BVHNode();
 		    			String name = line.substring("ROOT".length()).trim();
 		    			node.setName(name);
+		    			node.setTranslation(mTranslations.get(name));
 		    			bvh.setHiearchy(node);
 		    			nodes.add(node);
 
@@ -132,10 +461,10 @@ public class BVHDecoder
 		    			{
 		    				throw new InvalidLineException(i,line, "OFFSET value need 3 points");
 		    			}
-		    			double x = toDouble(i, line, values[1]);
-		    			double y = toDouble(i, line, values[2]);
-		    			double z = toDouble(i, line, values[3]);
-		    			getLast().setOffset(new Vector3d(x, y, z));
+		    			float x = toFloat(i, line, values[1]);
+		    			float y = toFloat(i, line, values[2]);
+		    			float z = toFloat(i, line, values[3]);
+		    			getLast().setOffset(new Vector3(x, y, z));
 		    		}
 		    		else if (values[0].equals("CHANNELS"))
 		    		{
@@ -213,13 +542,14 @@ public class BVHDecoder
 		    		}
 		    		else if(values[0].equals("JOINT"))
 		    		{
-		    			if (values.length!=2)
+		    			if (values.length != 2)
 		    			{
 		    				throw new InvalidLineException(i, line, " Invalid Joint name:" + line);
 		    			}
 		    			String name = values[1];
 		    			BVHNode node = new BVHNode();
 		    			node.setName(name);
+		    			node.setTranslation(mTranslations.get(name));
 		    			getLast().add(node);
 		    			nodes.add(node);
 		    			mode = JOINT_OPEN;
@@ -247,10 +577,10 @@ public class BVHDecoder
 		    			{
 		    				throw new InvalidLineException(i, line, "OFFSET value need 3 points");
 		    			}
-		    			double x = toDouble(i, line, values[1]);
-		    			double y = toDouble(i, line, values[2]);
-		    			double z = toDouble(i, line, values[3]);
-		    			getLast().addEndSite(new Vector3d(x, y, z));
+		    			float x = toFloat(i, line, values[1]);
+		    			float y = toFloat(i, line, values[2]);
+		    			float z = toFloat(i, line, values[3]);
+		    			getLast().addEndSite(new Vector3(x, y, z));
 		    			mode = ENDSITES_CLOSE;
 		    		}
 		    		else
@@ -291,7 +621,7 @@ public class BVHDecoder
 		    	case MOTION:
 		    		if (line.equals("MOTION"))
 		    		{
-		    			BVHMotion motion=new BVHMotion();
+		    			BVHMotion motion = new BVHMotion();
 		    			bvh.setMotion(motion);
 		    			mode = MOTION_FRAMES;
 		    		}
@@ -304,7 +634,7 @@ public class BVHDecoder
 		    		values = line.split(" ");
 		    		if (values[0].equals("Frames:") && values.length == 2)
 		    		{
-		    			int frames=toInt(i, line, values[1]);
+		    			int frames = toInt(i, line, values[1]);
 		    			bvh.getMotion().setFrames(frames);
 		    			mode = MOTION_FRAME_TIME;
 		    		}
@@ -317,7 +647,7 @@ public class BVHDecoder
 		    		values = line.split(":"); //not space
 		    		if (values[0].equals("Frame Time") && values.length == 2)
 		    		{
-		    			double frameTime = toDouble(i, line, values[1].trim());
+		    			float frameTime = toFloat(i, line, values[1].trim());
 		    			bvh.getMotion().setFrameTime(frameTime);
 		    			mode = MOTION_DATA;
 		    		}
@@ -327,12 +657,16 @@ public class BVHDecoder
 		    		}
 		    		break;
 		    	case MOTION_DATA:
-		    		double vs[] = toDouble(i, line);
+		    		float vs[] = toFloat(i, line);
 		    		bvh.getMotion().getMotions().add(vs);
 		    		break;
 		    }
-		}
-		return 0;		
+		}	
+	}
+	
+	public void optimize()
+	{
+		
 	}
 	
 	public boolean validate()
@@ -349,19 +683,18 @@ public class BVHDecoder
 		return nodes.get(nodes.size()-1);
 	}
 
-
-	protected double[] toDouble(int index,String line) throws InvalidLineException
+	protected float[] toFloat(int index,String line) throws InvalidLineException
 	{
 		String values[] = line.split(" ");
-		double vs[] = new double[values.length];
+		float vs[] = new float[values.length];
 		try
 		{
-			for(int i = 0; i < values.length; i++)
+			for (int i = 0; i < values.length; i++)
 			{
-				vs[i] = Double.parseDouble(values[i]);
+				vs[i] = Float.parseFloat(values[i]);
 			}
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new InvalidLineException(index, line, "has invalid double");
 		}
@@ -383,12 +716,12 @@ public class BVHDecoder
 		return d;
 	}
 
-	protected double toDouble(int index, String line, String v) throws InvalidLineException
+	protected float toFloat(int index, String line, String v) throws InvalidLineException
 	{
-		double d = 0;
+		float d = 0;
 		try
 		{
-			d = Double.parseDouble(v);
+			d = Float.parseFloat(v);
 		}
 		catch (Exception e)
 		{
