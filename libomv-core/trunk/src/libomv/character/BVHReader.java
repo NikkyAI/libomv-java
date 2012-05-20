@@ -23,13 +23,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import libomv.types.Matrix4;
 import libomv.types.Vector3;
 
-public class BVHDecoder
+public class BVHReader
 {
 
 /*
@@ -127,7 +126,7 @@ public class BVHDecoder
 	// computed values
 	float	mDuration;
 
-	public BVHDecoder(BufferedReader reader) throws IOException, InvalidLineException
+	public BVHReader(BufferedReader reader) throws IOException, InvalidLineException
 	{
 		mode = HIERARCHY;
 		loadTranslationTable("anim.ini");
