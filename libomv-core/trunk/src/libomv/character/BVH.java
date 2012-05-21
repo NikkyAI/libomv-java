@@ -57,7 +57,7 @@ public class BVH
 		this.hiearchy = hiearchy;
 	}
 	
-	public List<NameAndChannel> nameAndChannels=new ArrayList<NameAndChannel>();
+	public List<NameAndChannel> nameAndChannels = new ArrayList<NameAndChannel>();
 	public List<NameAndChannel> getNameAndChannels()
 	{
 		return nameAndChannels;
@@ -67,7 +67,6 @@ public class BVH
 	{
 		nameAndChannels.add(nc);
 	}
-
 
 	public int getFrames()
 	{
@@ -117,10 +116,10 @@ public class BVH
 	private void addNode(List<BVHNode> nodes, BVHNode node)
 	{
 		nodes.add(node);
-		for (BVHNode child:node.getJoints())
+		for (BVHNode child : node.getJoints())
 		{
 			child.setParentName(node.getName());
-			addNode(nodes,child);
+			addNode(nodes, child);
 		}
 	}
 }
