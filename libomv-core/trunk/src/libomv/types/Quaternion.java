@@ -41,6 +41,8 @@ import libomv.utils.RefObject;
 
 public class Quaternion
 {
+	private static float DEG_TO_RAD = 0.017453292519943295769236907684886f;
+	
 	public float X;
 
 	public float Y;
@@ -795,6 +797,107 @@ public class Quaternion
 		quaternion.Y = -quaternion.Y;
 		quaternion.Z = -quaternion.Z;
 		return quaternion;
+	}
+
+	public enum Order
+	{
+		XYZ,
+		YZX,
+		ZXY,
+		XZY,
+		YXZ,
+		ZYX;
+	}
+	
+	/**
+	 * Creates a quaternion from maya's rotation representation, which is 3 rotations (in DEGREES)
+	 * with specified order.
+	 * 
+	 * @param xRot X Rotation value
+	 * @param yRot Y Rotation value
+	 * @param zRot Z Rotation value
+	 * @param order the order of the rotational values
+	 * @returns a quaternion representing the 3 rotation values in the defined order
+	 */
+	 public static Quaternion mayaQ(float xRot, float yRot, float zRot, Order order)
+	{
+		Quaternion xQ = new Quaternion(new Vector3(1.0f, 0.0f, 0.0f), xRot * DEG_TO_RAD);
+		Quaternion yQ = new Quaternion(new Vector3(0.0f, 1.0f, 0.0f), yRot * DEG_TO_RAD );
+		Quaternion zQ = new Quaternion(new Vector3(0.0f, 0.0f, 1.0f), zRot * DEG_TO_RAD );
+		Quaternion ret = null;
+		switch (order)
+		{
+			case XYZ:
+				ret = multiply(multiply(xQ, yQ), zQ);
+				break;
+			case YZX:
+				ret = multiply(multiply(yQ, zQ), xQ);
+				break;
+			case ZXY:
+				ret = multiply(multiply(zQ, xQ), yQ);
+				break;
+			case XZY:
+				ret = multiply(multiply(xQ, zQ), yQ);
+				break;
+			case YXZ:
+				ret = multiply(multiply(yQ, xQ), zQ);
+				break;
+			case ZYX:
+				ret = multiply(multiply(zQ, yQ), xQ);
+				break;
+		}
+		return ret;
+	}
+
+	public String OrderToString(Order order)
+	{
+		String p;
+		switch (order)
+		{
+			default:
+			case XYZ:
+				p = "XYZ";
+				break;
+			case YZX:
+				p = "YZX";
+				break;
+			case ZXY:
+				p = "ZXY";
+				break;
+			case XZY:
+				p = "XZY";
+				break;
+			case YXZ:
+				p = "YXZ";
+				break;
+			case ZYX:
+				p = "ZYX";
+				break;
+		}
+		return p;
+	}
+
+	Order StringToOrder(String str)
+	{
+		if (str.compareToIgnoreCase("XYZ") == 0)
+			return Order.XYZ;
+
+		if (str.compareToIgnoreCase("YZX") == 0)
+			return Order.YZX;
+
+		if (str.compareToIgnoreCase("ZXY") == 0)
+			return Order.ZXY;
+
+		if (str.compareToIgnoreCase("XZY") == 0)
+			return Order.XZY;
+
+		if (str.compareToIgnoreCase("YXZ") == 0)
+			return Order.YXZ;
+
+		if (str.compareToIgnoreCase("ZYX") == 0)
+			return Order.ZYX;
+
+		return Order.XYZ;
 	}
 
 	/** A quaternion with a value of 0,0,0,1 */
