@@ -188,7 +188,7 @@ public class Quaternion
 
 	public float Length()
 	{
-		return (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
+		return (float) Math.sqrt(LengthSquared());
 	}
 
 	public float LengthSquared()
@@ -677,7 +677,6 @@ public class Quaternion
 			q.Z = 0f;
 			q.W = 1f;
 		}
-
 		return q;
 	}
 
@@ -711,7 +710,7 @@ public class Quaternion
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Quaternion) ? this == (Quaternion) obj : false;
+		return (obj instanceof Quaternion) ? equals((Quaternion)obj) : false;
 	}
 
 	public boolean equals(Quaternion other)
@@ -719,84 +718,82 @@ public class Quaternion
 		return W == other.W && X == other.X && Y == other.Y && Z == other.Z;
 	}
 
+	public boolean isIdentity()
+	{
+		return (X == 0f && Y == 0f && Z == 0f && W == 1f);
+	}
+	
 	public static Quaternion negate(Quaternion quaternion)
 	{
-		quaternion.X = -quaternion.X;
-		quaternion.Y = -quaternion.Y;
-		quaternion.Z = -quaternion.Z;
-		quaternion.W = -quaternion.W;
-		return quaternion;
-	}
-
-	public Quaternion add(Quaternion q)
-	{
-		return new Quaternion(X + q.X, Y + q.Y, Z + q.Z, W + q.W);
-	}
-
-	public Quaternion subtract(Quaternion q)
-	{
-		return new Quaternion(X - q.X, Y - q.Y, Z - q.Z, W - q.W);
-	}
-
-	public static Quaternion add(Quaternion quaternion1, Quaternion quaternion2)
-	{
-		quaternion1.X += quaternion2.X;
-		quaternion1.Y += quaternion2.Y;
-		quaternion1.Z += quaternion2.Z;
-		quaternion1.W += quaternion2.W;
-		return quaternion1;
-	}
-
-	public static Quaternion subtract(Quaternion quaternion1, Quaternion quaternion2)
-	{
-		quaternion1.X -= quaternion2.X;
-		quaternion1.Y -= quaternion2.Y;
-		quaternion1.Z -= quaternion2.Z;
-		quaternion1.W -= quaternion2.W;
-		return quaternion1;
-	}
-
-	public static Quaternion multiply(Quaternion q1, Quaternion q2)
-	{
-		return new Quaternion((q1.W * q2.X) + (q1.X * q2.W) + (q1.Y * q2.Z) - (q1.Z * q2.Y), (q1.W * q2.Y)
-				- (q1.X * q2.Z) + (q1.Y * q2.W) + (q1.Z * q2.X), (q1.W * q2.Z) + (q1.X * q2.Y) - (q1.Y * q2.X)
-				+ (q1.Z * q2.W), (q1.W * q2.W) - (q1.X * q2.X) - (q1.Y * q2.Y) - (q1.Z * q2.Z));
-	}
-
-	public static Quaternion multiply(Quaternion quaternion, float scaleFactor)
-	{
-		quaternion.X *= scaleFactor;
-		quaternion.Y *= scaleFactor;
-		quaternion.Z *= scaleFactor;
-		quaternion.W *= scaleFactor;
-		return quaternion;
-	}
-
-	public static Quaternion divide(Quaternion quaternion1, Quaternion quaternion2)
-	{
-		float x = quaternion1.X;
-		float y = quaternion1.Y;
-		float z = quaternion1.Z;
-		float w = quaternion1.W;
-
-		float q2lensq = quaternion2.LengthSquared(); // num14
-		float ooq2lensq = 1f / q2lensq;
-		float x2 = -quaternion2.X * ooq2lensq;
-		float y2 = -quaternion2.Y * ooq2lensq;
-		float z2 = -quaternion2.Z * ooq2lensq;
-		float w2 = quaternion2.W * ooq2lensq;
-
-		return new Quaternion(((x * w2) + (x2 * w)) + (y * z2) - (z * y2), ((y * w2) + (y2 * w)) + (z * x2) - (x * z2),
-				((z * w2) + (z2 * w)) + (x * y2) - (y * x2), (w * w2) - ((x * x2) + (y * y2)) + (z * z2));
+		return new Quaternion(-quaternion.X, -quaternion.Y, -quaternion.Z, -quaternion.W);
 	}
 
 	/** Returns the conjugate (spatial inverse) of a quaternion */
 	public static Quaternion conjugate(Quaternion quaternion)
 	{
-		quaternion.X = -quaternion.X;
-		quaternion.Y = -quaternion.Y;
-		quaternion.Z = -quaternion.Z;
-		return quaternion;
+		return new Quaternion(-quaternion.X, -quaternion.Y, -quaternion.Z, quaternion.W);
+	}
+
+	public Quaternion add(Quaternion q)
+	{
+		return add(this, q);
+	}
+
+	public Quaternion subtract(Quaternion q)
+	{
+		return subtract(this, q);
+	}
+
+	public Quaternion multiply(Quaternion q)
+	{
+		return multiply(this, q);
+	}
+
+	public Quaternion divide(Quaternion q)
+	{
+		return divide(this, q);
+	}
+
+	public static Quaternion add(Quaternion quaternion1, Quaternion quaternion2)
+	{
+		
+		return new Quaternion(quaternion1.X + quaternion2.X, quaternion1.Y + quaternion2.Y,
+		                      quaternion1.Z + quaternion2.Z, quaternion1.W + quaternion2.W);
+	}
+
+	public static Quaternion subtract(Quaternion quaternion1, Quaternion quaternion2)
+	{
+		return new Quaternion(quaternion1.X - quaternion2.X, quaternion1.Y - quaternion2.Y, 
+				              quaternion1.Z - quaternion2.Z, quaternion1.W - quaternion2.W);
+	}
+
+	public static Quaternion multiply(Quaternion q1, Quaternion q2)
+	{
+		return new Quaternion((q1.W * q2.X) + (q1.X * q2.W) + (q1.Y * q2.Z) - (q1.Z * q2.Y), 
+				              (q1.W * q2.Y) - (q1.X * q2.Z) + (q1.Y * q2.W) + (q1.Z * q2.X), 
+				              (q1.W * q2.Z) + (q1.X * q2.Y) - (q1.Y * q2.X) + (q1.Z * q2.W),
+				              (q1.W * q2.W) - (q1.X * q2.X) - (q1.Y * q2.Y) - (q1.Z * q2.Z));
+	}
+
+	public static Quaternion multiply(Quaternion quaternion, float scaleFactor)
+	{
+		
+		return new Quaternion(quaternion.X * scaleFactor, quaternion.Y * scaleFactor,
+		                      quaternion.Z * scaleFactor, quaternion.W * scaleFactor);
+	}
+
+	public static Quaternion divide(Quaternion quaternion1, Quaternion quaternion2)
+	{
+		float q2lensq = quaternion2.LengthSquared();
+		float x2 = quaternion2.X / q2lensq;
+		float y2 = quaternion2.Y / q2lensq;
+		float z2 = quaternion2.Z / q2lensq;
+		float w2 = quaternion2.W / q2lensq;
+
+		return new Quaternion((quaternion1.X * w2) - (quaternion1.W * x2) - (quaternion1.Y * z2) + (quaternion1.Z * y2),
+				              (quaternion1.Y * w2) - (quaternion1.W * y2) - (quaternion1.Z * x2) + (quaternion1.X * z2),
+				              (quaternion1.Z * w2) - (quaternion1.W * z2) - (quaternion1.X * y2) + (quaternion1.Y * x2), 
+				              (quaternion1.W * w2) + (quaternion1.X * x2) + (quaternion1.Y * y2) + (quaternion1.Z * z2));
 	}
 
 	public enum Order
@@ -804,8 +801,8 @@ public class Quaternion
 		XYZ,
 		YZX,
 		ZXY,
-		XZY,
 		YXZ,
+		XZY,
 		ZYX;
 	}
 	
