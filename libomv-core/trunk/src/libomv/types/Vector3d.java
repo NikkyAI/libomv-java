@@ -114,7 +114,55 @@ public class Vector3d
 		byteArray.putDouble(Z);
 	}
 
-    /**
+	public static double Distance(Vector3d value1, Vector3d value2)
+	{
+		return Math.sqrt(DistanceSquared(value1, value2));
+	}
+
+	public static double DistanceSquared(Vector3d value1, Vector3d value2)
+	{
+		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
+				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
+	}
+
+	public static Vector3d Normalize(Vector3d value)
+	{
+		double factor = Distance(value, Zero);
+		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			factor = 1f / factor;
+			value.X *= factor;
+			value.Y *= factor;
+			value.Z *= factor;
+		}
+		else
+		{
+			value.X = 0f;
+			value.Y = 0f;
+			value.Z = 0f;
+		}
+		return value;
+	}
+
+	public double Length()
+	{
+		return Math.sqrt(DistanceSquared(this, Zero));
+	}
+
+	public double LengthSquared()
+	{
+		return DistanceSquared(this, Zero);
+	}
+
+	public void Normalize()
+	{
+		Vector3d val = Normalize(this);
+		X = val.X;
+		Y = val.Y;
+		Z = val.Z;
+	}
+
+	/**
 	 * Writes the raw bytes for this UUID to a byte array
 	 * 
 	 * @param dest
