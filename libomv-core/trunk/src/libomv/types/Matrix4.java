@@ -251,7 +251,11 @@ public final class Matrix4
 	 */
 	public Quaternion GetQuaternion()
 	{
-		Quaternion quat = new Quaternion();
+		return GetQuaternion(new Quaternion());
+	}
+		
+	public Quaternion GetQuaternion(Quaternion quat)
+	{
 		float trace = Trace() + 1f;
 
 		if (trace > Helpers.FLOAT_MAG_THRESHOLD)
@@ -293,7 +297,6 @@ public final class Matrix4
 				quat.W = (M12 - M21) / s;
 			}
 		}
-
 		return quat;
 	}
 
