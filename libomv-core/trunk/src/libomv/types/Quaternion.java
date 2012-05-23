@@ -93,6 +93,10 @@ public class Quaternion
 		W = scalarPart;
 	}
 
+	public Quaternion(Matrix4 mat)
+	{
+		mat.GetQuaternion(this).Normalize();
+	}
 	/**
 	 * Constructor, builds a quaternion object from a byte array
 	 * 
@@ -132,16 +136,16 @@ public class Quaternion
 		}
 	}
 
-    /**
+	/**
 	 * Constructor, builds a quaternion from an XML reader
 	 * 
 	 * @param parser
 	 *            XML pull parser reader
 	 */
-    public Quaternion(XmlPullParser parser) throws XmlPullParserException, IOException
-    {
-    	if (parser.nextTag() != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
+	public Quaternion(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		if (parser.nextTag() != XmlPullParser.START_TAG)
+			throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
 		do
 		{
 			if (!parser.isEmptyElementTag())
@@ -169,10 +173,10 @@ public class Quaternion
 				}
 			}
 		}
-        while (parser.nextTag() == XmlPullParser.START_TAG);
-    }
+		while (parser.nextTag() == XmlPullParser.START_TAG);
+	}
 
-    public Quaternion(Quaternion q)
+	public Quaternion(Quaternion q)
 	{
 		X = q.X;
 		Y = q.Y;
@@ -197,13 +201,9 @@ public class Quaternion
 	}
 
 	/** Normalizes the quaternion */
-	public void Normalize()
+	public Quaternion Normalize()
 	{
-		Quaternion val = Normalize(this);
-		X = val.X;
-		Y = val.Y;
-		Z = val.Z;
-		W = val.W;
+		return Normalize(this);
 	}
 
 	/**
@@ -608,12 +608,25 @@ public class Quaternion
 			quaternion.Z *= oonorm;
 			quaternion.W *= oonorm;
 		}
-
 		return quaternion;
 	}
 
+	// linear interpolation from identity to q
+	public static Quaternion lerp(Quaternion q, float t)
+	{
+		return new Quaternion(t * q.X, t * q.Y, t * q.Z, t * (q.Z - 1f) + 1f).Normalize();
+	}
+
+	/* linear interpolation between two quaternions */
+	public static Quaternion lerp(Quaternion q1, Quaternion q2, float t)
+	{
+		float inv_t = 1.f - t;
+		return new Quaternion(t * q2.X + inv_t * q1.X, t * q2.Y + inv_t * q1.Y,
+		                              t * q2.Z + inv_t * q1.Z, t * q2.W + inv_t * q1.W).Normalize();
+	}
+
 	/** Spherical linear interpolation between two quaternions */
-	public static Quaternion Slerp(Quaternion q1, Quaternion q2, float amount)
+	public static Quaternion slerp(Quaternion q1, Quaternion q2, float amount)
 	{
 		float angle = Dot(q1, q2);
 
@@ -653,8 +666,8 @@ public class Quaternion
 			scale = (float) Math.sin(Helpers.PI * (0.5f - amount));
 			invscale = (float) Math.sin(Helpers.PI * amount);
 		}
-
-		return add(multiply(q1, scale), multiply(q2, invscale));
+		return new Quaternion(q1.X * scale + q2.X * invscale, q1.Y * scale + q2.Y * invscale,
+				              q1.Z * scale + q2.Z * invscale, q1.W * scale + q2.W * invscale);
 	}
 
 	public static Quaternion Normalize(Quaternion q)
@@ -749,6 +762,21 @@ public class Quaternion
 		return multiply(this, q);
 	}
 
+	public Vector4 multiply(Vector4 a)
+	{
+		return multiply(this, a);
+	}
+
+	public Vector3 multiply(Vector3 a)
+	{
+		return multiply(this, a);
+	}
+
+	public Vector3d multiply(Vector3d a)
+	{
+		return multiply(this, a);
+	}
+
 	public Quaternion divide(Quaternion q)
 	{
 		return divide(this, q);
@@ -776,10 +804,51 @@ public class Quaternion
 	}
 
 	public static Quaternion multiply(Quaternion quaternion, float scaleFactor)
-	{
-		
+	{	
 		return new Quaternion(quaternion.X * scaleFactor, quaternion.Y * scaleFactor,
 		                      quaternion.Z * scaleFactor, quaternion.W * scaleFactor);
+	}
+
+	public static Vector4 multiply(Quaternion rot, Vector4 a)
+	{
+	    float rw = - rot.X * a.X - rot.Y * a.Y - rot.Z * a.Z;
+	    float rx =   rot.W * a.X + rot.Y * a.Z - rot.Z * a.Y;
+	    float ry =   rot.W * a.Y + rot.Z * a.X - rot.X * a.Z;
+	    float rz =   rot.W * a.Z + rot.X * a.Y - rot.Y * a.X;
+
+	    float nx = - rw * rot.X +  rx * rot.W - ry * rot.Z + rz * rot.Y;
+	    float ny = - rw * rot.Y +  ry * rot.W - rz * rot.X + rx * rot.Z;
+	    float nz = - rw * rot.Z +  rz * rot.W - rx * rot.Y + ry * rot.X;
+
+	    return new Vector4(nx, ny, nz, a.S);
+	}
+
+	public static Vector3 multiply(Quaternion rot, Vector3 a)
+	{
+		float rw = - rot.X * a.X - rot.Y * a.Y - rot.Z * a.Z;
+		float rx =   rot.W * a.X + rot.Y * a.Z - rot.Z * a.Y;
+		float ry =   rot.W * a.Y + rot.Z * a.X - rot.X * a.Z;
+		float rz =   rot.W * a.Z + rot.X * a.Y - rot.Y * a.X;
+
+		float nx = - rw * rot.X +  rx * rot.W - ry * rot.Z + rz * rot.Y;
+		float ny = - rw * rot.Y +  ry * rot.W - rz * rot.X + rx * rot.Z;
+		float nz = - rw * rot.Z +  rz * rot.W - rx * rot.Y + ry * rot.X;
+
+	    return new Vector3(nx, ny, nz);
+	}
+
+	public static Vector3d multiply(Quaternion rot, Vector3d a)
+	{
+	    double rw = - rot.X * a.X - rot.Y * a.Y - rot.Z * a.Z;
+	    double rx =   rot.W * a.X + rot.Y * a.Z - rot.Z * a.Y;
+	    double ry =   rot.W * a.Y + rot.Z * a.X - rot.X * a.Z;
+	    double rz =   rot.W * a.Z + rot.X * a.Y - rot.Y * a.X;
+
+	    double nx = - rw * rot.X +  rx * rot.W - ry * rot.Z + rz * rot.Y;
+	    double ny = - rw * rot.Y +  ry * rot.W - rz * rot.X + rx * rot.Z;
+	    double nz = - rw * rot.Z +  rz * rot.W - rx * rot.Y + ry * rot.X;
+
+	    return new Vector3d(nx, ny, nz);
 	}
 
 	public static Quaternion divide(Quaternion quaternion1, Quaternion quaternion2)
@@ -805,7 +874,7 @@ public class Quaternion
 		XZY,
 		ZYX;
 	}
-	
+
 	/**
 	 * Creates a quaternion from maya's rotation representation, which is 3 rotations (in DEGREES)
 	 * with specified order.
@@ -816,7 +885,7 @@ public class Quaternion
 	 * @param order the order of the rotational values
 	 * @returns a quaternion representing the 3 rotation values in the defined order
 	 */
-	 public static Quaternion mayaQ(float xRot, float yRot, float zRot, Order order)
+	public static Quaternion mayaQ(float xRot, float yRot, float zRot, Order order)
 	{
 		Quaternion xQ = new Quaternion(new Vector3(1.0f, 0.0f, 0.0f), xRot * DEG_TO_RAD);
 		Quaternion yQ = new Quaternion(new Vector3(0.0f, 1.0f, 0.0f), yRot * DEG_TO_RAD );
@@ -846,7 +915,12 @@ public class Quaternion
 		return ret;
 	}
 
-	public String OrderToString(Order order)
+	public static Quaternion mayaQ(float[] arr, int pos, Order order)
+	{
+		return mayaQ(arr[pos], arr[pos + 1], arr[pos + 2], order);
+	}
+
+	public static String OrderToString(Order order)
 	{
 		String p;
 		switch (order)
@@ -874,7 +948,7 @@ public class Quaternion
 		return p;
 	}
 
-	Order StringToOrder(String str)
+	public static Order StringToOrder(String str)
 	{
 		if (str.compareToIgnoreCase("XYZ") == 0)
 			return Order.XYZ;
@@ -895,6 +969,11 @@ public class Quaternion
 			return Order.ZYX;
 
 		return Order.XYZ;
+	}
+
+	public static Order StringToOrderRev(String str)
+	{
+		return Order.values()[5 - StringToOrder(str).ordinal()];
 	}
 
 	/** A quaternion with a value of 0,0,0,1 */
