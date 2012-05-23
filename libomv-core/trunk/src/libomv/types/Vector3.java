@@ -54,6 +54,16 @@ public class Vector3
 		X = Y = Z = val;
 	}
 
+	public Vector3(float[] arr)
+	{
+		fromArray(this, arr, 0);
+	}
+	
+	public Vector3(float[] arr, int offset)
+	{
+		fromArray(this, arr, offset);
+	}
+	
 	public Vector3(Vector3 v)
 	{
 		X = v.X;
@@ -209,6 +219,27 @@ public class Vector3
 		int z = (int) Z;
 
 		return (x ^ y ^ z);
+	}
+
+	/**
+	 * Initializes a vector from a flaot array
+	 * 
+	 * @param vec
+	 *           the vector to intialize
+	 * @param arr
+	 *            is the float array
+	 * @param pos
+	 *            Beginning position in the float array
+	 */
+	public static Vector3 fromArray(Vector3 vec, float[] arr, int pos)
+	{
+		if (arr.length >= (pos + 3))
+		{		
+			vec.X = arr[pos + 0];
+			vec.Y = arr[pos + 1];
+			vec.Z = arr[pos + 2];
+		}
+		return vec;
 	}
 
 	/**
