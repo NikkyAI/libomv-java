@@ -27,44 +27,45 @@ package libomv.examples.TestClient.Commands.Movement;
 
 import libomv.examples.TestClient.TestClient;
 import libomv.examples.TestClient.Command;
+import libomv.primitives.Primitive;
 import libomv.types.UUID;
+import libomv.types.Vector3;
 import libomv.utils.RefObject;
 
-public class GotoLandmark extends Command
+public class SitOnCommand extends Command
 {
-    public GotoLandmark(TestClient testClient)
+    public SitOnCommand(TestClient testClient)
     {
-        Name = "goto_landmark";
-        Description = "Teleports to a Landmark. Usage: goto_landmark [UUID]";
+        Name = "siton";
+        Description = "Attempt to sit on a particular prim, with specified UUID";
         Category = CommandCategory.Movement;
     }
 
     @Override
 	public String Execute(String[] args, UUID fromAgentID)
     {
-        if (args.length < 1)
-        {
-            return "Usage: goto_landmark [UUID]";
-        }
+        if (args.length != 1)
+            return "Usage: siton UUID";
 
-        RefObject<UUID> landmark = new RefObject<UUID>(null);
-        if (UUID.TryParse(args[0], landmark))
+        RefObject<UUID> target = new RefObject<UUID>(null);
+        if (UUID.TryParse(args[0], target))
         {
-        	System.out.println("Teleporting to " + landmark.argvalue.toString());
-
-            try
-			{
-				if (Client.Self.Teleport(landmark.argvalue))
+            Primitive targetPrim = Client.Network.getCurrentSim().getObjectsPrimitives().get(target.argvalue);
+            if (targetPrim != null)
+            {
+                try
 				{
-				    return "Teleport Succesful";
+					Client.Self.RequestSit(targetPrim.ID, Vector3.Zero);
+	                Client.Self.Sit();
 				}
-			}
-			catch (Exception e)
-			{
-                return "Exception while trying to teleport to " + landmark.argvalue.toString();
-			}
-			return "Teleport Failed";
+				catch (Exception e)
+				{
+	                return "Exception while trying to sit on prim " + targetPrim.ID.toString() + " (" + targetPrim.LocalID + ")";
+				}
+                return "Requested to sit on prim " + targetPrim.ID.toString() + " (" + targetPrim.LocalID + ")";
+            }
         }
-		return "Invalid LLUID";
+        return "Couldn't find a prim to sit on with UUID " + args[0];
     }
 }
+
