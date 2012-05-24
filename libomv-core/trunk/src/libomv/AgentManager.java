@@ -5708,7 +5708,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void setOrigin(Vector3 value) throws Exception
 			{
-				if (!value.IsFinite())
+				if (!value.isFinite())
 				{
 					throw new Exception("Non-finite in CoordinateFrame.Origin assignment");
 				}
@@ -5723,7 +5723,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void setXAxis(Vector3 value) throws Exception
 			{
-				if (!value.IsFinite())
+				if (!value.isFinite())
 				{
 					throw new Exception("Non-finite in CoordinateFrame.XAxis assignment");
 				}
@@ -5738,7 +5738,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void setYAxis(Vector3 value) throws Exception
 			{
-				if (!value.IsFinite())
+				if (!value.isFinite())
 				{
 					throw new Exception("Non-finite in CoordinateFrame.YAxis assignment");
 				}
@@ -5753,7 +5753,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void setZAxis(Vector3 value) throws Exception
 			{
-				if (!value.IsFinite())
+				if (!value.isFinite())
 				{
 					throw new Exception("Non-finite in CoordinateFrame.ZAxis assignment");
 				}
@@ -5772,7 +5772,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				yAxis = Y_AXIS;
 				zAxis = Z_AXIS;
 
-				if (!this.origin.IsFinite())
+				if (!this.origin.isFinite())
 				{
 					throw new Exception("Non-finite in CoordinateFrame constructor");
 				}
@@ -5868,7 +5868,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				Matrix4 m = Matrix4.CreateFromQuaternion(q);
 				Rotate(m);
 
-				if (!yAxis.IsFinite() || !zAxis.IsFinite())
+				if (!yAxis.isFinite() || !zAxis.isFinite())
 				{
 					throw new Exception("Non-finite in CoordinateFrame.Roll()");
 				}
@@ -5880,7 +5880,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				Matrix4 m = Matrix4.CreateFromQuaternion(q);
 				Rotate(m);
 
-				if (!xAxis.IsFinite() || !zAxis.IsFinite())
+				if (!xAxis.isFinite() || !zAxis.isFinite())
 				{
 					throw new Throwable("Non-finite in CoordinateFrame.Pitch()");
 				}
@@ -5892,7 +5892,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				Matrix4 m = Matrix4.CreateFromQuaternion(q);
 				Rotate(m);
 
-				if (!xAxis.IsFinite() || !yAxis.IsFinite())
+				if (!xAxis.isFinite() || !yAxis.isFinite())
 				{
 					throw new Throwable("Non-finite in CoordinateFrame.Yaw()");
 				}
@@ -5958,7 +5958,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			protected final boolean IsFinite()
 			{
-				if (xAxis.IsFinite() && yAxis.IsFinite() && zAxis.IsFinite())
+				if (xAxis.isFinite() && yAxis.isFinite() && zAxis.isFinite())
 				{
 					return true;
 				}

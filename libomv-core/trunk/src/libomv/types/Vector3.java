@@ -352,26 +352,26 @@ public class Vector3
 		return (diff.LengthSquared() <= tolerance * tolerance);
 	}
 
-	public int CompareTo(Vector3 vector)
+	public int compareTo(Vector3 vector)
 	{
 		return ((Float) Length()).compareTo(vector.Length());
 	}
 
 	/** Test if this vector is composed of all finite numbers */
-	public boolean IsFinite()
+	public boolean isFinite()
 	{
 		return (Helpers.IsFinite(X) && Helpers.IsFinite(Y) && Helpers.IsFinite(Z));
 	}
 
-	public Vector3 Clamp(Vector3 min, Vector3 max)
+	public Vector3 clamp(Vector3 min, Vector3 max)
 	{
 		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z,
 				max.Z));
 	}
 	
-	public float Mag()
+	public float mag()
 	{
-		return Mag(this);
+		return mag(this);
 	}
 
 	public static Vector3 Cross(Vector3 value1, Vector3 value2)
@@ -396,24 +396,24 @@ public class Vector3
 		return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
 	}
 
-	public static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount)
+	public static Vector3 lerp(Vector3 value1, Vector3 value2, float amount)
 	{
 
 		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount),
 				Helpers.Lerp(value1.Z, value2.Z, amount));
 	}
 
-	public static float Mag(Vector3 value)
+	public static float mag(Vector3 value)
 	{
 		return (float) Math.sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
 	}
 
-	public static Vector3 Max(Vector3 value1, Vector3 value2)
+	public static Vector3 max(Vector3 value1, Vector3 value2)
 	{
 		return new Vector3(Math.max(value1.X, value2.X), Math.max(value1.Y, value2.Y), Math.max(value1.Z, value2.Z));
 	}
 
-	public static Vector3 Min(Vector3 value1, Vector3 value2)
+	public static Vector3 min(Vector3 value1, Vector3 value2)
 	{
 		return new Vector3(Math.min(value1.X, value2.X), Math.min(value1.Y, value2.Y), Math.min(value1.Z, value2.Z));
 	}
