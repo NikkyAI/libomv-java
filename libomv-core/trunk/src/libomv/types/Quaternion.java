@@ -95,7 +95,7 @@ public class Quaternion
 
 	public Quaternion(Matrix4 mat)
 	{
-		mat.GetQuaternion(this).Normalize();
+		mat.GetQuaternion(this).normalize();
 	}
 	/**
 	 * Constructor, builds a quaternion object from a byte array
@@ -184,26 +184,26 @@ public class Quaternion
 		W = q.W;
 	}
 
-	public boolean ApproxEquals(Quaternion quat, float tolerance)
+	public boolean approxEquals(Quaternion quat, float tolerance)
 	{
 		Quaternion diff = subtract(quat);
-		return (diff.LengthSquared() <= tolerance * tolerance);
+		return (diff.lengthSquared() <= tolerance * tolerance);
 	}
 
-	public float Length()
+	public float length()
 	{
-		return (float) Math.sqrt(LengthSquared());
+		return (float) Math.sqrt(lengthSquared());
 	}
 
-	public float LengthSquared()
+	public float lengthSquared()
 	{
 		return (X * X + Y * Y + Z * Z + W * W);
 	}
 
 	/** Normalizes the quaternion */
-	public Quaternion Normalize()
+	public Quaternion normalize()
 	{
-		return Normalize(this);
+		return normalize(this);
 	}
 
 	/**
@@ -390,7 +390,7 @@ public class Quaternion
 	 * @param yaw
 	 *            Z euler angle
 	 */
-	public void GetEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
+	public void getEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
 	{
 		float sqx = X * X;
 		float sqy = Y * Y;
@@ -431,7 +431,7 @@ public class Quaternion
 	 * @param angle
 	 *            Angle around the axis, in radians
 	 */
-	public void GetAxisAngle(RefObject<Vector3> axis, RefObject<Float> angle)
+	public void getAxisAngle(RefObject<Vector3> axis, RefObject<Float> angle)
 	{
 		axis.argvalue = new Vector3(0f);
 		float scale = (float) Math.sqrt(X * X + Y * Y + Z * Z);
@@ -456,10 +456,10 @@ public class Quaternion
 	/**
 	 * Build a quaternion from an axis and an angle of rotation around that axis
 	 */
-	public static Quaternion CreateFromAxisAngle(float axisX, float axisY, float axisZ, float angle)
+	public static Quaternion createFromAxisAngle(float axisX, float axisY, float axisZ, float angle)
 	{
 		Vector3 axis = new Vector3(axisX, axisY, axisZ);
-		return CreateFromAxisAngle(axis, angle);
+		return createFromAxisAngle(axis, angle);
 	}
 
 	/**
@@ -470,10 +470,10 @@ public class Quaternion
 	 * @param angle
 	 *            Angle of rotation
 	 */
-	public static Quaternion CreateFromAxisAngle(Vector3 axis, float angle)
+	public static Quaternion createFromAxisAngle(Vector3 axis, float angle)
 	{
 		Quaternion q = new Quaternion();
-		axis = Vector3.Normalize(axis);
+		axis = Vector3.normalize(axis);
 
 		angle *= 0.5f;
 		float c = (float) Math.cos(angle);
@@ -484,7 +484,7 @@ public class Quaternion
 		q.Z = axis.Z * s;
 		q.W = c;
 
-		return Normalize(q);
+		return normalize(q);
 	}
 
 	/**
@@ -496,9 +496,9 @@ public class Quaternion
 	 * @return Quaternion representation of the euler angles
 	 * @throws Exception
 	 */
-	public static Quaternion CreateFromEulers(Vector3 eulers) throws Exception
+	public static Quaternion createFromEulers(Vector3 eulers) throws Exception
 	{
-		return CreateFromEulers(eulers.X, eulers.Y, eulers.Z);
+		return createFromEulers(eulers.X, eulers.Y, eulers.Z);
 	}
 
 	/**
@@ -513,7 +513,7 @@ public class Quaternion
 	 * @return Quaternion representation of the euler angles
 	 * @throws Exception
 	 */
-	public static Quaternion CreateFromEulers(float roll, float pitch, float yaw) throws Exception
+	public static Quaternion createFromEulers(float roll, float pitch, float yaw) throws Exception
 	{
 		if (roll > Helpers.TWO_PI || pitch > Helpers.TWO_PI || yaw > Helpers.TWO_PI)
 		{
@@ -533,7 +533,7 @@ public class Quaternion
 				* upCos - atLeftSin * upSin));
 	}
 
-	public static Quaternion CreateFromRotationMatrix(Matrix4 m)
+	public static Quaternion createFromRotationMatrix(Matrix4 m)
 	{
 		Quaternion quat = new Quaternion();
 
@@ -582,7 +582,7 @@ public class Quaternion
 		return quat;
 	}
 
-	public static float Dot(Quaternion q1, Quaternion q2)
+	public static float dot(Quaternion q1, Quaternion q2)
 	{
 		return (q1.X * q2.X) + (q1.Y * q2.Y) + (q1.Z * q2.Z) + (q1.W * q2.W);
 	}
@@ -590,9 +590,9 @@ public class Quaternion
 	/**
 	 * Conjugates and renormalizes a vector
 	 */
-	public static Quaternion Inverse(Quaternion quaternion)
+	public static Quaternion inverse(Quaternion quaternion)
 	{
-		float norm = quaternion.LengthSquared();
+		float norm = quaternion.lengthSquared();
 
 		if (norm == 0f)
 		{
@@ -614,7 +614,7 @@ public class Quaternion
 	// linear interpolation from identity to q
 	public static Quaternion lerp(Quaternion q, float t)
 	{
-		return new Quaternion(t * q.X, t * q.Y, t * q.Z, t * (q.Z - 1f) + 1f).Normalize();
+		return new Quaternion(t * q.X, t * q.Y, t * q.Z, t * (q.Z - 1f) + 1f).normalize();
 	}
 
 	/* linear interpolation between two quaternions */
@@ -622,13 +622,13 @@ public class Quaternion
 	{
 		float inv_t = 1.f - t;
 		return new Quaternion(t * q2.X + inv_t * q1.X, t * q2.Y + inv_t * q1.Y,
-		                              t * q2.Z + inv_t * q1.Z, t * q2.W + inv_t * q1.W).Normalize();
+		                              t * q2.Z + inv_t * q1.Z, t * q2.W + inv_t * q1.W).normalize();
 	}
 
 	/** Spherical linear interpolation between two quaternions */
 	public static Quaternion slerp(Quaternion q1, Quaternion q2, float amount)
 	{
-		float angle = Dot(q1, q2);
+		float angle = dot(q1, q2);
 
 		if (angle < 0f)
 		{
@@ -670,9 +670,9 @@ public class Quaternion
 				              q1.Z * scale + q2.Z * invscale, q1.W * scale + q2.W * invscale);
 	}
 
-	public static Quaternion Normalize(Quaternion q)
+	public static Quaternion normalize(Quaternion q)
 	{
-		float mag = q.Length();
+		float mag = q.length();
 
 		// Catch very small rounding errors when normalizing
 		if (mag > Helpers.FLOAT_MAG_THRESHOLD)
@@ -755,6 +755,11 @@ public class Quaternion
 	public Quaternion subtract(Quaternion q)
 	{
 		return subtract(this, q);
+	}
+
+	public Quaternion multiply(float scale)
+	{
+		return multiply(this, scale);
 	}
 
 	public Quaternion multiply(Quaternion q)
@@ -853,7 +858,7 @@ public class Quaternion
 
 	public static Quaternion divide(Quaternion quaternion1, Quaternion quaternion2)
 	{
-		float q2lensq = quaternion2.LengthSquared();
+		float q2lensq = quaternion2.lengthSquared();
 		float x2 = quaternion2.X / q2lensq;
 		float y2 = quaternion2.Y / q2lensq;
 		float z2 = quaternion2.Z / q2lensq;
@@ -863,6 +868,66 @@ public class Quaternion
 				              (quaternion1.Y * w2) - (quaternion1.W * y2) - (quaternion1.Z * x2) + (quaternion1.X * z2),
 				              (quaternion1.Z * w2) - (quaternion1.W * z2) - (quaternion1.X * y2) + (quaternion1.Y * x2), 
 				              (quaternion1.W * w2) + (quaternion1.X * x2) + (quaternion1.Y * y2) + (quaternion1.Z * z2));
+	}
+
+	// calculate the shortest rotation from a to b
+	public static Quaternion shortestArc(Vector3 a, Vector3 b)
+	{
+		// Make a local copy of both vectors.
+		Vector3 vec_a = new Vector3(a);
+		Vector3 vec_b = new Vector3(b);
+
+		// Make sure neither vector is zero length.  Also normalize
+		// the vectors while we are at it.
+		float vec_a_mag = vec_a.normalize().mag();
+		float vec_b_mag = vec_b.normalize().mag();
+		if (vec_a_mag < Helpers.FLOAT_MAG_THRESHOLD ||
+			vec_b_mag < Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			// Can't calculate a rotation from this.
+			// Just return ZERO_ROTATION instead.
+			return Identity;
+		}
+
+		// Create an axis to rotate around, and the cos of the angle to rotate.
+		Vector3 axis = Vector3.cross(vec_a, vec_b);
+		float cos_theta  = Vector3.dot(vec_a, vec_b);
+
+		// Check the angle between the vectors to see if they are parallel or anti-parallel.
+		if (cos_theta > 1.0 - Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			// a and b are parallel.  No rotation is necessary.
+			return Identity;
+		}
+		else if (cos_theta < -1.0 + Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			// a and b are anti-parallel.
+			// Rotate 180 degrees around some orthogonal axis.
+			// Find the projection of the x-axis onto a, and try
+			// using the vector between the projection and the x-axis
+			// as the orthogonal axis.
+			Vector3 proj = vec_a.multiply(vec_a.X / cos_theta);
+			Vector3 ortho_axis = Vector3.subtract(Vector3.UnitX, proj);
+			
+			// Turn this into an orthonormal axis.
+			float ortho_length = ortho_axis.normalize().length();
+			// If the axis' length is 0, then our guess at an orthogonal axis
+			// was wrong (a is parallel to the x-axis).
+			if (ortho_length < Helpers.FLOAT_MAG_THRESHOLD)
+			{
+				// Use the z-axis instead.
+				ortho_axis = Vector3.UnitZ;
+			}
+
+			// Construct a quaternion from this orthonormal axis.
+			return new Quaternion(ortho_axis.X, ortho_axis.Y, ortho_axis.Z, 0f);
+		}
+		else
+		{
+			// a and b are NOT parallel or anti-parallel.
+			// Return the rotation between these vectors.
+			return createFromAxisAngle(axis, (float) Math.acos(cos_theta));
+		}
 	}
 
 	public enum Order

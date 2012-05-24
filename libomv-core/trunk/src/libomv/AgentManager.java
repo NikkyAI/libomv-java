@@ -5839,7 +5839,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void Rotate(float angle, Vector3 rotationAxis) throws Exception
 			{
-				Quaternion q = Quaternion.CreateFromAxisAngle(rotationAxis, angle);
+				Quaternion q = Quaternion.createFromAxisAngle(rotationAxis, angle);
 				Rotate(q);
 			}
 
@@ -5864,7 +5864,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void Roll(float angle) throws Exception
 			{
-				Quaternion q = Quaternion.CreateFromAxisAngle(xAxis, angle);
+				Quaternion q = Quaternion.createFromAxisAngle(xAxis, angle);
 				Matrix4 m = Matrix4.CreateFromQuaternion(q);
 				Rotate(m);
 
@@ -5876,7 +5876,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void Pitch(float angle) throws Throwable
 			{
-				Quaternion q = Quaternion.CreateFromAxisAngle(yAxis, angle);
+				Quaternion q = Quaternion.createFromAxisAngle(yAxis, angle);
 				Matrix4 m = Matrix4.CreateFromQuaternion(q);
 				Rotate(m);
 
@@ -5888,7 +5888,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void Yaw(float angle) throws Throwable
 			{
-				Quaternion q = Quaternion.CreateFromAxisAngle(zAxis, angle);
+				Quaternion q = Quaternion.createFromAxisAngle(zAxis, angle);
 				Matrix4 m = Matrix4.CreateFromQuaternion(q);
 				Rotate(m);
 

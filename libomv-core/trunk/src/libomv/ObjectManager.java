@@ -1113,7 +1113,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		                            			omega = (float) Math.sqrt(omega);
 		                            			float angle = omega * adjSeconds;
 		                            			angVel = Vector3.multiply(angVel, 1.0f / omega);
-		                            			Quaternion dQ = Quaternion.CreateFromAxisAngle(angVel, angle);
+		                            			Quaternion dQ = Quaternion.createFromAxisAngle(angVel, angle);
 		                            			prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
 		                            		}
 		                            	}
