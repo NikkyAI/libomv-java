@@ -5917,10 +5917,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 				{
 					// Prevent left from being zero
 					at.X += 0.01f;
-					at.Normalize();
+					at.normalize();
 					left = Vector3.Cross(upDirection, at);
 				}
-				left.Normalize();
+				left.normalize();
 
 				xAxis = at;
 				yAxis = left;
@@ -5951,7 +5951,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
 				this.origin = origin;
 				Vector3 at = target.subtract(origin);
-				at.Normalize();
+				at.normalize();
 
 				LookDirection(at, upDirection);
 			}
@@ -5968,9 +5968,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 			protected final void Orthonormalize()
 			{
 				// Make sure the axis are orthagonal and normalized
-				xAxis.Normalize();
+				xAxis.normalize();
 				yAxis.subtract(Vector3.multiply(xAxis, Vector3.multiply(xAxis, yAxis)));
-				yAxis.Normalize();
+				yAxis.normalize();
 				zAxis = Vector3.Cross(xAxis, yAxis);
 			}
 		}
@@ -6534,7 +6534,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				}
 
 				Quaternion between = Vector3.RotationBetween(Vector3.UnitX,
-						Vector3.Normalize(target.subtract(_Client.Self.getSimPosition())));
+						Vector3.normalize(target.subtract(_Client.Self.getSimPosition())));
 				Quaternion rot = Quaternion.multiply(between, Quaternion.divide(Quaternion.Identity, parentRot));
 
 				BodyRotation = rot;

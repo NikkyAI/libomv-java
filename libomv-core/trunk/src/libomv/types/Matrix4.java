@@ -405,8 +405,8 @@ public final class Matrix4
 	public static Matrix4 CreateLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector)
 	{
 
-		Vector3 z = Vector3.Normalize(Vector3.subtract(cameraPosition, cameraTarget));
-		Vector3 x = Vector3.Normalize(Vector3.Cross(cameraUpVector, z));
+		Vector3 z = Vector3.normalize(Vector3.subtract(cameraPosition, cameraTarget));
+		Vector3 x = Vector3.normalize(Vector3.Cross(cameraUpVector, z));
 		Vector3 y = Vector3.Cross(z, x);
 
 		return new Matrix4(x.X, y.X, z.X, 0f, x.Y, y.Y, z.Y, 0f, x.Z, y.Z, z.Z, 0f, -Vector3.Dot(x, cameraPosition),
@@ -540,15 +540,15 @@ public final class Matrix4
 		Matrix4 result = new Matrix4();
 
 		// Normalize forward vector
-		forward.Normalize();
+		forward.normalize();
 
 		// Calculate right vector
 		Vector3 right = Vector3.Cross(forward, up);
-		right.Normalize();
+		right.normalize();
 
 		// Recalculate up vector
 		up = Vector3.Cross(right, forward);
-		up.Normalize();
+		up.normalize();
 
 		result.M11 = right.X;
 		result.M12 = right.Y;

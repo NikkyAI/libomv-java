@@ -330,12 +330,9 @@ public class Vector3
 		return DistanceSquared(this, Zero);
 	}
 
-	public void Normalize()
+	public Vector3 normalize()
 	{
-		Vector3 val = Normalize(this);
-		X = val.X;
-		Y = val.Y;
-		Z = val.Z;
+		return normalize(this);
 	}
 
 	/**
@@ -370,6 +367,11 @@ public class Vector3
 	{
 		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z,
 				max.Z));
+	}
+	
+	public float Mag()
+	{
+		return Mag(this);
 	}
 
 	public static Vector3 Cross(Vector3 value1, Vector3 value2)
@@ -416,7 +418,7 @@ public class Vector3
 		return new Vector3(Math.min(value1.X, value2.X), Math.min(value1.Y, value2.Y), Math.min(value1.Z, value2.Z));
 	}
 
-	public static Vector3 Normalize(Vector3 value)
+	public static Vector3 normalize(Vector3 value)
 	{
 		float factor = Distance(value, Zero);
 		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
@@ -450,7 +452,7 @@ public class Vector3
 		Vector3 crossProduct = Cross(a, b);
 		float magProduct = a.Length() * b.Length();
 		double angle = Math.acos(dotProduct / magProduct);
-		Vector3 axis = Normalize(crossProduct);
+		Vector3 axis = normalize(crossProduct);
 		float s = (float) Math.sin(angle / 2d);
 
 		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float) Math.cos(angle / 2d));
