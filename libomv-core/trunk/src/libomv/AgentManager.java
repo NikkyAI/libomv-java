@@ -111,6 +111,7 @@ import libomv.packets.HealthMessagePacket;
 import libomv.packets.ImprovedInstantMessagePacket;
 import libomv.packets.MeanCollisionAlertPacket;
 import libomv.packets.MoneyBalanceReplyPacket;
+import libomv.packets.MoneyBalanceRequestPacket;
 import libomv.packets.MoneyTransferRequestPacket;
 import libomv.packets.MuteListRequestPacket;
 import libomv.packets.MuteListUpdatePacket;
@@ -3506,6 +3507,22 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.SendPacket(heightwidth);
 	}
 
+    // #region Money
+
+    /**
+     * Request the current L$ balance
+     * @throws Exception 
+     */
+    public void RequestBalance() throws Exception
+    {
+        MoneyBalanceRequestPacket money = new MoneyBalanceRequestPacket();
+        money.AgentData.AgentID = this.agentID;
+        money.AgentData.SessionID = this.sessionID;
+        money.TransactionID = UUID.Zero;
+
+        _Client.Network.SendPacket(money);
+    }
+
 	/**
 	 * Give Money to destination Avatar
 	 * 
@@ -3642,6 +3659,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		_Client.Network.SendPacket(money);
 	}
+    // #endregion Money
 
 	// #region Gestures
 	/**
