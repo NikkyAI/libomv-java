@@ -550,6 +550,21 @@ public class Vector3
 		return new Vector3(X - val.X, Y - val.X, Z - val.X);
 	}
 
+	public Vector3 multiply(float scaleFactor)
+	{
+		return multiply(this, scaleFactor);
+	}
+	
+	public Vector3 divide(Vector3 value)
+	{
+		return divide(this, value);
+	}
+
+	public Vector3 divide(float divider)
+	{
+		return divide(this, divider);
+	}
+	
 	public static Vector3 add(Vector3 val1, Vector3 val2)
 	{
 		val1.X += val2.X;
