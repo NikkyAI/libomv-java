@@ -54,11 +54,12 @@ public class BVHReader extends KeyFrameMotion
 	private final int MOTION_DATA = 11;
 
 	private int mode;
-	private List<BVHNode> nodes = new ArrayList<BVHNode>();
 	private BVH bvh;
+	private List<BVHNode> nodes = new ArrayList<BVHNode>();
+	private List<Constraint> constraints = new ArrayList<Constraint>();
 	
 	// Translation values
-	HashMap<String, BVHTranslation> mTranslations = new HashMap<String, BVHTranslation>();
+	HashMap<String, BVHTranslation> translations = new HashMap<String, BVHTranslation>();
 
 	public BVHReader(BufferedReader reader) throws InvalidLineException, IOException
 	{
@@ -67,12 +68,14 @@ public class BVHReader extends KeyFrameMotion
 		loadTranslationTable("anim.ini");
 		loadBVHFile(reader);
 		optimize();
+		translate();
+		constraints.clear();
 	}
 	
 	private void loadTranslationTable(String filename) throws InvalidLineException, IOException
 	{
-		mTranslations.clear();
-		Constraints.clear();
+		translations.clear();
+		constraints.clear();
 		InputStream st = getClass().getResourceAsStream("/res/" + filename);
 		BufferedReader br = new BufferedReader(new InputStreamReader(st));
 		try
@@ -105,7 +108,7 @@ public class BVHReader extends KeyFrameMotion
 					{
 						loadingGlobals = false;
 						trans = new BVHTranslation();
-						mTranslations.put(line.substring(1, line.indexOf("]") - 1), trans);
+						translations.put(line.substring(1, line.indexOf("]") - 1), trans);
 					}
 					continue;
 				}
@@ -189,7 +192,7 @@ public class BVHReader extends KeyFrameMotion
 							constraint.ConstraintType = EConstraintType.CONSTRAINT_TYPE_POINT;
 						else
 							constraint.ConstraintType = EConstraintType.CONSTRAINT_TYPE_PLANE;
-						Constraints.add(constraint);
+						constraints.add(constraint);
 					}
 				}
 				else if (trans == null)
@@ -339,7 +342,7 @@ public class BVHReader extends KeyFrameMotion
 		    			BVHNode node = new BVHNode();
 		    			String name = line.substring("ROOT".length()).trim();
 		    			node.setName(name);
-		    			node.setTranslation(mTranslations.get(name));
+		    			node.setTranslation(translations.get(name));
 		    			bvh.setHiearchy(node);
 		    			nodes.add(node);
 
@@ -457,7 +460,7 @@ public class BVHReader extends KeyFrameMotion
 		    			String name = values[1];
 		    			BVHNode node = new BVHNode();
 		    			node.setName(name);
-		    			node.setTranslation(mTranslations.get(name));
+		    			node.setTranslation(translations.get(name));
 		    			getLast().add(node);
 		    			nodes.add(node);
 		    			mode = JOINT_OPEN;
@@ -572,12 +575,7 @@ public class BVHReader extends KeyFrameMotion
 		}	
 	}
 	
-	public void applyTranslation() throws IOException
-	{
-		
-	}
-	
-	public void optimize() throws IOException
+	private void optimize() throws IOException
 	{
 		if (!Loop && EaseInTime + EaseOutTime > Length && Length != 0.f)
 		{
@@ -745,11 +743,9 @@ public class BVHReader extends KeyFrameMotion
 		}
 	}
 	
-	// writes contents to datapacker
-	KeyFrameMotion serialize()
+	// converts BVH contents to our KeyFrameMotion format
+	protected void translate()
 	{
-		KeyFrameMotion anim = new KeyFrameMotion();
-
 		// count number of non-ignored joints
 		int j = 0, numJoints = 0;
 		for (BVHNode node : bvh.getNodeList())
@@ -759,8 +755,7 @@ public class BVHReader extends KeyFrameMotion
 		}
 
 		// fill in header
-		anim.JointCount = numJoints;
-        anim.joints = new Joint[numJoints];
+        Joints = new Joint[numJoints];
 
 		Quaternion fixup_rot, first_frame_rot = new Quaternion();
 
@@ -769,7 +764,7 @@ public class BVHReader extends KeyFrameMotion
 			if (node.getTranslation().mIgnore)
 				continue;
 
-            Joint joint = anim.joints[j] = anim.new Joint();
+            Joint joint = Joints[j] = new Joint();
 
 			joint.Name = node.getTranslation().mOutName;
 			joint.Priority = node.getTranslation().mPriorityModifier;
@@ -847,7 +842,7 @@ public class BVHReader extends KeyFrameMotion
 				Quaternion outRot = frameRotInv.multiply(mergeChildRot).multiply(inRot).multiply(mergeParentRot).
 				                                multiply(first_frame_rot.inverse()).multiply(frameRot).multiply(offsetRot);
 
-				joint.rotationkeys[frame] = anim.new JointKey();
+				joint.rotationkeys[frame] = new JointKey();
 				joint.rotationkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
 				joint.rotationkeys[frame].key_element = outRot.toVector3();
 
@@ -882,7 +877,7 @@ public class BVHReader extends KeyFrameMotion
 
 					outPos = outPos.multiply(INCHES_TO_METERS).subtract(relPos);
 
-					joint.positionkeys[frame] = anim.new JointKey();
+					joint.positionkeys[frame] = new JointKey();
 					joint.positionkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
 					joint.positionkeys[frame].key_element = outPos.clamp(-KeyFrameMotion.MAX_PELVIS_OFFSET, KeyFrameMotion.MAX_PELVIS_OFFSET);
 					frame++;
@@ -894,8 +889,7 @@ public class BVHReader extends KeyFrameMotion
 				joint.positionkeys = new KeyFrameMotion.JointKey[0]; ;
 			}
 		}
-
-		return anim;
+		Constraints = constraints.toArray(Constraints);
 	}
 
 	public boolean validate()
@@ -966,13 +960,5 @@ public class BVHReader extends KeyFrameMotion
 		{
 			super("line " + index + ":" + line + ":message:" + message);
 		}
-	}
-
-	public KeyFrameMotion parse()
-	{
-
-		
-		
-		return null;
 	}
 }
