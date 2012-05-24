@@ -365,8 +365,12 @@ public class Vector3
 
 	public Vector3 clamp(Vector3 min, Vector3 max)
 	{
-		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z,
-				max.Z));
+		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z, max.Z));
+	}
+	
+	public Vector3 clamp(float min, float max)
+	{
+		return new Vector3(Helpers.Clamp(X, min, max), Helpers.Clamp(Y, min, max), Helpers.Clamp(Z, min, max));
 	}
 	
 	public float mag()
@@ -465,7 +469,7 @@ public class Vector3
 				amount), Helpers.SmoothStep(value1.Z, value2.Z, amount));
 	}
 
-	public static Vector3 Transform(Vector3 position, Matrix4 matrix)
+	public static Vector3 transform(Vector3 position, Matrix4 matrix)
 	{
 		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31)
 				+ matrix.M41, (position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32)
@@ -473,7 +477,7 @@ public class Vector3
 				+ matrix.M43);
 	}
 
-	public static Vector3 TransformNormal(Vector3 position, Matrix4 matrix)
+	public static Vector3 transformNormal(Vector3 position, Matrix4 matrix)
 	{
 		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31),
 				(position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32),
@@ -555,6 +559,16 @@ public class Vector3
 		return multiply(this, scaleFactor);
 	}
 	
+	public Vector3 multiply(Vector3 value)
+	{
+		return multiply(this, value);
+	}
+
+	public Vector3 multiply(Quaternion value)
+	{
+		return multiply(this, value);
+	}
+
 	public Vector3 divide(Vector3 value)
 	{
 		return divide(this, value);
@@ -599,22 +613,17 @@ public class Vector3
 
 	public static Vector3 multiply(Vector3 vec, Quaternion rot)
 	{
-		Vector3 vec2 = new Vector3(0f);
-		vec2.X = rot.W * rot.W * vec.X + 2f * rot.Y * rot.W * vec.Z - 2f * rot.Z * rot.W * vec.Y + rot.X * rot.X
-				* vec.X + 2f * rot.Y * rot.X * vec.Y + 2f * rot.Z * rot.X * vec.Z - rot.Z * rot.Z * vec.X - rot.Y
-				* rot.Y * vec.X;
-		vec2.Y = 2f * rot.X * rot.Y * vec.X + rot.Y * rot.Y * vec.Y + 2f * rot.Z * rot.Y * vec.Z + 2f * rot.W * rot.Z
-				* vec.X - rot.Z * rot.Z * vec.Y + rot.W * rot.W * vec.Y - 2f * rot.X * rot.W * vec.Z - rot.X * rot.X
-				* vec.Y;
-		vec2.Z = 2f * rot.X * rot.Z * vec.X + 2f * rot.Y * rot.Z * vec.Y + rot.Z * rot.Z * vec.Z - 2f * rot.W * rot.Y
-				* vec.X - rot.Y * rot.Y * vec.Z + 2f * rot.W * rot.X * vec.Y - rot.X * rot.X * vec.Z + rot.W * rot.W
-				* vec.Z;
-		return vec2;
+		return new Vector3(rot.W * rot.W * vec.X + 2f * rot.Y * rot.W * vec.Z - 2f * rot.Z * rot.W * vec.Y + rot.X * rot.X * vec.X
+				           + 2f * rot.Y * rot.X * vec.Y + 2f * rot.Z * rot.X * vec.Z - rot.Z * rot.Z * vec.X - rot.Y * rot.Y * vec.X,
+		                   2f * rot.X * rot.Y * vec.X + rot.Y * rot.Y * vec.Y + 2f * rot.Z * rot.Y * vec.Z + 2f * rot.W * rot.Z * vec.X
+		                   - rot.Z * rot.Z * vec.Y + rot.W * rot.W * vec.Y - 2f * rot.X * rot.W * vec.Z - rot.X * rot.X * vec.Y,
+		                   2f * rot.X * rot.Z * vec.X + 2f * rot.Y * rot.Z * vec.Y + rot.Z * rot.Z * vec.Z - 2f * rot.W * rot.Y * vec.X
+				           - rot.Y * rot.Y * vec.Z + 2f * rot.W * rot.X * vec.Y - rot.X * rot.X * vec.Z + rot.W * rot.W * vec.Z);
 	}
 
 	public static Vector3 multiply(Vector3 vector, Matrix4 matrix)
 	{
-		return Transform(vector, matrix);
+		return transform(vector, matrix);
 	}
 
 	public static Vector3 divide(Vector3 value1, Vector3 value2)

@@ -206,6 +206,15 @@ public class Quaternion
 		return normalize(this);
 	}
 
+	public Vector3 toVector3()
+	{
+		if (W >= 0 )
+		{
+			return new Vector3(X, Y, Z);
+		}
+		return new Vector3(-X, -Y, -Z);
+	}
+	
 	/**
 	 * Normalize this quaternion and serialize it to a byte array
 	 * 
