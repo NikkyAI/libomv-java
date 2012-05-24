@@ -27,7 +27,6 @@
 package libomv.character;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
@@ -147,12 +146,13 @@ public class KeyFrameMotion
     public int HandPose;
 
     // Number of joints defined in the animation
-    public int JointCount;
+//    public int JointCount;
 
     // Contains an array of joints
-    public Joint[] joints;
+    public Joint[] Joints;
 
-	public ArrayList<Constraint> Constraints = new ArrayList<Constraint>();
+//    public int ConstraintCount;
+	public Constraint[] Constraints;
 
 	// Custom application data that can be attached to a joint
     public Object Tag;
@@ -170,14 +170,14 @@ public class KeyFrameMotion
      */
     public KeyFrameMotion(byte[] animationdata)
     {
-    	int i = 0;
+    	int i = 0, jointCount, constraintCount;
     	
         version = Helpers.BytesToUInt16L(animationdata, i); i += 2; // Always 1
         sub_version = Helpers.BytesToUInt16L(animationdata, i); i += 2; // Always 0
         Priority = Helpers.BytesToInt32L(animationdata, i); i += 4;
         Length = Helpers.BytesToFloatL(animationdata, i); i += 4;
 
-        ExpressionName = ReadBytesUntilNull(animationdata, i);
+        ExpressionName = ReadBytesUntilNull(animationdata, i, -1);
         i += ExpressionName.length() + 1;
 
         InPoint = Helpers.BytesToFloatL(animationdata, i); i += 4;
@@ -187,33 +187,49 @@ public class KeyFrameMotion
         EaseOutTime = Helpers.BytesToFloatL(animationdata, i); i += 4;
         HandPose = (int)Helpers.BytesToUInt32L(animationdata, i); i += 4; // Handpose
 
-        JointCount = (int)Helpers.BytesToUInt32L(animationdata, i); i += 4; // Get Joint count
-        joints = new Joint[JointCount];
+        jointCount = (int)Helpers.BytesToUInt32L(animationdata, i); i += 4; // Get Joint count
+        Joints = new Joint[jointCount];
 
         // deserialize the number of joints in the animation.
         // Joints are variable length blocks of binary data consisting of joint data and keyframes
-        for (int j = 0; j < JointCount; j++)
+        for (int j = 0; j < jointCount; j++)
         {
             Joint joint = new Joint();
             i = readJoint(animationdata, i, joint);
-            joints[j] = joint;
+            Joints[j] = joint;
+        }
+
+        // Read possible constraint records if available
+        if (i < animationdata.length + 4)
+        {
+        	constraintCount = (int)Helpers.BytesToUInt32L(animationdata, i); i += 4;
+        	Constraints = new Constraint[constraintCount];
+        	for (int j = 0; j < constraintCount; i++)
+        	{
+        		Constraint constraint = new Constraint();
+        		i = readConstraint(animationdata, i, constraint);
+        		Constraints[j] = constraint;
+        	}
         }
     }
 
     /**
      * Variable length strings seem to be null terminated in the animation asset.. 
-	 * use with caution, home grown. advances the index.
+	 * use with caution, home grown.
 	 * 
      * @param data The animation asset byte array
      * @param i The offset to start reading
      * @returns a string
      */
-    public String ReadBytesUntilNull(byte[] data, int i)
+    public String ReadBytesUntilNull(byte[] data, int i, int max)
     {
         int startpos = i;
         
+        if (max < i || max > data.length)
+        	max = data.length;
+        
         // Find the null character
-        for (; i < data.length; i++)
+        for (; i < max; i++)
         {
             if (data[i] == 0)
             {
@@ -244,7 +260,7 @@ public class KeyFrameMotion
     public int readJoint(byte[] data, int i, Joint pJoint)
     {
         // Joint name
-        pJoint.Name = ReadBytesUntilNull(data, i);
+        pJoint.Name = ReadBytesUntilNull(data, i, -1);
         i += pJoint.Name.length() + 1;
 
         // Priority Revisited
@@ -299,5 +315,20 @@ public class KeyFrameMotion
             return m_keys;
         }
         return new JointKey[0];
+    }
+
+    public int readConstraint(byte[] data, int i, Constraint constraint)
+    {
+    	constraint.ChainLength = data[i++];
+    	constraint.ConstraintType = EConstraintType.values()[data[i++]];
+    	constraint.SourceJointName = ReadBytesUntilNull(data, i, i += 16);
+    	constraint.SourceOffset = new Vector3(data, i); i += 12;
+    	constraint.TargetJointName = ReadBytesUntilNull(data, i, i += 16);
+    	constraint.TargetOffset = new Vector3(data, i); i += 12;
+    	constraint.EaseInStart = Helpers.BytesToFloatL(data, i); i += 4;
+    	constraint.EaseInStop = Helpers.BytesToFloatL(data, i); i += 4;
+    	constraint.EaseOutStart = Helpers.BytesToFloatL(data, i); i += 4;
+    	constraint.EaseOutStop = Helpers.BytesToFloatL(data, i); i += 4;
+    	return i;
     }
 }
