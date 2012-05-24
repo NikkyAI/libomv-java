@@ -1797,7 +1797,6 @@ public class AssetManager implements PacketCallback
 							Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 						}
 					}
-
 					return;
 				}
 			}
