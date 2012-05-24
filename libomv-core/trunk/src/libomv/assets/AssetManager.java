@@ -1804,7 +1804,7 @@ public class AssetManager implements PacketCallback
 			/* If the received packet is in order, then add it and try to add already received packets that follow
 			 * directly this packet, otherwise add the packet to the delayed hashmap to be added later.
 			 */
-			if (download.Packet == asset.TransferData.Packet)
+			if (asset.TransferData.Packet == download.Packet)
 			{
 				byte[] data = asset.TransferData.getData();
 				do
@@ -1816,8 +1816,10 @@ public class AssetManager implements PacketCallback
 				}
 				while (data != null);
 			}
-			else
+			else if (asset.TransferData.Packet > download.Packet)
 			{
+				/* The packet number is higher than the currently expected packet.
+				 * Add it to our out of order hashlist */
 				download.delayed.put(asset.TransferData.Packet, asset.TransferData.getData());
 			}
 
