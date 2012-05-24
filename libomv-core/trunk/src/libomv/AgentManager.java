@@ -5971,7 +5971,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				xAxis.normalize();
 				yAxis.subtract(Vector3.multiply(xAxis, Vector3.multiply(xAxis, yAxis)));
 				yAxis.normalize();
-				zAxis = Vector3.Cross(xAxis, yAxis);
+				zAxis = Vector3.cross(xAxis, yAxis);
 			}
 		}
 
@@ -6533,7 +6533,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 					}
 				}
 
-				Quaternion between = Vector3.RotationBetween(Vector3.UnitX,
+				Quaternion between = Vector3.rotationBetween(Vector3.UnitX,
 						Vector3.normalize(target.subtract(_Client.Self.getSimPosition())));
 				Quaternion rot = Quaternion.multiply(between, Quaternion.divide(Quaternion.Identity, parentRot));
 
