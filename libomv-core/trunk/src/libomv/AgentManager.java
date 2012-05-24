@@ -5851,8 +5851,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void Rotate(Matrix4 m) throws Exception
 			{
-				xAxis = Vector3.Transform(xAxis, m);
-				yAxis = Vector3.Transform(yAxis, m);
+				xAxis = Vector3.transform(xAxis, m);
+				yAxis = Vector3.transform(yAxis, m);
 
 				Orthonormalize();
 
