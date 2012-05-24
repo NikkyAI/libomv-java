@@ -406,11 +406,11 @@ public final class Matrix4
 	{
 
 		Vector3 z = Vector3.normalize(Vector3.subtract(cameraPosition, cameraTarget));
-		Vector3 x = Vector3.normalize(Vector3.Cross(cameraUpVector, z));
-		Vector3 y = Vector3.Cross(z, x);
+		Vector3 x = Vector3.normalize(Vector3.cross(cameraUpVector, z));
+		Vector3 y = Vector3.cross(z, x);
 
-		return new Matrix4(x.X, y.X, z.X, 0f, x.Y, y.Y, z.Y, 0f, x.Z, y.Z, z.Z, 0f, -Vector3.Dot(x, cameraPosition),
-				-Vector3.Dot(y, cameraPosition), -Vector3.Dot(z, cameraPosition), 1f);
+		return new Matrix4(x.X, y.X, z.X, 0f, x.Y, y.Y, z.Y, 0f, x.Z, y.Z, z.Z, 0f, -Vector3.dot(x, cameraPosition),
+				-Vector3.dot(y, cameraPosition), -Vector3.dot(z, cameraPosition), 1f);
 	}
 
 	public static Matrix4 CreateRotationX(float radians)
@@ -543,11 +543,11 @@ public final class Matrix4
 		forward.normalize();
 
 		// Calculate right vector
-		Vector3 right = Vector3.Cross(forward, up);
+		Vector3 right = Vector3.cross(forward, up);
 		right.normalize();
 
 		// Recalculate up vector
-		up = Vector3.Cross(right, forward);
+		up = Vector3.cross(right, forward);
 		up.normalize();
 
 		result.M11 = right.X;

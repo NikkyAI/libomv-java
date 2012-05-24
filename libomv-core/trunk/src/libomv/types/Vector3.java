@@ -320,14 +320,14 @@ public class Vector3
 		}
 	}
 
-	public float Length()
+	public float length()
 	{
-		return (float) Math.sqrt(DistanceSquared(this, Zero));
+		return (float) Math.sqrt(distanceSquared(this, Zero));
 	}
 
-	public float LengthSquared()
+	public float lengthSquared()
 	{
-		return DistanceSquared(this, Zero);
+		return distanceSquared(this, Zero);
 	}
 
 	public Vector3 normalize()
@@ -346,15 +346,15 @@ public class Vector3
 	 * @return True if the magnitude of difference between the two vectors is
 	 *         less than the given tolerance, otherwise false
 	 */
-	public boolean ApproxEquals(Vector3 vec, float tolerance)
+	public boolean approxEquals(Vector3 vec, float tolerance)
 	{
 		Vector3 diff = this.subtract(vec);
-		return (diff.LengthSquared() <= tolerance * tolerance);
+		return (diff.lengthSquared() <= tolerance * tolerance);
 	}
 
 	public int compareTo(Vector3 vector)
 	{
-		return ((Float) Length()).compareTo(vector.Length());
+		return ((Float) length()).compareTo(vector.length());
 	}
 
 	/** Test if this vector is composed of all finite numbers */
@@ -374,24 +374,24 @@ public class Vector3
 		return mag(this);
 	}
 
-	public static Vector3 Cross(Vector3 value1, Vector3 value2)
+	public static Vector3 cross(Vector3 value1, Vector3 value2)
 	{
 		return new Vector3(value1.Y * value2.Z - value2.Y * value1.Z, value1.Z * value2.X - value2.Z * value1.X,
 				value1.X * value2.Y - value2.X * value1.Y);
 	}
 
-	public static float Distance(Vector3 value1, Vector3 value2)
+	public static float distance(Vector3 value1, Vector3 value2)
 	{
-		return (float) Math.sqrt(DistanceSquared(value1, value2));
+		return (float) Math.sqrt(distanceSquared(value1, value2));
 	}
 
-	public static float DistanceSquared(Vector3 value1, Vector3 value2)
+	public static float distanceSquared(Vector3 value1, Vector3 value2)
 	{
 		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
 				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
 	}
 
-	public static float Dot(Vector3 value1, Vector3 value2)
+	public static float dot(Vector3 value1, Vector3 value2)
 	{
 		return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
 	}
@@ -420,7 +420,7 @@ public class Vector3
 
 	public static Vector3 normalize(Vector3 value)
 	{
-		float factor = Distance(value, Zero);
+		float factor = distance(value, Zero);
 		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
 		{
 			factor = 1f / factor;
@@ -446,11 +446,11 @@ public class Vector3
 	 * @param b
 	 *            Normalized target vector
 	 */
-	public static Quaternion RotationBetween(Vector3 a, Vector3 b)
+	public static Quaternion rotationBetween(Vector3 a, Vector3 b)
 	{
-		float dotProduct = Dot(a, b);
-		Vector3 crossProduct = Cross(a, b);
-		float magProduct = a.Length() * b.Length();
+		float dotProduct = dot(a, b);
+		Vector3 crossProduct = cross(a, b);
+		float magProduct = a.length() * b.length();
 		double angle = Math.acos(dotProduct / magProduct);
 		Vector3 axis = normalize(crossProduct);
 		float s = (float) Math.sin(angle / 2d);
@@ -459,7 +459,7 @@ public class Vector3
 	}
 
 	/** Interpolates between two vectors using a cubic equation */
-	public static Vector3 SmoothStep(Vector3 value1, Vector3 value2, float amount)
+	public static Vector3 smoothStep(Vector3 value1, Vector3 value2, float amount)
 	{
 		return new Vector3(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y,
 				amount), Helpers.SmoothStep(value1.Z, value2.Z, amount));

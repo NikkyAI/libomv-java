@@ -92,7 +92,6 @@ import libomv.primitives.Primitive.Material;
 import libomv.primitives.Primitive.ObjectCategory;
 import libomv.primitives.Primitive.PathCurve;
 import libomv.primitives.Primitive.PrimFlags;
-import libomv.primitives.Primitive.PrimType;
 import libomv.primitives.Primitive.ProfileCurve;
 import libomv.primitives.Primitive.PCode;
 import libomv.primitives.Primitive.SculptData;
@@ -1108,7 +1107,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		                            	if (prim.AngularVelocity != null)
 		                            	{
 		                            		Vector3 angVel = prim.AngularVelocity;
-		                            		float omega = angVel.LengthSquared();
+		                            		float omega = angVel.lengthSquared();
 		                            		if (omega > 0.00001f)
 		                            		{
 		                            			omega = (float) Math.sqrt(omega);

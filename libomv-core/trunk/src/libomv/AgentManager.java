@@ -5912,19 +5912,19 @@ public class AgentManager implements PacketCallback, CapsCallback
 			public final void LookDirection(Vector3 at, Vector3 upDirection)
 			{
 				// The two parameters cannot be parallel
-				Vector3 left = Vector3.Cross(upDirection, at);
+				Vector3 left = Vector3.cross(upDirection, at);
 				if (left == Vector3.Zero)
 				{
 					// Prevent left from being zero
 					at.X += 0.01f;
 					at.normalize();
-					left = Vector3.Cross(upDirection, at);
+					left = Vector3.cross(upDirection, at);
 				}
 				left.normalize();
 
 				xAxis = at;
 				yAxis = left;
-				zAxis = Vector3.Cross(at, left);
+				zAxis = Vector3.cross(at, left);
 			}
 
 			/**
