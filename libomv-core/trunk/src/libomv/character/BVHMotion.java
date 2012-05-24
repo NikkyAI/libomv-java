@@ -45,7 +45,7 @@ public class BVHMotion
 		setFrames(motions.size());
 	}
 
-	public double getFrameTime()
+	public float getFrameTime()
 	{
 		return frameTime;
 	}
@@ -72,7 +72,7 @@ public class BVHMotion
 		return motions.size();
 	}
 	
-	public double getDuration()
+	public float getDuration()
 	{//TODO support ignore first
 		return frameTime * motions.size();
 	}
