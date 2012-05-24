@@ -125,7 +125,7 @@ public class Vector3d
 				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
 	}
 
-	public static Vector3d Normalize(Vector3d value)
+	public static Vector3d normalize(Vector3d value)
 	{
 		double factor = Distance(value, Zero);
 		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
@@ -154,9 +154,9 @@ public class Vector3d
 		return DistanceSquared(this, Zero);
 	}
 
-	public void Normalize()
+	public void normalize()
 	{
-		Vector3d val = Normalize(this);
+		Vector3d val = normalize(this);
 		X = val.X;
 		Y = val.Y;
 		Z = val.Z;
