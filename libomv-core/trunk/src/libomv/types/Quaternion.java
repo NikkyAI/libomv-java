@@ -787,6 +787,16 @@ public class Quaternion
 		return divide(this, q);
 	}
 
+	public float dot(Quaternion q)
+	{
+		return dot(this, q);
+	}
+	
+	public Quaternion inverse()
+	{
+		return inverse(this);
+	}
+
 	public static Quaternion add(Quaternion quaternion1, Quaternion quaternion2)
 	{
 		
