@@ -20,15 +20,28 @@ package libomv.character;
 
 public class Channels
 {
-	private boolean Xrotation,Yrotation,Zrotation,Xposition,Yposition,Zposition;
+	private boolean Xrotation, Yrotation, Zrotation, Xposition, Yposition, Zposition;
 
-	public static final int XPOSITION = 0;
+ 	public static final int XPOSITION = 0;
 	public static final int YPOSITION = 1;
 	public static final int ZPOSITION = 2;
 	public static final int XROTATION = 3;
 	public static final int YROTATION = 4;
 	public static final int ZROTATION = 5;
-	private String order = ""; //TODO merge string
+
+	private int rotOffset;
+	
+	public Channels(int rotOffset)
+	{
+		this.rotOffset = -rotOffset;
+	}
+	
+	public int getRotOffset()
+	{
+		return rotOffset;
+	}
+	
+	private String order = "";
 	private String text = "";
 
 	public String getOrder()
@@ -36,18 +49,20 @@ public class Channels
 		return order;
 	}
 
-	public boolean isXrotation()
-	{
-		return Xrotation;
-	}
-
 	public void addOrder(String ch)
 	{
 		order += ch;
 	}
 
+	public boolean isXrotation()
+	{
+		return Xrotation;
+	}
+
 	public void setXrotation(boolean xrotation)
 	{
+		if (rotOffset < 1)
+			rotOffset = -rotOffset;
 		Xrotation = xrotation;
 		text += "Xrotation ";
 	}
@@ -59,6 +74,8 @@ public class Channels
 
 	public void setYrotation(boolean yrotation)
 	{
+		if (rotOffset < 1)
+			rotOffset = -rotOffset;
 		Yrotation = yrotation;
 		text += "Yrotation ";
 	}
@@ -70,6 +87,8 @@ public class Channels
 
 	public void setZrotation(boolean zrotation)
 	{
+		if (rotOffset < 1)
+			rotOffset = -rotOffset;
 		Zrotation = zrotation;
 		text += "Zrotation ";
 	}
@@ -81,6 +100,8 @@ public class Channels
 
 	public void setXposition(boolean xposition)
 	{
+		if (rotOffset < 1)
+			rotOffset--;
 		Xposition = xposition;
 		text += "Xposition ";
 	}
@@ -92,6 +113,8 @@ public class Channels
 
 	public void setYposition(boolean yposition)
 	{
+		if (rotOffset < 1)
+			rotOffset--;
 		Yposition = yposition;
 		text += "Yposition ";
 	}
@@ -103,15 +126,15 @@ public class Channels
 
 	public void setZposition(boolean zposition)
 	{
+		if (rotOffset < 1)
+			rotOffset--;
 		Zposition = zposition;
 		text += "Zposition ";
 	}
 	
-	@Override
-	public String toString()
+	public int getNumChannels()
 	{
-		int size=0;
-		//String text="";
+		int size = 0;
 		if (Xposition)
 		{
 			size++;
@@ -136,10 +159,16 @@ public class Channels
 		{
 			size++;
 		}
+		return size;
+	}
+	
+	@Override
+	public String toString()
+	{
 		if (text.isEmpty())
 		{
 			return "CHANNELS 0";
 		}
-		return "CHANNELS " + size + " " + text.substring(0, text.length() - 1);
+		return "CHANNELS " + getNumChannels() + " " + text.substring(0, text.length() - 1);
 	}
 }

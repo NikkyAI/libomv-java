@@ -34,7 +34,7 @@ public class BVHWriter
 
 		for(int i = 0; i < frames; i++)
 		{
-			double[] values = bvh.getFrameAt(i);
+			float[] values = bvh.getFrameAt(i);
 			String v = "";
 			for(int j = 0; j < values.length; j++)
 			{

@@ -25,6 +25,9 @@ import libomv.types.Vector3;
 
 public class BVHNode
 {
+	public boolean[] mIgnorePos;
+	public boolean[] mIgnoreRot;
+	
 	private Vector3 offset;
 	
 	public Vector3 getOffset()
@@ -114,4 +117,6 @@ public class BVHNode
 		this.translation = translation;
 	}
 	
+	public int mNumPosKeys;
+	public int mNumRotKeys;
 }

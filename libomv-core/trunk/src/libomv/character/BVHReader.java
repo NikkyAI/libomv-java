@@ -26,64 +26,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import libomv.types.Matrix4;
+import libomv.types.Quaternion;
 import libomv.types.Vector3;
 
-public class BVHReader
+public class BVHReader extends KeyFrameMotion
 {
+	private float INCHES_TO_METERS = 0.02540005f;
 
-/*
-	public class Joint
-	{
-		// Include aligned members first
-		Matrix4		mFrameMatrix;
-		Matrix4		mOffsetMatrix;
-*		Vector3		mRelativePosition;
-		//
-*		String		mName;
-*		boolean		mIgnore;
-*		boolean		mIgnorePositions;
-*		boolean		mRelativePositionKey;
-*		boolean		mRelativeRotationKey;
-*		String		mOutName;
-*		String		mMergeParentName;
-*		String		mMergeChildName;
-*		char		mOrder[4];			/* Flawfinder: ignore
-*		KeyVector	mKeys;
-*		int			mNumPosKeys;
-*		int			mNumRotKeys;
-		int			mChildTreeMaxDepth;
-		int			mPriority;
-	}
-*/
+	private float POSITION_KEYFRAME_THRESHOLD = 0.03f;
+	private float ROTATION_KEYFRAME_THRESHOLD = 0.01f;
 
-	enum EConstraintType
-	{
-		CONSTRAINT_TYPE_POINT,
-		CONSTRAINT_TYPE_PLANE,
-		NUM_CONSTRAINT_TYPES
-	}
-
-	enum EConstraintTargetType
-	{
-		CONSTRAINT_TARGET_TYPE_BODY,
-		CONSTRAINT_TARGET_TYPE_GROUND,
-		NUM_CONSTRAINT_TARGET_TYPES
-	}
-	
-	public class Constraint
-	{
-		String		mSourceJointName;
-		String		mTargetJointName;
-		int			mChainLength;
-		Vector3		mSourceOffset;
-		Vector3		mTargetOffset;
-		Vector3		mTargetDir;
-		float		mEaseInStart;
-		float		mEaseInStop;
-		float		mEaseOutStart;
-		float		mEaseOutStop;
-		EConstraintType mConstraintType;
-	};
+	private float POSITION_MOTION_THRESHOLD = 0.001f;
+	private float ROTATION_MOTION_THRESHOLD = 0.001f;
 
 	private final int HIERARCHY = 0;
 	private final int ROOT = 1;
@@ -100,58 +54,43 @@ public class BVHReader
 	private final int MOTION_DATA = 11;
 
 	private int mode;
-	List<BVHNode> nodes = new ArrayList<BVHNode>();
+	private List<BVHNode> nodes = new ArrayList<BVHNode>();
 	private BVH bvh;
 	
-	int			mLineNumber;
-
 	// Translation values
-	int			mNumFrames;
-	float		mFrameTime;
-
-	ArrayList<Constraint>	mConstraints = new ArrayList<Constraint>();
 	HashMap<String, BVHTranslation> mTranslations = new HashMap<String, BVHTranslation>();
 
-	int		mPriority;
-	boolean	mLoop;
-	float	mLoopInPoint;
-	float	mLoopOutPoint;
-	float	mEaseIn;
-	float	mEaseOut;
-	int		mHand;
-	String	mEmoteName;
-
-	boolean	mInitialized;
-//	Status	mStatus;
-	// computed values
-	float	mDuration;
-
-	public BVHReader(BufferedReader reader) throws IOException, InvalidLineException
+	public BVHReader(BufferedReader reader) throws InvalidLineException, IOException
 	{
+		super();
 		mode = HIERARCHY;
 		loadTranslationTable("anim.ini");
 		loadBVHFile(reader);
 		optimize();
 	}
 	
-	private void loadTranslationTable(String filename) throws IOException
+	private void loadTranslationTable(String filename) throws InvalidLineException, IOException
 	{
 		mTranslations.clear();
-		mConstraints.clear();
+		Constraints.clear();
 		InputStream st = getClass().getResourceAsStream("/res/" + filename);
 		BufferedReader br = new BufferedReader(new InputStreamReader(st));
 		try
 		{
+			int i = 1;
 			String line = br.readLine();
 			
 			if (!line.startsWith("Translations 1.0"))
 			{
-				throw new IOException("Invalid Translation file header");
+    			throw new InvalidLineException(i, line, "Invalid Translation file header");
 			}
 			boolean loadingGlobals = false;
 			BVHTranslation trans = null;
-			while ((line = br.readLine().trim()) != null)
+			while ((line = br.readLine()) != null)
 			{
+				line = line.trim();
+				i++;
+				
 				/* if the line is empty or a comment ignore it */
 				if (line.isEmpty() || line.startsWith("#"))
 					continue;
@@ -179,11 +118,11 @@ public class BVHReader
 				{
 					if (token.compareToIgnoreCase("emote") == 0)
 					{
-						mEmoteName = line;
+						ExpressionName = line;
 					}
 					else if (token.compareToIgnoreCase("priority") == 0)
 					{
-						mPriority = Integer.parseInt(line);
+						Priority = Integer.parseInt(line);
 					}
 					else if (token.compareToIgnoreCase("loop") == 0)
 					{
@@ -192,101 +131,70 @@ public class BVHReader
 						float loop_out = 1.f;
 						if (vals.length >= 2)
 						{
-							mLoop = true;
+							Loop = true;
 							loop_in = Float.parseFloat(vals[0]);
 							loop_out = Float.parseFloat(vals[1]);
 						}
 						else if (vals.length == 1)
 						{
-						    mLoop = vals[0].compareToIgnoreCase("true") == 0;
+						    Loop = vals[0].compareToIgnoreCase("true") == 0;
 						}
-						mLoopInPoint = loop_in * mDuration;
-						mLoopOutPoint = loop_out * mDuration;
+						InPoint = loop_in * Length;
+						OutPoint = loop_out * Length;
 					}
 					else if (token.compareToIgnoreCase("easein") == 0)
 					{
-						mEaseIn = Float.parseFloat(line);
+						EaseInTime = Float.parseFloat(line);
 					}
 					else if (token.compareToIgnoreCase("easeout") == 0)
 					{
-						mEaseOut = Float.parseFloat(line);
+						EaseOutTime = Float.parseFloat(line);
 					}
 					else if (token.compareToIgnoreCase("hand") == 0)
 					{
-						mHand = Integer.parseInt(line);
+						HandPose = Integer.parseInt(line);
 					}
-					else if (token.compareToIgnoreCase("constraint") == 0)
+					else if (token.compareToIgnoreCase("constraint") == 0 ||
+							 token.compareToIgnoreCase("planar_constraint") == 0)
 					{
 						Constraint constraint = new Constraint();
 						vals = line.split(" ");
 						if (vals.length >= 13)
 						{
-							constraint.mChainLength = Integer.parseInt(vals[0]);
-							constraint.mEaseInStart = Float.parseFloat(vals[1]);
-							constraint.mEaseInStop = Float.parseFloat(vals[2]);
-							constraint.mEaseOutStart = Float.parseFloat(vals[3]);
-							constraint.mEaseOutStop = Float.parseFloat(vals[4]);
-							constraint.mSourceJointName = vals[5];
-							constraint.mSourceOffset.X = Float.parseFloat(vals[6]);
-							constraint.mSourceOffset.Y = Float.parseFloat(vals[7]);
-							constraint.mSourceOffset.Z = Float.parseFloat(vals[8]);
-							constraint.mTargetJointName = vals[9];
-							constraint.mTargetOffset.X = Float.parseFloat(vals[10]);
-							constraint.mTargetOffset.Y = Float.parseFloat(vals[11]);
-							constraint.mTargetOffset.Z = Float.parseFloat(vals[12]);
+							constraint.ChainLength = Integer.parseInt(vals[0]);
+							constraint.EaseInStart = Float.parseFloat(vals[1]);
+							constraint.EaseInStop = Float.parseFloat(vals[2]);
+							constraint.EaseOutStart = Float.parseFloat(vals[3]);
+							constraint.EaseOutStop = Float.parseFloat(vals[4]);
+							constraint.SourceJointName = vals[5];
+							constraint.SourceOffset = new Vector3(Float.parseFloat(vals[6]),
+							                                      Float.parseFloat(vals[7]),
+							                                      Float.parseFloat(vals[8]));
+							constraint.TargetJointName = vals[9];
+							constraint.TargetOffset = new Vector3(Float.parseFloat(vals[10]),
+                                                                  Float.parseFloat(vals[11]),
+                                                                  Float.parseFloat(vals[12]));
 							if (vals.length >= 16)
 							{
-								constraint.mTargetDir.X = Float.parseFloat(vals[13]);
-								constraint.mTargetDir.Y = Float.parseFloat(vals[14]);
-								constraint.mTargetDir.Z = Float.parseFloat(vals[15]);
-								constraint.mTargetDir.Normalize();
+								constraint.TargetDir = new Vector3(Float.parseFloat(vals[13]),
+								                                   Float.parseFloat(vals[14]),
+								                                   Float.parseFloat(vals[15])).normalize();
 							}
 						}
 						else
 						{
-							throw new IOException("Invalid constraint entry");							
+							throw new InvalidLineException(i, line, "Invalid constraint entry");							
 						}
-						constraint.mConstraintType = EConstraintType.CONSTRAINT_TYPE_POINT;
-						mConstraints.add(constraint);
-					}
-					else if (token.compareToIgnoreCase("planar_constraint") == 0)
-					{
-						Constraint constraint = new Constraint();
-						vals = line.split(" ");
-						if (vals.length >= 13)
-						{
-							constraint.mChainLength = Integer.parseInt(vals[0]);
-							constraint.mEaseInStart = Float.parseFloat(vals[1]);
-							constraint.mEaseInStop = Float.parseFloat(vals[2]);
-							constraint.mEaseOutStart = Float.parseFloat(vals[3]);
-							constraint.mEaseOutStop = Float.parseFloat(vals[4]);
-							constraint.mSourceJointName = vals[5];
-							constraint.mSourceOffset.X = Float.parseFloat(vals[6]);
-							constraint.mSourceOffset.Y = Float.parseFloat(vals[7]);
-							constraint.mSourceOffset.Z = Float.parseFloat(vals[8]);
-							constraint.mTargetJointName = vals[9];
-							constraint.mTargetOffset.X = Float.parseFloat(vals[10]);
-							constraint.mTargetOffset.Y = Float.parseFloat(vals[11]);
-							constraint.mTargetOffset.Z = Float.parseFloat(vals[12]);
-							if (vals.length >= 16)
-							{
-								constraint.mTargetDir.X = Float.parseFloat(vals[13]);
-								constraint.mTargetDir.Y = Float.parseFloat(vals[14]);
-								constraint.mTargetDir.Z = Float.parseFloat(vals[15]);
-								constraint.mTargetDir.Normalize();
-							}
-						}
+						if (token.compareToIgnoreCase("constraint") == 0)
+							constraint.ConstraintType = EConstraintType.CONSTRAINT_TYPE_POINT;
 						else
-						{
-							throw new IOException("Invalid constraint entry");							
-						}
-						constraint.mConstraintType = EConstraintType.CONSTRAINT_TYPE_PLANE;
-						mConstraints.add(constraint);
+							constraint.ConstraintType = EConstraintType.CONSTRAINT_TYPE_PLANE;
+						Constraints.add(constraint);
 					}
 				}
 				else if (trans == null)
 				{
-					throw new IOException("Invalid Translation file format");
+					throw new InvalidLineException(i, line, "Invalid Translation file format");
 				}
 				else if (token.compareToIgnoreCase("ignore") == 0)
 				{
@@ -306,7 +214,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No relative key");
+						throw new InvalidLineException(i, line, "No relative key");
 					}
 				}
 				else if (token.compareToIgnoreCase("relativerot") == 0)
@@ -317,7 +225,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No relative key");
+						throw new InvalidLineException(i, line, "No relative key");
 					}
 				}
 				else if (token.compareToIgnoreCase("outname") == 0)
@@ -328,7 +236,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No valid outname");
+						throw new InvalidLineException(i, line, "No valid outname");
 					}
 				}
 				else if (token.compareToIgnoreCase("frame") == 0)
@@ -343,7 +251,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No valid matrix");
+						throw new InvalidLineException(i, line, "No valid matrix");
 					}
 				}
 				else if (token.compareToIgnoreCase("offset") == 0)
@@ -358,7 +266,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No valid matrix");
+						throw new InvalidLineException(i, line, "No valid matrix");
 					}
 				}
 				else if (token.compareToIgnoreCase("mergeparent") == 0)
@@ -369,7 +277,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No valid merge parent");
+						throw new InvalidLineException(i, line, "No valid merge parent");
 					}
 				}
 				else if (token.compareToIgnoreCase("mergechild") == 0)
@@ -380,7 +288,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No valid merge parent");
+						throw new InvalidLineException(i, line, "No valid merge parent");
 					}
 				}
 				else if (token.compareToIgnoreCase("priority") == 0)
@@ -391,7 +299,7 @@ public class BVHReader
 					}
 					else
 					{
-						throw new IOException("No valid priority");
+						throw new InvalidLineException(i, line, "No valid priority");
 					}
 				}
 			}
@@ -405,7 +313,7 @@ public class BVHReader
 	
 	private void loadBVHFile(BufferedReader reader) throws InvalidLineException, IOException
 	{
-		int i = -1;
+		int i = 0, rotOffset = 0;
 		String line;
 		String[] values;
 		while ((line = reader.readLine()) != null) 
@@ -482,7 +390,7 @@ public class BVHReader
 		    			{
 		    				throw new InvalidLineException(i, line, " Invalid CHANNEL size:" + channelSize);
 		    			}
-		    			Channels channel = new Channels();
+		    			Channels channel = new Channels(rotOffset);
 		    			for (int j = 2; j < values.length; j++)
 		    			{
 		    				if (values[j].equals("Xposition"))
@@ -523,6 +431,7 @@ public class BVHReader
 		    					throw new InvalidLineException(i, line, " Invalid CHANNEL value:" + values[j]);
 		    				}
 		    			}
+		    			rotOffset += values.length - 2;
 		    			getLast().setChannels(channel);
 		    		}
 		    		else if(line.equals("End Site"))
@@ -663,11 +572,332 @@ public class BVHReader
 		}	
 	}
 	
-	public void optimize()
+	public void applyTranslation() throws IOException
 	{
 		
 	}
 	
+	public void optimize() throws IOException
+	{
+		if (!Loop && EaseInTime + EaseOutTime > Length && Length != 0.f)
+		{
+			float factor = Length / (EaseInTime + EaseOutTime);
+			EaseInTime *= factor;
+			EaseOutTime *= factor;
+		}
+		
+		if (bvh.getMotion().size() == 0)
+		{
+			throw new IOException("No motion frames");
+		}
+		
+		float[] first_frame = bvh.getMotion().getFrameAt(0);
+		Vector3 first_frame_pos = new Vector3(first_frame);
+
+		for (BVHNode node : bvh.getNodeList())
+		{
+			boolean pos_changed = false;
+			boolean rot_changed = false;
+
+			if (!(node.getTranslation().mIgnore))
+			{
+				int ki = 0, size = bvh.getMotion().size(), rotOffset = node.getChannels().getRotOffset();
+
+				// We need to reverse the channel order, so use the ..Rev function
+				Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
+				Quaternion first_frame_rot = Quaternion.mayaQ(first_frame, rotOffset, order);
+		
+				node.mIgnorePos = new boolean[bvh.getMotion().size()];
+				node.mIgnoreRot = new boolean[bvh.getMotion().size()];
+				
+				if (size == 1)
+				{
+					// FIXME: use single frame to move pelvis
+					// if we have only one keyframe force output for this joint
+					rot_changed = true;
+				}
+				else
+				{
+					// if more than one keyframe, use first frame as reference and skip to second keyframe
+					ki++;
+				}
+				
+				int ki_prev = ki, ki_last_good_pos = ki, ki_last_good_rot = ki;
+				int numPosFramesConsidered = 2;
+				int numRotFramesConsidered = 2;
+
+				double diff_max = 0;
+				float rot_threshold = ROTATION_KEYFRAME_THRESHOLD / Math.max(node.getJoints().size() * 0.33f, 1.f);
+				
+				for (; ki < size; ki++)
+				{
+					if (ki_prev == ki_last_good_pos)
+					{
+						node.mNumPosKeys++;
+						if (Vector3.distance(new Vector3(bvh.getMotion().getFrameAt(ki_prev), rotOffset), first_frame_pos) > POSITION_MOTION_THRESHOLD)
+						{
+							pos_changed = true;
+						}
+					}
+					else
+					{
+						//check position for noticeable effect
+						Vector3 test_pos = new Vector3(bvh.getMotion().getFrameAt(ki_prev), rotOffset);
+						Vector3 last_good_pos = new Vector3(bvh.getMotion().getFrameAt(ki_last_good_pos), rotOffset);
+						Vector3 current_pos = new Vector3(bvh.getMotion().getFrameAt(ki), rotOffset);
+						Vector3 interp_pos = Vector3.lerp(current_pos, last_good_pos, 1.f / numPosFramesConsidered);
+
+						if (Vector3.distance(current_pos, first_frame_pos) > POSITION_MOTION_THRESHOLD)
+						{
+							pos_changed = true;
+						}
+
+						if (Vector3.distance(interp_pos, test_pos) < POSITION_KEYFRAME_THRESHOLD)
+						{
+							node.mIgnorePos[ki] = true;
+							numPosFramesConsidered++;
+						}
+						else
+						{
+							numPosFramesConsidered = 2;
+							ki_last_good_pos = ki_prev;
+							node.mNumPosKeys++;
+						}
+					}
+
+					Quaternion test_rot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki_prev), rotOffset, order);
+					float x_delta = Vector3.distance(first_frame_rot.multiply(Vector3.UnitX), test_rot.multiply(Vector3.UnitX));
+					float y_delta = Vector3.distance(first_frame_rot.multiply(Vector3.UnitY), test_rot.multiply(Vector3.UnitY));
+					float rot_test = x_delta + y_delta;
+
+					if (ki_prev == ki_last_good_rot)
+					{
+						node.mNumRotKeys++;
+
+						if (rot_test > ROTATION_MOTION_THRESHOLD)
+						{
+							rot_changed = true;
+						}
+					}
+					else
+					{
+						//check rotation for noticeable effect
+						Quaternion last_good_rot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki_last_good_rot), rotOffset, order);
+						Quaternion current_rot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki), rotOffset, order);
+						Quaternion interp_rot = Quaternion.lerp(current_rot, last_good_rot, 1f / numRotFramesConsidered);
+
+						// Test if the rotation has changed significantly since the very first frame. If false
+						// for all frames, then we'll just throw out this joint's rotation entirely.
+						if (rot_test > ROTATION_MOTION_THRESHOLD)
+						{
+							rot_changed = true;
+						}
+						x_delta = Vector3.distance(interp_rot.multiply(Vector3.UnitX), test_rot.multiply(Vector3.UnitX));
+						y_delta = Vector3.distance(interp_rot.multiply(Vector3.UnitY), test_rot.multiply(Vector3.UnitY));
+						rot_test = x_delta + y_delta;
+
+						// Draw a line between the last good keyframe and current. Test the distance between the last 
+						// frame (current - 1, i.e. ki_prev) and the line. If it's greater than some threshold, then it
+						// represents a significant frame and we want to include it.
+						if (rot_test >= rot_threshold || (ki + 1 == size && numRotFramesConsidered > 2))
+						{
+							// Add the current test keyframe (which is technically the previous key, i.e. ki_prev).
+							numRotFramesConsidered = 2;
+							ki_last_good_rot = ki_prev;
+							node.mNumRotKeys++;
+
+							// Add another keyframe between the last good keyframe and current, at whatever point was
+							// the most "significant" (i.e. had the largest deviation from the earlier tests). 
+							// Note that a more robust approach would be test all intermediate keyframes against the
+							// line between the last good keyframe and current, but we're settling for this other method
+							// because it's significantly faster.
+							if (diff_max > 0)
+							{
+								if (node.mIgnoreRot[ki] == true)
+								{
+									node.mIgnoreRot[ki] = false;
+									node.mNumRotKeys++;
+								}
+								diff_max = 0;
+							}
+						}
+						else
+						{
+							// This keyframe isn't significant enough, throw it away.
+							node.mIgnoreRot[ki] = true;
+							numRotFramesConsidered++;
+							// Store away the keyframe that has the largest deviation from the interpolated line, for insertion later.
+							if (rot_test > diff_max)
+							{
+								diff_max = rot_test;
+							}
+						}
+					}
+					ki_prev = ki;
+				}
+			}	
+
+			// don't output joints with no motion
+			if (!(pos_changed || rot_changed))
+			{
+				node.getTranslation().mIgnore = true;
+			}			
+		}
+	}
+	
+	// writes contents to datapacker
+	KeyFrameMotion serialize()
+	{
+		KeyFrameMotion anim = new KeyFrameMotion();
+
+		// count number of non-ignored joints
+		int j = 0, numJoints = 0;
+		for (BVHNode node : bvh.getNodeList())
+		{
+			if (!node.getTranslation().mIgnore)
+				numJoints++;
+		}
+
+		// fill in header
+		anim.JointCount = numJoints;
+        anim.joints = new Joint[numJoints];
+
+		Quaternion fixup_rot, first_frame_rot = new Quaternion();
+
+		for (BVHNode node : bvh.getNodeList())
+		{
+			if (node.getTranslation().mIgnore)
+				continue;
+
+            Joint joint = anim.joints[j] = anim.new Joint();
+
+			joint.Name = node.getTranslation().mOutName;
+			joint.Priority = node.getTranslation().mPriorityModifier;
+
+			// compute coordinate frame rotation
+			Quaternion frameRot = new Quaternion(node.getTranslation().mFrameMatrix);
+			Quaternion frameRotInv = Quaternion.inverse(frameRot);
+
+			Quaternion offsetRot = new Quaternion(node.getTranslation().mOffsetMatrix);
+
+			// find mergechild and mergeparent nodes, if specified
+			Quaternion mergeParentRot, mergeChildRot;
+			BVHNode mergeParent = null, mergeChild = null;
+
+			for (BVHNode mnode : bvh.getNodeList())
+			{
+				String name = mnode.getTranslation().mMergeParentName;
+				if (!name.isEmpty() && (name.equals(mnode.getName())))
+				{
+					mergeParent = mnode;
+				}
+				name = mnode.getTranslation().mMergeChildName;
+				if (!name.isEmpty() && (name.equals(mnode.getName())))
+				{
+					mergeChild = mnode;
+				}
+			}
+
+			joint.rotationkeys = new KeyFrameMotion.JointKey[node.mNumRotKeys];
+
+			Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
+			int outcount = 0, frame = 0, rotOffset = node.getChannels().getRotOffset();
+			for (float[] keyFrame : bvh.getMotion().getMotions())
+			{
+				if (frame == 0 && node.getTranslation().mRelativeRotationKey)
+				{
+					first_frame_rot = Quaternion.mayaQ(keyFrame, rotOffset, order);
+					
+					fixup_rot = Quaternion.shortestArc(frameRot.multiply(first_frame_rot.multiply(Vector3.UnitZ)), Vector3.UnitZ);
+				}
+
+				if (node.mIgnoreRot[frame])
+				{
+					frame++;
+					continue;
+				}
+
+				if (mergeParent != null)
+				{
+					mergeParentRot = Quaternion.mayaQ(keyFrame, mergeParent.getChannels().getRotOffset(), 
+							                          Quaternion.StringToOrderRev(mergeParent.getChannels().getOrder()));
+					Quaternion parentFrameRot = new Quaternion(mergeParent.getTranslation().mFrameMatrix);
+					Quaternion parentOffsetRot = new Quaternion(mergeParent.getTranslation().mOffsetMatrix);
+					mergeParentRot = parentFrameRot.inverse().multiply(mergeParentRot).multiply(parentFrameRot).multiply(parentOffsetRot);
+				}
+				else
+				{
+					mergeParentRot = Quaternion.Identity;
+				}
+
+				if (mergeChild != null)
+				{
+					mergeChildRot = Quaternion.mayaQ(keyFrame, mergeChild.getChannels().getRotOffset(), 
+	                                                 Quaternion.StringToOrderRev(mergeChild.getChannels().getOrder()));
+					Quaternion childFrameRot = new Quaternion(mergeChild.getTranslation().mFrameMatrix);
+					Quaternion childOffsetRot = new Quaternion(mergeChild.getTranslation().mOffsetMatrix);
+					mergeChildRot = childFrameRot.inverse().multiply(mergeChildRot).multiply(childFrameRot).multiply(childOffsetRot);
+				}
+				else
+				{
+					mergeChildRot = Quaternion.Identity;
+				}
+
+				Quaternion inRot = Quaternion.mayaQ(keyFrame, rotOffset, order);
+				Quaternion outRot = frameRotInv.multiply(mergeChildRot).multiply(inRot).multiply(mergeParentRot).
+				                                multiply(first_frame_rot.inverse()).multiply(frameRot).multiply(offsetRot);
+
+				joint.rotationkeys[frame] = anim.new JointKey();
+				joint.rotationkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
+				joint.rotationkeys[frame].key_element = outRot.toVector3();
+
+				outcount++;
+				frame++;
+			}
+			
+			// output position keys (only for 1st joint)
+			if (j == 0 && !node.getTranslation().mIgnorePositions)
+			{
+				joint.positionkeys = new KeyFrameMotion.JointKey[node.mNumPosKeys];
+
+				Vector3 relPos = node.getTranslation().mRelativePosition;
+				Vector3 relKey = Vector3.Zero;
+
+				frame = 0;
+				for (float[] keyFrame : bvh.getMotion().getMotions())
+				{
+					if ((frame == 0) && node.getTranslation().mRelativePositionKey)
+					{
+						relKey = new Vector3(keyFrame, 0);
+					}
+
+					if (node.mIgnorePos[frame])
+					{
+						frame++;
+						continue;
+					}
+
+					Vector3 inPos = new Vector3(keyFrame, 0).subtract(relKey).multiply(first_frame_rot.inverse());
+					Vector3 outPos = inPos.multiply(frameRot).multiply(offsetRot);
+
+					outPos = outPos.multiply(INCHES_TO_METERS).subtract(relPos);
+
+					joint.positionkeys[frame] = anim.new JointKey();
+					joint.positionkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
+					joint.positionkeys[frame].key_element = outPos.clamp(-KeyFrameMotion.MAX_PELVIS_OFFSET, KeyFrameMotion.MAX_PELVIS_OFFSET);
+					frame++;
+				}
+				j++;
+			}
+			else
+			{
+				joint.positionkeys = new KeyFrameMotion.JointKey[0]; ;
+			}
+		}
+
+		return anim;
+	}
+
 	public boolean validate()
 	{
 		if (bvh.getMotion().getFrames() != bvh.getMotion().getMotions().size())
@@ -738,7 +968,7 @@ public class BVHReader
 		}
 	}
 
-	public LLAnimation parse()
+	public KeyFrameMotion parse()
 	{
 
 		
