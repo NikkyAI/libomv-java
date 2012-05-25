@@ -57,7 +57,7 @@ public class TerrainCompressor
     private static int[] CopyMatrix32 = new int[16 * 16];
     private static float[] QuantizeTable16 = new float[16 * 16];
 
-    public TerrainCompressor()
+    static
     {
         // Initialize the decompression tables
         BuildDequantizeTable16();
