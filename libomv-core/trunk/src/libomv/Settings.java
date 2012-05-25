@@ -82,6 +82,9 @@ public class Settings implements PacketCallback
 
 	/* Initialize Parcel Manager */
 	public boolean ENABLE_PARCEL_MANAGER = false;
+	
+	/* Initialize Terrain Manager */
+	public boolean ENABLE_TERRAIN_MANAGER = false;
 
 	// #region Login/Networking Settings
 
