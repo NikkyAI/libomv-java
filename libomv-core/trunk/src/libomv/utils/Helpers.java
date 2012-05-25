@@ -1192,7 +1192,6 @@ public class Helpers
 	public static float BytesToFixedL(byte[] bytes, int pos, boolean signed, int intBits, int fracBits)
 	{
 		int totalBits = intBits + fracBits;
-		;
 		float fixedVal;
 
 		if (signed)
@@ -1249,6 +1248,18 @@ public class Helpers
 		return FixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
+	public static int Int8ToBytes(byte value, byte[] dest, int pos)
+	{
+		dest[pos + 0] = value;
+		return 1;
+	}
+
+	public static int UInt8ToBytes(byte value, byte[] dest, int pos)
+	{
+		dest[pos + 0] = value;
+		return 1;
+	}
+
 	/**
 	 * Convert a short to a byte array in little endian format
 	 * 
@@ -1263,10 +1274,11 @@ public class Helpers
 		return bytes;
 	}
 
-	public static void Int16ToBytesL(short value, byte[] dest, int pos)
+	public static int Int16ToBytesL(short value, byte[] dest, int pos)
 	{
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
+		return 2;
 	}
 
 	public static byte[] Int16ToBytesB(short value)
