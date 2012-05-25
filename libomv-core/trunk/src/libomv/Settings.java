@@ -33,7 +33,6 @@ import libomv.packets.PacketType;
 import libomv.types.Color4;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
-import libomv.utils.Logger.LogLevel;
 
 /*
  * Class for controlling various system settings.
