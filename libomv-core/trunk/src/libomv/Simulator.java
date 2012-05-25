@@ -47,6 +47,7 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.ParcelManager.Parcel;
+import libomv.TerrainManager.TerrainPatch;
 import libomv.packets.AgentPausePacket;
 import libomv.packets.AgentResumePacket;
 import libomv.packets.CloseCircuitPacket;
@@ -58,7 +59,6 @@ import libomv.packets.UseCircuitCodePacket;
 import libomv.primitives.Avatar;
 import libomv.primitives.Primitive;
 import libomv.types.UUID;
-import libomv.types.TerrainPatch;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
