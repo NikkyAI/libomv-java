@@ -1101,7 +1101,7 @@ public class NetworkManager implements PacketCallback
 				Simulator simulator = _Simulators.get(i);
 				// Don't disconnect the current sim, we'll use LogoutRequest for
 				// that
-				if (simulator != null && simulator != _CurrentSim)
+				if (simulator != null && simulator.equals(_CurrentSim))
 				{
 					simulator.Disconnect(sendCloseCircuit);
 
