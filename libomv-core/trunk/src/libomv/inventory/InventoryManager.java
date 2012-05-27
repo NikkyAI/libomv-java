@@ -3533,15 +3533,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				// Initialize the store here so we know who owns it:
 				_Store = new InventoryStore(_Client);
 
-				Logger.DebugLog("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client);
 				synchronized (_Store)
 				{
+					Logger.DebugLog("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client);
 					_Store.setInventoryFolder(replyData.InventoryRoot);
 					for (int i = 0; i < replyData.InventorySkeleton.length; i++)
 					{
 						_Store.add(replyData.InventorySkeleton[i]);
 					}
 
+					Logger.DebugLog("Setting LibraryRoot to " + replyData.LibraryRoot.toString(), _Client);
 					_Store.setLibraryFolder(replyData.LibraryRoot, replyData.LibraryOwner);
 					for (int i = 0; i < replyData.LibrarySkeleton.length; i++)
 					{
