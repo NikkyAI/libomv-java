@@ -80,8 +80,7 @@ public class GridClient
 
 		public transient boolean saveSettings;
 		public transient boolean savePassword;
-		public transient String firstname; // firstname
-		public transient String lastname; // lastname
+		public transient String username; // first and last name separated by space, or resident name
 		public transient String startLocation;
 
 		private transient String password; // password
@@ -122,10 +121,8 @@ public class GridClient
 		{
 			saveSettings |= info.saveSettings;
 			savePassword = saveSettings && (info.savePassword || savePassword);
-			if (firstname == null)
-				firstname = info.firstname;
-			if (lastname == null)
-				lastname = info.lastname;
+			if (username == null)
+				username = info.username;
 			if (password == null)
 				password = info.password;
 			if (startLocation == null)
@@ -580,14 +577,9 @@ public class GridClient
 				{
 					info.passworduri = parser.nextText().trim();
 				}
-				else if (name.equals("firstname"))
+				else if (name.equals("username"))
 				{
-					info.firstname = parser.nextText().trim();
-					info.saveSettings = true;
-				}
-				else if (name.equals("lastname"))
-				{
-					info.lastname = parser.nextText().trim();
+					info.username = parser.nextText().trim();
 					info.saveSettings = true;
 				}
 				else if (name.equals("startLocation"))
@@ -674,8 +666,7 @@ public class GridClient
 			OSDMap members = OSD.serializeMembers(info);
 			if (info.saveSettings)
 			{
-				members.put("firstname", OSDString.FromString(info.firstname));
-				members.put("lastname", OSDString.FromString(info.lastname));
+				members.put("username", OSDString.FromString(info.username));
 				members.put("startLocation", OSDString.FromString(info.startLocation));
 				if (info.savePassword)
 				{

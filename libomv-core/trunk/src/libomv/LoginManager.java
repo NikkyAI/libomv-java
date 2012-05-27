@@ -92,7 +92,7 @@ public class LoginManager
 		public String MethodName;
 		/** The Agents First name */
 		public String FirstName;
-		/** The Agents Last name */
+		/** The Agents First name */
 		public String LastName;
 		/**
 		 * A md5 hashed password, plaintext password will be automatically
@@ -179,8 +179,19 @@ public class LoginManager
 			this.Timeout = client.Settings.LOGIN_TIMEOUT;
 			GridInfo gridInfo = client.getDefaultGrid();
 			this.URI = gridInfo.loginuri;
-			this.FirstName = gridInfo.firstname;
-			this.LastName = gridInfo.lastname;
+			
+			String names[] = gridInfo.username.split(". ");
+			
+			this.FirstName = names[0];
+			if (names.length >= 2)
+			{
+				this.LastName = names[1];
+			}
+			else
+			{
+				this.LastName = "Resident";
+			}
+				
 			this.Password = gridInfo.getPassword();
 			if (gridInfo.startLocation != null)
 				this.Start = gridInfo.startLocation;
