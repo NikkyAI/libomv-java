@@ -73,10 +73,8 @@ public class LoginPanel extends JPanel
 	private JFrame _Parent;
 	private ActionListener _Action;
 	
-	private JLabel jLblFirstName;
-	private JTextField jTxtFirstName;
-	private JLabel jLblLastName;
-	private JTextField jTxtLastName;
+	private JLabel jLblUserName;
+	private JTextField jTxtUserName;
 	private JLabel jLblPassword;
 	private JPasswordField jPwdPassword;
 	private JButton jBtnLogin;
@@ -87,6 +85,7 @@ public class LoginPanel extends JPanel
 	private JButton jBtnGrids;
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
+	private GridBagConstraints gbc_jLblUserName;
 	
 	public LoginPanel(GridClient client, JFrame parent, ActionListener action)
 	{
@@ -95,60 +94,47 @@ public class LoginPanel extends JPanel
 		_Action = action;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 6, 1, 0 };
+		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0 };
 		gridBagLayout.rowWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 
 		setLayout(gridBagLayout);
 		// Create a border around the edge
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		GridBagConstraints gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-		gridBagConstraints.gridx = 1;
-		gridBagConstraints.gridy = 0;
-		add(getJLblFirstName(), gridBagConstraints);
+		GridBagConstraints gridBagConstraints;
+		gbc_jLblUserName = new GridBagConstraints();
+		gbc_jLblUserName.anchor = GridBagConstraints.WEST;
+		gbc_jLblUserName.insets = new Insets(5, 5, 5, 5);
+		gbc_jLblUserName.gridx = 1;
+		gbc_jLblUserName.gridy = 0;
+		add(getJLblUserName(), gbc_jLblUserName);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 0;
-		add(getJTxtFirstName(), gridBagConstraints);
+		add(getJTxtUserName(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 0;
-		add(getJLblLastName(), gridBagConstraints);
+		add(getJLblPassword(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints.gridx = 4;
 		gridBagConstraints.gridy = 0;
-		add(getJTxtLastName(), gridBagConstraints);
-
-		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints.gridx = 5;
-		gridBagConstraints.gridy = 0;
-		add(getJLblPassword(), gridBagConstraints);
-
-		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints.gridx = 6;
-		gridBagConstraints.gridy = 0;
 		add(getJPwdPassword(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints.gridx = 7;
+		gridBagConstraints.gridx = 5;
 		gridBagConstraints.gridy = 0;
 		add(getJBtnLogin(), gridBagConstraints);
 
@@ -172,9 +158,15 @@ public class LoginPanel extends JPanel
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 1;
 		add(getBtnGrids(), gridBagConstraints);
+		
+				gridBagConstraints = new GridBagConstraints();
+				gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+				gridBagConstraints.gridx = 5;
+				gridBagConstraints.gridy = 1;
+				add(getChckbxSaveDetails(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+		gridBagConstraints.insets = new Insets(0, 5, 0, 5);
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
@@ -182,45 +174,30 @@ public class LoginPanel extends JPanel
 		add(jLblLocation, gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.insets = new Insets(0, 0, 0, 5);
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
-
-		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
-		gridBagConstraints.gridx = 4;
-		gridBagConstraints.gridy = 2;
-		add(getChckbxSaveDetails(), gridBagConstraints);
-
-		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
-		gridBagConstraints.gridx = 6;
-		gridBagConstraints.gridy = 2;
-		add(getChckbxSavePassword(), gridBagConstraints);
+				
+						gridBagConstraints = new GridBagConstraints();
+						gridBagConstraints.insets = new Insets(0, 0, 0, 5);
+						gridBagConstraints.gridx = 5;
+						gridBagConstraints.gridy = 2;
+						add(getChckbxSavePassword(), gridBagConstraints);
 		
-		parent.add(getJBrowser().getComponent(), BorderLayout.CENTER);
+		parent.getContentPane().add(getJBrowser().getComponent(), BorderLayout.CENTER);
 
 		initializePanel(_Client.getDefaultGrid());	
 	}
 
-	private JLabel getJLblFirstName()
+	private JLabel getJLblUserName()
 	{
-		if (jLblFirstName == null)
+		if (jLblUserName == null)
 		{
-			jLblFirstName = new JLabel("First Name:");
+			jLblUserName = new JLabel("User Name:");
 		}
-		return jLblFirstName;
-	}
-
-	private JLabel getJLblLastName()
-	{
-		if (jLblLastName == null)
-		{
-			jLblLastName = new JLabel("Last Name:");
-		}
-		return jLblLastName;
+		return jLblUserName;
 	}
 
 	private JLabel getJLblPassword()
@@ -237,13 +214,13 @@ public class LoginPanel extends JPanel
 	 * 
 	 * @return JTextField
 	 */
-	private JTextField getJTxtFirstName()
+	private JTextField getJTxtUserName()
 	{
-		if (jTxtFirstName == null)
+		if (jTxtUserName == null)
 		{
-			jTxtFirstName = new JTextField(20);
+			jTxtUserName = new JTextField(20);
 			// Add a caret listener
-			jTxtFirstName.addCaretListener(new CaretListener()
+			jTxtUserName.addCaretListener(new CaretListener()
 			{
 				/**
 				 * Called when the caret is updated
@@ -260,7 +237,7 @@ public class LoginPanel extends JPanel
 			});
 
 			// Add a focus listener
-			jTxtFirstName.addFocusListener(new FocusAdapter()
+			jTxtUserName.addFocusListener(new FocusAdapter()
 			{
 				/**
 				 * Called when focus is gained
@@ -272,78 +249,12 @@ public class LoginPanel extends JPanel
 				public void focusGained(FocusEvent e)
 				{
 					// Select all
-					getJTxtFirstName().selectAll();
+					getJTxtUserName().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtFirstName.addKeyListener(new KeyAdapter()
-			{
-				/**
-				 * Called when a key is pressed
-				 * 
-				 * @param e
-				 *            The KeyEvent
-				 */
-				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
-						getJTxtLastName().requestFocus();
-					}
-				}
-			});
-		}
-		return jTxtFirstName;
-	}
-
-	/**
-	 * This method initializes textLastName
-	 * 
-	 * @return JTextField
-	 */
-	private JTextField getJTxtLastName()
-	{
-		if (jTxtLastName == null)
-		{
-			jTxtLastName = new JTextField(20);
-			// Add a caret listener
-			jTxtLastName.addCaretListener(new CaretListener()
-			{
-				/**
-				 * Called when the caret is updated
-				 * 
-				 * @param e
-				 *            The CaretEvent
-				 */
-				@Override
-				public void caretUpdate(CaretEvent e)
-				{
-					// Validate
-					validateSettings();
-				}
-			});
-
-			// Add a focus listener
-			jTxtLastName.addFocusListener(new FocusAdapter()
-			{
-				/**
-				 * Called when focus is gained
-				 * 
-				 * @param e
-				 *            The FocusEvent
-				 */
-				@Override
-				public void focusGained(FocusEvent e)
-				{
-					// Select all
-					getJTxtLastName().selectAll();
-				}
-			});
-
-			// Add a key listener
-			jTxtLastName.addKeyListener(new KeyAdapter()
+			jTxtUserName.addKeyListener(new KeyAdapter()
 			{
 				/**
 				 * Called when a key is pressed
@@ -361,7 +272,7 @@ public class LoginPanel extends JPanel
 				}
 			});
 		}
-		return jTxtLastName;
+		return jTxtUserName;
 	}
 
 	/**
@@ -590,12 +501,9 @@ public class LoginPanel extends JPanel
 		grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
 		grid.startLocation = getJcbStartLocation().getSelectedItem().toString().toLowerCase();
 
-		String string = getJTxtFirstName().getText(); 
+		String string = getJTxtUserName().getText(); 
 		if (string != null)
-			grid.firstname = string;
-		string = getJTxtLastName().getText();
-		if (string != null)
-			grid.lastname = string;
+			grid.username = string;
 		string = String.valueOf(getJPwdPassword().getPassword());
 		if (string != null)
 			grid.setPassword(string);
@@ -626,13 +534,7 @@ public class LoginPanel extends JPanel
 		boolean valid = true;
 
 		// Validate the first name
-		if (!validateField(getJTxtFirstName(), getJLblFirstName()))
-		{
-			valid = false;
-		}
-
-		// Validate the last name
-		if (!validateField(getJTxtLastName(), getJLblLastName()))
+		if (!validateField(getJTxtUserName(), getJLblUserName()))
 		{
 			valid = false;
 		}
@@ -696,10 +598,8 @@ public class LoginPanel extends JPanel
 		{
 			getJcbStartLocation().setSelectedItem(grid.startLocation);
 		}
-		if (grid.firstname != null)
-			getJTxtFirstName().setText(grid.firstname);
-		if (grid.lastname != null)
-			getJTxtLastName().setText(grid.lastname);
+		if (grid.username != null)
+			getJTxtUserName().setText(grid.username);
 		if (grid.getPassword() != null)
 			getJPwdPassword().setText(grid.getPassword());
 		getChckbxSaveDetails().setSelected(grid.saveSettings);
