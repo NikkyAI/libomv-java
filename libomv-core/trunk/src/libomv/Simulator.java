@@ -1296,6 +1296,13 @@ public class Simulator extends Thread
 					_Client.Stats.Update(packet.getType().toString(), libomv.Statistics.Type.Packet, 0, numBytes);
 				}
 			}
+			catch (IOException ex)
+			{
+				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, _Client, ex);
+
+				_Connected = false;
+				return;
+			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
