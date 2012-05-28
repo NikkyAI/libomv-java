@@ -26,8 +26,12 @@ package libomv.imaging;
 
 import icc.ICCProfileException;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import jj2000.j2k.decoder.Decoder;
 import jj2000.j2k.decoder.ImgDecoder;
@@ -38,10 +42,8 @@ import jj2000.j2k.image.DataBlkInt;
 import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.util.ISRandomAccessIO;
 import jj2000.j2k.util.ParameterList;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
-public class J2KWrap
+public class J2KImage extends ManagedImage
 {
 	public class J2KLayerInfo
 	{
@@ -54,20 +56,38 @@ public class J2KWrap
 		int ls, mv, fb;
 	}
 
-	/**
+	public J2KImage(File file) throws IllegalArgumentException, FileNotFoundException, IOException, ICCProfileException
+	{
+		decode(new FileInputStream(file));
+	}
+	
+	public J2KImage(InputStream is) throws IllegalArgumentException, IOException, ICCProfileException
+	{
+		decode(is);
+	}
+	
+    /**
+     * Encode a <seealso cref="ManagedImage"/> object into a byte array
+     *
+     * @param image The <seealso cref="ManagedImage"/> object to encode
+     */
+    public static int encode(OutputStream os, ManagedImage image)
+    {
+        return encode(os, image, false);
+    }
+
+    /**
      * Encode a <seealso cref="ManagedImage"/> object into a byte array
      * 
      * @param image The <seealso cref="ManagedImage"/> object to encode
      * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
      * @return
      */
-    public static byte[] encode(ManagedImage image, boolean lossless)
+    public static int encode(OutputStream os, ManagedImage image, boolean lossless)
     {
         if ((image.Channels & ManagedImage.ImageChannels.Color) == 0 ||
             ((image.Channels & ManagedImage.ImageChannels.Bump) != 0 && (image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
             throw new IllegalArgumentException("JPEG2000 encoding is not supported for this channel combination");
-
-        byte[] encoded = null;
 
         int components = 3;
         if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0) components++;
@@ -77,17 +97,7 @@ public class J2KWrap
         
         
 
-        return encoded;
-    }
-
-    /**
-     * Encode a <seealso cref="ManagedImage"/> object into a byte array
-     *
-     * @param image The <seealso cref="ManagedImage"/> object to encode
-     */
-    public static byte[] encode(ManagedImage image)
-    {
-        return encode(image, false);
+        return 0;
     }
 
     /**
@@ -95,18 +105,18 @@ public class J2KWrap
      *
      * @param data The raw byte data to decode
      */
-	public static ManagedImage decode(byte[] data) throws IOException, ICCProfileException, IllegalArgumentException
+	protected void decode(InputStream is) throws IOException, ICCProfileException, IllegalArgumentException
 	{
-		BlkImgDataSrc dataSrc = decodeInternal(data);
+		BlkImgDataSrc dataSrc = decodeInternal(is);
 		
 		int ncomps = dataSrc.getNumComps();
 
 		// Check component sizes and bit depths
-		int imh = dataSrc.getCompImgHeight(0);
-		int imw = dataSrc.getCompImgWidth(0);
+		Height = dataSrc.getCompImgHeight(0);
+		Width = dataSrc.getCompImgWidth(0);
 		for (int i = dataSrc.getNumComps() - 1; i >= 0; i--)
 		{
-			if (dataSrc.getCompImgHeight(i) != imh || dataSrc.getCompImgWidth(i) != imw)
+			if (dataSrc.getCompImgHeight(i) != Height || dataSrc.getCompImgWidth(i) != Width)
 			{
 				throw new IllegalArgumentException("All components must have the same dimensions and no subsampling");
 			}
@@ -116,7 +126,7 @@ public class J2KWrap
 			}
 		}
 
-		byte channels = ManagedImage.ImageChannels.Color;
+		Channels = ManagedImage.ImageChannels.Color;
 				
 		PixelScale[] scale = new PixelScale[ncomps];
 		
@@ -133,16 +143,14 @@ public class J2KWrap
 			case 3:
 				break;
 			case 5:
-				channels |= ManagedImage.ImageChannels.Bump;
+				Channels |= ManagedImage.ImageChannels.Bump;
 			case 2:
 			case 4:
-				channels |= ManagedImage.ImageChannels.Alpha;
+				Channels |= ManagedImage.ImageChannels.Alpha;
 				break;
 			default:
-                Logger.Log("Decoded image with unhandled number of components: " + ncomps, LogLevel.Error);
-				return null;
+				throw new IllegalArgumentException("Decoded image with unhandled number of components: " + ncomps);
 		}		
-		ManagedImage image = new ManagedImage(imw, imh, channels);
 
 		int height; // tile height
 		int width; // tile width
@@ -170,7 +178,7 @@ public class J2KWrap
 				// since we don't support different component dimensions.
 				tOffx = dataSrc.getCompULX(0) - (int) Math.ceil(dataSrc.getImgULX() / (double) dataSrc.getCompSubsX(0));
 				tOffy = dataSrc.getCompULY(0) - (int) Math.ceil(dataSrc.getImgULY() / (double) dataSrc.getCompSubsY(0));
-				off = tOffy * imw + tOffx;
+				off = tOffy * Width + tOffx;
 
 				// Deliver in lines to reduce memory usage
 				for (l = 0; l < height; l++)
@@ -182,32 +190,31 @@ public class J2KWrap
 					{
 						case 5:
 							dataSrc.getInternCompData(block, 4);
-							fillLine(block, scale[4], image.Bump, off);
+							fillLine(block, scale[4], Bump, off);
 						case 4:
 							dataSrc.getInternCompData(block, 3);
-							fillLine(block, scale[3], image.Alpha, off);
+							fillLine(block, scale[3], Alpha, off);
 						case 3:
 							dataSrc.getInternCompData(block, 2);
-							fillLine(block, scale[2], image.Blue, off);
+							fillLine(block, scale[2], Blue, off);
 							dataSrc.getInternCompData(block, 1);
-							fillLine(block, scale[1], image.Green, off);
+							fillLine(block, scale[1], Green, off);
 							dataSrc.getInternCompData(block, 0);
-							fillLine(block, scale[0], image.Red, off);
+							fillLine(block, scale[0], Red, off);
 							break;
 						case 2:
 							dataSrc.getInternCompData(block, 1);
-							fillLine(block, scale[1], image.Alpha, off);
+							fillLine(block, scale[1], Alpha, off);
 						case 1:
 							dataSrc.getInternCompData(block, 0);
-							fillLine(block, scale[0], image.Red, off);
-							System.arraycopy(image.Red, off, image.Green, off, width);
-							System.arraycopy(image.Red, off, image.Blue, off, width);
+							fillLine(block, scale[0], Red, off);
+							System.arraycopy(Red, off, Green, off, width);
+							System.arraycopy(Red, off, Blue, off, width);
 							break;
 					}
 				}
 			}
 		}
-		return image;
 	}
 
 	private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)
@@ -227,7 +234,7 @@ public class J2KWrap
 		return 0;
 	}
 	
-	private static BlkImgDataSrc decodeInternal(byte[] data) throws IOException, ICCProfileException
+	private static BlkImgDataSrc decodeInternal(InputStream is) throws IOException, ICCProfileException
 	{
 		ParameterList pl, defpl = new ParameterList();
     	String[][] param = Decoder.getAllParameters();
@@ -243,7 +250,7 @@ public class J2KWrap
         pl = new ParameterList(defpl);
         ImgDecoder decoder = new ImgDecoder(pl);
         
-        RandomAccessIO in = new ISRandomAccessIO(new ByteArrayInputStream(data), 1 << 18, 1 << 18, data.length);
+        RandomAccessIO in = new ISRandomAccessIO(is);
 
 		// **** File Format ****
 		// If the codestream is wrapped in the jp2 fileformat, Read the file format wrapper

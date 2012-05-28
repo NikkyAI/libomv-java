@@ -25,6 +25,9 @@
  */
 package libomv.imaging;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class ManagedImage
 {
 	// [Flags]
@@ -77,6 +80,11 @@ public class ManagedImage
 	// Bump channel data
 	public byte[] Bump;
 
+	public ManagedImage()
+	{
+		
+	}
+	
 	/**
 	 * Create a new blank image
 	 * 
@@ -92,33 +100,49 @@ public class ManagedImage
 		Width = width;
 		Height = height;
 		Channels = channels;
-
-		int n = width * height;
-
-		if ((channels & ImageChannels.Gray) != 0)
-		{
-			Red = new byte[n];
-		}
-		else if ((channels & ImageChannels.Color) != 0)
-		{
-			Red = new byte[n];
-			Green = new byte[n];
-			Blue = new byte[n];
-		}
-
-		if ((channels & ImageChannels.Alpha) != 0)
-			Alpha = new byte[n];
-
-		if ((channels & ImageChannels.Bump) != 0)
-			Bump = new byte[n];
+		initialize(this);
 	}
 
+	protected static int initialize(ManagedImage image)
+	{
+		int n = image.Width * image.Height;
+
+		if ((image.Channels & ImageChannels.Gray) != 0)
+		{
+			image.Red = new byte[n];
+		}
+		else if ((image.Channels & ImageChannels.Color) != 0)
+		{
+			image.Red = new byte[n];
+			image.Green = new byte[n];
+			image.Blue = new byte[n];
+		}
+
+		if ((image.Channels & ImageChannels.Alpha) != 0)
+			image.Alpha = new byte[n];
+
+		if ((image.Channels & ImageChannels.Bump) != 0)
+			image.Bump = new byte[n];
+		
+		return n;
+	}
+
+	/**
+	 * Writes this image to the actual file format stream of derived classes
+	 * 
+	 * @throws IOException  
+	 */
+	public static int encode(OutputStream os, ManagedImage image) throws IOException
+	{
+		return -1;
+	}
+	
     /**
      * Convert the channels in the image. Channels are created or destroyed as required.
      *
      * @param channels new channel flags
      */
-    public void ConvertChannels(byte channels)
+    public void convertChannels(byte channels)
     {
         if (Channels == channels)
             return;
@@ -211,72 +235,6 @@ public class ManagedImage
 	{
 		return null;
 	}
-
-    /**
-     * Export the image to a tga file for debugging purposes
-     */
-    public byte[] exportTGA()
-    {
-        byte[] tga = new byte[Width * Height * ((Channels & ImageChannels.Alpha) == 0 ? 3 : 4) + 32];
-        int di = 0;
-        tga[di++] = 0; // idlength
-        tga[di++] = 0; // colormaptype = 0: no colormap
-        tga[di++] = 2; // image type = 2: uncompressed RGB
-        tga[di++] = 0; // color map spec is five zeroes for no color map
-        tga[di++] = 0; // color map spec is five zeroes for no color map
-        tga[di++] = 0; // color map spec is five zeroes for no color map
-        tga[di++] = 0; // color map spec is five zeroes for no color map
-        tga[di++] = 0; // color map spec is five zeroes for no color map
-        tga[di++] = 0; // x origin = two bytes
-        tga[di++] = 0; // x origin = two bytes
-        tga[di++] = 0; // y origin = two bytes
-        tga[di++] = 0; // y origin = two bytes
-        tga[di++] = (byte)(Width & 0xFF); // width - low byte
-        tga[di++] = (byte)(Width >> 8); // width - hi byte
-        tga[di++] = (byte)(Height & 0xFF); // height - low byte
-        tga[di++] = (byte)(Height >> 8); // height - hi byte
-        tga[di++] = (byte)((Channels & ImageChannels.Alpha) == 0 ? 24 : 32); // 24/32 bits per pixel
-        tga[di++] = (byte)((Channels & ImageChannels.Alpha) == 0 ? 32 : 40); // image descriptor byte
-
-        int n = Width * Height;
-
-        if ((Channels & ImageChannels.Alpha) != 0)
-        {
-            if ((Channels & ImageChannels.Color) != 0)
-            {
-                // RGBA
-                for (int i = 0; i < n; i++)
-                {
-                    tga[di++] = Blue[i];
-                    tga[di++] = Green[i];
-                    tga[di++] = Red[i];
-                    tga[di++] = Alpha[i];
-                }
-            }
-            else
-            {
-                // Alpha only
-                for (int i = 0; i < n; i++)
-                {
-                    tga[di++] = Alpha[i];
-                    tga[di++] = Alpha[i];
-                    tga[di++] = Alpha[i];
-                    tga[di++] = Byte.MAX_VALUE;
-                }
-            }
-        }
-        else
-        {
-            // RGB
-            for (int i = 0; i < n; i++)
-            {
-                tga[di++] = Blue[i];
-                tga[di++] = Green[i];
-                tga[di++] = Red[i];
-            }
-        }
-        return tga;
-    }
 
     private static void fillArray(byte[] array, byte value)
     {

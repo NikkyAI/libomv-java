@@ -26,6 +26,7 @@
 package libomv.imaging;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -310,15 +311,9 @@ public class Baker
     {
         try
         {
-            ManagedImage image = TGALoader.getImage(new File(Settings.RESOURCE_DIR + "/" + fileName));
-            if (image == null)
-            {
-                Logger.Log(String.format("Failed loading resource file: %s", fileName), LogLevel.Error);
-                return null;
-            }
-            return image;
+            return new TGAImage(new File(Settings.RESOURCE_DIR + "/" + fileName));
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             Logger.Log(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()), LogLevel.Error, ex);
             return null;
@@ -459,7 +454,7 @@ public class Baker
 
         if ((dest.Channels & ManagedImage.ImageChannels.Alpha) == 0)
         {
-            dest.ConvertChannels((byte)(dest.Channels | ManagedImage.ImageChannels.Alpha));
+            dest.convertChannels((byte)(dest.Channels | ManagedImage.ImageChannels.Alpha));
         }
 
         if (dest.Width != src.Width || dest.Height != src.Height)
@@ -480,7 +475,7 @@ public class Baker
 
         if ((dest.Channels & ManagedImage.ImageChannels.Alpha) == 0)
         {
-            dest.ConvertChannels((byte)(ManagedImage.ImageChannels.Alpha | dest.Channels));
+            dest.convertChannels((byte)(ManagedImage.ImageChannels.Alpha | dest.Channels));
         }
 
         if (dest.Width != src.Width || dest.Height != src.Height)
