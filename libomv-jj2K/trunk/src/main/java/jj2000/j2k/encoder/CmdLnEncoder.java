@@ -94,11 +94,13 @@ public class CmdLnEncoder{
     public CmdLnEncoder(String argv[]) {
         // Initialize default parameters
         defpl = new ParameterList();
-	String[][] param = Encoder.getAllParameters();
+        String[][] param = Encoder.getAllParameters();
 
-        for (int i=param.length-1; i>=0; i--) {
-	    if(param[i][3]!=null){
-		defpl.put(param[i][0],param[i][3]);
+        for (int i=param.length-1; i>=0; i--)
+        {
+        	if (param[i][3]!=null)
+        	{
+        		defpl.put(param[i][0],param[i][3]);
             }
         }
 
