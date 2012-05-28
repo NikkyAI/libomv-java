@@ -26,9 +26,14 @@
  */
 package libomv.assets;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import libomv.imaging.ManagedImage;
-import libomv.imaging.J2KWrap;
-import libomv.imaging.J2KWrap.J2KLayerInfo;
+import libomv.imaging.J2KImage;
+import libomv.imaging.J2KImage.J2KLayerInfo;
 import libomv.types.UUID;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -94,7 +99,9 @@ public class AssetTexture extends AssetItem
 	@Override
 	public void Encode()
 	{
-		AssetData = J2KWrap.encode(Image);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();		
+		J2KImage.encode(bos, Image);
+		AssetData = bos.toByteArray();
 	}
 
 	/**
@@ -102,19 +109,31 @@ public class AssetTexture extends AssetItem
 	 * {@link ManagedImage} object {@link Image}
 	 * 
 	 * @return True if the decoding was successful, otherwise false
+	 * @throws IOException 
 	 */
 	@Override
 	public boolean Decode()
 	{
 		Components = 0;
 
+		InputStream is = new ByteArrayInputStream(AssetData);
 		try
 		{
-			Image = J2KWrap.decode(AssetData);
+			Image = new J2KImage(is);
 		}
 		catch (Exception ex)
 		{
 			Logger.Log("Error decoding asset texture data", LogLevel.Error, ex);
+		}
+		finally
+		{
+			try
+			{
+				is.close();
+			}
+			catch (IOException e)
+			{
+			}
 		}
 
 		if (Image != null)
@@ -140,7 +159,7 @@ public class AssetTexture extends AssetItem
 	 */
 	public boolean DecodeLayerBoundaries()
 	{
-		Components = J2KWrap.decodeLayerBoundaries(AssetData, LayerInfo);
+		Components = J2KImage.decodeLayerBoundaries(AssetData, LayerInfo);
 		return (Components > 0);
 	}
 
