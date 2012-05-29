@@ -95,12 +95,24 @@ public final class Resources
 		return null;
 	}
 	
-	public static String loadTextFile(String resource) throws IOException
+	public static String loadTextFile(String resource)
 	{
-		InputStream is = Resources.class.getResource("/res/" + resource).openStream();
+		try
+		{
+			InputStream is = Resources.class.getResource("/res/" + resource).openStream();
+			String string = loadTextFile(is);
+			is.close();
+			return string;
+		}
+		catch (IOException e) { }
+		return Helpers.EmptyString;
+	}
+	
+	private static String loadTextFile(InputStream is)
+	{
 		Scanner scanner = new Scanner(is, Helpers.UTF8_ENCODING).useDelimiter("\\A");
 		if (scanner.hasNext())
 			return scanner.next();
-		return "";		
+		return Helpers.EmptyString;
 	}
 }
