@@ -26,9 +26,12 @@ package libomv.Gui;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
+import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -90,5 +93,14 @@ public final class Resources
 			Logger.Log("Couldn't load resource " + resource, LogLevel.Debug, ex);
 		}
 		return null;
+	}
+	
+	public static String loadTextFile(String resource) throws IOException
+	{
+		InputStream is = Resources.class.getResource("/res/" + resource).openStream();
+		Scanner scanner = new Scanner(is, Helpers.UTF8_ENCODING).useDelimiter("\\A");
+		if (scanner.hasNext())
+			return scanner.next();
+		return "";		
 	}
 }
