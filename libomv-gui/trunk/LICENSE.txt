@@ -25,7 +25,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
-
+Uses artwork files licenced under the 
+Creative Commons Share and Share Alike 3.0
+Copyright © 2002-2009 Linden Research Inc.
 
 The JxBrowser library and its helper libraries are Copyright © 2005-2011 TeamDev Ltd.
 
