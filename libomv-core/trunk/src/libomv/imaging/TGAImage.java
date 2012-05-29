@@ -288,9 +288,8 @@ public class TGAImage extends ManagedImage
     	}
 	}
 	
-    private void UnpackColor(int[] values, int line, TGAColorMap cd)
+    private void UnpackColor(int[] values, int pixel, TGAColorMap cd)
     {
-    	int pixel = line + Width;
     	for (int x = 0; x < Width; x++, pixel++)
     	{
     		int val = values[x];
@@ -336,7 +335,7 @@ public class TGAImage extends ManagedImage
     private void decodeRle(SwappedDataInputStream is, int byp, TGAColorMap cd, boolean bottomUp) throws IOException
     {
     	int vals[] = new int[Width + 128];
-		int x = 0;
+		int x = 0, pixel = bottomUp ? (Height - 1) * Width : 0;
     	
 		// RLE compressed
 		for (int y = 0; y < Height; y++)
@@ -368,7 +367,7 @@ public class TGAImage extends ManagedImage
     				}
     			}
             }
-            UnpackColor(vals, bottomUp ? (Height - y - 1) : y, cd);        
+            UnpackColor(vals, pixel, cd);        
             if (x > Width)
             {
                 System.arraycopy(vals, Width, vals, 0, x - Width);
@@ -378,6 +377,7 @@ public class TGAImage extends ManagedImage
             {
                 x = 0;
             }
+            pixel += bottomUp ? -Width : Width; 
 		}
     }
     
@@ -393,6 +393,7 @@ public class TGAImage extends ManagedImage
     private void decodePlain(SwappedDataInputStream is, int byp, TGAColorMap cd, boolean bottomUp) throws IOException
     {
     	int vals[] = new int[Width];
+		int pixel = bottomUp ? (Height - 1) * Width : 0;
 		for (int y = 0; y < Height; y++)
 		{
 			for (int x = 0; x < Width; x++)
@@ -402,7 +403,8 @@ public class TGAImage extends ManagedImage
 					vals[x] |= is.readUnsignedByte() << (k << 3);
 				}
 			}
-            UnpackColor(vals, bottomUp ? (Height - y - 1) : y, cd);        
+            UnpackColor(vals, pixel, cd);        
+            pixel += bottomUp ? -Width : Width; 
 		}    	
     }
 
