@@ -127,16 +127,6 @@ public class ManagedImage
 		return n;
 	}
 
-	/**
-	 * Writes this image to the actual file format stream of derived classes
-	 * 
-	 * @throws IOException  
-	 */
-	public static int encode(OutputStream os, ManagedImage image) throws IOException
-	{
-		return -1;
-	}
-	
     /**
      * Convert the channels in the image. Channels are created or destroyed as required.
      *
