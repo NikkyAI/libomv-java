@@ -26,6 +26,12 @@ package libomv.Gui.components;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 
 import javax.swing.JComponent;
 
@@ -34,7 +40,9 @@ import libomv.Gui.Resources;
 import libomv.assets.AssetTexture;
 import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
+import libomv.imaging.ManagedImage;
 import libomv.types.UUID;
+import libomv.utils.ImageUtil;
 
 // Component to display an image loaded from a resource or other buffered image 
 public class ImagePanel extends JComponent
@@ -149,13 +157,12 @@ public class ImagePanel extends JComponent
 		{
 			if (state == TextureRequestState.Finished)
 			{
-				// TODO: Convert the Texture into an AWT Image
-				Image image = null /* assetTexture.Image */;
+				Image image = ImageUtil.convert(assetTexture.Image);
 				setImage(image, true);
 			}
 		}
 	}
-
+	
 	/**
 	 * Called to update the component
 	 * 
