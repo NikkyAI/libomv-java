@@ -25,6 +25,7 @@
 package libomv.Gui;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -39,72 +40,90 @@ import libomv.utils.Logger.LogLevel;
 public final class Resources
 {
 	// The 16x16 application icon
-	public static final String ICON_APPLICATION = "/res/images/app-logo.png";
+	public static final String ICON_APPLICATION = "images/app-logo.png";
 
 	// The 16x16 online icon for displaying next to a name in lists
-	public static final String ICON_ONLINE = "/res/images/user-online.png";
+	public static final String ICON_ONLINE = "images/user-online.png";
 	// The 16x16 offline icon for displaying next to a name in lists
-	public static final String ICON_OFFLINE = "/res/images/user-offline.png";
+	public static final String ICON_OFFLINE = "images/user-offline.png";
 	// The 16x16 close tab icon for displaying next to a closable tab name
-	public static final String ICON_CLOSE_TAB = "/res/images/";
+	public static final String ICON_CLOSE_TAB = "images/";
 	// The 16x16 typing icon for displaying next to an agent's name when they
 	// are typing
-	public static final String ICON_TYPING = "/res/images/";
+	public static final String ICON_TYPING = "images/";
 	// The 16x16 "message pending" icon for displaying next to an agent's name
 	// when there are pending messages
-	public static final String ICON_PENDING_MESSAGES = "/res/images/mail-message-new.png";
+	public static final String ICON_PENDING_MESSAGES = "images/mail-message-new.png";
 	// The 16x16 "unknown status" icon
-	public static final String ICON_UNKNOWN_STATUS = "/res/images/";
+	public static final String ICON_UNKNOWN_STATUS = "images/";
 
 	// The exit button icon
-	public static final String ICON_BUTTON_EXIT = "/res/images/";
+	public static final String ICON_BUTTON_EXIT = "images/";
 	// The logout button icon
-	public static final String ICON_BUTTON_LOGOUT = "/res/images/";
+	public static final String ICON_BUTTON_LOGOUT = "images/";
 	// The login button icon
-	public static final String ICON_BUTTON_LOGIN = "/res/images/";
+	public static final String ICON_BUTTON_LOGIN = "images/";
 
 	// The 32x32 alert image
-	public static final String IMAGE_ALERT = "/res/images/dialog-warning.png";
+	public static final String IMAGE_ALERT = "images/dialog-warning.png";
 	// The 32x32 error image
-	public static final String IMAGE_ERROR = "/res/images/dialog-error.png";
+	public static final String IMAGE_ERROR = "images/dialog-error.png";
 	// The 32x32 informational image
-	public static final String IMAGE_INFORMATIONAL = "/res/images/dialog-information.png";
+	public static final String IMAGE_INFORMATIONAL = "images/dialog-information.png";
 	// The 32x32 question image
-	public static final String IMAGE_QUESTION = "/res/images/dialog-question.png";
+	public static final String IMAGE_QUESTION = "images/dialog-question.png";
 
 	// The image missing image
-	public static final String IMAGE_MISSING = "/res/images/image-missing.png";
+	public static final String IMAGE_MISSING = "images/image-missing.png";
 	// The image loading image 178x133 (for Second Life profile pictures)
-	public static final String IMAGE_LOADING = "/res/images/image-loading.png";
+	public static final String IMAGE_LOADING = "images/image-loading.png";
 
 	// The image to show for busy status
-	public static final String IMAGE_LOGO = "/res/images/logo.png";
+	public static final String IMAGE_LOGO = "images/logo.png";
 	// The image to show for busy status
-	public static final String IMAGE_WORKING = "/res/images/process-working.png";
+	public static final String IMAGE_WORKING = "images/process-working.png";
 
-	public static BufferedImage loadImage(String resource)
+	public static BufferedImage loadImage(String name)
 	{
+		InputStream is = Resources.class.getClassLoader().getResourceAsStream("res/" + name);
 		try
 		{
-			return ImageIO.read(Resources.class.getResource(resource));
+			return ImageIO.read(is);
 		}
 		catch (IOException ex)
 		{
-			Logger.Log("Couldn't load resource " + resource, LogLevel.Debug, ex);
+			Logger.Log("Couldn't load resource " + name, LogLevel.Debug, ex);
+		}
+		finally
+		{
+			try
+			{
+				is.close();
+			}
+			catch (IOException e) { }
 		}
 		return null;
 	}
 	
-	public static String loadTextFile(String resource)
+	public static String loadTextFile(String name)
 	{
+		InputStream is = Resources.class.getClassLoader().getResourceAsStream("res/" + name);
 		try
 		{
-			InputStream is = Resources.class.getResource("/res/" + resource).openStream();
-			String string = loadTextFile(is);
-			is.close();
-			return string;
+			return loadTextFile(is);
 		}
-		catch (IOException e) { }
+		catch (SecurityException ex)
+		{
+			Logger.Log("Couldn't load resource " + name, LogLevel.Debug, ex);
+		}
+		finally
+		{
+			try
+			{
+				is.close();
+			}
+			catch (IOException e) { }
+		}
 		return Helpers.EmptyString;
 	}
 	
