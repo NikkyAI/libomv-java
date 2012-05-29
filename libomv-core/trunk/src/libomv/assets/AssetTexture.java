@@ -84,7 +84,7 @@ public class AssetTexture extends AssetItem
 		Components = 0;
 		if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
 			Components += 3;
-		if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
+		else if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
 			++Components;
 		if ((Image.Channels & ManagedImage.ImageChannels.Bump) != 0)
 			++Components;
@@ -140,7 +140,7 @@ public class AssetTexture extends AssetItem
 		{
 			if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
 				Components += 3;
-			if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
+			else if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
 				++Components;
 			if ((Image.Channels & ManagedImage.ImageChannels.Bump) != 0)
 				++Components;
@@ -159,7 +159,8 @@ public class AssetTexture extends AssetItem
 	 */
 	public boolean DecodeLayerBoundaries()
 	{
-		Components = J2KImage.decodeLayerBoundaries(AssetData, LayerInfo);
+		LayerInfo = J2KImage.decodeLayerBoundaries(AssetData);
+		Components = LayerInfo.length;
 		return (Components > 0);
 	}
 

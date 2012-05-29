@@ -26,15 +26,14 @@ package libomv.imaging;
 
 import icc.ICCProfileException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import jj2000.j2k.decoder.Decoder;
 import jj2000.j2k.decoder.ImgDecoder;
+import jj2000.j2k.encoder.Encoder;
+import jj2000.j2k.encoder.ImgEncoder;
 import jj2000.j2k.fileformat.reader.FileFormatReader;
 import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.Coord;
@@ -56,56 +55,12 @@ public class J2KImage extends ManagedImage
 		int ls, mv, fb;
 	}
 
-	public J2KImage(File file) throws IllegalArgumentException, FileNotFoundException, IOException, ICCProfileException
-	{
-		decode(new FileInputStream(file));
-	}
-	
+    /**
+     * create a <seealso cref="ManagedImage"/> object from a JPEG2K stream
+     *
+     * @param is The input stream
+     */
 	public J2KImage(InputStream is) throws IllegalArgumentException, IOException, ICCProfileException
-	{
-		decode(is);
-	}
-	
-    /**
-     * Encode a <seealso cref="ManagedImage"/> object into a byte array
-     *
-     * @param image The <seealso cref="ManagedImage"/> object to encode
-     */
-    public static int encode(OutputStream os, ManagedImage image)
-    {
-        return encode(os, image, false);
-    }
-
-    /**
-     * Encode a <seealso cref="ManagedImage"/> object into a byte array
-     * 
-     * @param image The <seealso cref="ManagedImage"/> object to encode
-     * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
-     * @return
-     */
-    public static int encode(OutputStream os, ManagedImage image, boolean lossless)
-    {
-        if ((image.Channels & ManagedImage.ImageChannels.Color) == 0 ||
-            ((image.Channels & ManagedImage.ImageChannels.Bump) != 0 && (image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
-            throw new IllegalArgumentException("JPEG2000 encoding is not supported for this channel combination");
-
-        int components = 3;
-        if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0) components++;
-        if ((image.Channels & ManagedImage.ImageChannels.Bump) != 0) components++;
-
-        
-        
-        
-
-        return 0;
-    }
-
-    /**
-     * Decode a byte array into a <seealso cref="ManagedImage"/> object
-     *
-     * @param data The raw byte data to decode
-     */
-	protected void decode(InputStream is) throws IOException, ICCProfileException, IllegalArgumentException
 	{
 		BlkImgDataSrc dataSrc = decodeInternal(is);
 		
@@ -216,6 +171,69 @@ public class J2KImage extends ManagedImage
 			}
 		}
 	}
+	
+    /**
+     * Encode this <seealso cref="ManagedImage"/> object into a byte array
+     *
+     * @param image The <seealso cref="ManagedImage"/> object to encode
+     */
+    public int encode(OutputStream os)
+    {
+        return encode(os, this, false);
+    }
+
+    /**
+     * Encode a <seealso cref="ManagedImage"/> object into a byte array
+     *
+     * @param image The <seealso cref="ManagedImage"/> object to encode
+     */
+    public static int encode(OutputStream os, ManagedImage image)
+    {
+        return encode(os, image, false);
+    }
+
+    /**
+     * Encode a <seealso cref="ManagedImage"/> object into a byte array
+     * 
+     * @param image The <seealso cref="ManagedImage"/> object to encode
+     * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
+     * @return
+     */
+    public static int encode(OutputStream os, ManagedImage image, boolean lossless)
+    {
+        if ((image.Channels & ManagedImage.ImageChannels.Color) == 0 ||
+            ((image.Channels & ManagedImage.ImageChannels.Bump) != 0 && (image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
+            throw new IllegalArgumentException("JPEG2000 encoding is not supported for this channel combination");
+
+        int components = 3;
+        if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0) components++;
+        if ((image.Channels & ManagedImage.ImageChannels.Bump) != 0) components++;
+
+        // Initialize default parameters
+        ParameterList defpl = new ParameterList();
+        String[][] param = Encoder.getAllParameters();
+
+        for (int i = param.length - 1; i >= 0; i--)
+        {
+        	if (param[i][3] != null)
+        	{
+        		defpl.put(param[i][0],param[i][3]);
+            }
+        }
+
+        // Create parameter list using defaults
+        ImgEncoder enc = new ImgEncoder(new ParameterList(defpl));
+ 
+        boolean[] imsigned = new boolean[components];
+        BlkImgDataSrc imgsrc;
+
+//    	enc.encode(imgsrc, imsigned, components, ppminput, outname, useFileFormat);
+
+        
+        
+
+        return 0;
+    }
 
 	private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)
 	{
@@ -229,9 +247,9 @@ public class J2KImage extends ManagedImage
 	}
 
 
-	public static int decodeLayerBoundaries(byte[] encoded, J2KLayerInfo[] layers)
+	public static J2KLayerInfo[] decodeLayerBoundaries(byte[] encoded)
 	{
-		return 0;
+		return null;
 	}
 	
 	private static BlkImgDataSrc decodeInternal(InputStream is) throws IOException, ICCProfileException
