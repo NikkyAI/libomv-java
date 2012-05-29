@@ -1,0 +1,22 @@
+Based on the libsecondlife-java project (BSD License)
+Copyright © 2006, Lateral Arts Limited
+
+Based on the libopenmetaverse project (BSD License)
+Copyright (c) 2007 - 2012, openmetaverse.org
+
+Includes BVH code (Apache 2.0 License)
+Copyright© 2011 aki@akjava.com
+https://github.com/akjava/gwt-bvh
+
+Includes ported PrimMesher (BSD License)
+Copyright© 2010 Dahlia Trimble
+http://forge.opensimulator.org/gf/project/primmesher/
+
+Includes JxBrowser from TeamDev Ltd.
+Copyright © 2005-2011 TeamDev Ltd.
+TeamDev has been so kind to provide this project a free license to use their JxBrowser
+library. See for more information about this library: http://www.teamdev.com/jxbrowser/
+
+Uses artwork files licenced under the 
+Creative Commons Share and Share Alike 3.0
+Copyright © 2002-2009 Linden Research Inc.
