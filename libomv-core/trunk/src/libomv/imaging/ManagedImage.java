@@ -25,9 +25,6 @@
  */
 package libomv.imaging;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 public class ManagedImage
 {
 	// [Flags]
