@@ -30,6 +30,11 @@ import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JSplitPane;
+
+import libomv.Gui.Resources;
+import libomv.Gui.components.ImagePanel;
 
 public class AboutWindow extends JDialog
 {
@@ -44,7 +49,7 @@ public class AboutWindow extends JDialog
 	{
 		super(owner);
 		setTitle("About Libomv-Java");
-		setSize(300, 200);
+		setSize(640, 480);
 		setContentPane(getJContentPane());
 	}
 
@@ -58,7 +63,26 @@ public class AboutWindow extends JDialog
 		if (jContentPane == null)
 		{
 			jContentPane = new JPanel();
-			jContentPane.setLayout(new BorderLayout());
+			jContentPane.setLayout(new BorderLayout(0, 0));
+			
+			JSplitPane splitPane = new JSplitPane();
+			jContentPane.add(splitPane, BorderLayout.NORTH);
+						
+			ImagePanel panel = new ImagePanel(Resources.IMAGE_LOGO);
+			splitPane.setLeftComponent(panel);
+
+			JTextArea jTxtCopyright = new JTextArea();
+			jTxtCopyright.setText("Written by Frederick Martian\nwith contributions from\n");
+			splitPane.setRightComponent(jTxtCopyright);
+
+			JTextArea jTxtLicenses = new JTextArea();
+			jTxtLicenses.setText(Resources.loadTextFile("Licenses.txt"));
+			jContentPane.add(jTxtLicenses, BorderLayout.CENTER);
+			
+			JTextArea jTxtCredits = new JTextArea();
+			jTxtCredits.setText(Resources.loadTextFile("Credits.txt"));
+			jContentPane.add(jTxtCredits , BorderLayout.SOUTH);
+			
 		}
 		return jContentPane;
 	}
