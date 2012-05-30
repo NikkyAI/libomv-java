@@ -372,23 +372,6 @@ public class Primitive
 		}
 	}
 
-	public enum FaceType
-	{
-		PathBegin, PathEnd, InnerSide, ProfileBegin, ProfileEnd, OuterSide0, OuterSide1, OuterSide2, OuterSide3;
-
-		public static FaceType setValue(int value)
-		{
-			if (value >= 0 && value < values().length)
-				return values()[value];
-			return null;
-		}
-
-		public byte getValue()
-		{
-			return (byte) ordinal();
-		}
-	}
-
 	public enum ObjectCategory
 	{
 		Invalid(-1), None(0), Owner(1), Group(2), Other(3), Selected(4), Temporary(5);
