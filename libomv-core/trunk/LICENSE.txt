@@ -1,5 +1,3 @@
-Copyright (c) 2006, Second Life Reverse Engineering Team
-Copyright (c) 2006, Lateral Arts Limited
 Copyright (c) 2007 - 2012 openmetaverse.org
 Copyright (c) 2009 - 2012 Frederick Martian
 
@@ -30,14 +28,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Based on the libsecondlife-java project (BSD License)
 Copyright © 2006, Lateral Arts Limited
+Simon Whiteside (http://www.larts.co.uk)
+- original Java port for libsecondlife-java
 
 Based on the libopenmetaverse project (BSD License)
 Copyright (c) 2007 - 2012, openmetaverse.org
+Frederick Martian fred.martian@gmail.com
+- bug fixing of libopenmetaverse-java code and adding ports of various
+  newer openmetaverse.org libomv parts
 
 Includes BVH code (Apache 2.0 License)
-Copyright© 2011 aki@akjava.com
+Copyright© 2011, aki@akjava.com
 https://github.com/akjava/gwt-bvh
 
 Includes ported PrimMesher (BSD License)
-Copyright© 2010 Dahlia Trimble
+Copyright© 2010, Dahlia Trimble
 http://forge.opensimulator.org/gf/project/primmesher/
