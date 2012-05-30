@@ -180,7 +180,7 @@ public class LoginManager
 			GridInfo gridInfo = client.getDefaultGrid();
 			this.URI = gridInfo.loginuri;
 			
-			String names[] = gridInfo.username.split(" +");
+			String names[] = gridInfo.username.split("[\\. ]");
 			
 			this.FirstName = names[0];
 			if (names.length >= 2)
