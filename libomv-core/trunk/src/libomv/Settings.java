@@ -53,10 +53,10 @@ public class Settings implements PacketCallback
     // #region Application Settings
 
 	/* Application name */
-	public static final String APPLICATION_NAME = "libomv 0.6.1 123 / Second Life 1.23.5.136262";
+	public static final String LIBRARY_NAME = "libomv-java library";
 
 	/* Application Version */
-	public static final String APPLICATION_VERSION = "0.6.1";
+	public static final String LIBRARY_VERSION = "0.6.2";
 
 	/* The relative directory where external resources are kept */
 	public static String RESOURCE_DIR = "character";

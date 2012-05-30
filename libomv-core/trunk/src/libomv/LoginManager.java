@@ -168,8 +168,8 @@ public class LoginManager
 			this.ID0 = Helpers.GetMAC();
 			this.AgreeToTos = true;
 			this.ReadCritical = true;
-			this.Channel = Settings.APPLICATION_NAME;
-			this.Version = Settings.APPLICATION_VERSION;
+			this.Channel = Settings.LIBRARY_NAME;
+			this.Version = Settings.LIBRARY_VERSION;
 		}
 
 
@@ -766,18 +766,18 @@ public class LoginManager
 	 *            Account last name
 	 * @param password
 	 *            Account password
-	 * @param userAgent
+	 * @param channel
 	 *            Client application name
-	 * @param userVersion
+	 * @param version
 	 *            Client application version
 	 * @return A populated {@link LoginParams} struct containing sane defaults
 	 */
-	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String userAgent,
-			String userVersion)
+	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String channel,
+			String version)
 	{
 		LoginParams params = new LoginParams(_Client, firstName, lastName, password, null);
-		params.Channel = userAgent;
-		params.Version = userVersion;
+		params.Channel = channel;
+		params.Version = version;
 		return params;
 	}
 
@@ -835,19 +835,19 @@ public class LoginManager
 	 *            Account last name
 	 * @param password
 	 *            Account password
-	 * @param userAgent
+	 * @param channel
 	 *            Client application name
-	 * @param userVersion
+	 * @param version
 	 *            Client application version
 	 * @return Whether the login was successful or not. Register to the
 	 *         OnLoginResponse callback to receive more detailed information
 	 *         about the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password, String userAgent, String userVersion)
+	public final boolean Login(String firstName, String lastName, String password, String channel, String version)
 			throws Exception
 	{
-		return Login(DefaultLoginParams(firstName, lastName, password, userAgent, userVersion));
+		return Login(DefaultLoginParams(firstName, lastName, password, channel, version));
 	}
 
 	/**
@@ -864,19 +864,19 @@ public class LoginManager
 	 *            $1$1682a1e45e9f957dcdf0bb56eb43319c
 	 * @param start
 	 *            Starting location URI that can be built with StartLocation()
-	 * @param userAgent
+	 * @param channel
 	 *            Client application name
-	 * @param userVersion
+	 * @param version
 	 *            Client application version
 	 * @return Whether the login was successful or not. Register to the
 	 *         OnLoginResponse callback to receive more detailed information
 	 *         about the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password, String start, String userAgent,
-			String userVersion) throws Exception
+	public final boolean Login(String firstName, String lastName, String password, String start, String channel,
+			String version) throws Exception
 	{
-		LoginParams loginParams = DefaultLoginParams(firstName, lastName, password, userAgent, userVersion);
+		LoginParams loginParams = DefaultLoginParams(firstName, lastName, password, channel, version);
 		loginParams.Start = start;
 
 		return Login(loginParams);
@@ -947,7 +947,31 @@ public class LoginManager
 		{
 			loginParams.Password = Helpers.MD5Password(loginParams.Password);
 		}
-		// #endregion
+		
+        if (loginParams.ViewerDigest == null)
+        	loginParams.ViewerDigest = Helpers.EmptyString;
+        	 
+        if (loginParams.UserAgent == null)
+        	loginParams.UserAgent = Helpers.EmptyString;
+
+        if (loginParams.Version == null)
+            loginParams.Version = Helpers.EmptyString;
+
+        if (loginParams.Platform == null)
+        	loginParams.Platform = Helpers.GetPlatform();
+
+        if (loginParams.MAC == null)
+        	loginParams.MAC = Helpers.EmptyString;
+        
+        if (loginParams.Channel == null || loginParams.Channel.isEmpty())
+        {
+	 	    Logger.Log("Viewer channel not set. This is a TOS violation on some grids.", LogLevel.Warning);
+   	 	    loginParams.Channel = Settings.LIBRARY_NAME;
+        }
+
+        if (loginParams.Author == null)
+            loginParams.Author = Helpers.EmptyString;
+        // #endregion
 
 		if (callback != null)
 			RegisterLoginProgressCallback(callback, loginParams.Options, false);
@@ -1030,14 +1054,14 @@ public class LoginManager
 
 				// Create the Hashtable for XmlRpcCs
 				HashMap<String, Object> loginXmlRpc = new HashMap<String, Object>();
-				loginXmlRpc.put("first", loginParams.FirstName != null ? loginParams.FirstName : Helpers.EmptyString);
-				loginXmlRpc.put("last", loginParams.LastName != null ? loginParams.LastName : Helpers.EmptyString);
-				loginXmlRpc.put("passwd", loginParams.Password != null ? loginParams.Password : Helpers.EmptyString);
-				loginXmlRpc.put("start", loginParams.Start != null ? loginParams.Start : Helpers.EmptyString);
-				loginXmlRpc.put("channel", loginParams.Channel != null ? loginParams.Channel : Helpers.EmptyString);
-				loginXmlRpc.put("version", loginParams.Version != null ? loginParams.Version : Helpers.EmptyString);
-				loginXmlRpc.put("platform", loginParams.Platform != null ? loginParams.Platform : Helpers.EmptyString);
-				loginXmlRpc.put("mac", loginParams.MAC != null ? loginParams.MAC : Helpers.EmptyString);
+				loginXmlRpc.put("first", loginParams.FirstName);
+				loginXmlRpc.put("last", loginParams.LastName);
+				loginXmlRpc.put("passwd", loginParams.Password);
+				loginXmlRpc.put("start", loginParams.Start);
+				loginXmlRpc.put("channel", loginParams.Channel);
+				loginXmlRpc.put("version", loginParams.Version);
+				loginXmlRpc.put("platform", loginParams.Platform);
+				loginXmlRpc.put("mac", loginParams.MAC);
 				if (loginParams.AgreeToTos)
 				{
 					loginXmlRpc.put("agree_to_tos", "true");
