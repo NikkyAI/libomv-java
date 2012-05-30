@@ -445,8 +445,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	public class ObjectPropertiesCallbackArgs implements CallbackArgs
 	{
-		private final Simulator m_Simulator;
-		private final ObjectProperties m_Properties;
+		protected final Simulator m_Simulator;
+		protected final ObjectProperties m_Properties;
 
 		// Get the simulator the object is located
 		public final Simulator getSimulator()
@@ -496,28 +496,14 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * and <see cref="Settings.OBJECT_TRACKING"/> is enabled
 	 * </p>
 	 */
-	public class ObjectPropertiesUpdatedCallbackArgs implements CallbackArgs
+	public class ObjectPropertiesUpdatedCallbackArgs extends ObjectPropertiesCallbackArgs
 	{
-		private final Simulator m_Simulator;
 		private final Primitive m_Prim;
-		private final ObjectProperties m_Properties;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator()
-		{
-			return m_Simulator;
-		}
 
 		// Get the primitive details
 		public final Primitive getPrim()
 		{
 			return m_Prim;
-		}
-
-		// Get the primitive properties
-		public final ObjectProperties getProperties()
-		{
-			return m_Properties;
 		}
 
 		/**
@@ -533,9 +519,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		 */
 		public ObjectPropertiesUpdatedCallbackArgs(Simulator simulator, Primitive prim, ObjectProperties props)
 		{
-			this.m_Simulator = simulator;
+			super(simulator, props);
 			this.m_Prim = prim;
-			this.m_Properties = props;
 		}
 	}
 
@@ -560,23 +545,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * </p>
 	 * 
 	 */
-	public class ObjectPropertiesFamilyCallbackArgs implements CallbackArgs
+	public class ObjectPropertiesFamilyCallbackArgs extends ObjectPropertiesCallbackArgs
 	{
-		private final Simulator m_Simulator;
-		private final ObjectProperties m_Properties;
 		private final ReportType m_Type;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator()
-		{
-			return m_Simulator;
-		}
-
-		//
-		public final ObjectProperties getProperties()
-		{
-			return m_Properties;
-		}
 
 		//
 		public final ReportType getType()
@@ -586,8 +557,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		public ObjectPropertiesFamilyCallbackArgs(Simulator simulator, ObjectProperties props, ReportType type)
 		{
-			this.m_Simulator = simulator;
-			this.m_Properties = props;
+			super(simulator, props);
 			this.m_Type = type;
 		}
 	}
