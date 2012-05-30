@@ -44,7 +44,7 @@ import javax.swing.text.StyledDocument;
 import libomv.GridClient;
 import libomv.types.UUID;
 
-public class LocalChannel extends AbstractChannel
+public class GroupChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
 
@@ -55,9 +55,9 @@ public class LocalChannel extends AbstractChannel
 	/**
 	 * This is the default constructor
 	 */
-	public LocalChannel(GridClient client)
+	public GroupChannel(GridClient client, String name, UUID id)
 	{
-		super(client, "Local Chat", UUID.Zero);
+		super(client, name, id);
 		
 		setLayout(new BorderLayout(0, 0));
 		

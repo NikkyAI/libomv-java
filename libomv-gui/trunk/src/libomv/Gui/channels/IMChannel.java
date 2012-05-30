@@ -29,61 +29,31 @@ import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JList;
 import javax.swing.JTextPane;
-import javax.swing.JButton;
 import javax.swing.SwingConstants;
-import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.BoxLayout;
 import javax.swing.text.StyledDocument;
 
 import libomv.GridClient;
 import libomv.types.UUID;
 
-public class LocalChannel extends AbstractChannel
+public class IMChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
 
 	private JTextPane jTxPane;
-	private JScrollPane jScrpAttendents; 
 	private JTextField jTxChat;
-
-	/**
-	 * This is the default constructor
-	 */
-	public LocalChannel(GridClient client)
+	
+	public IMChannel(GridClient client, String name, UUID id)
 	{
-		super(client, "Local Chat", UUID.Zero);
-		
+		super(client, name, id);
+
 		setLayout(new BorderLayout(0, 0));
 		
-		JPanel panelNorth = new JPanel();
-		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
-		
-		JTextField textField = new JTextField();
-		textField.setColumns(10);
-		panelNorth.add(textField);
-
-		JToggleButton jtbExpandAttendents = new JToggleButton("Show Attendents");
-		jtbExpandAttendents.setHorizontalAlignment(SwingConstants.RIGHT);
-		jtbExpandAttendents.setSelected(false);
-		getJScrpAttendents().setVisible(false);
-		jtbExpandAttendents.addItemListener(new ItemListener()
-		{
-			@Override
-			public void itemStateChanged(ItemEvent e)
-			{
-				getJScrpAttendents().setVisible(e.getStateChange() == ItemEvent.SELECTED);
-			}
-		});
-	
-		panelNorth.add(jtbExpandAttendents);
-		add(panelNorth, BorderLayout.NORTH);
-
 		JScrollPane scrollPaneText = new JScrollPane();
 		scrollPaneText.setViewportView(getTxPane());
 		add(scrollPaneText, BorderLayout.CENTER);
@@ -106,11 +76,8 @@ public class LocalChannel extends AbstractChannel
 
 		panelSouth.add(btnSay);
 		add(panelSouth, BorderLayout.SOUTH);
-
-		add(getJScrpAttendents(), BorderLayout.EAST);
 	}
 
-		
 	private JTextPane getTxPane()
 	{
 		if (jTxPane == null)
@@ -131,20 +98,6 @@ public class LocalChannel extends AbstractChannel
 		return jTxChat;
 	}
 
-	private JScrollPane getJScrpAttendents()
-	{
-		if (jScrpAttendents == null)
-		{
-			jScrpAttendents = new JScrollPane();
-			add(jScrpAttendents, BorderLayout.EAST);
-
-			JList listAttendents = new JList();
-			listAttendents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jScrpAttendents.setViewportView(listAttendents);
-		}
-		return jScrpAttendents;
-	}
-	
 	@Override
 	public StyledDocument getDocument()
 	{

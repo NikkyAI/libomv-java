@@ -28,19 +28,32 @@ package libomv.Gui.channels;
 import javax.swing.JPanel;
 import javax.swing.text.StyledDocument;
 
+import libomv.GridClient;
 import libomv.types.UUID;
 
 public abstract class AbstractChannel extends JPanel
 {
-	public AbstractChannel(String name)
+	private UUID _Id;
+	private GridClient _Client;
+	
+	public AbstractChannel(GridClient client, String name, UUID id)
 	{
 		super();
+		_Id = id;
+		_Client = client;
 		setName(name);
 	}
 	
 	private static final long serialVersionUID = 1L;
 
-	public abstract UUID getID();
+	public UUID getID()
+	{
+		return _Id;
+	}
 
+	public GridClient getClient()
+	{
+		return _Client;
+	}
 	public abstract StyledDocument getDocument();
 }
