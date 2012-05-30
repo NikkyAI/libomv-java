@@ -304,7 +304,7 @@ public class AppearanceManager implements PacketCallback
      */ 
     public boolean getManagerBusy()
     {
-        return AppearanceThreadRunning.get();
+        return AppearanceThread.isAlive();
     }
 
     // Visual parameters last sent to the sim
@@ -327,7 +327,7 @@ public class AppearanceManager implements PacketCallback
     private AtomicInteger SetAppearanceSerialNum = new AtomicInteger();
     // Indicates whether or not the appearance thread is currently running, to prevent multiple
     // appearance threads from running simultaneously
-    private AtomicBoolean AppearanceThreadRunning = new AtomicBoolean(false);
+//    private AtomicBoolean AppearanceThreadRunning = new AtomicBoolean(false);
     // Reference to our agent
     private GridClient _Client;
     // 
@@ -389,7 +389,7 @@ public class AppearanceManager implements PacketCallback
      */
     public void RequestSetAppearance(final boolean forceRebake)
     {
-        if (!AppearanceThreadRunning.compareAndSet(false, true))
+        if (AppearanceThread.isAlive())
         {
             Logger.Log("Appearance thread is already running, skipping", LogLevel.Warning, _Client);
             return;
@@ -467,7 +467,6 @@ public class AppearanceManager implements PacketCallback
                 finally
                 {
                     OnAppearanceSet.dispatch(new AppearanceSetCallbackArgs(success));
-                    AppearanceThreadRunning.set(false);
                 }
             }
         };
@@ -2114,7 +2113,7 @@ public class AppearanceManager implements PacketCallback
             BakeType bakeType = BakeType.setValue(block.TextureIndex);
             AvatarTextureIndex index = BakeTypeToAgentTextureIndex(bakeType);
 
-            Logger.DebugLog("Cache response for " + bakeType + ", TextureID=" + block.TextureID, _Client);
+            Logger.DebugLog("Cache response for " + bakeType + ", TextureID = " + block.TextureID, _Client);
 
             if (!block.TextureID.equals(UUID.Zero))
             {
@@ -2167,7 +2166,6 @@ public class AppearanceManager implements PacketCallback
 	                AppearanceThread.stop();
 	            }
 	            AppearanceThread = null;
-	            AppearanceThreadRunning.set(false);
 	        }
 	        return false;
 		}
