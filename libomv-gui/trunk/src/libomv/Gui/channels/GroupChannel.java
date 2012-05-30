@@ -33,13 +33,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JList;
-import javax.swing.JTextPane;
-import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
-import javax.swing.text.StyledDocument;
 
 import libomv.GridClient;
 import libomv.types.UUID;
@@ -48,9 +45,7 @@ public class GroupChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
 
-	private JTextPane jTxPane;
 	private JScrollPane jScrpAttendents; 
-	private JTextField jTxChat;
 
 	/**
 	 * This is the default constructor
@@ -58,8 +53,6 @@ public class GroupChannel extends AbstractChannel
 	public GroupChannel(GridClient client, String name, UUID id)
 	{
 		super(client, name, id);
-		
-		setLayout(new BorderLayout(0, 0));
 		
 		JPanel panelNorth = new JPanel();
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
@@ -84,51 +77,7 @@ public class GroupChannel extends AbstractChannel
 		panelNorth.add(jtbExpandAttendents);
 		add(panelNorth, BorderLayout.NORTH);
 
-		JScrollPane scrollPaneText = new JScrollPane();
-		scrollPaneText.setViewportView(getTxPane());
-		add(scrollPaneText, BorderLayout.CENTER);
-
-		JPanel panelSouth = new JPanel();
-		panelSouth.setLayout(new BoxLayout(panelSouth, BoxLayout.X_AXIS));
-		panelSouth.add(getJTxChat());
-
-		JButton btnSay = new JButton("Say");
-		btnSay.setHorizontalAlignment(SwingConstants.RIGHT);
-		btnSay.addItemListener(new ItemListener()
-		{
-			@Override
-			public void itemStateChanged(ItemEvent e)
-			{
-				// TODO send the text from the chatTextField
-				getJTxChat().getText();
-			}
-		});
-
-		panelSouth.add(btnSay);
-		add(panelSouth, BorderLayout.SOUTH);
-
 		add(getJScrpAttendents(), BorderLayout.EAST);
-	}
-
-		
-	private JTextPane getTxPane()
-	{
-		if (jTxPane == null)
-		{
-			jTxPane = new JTextPane();
-		}
-		return jTxPane;
-	}
-
-	private JTextField getJTxChat()
-	{
-		if (jTxChat == null)
-		{
-			jTxChat = new JTextField();
-			jTxChat.setHorizontalAlignment(SwingConstants.LEFT);
-			jTxChat.setColumns(20);
-		}
-		return jTxChat;
 	}
 
 	private JScrollPane getJScrpAttendents()
@@ -143,11 +92,5 @@ public class GroupChannel extends AbstractChannel
 			jScrpAttendents.setViewportView(listAttendents);
 		}
 		return jScrpAttendents;
-	}
-	
-	@Override
-	public StyledDocument getDocument()
-	{
-		return getTxPane().getStyledDocument();
 	}
 }
