@@ -47,7 +47,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.JTextComponent;
@@ -85,7 +84,6 @@ public class LoginPanel extends JPanel
 	private JButton jBtnGrids;
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
-	private GridBagConstraints gbc_jLblUserName;
 	
 	public LoginPanel(GridClient client, JFrame parent, ActionListener action)
 	{
@@ -94,9 +92,9 @@ public class LoginPanel extends JPanel
 		_Action = action;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0 };
+		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0 };
 		gridBagLayout.rowWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 
 		setLayout(gridBagLayout);
@@ -104,12 +102,12 @@ public class LoginPanel extends JPanel
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 		GridBagConstraints gridBagConstraints;
-		gbc_jLblUserName = new GridBagConstraints();
-		gbc_jLblUserName.anchor = GridBagConstraints.WEST;
-		gbc_jLblUserName.insets = new Insets(5, 5, 5, 5);
-		gbc_jLblUserName.gridx = 1;
-		gbc_jLblUserName.gridy = 0;
-		add(getJLblUserName(), gbc_jLblUserName);
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints.gridx = 1;
+		gridBagConstraints.gridy = 0;
+		add(getJLblUserName(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -131,10 +129,17 @@ public class LoginPanel extends JPanel
 		gridBagConstraints.gridx = 4;
 		gridBagConstraints.gridy = 0;
 		add(getJPwdPassword(), gridBagConstraints);
-
+				
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.gridx = 5;
+		gridBagConstraints.gridy = 0;
+		add(getChckbxSavePassword(), gridBagConstraints);
+		
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
-		gridBagConstraints.gridx = 5;
+		gridBagConstraints.gridx = 7;
 		gridBagConstraints.gridy = 0;
 		add(getJBtnLogin(), gridBagConstraints);
 
@@ -154,16 +159,18 @@ public class LoginPanel extends JPanel
 		add(getJcbGridSelector(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 1;
 		add(getBtnGrids(), gridBagConstraints);
 		
-				gridBagConstraints = new GridBagConstraints();
-				gridBagConstraints.insets = new Insets(0, 0, 5, 5);
-				gridBagConstraints.gridx = 5;
-				gridBagConstraints.gridy = 1;
-				add(getChckbxSaveDetails(), gridBagConstraints);
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.gridx = 5;
+		gridBagConstraints.gridy = 1;
+		add(getChckbxSaveDetails(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.insets = new Insets(0, 5, 0, 5);
@@ -174,17 +181,11 @@ public class LoginPanel extends JPanel
 		add(jLblLocation, gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 0, 0, 5);
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints.insets = new Insets(0, 0, 0, 5);
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
-				
-						gridBagConstraints = new GridBagConstraints();
-						gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-						gridBagConstraints.gridx = 5;
-						gridBagConstraints.gridy = 2;
-						add(getChckbxSavePassword(), gridBagConstraints);
 		
 		parent.getContentPane().add(getJBrowser().getComponent(), BorderLayout.CENTER);
 
@@ -437,7 +438,6 @@ public class LoginPanel extends JPanel
 		if (jChkSaveDetails == null)
 		{
 			jChkSaveDetails = new JCheckBox("Save Details");
-			jChkSaveDetails.setHorizontalAlignment(SwingConstants.CENTER);
 			
 			jChkSaveDetails.addActionListener(new ActionListener()
 			{
@@ -473,18 +473,18 @@ public class LoginPanel extends JPanel
 			if (e.getStatus() == LoginStatus.Success)
 			{
 				// Login was successful
-				System.out.println("sldump: Message of the day: " + e.getMessage());
+				System.out.println("JOMV: Message of the day: " + e.getMessage());
 				doReturn(true);
 				return true;
 			}
 			else if (e.getStatus() == LoginStatus.Redirecting)
 			{
 				// Server requested redirection
-				System.out.println("sldump: Server requested redirection: " + e.getReason());
+				System.out.println("JOMV: Server requested redirection: " + e.getReason());
 			}
 			else if (e.getStatus() == LoginStatus.Failed)
 			{
-				System.out.println("sldump: Error logging in: " + e.getReason());
+				System.out.println("JOMV: Error logging in: " + e.getReason() + " : " + e.getMessage());
 				doReturn(false);
 				return true;
 			}
@@ -492,7 +492,7 @@ public class LoginPanel extends JPanel
 		}
 	}
 
-	private void doLogin()
+	private boolean doLogin()
 	{
 		GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
 		_Client.setDefaultGrid(grid);
@@ -511,18 +511,22 @@ public class LoginPanel extends JPanel
 		_Client.Login.OnLoginProgress.add(new LoginProgressHandler(), false);
 		try
 		{
-			_Client.Login.Login(_Client.Login.new LoginParams(_Client));
+			return _Client.Login.Login(_Client.Login.new LoginParams(_Client));
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		return false;
 	}
 	
 	private void doReturn(boolean success)
 	{
-		_Parent.remove(getJBrowser().getComponent());
-		_Parent.remove(this);
+		if (success)
+		{
+			_Parent.remove(getJBrowser().getComponent());
+			_Parent.remove(this);
+		}
 		_Action.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, success ? "success" : "failed"));
 	}
 	
@@ -567,8 +571,7 @@ public class LoginPanel extends JPanel
 		if (component instanceof JTextField)
 		{
 			// Invalid
-			if (component.getText() == null || component.getText().trim().length() <= 0
-					|| component.getText().contains(" "))
+			if (component.getText() == null || component.getText().trim().length() <= 0)
 			{
 				associatedLabel.setForeground(Color.RED);
 				return false;
