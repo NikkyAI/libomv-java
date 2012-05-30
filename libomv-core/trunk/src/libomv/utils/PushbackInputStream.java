@@ -1,10 +1,10 @@
-package libomv.StructuredData.LLSD;
+package libomv.utils;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LLSDInputStream extends FilterInputStream
+public class PushbackInputStream extends FilterInputStream
 {
 	/**
 	 * The pushback buffer.
@@ -29,7 +29,7 @@ public class LLSDInputStream extends FilterInputStream
 		return bytes;
 	}
 
-	public LLSDInputStream(InputStream in, int size)
+	public PushbackInputStream(InputStream in, int size)
 	{
 		super(in);
 		if (size <= 0)
@@ -41,7 +41,7 @@ public class LLSDInputStream extends FilterInputStream
 		this.bytes = 0;
 	}
 
-	public LLSDInputStream(InputStream in)
+	public PushbackInputStream(InputStream in)
 	{
 		this(in, 1);
 	}

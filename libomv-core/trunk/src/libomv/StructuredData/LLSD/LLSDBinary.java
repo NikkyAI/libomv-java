@@ -51,6 +51,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
+import libomv.utils.PushbackInputStream;
 
 public final class LLSDBinary
 {
@@ -87,11 +88,11 @@ public final class LLSDBinary
 	 */
 	public static OSD parse(InputStream instr) throws IOException, ParseException
 	{
-		LLSDInputStream stream = new LLSDInputStream(instr);
+		PushbackInputStream stream = new PushbackInputStream(instr);
 		return parse(stream);
 	}
 
-	public static OSD parse(LLSDInputStream stream) throws IOException, ParseException
+	public static OSD parse(PushbackInputStream stream) throws IOException, ParseException
 	{
 		skipWhiteSpace(stream);
 		boolean result = find(stream, llsdBinaryHead);
@@ -197,7 +198,7 @@ public final class LLSDBinary
 		stream.write(mapEndBinaryMarker);
 	}
 
-	private static OSD parseElement(LLSDInputStream stream) throws IOException, ParseException
+	private static OSD parseElement(PushbackInputStream stream) throws IOException, ParseException
 	{
 		skipWhiteSpace(stream);
 		OSD osd;
@@ -268,7 +269,7 @@ public final class LLSDBinary
 		return osd;
 	}
 
-	private static OSD parseArray(LLSDInputStream stream) throws IOException, ParseException
+	private static OSD parseArray(PushbackInputStream stream) throws IOException, ParseException
 	{
 		int numElements = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 		int crrElement = 0;
@@ -286,7 +287,7 @@ public final class LLSDBinary
 		return osdArray;
 	}
 
-	private static OSD parseMap(LLSDInputStream stream) throws IOException, ParseException
+	private static OSD parseMap(PushbackInputStream stream) throws IOException, ParseException
 	{
 		int numElements = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 		int crrElement = 0;
@@ -313,7 +314,7 @@ public final class LLSDBinary
 	 * @param stream
 	 * @throws IOException
 	 */
-	private static void skipWhiteSpace(LLSDInputStream stream) throws IOException
+	private static void skipWhiteSpace(PushbackInputStream stream) throws IOException
 	{
 		int bt;
 		while (((bt = stream.read()) > 0)
@@ -321,7 +322,7 @@ public final class LLSDBinary
 		stream.unread(bt);
 	}
 
-	private static boolean find(LLSDInputStream stream, byte toFind) throws IOException
+	private static boolean find(PushbackInputStream stream, byte toFind) throws IOException
 	{
 		int bt = stream.read();
 		if (bt < 0)
@@ -336,7 +337,7 @@ public final class LLSDBinary
 		return false;
 	}
 
-	public static boolean find(LLSDInputStream stream, byte[] toFind) throws IOException
+	public static boolean find(PushbackInputStream stream, byte[] toFind) throws IOException
 	{
 		if (toFind.length == 0)
 		{
@@ -369,7 +370,7 @@ public final class LLSDBinary
 		return false;
 	}
 
-	private static byte[] consumeBytes(LLSDInputStream stream, int consumeBytes) throws IOException, ParseException
+	private static byte[] consumeBytes(PushbackInputStream stream, int consumeBytes) throws IOException, ParseException
 	{
 		byte[] bytes = new byte[consumeBytes];
 		if (stream.read(bytes, 0, consumeBytes) < consumeBytes)
