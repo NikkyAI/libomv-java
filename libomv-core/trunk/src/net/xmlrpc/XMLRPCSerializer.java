@@ -130,7 +130,6 @@ class XMLRPCSerializer implements IXMLRPCSerializer
 		}
 
 		Object obj;
-		boolean hasType = true;
 		String typeNodeName = null;
 		try
 		{
@@ -141,13 +140,7 @@ class XMLRPCSerializer implements IXMLRPCSerializer
 				// empty <value></value>, return empty string
 				return "";
 			}
-		}
-		catch (XmlPullParserException e)
-		{
-			hasType = false;
-		}
-		if (hasType)
-		{
+
 			if (typeNodeName.equals(TYPE_INT) || typeNodeName.equals(TYPE_I4))
 			{
 				String value = parser.nextText();
@@ -253,7 +246,7 @@ class XMLRPCSerializer implements IXMLRPCSerializer
 				throw new IOException("Cannot deserialize " + parser.getName());
 			}
 		}
-		else
+		catch (XmlPullParserException e)
 		{
 			// TYPE_STRING (<string>) is not required
 			obj = parser.getText();
