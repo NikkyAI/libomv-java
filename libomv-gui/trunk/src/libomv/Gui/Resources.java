@@ -25,7 +25,6 @@
 package libomv.Gui;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;

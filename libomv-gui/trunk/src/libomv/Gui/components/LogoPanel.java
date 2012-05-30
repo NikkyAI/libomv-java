@@ -41,6 +41,10 @@ public class LogoPanel extends JPanel
 	// The active subimage to draw
 	private Image activeImage;
 
+	public LogoPanel()
+	{
+	}
+
 	@Override
 	public void paintComponent(Graphics g)
 	{
@@ -96,8 +100,8 @@ public class LogoPanel extends JPanel
 							imgIndex = 1;
 						}
 
-						x = imgIndex / 8;
-						y = (imgIndex % 4) * 32;
+						x = (imgIndex % 8) * 32;
+						y = (imgIndex / 8) * 32;
 
 						activeImage = progress.getSubimage(x, y, 32, 32);
 

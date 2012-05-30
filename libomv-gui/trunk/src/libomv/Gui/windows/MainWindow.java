@@ -42,7 +42,7 @@ import libomv.Gui.components.LoginPanel;
 import libomv.Gui.components.OnlinePanel;
 import libomv.Gui.dialogs.AboutDialog;
 
-public class MainWindow extends JFrame
+public class MainWindow extends JFrame implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 
@@ -76,32 +76,28 @@ public class MainWindow extends JFrame
 		initializeLoginPanel();
 	}
 	
-	
-	private class PanelActionListener implements ActionListener
+	@Override
+	public void actionPerformed(ActionEvent e)
 	{
-		@Override
-		public void actionPerformed(ActionEvent e)
+		String command = e.getActionCommand();
+		if (command != null && command.equals("success"))
 		{
-			String command = e.getActionCommand();
-			if (command != null && command.equals("success"))
-			{
-				// Create the online panel and display it
-				initializeOnlinePanel();
-			}
-			else if (command != null && command.equals("logout"))
-			{
-				// Create the online panel and display it
-				initializeLoginPanel();
-			}
+			// Create the online panel and display it
+			initializeOnlinePanel();
+		}
+		else if (command != null && command.equals("logout"))
+		{
+			// Create the online panel and display it
+			initializeLoginPanel();
 		}
 	}
-
+	
 	public void initializeLoginPanel()
 	{
 		if (jPSouth != null)
 			remove(jPSouth);
-		jPSouth = new LoginPanel(_Client, this, new PanelActionListener());
-		add(jPSouth, BorderLayout.SOUTH);
+		jPSouth = new LoginPanel(_Client, this, this);
+		getContentPane().add(jPSouth, BorderLayout.SOUTH);
 		validate();		
 	}
 
@@ -109,8 +105,8 @@ public class MainWindow extends JFrame
 	{
 		if (jPSouth != null)
 			remove(jPSouth);
-		jPSouth = new OnlinePanel(_Client, this, new PanelActionListener());
-		add(jPSouth, BorderLayout.SOUTH);
+		jPSouth = new OnlinePanel(_Client, this, this);
+		getContentPane().add(jPSouth, BorderLayout.SOUTH);
 		validate();		
 	}
 	
@@ -155,10 +151,16 @@ public class MainWindow extends JFrame
 			JMenu pref = new JMenu("Preferences");
 			pref.add(jMiSettings);
 			jMbMain.add(pref);
+			
+			JMenu mnNewMenu = new JMenu("New menu");
+			jMbMain.add(mnNewMenu);
 
 			JMenu help = new JMenu("Help");
 			help.add(jMiAbout);
 			jMbMain.add(help);
+			
+			JPanel panel = new JPanel();
+			jMbMain.add(panel);
 		}
 		return jMbMain;
 	}

@@ -73,5 +73,6 @@ public class OnlinePanel extends JPanel
 
 	private void initializePanel()
 	{
+
 	}
 }

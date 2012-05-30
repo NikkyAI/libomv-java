@@ -148,8 +148,7 @@ public class LoginPanel extends JPanel
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 1;
-		jLblGridSelector = new JLabel("Grid:");
-		add(jLblGridSelector, gridBagConstraints);
+		add(getJLblGridSelector(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
@@ -177,8 +176,7 @@ public class LoginPanel extends JPanel
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
-		jLblLocation = new JLabel("Location:");
-		add(jLblLocation, gridBagConstraints);
+		add(getJLblLocation(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -209,7 +207,24 @@ public class LoginPanel extends JPanel
 		}
 		return jLblPassword;
 	}
-
+	
+	private JLabel getJLblGridSelector()
+	{
+		if (jLblGridSelector == null)
+		{
+			jLblGridSelector = new JLabel("Grid:");
+		}
+		return jLblGridSelector;
+	}
+	private JLabel getJLblLocation()
+	{
+		if (jLblLocation == null)
+		{
+			jLblLocation = new JLabel("Location:");
+		}
+		return jLblLocation;
+	}
+	
 	/**
 	 * This method initializes textFirstName
 	 * 
