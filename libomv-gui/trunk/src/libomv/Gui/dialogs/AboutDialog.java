@@ -41,7 +41,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class AboutWindow extends JDialog
+public class AboutDialog extends JDialog
 {
 
 	private static final long serialVersionUID = 1L;
@@ -50,7 +50,7 @@ public class AboutWindow extends JDialog
 	/**
 	 * 
 	 */
-	public AboutWindow(JFrame owner)
+	public AboutDialog(JFrame owner)
 	{
 		super(owner);
 		setTitle("About Libomv-Java");

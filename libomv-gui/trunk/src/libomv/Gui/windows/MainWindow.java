@@ -40,6 +40,7 @@ import javax.swing.UIManager;
 import libomv.GridClient;
 import libomv.Gui.components.LoginPanel;
 import libomv.Gui.components.OnlinePanel;
+import libomv.Gui.dialogs.AboutDialog;
 
 public class MainWindow extends JFrame
 {
@@ -144,7 +145,7 @@ public class MainWindow extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					AboutWindow about = new AboutWindow(getJMainFrame());
+					AboutDialog about = new AboutDialog(getJMainFrame());
 					about.setVisible(true);
 				}
 			});
