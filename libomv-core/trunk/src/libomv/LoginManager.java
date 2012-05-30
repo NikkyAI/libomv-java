@@ -961,7 +961,7 @@ public class LoginManager
         	loginParams.Platform = Helpers.GetPlatform();
 
         if (loginParams.MAC == null)
-        	loginParams.MAC = Helpers.EmptyString;
+        	loginParams.MAC = Helpers.GetMAC();
         
         if (loginParams.Channel == null || loginParams.Channel.isEmpty())
         {

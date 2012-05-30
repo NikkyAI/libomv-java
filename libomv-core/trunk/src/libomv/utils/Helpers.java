@@ -2192,7 +2192,7 @@ public class Helpers
 		Class<?> type = value.getClass();
 		if (!type.isEnum())
 		{
-			return "";
+			return EmptyString;
 		}
 		return value.toString();
 	}
@@ -2351,6 +2351,10 @@ public class Helpers
 							sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? ":" : ""));
 						}
 						break;
+					}
+					if (nis.hasMoreElements())
+					{
+						sb.append(" ");
 					}
 				}
 			}
