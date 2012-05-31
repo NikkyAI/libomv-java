@@ -42,7 +42,7 @@ public class WaitForLoginCommand extends Command
     }
 
 	@Override
-	public String Execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID)
 	{
 		try
 		{

@@ -44,7 +44,7 @@ public class ScriptCommand extends Command
     }
 
     @Override
-	public String Execute(String[] args, UUID fromAgentID) throws Exception
+	public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 1)
             return "Usage: script [filename]";

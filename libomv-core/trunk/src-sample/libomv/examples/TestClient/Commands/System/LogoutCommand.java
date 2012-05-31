@@ -41,7 +41,7 @@ public class LogoutCommand extends Command
     }
 
     @Override
-	public String Execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID)
     {
         String name = Client.toString();
 	    try

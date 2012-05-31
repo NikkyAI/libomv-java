@@ -41,7 +41,7 @@ public class WhoCommand extends Command
 	}
 
     @Override
-	public String Execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID)
 	{
 		StringBuilder result = new StringBuilder();
 

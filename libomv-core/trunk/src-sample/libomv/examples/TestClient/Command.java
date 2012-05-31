@@ -53,7 +53,7 @@ public abstract class Command implements Comparable<Object>
 
 	protected TestClient Client;
 
-	public abstract String Execute(String[] args, UUID fromAgentID) throws Exception;
+	public abstract String execute(String[] args, UUID fromAgentID) throws Exception;
 
 	/// <summary>
 	/// When set to true, think will be called.
@@ -63,7 +63,7 @@ public abstract class Command implements Comparable<Object>
 	/// <summary>
 	/// Called twice per second, when Command.Active is set to true.
 	/// </summary>
-	public void Think()
+	public void think()
 	{
 		
 	}

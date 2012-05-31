@@ -126,7 +126,7 @@ public class TestClient extends GridClient implements PacketCallback
 		        for (Command c : Commands.values())
 		        {
 		            if (c.Active)
-		                c.Think();
+		                c.think();
 		        }
 			}
 		}, 500, 500);

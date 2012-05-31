@@ -39,7 +39,7 @@ public class LocationCommand extends Command
 	}
 
 	@Override
-	public String Execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID)
 	{
         return "CurrentSim: '" + Client.Network.getCurrentSim().toString() +
                "' Position: " + Client.Self.getSimRotation().toString();

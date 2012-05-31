@@ -40,7 +40,7 @@ public class GotoLandmark extends Command
     }
 
     @Override
-	public String Execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID)
     {
         if (args.length < 1)
         {

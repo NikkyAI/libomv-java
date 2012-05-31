@@ -42,7 +42,7 @@ public class BalanceCommand extends Command
 	}
 
     @Override
-	public String Execute(String[] args, UUID fromAgentID) throws Exception
+	public String execute(String[] args, UUID fromAgentID) throws Exception
 	{
         final TimeoutEvent<Integer> waitBalance = new TimeoutEvent<Integer>();
         

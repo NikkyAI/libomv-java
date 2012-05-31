@@ -387,7 +387,7 @@ public class ClientManager
             {
                 for (TestClient client : Clients.values())
                 {
-                    System.out.println(client.Commands.get("help").Execute(args, UUID.Zero));
+                    System.out.println(client.Commands.get("help").execute(args, UUID.Zero));
                     break;
                 }
             }
@@ -400,7 +400,7 @@ public class ClientManager
         {
             // No reason to pass this to all bots, and we also want to allow it when there are no bots
             ScriptCommand command = new ScriptCommand(null);
-            Logger.Log(command.Execute(args, UUID.Zero), LogLevel.Info);
+            Logger.Log(command.execute(args, UUID.Zero), LogLevel.Info);
         }
         else if (firstToken.equals("waitforlogin"))
         {
@@ -408,7 +408,7 @@ public class ClientManager
             if (ClientManager.getInstance().PendingLogins > 0)
             {
                 WaitForLoginCommand command = new WaitForLoginCommand(null);
-                Logger.Log(command.Execute(args, UUID.Zero), LogLevel.Info);
+                Logger.Log(command.execute(args, UUID.Zero), LogLevel.Info);
             }
             else
             {
@@ -438,7 +438,7 @@ public class ClientManager
                                 String result;
                                 try
                                 {
-                                    result = testClient.Commands.get(firstToken).Execute(args, fromAgentID);
+                                    result = testClient.Commands.get(firstToken).execute(args, fromAgentID);
                                     Logger.Log(result, LogLevel.Info, testClient);
                                 }
                                 catch(Exception e)

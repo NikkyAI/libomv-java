@@ -39,7 +39,7 @@ public class LoginCommand extends Command
     }
 
     @Override
-	public String Execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID)
     {
         // This is a dummy command. Calls to it should be intercepted and handled specially
         return "This command should not be executed directly";
