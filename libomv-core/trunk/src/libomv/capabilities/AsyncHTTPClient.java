@@ -204,12 +204,12 @@ public abstract class AsyncHTTPClient<T>
 			{
 				if (certificate == null)
 				{
-					certificate = Helpers.GetCertificate(host);
+					certificate = Helpers.getCertificate(host);
 				}
 
 				if (certificate != null)
 				{
-					KeyStore store = Helpers.GetExtendedKeyStore();
+					KeyStore store = Helpers.getExtendedKeyStore();
 					store.setCertificateEntry(host, certificate);
 					client.getConnectionManager().getSchemeRegistry().register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 				}

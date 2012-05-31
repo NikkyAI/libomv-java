@@ -162,10 +162,10 @@ public class LoginManager
 					"login-flags", "global-textures", "adult_compliant" };
 			this.MethodName = "login_to_simulator";
 			this.Start = "last";
-			this.Platform = Helpers.GetPlatform();
-			this.MAC = Helpers.GetMAC();
+			this.Platform = Helpers.getPlatform();
+			this.MAC = Helpers.getMAC();
 			this.ViewerDigest = "";
-			this.ID0 = Helpers.GetMAC();
+			this.ID0 = Helpers.getMAC();
 			this.AgreeToTos = true;
 			this.ReadCritical = true;
 			this.Channel = Settings.LIBRARY_NAME;
@@ -958,10 +958,10 @@ public class LoginManager
             loginParams.Version = Helpers.EmptyString;
 
         if (loginParams.Platform == null)
-        	loginParams.Platform = Helpers.GetPlatform();
+        	loginParams.Platform = Helpers.getPlatform();
 
         if (loginParams.MAC == null)
-        	loginParams.MAC = Helpers.GetMAC();
+        	loginParams.MAC = Helpers.getMAC();
         
         if (loginParams.Channel == null || loginParams.Channel.isEmpty())
         {
@@ -1103,8 +1103,8 @@ public class LoginManager
 
 				if (loginUri.getScheme().equals("https"))
 				{
-					KeyStore ks = Helpers.GetExtendedKeyStore();
-					ks.setCertificateEntry(loginUri.getHost(), Helpers.GetCertificate(loginUri.getHost()));
+					KeyStore ks = Helpers.getExtendedKeyStore();
+					ks.setCertificateEntry(loginUri.getHost(), Helpers.getCertificate(loginUri.getHost()));
 					client.register(new Scheme("https", 443, new SSLSocketFactory(ks)));
 				}
 

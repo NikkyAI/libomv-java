@@ -559,7 +559,7 @@ public class Helpers
 		return result.toString().trim();
 	}
 
-	public static double GetUnixTime()
+	public static double getUnixTime()
 	{
 		return Epoch.getTime() / 1000.0;
 	}
@@ -2287,7 +2287,7 @@ public class Helpers
 
 	/**
 	 * <p>
-	 * Checks if an array of Objects is empty or <code>null</code>.
+	 * Checks if a character array is empty or <code>null</code>.
 	 * </p>
 	 * 
 	 * @param array
@@ -2320,7 +2320,7 @@ public class Helpers
 	 * 
 	 * @return Either "Win" or "Linux"
 	 */
-	public static String GetPlatform()
+	public static String getPlatform()
 	{
 		return System.getProperty("os.name");
 	}
@@ -2331,7 +2331,7 @@ public class Helpers
 	 * @return A string containing the first found Mac Address
 	 * @throws SocketException
 	 */
-	public static String GetMAC()
+	public static String getMAC()
 	{
 		try
 		{
@@ -2493,7 +2493,7 @@ public class Helpers
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static KeyStore GetExtendedKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
+	public static KeyStore getExtendedKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
 			CertificateException
 	{
 		KeyStore ks = null;
@@ -2535,7 +2535,7 @@ public class Helpers
 		return ks;
 	}
 
-	public static X509Certificate GetCertificate(final String hostname) throws CertificateException, IOException,
+	public static X509Certificate getCertificate(final String hostname) throws CertificateException, IOException,
 			URISyntaxException
 	{
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
