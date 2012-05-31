@@ -155,7 +155,7 @@ public class sldump implements PacketCallback
 			}
 			else if (e.getStatus() == LoginStatus.Failed)
 			{
-				System.out.println("sldump: Error logging in: " + e.getReason());
+				System.out.println("sldump: Error logging in: " + e.getReason() + e.getMessage() != null ? " : " + e.getMessage() : "");
 			}
 			return false;
 		}
