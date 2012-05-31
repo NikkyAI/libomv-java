@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import libomv.StructuredData.LLSD.LLSDNotation;
+import libomv.StructuredData.LLSD.LLSDJson;
 
 public class OSDMap extends OSD implements Map<String, OSD>
 {
@@ -93,7 +93,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	{
 		try
 		{
-			return LLSDNotation.serializeToString(this);
+			return LLSDJson.serializeToString(this);
 		}
 		catch (IOException e)
 		{

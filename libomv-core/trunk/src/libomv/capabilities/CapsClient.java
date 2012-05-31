@@ -100,7 +100,6 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 			case Binary:
 				contentType = "application/llsd+binary";
 				break;
-			case Json:
 			default:
 				contentType = "application/llsd+json";
 				break;

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2007-2008, openmetaverse.org
- * Portions Copyright (c) 2009-2011, Frederick Martian
+ * Portions Copyright (c) 2009-2012, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,12 @@
  */
 package libomv.StructuredData.LLSD;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -43,8 +48,9 @@ import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDString;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
+import libomv.utils.PushbackReader;
 
-public final class LLSDNotation
+public final class LLSDJson
 {
 	private static final String baseIndent = "  ";
 
@@ -85,31 +91,128 @@ public final class LLSDNotation
 	private static final char doubleQuotesNotationMarker = '"';
 	private static final char singleQuotesNotationMarker = '\'';
 
+	/**
+	 * Parse an LLSD Notation string and convert it into an hierarchical OSD object
+	 * 
+	 * @param string The LLSD Notation string to parse
+	 * @return hierarchical OSD object
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static OSD parse(String string) throws ParseException, IOException
 	{
-		return parseElement(new LLSDReader(new StringReader(string)));
+		StringReader reader = new StringReader(string);
+		try
+		{
+			return parseElement(new PushbackReader(reader));
+		}
+		finally
+		{
+			reader.close();
+		}
 	}
 
+	/**
+	 * Parse an LLSD Notation byte stream and convert it into an hierarchical OSD
+	 * object
+	 * 
+	 * @param stream The LLSD Notation byte stream to parse
+	 * @param encoding The text encoding to use when converting the stream to text
+	 * @return hierarchical OSD object
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static OSD parse(byte[] data, String encoding) throws ParseException, IOException
+	{
+		PushbackReader reader = new PushbackReader(new InputStreamReader(new ByteArrayInputStream(data), encoding));
+		try
+		{
+			return parseElement(reader);
+		}
+		finally
+		{
+			reader.close();
+		}
+	}
+
+	/**
+	 * Parse an LLSD Notation reader and convert it into an hierarchical OSD object
+	 * 
+	 * @param reader The LLSD Notation reader to parse
+	 * @return hierarchical OSD object
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static OSD parse(Reader reader) throws ParseException, IOException
 	{
-		return parseElement(new LLSDReader(reader));
+		return parseElement(reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader));
 	}
-
-	public static void serialize(Writer writer, OSD osd) throws IOException
+	
+	/**
+	 * Parse an LLSD Notation byte stream and convert it into an hierarchical OSD
+	 * object
+	 * 
+	 * @param stream The LLSD Notation byte stream to parse
+	 * @param encoding The text encoding to use when converting the stream to text
+	 * @return hierarchical OSD object
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static OSD parse(InputStream stream, String encoding) throws ParseException, IOException
 	{
-		serializeElement(writer, osd);
+		return parseElement(new PushbackReader(new InputStreamReader(stream, encoding)));
 	}
 
-	public static String serializeToString(OSD osd) throws IOException
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation string
+	 * 
+	 * @param stream The hierarchical LLSD Notation byte stream
+	 * @param data The hierarchical OSD object to serialize
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
+	 * @throws IOException
+	 */
+	public static void serialize(OutputStream stream, OSD data, String encoding) throws IOException
+	{
+		serializeElement(new OutputStreamWriter(stream, encoding), data);
+	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @throws IOException
+	 */
+	public static void serialize(Writer writer, OSD data) throws IOException
+	{
+		serializeElement(writer, data);
+	}
+	
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation string
+	 * 
+	 * @param data The hierarchical OSD object to serialize
+	 * @return an LLSD Notation formatted string
+	 * @throws IOException
+	 */
+	public static String serializeToString(OSD data) throws IOException
 	{
 		Writer writer = new StringWriter();
-		serializeElement(writer, osd);
-		return writer.toString();
+		try
+		{
+			serializeElement(writer, data);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();
+		}
 	}
 
-	public static void serializeFormatted(Writer writer, OSD osd) throws IOException
+	public static void serializeFormatted(Writer writer, OSD data) throws IOException
 	{
-		serializeElementFormatted(writer, "", osd);
+		serializeElementFormatted(writer, "", data);
 	}
 
 	/**
@@ -120,7 +223,7 @@ public final class LLSDNotation
 	 * @return the OSD data corresponding to the LLSD data element
 	 * @throws IOException
 	 */
-	private static OSD parseElement(LLSDReader reader) throws ParseException, IOException
+	private static OSD parseElement(PushbackReader reader) throws ParseException, IOException
 	{
 		int character = skipWhitespace(reader);
 		if (character <= 0)
@@ -301,7 +404,7 @@ public final class LLSDNotation
 		return osd;
 	}
 
-	private static OSD parseInteger(LLSDReader reader) throws IOException
+	private static OSD parseInteger(PushbackReader reader) throws IOException
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
@@ -321,7 +424,7 @@ public final class LLSDNotation
 		return OSD.FromInteger(new Integer(s.toString()));
 	}
 
-	private static OSD parseReal(LLSDReader reader) throws IOException
+	private static OSD parseReal(PushbackReader reader) throws IOException
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
@@ -343,7 +446,7 @@ public final class LLSDNotation
 		return OSD.FromReal(new Double(s.toString()));
 	}
 
-	private static OSD parseArray(LLSDReader reader) throws IOException, ParseException
+	private static OSD parseArray(PushbackReader reader) throws IOException, ParseException
 	{
 		int character;
 		OSDArray osdArray = new OSDArray();
@@ -371,7 +474,7 @@ public final class LLSDNotation
 		return osdArray;
 	}
 
-	private static OSD parseMap(LLSDReader reader) throws ParseException, IOException
+	private static OSD parseMap(PushbackReader reader) throws ParseException, IOException
 	{
 		int character;
 		OSDMap osdMap = new OSDMap();
@@ -641,7 +744,7 @@ public final class LLSDNotation
 		writer.write(mapEndNotationMarker);
 	}
 
-	public static int skipWhitespace(LLSDReader reader) throws IOException
+	public static int skipWhitespace(PushbackReader reader) throws IOException
 	{
 		int character;
 		while ((character = reader.read()) >= 0)
@@ -655,7 +758,7 @@ public final class LLSDNotation
 		return character;
 	}
 
-	public static int GetLengthInBrackets(LLSDReader reader) throws IOException, ParseException
+	public static int GetLengthInBrackets(PushbackReader reader) throws IOException, ParseException
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
@@ -675,7 +778,7 @@ public final class LLSDNotation
 		return new Integer(s.toString());
 	}
 
-	public static String GetStringDelimitedBy(LLSDReader reader, char delimiter) throws IOException, ParseException
+	public static String GetStringDelimitedBy(PushbackReader reader, char delimiter) throws IOException, ParseException
 	{
 		int character;
 		boolean foundEscape = false;
@@ -732,7 +835,7 @@ public final class LLSDNotation
 		return s.toString();
 	}
 
-	public static int BufferCharactersEqual(LLSDReader reader, char[] buffer, int offset) throws IOException
+	public static int BufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
 	{
 
 		boolean charactersEqual = true;

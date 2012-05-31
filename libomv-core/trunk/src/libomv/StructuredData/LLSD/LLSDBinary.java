@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2007-2008, openmetaverse.org
- * Portions Copyright (c) 2009-2011, Frederick Martian
+ * Portions Copyright (c) 2009-2012, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -26,25 +26,27 @@
  */
 package libomv.StructuredData.LLSD;
 
-//
-// *
-// * This implementation is based upon the description at
-// *
-// * http://wiki.secondlife.com/wiki/LLSD
-// *
-// * and (partially) tested against the (supposed) reference implementation at
-// *
-// * http://svn.secondlife.com/svn/linden/release/indra/lib/python/indra/base/osd.py
-// *
-//
+/*
+ * This implementation is based upon the description at
+ * http://wiki.secondlife.com/wiki/LLSD
+ * and (partially) tested against the (supposed) reference implementation at
+ * http://svn.secondlife.com/svn/linden/release/indra/lib/python/indra/base/osd.py
+ */
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Map.Entry;
+
+import org.apache.commons.io.output.WriterOutputStream;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
@@ -78,22 +80,16 @@ public final class LLSDBinary
 	private static final byte keyBinaryMarker = (byte) 'k';
 
 	/**
-	 * Creates an OSD (object structured data) object from a binary data stream
+	 * Creates an OSD (object structured data) object from a LLSD binary data stream
 	 * 
-	 * @param stream
-	 *            The byte stream to read from
+	 * @param stream The byte stream to read from
 	 * @return and OSD object
 	 * @throws IOException
-	 *             , OSDException
+	 * @throws ParseException
 	 */
 	public static OSD parse(InputStream instr) throws IOException, ParseException
 	{
-		PushbackInputStream stream = new PushbackInputStream(instr);
-		return parse(stream);
-	}
-
-	public static OSD parse(PushbackInputStream stream) throws IOException, ParseException
-	{
+		PushbackInputStream stream = instr instanceof PushbackInputStream ? (PushbackInputStream)instr : new PushbackInputStream(instr);
 		skipWhiteSpace(stream);
 		boolean result = find(stream, llsdBinaryHead);
 		if (!result)
@@ -107,11 +103,52 @@ public final class LLSDBinary
 		return parseElement(stream);
 	}
 
-	public static void serialize(OutputStream stream, OSD osd) throws IOException
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Binary string
+	 * 
+	 * @param data The hierarchical OSD object to serialize
+	 * @return an OSD XML formatted string
+	 * @throws IOException
+	 */
+	public static String serializeToString(OSD data, String encoding) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(new WriterOutputStream(writer, encoding), data);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();
+		}
+	}
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Binary writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
+	 * @throws IOException
+	 */
+	public static void serialize(Writer writer, OSD data, String encoding) throws IOException
+	{
+		serialize(new WriterOutputStream(writer, encoding), data);
+	}
+	
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD binary stream
+	 * 
+	 * @param stream The binary byte stream to write the OSD object into
+	 * @param data The hierarchical OSD object to serialize
+	 * @throws IOException
+	 */
+	public static void serialize(OutputStream stream, OSD data) throws IOException
 	{
 		stream.write(llsdBinaryHead);
 		stream.write('\n');
-		serializeLLSDBinaryElement(stream, osd);
+		serializeLLSDBinaryElement(stream, data);
 	}
 
 	private static void serializeLLSDBinaryElement(OutputStream stream, OSD osd) throws IOException

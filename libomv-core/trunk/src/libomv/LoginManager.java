@@ -48,7 +48,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.LLSD.LLSDNotation;
+import libomv.StructuredData.LLSD.LLSDJson;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsClient;
 import libomv.inventory.InventoryFolder;
@@ -328,7 +328,7 @@ public class LoginManager
 			OSD osdHome = null;
 			try
 			{
-				osdHome = LLSDNotation.parse(reply.get("home").AsString());
+				osdHome = LLSDJson.parse(reply.get("home").AsString());
 			}
 			catch (Exception ex)
 			{
@@ -489,7 +489,7 @@ public class LoginManager
 				OSD osdHome = null;
 				try
 				{
-					osdHome = LLSDNotation.parse(reply.get("home").toString());
+					osdHome = LLSDJson.parse(reply.get("home").toString());
 				}
 				catch (Exception ex)
 				{
@@ -1375,7 +1375,7 @@ public class LoginManager
 			}
 			else if (value instanceof String)
 			{
-				OSD osd = LLSDNotation.parse((String) value);
+				OSD osd = LLSDJson.parse((String) value);
 				if (osd != null && osd.getType().equals(OSDType.Array))
 					return ((OSDArray) osd).AsVector3();
 			}

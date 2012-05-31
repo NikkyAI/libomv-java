@@ -31,12 +31,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -51,7 +49,7 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.io.output.WriterOutputStream;
 
 import libomv.StructuredData.LLSD.LLSDBinary;
-import libomv.StructuredData.LLSD.LLSDNotation;
+import libomv.StructuredData.LLSD.LLSDJson;
 import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.types.Color4;
 import libomv.types.UUID;
@@ -78,7 +76,7 @@ public class OSD
 
 	public enum OSDFormat
 	{
-		Xml, Json, Binary, Notation
+		Xml, Json, Binary;
 	}
 
 	/** The OSD class implementation */
@@ -489,14 +487,11 @@ public class OSD
 			case Binary:
 				LLSDBinary.serialize(new WriterOutputStream(writer), this);
 				break;
-			case Notation:
-				LLSDNotation.serialize(writer, this);
+			case Json:
+				LLSDJson.serialize(writer, this);
 				break;
 			case Xml:
 				LLSDXml.serialize(writer, this);
-				break;
-			case Json:
-				// Json.serialize(writer, this);
 				break;
 		}
 	}
@@ -508,14 +503,11 @@ public class OSD
 			case Binary:
 				LLSDBinary.serialize(stream, this);
 				break;
-			case Notation:
-				LLSDNotation.serialize(new OutputStreamWriter(stream), this);
+			case Json:
+				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
-				LLSDXml.serialize(new OutputStreamWriter(stream), this);
-				break;
-			case Json:
-				// Json.serialize(new OutputStreamWriter(stream), this);
+				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 		}
 	}
@@ -525,43 +517,31 @@ public class OSD
 		switch (type)
 		{
 			case Binary:
-				OutputStream binary = new ByteArrayOutputStream();
-				LLSDBinary.serialize(binary, this);
-				return binary.toString();
-			case Notation:
-				return LLSDNotation.serializeToString(this);
+				return LLSDBinary.serializeToString(this, Helpers.UTF8_ENCODING);
+			case Json:
+				return LLSDJson.serializeToString(this);
 			case Xml:
 				return LLSDXml.serializeToString(this);
-			case Json:
-				Writer json = new StringWriter();
-				// Json.serialize(json, this);
-				return json.toString();
 		}
 		return null;
 	}
 
 	public byte[] serializeToBytes(OSDFormat type) throws IOException
 	{
-		ByteArrayOutputStream stream;
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		switch (type)
 		{
 			case Binary:
-				stream = new ByteArrayOutputStream();
 				LLSDBinary.serialize(stream, this);
-				return stream.toByteArray();
-			case Notation:
-				stream = new ByteArrayOutputStream();
-				LLSDNotation.serialize(new OutputStreamWriter(stream, Helpers.UTF8_ENCODING), this);
-				return stream.toByteArray();
-			case Xml:
-				return LLSDXml.serializeToBytes(this, Helpers.UTF8_ENCODING);
+				break;
 			case Json:
-				stream = new ByteArrayOutputStream();
-				// Json.serialize(new OutputStreamWriter(stream,
-				// Helpers.UTF8_ENCODING), this);
-				return stream.toByteArray();
+				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
+				break;
+			case Xml:
+				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
+				break;
 		}
-		return null;
+		return stream.toByteArray();
 	}
 
 	public static OSD parse(Reader inread) throws IOException, ParseException
@@ -582,7 +562,7 @@ public class OSD
 		{
 			return LLSDXml.parse(reader);
 		}
-		return null;
+		return LLSDJson.parse(reader);
 	}
 
 	public static OSD parse(InputStream instream, String encoding) throws IOException, ParseException
@@ -603,7 +583,7 @@ public class OSD
 		{
 			return LLSDXml.parse(stream, encoding);
 		}
-		return null;
+		return LLSDJson.parse(stream, encoding);
 	}
 
 	public static OSD parse(String string) throws IOException, ParseException
@@ -619,7 +599,7 @@ public class OSD
 		{
 			return LLSDXml.parse(string);
 		}
-		return null;
+		return LLSDJson.parse(string);
 	}
 
 	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
@@ -635,7 +615,7 @@ public class OSD
 		{
 			return LLSDXml.parse(data, encoding);
 		}
-		return null;
+		return LLSDJson.parse(data, encoding);
 	}
 
 	/**
