@@ -67,7 +67,7 @@ public class PushbackInputStream extends FilterInputStream
 	{
 		if (buf == null)
 			return;
-		in.close();
+		super.close();
 		in = null;
 		buf = null;
 	}

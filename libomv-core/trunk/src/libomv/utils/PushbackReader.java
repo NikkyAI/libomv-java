@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package libomv.StructuredData.LLSD;
+package libomv.utils;
 
 import java.io.FilterReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.io.Reader;
  * specified during construction. If the buffer of pushed back bytes is empty,
  * characters are read from the underlying reader.
  */
-public class LLSDReader extends FilterReader
+public class PushbackReader extends FilterReader
 {
 	/**
 	 * The {@code char} array containing the chars to read.
@@ -57,7 +57,7 @@ public class LLSDReader extends FilterReader
 	 * @param in
 	 *            the source reader.
 	 */
-	public LLSDReader(Reader in)
+	public PushbackReader(Reader in)
 	{
 		super(in);
 		buf = new char[1];
@@ -75,7 +75,7 @@ public class LLSDReader extends FilterReader
 	 * @throws IllegalArgumentException
 	 *             if {@code size} is negative.
 	 */
-	public LLSDReader(Reader in, int size)
+	public PushbackReader(Reader in, int size)
 	{
 		super(in);
 		if (size <= 0)
