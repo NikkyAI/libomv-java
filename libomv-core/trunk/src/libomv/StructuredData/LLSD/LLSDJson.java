@@ -92,9 +92,9 @@ public final class LLSDJson
 	private static final char singleQuotesNotationMarker = '\'';
 
 	/**
-	 * Parse an LLSD Notation string and convert it into an hierarchical OSD object
+	 * Parse an JSON string and convert it into an hierarchical OSD object
 	 * 
-	 * @param string The LLSD Notation string to parse
+	 * @param string The JSON string to parse
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
@@ -113,10 +113,10 @@ public final class LLSDJson
 	}
 
 	/**
-	 * Parse an LLSD Notation byte stream and convert it into an hierarchical OSD
+	 * Parse an JSON byte stream and convert it into an hierarchical OSD
 	 * object
 	 * 
-	 * @param stream The LLSD Notation byte stream to parse
+	 * @param stream The JSON byte stream to parse
 	 * @param encoding The text encoding to use when converting the stream to text
 	 * @return hierarchical OSD object
 	 * @throws IOException
@@ -136,9 +136,9 @@ public final class LLSDJson
 	}
 
 	/**
-	 * Parse an LLSD Notation reader and convert it into an hierarchical OSD object
+	 * Parse an JSON reader and convert it into an hierarchical OSD object
 	 * 
-	 * @param reader The LLSD Notation reader to parse
+	 * @param reader The JSON reader to parse
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
@@ -149,10 +149,10 @@ public final class LLSDJson
 	}
 	
 	/**
-	 * Parse an LLSD Notation byte stream and convert it into an hierarchical OSD
+	 * Parse an JSON byte stream and convert it into an hierarchical OSD
 	 * object
 	 * 
-	 * @param stream The LLSD Notation byte stream to parse
+	 * @param stream The JSON byte stream to parse
 	 * @param encoding The text encoding to use when converting the stream to text
 	 * @return hierarchical OSD object
 	 * @throws IOException
@@ -164,9 +164,9 @@ public final class LLSDJson
 	}
 
 	/**
-	 * Serialize an hierarchical OSD object into an LLSD Notation string
+	 * Serialize an hierarchical OSD object into an JSON string
 	 * 
-	 * @param stream The hierarchical LLSD Notation byte stream
+	 * @param stream The hierarchical JSON byte stream
 	 * @param data The hierarchical OSD object to serialize
 	 * @param encoding The text encoding to use when converting the text into
 	 *            a byte stream
@@ -178,7 +178,7 @@ public final class LLSDJson
 	}
 
 	/**
-	 * Serialize an hierarchical OSD object into an LLSD Notation writer
+	 * Serialize an hierarchical OSD object into an JSON writer
 	 * 
 	 * @param writer The writer to format the serialized data into
 	 * @param data The hierarchical OSD object to serialize
@@ -190,10 +190,10 @@ public final class LLSDJson
 	}
 	
 	/**
-	 * Serialize an hierarchical OSD object into an LLSD Notation string
+	 * Serialize an hierarchical OSD object into an JSON string
 	 * 
 	 * @param data The hierarchical OSD object to serialize
-	 * @return an LLSD Notation formatted string
+	 * @return an JSON formatted string
 	 * @throws IOException
 	 */
 	public static String serializeToString(OSD data) throws IOException

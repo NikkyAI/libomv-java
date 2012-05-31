@@ -44,9 +44,6 @@ import java.text.ParseException;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.output.WriterOutputStream;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlSerializer;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
