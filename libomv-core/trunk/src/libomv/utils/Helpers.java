@@ -2378,7 +2378,7 @@ public class Helpers
 	 * @param clazz the class to get the code source for
 	 * @return the URL for the code source
 	 */
-	public static URL getBaseFileURL(Class<?> clazz) throws URISyntaxException
+	public static URL getBaseFileURL(Class<?> clazz)
 	{
 		CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
 		return codeSource.getLocation();
@@ -2392,6 +2392,7 @@ public class Helpers
 	 *
 	 * @param clazz the class to get the code source for
 	 * @return the File for the parent of the code source
+	 * @throws URISyntaxException
 	 */
 	public static File getBaseDirectory(Class<?> clazz) throws URISyntaxException
 	{
