@@ -129,6 +129,7 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Get Request from the server
 	 * 
+	 * @param address The document uri to fetch
 	 * @param acceptHeader The content type to add as Accept: header or null
 	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
@@ -147,6 +148,7 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Post Request from the server for string data
 	 * 
+	 * @param address The uri to post
 	 * @param data The string data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
 	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
@@ -171,6 +173,7 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Post Request from the server for binary data
 	 * 
+	 * @param address The uri to post
 	 * @param data The binary data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
 	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
