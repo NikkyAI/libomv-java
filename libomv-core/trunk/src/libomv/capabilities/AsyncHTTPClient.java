@@ -74,6 +74,7 @@ import org.apache.http.protocol.HTTP;
 
 public abstract class AsyncHTTPClient<T>
 {
+	public static final long TIMEOUT_INFINITE = -1;
 	public interface ProgressCallback
 	{
 		public void progress(long bytesReceived, long totalBytes);
@@ -126,6 +127,17 @@ public abstract class AsyncHTTPClient<T>
 		client.start();
 	}
 
+	/**
+	 * Do a HTTP Get Request from the server without any timeout
+	 * 
+	 * @param address The document uri to fetch
+	 * @return A Future that can be used to retrieve the data
+	 */
+	public Future<T> executeHttpGet(URI address)
+	{
+		return executeHttp(new HttpGet(address), TIMEOUT_INFINITE);
+	}
+	
 	/**
 	 * Do a HTTP Get Request from the server
 	 * 
