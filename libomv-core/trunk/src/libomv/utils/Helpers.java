@@ -40,6 +40,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
+import java.security.CodeSource;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -61,6 +62,8 @@ import java.util.jar.JarFile;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import test.ResourcePath;
 
 import libomv.types.UUID;
 
@@ -2364,6 +2367,36 @@ public class Helpers
 		{
 			return EmptyString;
 		}
+	}
+
+	/**
+	 * Get the base path of the source for the code containing the specified class.
+	 * This can be both a path to a file directory (usually the bin directroy) when
+	 * running in the IDE, or the actual JAR file the code is located in.
+	 * Note: Security manager limitations may apply!
+	 *
+	 * @param clazz the class to get the code source for
+	 * @return the URL for the code source
+	 */
+	public static URL getBaseFileURL(Class<?> clazz) throws URISyntaxException
+	{
+		CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+		return codeSource.getLocation();
+	}
+	
+	/**
+	 * Get the base directory of the source for the code containing the specified class.
+	 * This should be always a file directory for disk based applications, returning 
+	 * the parent directory of the code source (e.g. where the jar file resides).
+	 * Note: Security manager limitations may apply!
+	 *
+	 * @param clazz the class to get the code source for
+	 * @return the File for the parent of the code source
+	 */
+	public static File getBaseDirectory(Class<?> clazz) throws URISyntaxException
+	{
+		URL baseUrl = getBaseFileURL(clazz);
+		return new File(baseUrl.toURI()).getParentFile();
 	}
 
 	/**
