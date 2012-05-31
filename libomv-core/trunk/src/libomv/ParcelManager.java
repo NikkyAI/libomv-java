@@ -2243,7 +2243,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 			try
 			{
-				OSD result = new CapsClient().GetResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+				OSD result = new CapsClient().getResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
 				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages.DecodeEvent(
 						CapsEventType.RemoteParcelRequest, (OSDMap) result);
 				return ((RemoteParcelRequestReply) response.Request).ParcelID;
@@ -2316,13 +2316,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				}
 				LandResourcesMessage response = _Client.Messages.new LandResourcesMessage();
 				response.Deserialize((OSDMap) result);
-				OSD osd = new CapsClient().GetResponse(response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+				OSD osd = new CapsClient().getResponse(response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 
 				LandResourcesInfo info = _Client.Messages.new LandResourcesInfo();
 				info.Deserialize((OSDMap) osd);
 				if (response.ScriptResourceDetails != null && getDetails)
 				{
-					osd = new CapsClient().GetResponse(response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+					osd = new CapsClient().getResponse(response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 					info.Deserialize((OSDMap) osd);
 				}
 				callback.callback(true, info);

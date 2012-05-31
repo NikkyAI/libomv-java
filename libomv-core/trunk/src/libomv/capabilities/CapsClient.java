@@ -59,20 +59,20 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 * @throws TimeoutException
 	 * @throws ClientProtocolException
 	 */
-	public OSD GetResponse(URI address, String acceptHeader, long timeout) throws InterruptedException, ExecutionException, TimeoutException
+	public OSD getResponse(URI address, String acceptHeader, long timeout) throws InterruptedException, ExecutionException, TimeoutException
 	{
 		Future<OSD> result = executeHttpGet(address, acceptHeader, -1);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public OSD GetResponse(URI address, OSD data, OSD.OSDFormat format, long timeout) throws InterruptedException,
+	public OSD getResponse(URI address, OSD data, OSD.OSDFormat format, long timeout) throws InterruptedException,
 			ExecutionException, TimeoutException, IOException
 	{
 		Future<OSD> result = executeHttpPost(address, data, format, -1);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public OSD GetResponse(URI address, byte[] postData, String contentType, long timeout) throws InterruptedException,
+	public OSD getResponse(URI address, byte[] postData, String contentType, long timeout) throws InterruptedException,
 			ExecutionException, TimeoutException
 	{
 		Future<OSD> result = executeHttpPost(address, postData, contentType, -1);

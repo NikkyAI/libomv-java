@@ -5453,7 +5453,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             req.AgentID = memberID;
 
             CapsClient request = new CapsClient();
-            request.GetResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+            request.getResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
         }
         else
         {
