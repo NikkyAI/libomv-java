@@ -63,8 +63,6 @@ import java.util.jar.JarFile;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import test.ResourcePath;
-
 import libomv.types.UUID;
 
 public class Helpers
