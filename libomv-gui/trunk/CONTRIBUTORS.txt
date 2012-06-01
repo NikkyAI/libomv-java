@@ -1,2 +1,0 @@
-OpenMetaverse.org original C# code for translation to Java
-Frederick Martian - GUI JAva components and porting of libomv code to Java

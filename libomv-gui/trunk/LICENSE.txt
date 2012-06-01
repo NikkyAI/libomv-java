@@ -1,4 +1,5 @@
-Copyright (c) 2010 - 2011 Frederick Martian
+Copyright (c) 2007 - 2012 openmetaverse.org
+Copyright (c) 2009 - 2012 Frederick Martian
 
 All rights reserved.
 
@@ -25,7 +26,12 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
-Uses artwork files licenced under the 
+Based on the libopenmetaverse project (BSD License)
+Copyright (c) 2007 - 2012, openmetaverse.org
+Frederick Martian fred.martian@gmail.com
+- porting from openmetaverse.org and implementing java gui
+
+  Uses artwork files licenced under the 
 Creative Commons Share and Share Alike 3.0
 Copyright © 2002-2009 Linden Research Inc.
 
