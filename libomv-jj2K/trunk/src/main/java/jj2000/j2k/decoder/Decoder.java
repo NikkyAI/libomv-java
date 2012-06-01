@@ -57,10 +57,8 @@ import jj2000.disp.*;
 import jj2000.j2k.*;
 
 import colorspace.*;
-import icc.*;
 
 import java.awt.image.*;
-import java.util.*;
 import java.awt.*;
 import java.net.*;
 import java.io.*;
@@ -778,79 +776,6 @@ public class Decoder extends ImgDecoder implements Runnable
 			}
 			return;
 		}
-	}
-
-	/**
-	 * Returns all the parameters used in the decoding chain. It calls parameter
-	 * from each module and store them in one array (one row per parameter and 4
-	 * columns).
-	 * 
-	 * @return All decoding parameters
-	 * 
-	 * @see #getParameterInfo
-	 */
-	public static String[][] getAllParameters()
-	{
-		Vector<String[]> vec = new Vector<String[]>();
-		int i;
-
-		String[][] str = BitstreamReaderAgent.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = EntropyDecoder.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = ROIDeScaler.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = Dequantizer.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = InvCompTransf.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = HeaderDecoder.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = ICCProfiler.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = new String[vec.size()][4];
-		for (i = str.length - 1; i >= 0; i--)
-			str[i] = vec.elementAt(i);
-
-		return str;
-	}
-
-	/**
-	 * Prints the warning message 'msg' to standard err, prepending "WARNING" to
-	 * it.
-	 * 
-	 * @param msg
-	 *            The error message
-	 */
-	private void warning(String msg)
-	{
-		FacilityManager.getMsgLogger().printmsg(MsgLogger.WARNING, msg);
 	}
 
 	/**

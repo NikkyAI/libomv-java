@@ -1,10 +1,12 @@
 package jj2000.j2k.decoder;
 
 import icc.ICCProfileException;
+import icc.ICCProfiler;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import jj2000.j2k.codestream.HeaderInfo;
 import jj2000.j2k.codestream.HeaderInfo.COM;
@@ -27,20 +29,6 @@ import colorspace.ColorSpaceException;
 
 public class ImgDecoder
 {
-	/** The exit code of the run method */
-	private int exitCode;
-
-	/**
-	 * Returns the exit code of the class. This is only initialized after the
-	 * constructor and when the run method returns.
-	 * 
-	 * @return The exit code of the constructor and the run() method.
-	 */
-	public int getExitCode()
-	{
-		return exitCode;
-	}
-
 	/** The parameter information for this class */
 	private final static String[][] pinfo = {
 			{ "u", "[on|off]",
@@ -151,6 +139,67 @@ public class ImgDecoder
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
+	}
+
+	/**
+	 * Returns all the parameters used in the decoding chain. It calls parameter
+	 * from each module and store them in one array (one row per parameter and 4
+	 * columns).
+	 * 
+	 * @return All decoding parameters
+	 * 
+	 * @see #getParameterInfo
+	 */
+	public static String[][] getAllParameters()
+	{
+		Vector<String[]> vec = new Vector<String[]>();
+		int i;
+
+		String[][] str = BitstreamReaderAgent.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = EntropyDecoder.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = ROIDeScaler.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = Dequantizer.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = InvCompTransf.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = HeaderDecoder.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = ICCProfiler.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = new String[vec.size()][4];
+		for (i = str.length - 1; i >= 0; i--)
+			str[i] = vec.elementAt(i);
+
+		return str;
 	}
 
 	public BlkImgDataSrc decode(RandomAccessIO in, FileFormatReader ff, boolean verbose) throws IOException, ICCProfileException
@@ -352,8 +401,34 @@ public class ImgDecoder
 			infoCOM[i] = com.nextElement().toString();
 		}
 		return infoCOM;
+	}	
+
+	/** The exit code of the run method */
+	private int exitCode;
+
+	/**
+	 * Returns the exit code of the class. This is only initialized after the
+	 * constructor and when the run method returns.
+	 * 
+	 * @return The exit code of the constructor and the run() method.
+	 */
+	public int getExitCode()
+	{
+		return exitCode;
 	}
-	
+
+	/**
+	 * Prints the warning message 'msg' to standard err, prepending "WARNING" to
+	 * it.
+	 * 
+	 * @param msg
+	 *            The error message
+	 */
+	protected void warning(String msg)
+	{
+		FacilityManager.getMsgLogger().printmsg(MsgLogger.WARNING, msg);
+	}
+
 	/**
 	 * Prints the error message 'msg' to standard err, prepending "ERROR" to it,
 	 * and sets the exitCode to 'code'. An exit code different than 0 indicates

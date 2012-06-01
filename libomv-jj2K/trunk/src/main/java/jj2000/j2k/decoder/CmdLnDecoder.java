@@ -79,7 +79,6 @@ public class CmdLnDecoder
 							+ "to get help\n", 0, 0);
 			System.exit(1);
 		}
-
 		new CmdLnDecoder(argv);
 	}
 
@@ -99,7 +98,7 @@ public class CmdLnDecoder
 	{
 		// Initialize default parameters
 		defpl = new ParameterList();
-		String[][] param = Decoder.getAllParameters();
+		String[][] param = ImgDecoder.getAllParameters();
 
 		for (int i = param.length - 1; i >= 0; i--)
 		{

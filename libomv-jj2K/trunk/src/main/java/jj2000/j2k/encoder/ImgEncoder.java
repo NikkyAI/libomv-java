@@ -123,20 +123,6 @@ public class ImgEncoder
 	/** The parameter list (arguments) */
 	protected ParameterList pl;
 
-	/**
-	 * Returns the exit code of the class. This is only initialized after the
-	 * constructor and when the run method returns.
-	 * 
-	 * @return The exit code of the constructor and the run() method.
-	 */
-	public int getExitCode()
-	{
-		return exitCode;
-	}
-
-	/** The exit code of the run method */
-	private int exitCode;
-
 	public ImgEncoder(ParameterList pl)
 	{
 		this.pl = pl;
@@ -613,6 +599,20 @@ public class ImgEncoder
 			str[i] = vec.elementAt(i);
 
 		return str;
+	}
+
+	/** The exit code of the run method */
+	private int exitCode;
+
+	/**
+	 * Returns the exit code of the class. This is only initialized after the
+	 * constructor and when the run method returns.
+	 * 
+	 * @return The exit code of the constructor and the run() method.
+	 */
+	public int getExitCode()
+	{
+		return exitCode;
 	}
 
 	/**
