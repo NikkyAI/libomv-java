@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.disp;
 
 import jj2000.j2k.image.*;
@@ -69,7 +69,7 @@ import java.awt.*;
  * 
  * @see ImageProducer
  * @see BlkImgDataSrc
- * */
+ */
 public class BlkImgDataSrcImageProducer implements ImageProducer
 {
 
