@@ -148,120 +148,6 @@ public class Decoder extends ImgDecoder implements Runnable
 	/** The component where the image is to be displayed */
 	private ImgScrollPane isp;
 
-	/** The parameter information for this class */
-	private final static String[][] pinfo = {
-			{ "u", "[on|off]",
-					"Prints usage information. If specified all other arguments (except 'v') are ignored", "off" },
-			{ "v", "[on|off]", "Prints version and copyright information", "off" },
-			{ "verbose", "[on|off]", "Prints information about the decoded codestream", "on" },
-			{
-					"pfile",
-					"<filename>",
-					"Loads the arguments from the specified file. Arguments that are "
-							+ "specified on the command line override the ones from the file.\n"
-							+ "The arguments file is a simple text file with one argument per "
-							+ "line of the following form:\n  <argument name>=<argument value>\n"
-							+ "If the argument is of boolean type (i.e. its presence turns a "
-							+ "feature on), then the 'on' value turns it on, while the 'off' "
-							+ "value turns it off. The argument name does not include the '-' "
-							+ "or '+' character. Long lines can be broken into several lines "
-							+ "by terminating them with '\\'. Lines starting with '#' are "
-							+ "considered as comments. This option is not recursive: any 'pfile' "
-							+ "argument appearing in the file is ignored.", null },
-			{
-					"res",
-					"<resolution level index>",
-					"The resolution level at which to reconstruct the image "
-							+ " (0 means the lowest available resolution whereas the maximum "
-							+ "resolution level corresponds to the original image resolution). If the given index"
-							+ " is greater than the number of available resolution levels of the "
-							+ "compressed image, the image is reconstructed at its highest "
-							+ "resolution (among all tile-components). Note that this option"
-							+ " affects only the inverse wavelet transform and not the number "
-							+ " of bytes read by the codestream parser: this number of bytes "
-							+ "depends only on options '-nbytes' or '-rate'.", null },
-			{
-					"i",
-					"<filename or url>",
-					"The file containing the JPEG 2000 compressed data. This can be "
-							+ "either a JPEG 2000 codestream or a JP2 file containing a JPEG 2000 "
-							+ "codestream. In the latter case the first codestream in the file "
-							+ "will be decoded. If an URL is specified (e.g., http://...) "
-							+ "the data will be downloaded and cached in memory before decoding. "
-							+ "This is intended for easy use in applets, but it is not a very "
-							+ "efficient way of decoding network served data.", null },
-			{
-					"o",
-					"<filename>",
-					"This is the name of the file to which the decompressed image "
-							+ "is written. If no output filename is given, the image is displayed on the screen. "
-							+ "Output file format is PGX by default. If the extension"
-							+ " is '.pgm' then a PGM file is written as output, however this is "
-							+ "only permitted if the component bitdepth does not exceed 8. If "
-							+ "the extension is '.ppm' then a PPM file is written, however this "
-							+ "is only permitted if there are 3 components and none of them has "
-							+ "a bitdepth of more than 8. If there is more than 1 component, "
-							+ "suffices '-1', '-2', '-3', ... are added to the file name, just "
-							+ "before the extension, except for PPM files where all three "
-							+ "components are written to the same file.", null },
-			{
-					"rate",
-					"<decoding rate in bpp>",
-					"Specifies the decoding rate in bits per pixel (bpp) where the "
-							+ "number of pixels is related to the image's original size (Note:"
-							+ " this number is not affected by the '-res' option). If it is equal"
-							+ "to -1, the whole codestream is decoded. "
-							+ "The codestream is either parsed (default) or truncated depending "
-							+ "the command line option '-parsing'. To specify the decoding "
-							+ "rate in bytes, use '-nbytes' options instead.", "-1" },
-			{
-					"nbytes",
-					"<decoding rate in bytes>",
-					"Specifies the decoding rate in bytes. "
-							+ "The codestream is either parsed (default) or truncated depending "
-							+ "the command line option '-parsing'. To specify the decoding "
-							+ "rate in bits per pixel, use '-rate' options instead.", "-1" },
-			{
-					"parsing",
-					null,
-					"Enable or not the parsing mode when decoding rate is specified "
-							+ "('-nbytes' or '-rate' options). If it is false, the codestream "
-							+ "is decoded as if it were truncated to the given rate. If it is "
-							+ "true, the decoder creates, truncates and decodes a virtual layer"
-							+ " progressive codestream with the same truncation points in each code-block.", "on" },
-			{
-					"ncb_quit",
-					"<max number of code blocks>",
-					"Use the ncb and lbody quit conditions. If state information is "
-							+ "found for more code blocks than is indicated with this option, the decoder "
-							+ "will decode using only information found before that point. "
-							+ "Using this otion implies that the 'rate' or 'nbyte' parameter "
-							+ "is used to indicate the lbody parameter which is the number of "
-							+ "packet body bytes the decoder will decode.", "-1" },
-			{ "l_quit", "<max number of layers>",
-					"Specifies the maximum number of layers to decode for any code-block", "-1" },
-			{ "m_quit", "<max number of bit planes>",
-					"Specifies the maximum number of bit planes to decode for any code-block", "-1" },
-			{
-					"poc_quit",
-					null,
-					"Specifies the whether the decoder should only decode code-blocks "
-							+ "included in the first progression order.", "off" },
-			{ "one_tp", null,
-					"Specifies whether the decoder should only decode the first tile part of each tile.", "off" },
-			{ "comp_transf", null,
-					"Specifies whether the component transform indicated in the codestream should be used.", "on" },
-			{ "debug", null, "Print debugging messages when an error is encountered.", "off" },
-			{
-					"cdstr_info",
-					null,
-					"Display information about the codestream. This information is: "
-							+ "\n- Marker segments value in main and tile-part headers,"
-							+ "\n- Tile-part length and position within the code-stream.", "off" },
-			{ "nocolorspace", null, "Ignore any colorspace information in the image.", "off" },
-			{ "colorspace_debug", null,
-					"Print debugging messages when an error is encountered in the colorspace module.", "off" } };
-
 	/**
 	 * Instantiates a decoder object, with the ParameterList object given as
 	 * argument and a component where to display the image if no output file is
@@ -294,22 +180,6 @@ public class Decoder extends ImgDecoder implements Runnable
 	public Decoder(ParameterList pl)
 	{
 		this(pl, null);
-	}
-
-	/**
-	 * Returns the parameters that are used in this class. It returns a 2D
-	 * String array. Each of the 1D arrays is for a different option, and they
-	 * have 3 elements. The first element is the option name, the second one is
-	 * the synopsis and the third one is a long description of what the
-	 * parameter is. The synopsis or description may be 'null', in which case it
-	 * is assumed that there is no synopsis or description of the option,
-	 * respectively.
-	 * 
-	 * @return the options name, their synopsis and their explanation.
-	 */
-	public static String[][] getParameterInfo()
-	{
-		return pinfo;
 	}
 
 	/**
@@ -368,7 +238,7 @@ public class Decoder extends ImgDecoder implements Runnable
 			// **** Check parameters ****
 			try
 			{
-				pl.checkList(vprfxs, ParameterList.toNameArray(pinfo));
+				pl.checkList(vprfxs, ParameterList.toNameArray(getParameterInfo()));
 			}
 			catch (IllegalArgumentException e)
 			{
