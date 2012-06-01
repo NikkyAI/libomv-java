@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 /**
@@ -49,7 +49,7 @@ package jj2000.j2k.entropy.encoder;
  * implements the bit stuffing policy needed for the 'selective arithmetic
  * coding bypass' mode of the entropy coder. This class also delays the output
  * of a trailing 0xFF, since they are synthetized be the decoder.
- * */
+ */
 class BitToByteOutput
 {
 
@@ -88,7 +88,7 @@ class BitToByteOutput
 	 * 
 	 * @param out
 	 *            The underlying byte based output
-	 * */
+	 */
 	BitToByteOutput(ByteOutputBuffer out)
 	{
 		this.out = out;
@@ -103,7 +103,7 @@ class BitToByteOutput
 	 * 
 	 * @param nsym
 	 *            The number of symbols in symbuf
-	 * */
+	 */
 	final void writeBits(int[] symbuf, int nsym)
 	{
 		int i;
@@ -145,7 +145,7 @@ class BitToByteOutput
 	 * to the output.
 	 * 
 	 * @param bit
-	 * */
+	 */
 	final void writeBit(int bit)
 	{
 		bbuf |= (bit & 0x01) << (bpos--);
@@ -176,7 +176,7 @@ class BitToByteOutput
 	/**
 	 * Writes the contents of the bit buffer and byte aligns the output by
 	 * filling bits with an alternating sequence of 0's and 1's.
-	 * */
+	 */
 	void flush()
 	{
 		if (delFF)
@@ -228,7 +228,7 @@ class BitToByteOutput
 	 * Finally, it returns the number of bytes effectively written.
 	 * 
 	 * @return The number of bytes effectively written.
-	 * */
+	 */
 	public int terminate()
 	{
 		flush();
@@ -241,7 +241,7 @@ class BitToByteOutput
 	 * Resets the bit buffer to empty, without writing anything to the
 	 * underlying byte output, and resets the byte count. The underlying byte
 	 * output is NOT reset.
-	 * */
+	 */
 	void reset()
 	{
 		delFF = false;
@@ -256,7 +256,7 @@ class BitToByteOutput
 	 * in length then it is rounded to the next integer.
 	 * 
 	 * @return The length, in bytes, of the output bit stream.
-	 * */
+	 */
 	int length()
 	{
 		if (delFF)
@@ -276,7 +276,7 @@ class BitToByteOutput
 	 * 
 	 * @param isPredTerm
 	 *            Whether or not predictable termination is requested.
-	 * */
+	 */
 	void setPredTerm(boolean isPredTerm)
 	{
 		this.isPredTerm = isPredTerm;

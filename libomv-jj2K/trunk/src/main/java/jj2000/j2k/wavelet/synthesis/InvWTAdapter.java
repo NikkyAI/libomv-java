@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.decoder.*;
@@ -71,7 +71,7 @@ import jj2000.j2k.image.*;
  * </p>
  * 
  * @see InvWT
- * */
+ */
 public abstract class InvWTAdapter implements InvWT
 {
 
@@ -97,7 +97,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @param decSpec
 	 *            The decoder specifications
-	 * */
+	 */
 	protected InvWTAdapter(MultiResImgData src, DecoderSpecs decSpec)
 	{
 		mressrc = src;
@@ -129,7 +129,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public void setImgResLevel(int rl)
 	{
@@ -151,7 +151,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * </p>
 	 * 
 	 * @return The total current tile's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileWidth()
 	{
@@ -181,7 +181,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * </p>
 	 * 
 	 * @return The total current tile's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileHeight()
 	{
@@ -219,7 +219,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * width without accounting for any component subsampling or tiling.
 	 * 
 	 * @return The total image's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgWidth()
 	{
@@ -231,7 +231,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * height without accounting for any component subsampling or tiling.
 	 * 
 	 * @return The total image's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgHeight()
 	{
@@ -242,7 +242,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * Returns the number of components in the image.
 	 * 
 	 * @return The number of components in the image.
-	 * */
+	 */
 	@Override
 	public int getNumComps()
 	{
@@ -261,7 +261,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * @return The horizontal subsampling factor of component 'c'.
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsX(int c)
 	{
@@ -280,7 +280,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * @return The vertical subsampling factor of component 'c'.
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsY(int c)
 	{
@@ -297,7 +297,7 @@ public abstract class InvWTAdapter implements InvWT
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>n</tt> in tile <tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompWidth(int t, int c)
 	{
@@ -322,7 +322,7 @@ public abstract class InvWTAdapter implements InvWT
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The height in pixels of component <tt>n</tt> in tile <tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompHeight(int t, int c)
 	{
@@ -340,7 +340,7 @@ public abstract class InvWTAdapter implements InvWT
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
-	 * */
+	 */
 	@Override
 	public int getCompImgWidth(int c)
 	{
@@ -364,7 +364,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @return The height in pixels of component <tt>n</tt> in the overall
 	 *         image.
-	 * */
+	 */
 	@Override
 	public int getCompImgHeight(int c)
 	{
@@ -390,7 +390,7 @@ public abstract class InvWTAdapter implements InvWT
 	 *            The vertical index of the new tile.
 	 * 
 	 * @returns The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -407,7 +407,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * </p>
 	 * 
 	 * @returns The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -427,7 +427,7 @@ public abstract class InvWTAdapter implements InvWT
 	 *            null a new one is created and returned.
 	 * 
 	 * @return The current tile's indices (vertical and horizontal indexes).
-	 * */
+	 */
 	@Override
 	public Coord getTile(Coord co)
 	{
@@ -443,7 +443,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * </p>
 	 * 
 	 * @return The current tile's index (starts at 0).
-	 * */
+	 */
 	@Override
 	public int getTileIdx()
 	{
@@ -456,7 +456,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULX(int c)
 	{
@@ -473,7 +473,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULY(int c)
 	{
@@ -495,7 +495,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULX()
 	{
@@ -513,7 +513,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULY()
 	{
@@ -547,7 +547,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 *         (Coord.y) directions.
-	 * */
+	 */
 	@Override
 	public Coord getNumTiles(Coord co)
 	{
@@ -562,7 +562,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * </p>
 	 * 
 	 * @return The total number of tiles in the image.
-	 * */
+	 */
 	@Override
 	public int getNumTiles()
 	{
@@ -577,7 +577,7 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * @param c
 	 *            Component index.
-	 * */
+	 */
 	public SubbandSyn getSynSubbandTree(int t, int c)
 	{
 		return mressrc.getSynSubbandTree(t, c);

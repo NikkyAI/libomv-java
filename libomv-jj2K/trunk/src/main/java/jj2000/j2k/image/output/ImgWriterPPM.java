@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.output;
 
 import jj2000.j2k.image.*;
@@ -70,7 +70,7 @@ import java.io.*;
  * concurrently from different threads.
  *
  * <P>NOTE: This class is not thread safe, for reasons of internal buffering.
- * */
+ */
 public class ImgWriterPPM extends ImgWriter {
 
     /** Value used to inverse level shift. One for each component */
@@ -119,7 +119,7 @@ public class ImgWriterPPM extends ImgWriter {
      * that will be written as the green channel.
      *
      * @see DataBlk
-     * */
+     */
     public ImgWriterPPM(File out, BlkImgDataSrc imgSrc, 
 			int n1,int n2,int n3) throws IOException{
         // Check that imgSrc is of the correct type
@@ -188,7 +188,7 @@ public class ImgWriterPPM extends ImgWriter {
      * that will be written as the green channel.
      *
      * @see DataBlk
-     * */
+     */
     public ImgWriterPPM(String fname, BlkImgDataSrc imgSrc, 
 			int n1,int n2,int n3) throws IOException {
             this(new File(fname),imgSrc,n1,n2,n3);
@@ -200,7 +200,7 @@ public class ImgWriterPPM extends ImgWriter {
      * call to this one.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void close() throws IOException {
         int i;
@@ -224,7 +224,7 @@ public class ImgWriterPPM extends ImgWriter {
      * Writes all buffered data to the file or resource.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void flush() throws IOException {
         // No flush needed here since we are using a RandomAccessFile Get rid
@@ -255,7 +255,7 @@ public class ImgWriterPPM extends ImgWriter {
      * @param height The height of the area to write.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void write(int ulx, int uly, int w, int h) throws IOException{
         int k,j,i,c;
@@ -337,7 +337,7 @@ public class ImgWriterPPM extends ImgWriter {
      * more.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void write() throws IOException {
         int i;
@@ -360,7 +360,7 @@ public class ImgWriterPPM extends ImgWriter {
      * 255<br>
      *
      * @exception IOException If there is an I/O Error 
-     * */
+     */
      private void writeHeaderInfo() throws IOException {
         byte[] byteVals;
         int i;
@@ -404,7 +404,7 @@ public class ImgWriterPPM extends ImgWriter {
      * RandomAccessFile (its toString() method is called in turn).
      *
      * @return A string of information about the object.
-     * */
+     */
     @Override
 	public String toString() {
         return "ImgWriterPPM: WxH = " + w + "x" + h + ", Components = " +

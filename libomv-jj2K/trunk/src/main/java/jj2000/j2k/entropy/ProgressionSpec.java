@@ -38,7 +38,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy;
 
 import java.util.*;
@@ -56,7 +56,7 @@ import jj2000.j2k.*;
  * several progression type(s) if progression order changes are used (POC
  * markers).
  * </p>
- * */
+ */
 public class ProgressionSpec extends ModuleSpec
 {
 
@@ -74,7 +74,7 @@ public class ProgressionSpec extends ModuleSpec
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both. The ProgressionSpec class should
 	 *            only be used only with the type ModuleSpec.SPEC_TYPE_TILE.
-	 * */
+	 */
 	public ProgressionSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -107,7 +107,7 @@ public class ProgressionSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList instance
-	 * */
+	 */
 	public ProgressionSpec(int nt, int nc, int nl, IntegerSpec dls, byte type, ParameterList pl)
 	{
 		super(nt, nc, type);
@@ -419,7 +419,7 @@ public class ProgressionSpec extends ModuleSpec
 	 *         progression mode does not exist.
 	 * 
 	 * @see ProgressionType
-	 * */
+	 */
 	private int checkProgMode(String mode)
 	{
 		if (mode.equals("res"))

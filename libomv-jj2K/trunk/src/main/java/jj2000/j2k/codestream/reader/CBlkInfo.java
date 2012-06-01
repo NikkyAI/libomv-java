@@ -39,13 +39,13 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.reader;
 
 /**
  * This class contains location of code-blocks' piece of codewords (there is
  * one piece per layer) and some other information.
- * */
+ */
 public class CBlkInfo {
     
     /** Upper-left x-coordinate of the code-block (relative to the tile) */
@@ -97,7 +97,7 @@ public class CBlkInfo {
      * @param h Height of the code-block
      *
      * @param nl The number of layers
-     * */
+     */
     public CBlkInfo(int ulx,int uly,int w,int h,int nl) {
         this.ulx = ulx;
         this.uly = uly;
@@ -119,7 +119,7 @@ public class CBlkInfo {
      * @param l layer index
      *
      * @param newtp Number of new truncation points 
-     * */
+     */
     public void addNTP(int l,int newtp){
         ntp[l] = newtp;
         ctp = 0;
@@ -132,7 +132,7 @@ public class CBlkInfo {
      * Object information in a string.
      *
      * @return Object information
-     * */
+     */
     @Override
 	public String toString(){
         String string = "(ulx,uly,w,h)= ("+ulx+","+uly+","+w+","+h;

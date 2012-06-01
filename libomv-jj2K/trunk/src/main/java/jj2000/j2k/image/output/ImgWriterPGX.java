@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.output;
 
 import jj2000.j2k.image.*;
@@ -88,7 +88,7 @@ import java.io.*;
  * @see ImgWriter
  *
  * @see BlkImgDataSrc
- * */
+ */
 public class ImgWriterPGX extends ImgWriter {
 
     /** Used during saturation (2^bitdepth-1 if unsigned, 2^(bitdepth-1)-1 if
@@ -156,7 +156,7 @@ public class ImgWriterPGX extends ImgWriter {
      * writing header).
      *
      * @see DataBlk
-     * */
+     */
     public ImgWriterPGX(File out, BlkImgDataSrc imgSrc, 
 			int c, boolean isSigned) throws IOException {
         //Initialize
@@ -228,7 +228,7 @@ public class ImgWriterPGX extends ImgWriter {
      * writing header).
      *
      * @see DataBlk
-     * */
+     */
     public ImgWriterPGX(String fname, BlkImgDataSrc imgSrc, 
 			int c, boolean isSigned) throws IOException{
         this(new File(fname),imgSrc,c,isSigned);
@@ -240,7 +240,7 @@ public class ImgWriterPGX extends ImgWriter {
      * call to this one.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void close() throws IOException {
         int i;
@@ -264,7 +264,7 @@ public class ImgWriterPGX extends ImgWriter {
      * Writes all buffered data to the file or resource.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void flush() throws IOException {
         // No flush is needed since we use RandomAccessFile
@@ -299,7 +299,7 @@ public class ImgWriterPGX extends ImgWriter {
      * @param height The height of the area to write.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void write(int ulx, int uly, int w, int h) throws IOException {
         int k,i,j;
@@ -440,7 +440,7 @@ public class ImgWriterPGX extends ImgWriter {
      * @exception IOException If an I/O error occurs.
      *
      * @see DataBlk
-     * */
+     */
     @Override
 	public void write() throws IOException {
         int i;
@@ -459,7 +459,7 @@ public class ImgWriterPGX extends ImgWriter {
      * RandomAccessFile (its toString() method is called in turn).
      *
      * @return A string of information about the object.
-     * */
+     */
     @Override
 	public String toString() {
         return "ImgWriterPGX: WxH = " + w + "x" + h + ", Component = "+

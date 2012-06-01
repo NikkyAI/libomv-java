@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 /**
@@ -52,7 +52,7 @@ package jj2000.j2k.image;
  * </p>
  * 
  * @see DataBlk
- * */
+ */
 public class DataBlkInt extends DataBlk
 {
 	/** The array where the data is stored */
@@ -61,7 +61,7 @@ public class DataBlkInt extends DataBlk
 	/**
 	 * Creates a DataBlkInt with 0 dimensions and no data array (i.e. data is
 	 * null).
-	 * */
+	 */
 	public DataBlkInt()
 	{
 	}
@@ -82,7 +82,7 @@ public class DataBlkInt extends DataBlk
 	 * 
 	 * @param h
 	 *            The height of the block (in pixels)
-	 * */
+	 */
 	public DataBlkInt(int ulx, int uly, int w, int h)
 	{
 		this.ulx = ulx;
@@ -100,7 +100,7 @@ public class DataBlkInt extends DataBlk
 	 * 
 	 * @param DataBlkInt
 	 *            the object to be copied.
-	 * */
+	 */
 	public DataBlkInt(DataBlkInt src)
 	{
 		this.ulx = src.ulx;
@@ -121,7 +121,7 @@ public class DataBlkInt extends DataBlk
 	 * @return The type of data stored. Always <tt>DataBlk.TYPE_INT</tt>
 	 * 
 	 * @see DataBlk#TYPE_INT
-	 * */
+	 */
 	@Override
 	public final int getDataType()
 	{
@@ -133,7 +133,7 @@ public class DataBlkInt extends DataBlk
 	 * The returned array is a int array.
 	 * 
 	 * @return The array of data (a int[]) or null if there is no data.
-	 * */
+	 */
 	@Override
 	public final Object getData()
 	{
@@ -144,7 +144,7 @@ public class DataBlkInt extends DataBlk
 	 * Returns the array containing the data, or null if there is no data array.
 	 * 
 	 * @return The array of data or null if there is no data.
-	 * */
+	 */
 	public final int[] getDataInt()
 	{
 		return data;
@@ -157,7 +157,7 @@ public class DataBlkInt extends DataBlk
 	 * 
 	 * @param arr
 	 *            The data array to use. Must be a int array.
-	 * */
+	 */
 	@Override
 	public final void setData(Object arr)
 	{
@@ -171,7 +171,7 @@ public class DataBlkInt extends DataBlk
 	 * 
 	 * @param arr
 	 *            The data array to use.
-	 * */
+	 */
 	public final void setDataInt(int[] arr)
 	{
 		data = arr;
@@ -179,7 +179,7 @@ public class DataBlkInt extends DataBlk
 
 	/**
 	 * Returns a string of informations about the DataBlkInt.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

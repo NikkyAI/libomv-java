@@ -60,7 +60,7 @@ import java.awt.*;
  * MOVE_CURSOR type. The original cursor is restored when the mouse is
  * released after the drag.
  *
- * */
+ */
 public class ImgMouseListener extends MouseAdapter 
     implements MouseMotionListener {
     /** The component where the image is displayed */
@@ -85,7 +85,7 @@ public class ImgMouseListener extends MouseAdapter
      * ImgScrollPane.
      *
      * @param isp The image scroll pane on which the actions should operate.
-     * */
+     */
     public ImgMouseListener(ImgScrollPane isp) {
         this.isp = isp;
     }

@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.entropy.*;
@@ -148,7 +148,7 @@ import jj2000.j2k.util.*;
  * 
  * Implemented but performance not tested yet.
  * </p>
- * */
+ */
 public class MQCoder
 {
 
@@ -314,7 +314,7 @@ public class MQCoder
 	 * @param ltype
 	 *            The type of length calculation to use. One of 'LENGTH_LAZY',
 	 *            'LENGTH_LAZY_GOOD' or 'LENGTH_NEAR_OPT'.
-	 * */
+	 */
 	public void setLenCalcType(int ltype)
 	{
 		// Verify the ttype and ltype
@@ -345,7 +345,7 @@ public class MQCoder
 	 * @param ttype
 	 *            The type of termination to use. One of 'TERM_FULL',
 	 *            'TERM_NEAR_OPT', 'TERM_EASY' or 'TERM_PRED_ER'.
-	 * */
+	 */
 	public void setTermType(int ttype)
 	{
 		if (ttype != TERM_FULL && ttype != TERM_NEAR_OPT && ttype != TERM_EASY && ttype != TERM_PRED_ER)
@@ -370,7 +370,7 @@ public class MQCoder
 	 *            The initial state for each context. A reference is kept to
 	 *            this array to reinitialize the contexts whenever 'reset()' or
 	 *            'resetCtxts()' is called.
-	 * */
+	 */
 	public MQCoder(ByteOutputBuffer oStream, int nrOfContexts, int init[])
 	{
 		out = oStream;
@@ -428,7 +428,7 @@ public class MQCoder
 	 * 
 	 * @param n
 	 *            The number of times that the symbol must be coded.
-	 * */
+	 */
 	public final void fastCodeSymbols(int bit, int ctxt, int n)
 	{
 		int q; // cache for context's Qe
@@ -611,7 +611,7 @@ public class MQCoder
 	 * 
 	 * @param n
 	 *            The number of symbols to encode.
-	 * */
+	 */
 	public final void codeSymbols(int[] bits, int[] cX, int n)
 	{
 		int q;
@@ -739,7 +739,7 @@ public class MQCoder
 	 * 
 	 * @param context
 	 *            the context with which to encode the symbol.
-	 * */
+	 */
 	public final void codeSymbol(int bit, int context)
 	{
 		int q;
@@ -849,7 +849,7 @@ public class MQCoder
 	 * method delays the output of any 0xFF bytes until a non 0xFF byte has to
 	 * be written to the output bit stream (the 'delFF' variable signals if
 	 * there is a delayed 0xff byte).
-	 * */
+	 */
 	private void byteOut()
 	{
 		if (nrOfWrittenBytes >= 0)
@@ -935,7 +935,7 @@ public class MQCoder
 	 * 
 	 * @return The length of the arithmetic codeword after termination, in
 	 *         bytes.
-	 * */
+	 */
 	public int terminate()
 	{
 		switch (ttype)
@@ -1198,7 +1198,7 @@ public class MQCoder
 	 * Returns the number of contexts in the arithmetic coder.
 	 * 
 	 * @return The number of contexts
-	 * */
+	 */
 	public final int getNumCtxts()
 	{
 		return I.length;
@@ -1210,7 +1210,7 @@ public class MQCoder
 	 * 
 	 * @param c
 	 *            The number of the context (it starts at 0).
-	 * */
+	 */
 	public final void resetCtxt(int c)
 	{
 		I[c] = initStates[c];
@@ -1220,7 +1220,7 @@ public class MQCoder
 	/**
 	 * Resets all contexts to their original probability distribution and sets
 	 * all more probable symbols to 0.
-	 * */
+	 */
 	public final void resetCtxts()
 	{
 		System.arraycopy(initStates, 0, I, 0, I.length);
@@ -1252,7 +1252,7 @@ public class MQCoder
 	 * 
 	 * @return The number of bytes in the compressed output stream necessary to
 	 *         decode all the information coded this far.
-	 * */
+	 */
 	public final int getNumCodedBytes()
 	{
 		// NOTE: testing these algorithms for correctness is quite
@@ -1315,7 +1315,7 @@ public class MQCoder
 	 * as if a new object was instantaited. All the data in the
 	 * 'ByteOutputBuffer' buffer is erased and the state and contexts of the MQ
 	 * coder are reinitialized). Additionally any saved MQ states are discarded.
-	 * */
+	 */
 	public final void reset()
 	{
 
@@ -1340,7 +1340,7 @@ public class MQCoder
 	 * Saves the current state of the MQ coder (just the registers, not the
 	 * contexts) so that a near optimal length calculation can be performed
 	 * later.
-	 * */
+	 */
 	private void saveState()
 	{
 		// Increase capacity if necessary
@@ -1389,7 +1389,7 @@ public class MQCoder
 	 * 
 	 * @param n
 	 *            The index in the 'rates' array of the last terminated length.
-	 * */
+	 */
 	public void finishLengthCalculation(int rates[], int n)
 	{
 		if (ltype != LENGTH_NEAR_OPT)

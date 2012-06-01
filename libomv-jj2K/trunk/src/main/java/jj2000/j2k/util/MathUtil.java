@@ -39,13 +39,13 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 /**
  * This class contains a collection of utility methods fro mathematical
  * operations. All methods are static.
- * */
+ */
 public class MathUtil
 {
 
@@ -57,7 +57,7 @@ public class MathUtil
 	 *            The value to calculate log2 on.
 	 * 
 	 * @return floor(log(x)/log(2)), calculated in an exact way.
-	 * */
+	 */
 	public static int log2(int x)
 	{
 		int y, v;
@@ -86,7 +86,7 @@ public class MathUtil
 	 * 
 	 * @param x2
 	 *            Second number
-	 * */
+	 */
 	public static final int lcm(int x1, int x2)
 	{
 		if (x1 <= 0 || x2 <= 0)
@@ -121,7 +121,7 @@ public class MathUtil
 	 * 
 	 * @param x
 	 *            Array containing the numbers.
-	 * */
+	 */
 	public static final int lcm(int[] x)
 	{
 		if (x.length < 2)
@@ -144,7 +144,7 @@ public class MathUtil
 	/**
 	 * Method that calculates the Greatest Common Divisor (GCD) of two positive
 	 * integer numbers.
-	 * */
+	 */
 	public static final int gcd(int x1, int x2)
 	{
 		if (x1 < 0 || x2 < 0)
@@ -184,7 +184,7 @@ public class MathUtil
 	 * 
 	 * @param x
 	 *            Array containing the numbers.
-	 * */
+	 */
 	public static final int gcd(int[] x)
 	{
 		if (x.length < 2)

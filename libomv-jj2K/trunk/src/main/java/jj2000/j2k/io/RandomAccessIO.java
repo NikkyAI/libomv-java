@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.io;
 
 import java.io.*;
@@ -55,7 +55,7 @@ import java.io.*;
  * 
  * @see BinaryDataInput
  * @see BinaryDataOutput
- * */
+ */
 public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 {
 
@@ -65,7 +65,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void close() throws IOException;
 
 	/**
@@ -77,7 +77,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int getPos() throws IOException;
 
 	/**
@@ -88,7 +88,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int length() throws IOException;
 
 	/**
@@ -107,7 +107,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void seek(int off) throws IOException;
 
 	/**
@@ -121,7 +121,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int read() throws EOFException, IOException;
 
 	/**
@@ -146,7 +146,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void readFully(byte b[], int off, int len) throws IOException;
 
 	/**
@@ -158,6 +158,6 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void write(int b) throws IOException;
 }

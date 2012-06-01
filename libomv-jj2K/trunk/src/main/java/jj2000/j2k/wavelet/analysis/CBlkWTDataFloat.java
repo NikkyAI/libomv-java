@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.image.*;
@@ -54,7 +54,7 @@ import jj2000.j2k.image.*;
  * </p>
  * 
  * @see CBlkWTData
- * */
+ */
 public class CBlkWTDataFloat extends CBlkWTData
 {
 
@@ -68,7 +68,7 @@ public class CBlkWTDataFloat extends CBlkWTData
 	 * @return The type of data stored. Always <tt>DataBlk.TYPE_FLOAT</tt>
 	 * 
 	 * @see DataBlk#TYPE_FLOAT
-	 * */
+	 */
 	@Override
 	public final int getDataType()
 	{
@@ -80,7 +80,7 @@ public class CBlkWTDataFloat extends CBlkWTData
 	 * The returned array is a float array.
 	 * 
 	 * @return The array of data (a float[]) or null if there is no data.
-	 * */
+	 */
 	@Override
 	public final Object getData()
 	{
@@ -91,7 +91,7 @@ public class CBlkWTDataFloat extends CBlkWTData
 	 * Returns the array containing the data, or null if there is no data array.
 	 * 
 	 * @return The array of data or null if there is no data.
-	 * */
+	 */
 	public final float[] getDataFloat()
 	{
 		return data;
@@ -104,7 +104,7 @@ public class CBlkWTDataFloat extends CBlkWTData
 	 * 
 	 * @param arr
 	 *            The data array to use. Must be a float array.
-	 * */
+	 */
 	@Override
 	public final void setData(Object arr)
 	{
@@ -118,7 +118,7 @@ public class CBlkWTDataFloat extends CBlkWTData
 	 * 
 	 * @param arr
 	 *            The data array to use.
-	 * */
+	 */
 	public final void setDataFloat(float[] arr)
 	{
 		data = arr;

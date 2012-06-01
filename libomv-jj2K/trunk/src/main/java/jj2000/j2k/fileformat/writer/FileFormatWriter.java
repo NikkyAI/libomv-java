@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *  */
+ */
 package jj2000.j2k.fileformat.writer;
 
 import jj2000.j2k.fileformat.*;
@@ -53,7 +53,7 @@ import java.io.*;
  * fileformat
  * 
  * @see jj2000.j2k.fileformat.reader.FileFormatReader
- * */
+ */
 public class FileFormatWriter implements FileFormatBoxes
 {
 
@@ -117,7 +117,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * 
 	 * @param clength
 	 *            Length of codestream
-	 * */
+	 */
 	public FileFormatWriter(String filename, int height, int width, int nc, int[] bpc, int clength)
 	{
 		this.height = height;
@@ -145,7 +145,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int writeFileFormat() throws IOException
 	{
 		byte[] codestream;
@@ -190,7 +190,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void writeFileTypeBox() throws IOException
 	{
 		// Write box length (LBox)
@@ -217,7 +217,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void writeJP2HeaderBox() throws IOException
 	{
 
@@ -302,7 +302,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void writeImageHeaderBox() throws IOException
 	{
 
@@ -348,7 +348,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public void writeContiguousCodeStreamBox(byte[] cs) throws IOException
 	{
 

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.quantization.*;
@@ -53,7 +53,7 @@ import java.util.*;
  * holding purpose.
  * 
  * @see ModuleSpec
- * */
+ */
 public class AnWTFilterSpec extends ModuleSpec
 {
 
@@ -82,7 +82,7 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList
-	 * */
+	 */
 	public AnWTFilterSpec(int nt, int nc, byte type, QuantTypeSpec qts, ParameterList pl)
 	{
 		super(nt, nc, type);
@@ -415,7 +415,7 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * @return The data type of the filters in this object
 	 * 
 	 * @see jj2000.j2k.image.DataBlk
-	 * */
+	 */
 	public int getWTDataType(int t, int c)
 	{
 		AnWTFilter[][] an = (AnWTFilter[][]) getSpec(t, c);
@@ -442,7 +442,7 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * 
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 *         tile 't'.
-	 * */
+	 */
 	public AnWTFilter[] getHFilters(int t, int c)
 	{
 		AnWTFilter[][] an = (AnWTFilter[][]) getSpec(t, c);
@@ -469,7 +469,7 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * 
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 *         tile 't'.
-	 * */
+	 */
 	public AnWTFilter[] getVFilters(int t, int c)
 	{
 		AnWTFilter[][] an = (AnWTFilter[][]) getSpec(t, c);
@@ -516,7 +516,7 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * 
 	 * @param c
 	 *            The index of the component
-	 * */
+	 */
 	public boolean isReversible(int t, int c)
 	{
 		// Note: no need to buffer the result since this method is

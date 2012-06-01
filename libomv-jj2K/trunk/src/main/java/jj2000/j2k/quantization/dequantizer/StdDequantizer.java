@@ -43,7 +43,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization.dequantizer;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -85,7 +85,7 @@ import jj2000.j2k.image.*;
  * way the dequantized values will always lie midways in the quantization
  * intervals.
  * </p>
- * */
+ */
 public class StdDequantizer extends Dequantizer
 {
 
@@ -135,7 +135,7 @@ public class StdDequantizer extends Dequantizer
 	 *                if 'param' specify reversible quantization and 'outdt' is
 	 *                not TYPE_INT or 'fp' has non-zero values, or if 'outdt' is
 	 *                TYPE_FLOAT and 'fp' has non-zero values.
-	 * */
+	 */
 	public StdDequantizer(CBlkQuantDataSrcDec src, int[] utrb, DecoderSpecs decSpec)
 	{
 		super(src, utrb, decSpec);
@@ -168,7 +168,7 @@ public class StdDequantizer extends Dequantizer
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -222,7 +222,7 @@ public class StdDequantizer extends Dequantizer
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	@Override
 	public final DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk)
 	{
@@ -275,7 +275,7 @@ public class StdDequantizer extends Dequantizer
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	@Override
 	public final DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk)
 	{

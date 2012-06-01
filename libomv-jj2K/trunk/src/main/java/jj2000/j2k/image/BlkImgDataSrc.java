@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 /**
@@ -61,7 +61,7 @@ package jj2000.j2k.image;
  * their source to load the data they need.
  *
  * @see ImgData
- * */
+ */
 public interface BlkImgDataSrc extends ImgData {
 
     /**
@@ -78,7 +78,7 @@ public interface BlkImgDataSrc extends ImgData {
      *
      * @return The position of the fixed-point, which is the same as the
      * number of fractional bits. For floating-point data 0 is returned.
-     * */
+     */
      public int getFixedPoint(int c);
 
     /**
@@ -123,7 +123,7 @@ public interface BlkImgDataSrc extends ImgData {
      * @return The requested DataBlk
      * 
      * @see #getCompData
-     * */
+     */
     public DataBlk getInternCompData(DataBlk blk, int c);
 
     /**
@@ -160,6 +160,6 @@ public interface BlkImgDataSrc extends ImgData {
      * @param c The index of the component from which to get the data.
      *
      * @see #getInternCompData
-     * */
+     */
     public DataBlk getCompData(DataBlk blk, int c);
 }

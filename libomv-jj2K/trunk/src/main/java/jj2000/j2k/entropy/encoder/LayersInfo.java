@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 /**
@@ -72,7 +72,7 @@ package jj2000.j2k.entropy.encoder;
  * Information about the total number of layers, total number of optimization
  * points, target bitrates, etc. can be obtained with the other methods.
  * </p>
- * */
+ */
 public class LayersInfo
 {
 
@@ -115,7 +115,7 @@ public class LayersInfo
 	 * 
 	 * @param brate
 	 *            The overall target bitrate for the bit stream
-	 * */
+	 */
 	public LayersInfo(float brate)
 	{
 		if (brate <= 0)
@@ -129,7 +129,7 @@ public class LayersInfo
 	 * Returns the overall target bitrate for the entire bit stream.
 	 * 
 	 * @return The overall target bitrate
-	 * */
+	 */
 	public float getTotBitrate()
 	{
 		return totbrate;
@@ -140,7 +140,7 @@ public class LayersInfo
 	 * of this object and the overall target bitrate.
 	 * 
 	 * @return The total number of layers, according to the layer spec.
-	 * */
+	 */
 	public int getTotNumLayers()
 	{
 		return totlyrs;
@@ -151,7 +151,7 @@ public class LayersInfo
 	 * specified by this object.
 	 * 
 	 * @return The number of optimization points
-	 * */
+	 */
 	public int getNOptPoints()
 	{
 		// overall target bitrate is counted as extra
@@ -165,7 +165,7 @@ public class LayersInfo
 	 *            The optimization point index (starts at 0).
 	 * 
 	 * @return The target bitrate (in bpp) for the optimization point 'n'.
-	 * */
+	 */
 	public float getTargetBitrate(int n)
 	{
 		// overall target bitrate is counted as extra
@@ -182,7 +182,7 @@ public class LayersInfo
 	 * 
 	 * @return The number of extra (unoptimized) layers to add after the
 	 *         optimization point 'n'
-	 * */
+	 */
 	public int getExtraLayers(int n)
 	{
 		// overall target bitrate is counted as extra
@@ -201,7 +201,7 @@ public class LayersInfo
 	 * @param elyrs
 	 *            The number of extra (unoptimized) layers to add after the
 	 *            optimized layer.
-	 * */
+	 */
 	public void addOptPoint(float brate, int elyrs)
 	{
 		// Check validity of arguments

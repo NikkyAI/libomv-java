@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.writer;
 
 import jj2000.j2k.util.*;
@@ -73,7 +73,7 @@ import jj2000.j2k.util.*;
  * @see BitOutputBuffer
  *
  * @see jj2000.j2k.codestream.reader.TagTreeDecoder
- * */
+ */
 public class TagTreeEncoder {
 
     /** The horizontal dimension of the base level */
@@ -119,7 +119,7 @@ public class TagTreeEncoder {
      * @param h The number of elements along the horizontal direction.
      *
      * @param w The number of elements along the vertical direction.
-     * */
+     */
     public TagTreeEncoder(int h, int w) {
         int k;
         // Check arguments
@@ -148,7 +148,7 @@ public class TagTreeEncoder {
      * @param w The number of elements along the vertical direction.
      *
      * @param val The values with which initialize the leafs of the tag tree.
-     * */
+     */
     public TagTreeEncoder(int h, int w, int val[]) {
         int k;
         // Check arguments
@@ -169,7 +169,7 @@ public class TagTreeEncoder {
      * Returns the number of leafs along the horizontal direction.
      *
      * @return The number of leafs along the horizontal direction.
-     * */
+     */
     public final int getWidth() {
         return w;
     }
@@ -178,7 +178,7 @@ public class TagTreeEncoder {
      * Returns the number of leafs along the vertical direction.
      *
      * @return The number of leafs along the vertical direction.
-     * */
+     */
     public final int getHeight() {
         return h;
     }
@@ -192,7 +192,7 @@ public class TagTreeEncoder {
      * @param w The number of elements along the vertical direction.
      *
      * @param h The number of elements along the horizontal direction.
-     * */
+     */
     private void init(int w, int h) {
         int i;
         // Initialize dimensions
@@ -227,7 +227,7 @@ public class TagTreeEncoder {
     /**
      * Recalculates the values of the elements in the tag tree, in levels 1
      * and up, based on the values of the leafs (level 0).
-     * */
+     */
     private void recalcTreeV() {
         int m,n,bi,lw,tm1,tm2,lh,k;
         // Loop on all other levels, updating minimum
@@ -290,7 +290,7 @@ public class TagTreeEncoder {
      * @param n The horizontal index of the element.
      *
      * @param v The new value of the element.
-     * */
+     */
     public void setValue(int m, int n, int v) {
         int k,idx;
         // Check arguments
@@ -331,7 +331,7 @@ public class TagTreeEncoder {
      * @param val The new values for the leafs, in lexicographical order.
      *
      * @see #setValue
-     * */
+     */
     public void setValues(int val[]) {
         int i,maxt;
         if (lvls == 0) { // Can't set values on empty tree
@@ -364,7 +364,7 @@ public class TagTreeEncoder {
      * @param t The threshold to use for encoding. It must be non-negative.
      *
      * @param out The stream where to write the coded information.
-     * */
+     */
     public void encode(int m, int n, int t, BitOutputBuffer out) {
         int k,ts,idx,tmin;
 
@@ -419,7 +419,7 @@ public class TagTreeEncoder {
      * restores the tag tree the saved state.
      *
      * @see #restore
-     * */
+     */
     public void save() {
         int k;
 
@@ -450,7 +450,7 @@ public class TagTreeEncoder {
      * not been saved yet.
      *
      * @see #save
-     * */
+     */
     public void restore() {
         int k;
 
@@ -469,7 +469,7 @@ public class TagTreeEncoder {
     /**
      * Resets the tree values and state. All the values are set to
      * Integer.MAX_VALUE and the states to 0.
-     * */
+     */
     public void reset() {
         int k;
         // Set all values to Integer.MAX_VALUE
@@ -487,7 +487,7 @@ public class TagTreeEncoder {
      * 'val'. The states are all set to 0.
      *
      * @param val The new values for the leafs, in lexicographical order.
-     * */
+     */
     public void reset(int val[]) {
         int k;
         // Set values for leaf level

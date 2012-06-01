@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 /**
@@ -116,7 +116,7 @@ package jj2000.j2k.util;
  *
  * @see RuntimeException
  *
- * */
+ */
 public class ThreadPool {
 
     /** The name of the property that sets the concurrency level:
@@ -147,7 +147,7 @@ public class ThreadPool {
 
     /**
      * The threads that are managed by the pool.
-     * */
+     */
     class ThreadPoolThread extends Thread {
         private Runnable target;
         private Object lock;
@@ -161,7 +161,7 @@ public class ThreadPool {
          * @param idx The index of this thread in the pool
 	 *
 	 * @param name The name of the thread
-         * */
+         */
         public ThreadPoolThread(int idx, String name) {
             super(name);
             setDaemon(true);
@@ -187,7 +187,7 @@ public class ThreadPool {
          * the corresponding error condition is set and this thread is not
          * affected. For any other exceptions a new 'RuntimeException' is
          * created and the error condition is set, this thread is not affected.
-         * */
+         */
         @Override
 		public void run() {
             // Join the idle threads list
@@ -263,7 +263,7 @@ public class ThreadPool {
          *
          * @param notifyAll If true 'notifyAll()', instead of 'notify()', will
          * be called on tghe lock.
-         * */
+         */
         synchronized void setTarget(Runnable target, Object lock,
                                     boolean notifyAll) {
             // Set the target
@@ -298,7 +298,7 @@ public class ThreadPool {
      * @see NativeServices
      *
      * @see #CONCURRENCY_PROP_NAME
-     * */
+     */
     public ThreadPool(int size, int priority, String name) {
         int i;
         ThreadPoolThread t;
@@ -375,7 +375,7 @@ public class ThreadPool {
      *
      * @return The pool's size.
      *
-     * */
+     */
     public int getSize() {
         return idle.length;
     }
@@ -400,7 +400,7 @@ public class ThreadPool {
      * idle thread could be found and the target was not submitted for
      * execution.
      *
-     * */
+     */
     public boolean runTarget(Runnable t, Object l) {
         return runTarget(t,l,false,false);
     }
@@ -429,7 +429,7 @@ public class ThreadPool {
      * idle thread could be found and the target was not submitted for
      * execution.
      *
-     * */
+     */
     public boolean runTarget(Runnable t, Object l, boolean async) {
         return runTarget(t,l,async,false);
     }
@@ -460,7 +460,7 @@ public class ThreadPool {
      * idle thread could be found and the target was not submitted for
      * execution.
      *
-     * */
+     */
     public boolean runTarget(Runnable t, Object l,
                              boolean async, boolean notifyAll) {
         ThreadPoolThread runner;   // The thread to run the target
@@ -484,7 +484,7 @@ public class ThreadPool {
      *
      * @exception RuntimeException If a runtime exception has been thrown by a 
      * target 'run()' method.
-     * */
+     */
     public void checkTargetErrors() {
         // Check for Error
         if (targetE != null) throw targetE;
@@ -504,7 +504,7 @@ public class ThreadPool {
      * from this method cooperation from the targets and the thread using this
      * pool is necessary (i.e. currently no targets running or waiting to
      * run).
-     * */
+     */
     public void clearTargetErrors() {
         // Clear the error and runtime exception conditions
         targetE = null;
@@ -524,7 +524,7 @@ public class ThreadPool {
      * 'getIdle()' method) on an idle thread to become available.
      *
      * @param t The thread to put in the idle list.
-     * */
+     */
     private void putInIdleList(ThreadPoolThread t) {
         // NOTE: if already in idle => catastrophe! (should be OK since //
         // this is private method)
@@ -553,7 +553,7 @@ public class ThreadPool {
      *
      * @return An idle thread of the pool, that has been removed from the idle 
      * list, or null if none is available.
-     * */
+     */
     private ThreadPoolThread getIdle(boolean async) {
         // Lock the idle array to avoid races with 'putInIdleList()'
         synchronized (idle) {

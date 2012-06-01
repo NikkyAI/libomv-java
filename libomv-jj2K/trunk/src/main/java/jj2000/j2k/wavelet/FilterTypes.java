@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet;
 
 /**
@@ -50,7 +50,7 @@ package jj2000.j2k.wavelet;
  * The identifier values are the same as those used in the codestream syntax,
  * for the filters that are defined in the standard.
  * </p>
- * */
+ */
 public interface FilterTypes
 {
 

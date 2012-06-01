@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.wavelet.*;
@@ -83,7 +83,7 @@ import jj2000.j2k.wavelet.*;
  * 
  * @see AnWTFilterInt
  * @see AnWTFilterFloat
- * */
+ */
 public abstract class AnWTFilter implements WaveletFilter
 {
 
@@ -213,7 +213,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 *            output samples in the highSig array. See above.
 	 * 
 	 * @see WaveletFilter#getDataType
-	 * */
+	 */
 	public abstract void analyze_lpf(Object inSig, int inOff, int inLen, int inStep, Object lowSig, int lowOff,
 			int lowStep, Object highSig, int highOff, int highStep);
 
@@ -298,7 +298,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 *            output samples in the highSig array. See above.
 	 * 
 	 * @see WaveletFilter#getDataType
-	 * */
+	 */
 	public abstract void analyze_hpf(Object inSig, int inOff, int inLen, int inStep, Object lowSig, int lowOff,
 			int lowStep, Object highSig, int highOff, int highStep);
 
@@ -315,7 +315,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * </p>
 	 * 
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
-	 * */
+	 */
 	public abstract float[] getLPSynthesisFilter();
 
 	/**
@@ -331,7 +331,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * </p>
 	 * 
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
-	 * */
+	 */
 	public abstract float[] getHPSynthesisFilter();
 
 	/**
@@ -357,7 +357,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * 
 	 * @see #getSynLowNegSupport
 	 * @see #getSynLowPosSupport
-	 * */
+	 */
 	public float[] getLPSynWaveForm(float in[], float out[])
 	{
 		return upsampleAndConvolve(in, getLPSynthesisFilter(), out);
@@ -386,7 +386,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * 
 	 * @see #getSynHighNegSupport
 	 * @see #getSynHighPosSupport
-	 * */
+	 */
 	public float[] getHPSynWaveForm(float in[], float out[])
 	{
 		return upsampleAndConvolve(in, getHPSynthesisFilter(), out);
@@ -417,7 +417,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 *            IndexOutOfBoundsException is thrown if this is not the case.
 	 * 
 	 * @return The resulting signal, of length in.length*2+wf.length-2
-	 * */
+	 */
 	private static float[] upsampleAndConvolve(float in[], float wf[], float out[])
 	{
 		// NOTE: the effective length of the signal 'in' upsampled by
@@ -472,7 +472,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * @see FilterTypes
 	 * 
 	 * @return The filter type.
-	 * */
+	 */
 	public abstract int getFilterType();
 
 	/**
@@ -487,7 +487,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;

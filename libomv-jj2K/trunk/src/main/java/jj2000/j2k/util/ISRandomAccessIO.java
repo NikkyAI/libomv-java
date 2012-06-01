@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 import jj2000.j2k.io.*;
@@ -86,7 +86,7 @@ import java.io.*;
  * This class does not use temporary files as buffers, because that would
  * preclude the use in unsigned applets.
  * </p>
- * */
+ */
 public class ISRandomAccessIO implements RandomAccessIO
 {
 
@@ -133,7 +133,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @param maxsize
 	 *            The maximum size for the cache buffer, in bytes.
-	 * */
+	 */
 	public ISRandomAccessIO(InputStream is, int size, int inc, int maxsize)
 	{
 		if (size < 0 || inc <= 0 || maxsize <= 0 || is == null)
@@ -162,7 +162,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @param is
 	 *            The input from where to get the data.
-	 * */
+	 */
 	public ISRandomAccessIO(InputStream is)
 	{
 		this(is, 1 << 18, 1 << 18, Integer.MAX_VALUE);
@@ -175,7 +175,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * @exception IOException
 	 *                If the maximum cache size is reached or if not enough
 	 *                memory is available to grow the buffer.
-	 * */
+	 */
 	private void growBuffer() throws IOException
 	{
 		byte newbuf[];
@@ -210,7 +210,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * @exception IOException
 	 *                An I/O error occurred, out of meory to grow cache or
 	 *                maximum cache size reached.
-	 * */
+	 */
 	private void readInput() throws IOException
 	{
 		int n;
@@ -252,7 +252,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * @exception IOException
 	 *                If an I/O error occurs while closing the underlying
 	 *                InputStream.
-	 * */
+	 */
 	@Override
 	public void close() throws IOException
 	{
@@ -271,7 +271,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurred.
-	 * */
+	 */
 	@Override
 	public int getPos() throws IOException
 	{
@@ -295,7 +295,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public void seek(int off) throws IOException
 	{
@@ -318,7 +318,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int length() throws IOException
 	{
@@ -339,7 +339,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int read() throws IOException
 	{
@@ -385,7 +385,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public void readFully(byte b[], int off, int n) throws IOException
 	{
@@ -415,7 +415,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * @return Always EndianType.BIG_ENDIAN.
 	 * 
 	 * @see EndianType
-	 * */
+	 */
 	@Override
 	public int getByteOrdering()
 	{
@@ -433,7 +433,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public byte readByte() throws IOException
 	{
@@ -456,7 +456,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int readUnsignedByte() throws IOException
 	{
@@ -479,7 +479,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public short readShort() throws IOException
 	{
@@ -502,7 +502,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int readUnsignedShort() throws IOException
 	{
@@ -525,7 +525,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int readInt() throws IOException
 	{
@@ -548,7 +548,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public long readUnsignedInt() throws IOException
 	{
@@ -571,7 +571,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public long readLong() throws IOException
 	{
@@ -598,7 +598,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public float readFloat() throws IOException
 	{
@@ -623,7 +623,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public double readDouble() throws IOException
 	{
@@ -654,7 +654,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int skipBytes(int n) throws IOException
 	{
@@ -671,7 +671,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Does nothing since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void flush()
 	{ /* no-op */
@@ -679,7 +679,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void write(int b) throws IOException
 	{
@@ -688,7 +688,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void writeByte(int v) throws IOException
 	{
@@ -697,7 +697,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void writeShort(int v) throws IOException
 	{
@@ -706,7 +706,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void writeInt(int v) throws IOException
 	{
@@ -715,7 +715,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void writeLong(long v) throws IOException
 	{
@@ -724,7 +724,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void writeFloat(float v) throws IOException
 	{
@@ -733,7 +733,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 
 	/**
 	 * Throws an IOException since this class does not implement data output.
-	 * */
+	 */
 	@Override
 	public void writeDouble(double v) throws IOException
 	{

@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -95,7 +95,7 @@ import jj2000.j2k.entropy.*;
  * </p>
  * 
  * @see CodedCBlk
- * */
+ */
 public class CBlkRateDistStats extends CodedCBlk
 {
 
@@ -139,7 +139,7 @@ public class CBlkRateDistStats extends CodedCBlk
 	/**
 	 * Creates a new CBlkRateDistStats object without allocating any space for
 	 * 'truncRates', 'truncSlopes', 'truncDists' and 'truncIdxs' or 'data'.
-	 * */
+	 */
 	public CBlkRateDistStats()
 	{
 	}
@@ -201,7 +201,7 @@ public class CBlkRateDistStats extends CodedCBlk
 	 *            If true it is constructed as for lossless coding, in which
 	 *            case it is ensured that all bit-planes are sent (i.e. the last
 	 *            truncation point is always included).
-	 * */
+	 */
 	public CBlkRateDistStats(int m, int n, int skipMSBP, byte data[], int rates[], double dists[], boolean termp[],
 			int np, boolean inclast)
 	{
@@ -246,7 +246,7 @@ public class CBlkRateDistStats extends CodedCBlk
 	 *            If true it is constructed as for lossless coding, in which
 	 *            case it is ensured that all bit-planes are sent (i.e. the last
 	 *            truncation point is always included).
-	 * */
+	 */
 	public void selectConvexHull(int rates[], double dists[], boolean termp[], int n, boolean inclast)
 	{
 		int first_pnt; // The first point containing some coded data
@@ -378,7 +378,7 @@ public class CBlkRateDistStats extends CodedCBlk
 	 * debugging.
 	 * 
 	 * @return A string with the contents of the object
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

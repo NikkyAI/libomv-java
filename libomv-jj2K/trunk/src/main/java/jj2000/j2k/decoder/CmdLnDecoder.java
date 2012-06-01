@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.decoder;
 
 import jj2000.j2k.util.*;
@@ -50,7 +50,7 @@ import java.io.*;
  * This class runs the JJ2000 decoder from the command line interface. It parses
  * command-line arguments in order to fill a ParameterList object. Then this one
  * is provided to a Decoder object.
- * */
+ */
 public class CmdLnDecoder
 {
 
@@ -69,7 +69,7 @@ public class CmdLnDecoder
 	 * 
 	 * @param argv
 	 *            The command line parameters
-	 * */
+	 */
 	public static void main(String argv[])
 	{
 		if (argv.length == 0)
@@ -94,7 +94,7 @@ public class CmdLnDecoder
 	 *                If 'argv' is empty
 	 * 
 	 * @see Decoder#getExitCode
-	 * */
+	 */
 	public CmdLnDecoder(String argv[])
 	{
 		// Initialize default parameters

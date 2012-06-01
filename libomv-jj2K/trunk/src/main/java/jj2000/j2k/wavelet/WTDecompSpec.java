@@ -65,7 +65,7 @@ import jj2000.j2k.*;
  * 
  * <P>
  * At the moment tiles are not supported by this class.
- * */
+ */
 public class WTDecompSpec
 {
 	/**
@@ -143,7 +143,7 @@ public class WTDecompSpec
 	 *            The main default number of decomposition levels
 	 * 
 	 * 
-	 * */
+	 */
 	public WTDecompSpec(int nc, int dec, int lev)
 	{
 		mainDefDecompType = dec;
@@ -168,7 +168,7 @@ public class WTDecompSpec
 	 *            used.
 	 * 
 	 * 
-	 * */
+	 */
 	public void setMainCompDefDecompType(int n, int dec, int lev)
 	{
 		if (dec < 0 && lev < 0)
@@ -208,7 +208,7 @@ public class WTDecompSpec
 	 * @return The specification type for component 'n' and tile 't'.
 	 * 
 	 * 
-	 * */
+	 */
 	public byte getDecSpecType(int n)
 	{
 		return specValType[n];
@@ -220,7 +220,7 @@ public class WTDecompSpec
 	 * @return The main default decomposition type.
 	 * 
 	 * 
-	 * */
+	 */
 	public int getMainDefDecompType()
 	{
 		return mainDefDecompType;
@@ -232,7 +232,7 @@ public class WTDecompSpec
 	 * @return The main default decomposition number of levels.
 	 * 
 	 * 
-	 * */
+	 */
 	public int getMainDefLevels()
 	{
 		return mainDefLevels;
@@ -253,7 +253,7 @@ public class WTDecompSpec
 	 * @return The decomposition type to be used.
 	 * 
 	 * 
-	 * */
+	 */
 	public int getDecompType(int n)
 	{
 		switch (specValType[n])
@@ -286,7 +286,7 @@ public class WTDecompSpec
 	 * @return The decomposition number of levels.
 	 * 
 	 * 
-	 * */
+	 */
 	public int getLevels(int n)
 	{
 		switch (specValType[n])

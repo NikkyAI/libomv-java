@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.wavelet.*;
@@ -65,7 +65,7 @@ import jj2000.j2k.wavelet.*;
  * @see WaveletTransform
  * @see jj2000.j2k.quantization.quantizer.CBlkQuantDataSrcEnc
  * @see jj2000.j2k.quantization.quantizer.Quantizer
- * */
+ */
 public interface CBlkWTDataSrc extends ForwWTDataProps
 {
 
@@ -83,7 +83,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	public int getFixedPoint(int c);
 
 	/**
@@ -99,7 +99,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 *            Component index
 	 * 
 	 * @return Current data type
-	 * */
+	 */
 	public int getDataType(int t, int c);
 
 	/**
@@ -145,7 +145,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	public abstract CBlkWTData getNextCodeBlock(int c, CBlkWTData cblk);
 
 	/**
@@ -189,6 +189,6 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	public abstract CBlkWTData getNextInternCodeBlock(int c, CBlkWTData cblk);
 }

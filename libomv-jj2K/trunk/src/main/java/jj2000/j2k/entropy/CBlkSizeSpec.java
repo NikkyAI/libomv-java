@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy;
 
 import jj2000.j2k.util.*;
@@ -52,7 +52,7 @@ import java.util.*;
  * 
  * <P>
  * It stores the size a of code-block.
- * */
+ */
 public class CBlkSizeSpec extends ModuleSpec
 {
 
@@ -78,7 +78,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * @param type
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both.
-	 * */
+	 */
 	public CBlkSizeSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -103,7 +103,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList instance
-	 * */
+	 */
 	public CBlkSizeSpec(int nt, int nc, byte type, ParameterList pl)
 	{
 		super(nt, nc, type);
@@ -353,7 +353,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 *            the component index
 	 * 
 	 * @return The code-block width for the specified tile and component
-	 * */
+	 */
 	public int getCBlkWidth(byte type, int t, int c)
 	{
 		Integer dim[] = null;
@@ -405,7 +405,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 *            the component index
 	 * 
 	 * @return The code-block height for the specified tile and component
-	 * */
+	 */
 	public int getCBlkHeight(byte type, int t, int c)
 	{
 		Integer dim[] = null;
@@ -431,7 +431,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * 
 	 * @param value
 	 *            Default value
-	 * */
+	 */
 	@Override
 	public void setDefault(Object value)
 	{
@@ -450,7 +450,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * 
 	 * @param value
 	 *            Tile's default value
-	 * */
+	 */
 	@Override
 	public void setTileDef(int t, Object value)
 	{
@@ -469,7 +469,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * 
 	 * @param value
 	 *            Component's default value
-	 * */
+	 */
 	@Override
 	public void setCompDef(int c, Object value)
 	{
@@ -490,7 +490,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * 
 	 * @param value
 	 *            Tile-component's value
-	 * */
+	 */
 	@Override
 	public void setTileCompVal(int t, int c, Object value)
 	{
@@ -506,7 +506,7 @@ public class CBlkSizeSpec extends ModuleSpec
 	 * @param dim
 	 *            The 2 elements array that contains the code-block width and
 	 *            height.
-	 * */
+	 */
 	private void storeHighestDims(Integer[] dim)
 	{
 		// Store the biggest code-block dimensions

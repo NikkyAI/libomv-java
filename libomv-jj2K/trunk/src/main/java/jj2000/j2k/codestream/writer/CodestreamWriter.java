@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.writer;
 
 import java.io.*;
@@ -64,7 +64,7 @@ import java.io.*;
  * the HeaderEncoder class.</p>
  *
  * @see HeaderEncoder
- * */
+ */
 public abstract class CodestreamWriter {
 
     /** The number of bytes already written to the bit stream */
@@ -78,7 +78,7 @@ public abstract class CodestreamWriter {
      *
      * @param mb The maximum number of bytes that can be written to the
      * codestream.
-     * */
+     */
     protected CodestreamWriter(int mb) {
         maxBytes = mb;
     }
@@ -91,14 +91,14 @@ public abstract class CodestreamWriter {
      * then a negative value is returned.
      *
      * @return The number of bytes remaining available in the bit stream.
-     * */
+     */
     public abstract int getMaxAvailableBytes();
 
     /**
      * Returns the current length of the entire codestream.
      *
      * @return the current length of the codestream
-     * */
+     */
     public abstract int getLength();
 
     /**
@@ -139,7 +139,7 @@ public abstract class CodestreamWriter {
      * output stream.
      *
      * @see #commitBitstreamHeader
-     * */ 
+     */ 
     public abstract int writePacketHead(byte head[],int hlen,boolean sim, 
 					boolean sop, boolean eph)
         throws IOException;
@@ -175,7 +175,7 @@ public abstract class CodestreamWriter {
      * output stream.
      *
      * @see #commitBitstreamHeader
-     * */ 
+     */ 
     public abstract int writePacketBody(byte body[],int blen,boolean sim,
                                         boolean roiInPkt, int roiLen) 
         throws IOException;
@@ -188,7 +188,7 @@ public abstract class CodestreamWriter {
      *
      * @exception IOException If an I/O error occurs while closing the
      * resource.
-     * */
+     */
     public abstract void close() throws IOException;
     
     /**
@@ -200,7 +200,7 @@ public abstract class CodestreamWriter {
      *
      * @exception IllegalArgumentException If this method has already been
      * called.
-     * */
+     */
     public abstract void commitBitstreamHeader(HeaderEncoder he)
         throws IOException;
 
@@ -208,6 +208,6 @@ public abstract class CodestreamWriter {
      * Gives the offset of the end of last packet containing ROI information 
      *
      * @return End of last ROI packet 
-     * */
+     */
     public abstract int getOffLastROIPkt();
 }

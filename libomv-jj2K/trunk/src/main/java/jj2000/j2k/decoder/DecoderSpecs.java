@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.decoder;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -56,7 +56,7 @@ import jj2000.j2k.*;
  * members must be instance of ModuleSpec class (or its children).
  * 
  * @see ModuleSpec
- * */
+ */
 public class DecoderSpecs implements Cloneable
 {
 	/** ICC Profiling specifications */
@@ -117,7 +117,7 @@ public class DecoderSpecs implements Cloneable
 
 	/**
 	 * Returns a copy of the current object.
-	 * */
+	 */
 	public DecoderSpecs getCopy()
 	{
 		DecoderSpecs decSpec2;
@@ -154,7 +154,7 @@ public class DecoderSpecs implements Cloneable
 	 * 
 	 * @param nc
 	 *            Number of components
-	 * */
+	 */
 	public DecoderSpecs(int nt, int nc)
 	{
 		// Quantization

@@ -59,7 +59,7 @@ package jj2000.j2k.wavelet;
  * @see jj2000.j2k.wavelet.analysis.AnWTFilter
  * 
  * @see jj2000.j2k.wavelet.synthesis.SynWTFilter
- * */
+ */
 public interface WaveletFilter
 {
 
@@ -168,7 +168,7 @@ public interface WaveletFilter
 	 * reversible if it is suitable for lossless coding.
 	 * 
 	 * @return true if the filter is reversible, false otherwise.
-	 * */
+	 */
 	public boolean isReversible();
 
 	/**
@@ -201,6 +201,6 @@ public interface WaveletFilter
 	 * 
 	 * @return true if the overlaps are large enough and correct processing is
 	 *         performed, false otherwise.
-	 * */
+	 */
 	public boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen);
 }

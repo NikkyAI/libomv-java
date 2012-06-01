@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 import jj2000.j2k.codestream.*;
@@ -51,18 +51,18 @@ import java.io.*;
 /**
  * This class takes a legal JPEG 2000 codestream and performs some manipulation
  * on it. Currently the manipulations supported are: Tile-parts
- * */
+ */
 public class CodestreamManipulator
 {
 
 	/**
 	 * Flag indicating whether packed packet headers in main header is used
-	 * */
+	 */
 	private boolean ppmUsed;
 
 	/**
 	 * Flag indicating whether packed packet headers in tile headers is used
-	 * */
+	 */
 	private boolean pptUsed;
 
 	/**
@@ -143,7 +143,7 @@ public class CodestreamManipulator
 	 * 
 	 * @param tempEph
 	 *            Flag indicating whether EPH merker should be removed
-	 * */
+	 */
 	public CodestreamManipulator(String outname, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
 			boolean tempEph)
 	{
@@ -164,7 +164,7 @@ public class CodestreamManipulator
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int doCodestreamManipulation() throws IOException
 	{
 		BEBufferedRandomAccessFile fi;
@@ -218,7 +218,7 @@ public class CodestreamManipulator
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	private void parseAndFind(BufferedRandomAccessFile fi) throws IOException
 	{
 		int length, pos, i, t, sop = 0, eph = 0;
@@ -333,7 +333,7 @@ public class CodestreamManipulator
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	private void readAndBuffer(BufferedRandomAccessFile fi) throws IOException
 	{
 		int p, prem, length, t, markIndex;
@@ -406,7 +406,7 @@ public class CodestreamManipulator
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	private void createTileParts() throws IOException
 	{
 		int i, prem, t, length;
@@ -573,7 +573,7 @@ public class CodestreamManipulator
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	private void writeNewCodestream(BufferedRandomAccessFile fi) throws IOException
 	{
 		int t, p, tp;

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.image.*;
@@ -81,7 +81,7 @@ import jj2000.j2k.image.*;
  * @see DataBlk
  * @see CBlkWTDataInt
  * @see CBlkWTDataFloat
- * */
+ */
 public abstract class CBlkWTData
 {
 
@@ -151,7 +151,7 @@ public abstract class CBlkWTData
 	 * @return The data type of the object, as defined in the DataBlk class.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	public abstract int getDataType();
 
 	/**
@@ -169,7 +169,7 @@ public abstract class CBlkWTData
 	 *         data.
 	 * 
 	 * @see #getDataType
-	 * */
+	 */
 	public abstract Object getData();
 
 	/**
@@ -193,14 +193,14 @@ public abstract class CBlkWTData
 	 *            The new data array to use
 	 * 
 	 * @see #getDataType
-	 * */
+	 */
 	public abstract void setData(Object arr);
 
 	/**
 	 * Returns a string of informations about the DataBlk
 	 * 
 	 * @return Block dimensions and progressiveness in a string
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

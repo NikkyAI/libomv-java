@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization.quantizer;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -96,7 +96,7 @@ import jj2000.j2k.image.*;
  * </p>
  * 
  * @see Subband
- * */
+ */
 public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 {
 
@@ -138,7 +138,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 * 
 	 * @param src
 	 *            The source of wavelet transform coefficients.
-	 * */
+	 */
 	public Quantizer(CBlkWTDataSrc src)
 	{
 		super(src);
@@ -156,7 +156,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 *            Component index
 	 * 
 	 * @return The number of guard bits
-	 * */
+	 */
 	public abstract int getNumGuardBits(int t, int c);
 
 	/**
@@ -170,7 +170,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 *            Component index
 	 * 
 	 * @return True if derived quantization is used.
-	 * */
+	 */
 	public abstract boolean isDerived(int t, int c);
 
 	/**
@@ -186,7 +186,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 *            The component index.
 	 * 
 	 * @see SubbandAn#stepWMSE
-	 * */
+	 */
 	protected abstract void calcSbParams(SubbandAn sb, int n);
 
 	/**
@@ -210,7 +210,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 * @see Subband
 	 * 
 	 * @see #calcSbParams
-	 * */
+	 */
 	@Override
 	public SubbandAn getAnSubbandTree(int t, int c)
 	{
@@ -226,7 +226,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	/**
 	 * Returns the horizontal offset of the code-block partition. Allowable
 	 * values are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -236,7 +236,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	/**
 	 * Returns the vertical offset of the code-block partition. Allowable values
 	 * are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -255,7 +255,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -278,7 +278,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 * 
 	 * @exception IllegalArgumentException
 	 *                If an error occurs while parsing the options in 'pl'
-	 * */
+	 */
 	public static Quantizer createInstance(CBlkWTDataSrc src, EncoderSpecs encSpec)
 	{
 		// Instantiate quantizer
@@ -294,7 +294,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 	 * 
 	 * @return The maximum number of magnitude bits in all subbands of the
 	 *         current tile.
-	 * */
+	 */
 	public abstract int getMaxMagBits(int c);
 
 }

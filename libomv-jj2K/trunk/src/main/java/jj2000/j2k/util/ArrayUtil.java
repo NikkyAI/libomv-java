@@ -48,7 +48,7 @@ package jj2000.j2k.util;
 
 /**
  * This class contains a colleaction of utility static methods for arrays.
- * */
+ */
 public class ArrayUtil
 {
 
@@ -75,7 +75,7 @@ public class ArrayUtil
 	 *            The value to set the array to.
 	 * 
 	 * 
-	 * */
+	 */
 	public static void intArraySet(int arr[], int val)
 	{
 		int i, len, len2;
@@ -123,7 +123,7 @@ public class ArrayUtil
 	 *            The value to set the array to.
 	 * 
 	 * 
-	 * */
+	 */
 	public static void byteArraySet(byte arr[], byte val)
 	{
 		int i, len, len2;

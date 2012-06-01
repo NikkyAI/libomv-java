@@ -4,7 +4,7 @@
  *
  * Copyright Eastman Kodak Company, 343 State Street, Rochester, NY 14650
  * $Date $
- *****************************************************************************/
+ ************************************************************************/
 
 package colorspace;
 
@@ -125,7 +125,7 @@ public abstract class ColorSpaceMapper extends ImgDataAdapter implements BlkImgD
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 **/
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -353,7 +353,7 @@ public abstract class ColorSpaceMapper extends ImgDataAdapter implements BlkImgD
 	 *            The index of the component from which to get the data.
 	 * 
 	 * @see #getInternCompData
-	 **/
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk out, int c)
 	{
@@ -409,7 +409,7 @@ public abstract class ColorSpaceMapper extends ImgDataAdapter implements BlkImgD
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getCompData
-	 **/
+	 */
 	@Override
 	public DataBlk getInternCompData(DataBlk out, int c)
 	{

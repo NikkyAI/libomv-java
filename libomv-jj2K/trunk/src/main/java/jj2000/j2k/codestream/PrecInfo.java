@@ -37,13 +37,13 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream;
 
 /** 
  * Class that holds precinct coordinates and references to contained
  * code-blocks in each subband. 
- * */
+ */
 public class PrecInfo {
     
     /** Precinct horizontal upper-left coordinate in the reference grid */
@@ -94,7 +94,7 @@ public class PrecInfo {
      * @param rguly Precinct horizontal offset in the image reference grid.
      * @param rgw Precinct width in the reference grid.
      * @param rgh Precinct height in the reference grid.
-     * */
+     */
     public PrecInfo(int r,int ulx,int uly,int w,int h,int rgulx,int rguly,
                     int rgw,int rgh) {
         this.r = r;
@@ -120,7 +120,7 @@ public class PrecInfo {
      * Returns PrecInfo object information in a String
      *
      * @return PrecInfo information 
-     * */
+     */
     @Override
 	public String toString() {
         return "ulx="+ulx+",uly="+uly+",w="+w+",h="+h+",rgulx="+rgulx+

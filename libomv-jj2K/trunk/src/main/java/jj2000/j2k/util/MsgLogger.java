@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 /**
@@ -66,7 +66,7 @@ package jj2000.j2k.util;
  * 'printmsg()' method should never be called before a previous simple string
  * has been terminated.
  * </p>
- * */
+ */
 public interface MsgLogger
 {
 
@@ -108,7 +108,7 @@ public interface MsgLogger
 	 * 
 	 * @param msg
 	 *            The message to display
-	 * */
+	 */
 	public void printmsg(int sev, String msg);
 
 	/**
@@ -129,11 +129,11 @@ public interface MsgLogger
 	 * 
 	 * @param ind
 	 *            Indentation of any other lines.
-	 * */
+	 */
 	public void println(String str, int flind, int ind);
 
 	/**
 	 * Writes any buffered data from the println() method to the device.
-	 * */
+	 */
 	public void flush();
 }

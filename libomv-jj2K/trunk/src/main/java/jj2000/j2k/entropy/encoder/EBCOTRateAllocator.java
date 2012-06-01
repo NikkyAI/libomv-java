@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.codestream.writer.*;
@@ -76,7 +76,7 @@ import java.io.*;
  * @see PostCompRateAllocator
  * @see CodedCBlkDataSrcEnc
  * @see jj2000.j2k.codestream.writer.CodestreamWriter
- * */
+ */
 public class EBCOTRateAllocator extends PostCompRateAllocator
 {
 
@@ -105,7 +105,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * <li>4th index: subband index</li>
 	 * <li>5th index: code-block index</li>
 	 * </ul>
-	 * */
+	 */
 	private CBlkRateDistStats cblks[][][][][];
 
 	/**
@@ -121,7 +121,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * <li>5th index: subband index</li>
 	 * <li>6th index: code-block index</li>
 	 * </ul>
-	 **/
+	 */
 	private int truncIdxs[][][][][][];
 
 	/**
@@ -132,7 +132,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * <li>2nd dim: component index.</li>
 	 * <li>3nd dim: resolution level index.</li>
 	 * </ul>
-	 * */
+	 */
 	private Coord numPrec[][][];
 
 	/** Array containing the layers information. */
@@ -213,7 +213,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 *            The bit stream writer.
 	 * 
 	 * @see ProgressionType
-	 * */
+	 */
 	public EBCOTRateAllocator(CodedCBlkDataSrcEnc src, LayersInfo lyrs, CodestreamWriter writer, EncoderSpecs encSpec,
 			ParameterList pl)
 	{
@@ -408,7 +408,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	/**
 	 * Prints the timing information, if collected, and calls 'finalize' on the
 	 * super class.
-	 * */
+	 */
 	@Override
 	public void finalize() throws Throwable
 	{
@@ -434,7 +434,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	/**
 	 * Runs the rate allocation algorithm and writes the data to the bit stream
 	 * writer object provided to the constructor.
-	 * */
+	 */
 	@Override
 	public void runAndWrite() throws IOException
 	{
@@ -447,7 +447,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * has been entirely written or simulated, so as to take its overhead into
 	 * account. This method will get all the code-blocks and then initialize the
 	 * target bitrates for each layer, according to the specifications.
-	 * */
+	 */
 	@Override
 	public void initialize() throws IOException
 	{
@@ -683,7 +683,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * <P>
 	 * For each code-block, the valid slopes are computed and converted into the
 	 * mantissa-exponent representation.
-	 * */
+	 */
 	private void getAllCodeBlocks()
 	{
 
@@ -814,7 +814,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * output bit stream. Firstly it builds all the layers by computing the
 	 * threshold according to the layer target bit-rate, and then it writes the
 	 * layer bit streams according to the progressive type.
-	 * */
+	 */
 	private void buildAndWriteLayers() throws IOException
 	{
 		int nPrec = 0;
@@ -1021,7 +1021,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @param lye
 	 *            Index of the last layer.
-	 * */
+	 */
 	public void writeResLyCompPos(int t, int rs, int re, int cs, int ce, int lys[][], int lye) throws IOException
 	{
 
@@ -1131,7 +1131,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @param lye
 	 *            Index of the last layer.
-	 * */
+	 */
 	public void writeLyResCompPos(int t, int rs, int re, int cs, int ce, int[][] lys, int lye) throws IOException
 	{
 
@@ -1227,7 +1227,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @param lye
 	 *            Index of the last layer.
-	 * */
+	 */
 	public void writePosCompResLy(int t, int rs, int re, int cs, int ce, int[][] lys, int lye) throws IOException
 	{
 
@@ -1441,7 +1441,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @param lye
 	 *            Index of the last layer.
-	 * */
+	 */
 	public void writeCompPosResLy(int t, int rs, int re, int cs, int ce, int[][] lys, int lye) throws IOException
 	{
 
@@ -1659,7 +1659,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @param lye
 	 *            Last layer index.
-	 * */
+	 */
 	public void writeResPosCompLy(int t, int rs, int re, int cs, int ce, int[][] lys, int lye) throws IOException
 	{
 
@@ -1876,7 +1876,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 *            The number of bytes of all the previous layers.
 	 * 
 	 * @return The value of the slope threshold.
-	 * */
+	 */
 	private float optimizeBitstreamLayer(int layerIdx, float fmaxt, int maxBytes, int prevBytes) throws IOException
 	{
 
@@ -2058,7 +2058,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 *            The previous layer information.
 	 * 
 	 * @return The value of the slope threshold for the estimated layer
-	 * */
+	 */
 	private float estimateLayerThreshold(int targetBytes, EBCOTLayer lastLayer)
 	{
 		float log_sl1; // The log of the first slope used for interpolation
@@ -2224,7 +2224,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @param fthresh
 	 *            The value of the rate-distortion threshold
-	 * */
+	 */
 	private void findTruncIndices(int layerIdx, int compIdx, int lvlIdx, int tileIdx, SubbandAn subb, float fthresh,
 			int precinctIdx)
 	{
@@ -2291,7 +2291,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 *            The slope value
 	 * 
 	 * @return The index for the summary table of the slope.
-	 * */
+	 */
 	private static int getLimitedSIndexFromSlope(float slope)
 	{
 		int idx;
@@ -2320,7 +2320,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 *            The summary index value.
 	 * 
 	 * @return The minimum slope value associated with a summary table index.
-	 * */
+	 */
 	private static float getSlopeFromSIndex(int index)
 	{
 		return (float) Math.pow(2, (index - RD_SUMMARY_OFF));

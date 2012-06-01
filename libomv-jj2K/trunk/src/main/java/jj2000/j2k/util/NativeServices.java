@@ -85,7 +85,7 @@ package jj2000.j2k.util;
  * 95/98/NT/2000, MacIntosh, OS/2) there is no problem since the SHLIB_NAME, if
  * available, will not make use of POSIX threads library functions, thus no
  * problem should occur.
- * */
+ */
 public final class NativeServices
 {
 
@@ -94,7 +94,7 @@ public final class NativeServices
 	 * native methods: 'jj2000'. The actual file name of the library is system
 	 * dependent. Under UNIX it will be 'libjj2000.so', while under Windows it
 	 * will be 'jj2000.dll'.
-	 * */
+	 */
 	public static final String SHLIB_NAME = "jj2000";
 
 	/** The state of the library loading */
@@ -122,7 +122,7 @@ public final class NativeServices
 	 * Private and only constructor, so that no class instance might be created.
 	 * Since all methods are static creating a class instance is useless. If
 	 * called it throws an 'IllegalArgumentException'.
-	 * */
+	 */
 	private NativeServices()
 	{
 		throw new IllegalArgumentException("Class can not be instantiated");
@@ -163,7 +163,7 @@ public final class NativeServices
 	 * @exception UnsatisfiedLinkError
 	 *                If the shared native library implementing the
 	 *                functionality could not be loaded.
-	 * */
+	 */
 	public static void setThreadConcurrency(int n)
 	{
 		// Check that the library is loaded
@@ -178,7 +178,7 @@ public final class NativeServices
 	/**
 	 * Calls the POSIX threads 'pthread_setconcurrency', or equivalent, function
 	 * with 'level' as the argument.
-	 * */
+	 */
 	private static native void setThreadConcurrencyN(int level);
 
 	/**
@@ -188,7 +188,7 @@ public final class NativeServices
 	 * @return The current concurrency level
 	 * 
 	 * @see #setThreadConcurrency
-	 * */
+	 */
 	public static int getThreadConcurrency()
 	{
 		// Check that the library is loaded
@@ -202,7 +202,7 @@ public final class NativeServices
 	 * and return the result.
 	 * 
 	 * @return The current concurrency level.
-	 * */
+	 */
 	private static native int getThreadConcurrencyN();
 
 	/**
@@ -214,7 +214,7 @@ public final class NativeServices
 	 * 
 	 * @return True if the libary could be loaded or is already loaded. False if
 	 *         the library can not be found and loaded.
-	 * */
+	 */
 	public static boolean loadLibrary()
 	{
 		// If already loaded return true without doing anything
@@ -244,7 +244,7 @@ public final class NativeServices
 	 * 
 	 * @exception UnsatisfiedLinkError
 	 *                If the library SHLIB_NAME can not be found.
-	 * */
+	 */
 	private static void checkLibrary()
 	{
 		switch (libState)

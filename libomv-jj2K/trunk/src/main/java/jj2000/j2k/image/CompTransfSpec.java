@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *  */
+ */
 package jj2000.j2k.image;
 
 import jj2000.j2k.image.invcomptransf.*;
@@ -50,7 +50,7 @@ import jj2000.j2k.*;
  * specifications for multiple component transformation
  *
  * @see ModuleSpec
- * */
+ */
 public class CompTransfSpec extends ModuleSpec {
     
     /** 
@@ -65,7 +65,7 @@ public class CompTransfSpec extends ModuleSpec {
      *
      * @param type the type of the specification module i.e. tile specific,
      * component specific or both.
-     * */
+     */
     public CompTransfSpec(int nt, int nc, byte type){
 	super(nt, nc, type);
     }
@@ -77,7 +77,7 @@ public class CompTransfSpec extends ModuleSpec {
      *
      * @return True if a component transformation is used in at least on
      * tile.
-     * */
+     */
     public boolean isCompTransfUsed(){
         if( ((Integer)def).intValue() != InvCompTransf.NONE ){
             return true;

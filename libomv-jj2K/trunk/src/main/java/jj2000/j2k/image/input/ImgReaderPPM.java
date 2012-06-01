@@ -37,7 +37,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.input;
 
 import jj2000.j2k.image.*;
@@ -63,7 +63,7 @@ import java.io.*;
  * NOTE: This class is not thread safe, for reasons of internal buffering.
  * 
  * @see jj2000.j2k.image.ImgData
- * */
+ */
 public class ImgReaderPPM extends ImgReader
 {
 
@@ -104,7 +104,7 @@ public class ImgReaderPPM extends ImgReader
 	 * 
 	 * @param IOException
 	 *            If an error occurs while opening the file.
-	 * */
+	 */
 	public ImgReaderPPM(File file) throws IOException
 	{
 		this(new RandomAccessFile(file, "r"));
@@ -118,7 +118,7 @@ public class ImgReaderPPM extends ImgReader
 	 * 
 	 * @param IOException
 	 *            If an error occurs while opening the file.
-	 * */
+	 */
 	public ImgReaderPPM(String fname) throws IOException
 	{
 		this(new RandomAccessFile(fname, "r"));
@@ -135,7 +135,7 @@ public class ImgReaderPPM extends ImgReader
 	 *                if an EOF is read
 	 * @exception IOException
 	 *                if an error occurs when opening the file
-	 * */
+	 */
 	private ImgReaderPPM(RandomAccessFile in) throws EOFException, IOException
 	{
 		this.in = in;
@@ -158,7 +158,7 @@ public class ImgReaderPPM extends ImgReader
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurs.
-	 * */
+	 */
 	@Override
 	public void close() throws IOException
 	{
@@ -188,7 +188,7 @@ public class ImgReaderPPM extends ImgReader
 	 * @return The number of bits corresponding to the nominal range of the
 	 *         data. For floating-point data this value is not applicable and
 	 *         the return value is undefined.
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -208,7 +208,7 @@ public class ImgReaderPPM extends ImgReader
 	 * 
 	 * @return The position of the fixed-point (i.e. the number of fractional
 	 *         bits). Always 0 for this ImgReader.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -270,7 +270,7 @@ public class ImgReaderPPM extends ImgReader
 	 * @see #getCompData
 	 * 
 	 * @see JJ2KExceptionHandler
-	 **/
+	 */
 	@Override
 	public final DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -428,7 +428,7 @@ public class ImgReaderPPM extends ImgReader
 	 * @see #getInternCompData
 	 * 
 	 * @see JJ2KExceptionHandler
-	 * */
+	 */
 	@Override
 	public final DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -478,7 +478,7 @@ public class ImgReaderPPM extends ImgReader
 	 * are counted to keep track of the offset of the pixel data in the PPM file
 	 * 
 	 * @return One byte read from the header of the PPM file.
-	 * */
+	 */
 	private byte countedByteRead() throws IOException, EOFException
 	{
 		offset++;
@@ -487,7 +487,7 @@ public class ImgReaderPPM extends ImgReader
 
 	/**
 	 * Checks that the file begins with 'P6'
-	 * */
+	 */
 	private void confirmFileType() throws IOException, EOFException
 	{
 		byte[] type = { 80, 54 };
@@ -512,7 +512,7 @@ public class ImgReaderPPM extends ImgReader
 	/**
 	 * Skips any line in the header starting with '#' and any space, tab, line
 	 * feed or carriage return.
-	 * */
+	 */
 	private void skipCommentAndWhiteSpace() throws IOException, EOFException
 	{
 
@@ -543,7 +543,7 @@ public class ImgReaderPPM extends ImgReader
 	 * Returns an int read from the header of the PPM file.
 	 * 
 	 * @return One int read from the header of the PPM file.
-	 * */
+	 */
 	private int readHeaderInt() throws IOException, EOFException
 	{
 		int res = 0;
@@ -567,7 +567,7 @@ public class ImgReaderPPM extends ImgReader
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return always false, since PPM data is always unsigned.
-	 * */
+	 */
 	@Override
 	public boolean isOrigSigned(int c)
 	{
@@ -583,7 +583,7 @@ public class ImgReaderPPM extends ImgReader
 	 * RandomAccessFile (its toString() method is called in turn).
 	 * 
 	 * @return A string of information about the object.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

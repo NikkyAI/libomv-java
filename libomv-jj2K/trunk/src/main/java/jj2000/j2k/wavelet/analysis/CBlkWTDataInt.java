@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.image.*;
@@ -54,7 +54,7 @@ import jj2000.j2k.image.*;
  * </p>
  * 
  * @see CBlkWTData
- * */
+ */
 public class CBlkWTDataInt extends CBlkWTData
 {
 
@@ -65,7 +65,7 @@ public class CBlkWTDataInt extends CBlkWTData
 	 * Returns the data type of this object, always DataBlk.TYPE_INT.
 	 * 
 	 * @return The data type of the object, always DataBlk.TYPE_INT
-	 * */
+	 */
 	@Override
 	public final int getDataType()
 	{
@@ -77,7 +77,7 @@ public class CBlkWTDataInt extends CBlkWTData
 	 * The returned array is an int array.
 	 * 
 	 * @return The array of data (a int[]) or null if there is no data.
-	 * */
+	 */
 	@Override
 	public final Object getData()
 	{
@@ -88,7 +88,7 @@ public class CBlkWTDataInt extends CBlkWTData
 	 * Returns the array containing the data, or null if there is no data array.
 	 * 
 	 * @return The array of data or null if there is no data.
-	 * */
+	 */
 	public final int[] getDataInt()
 	{
 		return data;
@@ -101,7 +101,7 @@ public class CBlkWTDataInt extends CBlkWTData
 	 * 
 	 * @param arr
 	 *            The data array to use. Must be an int array.
-	 * */
+	 */
 	@Override
 	public final void setData(Object arr)
 	{
@@ -115,7 +115,7 @@ public class CBlkWTDataInt extends CBlkWTData
 	 * 
 	 * @param arr
 	 *            The data array to use.
-	 * */
+	 */
 	public final void setDataInt(int[] arr)
 	{
 		data = arr;

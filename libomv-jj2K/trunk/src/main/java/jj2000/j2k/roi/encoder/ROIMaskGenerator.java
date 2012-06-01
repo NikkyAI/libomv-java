@@ -58,7 +58,7 @@ import jj2000.j2k.wavelet.*;
  * @see RectROIMaskGenerator
  * 
  * @see ArbROIMaskGenerator
- * */
+ */
 public abstract class ROIMaskGenerator
 {
 

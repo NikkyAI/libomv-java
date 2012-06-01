@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 /**
@@ -52,7 +52,7 @@ package jj2000.j2k.image;
  * </p>
  * 
  * @see DataBlk
- * */
+ */
 public class DataBlkFloat extends DataBlk
 {
 	/** The array where the data is stored */
@@ -61,7 +61,7 @@ public class DataBlkFloat extends DataBlk
 	/**
 	 * Creates a DataBlkFloat with 0 dimensions and no data array (i.e. data is
 	 * null).
-	 * */
+	 */
 	public DataBlkFloat()
 	{
 	}
@@ -82,7 +82,7 @@ public class DataBlkFloat extends DataBlk
 	 * 
 	 * @param h
 	 *            The height of the block (in pixels)
-	 * */
+	 */
 	public DataBlkFloat(int ulx, int uly, int w, int h)
 	{
 		this.ulx = ulx;
@@ -100,7 +100,7 @@ public class DataBlkFloat extends DataBlk
 	 * 
 	 * @param DataBlkFloat
 	 *            the object to be copied.
-	 * */
+	 */
 	public DataBlkFloat(DataBlkFloat src)
 	{
 		this.ulx = src.ulx;
@@ -121,7 +121,7 @@ public class DataBlkFloat extends DataBlk
 	 * @return The type of data stored. Always <tt>DataBlk.TYPE_FLOAT</tt>
 	 * 
 	 * @see DataBlk#TYPE_FLOAT
-	 * */
+	 */
 	@Override
 	public final int getDataType()
 	{
@@ -133,7 +133,7 @@ public class DataBlkFloat extends DataBlk
 	 * The returned array is a float array.
 	 * 
 	 * @return The array of data (a float[]) or null if there is no data.
-	 * */
+	 */
 	@Override
 	public final Object getData()
 	{
@@ -144,7 +144,7 @@ public class DataBlkFloat extends DataBlk
 	 * Returns the array containing the data, or null if there is no data array.
 	 * 
 	 * @return The array of data or null if there is no data.
-	 * */
+	 */
 	public final float[] getDataFloat()
 	{
 		return data;
@@ -157,7 +157,7 @@ public class DataBlkFloat extends DataBlk
 	 * 
 	 * @param arr
 	 *            The data array to use. Must be a float array.
-	 * */
+	 */
 	@Override
 	public final void setData(Object arr)
 	{
@@ -170,7 +170,7 @@ public class DataBlkFloat extends DataBlk
 	 * 
 	 * @param arr
 	 *            The data array to use.
-	 * */
+	 */
 	public final void setDataFloat(float[] arr)
 	{
 		data = arr;
@@ -178,7 +178,7 @@ public class DataBlkFloat extends DataBlk
 
 	/**
 	 * Returns a string of informations about the DataBlkInt.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

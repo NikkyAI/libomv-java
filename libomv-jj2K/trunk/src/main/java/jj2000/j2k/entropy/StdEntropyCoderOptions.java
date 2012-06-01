@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 
 
 package jj2000.j2k.entropy;
@@ -49,7 +49,7 @@ package jj2000.j2k.entropy;
  * This interface define the constants that identify the possible options for
  * the entropy coder, as well some fixed parameters of the JPEG 2000 entropy
  * coder.
- * */
+ */
 public interface StdEntropyCoderOptions{
 
     /** The flag bit to indicate that selective arithmetic coding bypass

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.forwcomptransf;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -57,7 +57,7 @@ import jj2000.j2k.*;
  * Transformation).
  * 
  * @see ModuleSpec
- * */
+ */
 public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 {
 	/** Identifier for no component transformation. Value is 0. */
@@ -119,7 +119,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The encoder specifications
 	 * 
 	 * @see BlkImgDataSrc
-	 * */
+	 */
 	public ForwCompTransf(BlkImgDataSrc imgSrc, EncoderSpecs encSpec)
 	{
 		super(imgSrc);
@@ -164,7 +164,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The value of the fixed point position of the source since the
 	 *         color transform does not affect it.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -183,7 +183,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -205,7 +205,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            new array is allocated and returned.
 	 * 
 	 * @return The bitdepth of each transformed component.
-	 * */
+	 */
 	public static int[] calcMixedBitDepths(int ntdepth[], int ttype, int tdepth[])
 	{
 
@@ -266,7 +266,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	/**
 	 * Initialize some variables used with RCT. It must be called, at least, at
 	 * the beginning of each new tile.
-	 * */
+	 */
 	private void initForwRCT()
 	{
 		int i;
@@ -297,7 +297,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	/**
 	 * Initialize some variables used with ICT. It must be called, at least, at
 	 * the beginning of a new tile.
-	 * */
+	 */
 	private void initForwICT()
 	{
 		int i;
@@ -331,7 +331,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * ICT" or "No component transformation" depending on the current tile.
 	 * 
 	 * @return A descriptive string
-	 * */
+	 */
 	@Override
 	public String toString()
 	{
@@ -360,7 +360,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the component.
 	 * 
 	 * @return The bitdepth of component 'c' after mixing.
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -382,7 +382,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * reversed without any loss of information (not even due to rounding).
 	 * 
 	 * @return Reversibility of component transformation in current tile
-	 * */
+	 */
 	public boolean isReversible()
 	{
 		switch (transfType)
@@ -418,7 +418,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see BlkImgDataSrc#getCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -449,7 +449,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            Index of the output component.
 	 * 
 	 * @return The requested DataBlk
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -479,7 +479,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the requested component
 	 * 
 	 * @return Data of requested component
-	 * */
+	 */
 	private DataBlk forwRCT(DataBlk blk, int c)
 	{
 		int k, k0, k1, k2, mink, i;
@@ -630,7 +630,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the requested component
 	 * 
 	 * @return Data of requested component
-	 * */
+	 */
 	private DataBlk forwICT(DataBlk blk, int c)
 	{
 		int k, k0, k1, k2, mink, i;
@@ -812,7 +812,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -852,7 +852,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * </p>
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{

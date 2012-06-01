@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.writer;
 
 import jj2000.j2k.codestream.*;
@@ -57,7 +57,7 @@ import java.io.*;
  * are given by getMaxAvailableBytes() for rate allocation.
  *
  * @see CodestreamWriter
- * */
+ */
 public class FileCodestreamWriter extends CodestreamWriter 
     implements Markers {
 
@@ -107,7 +107,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      *
      * @exception IOException If an error occurs while trying to open the file
      * for writing or while writing the magic number.
-     * */
+     */
     public FileCodestreamWriter(File file, int mb) throws IOException {
         super(mb);
         out = new BufferedOutputStream(new FileOutputStream(file),DEF_BUF_LEN);
@@ -130,7 +130,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      *
      * @exception IOException If an error occurs while trying to open the file
      * for writing or while writing the magic number.
-     * */
+     */
     public FileCodestreamWriter(String fname, int mb) throws IOException {
         super(mb);
         out = new BufferedOutputStream(new FileOutputStream(fname),
@@ -152,7 +152,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      *
      * @exception IOException If an error occurs while writing the magic
      * number to the 'os' output stream.
-     * */
+     */
     public FileCodestreamWriter(OutputStream os, int mb) throws IOException {
         super(mb);
         out = os;
@@ -167,7 +167,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      * then a negative value is returned.
      *
      * @return The number of bytes remaining available in the bit stream.
-     * */
+     */
     @Override
 	public final int getMaxAvailableBytes() {
         return maxBytes-ndata;
@@ -177,7 +177,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      * Returns the current length of the entire bit stream.
      *
      * @return the current length of the bit stream
-     * */
+     */
     @Override
 	public int getLength() {
         if (getMaxAvailableBytes() >= 0) {
@@ -224,7 +224,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      * output stream.
      *
      * @see #commitBitstreamHeader
-     * */ 
+     */ 
     @Override
 	public int writePacketHead(byte head[],int hlen,boolean sim, 
 			       boolean sop, boolean eph) throws IOException{
@@ -300,7 +300,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      * output stream.
      *
      * @see #commitBitstreamHeader
-     * */ 
+     */ 
     @Override
 	public int writePacketBody(byte body[],int blen,boolean sim,
                                boolean roiInPkt, int roiLen) 
@@ -337,7 +337,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      *
      * @exception IOException If an error occurs while closing the underlying
      * stream.
-     * */
+     */
     @Override
 	public void close() throws IOException {
 
@@ -354,7 +354,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      * Gives the offset of the end of last packet containing ROI information 
      *
      * @return End of last ROI packet 
-     * */
+     */
     @Override
 	public int getOffLastROIPkt(){
         return offLastROIPkt;
@@ -368,7 +368,7 @@ public class FileCodestreamWriter extends CodestreamWriter
      * @param he The current header encoder.
      *
      * @exception IOException If an I/O error occurs while writing the data.
-     * */
+     */
     @Override
 	public void commitBitstreamHeader(HeaderEncoder he) throws IOException {
         // Actualize ndata
@@ -384,7 +384,7 @@ public class FileCodestreamWriter extends CodestreamWriter
     /**
      * Performs the initialisation of the arrays that are used to store the
      * values used to write SOP and EPH markers
-     * */
+     */
     private void initSOP_EPHArrays() {
         
         // Allocate and set first values of SOP marker as they will not be

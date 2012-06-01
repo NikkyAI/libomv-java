@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *  */
+ */
 package jj2000.j2k.entropy.decoder;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -66,7 +66,7 @@ import jj2000.j2k.wavelet.synthesis.*;
  * @see DecLyrdCBlk
  * 
  * @see jj2000.j2k.codestream.reader.BitstreamReaderAgent
- * */
+ */
 public interface CodedCBlkDataSrcDec extends InvWTData
 {
 
@@ -133,6 +133,6 @@ public interface CodedCBlkDataSrcDec extends InvWTData
 	 * 
 	 * @return The compressed code-block, with a certain number of layers
 	 *         determined by the available data and 'nl'.
-	 * */
+	 */
 	public DecLyrdCBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, int fl, int nl, DecLyrdCBlk ccb);
 }

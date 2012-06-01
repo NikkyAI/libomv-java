@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.output;
 
 import jj2000.j2k.image.*;
@@ -64,7 +64,7 @@ import java.io.*;
  *
  * <p>NOTE: This class is not thread safe, for reasons of internal
  * buffering.</p>
- * */
+ */
 public class ImgWriterPGM extends ImgWriter {
 
     /** Value used to inverse level shift */
@@ -104,7 +104,7 @@ public class ImgWriterPGM extends ImgWriter {
      * @param imgSrc The source from where to get the image data to write.
      *
      * @param c The index of the component from where to get the data.
-     * */
+     */
     public ImgWriterPGM(File out, 
 			BlkImgDataSrc imgSrc, int c) throws IOException{
         // Check that imgSrc is of the correct type
@@ -149,7 +149,7 @@ public class ImgWriterPGM extends ImgWriter {
      * @param imgSrc The source from where to get the image data to write.
      *
      * @param c The index of the component from where to get the data.
-     * */
+     */
     public ImgWriterPGM(String fname, 
                         BlkImgDataSrc imgSrc, int c) throws IOException{
         this(new File(fname),imgSrc,c);
@@ -161,7 +161,7 @@ public class ImgWriterPGM extends ImgWriter {
      * call to this one.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void close() throws IOException {
         int i;
@@ -185,7 +185,7 @@ public class ImgWriterPGM extends ImgWriter {
      * Writes all buffered data to the file or resource.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void flush() throws IOException {
         // No flush needed here since we are using a RandomAccessFile Get rid
@@ -216,7 +216,7 @@ public class ImgWriterPGM extends ImgWriter {
      * @param height The height of the area to write.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void write(int ulx,int uly,int w,int h) throws IOException{
         int k,i,j;
@@ -294,7 +294,7 @@ public class ImgWriterPGM extends ImgWriter {
      * @exception IOException If an I/O error occurs.
      *
      * @see DataBlk
-     * */
+     */
     @Override
 	public void write() throws IOException {
         int i;
@@ -315,7 +315,7 @@ public class ImgWriterPGM extends ImgWriter {
      * 255
      *
      * @exception IOException If there is an IOException
-     * */
+     */
      private void writeHeaderInfo() throws IOException{
         byte[] byteVals;
         int i;
@@ -357,7 +357,7 @@ public class ImgWriterPGM extends ImgWriter {
      * RandomAccessFile (its toString() method is called in turn).
      *
      * @return A string of information about the object.
-     * */
+     */
     @Override
 	public String toString() {
         return "ImgWriterPGM: WxH = "+w+"x"+h+", Component="+

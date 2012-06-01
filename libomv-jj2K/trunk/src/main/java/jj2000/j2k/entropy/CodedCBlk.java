@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy;
 
 /**
@@ -53,7 +53,7 @@ package jj2000.j2k.entropy;
  * 
  * @see jj2000.j2k.entropy.encoder.CBlkRateDistStats
  * @see jj2000.j2k.entropy.decoder.DecLyrdCBlk
- * */
+ */
 public class CodedCBlk
 {
 
@@ -72,7 +72,7 @@ public class CodedCBlk
 	/**
 	 * Creates a new CodedCBlk object wit the default values and without
 	 * allocating any space for its members.
-	 * */
+	 */
 	public CodedCBlk()
 	{
 	}
@@ -93,7 +93,7 @@ public class CodedCBlk
 	 * @param data
 	 *            The compressed data. This array is referenced by this object
 	 *            so it should not be modified after.
-	 * */
+	 */
 	public CodedCBlk(int m, int n, int skipMSBP, byte data[])
 	{
 		this.m = m;
@@ -108,7 +108,7 @@ public class CodedCBlk
 	 * debugging.
 	 * 
 	 * @return A string with the contents of the object
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

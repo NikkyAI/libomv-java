@@ -51,7 +51,7 @@ import jj2000.j2k.quantization.*;
  * parameters from the main header and tile headers.
  * 
  * @see StdDequantizer
- * */
+ */
 public class StdDequantizerParams extends DequantizerParams
 {
 
@@ -82,7 +82,7 @@ public class StdDequantizerParams extends DequantizerParams
 	 * of the subband is exp[3][16], not exp[3][0].
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	public int exp[][];
 
 	/**
@@ -110,7 +110,7 @@ public class StdDequantizerParams extends DequantizerParams
 	 * is nStep[3][16], not nStep[3][0].
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	public float nStep[][];
 
 	/**
@@ -121,7 +121,7 @@ public class StdDequantizerParams extends DequantizerParams
 	 *         Q_TYPE_SCALAR_DZ.
 	 * 
 	 * @see Dequantizer
-	 * */
+	 */
 	@Override
 	public int getDequantizerType()
 	{

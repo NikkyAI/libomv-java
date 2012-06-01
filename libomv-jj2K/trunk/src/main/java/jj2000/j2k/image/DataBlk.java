@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 
 package jj2000.j2k.image;
 
@@ -80,7 +80,7 @@ package jj2000.j2k.image;
  * @see DataBlkInt
  * 
  * @see DataBlkFloat
- * */
+ */
 public abstract class DataBlk
 {
 
@@ -134,7 +134,7 @@ public abstract class DataBlk
 	 *            The data type.
 	 * 
 	 * @return The size in bits of the data type.
-	 * */
+	 */
 	public static int getSize(int type)
 	{
 		switch (type)
@@ -156,7 +156,7 @@ public abstract class DataBlk
 	 * class.
 	 * 
 	 * @return The data type of the object, as defined in thsi class.
-	 * */
+	 */
 	public abstract int getDataType();
 
 	/**
@@ -174,7 +174,7 @@ public abstract class DataBlk
 	 *         data.
 	 * 
 	 * @see #getDataType
-	 * */
+	 */
 	public abstract Object getData();
 
 	/**
@@ -198,14 +198,14 @@ public abstract class DataBlk
 	 *            The new data array to use
 	 * 
 	 * @see #getDataType
-	 * */
+	 */
 	public abstract void setData(Object arr);
 
 	/**
 	 * Returns a string of informations about the DataBlk
 	 * 
 	 * @return Block dimensions and progressiveness in a string
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

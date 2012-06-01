@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.roi.encoder;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -61,7 +61,7 @@ import jj2000.j2k.image.*;
  * @see ROIMaskGenerator
  * 
  * @see ArbROIMaskGenerator
- * */
+ */
 public class ArbROIMaskGenerator extends ROIMaskGenerator
 {
 
@@ -94,7 +94,7 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 	 * 
 	 * @param src
 	 *            The quantizer module
-	 * */
+	 */
 	public ArbROIMaskGenerator(ROI[] rois, int nrc, Quantizer src)
 	{
 		super(rois, nrc);
@@ -128,7 +128,7 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 	 *            The number of the component
 	 * 
 	 * @return Whether or not a mask was needed for this tile
-	 **/
+	 */
 	@Override
 	public boolean getROIMask(DataBlkInt db, Subband sb, int magbits, int c)
 	{
@@ -170,7 +170,7 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 
 	/**
 	 * This function returns the relevant data of the mask generator
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

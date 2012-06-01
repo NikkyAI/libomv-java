@@ -40,13 +40,13 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k;
 
 /**
  * This class holds general JJ2000 information, such as the version number,
  * copyright, contact address, etc.
- * */
+ */
 public class JJ2KInfo {
 
     /** The version number (such as 2.0, 2.1.1, etc.) */
@@ -55,7 +55,7 @@ public class JJ2KInfo {
     /**
      * The copyright message string. Double newlines separate paragraphs.
      * Newlines should be respected when displaying the message.
-     * */
+     */
     public static final String copyright =
         "This software module was originally developed by Rapha\u00ebl "+
         "Grosbois "+

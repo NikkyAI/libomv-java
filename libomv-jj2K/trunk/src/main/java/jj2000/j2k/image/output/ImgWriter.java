@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *  */
+ */
 package jj2000.j2k.image.output;
 
 import jj2000.j2k.image.*;
@@ -61,7 +61,7 @@ import java.io.*;
  * components or all components. For example, a PGM writer will write data
  * from only one component (defined in the constructor) while a PPM writer
  * will write 3 components (normally R,G,B).</p>
- * */
+ */
 public abstract class ImgWriter {
 
     /** The defaukt height used when writing strip by strip in the 'write()'
@@ -84,7 +84,7 @@ public abstract class ImgWriter {
      * become illegal after a call to this one.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     public abstract void close() throws IOException;
 
     /**
@@ -92,7 +92,7 @@ public abstract class ImgWriter {
      * class does onot use buffering nothing should be done.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     public abstract void flush() throws IOException;
 
     /**
@@ -104,7 +104,7 @@ public abstract class ImgWriter {
      * finalization of the object, but is otherwise ignored.
      *
      * @see Object#finalize
-     * */
+     */
     @Override
 	public void finalize() throws IOException {
         flush();
@@ -122,7 +122,7 @@ public abstract class ImgWriter {
      * @exception IOException If an I/O error occurs.
      *
      * @see DataBlk
-     * */
+     */
     public abstract void write() throws IOException;
 
     /**
@@ -134,7 +134,7 @@ public abstract class ImgWriter {
      * @exception IOException If an I/O error occurs.
      *
      * @see DataBlk
-     * */
+     */
     public void writeAll() throws IOException {
         // Find the list of tile to decode.
         Coord nT = src.getNumTiles(null);
@@ -168,7 +168,7 @@ public abstract class ImgWriter {
      * @param height The height of the area to write.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     public abstract void write(int ulx, int uly, int w, int h) 
         throws IOException;
 

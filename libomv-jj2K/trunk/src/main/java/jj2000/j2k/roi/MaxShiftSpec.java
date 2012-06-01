@@ -47,7 +47,7 @@ import jj2000.j2k.*;
 /**
  * This class contains the maxshift scaling value for each tile-component.
  * The scaling values used are calculated in the ROIScaler class
- * */
+ */
 
 public class MaxShiftSpec extends ModuleSpec{
 
@@ -62,7 +62,7 @@ public class MaxShiftSpec extends ModuleSpec{
      *
      * @param type the type of the specification module i.e. tile specific,
      * component specific or both.
-     * */
+     */
     public MaxShiftSpec(int nt, int nc, byte type) {
       super(nt, nc, type);
     }

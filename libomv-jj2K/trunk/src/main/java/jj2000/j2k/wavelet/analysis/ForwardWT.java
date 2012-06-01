@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.encoder.*;
@@ -61,14 +61,14 @@ import java.util.*;
  * may be done differently but a buffering class should convert to that type of
  * transfer.
  * </p>
- * */
+ */
 public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWTDataSrc
 {
 
 	/**
 	 * ID for the dyadic wavelet tree decomposition (also called "Mallat" in
 	 * JPEG 2000): 0x00.
-	 * */
+	 */
 	public final static int WT_DECOMP_DYADIC = 0;
 
 	/** The prefix for wavelet transform options: 'W' */
@@ -103,7 +103,7 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 * 
 	 * @param src
 	 *            The source of ImgData
-	 * */
+	 */
 	protected ForwardWT(ImgData src)
 	{
 		super(src);
@@ -121,7 +121,7 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -146,7 +146,7 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 * @exception IllegalArgumentException
 	 *                If mandatory parameters are missing or if invalid values
 	 *                are given.
-	 * */
+	 */
 	public static ForwardWT createInstance(BlkImgDataSrc src, ParameterList pl, EncoderSpecs encSpec)
 	{
 		int deflev = ((Integer)encSpec.dls.getDefault()).intValue();

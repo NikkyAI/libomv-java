@@ -42,7 +42,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.wavelet.*;
@@ -80,7 +80,7 @@ import jj2000.j2k.util.*;
  * </p>
  * 
  * @see DataBlk
- * */
+ */
 public class InvWTFull extends InverseWT
 {
 
@@ -109,7 +109,7 @@ public class InvWTFull extends InverseWT
 	 * The reversible flag for each component in each tile. The first index is
 	 * the tile index, the second one is the component index. The reversibility
 	 * of the components for each tile are calculated on a as needed basis.
-	 * */
+	 */
 	private boolean reversible[][];
 
 	/**
@@ -121,7 +121,7 @@ public class InvWTFull extends InverseWT
 	 * 
 	 * @param decSpec
 	 *            The decoder specifications
-	 * */
+	 */
 	public InvWTFull(CBlkWTDataSrcDec src, DecoderSpecs decSpec)
 	{
 		super(src, decSpec);
@@ -143,7 +143,7 @@ public class InvWTFull extends InverseWT
 	 * 
 	 * @return true if all the filters used to reconstruct the current subband
 	 *         are reversible
-	 * */
+	 */
 	private boolean isSubbandReversible(Subband subband)
 	{
 		if (subband.isNode)
@@ -171,7 +171,7 @@ public class InvWTFull extends InverseWT
 	 *            The index of the component.
 	 * 
 	 * @return true is the wavelet transform is reversible, false if not.
-	 * */
+	 */
 	@Override
 	public boolean isReversible(int t, int c)
 	{
@@ -210,7 +210,7 @@ public class InvWTFull extends InverseWT
 	 * 
 	 * @return The number of bits corresponding to the nominal range of the
 	 *         data.
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -236,7 +236,7 @@ public class InvWTFull extends InverseWT
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -274,7 +274,7 @@ public class InvWTFull extends InverseWT
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getInternCompData
-	 * */
+	 */
 	@Override
 	public final DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -370,7 +370,7 @@ public class InvWTFull extends InverseWT
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -426,7 +426,7 @@ public class InvWTFull extends InverseWT
 	 * 
 	 * @param c
 	 *            The index of the component to reconstruct
-	 * */
+	 */
 	private void wavelet2DReconstruction(DataBlk db, SubbandSyn sb, int c)
 	{
 		Object data;
@@ -551,7 +551,7 @@ public class InvWTFull extends InverseWT
 	 * 
 	 * @param c
 	 *            The index of the component to reconstruct
-	 * */
+	 */
 	private void waveletTreeReconstruction(DataBlk img, SubbandSyn sb, int c)
 	{
 
@@ -631,7 +631,7 @@ public class InvWTFull extends InverseWT
 	 * @return WT_IMPL_FULL
 	 * 
 	 * @see WaveletTransform#WT_IMPL_FULL
-	 * */
+	 */
 	@Override
 	public int getImplementationType(int c)
 	{
@@ -650,7 +650,7 @@ public class InvWTFull extends InverseWT
 	 *            The vertical index of the new tile.
 	 * 
 	 * @returns The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -715,7 +715,7 @@ public class InvWTFull extends InverseWT
 	 * the last one (i.e. there is no next tile).
 	 * 
 	 * @returns The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{

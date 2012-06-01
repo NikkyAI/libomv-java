@@ -39,14 +39,14 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream;
 
 import jj2000.j2k.image.*;
 
 /**
  * This class is used to store the coordinates of code-blocks.
- * */
+ */
 public class CBlkCoordInfo extends CoordInfo {
 
     /** The code-block horizontal and vertical indexes */
@@ -54,7 +54,7 @@ public class CBlkCoordInfo extends CoordInfo {
     
     /** 
      * Constructor. Creates a CBlkCoordInfo object.
-     * */
+     */
     public CBlkCoordInfo() {
         this.idx = new Coord(); 
     }
@@ -66,7 +66,7 @@ public class CBlkCoordInfo extends CoordInfo {
      * @param m Code-block vertical index.
      *
      * @param n Code-block horizontal index.
-     * */
+     */
     public CBlkCoordInfo(int m,int n) {
         this.idx = new Coord(n,m);
     }
@@ -75,7 +75,7 @@ public class CBlkCoordInfo extends CoordInfo {
      * Returns code-block's information in a String 
      * 
      * @return String with code-block's information
-     * */
+     */
     @Override
 	public String toString() {
         return super.toString() + ",idx="+idx;

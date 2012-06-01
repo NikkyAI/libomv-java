@@ -4,7 +4,7 @@
  *
  * Copyright Eastman Kodak Company, 343 State Street, Rochester, NY 14650
  * $Date $
- *****************************************************************************/
+ ****************************************************************************/
 package colorspace;
 
 import jj2000.j2k.image.*;
@@ -111,7 +111,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getInternCompData
-	 **/
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk out, int c)
 	{
@@ -215,7 +215,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * 7 bit signed entry column=1, 7 bit unsigned entry column=2, 7 bit signed
 	 * entry]
 	 * <p>
-	 **/
+	 */
 	@Override
 	public String toString()
 	{
@@ -342,7 +342,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * @return The horizontal subsampling factor of component 'c'
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsX(int c)
 	{
@@ -361,7 +361,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * @return The vertical subsampling factor of component 'c'
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsY(int c)
 	{
@@ -378,7 +378,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in tile<tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompWidth(int t, int c)
 	{
@@ -395,7 +395,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompHeight(int t, int c)
 	{
@@ -410,7 +410,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
-	 * */
+	 */
 	@Override
 	public int getCompImgWidth(int c)
 	{
@@ -431,7 +431,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * 
 	 * @return The number of bits corresponding to the nominal range of the
 	 *         image data (in the image domain).
-	 * */
+	 */
 	@Override
 	public int getCompImgHeight(int c)
 	{
@@ -444,7 +444,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * 
 	 * @param c
 	 *            The index of the component.
-	 * */
+	 */
 	@Override
 	public int getCompULX(int c)
 	{
@@ -457,7 +457,7 @@ public class PalettizedColorSpaceMapper extends ColorSpaceMapper
 	 * 
 	 * @param c
 	 *            The index of the component.
-	 * */
+	 */
 	@Override
 	public int getCompULY(int c)
 	{

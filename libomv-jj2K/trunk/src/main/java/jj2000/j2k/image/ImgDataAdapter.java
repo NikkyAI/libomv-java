@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 /**
@@ -63,7 +63,7 @@ package jj2000.j2k.image;
  * </p>
  * 
  * @see ImgData
- * */
+ */
 public abstract class ImgDataAdapter implements ImgData
 {
 
@@ -78,7 +78,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @param src
 	 *            From where to obtain all the ImgData values.
-	 * */
+	 */
 	protected ImgDataAdapter(ImgData src)
 	{
 		imgdatasrc = src;
@@ -94,7 +94,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The total current tile's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileWidth()
 	{
@@ -111,7 +111,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The total current tile's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileHeight()
 	{
@@ -141,7 +141,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The total image's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgWidth()
 	{
@@ -157,7 +157,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The total image's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgHeight()
 	{
@@ -172,7 +172,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The number of components in the image.
-	 * */
+	 */
 	@Override
 	public int getNumComps()
 	{
@@ -195,7 +195,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * @return The horizontal subsampling factor of component 'c'
 	 * 
 	 * @see ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsX(int c)
 	{
@@ -218,7 +218,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * @return The vertical subsampling factor of component 'c'
 	 * 
 	 * @see ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsY(int c)
 	{
@@ -239,7 +239,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in tile<tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompWidth(int t, int c)
 	{
@@ -260,7 +260,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompHeight(int t, int c)
 	{
@@ -279,7 +279,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
-	 * */
+	 */
 	@Override
 	public int getCompImgWidth(int c)
 	{
@@ -299,7 +299,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in the overall
 	 *         image.
-	 * */
+	 */
 	@Override
 	public int getCompImgHeight(int c)
 	{
@@ -324,7 +324,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @return The number of bits corresponding to the nominal range of the
 	 *         image data (in the image domain).
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -347,7 +347,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -365,7 +365,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -386,7 +386,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 *            null a new one is created and returned.
 	 * 
 	 * @return The current tile's indexes (vertical and horizontal indexes).
-	 * */
+	 */
 	@Override
 	public Coord getTile(Coord co)
 	{
@@ -402,7 +402,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The current tile's index (starts at 0).
-	 * */
+	 */
 	@Override
 	public int getTileIdx()
 	{
@@ -419,7 +419,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULX(int c)
 	{
@@ -436,7 +436,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULY(int c)
 	{
@@ -467,7 +467,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULX()
 	{
@@ -484,7 +484,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULY()
 	{
@@ -504,7 +504,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 *         (Coord.y) directions.
-	 * */
+	 */
 	@Override
 	public Coord getNumTiles(Coord co)
 	{
@@ -519,7 +519,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * </p>
 	 * 
 	 * @return The total number of tiles in the image.
-	 * */
+	 */
 	@Override
 	public int getNumTiles()
 	{

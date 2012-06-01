@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.reader;
 
 import jj2000.j2k.util.*;
@@ -62,7 +62,7 @@ import java.io.*;
  * convenience. Of course no values can be set or coded in such cases.</p>
  *
  * @see jj2000.j2k.codestream.writer.TagTreeEncoder
- * */
+ */
 public class TagTreeDecoder {
 
     /** The horizontal dimension of the base level */
@@ -96,7 +96,7 @@ public class TagTreeDecoder {
      * @param h The number of elements along the vertical direction.
      *
      * @param w The number of elements along the horizontal direction.
-     * */
+     */
     public TagTreeDecoder(int h, int w) {
         int i;
 
@@ -139,7 +139,7 @@ public class TagTreeDecoder {
      * Returns the number of leafs along the horizontal direction.
      *
      * @return The number of leafs along the horizontal direction.
-     * */
+     */
     public final int getWidth() {
         return w;
     }
@@ -148,7 +148,7 @@ public class TagTreeDecoder {
      * Returns the number of leafs along the vertical direction.
      *
      * @return The number of leafs along the vertical direction.
-     * */
+     */
     public final int getHeight() {
         return h;
     }
@@ -173,7 +173,7 @@ public class TagTreeDecoder {
      *
      * @exception EOFException If the ned of the 'in' stream is reached before
      * getting all the necessary data.
-     * */
+     */
     public int update(int m, int n, int t, PktHeaderBitReader in)
         throws IOException {
         int k,tmin;
@@ -239,7 +239,7 @@ public class TagTreeDecoder {
      * @return The current value of the element.
      *
      * @see #update
-     * */
+     */
     public int getValue(int m, int n) {
         // Check arguments
         if (m >= h || n >= w) {

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.forwcomptransf;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -54,7 +54,7 @@ import java.util.*;
  * aspects of CompTransfSpec.
  * 
  * @see CompTransfSpec
- * */
+ */
 public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes
 {
 	/**
@@ -84,7 +84,7 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes
 	 * 
 	 * @param pl
 	 *            The ParameterList
-	 * */
+	 */
 	public ForwCompTransfSpec(int nt, int nc, byte type, AnWTFilterSpec wfs, ParameterList pl)
 	{
 		super(nt, nc, type);
@@ -387,7 +387,7 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes
 	 *            The analysis filters specifications
 	 * 
 	 * @return The filter type common to all the components
-	 * */
+	 */
 	private int getFilterType(int t, AnWTFilterSpec wfs)
 	{
 		AnWTFilter[][] anfilt;

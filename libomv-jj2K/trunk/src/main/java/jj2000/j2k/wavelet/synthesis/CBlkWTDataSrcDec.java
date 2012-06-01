@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.image.*;
@@ -61,7 +61,7 @@ import jj2000.j2k.wavelet.*;
  * @see WaveletTransform
  * @see jj2000.j2k.quantization.dequantizer.CBlkQuantDataSrcDec
  * @see InverseWT
- * */
+ */
 public interface CBlkWTDataSrcDec extends InvWTData
 {
 
@@ -93,7 +93,7 @@ public interface CBlkWTDataSrcDec extends InvWTData
 	 *         data.
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	public int getNomRangeBits(int c);
 
 	/**
@@ -110,7 +110,7 @@ public interface CBlkWTDataSrcDec extends InvWTData
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	public int getFixedPoint(int c);
 
 	/**
@@ -160,7 +160,7 @@ public interface CBlkWTDataSrcDec extends InvWTData
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	public DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
 
 	/**
@@ -209,6 +209,6 @@ public interface CBlkWTDataSrcDec extends InvWTData
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	public DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
 }

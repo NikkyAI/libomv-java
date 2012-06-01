@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.roi.encoder;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -73,7 +73,7 @@ import java.io.*;
  * 
  * @see Quantizer
  * @see CBlkWTData
- * */
+ */
 public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 {
 
@@ -169,7 +169,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * 
 	 * @param encSpec
 	 *            The encoder specifications for addition of roi specs
-	 * */
+	 */
 	public ROIScaler(Quantizer src, ROIMaskGenerator mg, boolean roi, int sLev, boolean uba, EncoderSpecs encSpec)
 	{
 		super(src);
@@ -197,7 +197,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 *            The component to test for reversibility
 	 * 
 	 * @return True if the quantized data is reversible, false if not.
-	 * */
+	 */
 	@Override
 	public boolean isReversible(int t, int c)
 	{
@@ -219,7 +219,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * @see SubbandAn
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	@Override
 	public SubbandAn getAnSubbandTree(int t, int c)
 	{
@@ -229,7 +229,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	/**
 	 * Returns the horizontal offset of the code-block partition. Allowable
 	 * values are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -239,7 +239,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	/**
 	 * Returns the vertical offset of the code-block partition. Allowable values
 	 * are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -266,7 +266,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * 
 	 * @exception IllegalArgumentException
 	 *                If an error occurs while parsing the options in 'pl'
-	 * */
+	 */
 	public static ROIScaler createInstance(Quantizer src, ParameterList pl, EncoderSpecs encSpec)
 	{
 		Vector<ROI> roiVector = new Vector<ROI>();
@@ -353,7 +353,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 *            The vcector containing the ROI parsed from the cmd line
 	 * 
 	 * @return The ROIs specified in roiopt
-	 * */
+	 */
 	protected static Vector<ROI> parseROIs(String roiopt, int nc, Vector<ROI> roiVector)
 	{
 		ROI roi;
@@ -536,7 +536,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	@Override
 	public CBlkWTData getNextCodeBlock(int c, CBlkWTData cblk)
 	{
@@ -566,7 +566,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	@Override
 	public CBlkWTData getNextInternCodeBlock(int c, CBlkWTData cblk)
 	{
@@ -755,7 +755,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -773,7 +773,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -789,7 +789,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * last one (i.e. there is no next tile).
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -806,7 +806,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * 
 	 * @param encSpec
 	 *            The encoder specifications for addition of roi specs
-	 * */
+	 */
 	private void calcMaxMagBits(EncoderSpecs encSpec)
 	{
 		int tmp;

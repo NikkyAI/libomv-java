@@ -128,7 +128,7 @@ public class ImgEncoder
 	 * constructor and when the run method returns.
 	 * 
 	 * @return The exit code of the constructor and the run() method.
-	 * */
+	 */
 	public int getExitCode()
 	{
 		return exitCode;
@@ -539,7 +539,7 @@ public class ImgEncoder
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -553,7 +553,7 @@ public class ImgEncoder
 	 * @return All encoding parameters
 	 * 
 	 * @see #getParameterInfo
-	 * */
+	 */
 	public static String[][] getAllParameters()
 	{
 		Vector<String[]> vec = new Vector<String[]>();
@@ -621,7 +621,7 @@ public class ImgEncoder
 	 * 
 	 * @param msg
 	 *            The error message
-	 * */
+	 */
 	protected void warning(String msg)
 	{
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.WARNING, msg);
@@ -637,7 +637,7 @@ public class ImgEncoder
 	 * 
 	 * @param code
 	 *            The exit code to set
-	 * */
+	 */
 	protected void error(String msg, int code)
 	{
 		exitCode = code;

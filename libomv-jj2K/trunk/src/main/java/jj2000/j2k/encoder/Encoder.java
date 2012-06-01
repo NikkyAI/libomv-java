@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.encoder;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -128,7 +128,7 @@ import java.io.*;
  * @see FileFormatWriter
  * @see ModuleSpec
  * @see EncoderSpecs
- * */
+ */
 public class Encoder extends ImgEncoder implements Runnable
 {
 	/** The valid list of options prefixes */
@@ -151,7 +151,7 @@ public class Encoder extends ImgEncoder implements Runnable
 	 * @param pl
 	 *            The ParameterList for this decoder (contains also defaults
 	 *            values);
-	 * */
+	 */
 	public Encoder(ParameterList pl)
 	{
 		super(pl);
@@ -162,7 +162,7 @@ public class Encoder extends ImgEncoder implements Runnable
 	 * indicates that an error ocurred.
 	 * 
 	 * @see #getExitCode
-	 * */
+	 */
 	@Override
 	public void run()
 	{
@@ -397,7 +397,7 @@ public class Encoder extends ImgEncoder implements Runnable
 
 	/**
 	 * Prints version and copyright information to stdout, using the MsgPrinter.
-	 * */
+	 */
 	private void printVersionAndCopyright()
 	{
 		FacilityManager.getMsgLogger().println("JJ2000's JPEG 2000 Encoder\n", 2, 4);
@@ -409,7 +409,7 @@ public class Encoder extends ImgEncoder implements Runnable
 	/**
 	 * Prints the usage information to stdout. The usage information is written
 	 * for all modules in the encoder.
-	 * */
+	 */
 	private void printUsage()
 	{
 		MsgLogger ml = FacilityManager.getMsgLogger();
@@ -453,7 +453,7 @@ public class Encoder extends ImgEncoder implements Runnable
 	 * 
 	 * @param pinfo
 	 *            The parameter information to write.
-	 * */
+	 */
 	private void printParamInfo(MsgLogger out, String pinfo[][])
 	{
 		String defval;

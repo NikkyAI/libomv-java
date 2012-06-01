@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream;
 
 /**
@@ -50,7 +50,7 @@ package jj2000.j2k.codestream;
  *
  * @see PrecCoordInfo
  * @see CBlkCoordInfo
- * */
+ */
 public abstract class CoordInfo {
 
     /** Horizontal upper left coordinate in the subband */
@@ -77,7 +77,7 @@ public abstract class CoordInfo {
      * @param h The height
      *
      * @param idx The object's index
-     * */
+     */
     public CoordInfo(int ulx, int uly, int w, int h) {
         this.ulx = ulx;
         this.uly = uly;
@@ -92,7 +92,7 @@ public abstract class CoordInfo {
      * Returns object's information in a String 
      * 
      * @return String with object's information
-     * */
+     */
     @Override
 	public String toString() {
         return "ulx="+ulx+",uly="+uly+",w="+w+",h="+h;

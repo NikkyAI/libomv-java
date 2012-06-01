@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.fileformat.reader;
 
 import jj2000.j2k.codestream.*;
@@ -57,7 +57,7 @@ import java.io.*;
  * first valid codestream.
  * 
  * @see jj2000.j2k.fileformat.writer.FileFormatWriter
- * */
+ */
 public class FileFormatReader implements FileFormatBoxes
 {
 
@@ -78,7 +78,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * 
 	 * @param in
 	 *            The RandomAccessIO from which to read the file format
-	 * */
+	 */
 	public FileFormatReader(RandomAccessIO in)
 	{
 		this.in = in;
@@ -97,7 +97,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * 
 	 * @exception java.io.EOFException
 	 *                If end of file is reached
-	 * */
+	 */
 	public void readFileFormat() throws IOException, EOFException
 	{
 
@@ -222,7 +222,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 *                If an I/O error ocurred.
 	 * @exception java.io.EOFException
 	 *                If the end of file was reached
-	 * */
+	 */
 	public boolean readFileTypeBox() throws IOException, EOFException
 	{
 		int length;
@@ -288,7 +288,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * 
 	 * @exception java.io.EOFException
 	 *                If the end of file was reached
-	 * */
+	 */
 	public boolean readJP2HeaderBox(long pos, int length, long longLength) throws IOException, EOFException
 	{
 
@@ -322,7 +322,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * 
 	 * @exception java.io.EOFException
 	 *                If the end of file was reached
-	 * */
+	 */
 	public boolean readContiguousCodeStreamBox(long pos, int length, long longLength) throws IOException, EOFException
 	{
 
@@ -343,28 +343,28 @@ public class FileFormatReader implements FileFormatBoxes
 
 	/**
 	 * This method reads the contents of the Intellectual property box
-	 * */
+	 */
 	public void readIntPropertyBox(int length)
 	{
 	}
 
 	/**
 	 * This method reads the contents of the XML box
-	 * */
+	 */
 	public void readXMLBox(int length)
 	{
 	}
 
 	/**
 	 * This method reads the contents of the Intellectual property box
-	 * */
+	 */
 	public void readUUIDBox(int length)
 	{
 	}
 
 	/**
 	 * This method reads the contents of the Intellectual property box
-	 * */
+	 */
 	public void readUUIDInfoBox(int length)
 	{
 	}
@@ -374,7 +374,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * codestreams in the file
 	 * 
 	 * @return The positions of the contiguous codestreams in the file
-	 * */
+	 */
 	public long[] getCodeStreamPos()
 	{
 		int size = codeStreamPos.size();
@@ -389,7 +389,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * the file
 	 * 
 	 * @return The position of the first contiguous codestream in the file
-	 * */
+	 */
 	public int getFirstCodeStreamPos()
 	{
 		return codeStreamPos.elementAt(0).intValue();
@@ -400,7 +400,7 @@ public class FileFormatReader implements FileFormatBoxes
 	 * file
 	 * 
 	 * @return The length of the first contiguous codestream in the file
-	 * */
+	 */
 	public int getFirstCodeStreamLength()
 	{
 		return codeStreamLength.elementAt(0).intValue();

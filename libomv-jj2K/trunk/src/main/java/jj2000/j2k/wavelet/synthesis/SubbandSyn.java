@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.wavelet.*;
@@ -62,7 +62,7 @@ import jj2000.j2k.wavelet.*;
  * The only exception is the root element which has no parent (i.e.it's null),
  * for obvious reasons.
  * </p>
- * */
+ */
 public class SubbandSyn extends Subband
 {
 
@@ -87,7 +87,7 @@ public class SubbandSyn extends Subband
 	/**
 	 * The reference to the LH subband (vertical high-pass) resulting from the
 	 * decomposition of this subband. It is null by default.
-	 * */
+	 */
 	private SubbandSyn subb_LH;
 
 	/**
@@ -116,7 +116,7 @@ public class SubbandSyn extends Subband
 	/**
 	 * Creates a SubbandSyn element with all the default values. The dimensions
 	 * are (0,0) and the upper left corner is (0,0).
-	 * */
+	 */
 	public SubbandSyn()
 	{
 	}
@@ -157,7 +157,7 @@ public class SubbandSyn extends Subband
 	 * 
 	 * @see Subband#Subband(int,int,int,int,int,
 	 *      WaveletFilter[],WaveletFilter[])
-	 * */
+	 */
 	public SubbandSyn(int w, int h, int ulcx, int ulcy, int lvls, WaveletFilter hfilters[], WaveletFilter vfilters[])
 	{
 		super(w, h, ulcx, ulcy, lvls, hfilters, vfilters);
@@ -169,7 +169,7 @@ public class SubbandSyn extends Subband
 	 * element has no parent subband (null).
 	 * 
 	 * @return The parent subband, or null for the root one.
-	 * */
+	 */
 	@Override
 	public Subband getParent()
 	{
@@ -180,7 +180,7 @@ public class SubbandSyn extends Subband
 	 * Returns the LL child subband of this subband.
 	 * 
 	 * @return The LL child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getLL()
 	{
@@ -191,7 +191,7 @@ public class SubbandSyn extends Subband
 	 * Returns the HL (horizontal high-pass) child subband of this subband.
 	 * 
 	 * @return The HL child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getHL()
 	{
@@ -202,7 +202,7 @@ public class SubbandSyn extends Subband
 	 * Returns the LH (vertical high-pass) child subband of this subband.
 	 * 
 	 * @return The LH child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getLH()
 	{
@@ -213,7 +213,7 @@ public class SubbandSyn extends Subband
 	 * Returns the HH child subband of this subband.
 	 * 
 	 * @return The HH child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getHH()
 	{
@@ -241,7 +241,7 @@ public class SubbandSyn extends Subband
 	 * @return A reference to the LL leaf (subb_LL).
 	 * 
 	 * @see Subband#initChilds
-	 * */
+	 */
 	@Override
 	protected Subband split(WaveletFilter hfilter, WaveletFilter vfilter)
 	{
@@ -280,7 +280,7 @@ public class SubbandSyn extends Subband
 	 * subband
 	 * 
 	 * @return The horizontal wavelet filter
-	 * */
+	 */
 	@Override
 	public WaveletFilter getHorWFilter()
 	{
@@ -292,7 +292,7 @@ public class SubbandSyn extends Subband
 	 * subband
 	 * 
 	 * @return The vertical wavelet filter
-	 * */
+	 */
 	@Override
 	public WaveletFilter getVerWFilter()
 	{

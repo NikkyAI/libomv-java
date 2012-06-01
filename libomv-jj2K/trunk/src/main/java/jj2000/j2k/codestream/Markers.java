@@ -37,7 +37,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream;
 
 /**
@@ -45,7 +45,7 @@ package jj2000.j2k.codestream;
  * codestream. There are 16 bit values, always appearing in big-endian (most
  * significant byte first) and byte-aligned in the codestream. This interface
  * also defines some other constants such as bit-masks and bit-shifts.
- * */
+ */
 public interface Markers {
 
     // ----> Delimiting markers and marker segments <----

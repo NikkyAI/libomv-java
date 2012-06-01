@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.wavelet.*;
@@ -62,7 +62,7 @@ import jj2000.j2k.wavelet.*;
  * The only exception is the root element which has no parent (i.e.it's null),
  * for obvious reasons.
  * </p>
- * */
+ */
 public class SubbandAn extends Subband
 {
 
@@ -87,7 +87,7 @@ public class SubbandAn extends Subband
 	/**
 	 * The reference to the LH subband (vertical high-pass) resulting from the
 	 * decomposition of this subband. It is null by default.
-	 * */
+	 */
 	public SubbandAn subb_LH;
 
 	/**
@@ -111,7 +111,7 @@ public class SubbandAn extends Subband
 	/**
 	 * The L2-norm of the synthesis basis waveform of this subband, applicable
 	 * to "leafs" only. By default it is -1 (i.e. not calculated yet).
-	 * */
+	 */
 	public float l2Norm = -1.0f;
 
 	/**
@@ -122,13 +122,13 @@ public class SubbandAn extends Subband
 	 * only after quantization 9See Quantizer).
 	 * 
 	 * @see jj2000.j2k.quantization.quantizer.Quantizer
-	 * */
+	 */
 	public float stepWMSE;
 
 	/**
 	 * Creates a SubbandAn element with all the default values. The dimensions
 	 * are (0,0) and the upper left corner is (0,0).
-	 * */
+	 */
 	public SubbandAn()
 	{
 	}
@@ -178,7 +178,7 @@ public class SubbandAn extends Subband
 	 *      WaveletFilter[],WaveletFilter[])
 	 * 
 	 * @see jj2000.j2k.quantization.quantizer.Quantizer
-	 * */
+	 */
 	public SubbandAn(int w, int h, int ulcx, int ulcy, int lvls, WaveletFilter hfilters[], WaveletFilter vfilters[])
 	{
 		super(w, h, ulcx, ulcy, lvls, hfilters, vfilters);
@@ -192,7 +192,7 @@ public class SubbandAn extends Subband
 	 * element has no parent subband (null).
 	 * 
 	 * @return The parent subband, or null for the root one.
-	 * */
+	 */
 	@Override
 	public Subband getParent()
 	{
@@ -203,7 +203,7 @@ public class SubbandAn extends Subband
 	 * Returns the LL child subband of this subband.
 	 * 
 	 * @return The LL child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getLL()
 	{
@@ -214,7 +214,7 @@ public class SubbandAn extends Subband
 	 * Returns the HL (horizontal high-pass) child subband of this subband.
 	 * 
 	 * @return The HL child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getHL()
 	{
@@ -225,7 +225,7 @@ public class SubbandAn extends Subband
 	 * Returns the LH (vertical high-pass) child subband of this subband.
 	 * 
 	 * @return The LH child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getLH()
 	{
@@ -236,7 +236,7 @@ public class SubbandAn extends Subband
 	 * Returns the HH child subband of this subband.
 	 * 
 	 * @return The HH child subband, or null if there are no childs.
-	 * */
+	 */
 	@Override
 	public Subband getHH()
 	{
@@ -264,7 +264,7 @@ public class SubbandAn extends Subband
 	 * @return A reference to the LL leaf (subb_LL).
 	 * 
 	 * @see Subband#initChilds
-	 * */
+	 */
 	@Override
 	protected Subband split(WaveletFilter hfilter, WaveletFilter vfilter)
 	{
@@ -318,7 +318,7 @@ public class SubbandAn extends Subband
 	 * @param wfs
 	 *            An size 2 array where the line and column waveforms will be
 	 *            returned.
-	 * */
+	 */
 	private void calcBasisWaveForms(float wfs[][])
 	{
 		if (l2Norm < 0)
@@ -391,7 +391,7 @@ public class SubbandAn extends Subband
 	 * 
 	 * @param l2n
 	 *            The L2-norm to assign.
-	 * */
+	 */
 	private void assignL2Norm(float l2n)
 	{
 		if (l2Norm < 0)
@@ -445,7 +445,7 @@ public class SubbandAn extends Subband
 	/**
 	 * Calculates the L2-norm of the sythesis waveforms of every leaf in the
 	 * tree. This method should only be called on the root element.
-	 * */
+	 */
 	private void calcL2Norms()
 	{
 		int i;
@@ -486,7 +486,7 @@ public class SubbandAn extends Subband
 	 * subband
 	 * 
 	 * @return The horizontal wavelet filter
-	 * */
+	 */
 	@Override
 	public WaveletFilter getHorWFilter()
 	{
@@ -498,7 +498,7 @@ public class SubbandAn extends Subband
 	 * subband
 	 * 
 	 * @return The vertical wavelet filter
-	 * */
+	 */
 	@Override
 	public WaveletFilter getVerWFilter()
 	{

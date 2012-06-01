@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.encoder;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -59,7 +59,7 @@ import jj2000.j2k.*;
  * members must be instance of ModuleSpec class (or its children).
  * 
  * @see ModuleSpec
- * */
+ */
 public class EncoderSpecs
 {
 
@@ -141,7 +141,7 @@ public class EncoderSpecs
 	 * 
 	 * @param pl
 	 *            The ParameterList instance
-	 * */
+	 */
 	public EncoderSpecs(int nt, int nc, BlkImgDataSrc imgsrc, ParameterList pl)
 	{
 		nTiles = nt;

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *  */
+ */
 package jj2000.j2k.roi.encoder;
 
 /** 
@@ -87,7 +87,7 @@ public abstract class SubbandROIMask{
      * @param w The width of corresponding subband
      *
      * @param h The height of corresponding subband
-     * */
+     */
     public SubbandROIMask(int ulx, int uly, int w, int h){
         this.ulx=ulx;
         this.uly=uly;
@@ -104,7 +104,7 @@ public abstract class SubbandROIMask{
      * @param x horizontal coordinate of the specified point.
      *
      * @param y horizontal coordinate of the specified point.
-     * */
+     */
     public SubbandROIMask getSubbandRectROIMask(int x, int y) {
         SubbandROIMask cur,hhs;
 

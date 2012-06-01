@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.invcomptransf;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -57,7 +57,7 @@ import jj2000.j2k.*;
  * Transformation) and ICT (Irreversible Component Transformation).
  * 
  * @see ModuleSpec
- * */
+ */
 public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 {
 
@@ -143,7 +143,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The command line optinons of the decoder
 	 * 
 	 * @see BlkImgDataSrc
-	 * */
+	 */
 	public InvCompTransf(BlkImgDataSrc imgSrc, DecoderSpecs decSpec, int[] utdepth, ParameterList pl)
 	{
 		super(imgSrc);
@@ -166,7 +166,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -178,7 +178,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * ICT" or "No component transformation" depending on the current tile.
 	 * 
 	 * @return A descriptive string
-	 * */
+	 */
 	@Override
 	public String toString()
 	{
@@ -201,7 +201,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * reversed without any loss of information (not even due to rounding).
 	 * 
 	 * @return Reversibility of component transformation in current tile
-	 * */
+	 */
 	public boolean isReversible()
 	{
 		switch (transfType)
@@ -233,7 +233,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The value of the fixed point position of the source since the
 	 *         color transform does not affect it.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -256,7 +256,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            new array is allocated and returned.
 	 * 
 	 * @return The bitdepth of each transformed component.
-	 * */
+	 */
 	public static int[] calcMixedBitDepths(int utdepth[], int ttype, int tdepth[])
 	{
 
@@ -325,7 +325,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the component.
 	 * 
 	 * @return The bitdepth of un-transformed component 'c'.
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -352,7 +352,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see BlkImgDataSrc#getCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -383,7 +383,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            Index of the output component.
 	 * 
 	 * @return The requested DataBlk
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -418,7 +418,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the requested component
 	 * 
 	 * @return Data of requested component
-	 * */
+	 */
 	private DataBlk invRCT(DataBlk blk, int c)
 	{
 		// If the component number is three or greater, return original data
@@ -534,7 +534,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the requested component
 	 * 
 	 * @return Data of requested component
-	 * */
+	 */
 	private DataBlk invICT(DataBlk blk, int c)
 	{
 		if (c >= 3 && c < getNumComps())
@@ -695,7 +695,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -743,7 +743,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * </p>
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{

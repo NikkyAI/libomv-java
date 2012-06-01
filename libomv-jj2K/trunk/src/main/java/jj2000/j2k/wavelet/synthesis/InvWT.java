@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.wavelet.*;
@@ -55,7 +55,7 @@ import jj2000.j2k.wavelet.*;
  * to inverse wavelet transform. Different data transfer methods are
  * envisageable for different transforms.
  * </p>
- * */
+ */
 public interface InvWT extends WaveletTransform
 {
 
@@ -83,6 +83,6 @@ public interface InvWT extends WaveletTransform
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	public void setImgResLevel(int rl);
 }

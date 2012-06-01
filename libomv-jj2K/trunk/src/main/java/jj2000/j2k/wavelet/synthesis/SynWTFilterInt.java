@@ -62,7 +62,7 @@ import jj2000.j2k.image.*;
  * The advantage of using the specialized method is that no casts are performed.
  * 
  * @see SynWTFilter
- * */
+ */
 public abstract class SynWTFilterInt extends SynWTFilter
 {
 
@@ -116,7 +116,7 @@ public abstract class SynWTFilterInt extends SynWTFilter
 	 * 
 	 * 
 	 * 
-	 * */
+	 */
 	public abstract void synthetize_lpf(int[] lowSig, int lowOff, int lowLen, int lowStep, int[] highSig, int highOff,
 			int highLen, int highStep, int[] outSig, int outOff, int outStep);
 
@@ -172,7 +172,7 @@ public abstract class SynWTFilterInt extends SynWTFilter
 	 * 
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public void synthetize_lpf(Object lowSig, int lowOff, int lowLen, int lowStep, Object highSig, int highOff,
 			int highLen, int highStep, Object outSig, int outOff, int outStep)
@@ -232,7 +232,7 @@ public abstract class SynWTFilterInt extends SynWTFilter
 	 * 
 	 * 
 	 * 
-	 * */
+	 */
 	public abstract void synthetize_hpf(int[] lowSig, int lowOff, int lowLen, int lowStep, int[] highSig, int highOff,
 			int highLen, int highStep, int[] outSig, int outOff, int outStep);
 
@@ -288,7 +288,7 @@ public abstract class SynWTFilterInt extends SynWTFilter
 	 * 
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public void synthetize_hpf(Object lowSig, int lowOff, int lowLen, int lowStep, Object highSig, int highOff,
 			int highLen, int highStep, Object outSig, int outOff, int outStep)
@@ -307,7 +307,7 @@ public abstract class SynWTFilterInt extends SynWTFilter
 	 * @see jj2000.j2k.image.DataBlk
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public int getDataType()
 	{

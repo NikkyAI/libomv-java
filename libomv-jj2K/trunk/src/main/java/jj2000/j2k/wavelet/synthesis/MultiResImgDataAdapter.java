@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.image.*;
@@ -66,7 +66,7 @@ import jj2000.j2k.image.*;
  * </p>
  * 
  * @see MultiResImgData
- * */
+ */
 public abstract class MultiResImgDataAdapter implements MultiResImgData
 {
 
@@ -82,7 +82,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @param src
 	 *            From where to obrtain the MultiResImgData values.
-	 * */
+	 */
 	protected MultiResImgDataAdapter(MultiResImgData src)
 	{
 		mressrc = src;
@@ -101,7 +101,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The resolution level, from 0 to L.
 	 * 
 	 * @return The total current tile's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileWidth(int rl)
 	{
@@ -121,7 +121,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The resolution level, from 0 to L.
 	 * 
 	 * @return The total current tile's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileHeight(int rl)
 	{
@@ -155,7 +155,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The resolution level, from 0 to L.
 	 * 
 	 * @return The total image's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgWidth(int rl)
 	{
@@ -175,7 +175,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The resolution level, from 0 to L.
 	 * 
 	 * @return The total image's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgHeight(int rl)
 	{
@@ -190,7 +190,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * </p>
 	 * 
 	 * @return The number of components in the image.
-	 * */
+	 */
 	@Override
 	public int getNumComps()
 	{
@@ -213,7 +213,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * @return The horizontal subsampling factor of component 'c'
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsX(int c)
 	{
@@ -236,7 +236,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * @return The vertical subsampling factor of component 'c'
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsY(int c)
 	{
@@ -262,7 +262,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in tile <tt>t</tt>
 	 *         for resolution level <tt>rl</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompWidth(int t, int c, int rl)
 	{
@@ -287,7 +287,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The resolution level, from 0 to L.
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompHeight(int t, int c, int rl)
 	{
@@ -309,7 +309,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The resolution level, from 0 to L.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
-	 * */
+	 */
 	@Override
 	public int getCompImgWidth(int c, int rl)
 	{
@@ -331,7 +331,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in the overall
 	 *         image.
-	 * */
+	 */
 	@Override
 	public int getCompImgHeight(int c, int rl)
 	{
@@ -354,7 +354,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            The vertical indexes of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -372,7 +372,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * </p>
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -393,7 +393,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 *            null a new one is created and returned.
 	 * 
 	 * @return The current tile's indexes (vertical and horizontal indexes).
-	 * */
+	 */
 	@Override
 	public Coord getTile(Coord co)
 	{
@@ -409,7 +409,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * </p>
 	 * 
 	 * @return The current tile's index (starts at 0).
-	 * */
+	 */
 	@Override
 	public int getTileIdx()
 	{
@@ -429,7 +429,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @param rl
 	 *            The resolution level index.
-	 * */
+	 */
 	@Override
 	public int getResULX(int c, int rl)
 	{
@@ -449,7 +449,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @param rl
 	 *            The resolution level index.
-	 * */
+	 */
 	@Override
 	public int getResULY(int c, int rl)
 	{
@@ -484,7 +484,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULX(int rl)
 	{
@@ -505,7 +505,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULY(int rl)
 	{
@@ -525,7 +525,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 *         (Coord.y) directions.
-	 * */
+	 */
 	@Override
 	public Coord getNumTiles(Coord co)
 	{
@@ -540,7 +540,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * </p>
 	 * 
 	 * @return The total number of tiles in the image.
-	 * */
+	 */
 	@Override
 	public int getNumTiles()
 	{

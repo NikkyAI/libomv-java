@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.codestream.*;
@@ -57,7 +57,7 @@ import jj2000.j2k.*;
  * approach to be used either with integer or floating-point filters
  * 
  * @see ForwardWT
- * */
+ */
 public class ForwWTFull extends ForwardWT
 {
 
@@ -75,7 +75,7 @@ public class ForwWTFull extends ForwardWT
 	 * first call to getAnSubbandTree() for that component, in the current tile.
 	 * Before that, the element in 'subbTrees' is null.
 	 * </p>
-	 * */
+	 */
 	private SubbandAn subbTrees[][];
 
 	/** The source of image data */
@@ -110,13 +110,13 @@ public class ForwWTFull extends ForwardWT
 	/**
 	 * The horizontal index of the last "sent" code-block in the current subband
 	 * in each component. It should be -1 if none have been sent yet.
-	 * */
+	 */
 	private int lastn[];
 
 	/**
 	 * The vertical index of the last "sent" code-block in the current subband
 	 * in each component. It should be 0 if none have been sent yet.
-	 * */
+	 */
 	private int lastm[];
 
 	/** The subband being dealt with in each component */
@@ -147,7 +147,7 @@ public class ForwWTFull extends ForwardWT
 	 *            the reference grid.
 	 * 
 	 * @see ForwardWT
-	 * */
+	 */
 	public ForwWTFull(BlkImgDataSrc src, EncoderSpecs encSpec, int cb0x, int cb0y)
 	{
 		super(src);
@@ -177,7 +177,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The index of the component.
 	 * 
 	 * @return WT_IMPL_FULL
-	 * */
+	 */
 	@Override
 	public int getImplementationType(int c)
 	{
@@ -197,7 +197,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @return The number of decompositions applied to the LL band (0 for no
 	 *         wavelet transform).
-	 * */
+	 */
 	@Override
 	public int getDecompLevels(int t, int c)
 	{
@@ -215,7 +215,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The index of the component.
 	 * 
 	 * @return The wavelet decomposition.
-	 * */
+	 */
 	@Override
 	public int getDecomp(int t, int c)
 	{
@@ -248,7 +248,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The index of the component for which to return the filters.
 	 * 
 	 * @return The horizontal analysis wavelet filters used in each level.
-	 * */
+	 */
 	@Override
 	public AnWTFilter[] getHorAnWaveletFilters(int t, int c)
 	{
@@ -281,7 +281,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The index of the component for which to return the filters.
 	 * 
 	 * @return The vertical analysis wavelet filters used in each level.
-	 * */
+	 */
 	@Override
 	public AnWTFilter[] getVertAnWaveletFilters(int t, int c)
 	{
@@ -300,7 +300,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The index of the component.
 	 * 
 	 * @return true is the wavelet transform is reversible, false if not.
-	 * */
+	 */
 	@Override
 	public boolean isReversible(int t, int c)
 	{
@@ -310,7 +310,7 @@ public class ForwWTFull extends ForwardWT
 	/**
 	 * Returns the horizontal offset of the code-block partition. Allowable
 	 * values are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -320,7 +320,7 @@ public class ForwWTFull extends ForwardWT
 	/**
 	 * Returns the vertical offset of the code-block partition. Allowable values
 	 * are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -340,7 +340,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -386,7 +386,7 @@ public class ForwWTFull extends ForwardWT
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	@Override
 	public CBlkWTData getNextInternCodeBlock(int c, CBlkWTData cblk)
 	{
@@ -622,7 +622,7 @@ public class ForwWTFull extends ForwardWT
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	@Override
 	public CBlkWTData getNextCodeBlock(int c, CBlkWTData cblk)
 	{
@@ -699,7 +699,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The index of the component for which to return the data type.
 	 * 
 	 * @return Current data type
-	 * */
+	 */
 	@Override
 	public int getDataType(int t, int c)
 	{
@@ -715,7 +715,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @return Its returns the next subband that will be used to get the next
 	 *         code-block to return by the getNext[Intern]CodeBlock method.
-	 **/
+	 */
 	private SubbandAn getNextSubband(int c)
 	{
 		int down = 1;
@@ -827,7 +827,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @param c
 	 *            The index of the current component to decompose
-	 * */
+	 */
 	private void waveletTreeDecomposition(DataBlk band, SubbandAn subband, int c)
 	{
 
@@ -862,7 +862,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @param c
 	 *            The index of the current component to decompose
-	 * */
+	 */
 	private void wavelet2DDecomposition(DataBlk band, SubbandAn subband, int c)
 	{
 
@@ -1008,7 +1008,7 @@ public class ForwWTFull extends ForwardWT
 	 *            The vertical coordinate of the new tile.
 	 * 
 	 * @returns The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -1036,7 +1036,7 @@ public class ForwWTFull extends ForwardWT
 	 * </p>
 	 * 
 	 * @returns The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -1067,7 +1067,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @see SubbandAn
 	 * @see Subband
-	 * */
+	 */
 	@Override
 	public SubbandAn getAnSubbandTree(int t, int c)
 	{
@@ -1093,7 +1093,7 @@ public class ForwWTFull extends ForwardWT
 	 * 
 	 * @param sb
 	 *            The subband tree to be initialised.
-	 * */
+	 */
 	private void initSubbandsFields(int t, int c, Subband sb)
 	{
 		int cbw = cblks.getCBlkWidth(ModuleSpec.SPEC_TILE_COMP, t, c);

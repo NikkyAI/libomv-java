@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -115,7 +115,7 @@ import java.util.*;
  * @see CBlkQuantDataSrcEnc
  * @see CBlkWTData
  * @see CBlkRateDistStats
- * */
+ */
 public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOptions
 {
 
@@ -223,7 +223,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * the StdEntropyCoderOptions interface
 	 * 
 	 * @see StdEntropyCoderOptions
-	 * */
+	 */
 	private int[][] opts = null;
 
 	/** The length calculation type for each tile-component */
@@ -339,7 +339,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * The lower 16 bits are referred to as "row 1" ("R1") while the upper 16
 	 * bits are referred to as "row 2" ("R2").
 	 * </p>
-	 * */
+	 */
 	private int stateT[][];
 
 	/*
@@ -668,7 +668,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	/**
 	 * Class that takes care of running the 'compressCodeBlock()' method with
 	 * thread local arguments. Used only in multithreaded implementation.
-	 * */
+	 */
 	private class Compressor implements Runnable
 	{
 		/**
@@ -710,7 +710,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		 * 
 		 * @param idx
 		 *            The index of this compressor.
-		 * */
+		 */
 		Compressor(int idx)
 		{
 			this.idx = idx;
@@ -724,7 +724,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		 * 'c' is the component for which this compressor is running. This last
 		 * step occurs even if exceptions are thrown by the
 		 * 'compressCodeBlock()' method.
-		 * */
+		 */
 		@Override
 		public void run()
 		{
@@ -754,7 +754,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		 * 
 		 * @return The wall time in milliseconds spent by this compressor since
 		 *         the last call to this method.
-		 * */
+		 */
 		synchronized long getTiming(int c)
 		{
 			if (DO_TIMING)
@@ -770,7 +770,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		 * Returns the index of this compressor.
 		 * 
 		 * @return The index of this compressor.
-		 * */
+		 */
 		public int getIdx()
 		{
 			return idx;
@@ -1070,7 +1070,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 *            Termination type specifications
 	 * 
 	 * @see MQCoder
-	 * */
+	 */
 	public StdEntropyCoder(CBlkQuantDataSrcEnc src, CBlkSizeSpec cblks, PrecinctSizeSpec pss, StringSpec bms,
 			StringSpec mqrs, StringSpec rts, StringSpec css, StringSpec sss, StringSpec lcs, StringSpec tts)
 	{
@@ -1183,7 +1183,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	/**
 	 * Prints the timing information, if collected, and calls 'finalize' on the
 	 * super class.
-	 * */
+	 */
 	@Override
 	public void finalize() throws Throwable
 	{
@@ -1251,7 +1251,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 *            the component index
 	 * 
 	 * @return The code-block width for the specified tile and component
-	 * */
+	 */
 	@Override
 	public int getCBlkWidth(int t, int c)
 	{
@@ -1268,7 +1268,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 *            The component index
 	 * 
 	 * @return The code-block height for the specified tile and component.
-	 * */
+	 */
 	@Override
 	public int getCBlkHeight(int t, int c)
 	{
@@ -1311,7 +1311,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 *         returned.
 	 * 
 	 * @see CBlkRateDistStats
-	 * */
+	 */
 	@Override
 	public CBlkRateDistStats getNextCodeBlock(int c, CBlkRateDistStats ccb)
 	{
@@ -1459,7 +1459,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -1484,7 +1484,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * </p>
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -1560,7 +1560,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 *            The type of termination to use with the MQ coder.
 	 * 
 	 * @see #getNextCodeBlock
-	 * */
+	 */
 	static private void compressCodeBlock(int c, CBlkRateDistStats ccb, CBlkWTData srcblk, MQCoder mq,
 			BitToByteOutput bout, ByteOutputBuffer out, int state[], double distbuf[], int ratebuf[],
 			boolean istermbuf[], int symbuf[], int ctxtbuf[], int options, boolean rev, int lcType, int tType)
@@ -1757,7 +1757,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @return The number of magnitude bit-planes to skip (i.e. all zero most
 	 *         significant bit-planes).
-	 **/
+	 */
 	static private int calcSkipMSBP(CBlkWTData cblk, int lmb)
 	{
 		int k, kmax, mask;
@@ -1855,7 +1855,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * @return The decrease in distortion for this pass, in the fixed-point
 	 *         normalized representation of the 'FS_LOSSY' and 'FS_LOSSLESS'
 	 *         tables.
-	 * */
+	 */
 	static private int sigProgPass(CBlkWTData srcblk, MQCoder mq, boolean doterm, int bp, int state[], int fs[],
 			int zc_lut[], int symbuf[], int ctxtbuf[], int ratebuf[], int pidx, int ltpidx, int options)
 	{
@@ -2236,7 +2236,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * @return The decrease in distortion for this pass, in the fixed-point
 	 *         normalized representation of the 'FS_LOSSY' and 'FS_LOSSLESS'
 	 *         tables.
-	 * */
+	 */
 	static private int rawSigProgPass(CBlkWTData srcblk, BitToByteOutput bout, boolean doterm, int bp, int state[],
 			int fs[], int ratebuf[], int pidx, int ltpidx, int options)
 	{
@@ -2606,7 +2606,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * @return The decrease in distortion for this pass, in the fixed-point
 	 *         normalized representation of the 'FS_LOSSY' and 'FS_LOSSLESS'
 	 *         tables.
-	 * */
+	 */
 	static private int magRefPass(CBlkWTData srcblk, MQCoder mq, boolean doterm, int bp, int state[], int fm[],
 			int symbuf[], int ctxtbuf[], int ratebuf[], int pidx, int ltpidx, int options)
 	{
@@ -2826,7 +2826,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * @return The decrease in distortion for this pass, in the fixed-point
 	 *         normalized representation of the 'FS_LOSSY' and 'FS_LOSSLESS'
 	 *         tables.
-	 * */
+	 */
 	static private int rawMagRefPass(CBlkWTData srcblk, BitToByteOutput bout, boolean doterm, int bp, int state[],
 			int fm[], int ratebuf[], int pidx, int ltpidx, int options)
 	{
@@ -3026,7 +3026,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * @return The decrease in distortion for this pass, in the fixed-point
 	 *         normalized representation of the 'FS_LOSSY' and 'FS_LOSSLESS'
 	 *         tables.
-	 * */
+	 */
 	static private int cleanuppass(CBlkWTData srcblk, MQCoder mq, boolean doterm, int bp, int state[], int fs[],
 			int zc_lut[], int symbuf[], int ctxtbuf[], int ratebuf[], int pidx, int ltpidx, int options)
 	{
@@ -3553,7 +3553,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @param n
 	 *            The number of coding passes
-	 * */
+	 */
 	static private void checkEndOfPassFF(byte data[], int rates[], boolean isterm[], int n)
 	{
 		int dp; // the position to test in 'data'
@@ -3599,7 +3599,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @param nc
 	 *            The number of components
-	 * */
+	 */
 	public void initTileComp(int nt, int nc)
 	{
 
@@ -3712,7 +3712,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @return The precinct partition width for the specified component, tile
 	 *         and resolution level
-	 * */
+	 */
 	@Override
 	public int getPPX(int t, int c, int rl)
 	{
@@ -3734,7 +3734,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @return The precinct partition height for the specified component, tile
 	 *         and resolution level
-	 * */
+	 */
 	@Override
 	public int getPPY(int t, int c, int rl)
 	{
@@ -3753,7 +3753,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @return True if precinct partition is used for the specified component
 	 *         and tile, returns false otherwise.
-	 * */
+	 */
 	@Override
 	public boolean precinctPartitionUsed(int c, int t)
 	{

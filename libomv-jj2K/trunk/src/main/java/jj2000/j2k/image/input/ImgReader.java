@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.input;
 
 import jj2000.j2k.image.*;
@@ -70,7 +70,7 @@ import java.io.*;
  * there is no component subsampling (all components are the same size), but
  * they can be overloaded by the implementating class if need be.
  * </p>
- * */
+ */
 public abstract class ImgReader implements BlkImgDataSrc
 {
 
@@ -98,7 +98,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * the image. The value of <tt>w</tt> is returned.
 	 * 
 	 * @return The total image width in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileWidth()
 	{
@@ -138,7 +138,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * value of <tt>w</tt> is returned.
 	 * 
 	 * @return The total image's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgWidth()
 	{
@@ -151,7 +151,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * value of <tt>h</tt> is returned.
 	 * 
 	 * @return The total image's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgHeight()
 	{
@@ -163,7 +163,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * is returned.
 	 * 
 	 * @return The number of components in the image.
-	 * */
+	 */
 	@Override
 	public int getNumComps()
 	{
@@ -182,7 +182,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * @return The horizontal subsampling factor of component 'c'
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsX(int c)
 	{
@@ -201,7 +201,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * @return The vertical subsampling factor of component 'c'
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsY(int c)
 	{
@@ -220,7 +220,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in tile<tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompWidth(int t, int c)
 	{
@@ -245,7 +245,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompHeight(int t, int c)
 	{
@@ -266,7 +266,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
-	 * */
+	 */
 	@Override
 	public int getCompImgWidth(int c)
 	{
@@ -283,7 +283,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in the overall
 	 *         image.
-	 * */
+	 */
 	@Override
 	public int getCompImgHeight(int c)
 	{
@@ -303,7 +303,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 *            The vertical coordinate of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -321,7 +321,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * assumes no tiling, so NoNextElementException() is always thrown.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -337,7 +337,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 *            null a new one is created and returned.
 	 * 
 	 * @return The current tile's coordinates.
-	 * */
+	 */
 	@Override
 	public Coord getTile(Coord co)
 	{
@@ -356,7 +356,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * returned.
 	 * 
 	 * @return The current tile's index (starts at 0).
-	 * */
+	 */
 	@Override
 	public int getTileIdx()
 	{
@@ -369,7 +369,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULX(int c)
 	{
@@ -382,7 +382,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULY(int c)
 	{
@@ -409,7 +409,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULX()
 	{
@@ -422,7 +422,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULY()
 	{
@@ -440,7 +440,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * 
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 *         (Coord.y) directions.
-	 * */
+	 */
 	@Override
 	public Coord getNumTiles(Coord co)
 	{
@@ -458,7 +458,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * implementation assumes no tiling, so 1 is always returned.
 	 * 
 	 * @return The total number of tiles in the image.
-	 * */
+	 */
 	@Override
 	public int getNumTiles()
 	{
@@ -473,7 +473,7 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return true if the data was originally signed, false if not.
-	 * */
+	 */
 	public abstract boolean isOrigSigned(int c);
 
 }

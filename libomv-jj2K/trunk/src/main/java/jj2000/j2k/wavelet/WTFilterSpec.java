@@ -66,7 +66,7 @@ package jj2000.j2k.wavelet;
  * @see jj2000.j2k.wavelet.analysis.AnWTFilterSpec
  * 
  * @see jj2000.j2k.wavelet.synthesis.SynWTFilterSpec
- * */
+ */
 
 public abstract class WTFilterSpec
 {
@@ -106,7 +106,7 @@ public abstract class WTFilterSpec
 	 *            The number of tiles
 	 * 
 	 * 
-	 * */
+	 */
 	protected WTFilterSpec(int nc)
 	{
 		specValType = new byte[nc];
@@ -121,7 +121,7 @@ public abstract class WTFilterSpec
 	 * @see jj2000.j2k.image.DataBlk
 	 * 
 	 * 
-	 * */
+	 */
 	public abstract int getWTDataType();
 
 	/**
@@ -142,7 +142,7 @@ public abstract class WTFilterSpec
 	 * @return The specification type for component 'n' and tile 't'.
 	 * 
 	 * 
-	 * */
+	 */
 	public byte getKerSpecType(int n)
 	{
 		return specValType[n];

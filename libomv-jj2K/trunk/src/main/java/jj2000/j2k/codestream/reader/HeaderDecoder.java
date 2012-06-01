@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.reader;
 
 import jj2000.j2k.quantization.dequantizer.*;
@@ -116,7 +116,7 @@ import java.util.*;
  * @see HeaderInfo
  * @see Decoder
  * @see FileBitstreamReaderAgent
- * */
+ */
 public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderOptions
 {
 
@@ -256,7 +256,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Return the maximum height among all components
 	 * 
 	 * @return Maximum component height
-	 * */
+	 */
 	public int getMaxCompImgHeight()
 	{
 		return hi.siz.getMaxCompHeight();
@@ -266,7 +266,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Return the maximum width among all components
 	 * 
 	 * @return Maximum component width
-	 * */
+	 */
 	public int getMaxCompImgWidth()
 	{
 		return hi.siz.getMaxCompWidth();
@@ -276,7 +276,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Returns the image width in the reference grid.
 	 * 
 	 * @return The image width in the reference grid
-	 * */
+	 */
 	public final int getImgWidth()
 	{
 		return hi.siz.xsiz - hi.siz.x0siz;
@@ -286,7 +286,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Returns the image height in the reference grid.
 	 * 
 	 * @return The image height in the reference grid
-	 * */
+	 */
 	public final int getImgHeight()
 	{
 		return hi.siz.ysiz - hi.siz.y0siz;
@@ -297,7 +297,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * grid.
 	 * 
 	 * @return The horizontal coordinate of the image origin.
-	 * */
+	 */
 	public final int getImgULX()
 	{
 		return hi.siz.x0siz;
@@ -308,7 +308,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * grid.
 	 * 
 	 * @return The vertical coordinate of the image origin.
-	 * */
+	 */
 	public final int getImgULY()
 	{
 		return hi.siz.y0siz;
@@ -318,7 +318,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Returns the nominal width of the tiles in the reference grid.
 	 * 
 	 * @return The nominal tile width, in the reference grid.
-	 * */
+	 */
 	public final int getNomTileWidth()
 	{
 		return hi.siz.xtsiz;
@@ -328,7 +328,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Returns the nominal width of the tiles in the reference grid.
 	 * 
 	 * @return The nominal tile width, in the reference grid.
-	 * */
+	 */
 	public final int getNomTileHeight()
 	{
 		return hi.siz.ytsiz;
@@ -346,7 +346,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *         reference grid.
 	 * 
 	 * @see jj2000.j2k.image.ImgData
-	 * */
+	 */
 	public final Coord getTilingOrigin(Coord co)
 	{
 		if (co != null)
@@ -367,7 +367,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            The index of the component
 	 * 
 	 * @return True if the original image component was signed.
-	 * */
+	 */
 	public final boolean isOriginalSigned(int c)
 	{
 		return hi.siz.isOrigSigned(c);
@@ -380,7 +380,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            The index of the component
 	 * 
 	 * @return The bitdepth of the component
-	 * */
+	 */
 	public final int getOriginalBitDepth(int c)
 	{
 		return hi.siz.getOrigBitDepth(c);
@@ -390,7 +390,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Returns the number of components in the image.
 	 * 
 	 * @return The number of components in the image.
-	 * */
+	 */
 	public final int getNumComps()
 	{
 		return nComp;
@@ -404,7 +404,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            The index of the component
 	 * 
 	 * @return The component sub-sampling factor X-wise.
-	 * */
+	 */
 	public final int getCompSubsX(int c)
 	{
 		return hi.siz.xrsiz[c];
@@ -418,7 +418,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            The index of the component
 	 * 
 	 * @return The component sub-sampling factor Y-wise.
-	 * */
+	 */
 	public final int getCompSubsY(int c)
 	{
 		return hi.siz.yrsiz[c];
@@ -439,7 +439,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            The DecoderSpecs instance after any image manipulation.
 	 * 
 	 * @return The dequantizer
-	 * */
+	 */
 	public final Dequantizer createDequantizer(CBlkQuantDataSrcDec src, int rb[], DecoderSpecs decSpec2)
 	{
 		return new StdDequantizer(src, rb, decSpec2);
@@ -448,7 +448,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	/**
 	 * Returns the horizontal code-block partition origin.Allowable values are 0
 	 * and 1, nothing else.
-	 * */
+	 */
 	public final int getCbULX()
 	{
 		return cb0x;
@@ -457,7 +457,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	/**
 	 * Returns the vertical code-block partition origin. Allowable values are 0
 	 * and 1, nothing else.
-	 * */
+	 */
 	public final int getCbULY()
 	{
 		return cb0y;
@@ -478,7 +478,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @return The precinct partition width for the specified tile-component and
 	 *         resolution level
-	 * */
+	 */
 	public final int getPPX(int t, int c, int rl)
 	{
 		return decSpec.pss.getPPX(t, c, rl);
@@ -499,7 +499,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @return The precinct partition height for the specified tile-component
 	 *         and resolution level
-	 * */
+	 */
 	public final int getPPY(int t, int c, int rl)
 	{
 		return decSpec.pss.getPPY(t, c, rl);
@@ -507,7 +507,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 
 	/**
 	 * Returns the boolean used to know if the precinct partition is used
-	 **/
+	 */
 	public final boolean precinctPartitionUsed()
 	{
 		return precinctPartitionIsUsed;
@@ -523,7 +523,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @param filtIdx
 	 *            Int array of one element to return the type of the wavelet
 	 *            filter.
-	 * */
+	 */
 	private SynWTFilter readFilter(DataInputStream ehs, int[] filtIdx) throws IOException
 	{
 		int kid; // the filter id
@@ -556,7 +556,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurs
-	 * */
+	 */
 	public void checkMarkerLength(DataInputStream ehs, String str) throws IOException
 	{
 		if (ehs.available() != 0)
@@ -582,7 +582,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoded
 	 *                header stream
-	 * */
+	 */
 	private void readSIZ(DataInputStream ehs) throws IOException
 	{
 		HeaderInfo.SIZ ms = hi.getNewSIZ();
@@ -669,7 +669,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @param ehs
 	 *            The encoded header stream
-	 * */
+	 */
 	private void readCRG(DataInputStream ehs) throws IOException
 	{
 		HeaderInfo.CRG ms = hi.getNewCRG();
@@ -715,7 +715,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoded
 	 *                header stream
-	 * */
+	 */
 	private void readCOM(DataInputStream ehs, boolean mainh, int tileIdx, int comIdx) throws IOException
 	{
 		HeaderInfo.COM ms = hi.getNewCOM();
@@ -780,7 +780,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoded
 	 *                header stream.
-	 * */
+	 */
 	private void readQCD(DataInputStream ehs, boolean mainh, int tileIdx, int tpIdx) throws IOException
 	{
 		StdDequantizerParams qParms;
@@ -981,7 +981,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoded
 	 *                header stream.
-	 * */
+	 */
 	private void readQCC(DataInputStream ehs, boolean mainh, int tileIdx, int tpIdx) throws IOException
 	{
 		int cComp; // current component
@@ -1194,7 +1194,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readCOD(DataInputStream ehs, boolean mainh, int tileIdx, int tpIdx) throws IOException
 	{
 		int cstyle; // The block style
@@ -1491,7 +1491,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readCOC(DataInputStream ehs, boolean mainh, int tileIdx, int tpIdx) throws IOException
 	{
 		int cComp; // current component
@@ -1665,7 +1665,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readPOC(DataInputStream ehs, boolean mainh, int t, int tpIdx) throws IOException
 	{
 
@@ -1819,7 +1819,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readTLM(DataInputStream ehs) throws IOException
 	{
 		int length;
@@ -1842,7 +1842,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readPLM(DataInputStream ehs) throws IOException
 	{
 		int length;
@@ -1865,7 +1865,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readPLTFields(DataInputStream ehs) throws IOException
 	{
 		int length;
@@ -1902,7 +1902,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readRGN(DataInputStream ehs, boolean mainh, int tileIdx, int tpIdx) throws IOException
 	{
 		int comp; // ROI component
@@ -1958,7 +1958,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readPPM(DataInputStream ehs) throws IOException
 	{
 		int curMarkSegLen;
@@ -2004,7 +2004,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void readPPT(DataInputStream ehs, int tile, int tpIdx) throws IOException
 	{
 		int curMarkSegLen, indx;
@@ -2062,7 +2062,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @param ehs
 	 *            The encoded header stream
-	 * */
+	 */
 	private void extractMainMarkSeg(short marker, RandomAccessIO ehs) throws IOException
 	{
 		if (nfMarkSeg == 0)
@@ -2222,7 +2222,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @param tilePartIdx
 	 *            The index of the current tile part
-	 * */
+	 */
 	public void extractTilePartMarkSeg(short marker, RandomAccessIO ehs, int tileIdx, int tilePartIdx)
 			throws IOException
 	{
@@ -2343,7 +2343,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	/**
 	 * Retrieves and reads all marker segments found in the main header during
 	 * the first pass.
-	 * */
+	 */
 	private void readFoundMainMarkSeg() throws IOException
 	{
 		ByteArrayInputStream bais;
@@ -2446,7 +2446,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @param tpIdx
 	 *            Index of the current tile-part
-	 * */
+	 */
 	public void readFoundTilePartMarkSeg(int tileIdx, int tpIdx) throws IOException
 	{
 		ByteArrayInputStream bais;
@@ -2530,7 +2530,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Return the DecoderSpecs instance filled when reading the headers
 	 * 
 	 * @return The DecoderSpecs of the decoder
-	 * */
+	 */
 	public DecoderSpecs getDecoderSpecs()
 	{
 		return decSpec;
@@ -2558,7 +2558,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                getting all the data.
 	 * @exception CorruptedCodestreamException
 	 *                If invalid data is found in the codestream main header.
-	 * */
+	 */
 	public HeaderDecoder(RandomAccessIO ehs, ParameterList pl, HeaderInfo hi) throws IOException
 	{
 
@@ -2599,7 +2599,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            entropy decoder (other parameters can also be present).
 	 * 
 	 * @return The entropy decoder
-	 * */
+	 */
 	public EntropyDecoder createEntropyDecoder(CodedCBlkDataSrcDec src, ParameterList pl)
 	{
 		boolean doer;
@@ -2635,7 +2635,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                if image contains a bad icc profile
 	 * @exception ColorSpaceException
 	 *                if image contains a bad colorspace box
-	 **/
+	 */
 	public BlkImgDataSrc createColorSpaceMapper(BlkImgDataSrc src, ColorSpace csMap) throws IOException,
 			ICCProfileException, ColorSpaceException
 	{
@@ -2656,7 +2656,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                image access exception
 	 * @exception ColorSpaceException
 	 *                if image contains a bad colorspace box
-	 **/
+	 */
 	public BlkImgDataSrc createChannelDefinitionMapper(BlkImgDataSrc src, ColorSpace csMap) throws IOException,
 			ColorSpaceException
 	{
@@ -2677,7 +2677,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                image access exception
 	 * @exception ColorSpaceException
 	 *                if image contains a bad colorspace box
-	 **/
+	 */
 	public BlkImgDataSrc createPalettizedColorSpaceMapper(BlkImgDataSrc src, ColorSpace csMap) throws IOException,
 			ColorSpaceException
 	{
@@ -2699,7 +2699,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                image access exception
 	 * @exception ColorSpaceException
 	 *                if image contains a bad colorspace box
-	 **/
+	 */
 	public BlkImgDataSrc createResampler(BlkImgDataSrc src, ColorSpace csMap) throws IOException, ColorSpaceException
 	{
 		return Resampler.createInstance(src, csMap);
@@ -2721,7 +2721,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *            The DecoderSpecs instance after any image manipulation.
 	 * 
 	 * @return The ROI descaler.
-	 * */
+	 */
 	public ROIDeScaler createROIDeScaler(CBlkQuantDataSrcDec src, ParameterList pl, DecoderSpecs decSpec2)
 	{
 		return ROIDeScaler.createInstance(src, pl, decSpec2);
@@ -2730,7 +2730,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	/**
 	 * Method that resets members indicating which markers have already been
 	 * found
-	 * */
+	 */
 	public void resetHeaderMarkers()
 	{
 		// The found status of PLM remains since only PLM OR PLT allowed
@@ -2746,7 +2746,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Print information about the current header.
 	 * 
 	 * @return Information in a String
-	 * */
+	 */
 	@Override
 	public String toString()
 	{
@@ -2763,7 +2763,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * respectively.
 	 * 
 	 * @return the options name, their synopsis and their explanation.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -2773,7 +2773,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Return the number of tiles in the image
 	 * 
 	 * @return The number of tiles
-	 * */
+	 */
 	public int getNumTiles()
 	{
 		return nTiles;
@@ -2788,7 +2788,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	public ByteArrayInputStream getPackedPktHead(int tile) throws IOException
 	{
 
@@ -2858,7 +2858,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * 
 	 * @param tile
 	 *            The tile number that the present tile part belongs to.
-	 * */
+	 */
 	public void setTileOfTileParts(int tile)
 	{
 		if (nPPMMarkSeg != 0)
@@ -2871,7 +2871,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * Returns the number of found marker segments in the current header.
 	 * 
 	 * @return The number of marker segments found in the current header.
-	 * */
+	 */
 	public int getNumFoundMarkSeg()
 	{
 		return nfMarkSeg;

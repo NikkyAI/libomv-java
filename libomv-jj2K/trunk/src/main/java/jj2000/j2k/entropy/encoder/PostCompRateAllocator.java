@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.codestream.writer.*;
@@ -68,7 +68,7 @@ import java.io.*;
  * 
  * @see CodedCBlkDataSrcEnc
  * @see jj2000.j2k.codestream.writer.CodestreamWriter
- * */
+ */
 public abstract class PostCompRateAllocator extends ImgDataAdapter
 {
 
@@ -158,7 +158,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 *            The packet bit stream writer.
 	 * 
 	 * @see ProgressionType
-	 * */
+	 */
 	public PostCompRateAllocator(CodedCBlkDataSrcEnc src, int nl, CodestreamWriter bw, EncoderSpecs encSpec)
 	{
 		super(src);
@@ -173,7 +173,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 * 
 	 * @param headEnc
 	 *            The header encoder
-	 * */
+	 */
 	public void setHeaderEncoder(HeaderEncoder headEnc)
 	{
 		this.headEnc = headEnc;
@@ -190,7 +190,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 *            Whether or not the old syntax is used.
 	 * 
 	 * @see #runAndWrite
-	 * */
+	 */
 	public abstract void initialize() throws IOException;
 
 	/**
@@ -198,14 +198,14 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 * This must be called after the initialize() method.
 	 * 
 	 * @see #initialize
-	 * */
+	 */
 	public abstract void runAndWrite() throws IOException;
 
 	/**
 	 * Returns the number of layers that are actually generated.
 	 * 
 	 * @return The number of layers generated.
-	 * */
+	 */
 	public int getNumLayers()
 	{
 		return numLayers;
@@ -223,7 +223,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -247,7 +247,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 * @param bw
 	 *            The bit stream writer object, where the bit stream data will
 	 *            be written.
-	 * */
+	 */
 	public static PostCompRateAllocator createInstance(CodedCBlkDataSrcEnc src, ParameterList pl, float rate,
 			CodestreamWriter bw, EncoderSpecs encSpec)
 	{
@@ -277,7 +277,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 *            The overall target bitrate
 	 * 
 	 * @return The layer specification.
-	 * */
+	 */
 	private static LayersInfo parseAlayers(String params, float rate)
 	{
 		LayersInfo lyrs;

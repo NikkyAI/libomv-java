@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.decoder;
 
 import jj2000.j2k.util.*;
@@ -50,7 +50,7 @@ import jj2000.j2k.util.*;
  * software conventions decoder for better performance (i.e. execution time
  * performance). The initial states for each context of the MQ-coder are
  * specified in the constructor.
- * */
+ */
 
 // A trick to test for increased speed: merge the Qe and mPS into 1 thing by
 // using the sign bit of Qe to signal mPS (positive-or-0 is 0, negative is 1),
@@ -122,7 +122,7 @@ public class MQDecoder
 	 *            The initial state for each context. A reference is kept to
 	 *            this array to reinitialize the contexts whenever 'reset()' or
 	 *            'resetCtxts()' is called.
-	 * */
+	 */
 	public MQDecoder(ByteInputBuffer iStream, int nrOfContexts, int initStates[])
 	{
 		in = iStream;
@@ -173,7 +173,7 @@ public class MQDecoder
 	 * @return True if speedup mode was used, false if not. If speedup mode was
 	 *         used then all the decoded symbols are the same and its value is
 	 *         returned in 'bits[0]' only (not in bits[1], bits[2], etc.).
-	 * */
+	 */
 	public final boolean fastDecodeSymbols(int[] bits, int ctxt, int n)
 	{
 		int q; // LPS probability for context
@@ -328,7 +328,7 @@ public class MQDecoder
 	 * 
 	 * @param n
 	 *            The number of symbols to decode
-	 * */
+	 */
 	public final void decodeSymbols(int[] bits, int[] cX, int n)
 	{
 		int q;
@@ -452,7 +452,7 @@ public class MQDecoder
 	 *            The context to use in decoding the symbol
 	 * 
 	 * @return The decoded symbol, 0 or 1.
-	 * */
+	 */
 	public final int decodeSymbol(int context)
 	{
 		int q;
@@ -568,7 +568,7 @@ public class MQDecoder
 	 * stream has been correctly decoded.
 	 * 
 	 * @return True if errors are found, false otherwise.
-	 * */
+	 */
 	public boolean checkPredTerm()
 	{
 		int k; // Number of bits that where added in the termination process
@@ -655,7 +655,7 @@ public class MQDecoder
 	 * This function gets one byte of compressed bits from the in-stream. the
 	 * byte is added to c. If the byte is 0xFF and the next byte is greater than
 	 * 0x8F, the byte after 0xFF is a marker.
-	 * */
+	 */
 	private void byteIn()
 	{
 		if (!markerFound)
@@ -694,7 +694,7 @@ public class MQDecoder
 	 * Returns the number of contexts in the arithmetic coder.
 	 * 
 	 * @return The number of contexts
-	 **/
+	 */
 	public final int getNumCtxts()
 	{
 		return I.length;
@@ -705,7 +705,7 @@ public class MQDecoder
 	 * 
 	 * @param c
 	 *            The number of the context (it starts at 0).
-	 * */
+	 */
 	public final void resetCtxt(int c)
 	{
 		I[c] = initStates[c];
@@ -719,7 +719,7 @@ public class MQDecoder
 	 * 
 	 * @param c
 	 *            The index of the context (it starts at 0).
-	 * */
+	 */
 	public final void resetCtxts()
 	{
 		System.arraycopy(initStates, 0, I, 0, I.length);
@@ -742,7 +742,7 @@ public class MQDecoder
 	 * @param len
 	 *            The number of bytes in 'buf' to be decoded. Any subsequent
 	 *            bytes are taken to be 0xFF.
-	 * */
+	 */
 	public final void nextSegment(byte buf[], int off, int len)
 	{
 		// Set the new input
@@ -756,7 +756,7 @@ public class MQDecoder
 	 * bytes are read.
 	 * 
 	 * @return The underlying ByteInputBuffer.
-	 * */
+	 */
 	public ByteInputBuffer getByteInputBuffer()
 	{
 		return in;
@@ -770,7 +770,7 @@ public class MQDecoder
 	 * <P>
 	 * To have a complete reset of the MQ (as if a new MQDecoder object was
 	 * created) 'resetCtxts()' should be called after this method.
-	 * */
+	 */
 	private void init()
 	{
 		// --- INITDEC

@@ -42,7 +42,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.decoder;
 
 import java.io.*;
@@ -64,7 +64,7 @@ import java.io.*;
  * </p>
  * 
  * @see InputStream
- * */
+ */
 public class ByteInputBuffer
 {
 
@@ -79,7 +79,7 @@ public class ByteInputBuffer
 
 	/**
 	 * The index of the next character to read from the input stream buffer
-	 * */
+	 */
 	private int pos;
 
 	/**
@@ -88,7 +88,7 @@ public class ByteInputBuffer
 	 * 
 	 * @param buf
 	 *            the input buffer.
-	 * */
+	 */
 	public ByteInputBuffer(byte buf[])
 	{
 		this.buf = buf;
@@ -112,7 +112,7 @@ public class ByteInputBuffer
 	 * 
 	 * @param length
 	 *            the maximum number of bytes to read from the buffer.
-	 * */
+	 */
 	public ByteInputBuffer(byte buf[], int offset, int length)
 	{
 		this.buf = buf;
@@ -141,7 +141,7 @@ public class ByteInputBuffer
 	 * 
 	 * @param length
 	 *            the maximum number of bytes to read frmo the buffer.
-	 * */
+	 */
 	public void setByteArray(byte buf[], int offset, int length)
 	{
 		// In same buffer?
@@ -187,7 +187,7 @@ public class ByteInputBuffer
 	 * 
 	 * @param len
 	 *            The number of elements to add to the array.
-	 * */
+	 */
 	public synchronized void addByteArray(byte data[], int off, int len)
 	{
 		// Check integrity
@@ -238,7 +238,7 @@ public class ByteInputBuffer
 	 * 
 	 * @exception EOFException
 	 *                If the end of the stream is reached.
-	 * */
+	 */
 	public int readChecked() throws IOException
 	{
 		if (pos < count)
@@ -259,7 +259,7 @@ public class ByteInputBuffer
 	 * 
 	 * @return The byte read in the range 0-255, or -1 if the end of stream has
 	 *         been reached.
-	 * */
+	 */
 	public int read()
 	{
 		if (pos < count)

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.reader;
 
 import jj2000.j2k.quantization.dequantizer.*;
@@ -75,7 +75,7 @@ import java.io.*;
  * 
  * @see HeaderDecoder
  * @see PktDecoder
- * */
+ */
 public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Markers, ProgressionType,
 		StdEntropyCoderOptions
 {
@@ -101,7 +101,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * @param t
 	 *            Tile index
 	 * 
-	 * */
+	 */
 	public int getNumTileParts(int t)
 	{
 		if (firstPackOff == null || firstPackOff[t] == null)
@@ -126,7 +126,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * to restore the number of bytes to read in each tile when the codestream
 	 * is read several times (for instance when decoding an R,G,B image to three
 	 * output files)
-	 * */
+	 */
 	private int[] baknBytes;
 
 	/** Length of each tile-part (written in Psot) */
@@ -234,7 +234,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Whether or not to print information found in codestream.
 	 * 
 	 * @see #allocateRate
-	 * */
+	 */
 	public FileBitstreamReaderAgent(HeaderDecoder hd, RandomAccessIO ehs, DecoderSpecs decSpec, ParameterList pl,
 			boolean cdstrInfo, HeaderInfo hi) throws IOException
 	{
@@ -634,7 +634,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * Allocates output bit-rate for each tile in parsing mode: The allocator
 	 * simulates the truncation of a virtual layer-resolution progressive
 	 * codestream.
-	 * */
+	 */
 	private void allocateRate()
 	{
 		int stopOff = tnbytes;
@@ -668,7 +668,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * tile-part header is entirely read when a SOD marker is encountered.
 	 * 
 	 * @return The tile number of the tile part that was read
-	 * */
+	 */
 	private int readTilePartHeader() throws IOException
 	{
 		HeaderInfo.SOT ms = hi.getNewSOT();
@@ -893,7 +893,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Index of the last component.
 	 * 
 	 * @return True if rate has been reached.
-	 * */
+	 */
 	private boolean readLyResCompPos(int[][] lys, int lye, int ress, int rese, int comps, int compe) throws IOException
 	{
 
@@ -1046,7 +1046,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Index of the last component.
 	 * 
 	 * @return True if rate has been reached.
-	 * */
+	 */
 	private boolean readResLyCompPos(int lys[][], int lye, int ress, int rese, int comps, int compe) throws IOException
 	{
 
@@ -1204,7 +1204,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Index of the last component.
 	 * 
 	 * @return True if rate has been reached.
-	 * */
+	 */
 	private boolean readResPosCompLy(int[][] lys, int lye, int ress, int rese, int comps, int compe) throws IOException
 	{
 		// Computes current tile offset in the reference grid
@@ -1456,7 +1456,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Index of the last component.
 	 * 
 	 * @return True if rate has been reached.
-	 * */
+	 */
 	private boolean readPosCompResLy(int[][] lys, int lye, int ress, int rese, int comps, int compe) throws IOException
 	{
 		Coord nTiles = getNumTiles(null);
@@ -1707,7 +1707,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Index of the last component.
 	 * 
 	 * @return True if rate has been reached.
-	 * */
+	 */
 	private boolean readCompPosResLy(int lys[][], int lye, int ress, int rese, int comps, int compe) throws IOException
 	{
 		Coord nTiles = getNumTiles(null);
@@ -1953,7 +1953,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            Tile index
 	 * 
 	 * @see PktDecoder
-	 * */
+	 */
 	private void readTilePkts(int t) throws IOException
 	{
 		pktHL = new Vector<Integer>();
@@ -2288,7 +2288,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 *            The vertical indexes of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -2368,7 +2368,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * last one (i.e. there is no next tile).
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -2451,7 +2451,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * 
 	 * @return The compressed code-block, with a certain number of layers
 	 *         determined by the available data and 'nl'.
-	 * */
+	 */
 	@Override
 	public DecLyrdCBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, int fl, int nl, DecLyrdCBlk ccb)
 	{

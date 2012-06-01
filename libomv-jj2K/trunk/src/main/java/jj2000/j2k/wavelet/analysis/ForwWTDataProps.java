@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.image.*;
@@ -65,7 +65,7 @@ public interface ForwWTDataProps extends ImgData
 	 *            Component index
 	 * 
 	 * @return true is the data is reversible, false if not.
-	 * */
+	 */
 	public boolean isReversible(int t, int c);
 
 	/**
@@ -83,18 +83,18 @@ public interface ForwWTDataProps extends ImgData
 	 * @see SubbandAn
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	public SubbandAn getAnSubbandTree(int t, int c);
 
 	/**
 	 * Returns the horizontal offset of the code-block partition. Allowable
 	 * values are 0 and 1, nothing else.
-	 * */
+	 */
 	public int getCbULX();
 
 	/**
 	 * Returns the vertical offset of the code-block partition. Allowable values
 	 * are 0 and 1, nothing else.
-	 * */
+	 */
 	public int getCbULY();
 }

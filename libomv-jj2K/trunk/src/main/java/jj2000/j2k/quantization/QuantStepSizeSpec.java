@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization;
 
 import jj2000.j2k.util.*;
@@ -52,7 +52,7 @@ import java.util.*;
  * quantization base normalized step size to use in each tile-component.
  * 
  * @see ModuleSpec
- * */
+ */
 public class QuantStepSizeSpec extends ModuleSpec
 {
 
@@ -69,7 +69,7 @@ public class QuantStepSizeSpec extends ModuleSpec
 	 * @param type
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both.
-	 * */
+	 */
 	public QuantStepSizeSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -91,7 +91,7 @@ public class QuantStepSizeSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList
-	 * */
+	 */
 	public QuantStepSizeSpec(int nt, int nc, byte type, ParameterList pl)
 	{
 		super(nt, nc, type);

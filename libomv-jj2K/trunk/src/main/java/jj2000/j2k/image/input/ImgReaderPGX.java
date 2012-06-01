@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.input;
 
 import jj2000.j2k.image.*;
@@ -104,7 +104,7 @@ import java.io.*;
  * @see RandomAccessIO
  * @see BufferedRandomAccessFile
  * @see BEBufferedRandomAccessFile
- * */
+ */
 public class ImgReaderPGX extends ImgReader implements EndianType
 {
 
@@ -148,7 +148,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurs.
-	 * */
+	 */
 	public ImgReaderPGX(File in) throws IOException
 	{
 		String header;
@@ -245,7 +245,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @param inName
 	 *            The input file name.
-	 * */
+	 */
 	public ImgReaderPGX(String inName) throws IOException
 	{
 		this(new File(inName));
@@ -257,7 +257,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurs.
-	 * */
+	 */
 	@Override
 	public void close() throws IOException
 	{
@@ -281,7 +281,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @return The number of bits corresponding to the nominal range of the
 	 *         data.
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -301,7 +301,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @return The position of the fixed-point (i.e. the number of fractional
 	 *         bits). Always 0 for this ImgReader.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -363,7 +363,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @see #getCompData
 	 * @see JJ2KExceptionHandler
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -628,7 +628,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 
 	 * @see #getInternCompData
 	 * @see JJ2KExceptionHandler
-	 * */
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -643,7 +643,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return true if the data was originally signed, false if not.
-	 * */
+	 */
 	@Override
 	public boolean isOrigSigned(int c)
 	{
@@ -659,7 +659,7 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * RandomAccessIO (its toString() method is called in turn).
 	 * 
 	 * @return A string of information about the object.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

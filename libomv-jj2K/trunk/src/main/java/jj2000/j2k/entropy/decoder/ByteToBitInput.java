@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.decoder;
 
 /**
@@ -48,7 +48,7 @@ package jj2000.j2k.entropy.decoder;
  * output obejcts that inherit from a 'ByteInputBuffer' class. This class also
  * performs the bit unstuffing procedure specified for the 'selective arithmetic
  * coding bypass' mode of the JPEG 2000 entropy coder.
- * */
+ */
 public class ByteToBitInput
 {
 
@@ -70,7 +70,7 @@ public class ByteToBitInput
 	 * 
 	 * @param in
 	 *            The underlying byte based input.
-	 * */
+	 */
 	public ByteToBitInput(ByteInputBuffer in)
 	{
 		this.in = in;
@@ -82,7 +82,7 @@ public class ByteToBitInput
 	 * the bit unstuffing will be applied.
 	 * 
 	 * @return The read bit (0 or 1).
-	 * */
+	 */
 	public final int readBit()
 	{
 		if (bpos < 0)
@@ -110,7 +110,7 @@ public class ByteToBitInput
 	 * correctly decoded.
 	 * 
 	 * @return True if errors are found, false otherwise.
-	 * */
+	 */
 	public boolean checkBytePadding()
 	{
 		int seq; // Byte padding sequence in last byte
@@ -156,7 +156,7 @@ public class ByteToBitInput
 	/**
 	 * Flushes (i.e. empties) the bit buffer, without loading any new bytes.
 	 * This realigns the input at the next byte boundary, if not already at one.
-	 * */
+	 */
 	final void flush()
 	{
 		bbuf = 0; // reset any bit stuffing state
@@ -179,7 +179,7 @@ public class ByteToBitInput
 	 * @param len
 	 *            The number of bytes in 'buf' to be decoded. Any subsequent
 	 *            bytes are taken to be 0xFF.
-	 * */
+	 */
 	final void setByteArray(byte buf[], int off, int len)
 	{
 		in.setByteArray(buf, off, len);

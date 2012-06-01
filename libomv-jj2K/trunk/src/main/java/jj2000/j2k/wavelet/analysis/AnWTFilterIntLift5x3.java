@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.wavelet.*;
@@ -58,7 +58,7 @@ import jj2000.j2k.wavelet.*;
  * 
  * @see AnWTFilter
  * @see AnWTFilterInt
- * */
+ */
 public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 {
 
@@ -116,7 +116,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * @param highStep
 	 *            This is the step, or interleave factor, of the high-pass
 	 *            output samples in the highSig array.
-	 * */
+	 */
 	@Override
 	public void analyze_lpf(int inSig[], int inOff, int inLen, int inStep, int lowSig[], int lowOff, int lowStep,
 			int highSig[], int highOff, int highStep)
@@ -238,7 +238,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 *            output samples in the highSig array.
 	 * 
 	 * @see AnWTFilter#analyze_hpf
-	 * */
+	 */
 	@Override
 	public void analyze_hpf(int inSig[], int inOff, int inLen, int inStep, int lowSig[], int lowOff, int lowStep,
 			int highSig[], int highOff, int highStep)
@@ -316,7 +316,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * number of taps of the filter in the negative direction.
 	 * 
 	 * @return 2
-	 * */
+	 */
 	@Override
 	public int getAnLowNegSupport()
 	{
@@ -329,7 +329,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the low-pass analysis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getAnLowPosSupport()
 	{
@@ -342,7 +342,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass analysis filter in the
 	 *         negative direction
-	 * */
+	 */
 	@Override
 	public int getAnHighNegSupport()
 	{
@@ -355,7 +355,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass analysis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getAnHighPosSupport()
 	{
@@ -368,7 +368,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         negative direction
-	 * */
+	 */
 	@Override
 	public int getSynLowNegSupport()
 	{
@@ -381,7 +381,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getSynLowPosSupport()
 	{
@@ -394,7 +394,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         negative direction
-	 * */
+	 */
 	@Override
 	public int getSynHighNegSupport()
 	{
@@ -407,7 +407,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getSynHighPosSupport()
 	{
@@ -427,7 +427,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * </p>
 	 * 
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
-	 * */
+	 */
 	@Override
 	public float[] getLPSynthesisFilter()
 	{
@@ -447,7 +447,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * </p>
 	 * 
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
-	 * */
+	 */
 	@Override
 	public float[] getHPSynthesisFilter()
 	{
@@ -459,7 +459,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * such as WT_FILTER_INT_LIFT, WT_FILTER_FLOAT_LIFT, WT_FILTER_FLOAT_CONVOL.
 	 * 
 	 * @return WT_FILTER_INT_LIFT.
-	 * */
+	 */
 	@Override
 	public int getImplType()
 	{
@@ -472,7 +472,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return true since the 5x3 is reversible, provided the appropriate
 	 *         rounding is performed.
-	 * */
+	 */
 	@Override
 	public boolean isReversible()
 	{
@@ -509,7 +509,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @return true if both overlaps are greater than 2, and correct processing
 	 *         is applied in the analyze() method.
-	 * */
+	 */
 	@Override
 	public boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen)
 	{
@@ -535,7 +535,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * @param The
 	 *            object against which to test inequality.
-	 * */
+	 */
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -556,7 +556,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * @see FilterTypes
 	 * 
 	 * @return The filter type.
-	 * */
+	 */
 	@Override
 	public int getFilterType()
 	{

@@ -106,7 +106,7 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
      *
      *
      *
-     * */
+     */
     public abstract 
         void analyze_lpf(float inSig[], int inOff, int inLen, int inStep,
                      float lowSig[], int lowOff, int lowStep,
@@ -150,7 +150,7 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
      * @see AnWTFilter#analyze_lpf
      *
      *
-     * */
+     */
     @Override
 	public void analyze_lpf(Object inSig, int inOff, int inLen, int inStep,
                     Object lowSig, int lowOff, int lowStep,
@@ -199,7 +199,7 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
      * @see AnWTFilter#analyze_hpf
      *
      *
-     * */        
+     */        
     public abstract 
         void analyze_hpf(float inSig[], int inOff, int inLen, int inStep,
                      float lowSig[], int lowOff, int lowStep,
@@ -245,7 +245,7 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
      * @see AnWTFilter#analyze_hpf
      *
      *
-     * */
+     */
     @Override
 	public void analyze_hpf(Object inSig, int inOff, int inLen, int inStep,
                     Object lowSig, int lowOff, int lowStep,
@@ -266,7 +266,7 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
      * @see jj2000.j2k.image.DataBlk
      *
      *
-     * */
+     */
     @Override
 	public int getDataType() {
         return DataBlk.TYPE_FLOAT;

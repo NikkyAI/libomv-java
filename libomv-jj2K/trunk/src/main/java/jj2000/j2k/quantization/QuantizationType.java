@@ -58,7 +58,7 @@ package jj2000.j2k.quantization;
  * any other class you can either use the fully qualified name (e.g.,
  * <tt>QuantizationType.Q_TYPE_SCALAR_DZ</tt>) or declare this interface in the
  * implements clause of the class and then access the identifier directly.
- * */
+ */
 public interface QuantizationType
 {
 

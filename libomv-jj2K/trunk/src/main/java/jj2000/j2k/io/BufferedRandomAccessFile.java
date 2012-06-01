@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.io;
 
 import java.io.*;
@@ -64,7 +64,7 @@ import java.io.*;
  * @see BinaryDataOutput
  * @see BinaryDataInput
  * @see BEBufferedRandomAccessFile
- * */
+ */
 public abstract class BufferedRandomAccessFile implements RandomAccessIO, EndianType
 {
 
@@ -74,45 +74,45 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	/**
 	 * Whether the opened file is read only or not (defined by the constructor
 	 * arguments)
-	 * */
+	 */
 	private boolean isReadOnly = true;
 
 	/**
 	 * The RandomAccessFile associated with the buffer
-	 * */
+	 */
 	private RandomAccessFile theFile;
 
 	/**
 	 * Buffer of bytes containing the part of the file that is currently being
 	 * accessed
-	 * */
+	 */
 	protected byte[] byteBuffer;
 
 	/**
 	 * Boolean keeping track of whether the byte buffer has been changed since
 	 * it was read.
-	 * */
+	 */
 	protected boolean byteBufferChanged;
 
 	/**
 	 * The current offset of the buffer (which will differ from the offset of
 	 * the file)
-	 * */
+	 */
 	protected int offset;
 
 	/**
 	 * The current position in the byte-buffer
-	 * */
+	 */
 	protected int pos;
 
 	/**
 	 * The maximum number of bytes that can be read from the buffer
-	 * */
+	 */
 	protected int maxByte;
 
 	/**
 	 * Whether the end of the file is in the current buffer or not
-	 * */
+	 */
 	protected boolean isEOFInBuffer;
 
 	/* The endianess of the class */
@@ -134,7 +134,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	protected BufferedRandomAccessFile(File file, String mode, int bufferSize) throws IOException
 	{
 
@@ -167,7 +167,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	protected BufferedRandomAccessFile(File file, String mode) throws IOException
 	{
 
@@ -190,7 +190,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	protected BufferedRandomAccessFile(String name, String mode, int bufferSize) throws IOException
 	{
 		this(new File(name), mode, bufferSize);
@@ -209,7 +209,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	protected BufferedRandomAccessFile(String name, String mode) throws IOException
 	{
 
@@ -225,7 +225,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	protected final void readNewBuffer(int off) throws IOException
 	{
 
@@ -269,7 +269,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public void close() throws IOException
 	{
@@ -283,7 +283,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 
 	/**
 	 * Returns the current offset in the file
-	 * */
+	 */
 	@Override
 	public int getPos()
 	{
@@ -298,7 +298,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int length() throws IOException
 	{
@@ -328,7 +328,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public void seek(int off) throws IOException
 	{
@@ -362,7 +362,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.EOFException
 	 *                If the end of file was reached
-	 * */
+	 */
 	@Override
 	public final int read() throws IOException, EOFException
 	{
@@ -405,7 +405,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void readFully(byte b[], int off, int len) throws IOException
 	{
@@ -444,7 +444,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void write(int b) throws IOException
 	{
@@ -479,7 +479,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public final void write(byte b) throws IOException
 	{
 		// As long as pos is less than the length of the buffer we can write
@@ -519,7 +519,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public final void write(byte[] b, int offset, int length) throws IOException
 	{
 		int i, stop;
@@ -548,7 +548,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void writeByte(int v) throws IOException
 	{
@@ -561,7 +561,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void flush() throws IOException
 	{
@@ -585,7 +585,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final byte readByte() throws EOFException, IOException
 	{
@@ -620,7 +620,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final int readUnsignedByte() throws EOFException, IOException
 	{
@@ -636,7 +636,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *         <tt>EndianType.LITTLE_ENDIAN</tt>
 	 * 
 	 * @see EndianType
-	 * */
+	 */
 	@Override
 	public int getByteOrdering()
 	{
@@ -656,7 +656,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public int skipBytes(int n) throws EOFException, IOException
 	{
@@ -673,7 +673,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 
 	/**
 	 * Returns a string of information about the file
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

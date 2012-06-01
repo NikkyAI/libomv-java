@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.writer;
 
 import jj2000.j2k.util.*;
@@ -55,7 +55,7 @@ import jj2000.j2k.util.*;
  * NOTE: The methods implemented in this class are intended to be used only in
  * writing packet heads, since a special bit stuffing procedure is used, as
  * required for the packet heads.
- * */
+ */
 public class BitOutputBuffer
 {
 
@@ -80,7 +80,7 @@ public class BitOutputBuffer
 
 	/**
 	 * Creates a new BitOutputBuffer width a buffer of length 'SZ_INIT'.
-	 * */
+	 */
 	public BitOutputBuffer()
 	{
 		buf = new byte[SZ_INIT];
@@ -91,7 +91,7 @@ public class BitOutputBuffer
 	 * buffer and sets all tha data to 0. Note that no new buffer is allocated,
 	 * so this will affect any data that was returned by the 'getBuffer()'
 	 * method.
-	 * */
+	 */
 	public void reset()
 	{
 		// Reinit pointers
@@ -110,7 +110,7 @@ public class BitOutputBuffer
 	 * 
 	 * @param bit
 	 *            The bit to write, 0 or 1.
-	 * */
+	 */
 	public final void writeBit(int bit)
 	{
 		buf[curbyte] |= bit << --avbits;
@@ -153,7 +153,7 @@ public class BitOutputBuffer
 	 * 
 	 * @param n
 	 *            The number of LSBs in 'bits' to write.
-	 * */
+	 */
 	public final void writeBits(int bits, int n)
 	{
 		// Check that we have enough place in 'buf' for n bits, and that we do
@@ -227,7 +227,7 @@ public class BitOutputBuffer
 	 * This method is declared final to increase performance.
 	 * 
 	 * @return The currebt length of the buffer in bytes.
-	 * */
+	 */
 	public final int getLength()
 	{
 		if (avbits == 8)
@@ -246,7 +246,7 @@ public class BitOutputBuffer
 	 * This method is declared final to increase performance.
 	 * 
 	 * @return The internal byte buffer.
-	 * */
+	 */
 	public final byte[] getBuffer()
 	{
 		return buf;
@@ -264,7 +264,7 @@ public class BitOutputBuffer
 	 *            be large enough. Otherwise a new one is created and returned.
 	 * 
 	 * @return The byte buffer data.
-	 * */
+	 */
 	public byte[] toByteArray(byte data[])
 	{
 		if (data == null)
@@ -279,7 +279,7 @@ public class BitOutputBuffer
 	 * Prints information about this object for debugging purposes
 	 * 
 	 * @return Information about the object.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

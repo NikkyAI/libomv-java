@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.decoder;
 
 import jj2000.j2k.quantization.dequantizer.*;
@@ -65,7 +65,7 @@ import jj2000.j2k.wavelet.synthesis.*;
  * 
  * @see MultiResImgData
  * @see MultiResImgDataAdapter
- * */
+ */
 public abstract class EntropyDecoder extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec
 {
 
@@ -102,7 +102,7 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	 * 
 	 * @param src
 	 *            From where to obtain the compressed data.
-	 * */
+	 */
 	public EntropyDecoder(CodedCBlkDataSrcDec src)
 	{
 		super(src);
@@ -125,7 +125,7 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return The root of the tree structure.
-	 * */
+	 */
 	@Override
 	public SubbandSyn getSynSubbandTree(int t, int c)
 	{
@@ -135,7 +135,7 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	/**
 	 * Returns the horizontal code-block partition origin. Allowable values are
 	 * 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -145,7 +145,7 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	/**
 	 * Returns the vertical code-block partition origin. Allowable values are 0
 	 * and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -164,7 +164,7 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;

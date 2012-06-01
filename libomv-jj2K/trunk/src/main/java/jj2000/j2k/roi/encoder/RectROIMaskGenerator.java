@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.roi.encoder;
 
 import jj2000.j2k.wavelet.*;
@@ -66,7 +66,7 @@ import jj2000.j2k.image.*;
  * @see ROIMaskGenerator
  * 
  * @see ArbROIMaskGenerator
- * */
+ */
 public class RectROIMaskGenerator extends ROIMaskGenerator
 {
 
@@ -101,7 +101,7 @@ public class RectROIMaskGenerator extends ROIMaskGenerator
 	 * 
 	 * @param nrc
 	 *            number of components.
-	 * */
+	 */
 	public RectROIMaskGenerator(ROI[] ROIs, int nrc)
 	{
 		super(ROIs, nrc);
@@ -139,7 +139,7 @@ public class RectROIMaskGenerator extends ROIMaskGenerator
 	 *            The component for which to get the mask
 	 * 
 	 * @return Whether or not a mask was needed for this tile
-	 * */
+	 */
 	@Override
 	public boolean getROIMask(DataBlkInt db, Subband sb, int magbits, int c)
 	{
@@ -243,7 +243,7 @@ public class RectROIMaskGenerator extends ROIMaskGenerator
 
 	/**
 	 * This function returns the relevant data of the mask generator
-	 * */
+	 */
 	@Override
 	public String toString()
 	{
@@ -260,7 +260,7 @@ public class RectROIMaskGenerator extends ROIMaskGenerator
 	 * 
 	 * @param n
 	 *            component number
-	 * */
+	 */
 	@Override
 	public void makeMask(Subband sb, int magbits, int n)
 	{

@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 /**
@@ -52,7 +52,7 @@ package jj2000.j2k.image;
  * the methods of the 'ImgData' interface are implemented by the
  * 'ImgDataAdapter' class that is the superclass of this one, so they don't need
  * to be reimplemented by subclasses.
- * */
+ */
 public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 {
 
@@ -81,7 +81,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The number of fraction bits in the casted ints
 	 * 
 	 * @see BlkImgDataSrc
-	 * */
+	 */
 	public ImgDataConverter(BlkImgDataSrc imgSrc, int fp)
 	{
 		super(imgSrc);
@@ -97,7 +97,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The source from where to get the data to be transformed
 	 * 
 	 * @see BlkImgDataSrc
-	 * */
+	 */
 	public ImgDataConverter(BlkImgDataSrc imgSrc)
 	{
 		super(imgSrc);
@@ -118,7 +118,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -166,7 +166,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the component from which to get the data.
 	 * 
 	 * @see #getInternCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -220,7 +220,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getCompData
-	 * */
+	 */
 	@Override
 	public final DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -246,7 +246,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * @see #getInternCompData
 	 * 
 	 * @see #getCompData
-	 * */
+	 */
 	private DataBlk getData(DataBlk blk, int c, boolean intern)
 	{
 		DataBlk reqBlk; // Reference to block used in request to source

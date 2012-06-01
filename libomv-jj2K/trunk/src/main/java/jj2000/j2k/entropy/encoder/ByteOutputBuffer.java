@@ -42,7 +42,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 /**
@@ -57,7 +57,7 @@ package jj2000.j2k.entropy.encoder;
  * safe.</p>
  *
  * @see #reset
- * */
+ */
 public class ByteOutputBuffer {
 
     /** The buffer where the data is stored */
@@ -75,7 +75,7 @@ public class ByteOutputBuffer {
     /**
      * Creates a new byte array output stream. The buffer capacity is
      * initially BUF_DEF_LEN bytes, though its size increases if necessary.
-     * */
+     */
     public ByteOutputBuffer() {
         buf = new byte[BUF_DEF_LEN];
     }
@@ -85,7 +85,7 @@ public class ByteOutputBuffer {
      * specified size, in bytes.
      *
      * @param size the initial size.
-     * */
+     */
     public ByteOutputBuffer(int size) {
         buf = new byte[size];
     }
@@ -97,7 +97,7 @@ public class ByteOutputBuffer {
      * therefore not safe thread, but faster.
      *
      * @param b The byte to write
-     * */
+     */
     public final void write(int b) {
         if (count == buf.length) { // Resize buffer
             byte tmpbuf[] = buf;
@@ -118,7 +118,7 @@ public class ByteOutputBuffer {
      *
      * @param outoff The index of the first element in 'outbuf' where to write
      * the data.
-     * */
+     */
     public void toByteArray(int off, int len, byte outbuf[], int outoff) {
         // Copy the data
         System.arraycopy(buf,off,outbuf,outoff,len);
@@ -129,7 +129,7 @@ public class ByteOutputBuffer {
      * variable).
      *
      * @return The number of bytes written to the buffer
-     * */
+     */
     public int size() {
         return count;
     }
@@ -137,7 +137,7 @@ public class ByteOutputBuffer {
     /**
      * Discards all the buffered data, by resetting the counter of written
      * bytes to 0.
-     * */
+     */
     public void reset() {
         count = 0;
     }
@@ -150,7 +150,7 @@ public class ByteOutputBuffer {
      * @param pos The position of the byte to return
      *
      * @return The value (betweeb 0-255) of the byte at position 'pos'.
-     * */
+     */
     public int getByte(int pos) {
         if (pos >= count) {
             throw new IllegalArgumentException();

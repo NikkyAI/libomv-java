@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization;
 
 import jj2000.j2k.util.*;
@@ -61,7 +61,7 @@ import java.util.*;
  * </ul>
  * 
  * @see ModuleSpec
- * */
+ */
 public class QuantTypeSpec extends ModuleSpec
 {
 
@@ -78,7 +78,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 * @param type
 	 *            the type of the allowed specifications for this module i.e.
 	 *            tile specific, component specific or both.
-	 * */
+	 */
 	public QuantTypeSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -101,7 +101,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList
-	 * */
+	 */
 	public QuantTypeSpec(int nt, int nc, byte type, ParameterList pl)
 	{
 		super(nt, nc, type);
@@ -297,7 +297,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 *            Component index
 	 * 
 	 * @return True if derived quantization step size
-	 * */
+	 */
 	public boolean isDerived(int t, int c)
 	{
 		if (((String) getTileCompVal(t, c)).equals("derived"))
@@ -317,7 +317,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 *            The index of the component
 	 * 
 	 * @return Whether or not the tile-component is reversible
-	 * */
+	 */
 	public boolean isReversible(int t, int c)
 	{
 		if (((String) getTileCompVal(t, c)).equals("reversible"))
@@ -331,7 +331,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 * Check the reversibility of the whole image.
 	 * 
 	 * @return Whether or not the whole image is reversible
-	 * */
+	 */
 	public boolean isFullyReversible()
 	{
 		// The whole image is reversible if default specification is
@@ -353,7 +353,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 * Check the irreversibility of the whole image.
 	 * 
 	 * @return Whether or not the whole image is reversible
-	 * */
+	 */
 	public boolean isFullyNonReversible()
 	{
 		// The whole image is irreversible no tile-component is reversible

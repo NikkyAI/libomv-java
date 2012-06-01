@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k;
 
 import jj2000.j2k.util.*;
@@ -51,7 +51,7 @@ import java.util.*;
  * for each tile-component.
  * 
  * @see ModuleSpec
- * */
+ */
 public class IntegerSpec extends ModuleSpec
 {
 
@@ -71,7 +71,7 @@ public class IntegerSpec extends ModuleSpec
 	 * 
 	 * @param type
 	 *            The type of allowed specifications
-	 * */
+	 */
 	public IntegerSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -97,7 +97,7 @@ public class IntegerSpec extends ModuleSpec
 	 * 
 	 * @param optName
 	 *            The name of the option to process
-	 * */
+	 */
 	public IntegerSpec(int nt, int nc, byte type, ParameterList pl, String optName)
 	{
 		super(nt, nc, type);
@@ -275,7 +275,7 @@ public class IntegerSpec extends ModuleSpec
 	 * Gets the maximum value of all tile-components.
 	 * 
 	 * @return The maximum value
-	 * */
+	 */
 	public int getMax()
 	{
 		int max = ((Integer) def).intValue();
@@ -298,7 +298,7 @@ public class IntegerSpec extends ModuleSpec
 	 * Get the minimum value of all tile-components.
 	 * 
 	 * @return The minimum value
-	 * */
+	 */
 	public int getMin()
 	{
 		int min = ((Integer) def).intValue();
@@ -324,7 +324,7 @@ public class IntegerSpec extends ModuleSpec
 	 *            The component index
 	 * 
 	 * @return The maximum value
-	 * */
+	 */
 	public int getMaxInComp(int c)
 	{
 		int max = 0;
@@ -347,7 +347,7 @@ public class IntegerSpec extends ModuleSpec
 	 *            The component index
 	 * 
 	 * @return The minimum value
-	 * */
+	 */
 	public int getMinInComp(int c)
 	{
 		int min = MAX_INT; // Big value
@@ -370,7 +370,7 @@ public class IntegerSpec extends ModuleSpec
 	 *            The tile index
 	 * 
 	 * @return The maximum value
-	 * */
+	 */
 	public int getMaxInTile(int t)
 	{
 		int max = 0;
@@ -393,7 +393,7 @@ public class IntegerSpec extends ModuleSpec
 	 *            The tile index
 	 * 
 	 * @return The minimum value
-	 * */
+	 */
 	public int getMinInTile(int t)
 	{
 		int min = MAX_INT; // Big value

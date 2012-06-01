@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.roi.encoder;
 
 import jj2000.j2k.wavelet.*;
@@ -50,7 +50,7 @@ import jj2000.j2k.wavelet.*;
  * the masks of the children subbands of the subband corresponding to this
  * mask. This class describes subband masks for images containing only
  * rectangular ROIS
- * */
+ */
 public class SubbandRectROIMask extends SubbandROIMask{
 
     /** The upper left x coordinates of the applicable ROIs */
@@ -83,7 +83,7 @@ public class SubbandRectROIMask extends SubbandROIMask{
      * @param lrys The lower right y coordinates of the ROIs
      *
      * @param nr Number of ROIs that affect this tile
-     * */
+     */
     public SubbandRectROIMask(Subband sb, int[] ulxs, int[] ulys, int[] lrxs,
                           int[] lrys, int nr){
         super(sb.ulx,sb.uly,sb.w,sb.h);

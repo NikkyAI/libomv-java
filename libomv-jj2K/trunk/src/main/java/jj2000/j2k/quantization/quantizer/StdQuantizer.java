@@ -42,7 +42,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization.quantizer;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -90,7 +90,7 @@ import jj2000.j2k.image.*;
  * @see Subband
  * 
  * @see Quantizer
- * */
+ */
 public class StdQuantizer extends Quantizer
 {
 
@@ -145,7 +145,7 @@ public class StdQuantizer extends Quantizer
 	 * 
 	 * @param encSpec
 	 *            The encoder specifications
-	 * */
+	 */
 	public StdQuantizer(CBlkWTDataSrc src, EncoderSpecs encSpec)
 	{
 		super(src);
@@ -158,7 +158,7 @@ public class StdQuantizer extends Quantizer
 	 * Returns the quantization type spec object associated to the quantizer.
 	 * 
 	 * @return The quantization type spec
-	 * */
+	 */
 	public QuantTypeSpec getQuantTypeSpec()
 	{
 		return qts;
@@ -175,7 +175,7 @@ public class StdQuantizer extends Quantizer
 	 *            Component index
 	 * 
 	 * @return The number of guard bits
-	 * */
+	 */
 	@Override
 	public int getNumGuardBits(int t, int c)
 	{
@@ -194,7 +194,7 @@ public class StdQuantizer extends Quantizer
 	 *            The component to test for reversibility
 	 * 
 	 * @return True if the quantized data is reversible, false if not.
-	 * */
+	 */
 	@Override
 	public boolean isReversible(int t, int c)
 	{
@@ -261,7 +261,7 @@ public class StdQuantizer extends Quantizer
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	@Override
 	public CBlkWTData getNextCodeBlock(int c, CBlkWTData cblk)
 	{
@@ -308,7 +308,7 @@ public class StdQuantizer extends Quantizer
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
-	 * */
+	 */
 	@Override
 	public final CBlkWTData getNextInternCodeBlock(int c, CBlkWTData cblk)
 	{
@@ -478,7 +478,7 @@ public class StdQuantizer extends Quantizer
 	 *            The component index
 	 * 
 	 * @see SubbandAn#stepWMSE
-	 * */
+	 */
 	@Override
 	protected void calcSbParams(SubbandAn sb, int c)
 	{
@@ -525,7 +525,7 @@ public class StdQuantizer extends Quantizer
 	 *            The quantization step, normalized to a dynamic range of 1.
 	 * 
 	 * @return The exponent mantissa representation of the step.
-	 * */
+	 */
 	public static int convertToExpMantissa(float step)
 	{
 		int exp;
@@ -553,7 +553,7 @@ public class StdQuantizer extends Quantizer
 	 * 
 	 * @return The floating point representation of the step, normalized to a
 	 *         dynamic range of 1.
-	 * */
+	 */
 	private static float convertFromExpMantissa(int ems)
 	{
 		// NOTE: this formula does not support more than 5 bits for the
@@ -572,7 +572,7 @@ public class StdQuantizer extends Quantizer
 	 * 
 	 * @return The maximum number of magnitude bits in all subbands of the
 	 *         current tile.
-	 * */
+	 */
 	@Override
 	public int getMaxMagBits(int c)
 	{
@@ -599,7 +599,7 @@ public class StdQuantizer extends Quantizer
 	 *            the component number
 	 * 
 	 * @return The highest number of magnitude bit-planes
-	 * */
+	 */
 	private int getMaxMagBitsRev(Subband sb, int c)
 	{
 		int tmp, max = 0;
@@ -636,7 +636,7 @@ public class StdQuantizer extends Quantizer
 	 *            Component index
 	 * 
 	 * @return The highest number of magnitude bit-planes
-	 * */
+	 */
 	private int getMaxMagBitsDerived(Subband sb, int t, int c)
 	{
 		int tmp, max = 0;
@@ -676,7 +676,7 @@ public class StdQuantizer extends Quantizer
 	 *            Component index
 	 * 
 	 * @return The highest number of magnitude bit-planes
-	 * */
+	 */
 	private int getMaxMagBitsExpounded(Subband sb, int t, int c)
 	{
 		int tmp, max = 0;

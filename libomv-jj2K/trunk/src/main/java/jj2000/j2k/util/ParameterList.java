@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 import java.util.*;
@@ -72,7 +72,7 @@ import java.util.*;
  * </p>
  * 
  * @see Properties
- * */
+ */
 public class ParameterList extends Properties
 {
 	private static final long serialVersionUID = 1L;
@@ -81,7 +81,7 @@ public class ParameterList extends Properties
 	 * Constructs an empty ParameterList object. It can be later completed by
 	 * adding elements one by one, by loading them from a file, or by
 	 * initializing them from an argument string.
-	 * */
+	 */
 	public ParameterList()
 	{
 		super();
@@ -95,7 +95,7 @@ public class ParameterList extends Properties
 	 * 
 	 * @param def
 	 *            The defaults parameters
-	 * */
+	 */
 	public ParameterList(ParameterList def)
 	{
 		super(def);
@@ -105,7 +105,7 @@ public class ParameterList extends Properties
 	 * Returns the default ParameterList.
 	 * 
 	 * @return Default ParameterList
-	 * */
+	 */
 	public ParameterList getDefaultParameterList()
 	{
 		return (ParameterList) defaults;
@@ -153,7 +153,7 @@ public class ParameterList extends Properties
 	 * 
 	 * @exception StringFormatException
 	 *                if there are invalid arguments in 'argv'
-	 * */
+	 */
 	public void parseArgs(String argv[])
 	{
 		int k;
@@ -272,7 +272,7 @@ public class ParameterList extends Properties
 	 * 
 	 * @return the value of the parameter as a string, or null if there is no
 	 *         parameter with the name 'pname'.
-	 * */
+	 */
 	public String getParameter(String pname)
 	{
 		String pval;
@@ -305,7 +305,7 @@ public class ParameterList extends Properties
 	 * @exception IllegalArgumentException
 	 *                If there is no parameter with the name 'pname' in the
 	 *                parameter list.
-	 * */
+	 */
 	public boolean getBooleanParameter(String pname)
 	{
 		String s = getParameter(pname);
@@ -346,7 +346,7 @@ public class ParameterList extends Properties
 	 * @exception IllegalArgumentException
 	 *                If there is no parameter with the name 'pname' in the
 	 *                parameter list.
-	 * */
+	 */
 	public int getIntParameter(String pname)
 	{
 		String s = getParameter(pname);
@@ -383,7 +383,7 @@ public class ParameterList extends Properties
 	 *                parameter list.
 	 * 
 	 * @return the value of the parameter as a float.
-	 * */
+	 */
 	public float getFloatParameter(String pname)
 	{
 		String s = getParameter(pname);
@@ -421,7 +421,7 @@ public class ParameterList extends Properties
 	 * @exception IllegalArgumentException
 	 *                If there's a parameter name starting with 'prfx' which is
 	 *                not in the valid list of parameter names.
-	 * */
+	 */
 	public void checkList(char prfx, String plist[])
 	{
 		Enumeration<String> args;
@@ -473,7 +473,7 @@ public class ParameterList extends Properties
 	 * @exception IllegalArgumentException
 	 *                If there's a parameter name not starting with 'prfx' which
 	 *                is not in the valid list of parameter names.
-	 * */
+	 */
 	public void checkList(char prfxs[], String plist[])
 	{
 		Enumeration<String> args;
@@ -522,7 +522,7 @@ public class ParameterList extends Properties
 	 * 
 	 * @return An array with the names of the options in pinfo. If pinfo is
 	 *         null, null is returned.
-	 * */
+	 */
 	public static String[] toNameArray(String pinfo[][])
 	{
 		String pnames[];

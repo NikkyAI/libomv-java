@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.decoder;
 
 import jj2000.j2k.entropy.*;
@@ -60,7 +60,7 @@ import jj2000.j2k.entropy.*;
  * </p>
  * 
  * @see CodedCBlk
- * */
+ */
 public class DecLyrdCBlk extends CodedCBlk
 {
 
@@ -112,7 +112,7 @@ public class DecLyrdCBlk extends CodedCBlk
 	 * Object information in a string
 	 * 
 	 * @return Information in a string
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

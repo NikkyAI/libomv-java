@@ -37,7 +37,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image.input;
 
 import jj2000.j2k.image.*;
@@ -56,7 +56,7 @@ import java.io.*;
  * <P>NOTE: This class is not thread safe, for reasons of internal buffering.
  *
  * @see jj2000.j2k.image.ImgData
- * */
+ */
 public class ImgReaderPGM extends ImgReader {
 
     /** DC offset value used when reading image */
@@ -86,7 +86,7 @@ public class ImgReaderPGM extends ImgReader {
      * @param file The input file.
      *
      * @exception IOException If an error occurs while opening the file.
-     * */
+     */
     public ImgReaderPGM(File file) throws IOException {
         this(new RandomAccessFile(file,"r"));
     }
@@ -97,7 +97,7 @@ public class ImgReaderPGM extends ImgReader {
      * @param fname The input file name.
      *
      * @exception IOException If an error occurs while opening the file.
-     * */
+     */
     public ImgReaderPGM(String fname) throws IOException {
         this(new RandomAccessFile(fname,"r"));
     }
@@ -110,7 +110,7 @@ public class ImgReaderPGM extends ImgReader {
      *
      * @exception EOFException if an EOF is read
      * @exception IOException if an error occurs when opening the file
-     * */
+     */
     public ImgReaderPGM(RandomAccessFile in) throws EOFException, IOException {
         this.in = in;
 
@@ -132,7 +132,7 @@ public class ImgReaderPGM extends ImgReader {
      * being read. No operations are possible after a call to this method.
      *
      * @exception IOException If an I/O error occurs.
-     * */
+     */
     @Override
 	public void close() throws IOException {
         in.close();
@@ -154,7 +154,7 @@ public class ImgReaderPGM extends ImgReader {
      * @return The number of bits corresponding to the nominal range of the
      * data. Fro floating-point data this value is not applicable and the
      * return value is undefined.
-     * */
+     */
     @Override
 	public int getNomRangeBits(int c) {
         // Check component index
@@ -174,7 +174,7 @@ public class ImgReaderPGM extends ImgReader {
      *
      * @return The position of the fixed-point (i.e. the number of fractional
      * bits). Always 0 for this ImgReader.
-     * */
+     */
     @Override
 	public int getFixedPoint(int c) {
         // Check component index
@@ -225,7 +225,7 @@ public class ImgReaderPGM extends ImgReader {
      * @see #getCompData
      *
      * @see JJ2KExceptionHandler
-     * */
+     */
     @Override
 	public final DataBlk getInternCompData(DataBlk blk, int c) {
         int k,j,i,mi;
@@ -328,7 +328,7 @@ public class ImgReaderPGM extends ImgReader {
      * @see #getInternCompData
      *
      * @see JJ2KExceptionHandler
-     * */
+     */
     @Override
 	public DataBlk getCompData(DataBlk blk, int c) {
         return getInternCompData(blk,c);
@@ -344,7 +344,7 @@ public class ImgReaderPGM extends ImgReader {
      * @exception IOException If an I/O error occurs.
      *
      * @exception EOFException If an EOF is read 
-     * */
+     */
      private byte countedByteRead() throws IOException, EOFException{
         offset++;
         return in.readByte();
@@ -355,7 +355,7 @@ public class ImgReaderPGM extends ImgReader {
      *
      * @exception IOException If an I/O error occurs.
      * @exception EOFException If an EOF is read
-     * */        
+     */        
     private void confirmFileType() throws IOException, EOFException{
         byte[] type={80,53}; // 'P5'
         int i;
@@ -381,7 +381,7 @@ public class ImgReaderPGM extends ImgReader {
      *
      * @exception IOException If an I/O error occurs.  
      * @exception EOFException if an EOF is read
-     * */
+     */
     private void skipCommentAndWhiteSpace() throws IOException, EOFException {
 
         boolean done=false;
@@ -410,7 +410,7 @@ public class ImgReaderPGM extends ImgReader {
      *
      * @exception IOException If an I/O error occurs.
      * @exception EOFException If an EOF is read 
-     * */
+     */
     private int readHeaderInt() throws IOException, EOFException{
         int res=0;
         byte b=0;
@@ -431,7 +431,7 @@ public class ImgReaderPGM extends ImgReader {
      * @param c The index of the component, from 0 to N-1.
      *
      * @return always false, since PGM data is always unsigned.
-     * */
+     */
     @Override
 	public boolean isOrigSigned(int c) {
         // Check component index
@@ -446,7 +446,7 @@ public class ImgReaderPGM extends ImgReader {
      * RandomAccessIO (its toString() method is called in turn).
      *
      * @return A string of information about the object.  
-     * */
+     */
     @Override
 	public String toString() {
         return "ImgReaderPGM: WxH = " + w + "x" + h + ", Component = 0" +

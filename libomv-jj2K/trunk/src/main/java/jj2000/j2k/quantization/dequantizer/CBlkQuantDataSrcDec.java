@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization.dequantizer;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -73,7 +73,7 @@ import jj2000.j2k.image.*;
  * @see CBlkWTDataSrcDec
  * @see Dequantizer
  * @see EntropyDecoder
- * */
+ */
 public interface CBlkQuantDataSrcDec extends InvWTData
 {
 
@@ -130,7 +130,7 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	public DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
 
 	/**
@@ -185,6 +185,6 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	public DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
 }

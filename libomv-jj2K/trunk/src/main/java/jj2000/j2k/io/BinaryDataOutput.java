@@ -63,7 +63,7 @@ import java.io.*;
  * significant byte first or most significant byte first, respectively).
  * 
  * @see EndianType
- * */
+ */
 public interface BinaryDataOutput
 {
 
@@ -198,6 +198,6 @@ public interface BinaryDataOutput
 	 *                If an I/O error ocurred.
 	 * 
 	 * 
-	 * */
+	 */
 	public void flush() throws IOException;
 }

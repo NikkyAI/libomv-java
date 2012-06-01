@@ -4,7 +4,7 @@
  *
  * Copyright Eastman Kodak Company, 343 State Street, Rochester, NY 14650
  * $Date $
- *****************************************************************************/
+ ****************************************************************************/
 package colorspace;
 
 import jj2000.j2k.image.*;
@@ -86,7 +86,7 @@ public class ChannelDefinitionMapper extends ColorSpaceMapper
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getInternCompData
-	 **/
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk out, int c)
 	{
@@ -133,7 +133,7 @@ public class ChannelDefinitionMapper extends ColorSpaceMapper
 	 *            The index of the component from which to get the data.
 	 * 
 	 * @see #getCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCompData(DataBlk out, int c)
 	{

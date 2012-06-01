@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.writer;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -85,7 +85,7 @@ import java.io.*;
  * @see Encoder
  * @see Markers
  * @see EBCOTRateAllocator
- * */
+ */
 public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 {
 
@@ -139,7 +139,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * to write short, int, .... It's constructor takes baos as parameter.
 	 * 
 	 * @see #baos
-	 **/
+	 */
 	protected DataOutputStream hbuf;
 
 	/** The image data reader. Source of original data info */
@@ -147,7 +147,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 
 	/**
 	 * An array specifying, for each component,if the data was signed or not
-	 * */
+	 */
 	protected boolean isOrigSig[];
 
 	/** Reference to the rate allocator */
@@ -177,7 +177,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -211,7 +211,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param pl
 	 *            ParameterList instance.
-	 * */
+	 */
 	public HeaderEncoder(ImgData origsrc, boolean isorigsig[], ForwardWT dwt, Tiler tiler, EncoderSpecs encSpec,
 			ROIScaler roiSc, PostCompRateAllocator ralloc, ParameterList pl)
 	{
@@ -239,7 +239,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * Resets the contents of this HeaderEncoder to its initial state. It erases
 	 * all the data in the header buffer and reactualizes the headerLength field
 	 * of the bit stream writer.
-	 * */
+	 */
 	public void reset()
 	{
 		baos.reset();
@@ -250,7 +250,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * Returns the byte-buffer used to store the codestream header.
 	 * 
 	 * @return A byte array countaining codestream header
-	 * */
+	 */
 	protected byte[] getBuffer()
 	{
 		return baos.toByteArray();
@@ -260,7 +260,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * Returns the length of the header.
 	 * 
 	 * @return The length of the header in bytes
-	 * */
+	 */
 	public int getLength()
 	{
 		return hbuf.size();
@@ -271,7 +271,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param out
 	 *            Where to write the header.
-	 * */
+	 */
 	public void writeTo(BinaryDataOutput out) throws IOException
 	{
 		int i, len;
@@ -290,7 +290,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * Returns the number of bytes used in the codestream header's buffer.
 	 * 
 	 * @return Header length in buffer (without any header overhead)
-	 * */
+	 */
 	protected int getBufferLength()
 	{
 		return baos.size();
@@ -301,7 +301,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param out
 	 *            Where to write the header.
-	 * */
+	 */
 	public void writeTo(OutputStream out) throws IOException
 	{
 		out.write(getBuffer(), 0, getBufferLength());
@@ -310,7 +310,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	/**
 	 * Start Of Codestream marker (SOC) signalling the beginning of a
 	 * codestream.
-	 * */
+	 */
 	private void writeSOC() throws IOException
 	{
 		hbuf.writeShort(SOC);
@@ -321,7 +321,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * information marker segment containing informations about image and tile
 	 * sizes. It is required in the main header immediately after SOC marker
 	 * segment.
-	 * */
+	 */
 	private void writeSIZ() throws IOException
 	{
 		int tmp;
@@ -409,7 +409,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 *            Tile index if the marker belongs to a tile-part header
 	 * 
 	 * @see #writeCOC
-	 * */
+	 */
 	protected void writeCOD(boolean mh, int tileIdx) throws IOException
 	{
 		AnWTFilter[][] filt;
@@ -699,7 +699,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 *            segment.
 	 * 
 	 * @see #writeCOD
-	 * */
+	 */
 	protected void writeCOC(boolean mh, int tileIdx, int compIdx) throws IOException
 	{
 		AnWTFilter[][] filt;
@@ -920,7 +920,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * segment countaining the quantization default used for compressing all the
 	 * components in an image. The values can be overriden for an individual
 	 * component by a QCC marker in either the main or the tile header.
-	 * */
+	 */
 	protected void writeMainQCD() throws IOException
 	{
 		int mrl;
@@ -1086,7 +1086,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param compIdx
 	 *            Index of the component which needs QCC marker segment.
-	 * */
+	 */
 	protected void writeMainQCC(int compIdx) throws IOException
 	{
 
@@ -1283,7 +1283,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param tIdx
 	 *            Tile index
-	 * */
+	 */
 	protected void writeTileQCD(int tIdx) throws IOException
 	{
 		int mrl;
@@ -1448,7 +1448,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param compIdx
 	 *            Index of the component which needs QCC marker segment.
-	 * */
+	 */
 	protected void writeTileQCC(int t, int compIdx) throws IOException
 	{
 
@@ -1619,7 +1619,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param tileIdx
 	 *            Tile index
-	 * */
+	 */
 	protected void writePOC(boolean mh, int tileIdx) throws IOException
 	{
 		int markSegLen = 0; // Segment marker length
@@ -1699,7 +1699,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * <li>QCC (if needed)</li>
 	 * <li>POC (if needed)</li>
 	 * </ol>
-	 * */
+	 */
 	public void encodeMainHeader() throws IOException
 	{
 		int i;
@@ -1773,7 +1773,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * This marker is currently written in main header and indicates the JJ2000
 	 * encoder's version that has created the codestream.
 	 * </p>
-	 * */
+	 */
 	private void writeCOM() throws IOException
 	{
 		// JJ2000 COM marker segment
@@ -1843,7 +1843,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * @exception IOException
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
-	 * */
+	 */
 	private void writeRGN(int tIdx) throws IOException
 	{
 		int i;
@@ -1899,7 +1899,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @param tileIdx
 	 *            Index of the tile to write
-	 * */
+	 */
 	public void encodeTilePartHeader(int tileLength, int tileIdx) throws IOException
 	{
 

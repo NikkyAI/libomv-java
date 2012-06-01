@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet;
 
 import jj2000.j2k.image.*;
@@ -65,7 +65,7 @@ import jj2000.j2k.image.*;
  * 
  * @see jj2000.j2k.wavelet.analysis.SubbandAn
  * @see jj2000.j2k.wavelet.synthesis.SubbandSyn
- * */
+ */
 public abstract class Subband
 {
 
@@ -125,7 +125,7 @@ public abstract class Subband
 	 * </p>
 	 * 
 	 * @see #split
-	 * */
+	 */
 	public int anGainExp;
 
 	/**
@@ -140,7 +140,7 @@ public abstract class Subband
 	 * descendant 4*b+1, its LH descendant 4*b+2, and its HH descendant 4*b+3,
 	 * for their subband indexes.
 	 * </p>
-	 * */
+	 */
 	public int sbandIdx = 0;
 
 	/**
@@ -150,7 +150,7 @@ public abstract class Subband
 	 * column of this subband. If even the horizontal decomposition of this
 	 * subband should be done with the low-pass-first convention. If odd it
 	 * should be done with the high-pass-first convention.
-	 * */
+	 */
 	public int ulcx;
 
 	/**
@@ -160,7 +160,7 @@ public abstract class Subband
 	 * of this subband. If even the vertical decomposition of this subband
 	 * should be done with the low-pass-first convention. If odd it should be
 	 * done with the high-pass-first convention.
-	 * */
+	 */
 	public int ulcy;
 
 	/** The horizontal coordinate of the upper-left corner of the subband */
@@ -187,35 +187,35 @@ public abstract class Subband
 	 * element has no parent subband (null).
 	 * 
 	 * @return The parent subband, or null for the root one.
-	 * */
+	 */
 	public abstract Subband getParent();
 
 	/**
 	 * Returns the LL child subband of this subband.
 	 * 
 	 * @return The LL child subband, or null if there are no childs.
-	 * */
+	 */
 	public abstract Subband getLL();
 
 	/**
 	 * Returns the HL (horizontal high-pass) child subband of this subband.
 	 * 
 	 * @return The HL child subband, or null if there are no childs.
-	 * */
+	 */
 	public abstract Subband getHL();
 
 	/**
 	 * Returns the LH (vertical high-pass) child subband of this subband.
 	 * 
 	 * @return The LH child subband, or null if there are no childs.
-	 * */
+	 */
 	public abstract Subband getLH();
 
 	/**
 	 * Returns the HH child subband of this subband.
 	 * 
 	 * @return The HH child subband, or null if there are no childs.
-	 * */
+	 */
 	public abstract Subband getHH();
 
 	/**
@@ -229,7 +229,7 @@ public abstract class Subband
 	 *            The vertical wavelet filter used to decompose this subband.
 	 * 
 	 * @return A reference to the LL leaf (getLL()).
-	 * */
+	 */
 	protected abstract Subband split(WaveletFilter hfilter, WaveletFilter vfilter);
 
 	/**
@@ -241,7 +241,7 @@ public abstract class Subband
 	 * For the analysis subband gain calculation it is assumed that analysis
 	 * filters are normalized with a DC gain of 1 and a Nyquist gain of 2.
 	 * </p>
-	 * */
+	 */
 	protected void initChilds()
 	{
 		Subband subb_LL = getLL();
@@ -304,7 +304,7 @@ public abstract class Subband
 	 * Creates a Subband element with all the default values. The dimensions are
 	 * (0,0), the upper left corner is (0,0) and the upper-left corner with
 	 * respect to the canvas is (0,0) too.
-	 * */
+	 */
 	public Subband()
 	{
 	}
@@ -356,7 +356,7 @@ public abstract class Subband
 	 *            the last element is used for the remaining resolution levels.
 	 * 
 	 * @see WaveletTransform
-	 * */
+	 */
 	public Subband(int w, int h, int ulcx, int ulcy, int lvls, WaveletFilter hfilters[], WaveletFilter vfilters[])
 	{
 		int i, hi, vi;
@@ -386,7 +386,7 @@ public abstract class Subband
 	 * 
 	 * @return The next subband in the same resolution level, following the
 	 *         subband index order, or null if already at last subband.
-	 * */
+	 */
 	public Subband nextSubband()
 	{
 		Subband sb;
@@ -454,7 +454,7 @@ public abstract class Subband
 	 * 
 	 * @return The first leaf element in the next higher resolution level, or
 	 *         null if there is no higher resolution level.
-	 * */
+	 */
 	public Subband getNextResLevel()
 	{
 		Subband sb;
@@ -492,7 +492,7 @@ public abstract class Subband
 	 * 
 	 * @param sbi
 	 *            The subband index, within the resolution level.
-	 * */
+	 */
 	public Subband getSubbandByIdx(int rl, int sbi)
 	{
 		Subband sb = this;
@@ -540,7 +540,7 @@ public abstract class Subband
 	 * 
 	 * @param y
 	 *            horizontal coordinate of the specified point.
-	 * */
+	 */
 	public Subband getSubband(int x, int y)
 	{
 		Subband cur, hhs;
@@ -593,7 +593,7 @@ public abstract class Subband
 	 * Returns subband informations in a string.
 	 * 
 	 * @return Subband informations
-	 * */
+	 */
 	@Override
 	public String toString()
 	{
@@ -609,7 +609,7 @@ public abstract class Subband
 	 * subband
 	 * 
 	 * @return The horizontal wavelet filter
-	 * */
+	 */
 	public abstract WaveletFilter getHorWFilter();
 
 	/**
@@ -617,6 +617,6 @@ public abstract class Subband
 	 * subband
 	 * 
 	 * @return The vertical wavelet filter
-	 * */
+	 */
 	public abstract WaveletFilter getVerWFilter();
 }

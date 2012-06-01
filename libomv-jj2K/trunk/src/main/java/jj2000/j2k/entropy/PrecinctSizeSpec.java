@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy;
 
 import jj2000.j2k.codestream.*;
@@ -58,7 +58,7 @@ import java.util.*;
  * precinct partition is used, we can have several packets for a given
  * resolution level whereas there is only one packet per resolution level if no
  * precinct partition is used.
- * */
+ */
 public class PrecinctSizeSpec extends ModuleSpec
 {
 
@@ -87,7 +87,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * 
 	 * @param dls
 	 *            Reference to the number of decomposition levels specification
-	 * */
+	 */
 	public PrecinctSizeSpec(int nt, int nc, byte type, IntegerSpec dls)
 	{
 		super(nt, nc, type);
@@ -113,7 +113,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList instance
-	 * */
+	 */
 	public PrecinctSizeSpec(int nt, int nc, byte type, BlkImgDataSrc imgsrc, IntegerSpec dls, ParameterList pl)
 	{
 		super(nt, nc, type);
@@ -387,7 +387,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * 
 	 * @return The precinct partition width in component 'c' and tile 't' at
 	 *         resolution level 'rl'.
-	 * */
+	 */
 	public int getPPX(int t, int c, int rl)
 	{
 		int mrl, idx;
@@ -445,7 +445,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * 
 	 * @return The precinct partition width in component 'n' and tile 't' at
 	 *         resolution level 'rl'.
-	 * */
+	 */
 	public int getPPY(int t, int c, int rl)
 	{
 		int mrl, idx;

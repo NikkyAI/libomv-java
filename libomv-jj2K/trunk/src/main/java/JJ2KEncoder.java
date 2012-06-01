@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 
 import jj2000.j2k.encoder.*;
 
@@ -47,7 +47,7 @@ import jj2000.j2k.encoder.*;
  * This class is a wrapper for the CmdLnEncoder class in the
  * jj2000.j2k.encoder package. It is used to avoid having to list the whole
  * package hierarchy in the java virtual machine command line.
- * */
+ */
 public class JJ2KEncoder {
 
     /**
@@ -55,7 +55,7 @@ public class JJ2KEncoder {
      * CmdLnEncoder class.
      *
      * @param argv The command line arguments.
-     * */
+     */
     public static void main(String argv[]) {
         if (argv.length == 0) {
             System.err.println("JJ2KEncoder: JJ2000's JPEG 2000 Encoder\n");

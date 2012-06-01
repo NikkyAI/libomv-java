@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 import jj2000.j2k.*;
@@ -65,7 +65,7 @@ import jj2000.j2k.*;
  * 
  * @see ImgData
  * @see jj2000.j2k.image.input.ImgReader
- * */
+ */
 public class ImgDataJoiner implements BlkImgDataSrc
 {
 
@@ -121,7 +121,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @param cIdx
 	 *            The component index associated with each ImgData.
-	 * */
+	 */
 	public ImgDataJoiner(BlkImgDataSrc[] imD, int[] cIdx)
 	{
 		int i;
@@ -194,7 +194,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * tile's width without accounting for any component subsampling.
 	 * 
 	 * @return The total current tile's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileWidth()
 	{
@@ -206,7 +206,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * tile's height without accounting for any component subsampling.
 	 * 
 	 * @return The total current tile's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getTileHeight()
 	{
@@ -232,7 +232,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * width without accounting for any component subsampling or tiling.
 	 * 
 	 * @return The total image's width in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgWidth()
 	{
@@ -244,7 +244,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * height without accounting for any component subsampling or tiling.
 	 * 
 	 * @return The total image's height in pixels.
-	 * */
+	 */
 	@Override
 	public int getImgHeight()
 	{
@@ -255,7 +255,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * Returns the number of components in the image.
 	 * 
 	 * @return The number of components in the image.
-	 * */
+	 */
 	@Override
 	public int getNumComps()
 	{
@@ -274,7 +274,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * @return The horizontal subsampling factor of component 'c'
 	 * 
 	 * @see ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsX(int c)
 	{
@@ -293,7 +293,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * @return The vertical subsampling factor of component 'c'
 	 * 
 	 * @see ImgData
-	 * */
+	 */
 	@Override
 	public int getCompSubsY(int c)
 	{
@@ -310,7 +310,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in tile<tt>t</tt>.
-	 * */
+	 */
 	@Override
 	public int getTileCompWidth(int t, int c)
 	{
@@ -327,7 +327,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The height in pixels of component <tt>c</tt> in the current tile.
-	 * */
+	 */
 	@Override
 	public int getTileCompHeight(int t, int c)
 	{
@@ -342,7 +342,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
-	 * */
+	 */
 	@Override
 	public int getCompImgWidth(int c)
 	{
@@ -360,7 +360,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 *         image.
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public int getCompImgHeight(int n)
 	{
@@ -380,7 +380,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * @return The number of bits corresponding to the nominal range of the
 	 *         data. Fro floating-point data this value is not applicable and
 	 *         the return value is undefined.
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -400,7 +400,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -449,7 +449,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -498,7 +498,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getInternCompData
-	 * */
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -517,7 +517,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 *            The vertical coordinate of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -535,7 +535,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * assumes no tiling, so NoNextElementException() is always thrown.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{
@@ -551,7 +551,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 *            null a new one is created and returned.
 	 * 
 	 * @return The current tile's coordinates.
-	 * */
+	 */
 	@Override
 	public Coord getTile(Coord co)
 	{
@@ -570,7 +570,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * returned.
 	 * 
 	 * @return The current tile's index (starts at 0).
-	 * */
+	 */
 	@Override
 	public int getTileIdx()
 	{
@@ -583,7 +583,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULX(int c)
 	{
@@ -596,7 +596,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public int getCompULY(int c)
 	{
@@ -623,7 +623,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULX()
 	{
@@ -636,7 +636,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public int getImgULY()
 	{
@@ -654,7 +654,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 *         (Coord.y) directions.
-	 * */
+	 */
 	@Override
 	public Coord getNumTiles(Coord co)
 	{
@@ -672,7 +672,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * implementation assumes no tiling, so 1 is always returned.
 	 * 
 	 * @return The total number of tiles in the image.
-	 * */
+	 */
 	@Override
 	public int getNumTiles()
 	{
@@ -685,7 +685,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * ImgData (their toString() method are called one after the other).
 	 * 
 	 * @return A string of information about the object.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

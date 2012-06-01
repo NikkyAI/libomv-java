@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.decoder.*;
@@ -67,7 +67,7 @@ import jj2000.j2k.image.*;
  * applicable to the current tile, since many methods implemented here rely on
  * them.
  * </p>
- * */
+ */
 public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc
 {
 
@@ -87,7 +87,7 @@ public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc
 	 * 
 	 * @param decSpec
 	 *            The decoder specifications
-	 * */
+	 */
 	public InverseWT(MultiResImgData src, DecoderSpecs decSpec)
 	{
 		super(src, decSpec);
@@ -106,7 +106,7 @@ public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc
 	 *            The parameter list containing parameters applicable to the
 	 *            inverse wavelet transform (other parameters can also be
 	 *            present).
-	 * */
+	 */
 	public static InverseWT createInstance(CBlkWTDataSrcDec src, DecoderSpecs decSpec)
 	{
 

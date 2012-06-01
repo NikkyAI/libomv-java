@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization.dequantizer;
 
 import jj2000.j2k.image.invcomptransf.*;
@@ -77,7 +77,7 @@ import jj2000.j2k.image.*;
  * and all operations must be performed accordingly. Each component may have a
  * different number of fractional bits.
  * </p>
- * */
+ */
 public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlkWTDataSrcDec
 {
 
@@ -119,7 +119,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 *            definition of "range bits" see the getNomRangeBits() method.
 	 * 
 	 * @see #getNomRangeBits
-	 * */
+	 */
 	public Dequantizer(CBlkQuantDataSrcDec src, int utrb[], DecoderSpecs decSpec)
 	{
 		super(src);
@@ -161,7 +161,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 *         data.
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	@Override
 	public int getNomRangeBits(int c)
 	{
@@ -186,7 +186,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return The root of the tree structure.
-	 * */
+	 */
 	@Override
 	public SubbandSyn getSynSubbandTree(int t, int c)
 	{
@@ -196,7 +196,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	/**
 	 * Returns the horizontal code-block partition origin. Allowable values are
 	 * 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -206,7 +206,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	/**
 	 * Returns the vertical code-block partition origin. Allowable values are 0
 	 * and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -225,7 +225,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -247,7 +247,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int setTile(int x, int y)
 	{
@@ -309,7 +309,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * and re-initializes properly component transformation variables.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public int nextTile()
 	{

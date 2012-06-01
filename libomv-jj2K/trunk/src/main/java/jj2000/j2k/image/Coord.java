@@ -39,12 +39,12 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 /**
  * This class represents 2-D coordinates.
- * */
+ */
 public class Coord
 {
 	/** The horizontal coordinate */
@@ -55,7 +55,7 @@ public class Coord
 
 	/**
 	 * Creates a new coordinate object given with the (0,0) coordinates
-	 * */
+	 */
 	public Coord()
 	{
 	}
@@ -68,7 +68,7 @@ public class Coord
 	 * 
 	 * @param y
 	 *            The vertical coordinate.
-	 * */
+	 */
 	public Coord(int x, int y)
 	{
 		this.x = x;
@@ -81,7 +81,7 @@ public class Coord
 	 * 
 	 * @param c
 	 *            The Coord object to be copied.
-	 * */
+	 */
 	public Coord(Coord c)
 	{
 		this.x = c.x;
@@ -92,7 +92,7 @@ public class Coord
 	 * Returns a string representation of the object coordinates
 	 * 
 	 * @return The vertical and the horizontal coordinates
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

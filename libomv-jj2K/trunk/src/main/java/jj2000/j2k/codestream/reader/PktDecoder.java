@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.reader;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -57,7 +57,7 @@ import java.io.*;
 /**
  * This class is used to read packet's head and body. All the members must be
  * re-initialized at the beginning of each tile thanks to the restart() method.
- * */
+ */
 public class PktDecoder implements StdEntropyCoderOptions
 {
 
@@ -94,7 +94,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * <li>1st dim: component index.</li>
 	 * <li>2nd dim: resolution level index.</li>
 	 * </ul>
-	 * */
+	 */
 	private Coord[][] numPrec;
 
 	/** Index of the current tile */
@@ -109,7 +109,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * <li>2nd dim: resolution level index.</li>
 	 * <li>3rd dim: precinct index.</li>
 	 * </ul>
-	 * */
+	 */
 	private PrecInfo[][][] ppinfo;
 
 	/**
@@ -121,7 +121,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * <li>3rd dim: subband index.</li>
 	 * <li>4th/5th dim: code-block index (vert. and horiz.).</li>
 	 * </ul>
-	 * */
+	 */
 	private int[][][][][] lblock;
 
 	/**
@@ -132,7 +132,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * <li>2nd dim: resolution level index.</li>
 	 * <li>3rd dim: precinct index.</li>
 	 * <li>4th dim: subband index.</li>
-	 * */
+	 */
 	private TagTreeDecoder[][][][] ttIncl;
 
 	/**
@@ -144,7 +144,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * <li>3rd dim: precinct index.</li>
 	 * <li>4th dim: subband index.</li>
 	 * </ul>
-	 * */
+	 */
 	private TagTreeDecoder[][][][] ttMaxBP;
 
 	/** Number of layers in t he current tile */
@@ -161,7 +161,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 
 	/**
 	 * Index of the current packet in the tile. Used with SOP marker segment
-	 * */
+	 */
 	private int pktIdx;
 
 	/**
@@ -224,7 +224,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * @param maxCB
 	 *            The maximum number of code-blocks to read before ncbquit
 	 * 
-	 * */
+	 */
 	public PktDecoder(DecoderSpecs decSpec, HeaderDecoder hd, RandomAccessIO ehs, BitstreamReaderAgent src,
 			boolean isTruncMode, int maxCB)
 	{
@@ -260,7 +260,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @param pphbais
 	 *            Stream containing the packed packet headers
-	 * */
+	 */
 	public CBlkInfo[][][][][] restart(int nc, int[] mdl, int nl, CBlkInfo[][][][][] cbI, boolean pph,
 			ByteArrayInputStream pphbais)
 	{
@@ -387,7 +387,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @param mdl
 	 *            Number of decomposition level in component <tt>c</tt>.
-	 * */
+	 */
 	private void fillPrecInfo(int c, int r, int mdl)
 	{
 		if (ppinfo[c][r].length == 0)
@@ -801,7 +801,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @param r
 	 *            Resolution index
-	 * */
+	 */
 	public int getNumPrecinct(int c, int r)
 	{
 		return numPrec[c][r].x * numPrec[c][r].y;
@@ -831,7 +831,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 *            output rate (used by truncation mode)
 	 * 
 	 * @return True if specified output rate or EOF is reached.
-	 * */
+	 */
 	public boolean readPktHead(int l, int r, int c, int p, CBlkInfo[][][] cbI, int[] nb) throws IOException
 	{
 
@@ -1272,7 +1272,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 *            mode)
 	 * 
 	 * @return True if decoding rate is reached
-	 * */
+	 */
 	public boolean readPktBody(int l, int r, int c, int p, CBlkInfo[][][] cbI, int[] nb) throws IOException
 	{
 		int curOff = ehs.getPos();
@@ -1379,7 +1379,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @return the precinct partition width for the specified component,
 	 *         resolution level and tile.
-	 * */
+	 */
 	public final int getPPX(int t, int c, int r)
 	{
 		return decSpec.pss.getPPX(t, c, r);
@@ -1400,7 +1400,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @return the precinct partition height in the specified component, for the
 	 *         specified resolution level, for the current tile.
-	 * */
+	 */
 	public final int getPPY(int t, int c, int rl)
 	{
 		return decSpec.pss.getPPY(t, c, rl);
@@ -1421,7 +1421,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @param c
 	 *            Component index
-	 * */
+	 */
 	public boolean readSOPMarker(int[] nBytes, int p, int c, int r) throws IOException
 	{
 		int val;
@@ -1509,7 +1509,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @param bin
 	 *            The packet header reader to read the EPH marker from
-	 * */
+	 */
 	public void readEPHMarker(PktHeaderBitReader bin) throws IOException
 	{
 		int val;
@@ -1546,7 +1546,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @param p
 	 *            Precinct index.
-	 * */
+	 */
 	public PrecInfo getPrecInfo(int c, int r, int p)
 	{
 		return ppinfo[c][r][p];

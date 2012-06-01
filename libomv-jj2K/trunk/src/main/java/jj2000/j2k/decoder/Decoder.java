@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.decoder;
 
 import jj2000.j2k.quantization.dequantizer.*;
@@ -119,7 +119,7 @@ import java.io.*;
  * @see BlkImgDataSrcImageProducer
  * @see ModuleSpec
  * @see DecoderSpecs
- * */
+ */
 public class Decoder extends ImgDecoder implements Runnable
 {
 	/**
@@ -275,7 +275,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 *            The component where the image is to be displayed if not output
 	 *            file is specified. If null a new frame will be created to
 	 *            display the image.
-	 * */
+	 */
 	public Decoder(ParameterList pl, ImgScrollPane isp)
 	{
 		super(pl);
@@ -290,7 +290,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * @param pl
 	 *            The ParameterList for this decoder (contains also defaults
 	 *            values).
-	 * */
+	 */
 	public Decoder(ParameterList pl)
 	{
 		this(pl, null);
@@ -306,7 +306,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * respectively.
 	 * 
 	 * @return the options name, their synopsis and their explanation.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -317,7 +317,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * indicates that an error ocurred.
 	 * 
 	 * @see #getExitCode
-	 * */
+	 */
 	@Override
 	public void run()
 	{
@@ -918,7 +918,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * @return All decoding parameters
 	 * 
 	 * @see #getParameterInfo
-	 * */
+	 */
 	public static String[][] getAllParameters()
 	{
 		Vector<String[]> vec = new Vector<String[]>();
@@ -977,7 +977,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * 
 	 * @param msg
 	 *            The error message
-	 * */
+	 */
 	private void warning(String msg)
 	{
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.WARNING, msg);
@@ -986,7 +986,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	/**
 	 * Prints version and copyright information to the logging facility returned
 	 * by FacilityManager.getMsgLogger()
-	 * */
+	 */
 	private void printVersionAndCopyright()
 	{
 		FacilityManager.getMsgLogger().println("JJ2000's JPEG 2000 Decoder\n", 2, 4);
@@ -998,7 +998,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	/**
 	 * Prints the usage information to stdout. The usage information is written
 	 * for all modules in the decoder.
-	 * */
+	 */
 	private void printUsage()
 	{
 		MsgLogger ml = FacilityManager.getMsgLogger();
@@ -1033,7 +1033,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * 
 	 * @param pinfo
 	 *            The parameter information to write.
-	 * */
+	 */
 	private void printParamInfo(MsgLogger out, String pinfo[][])
 	{
 		String defval;
@@ -1060,7 +1060,7 @@ public class Decoder extends ImgDecoder implements Runnable
 
 	/**
 	 * Exit the decoding process according to the isChildProcess variable
-	 **/
+	 */
 	public void exit()
 	{
 		if (isChildProcess)
@@ -1079,7 +1079,7 @@ public class Decoder extends ImgDecoder implements Runnable
 	 * 
 	 * @param b
 	 *            The boolean value
-	 * */
+	 */
 	public void setChildProcess(boolean b)
 	{
 		isChildProcess = b;

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 
 import jj2000.j2k.decoder.*;
 
@@ -48,7 +48,7 @@ import jj2000.j2k.decoder.*;
  * jj2000.j2k.decoder package. It avoids having to list the whole package
  * hierarchy in the java virtual machine command line
  * (i.e. jj2000.j2k.decoder.Decoder).
- * */
+ */
 public class JJ2KDecoder {
 
     /**
@@ -56,7 +56,7 @@ public class JJ2KDecoder {
      * CmdLnDecoder class.
      *
      * @param argv The command line arguments.
-     * */
+     */
     public static void main(String argv[]) {
         if (argv.length == 0) {
             System.err.println("JJ2KDecoder: JJ2000's JPEG 2000 Decoder\n");

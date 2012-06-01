@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.roi;
 
 import jj2000.j2k.quantization.dequantizer.*;
@@ -66,13 +66,13 @@ import jj2000.j2k.util.*;
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
  * </p>
- * */
+ */
 public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec
 {
 
 	/**
 	 * The MaxShiftSpec containing the scaling values for all tile-components
-	 * */
+	 */
 	private MaxShiftSpec mss;
 
 	/** The prefix for ROI decoder options: 'R' */
@@ -90,7 +90,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 
 	/**
 	 * The entropy decoder from where to get the compressed data (the source)
-	 * */
+	 */
 	private CBlkQuantDataSrcDec src;
 
 	/**
@@ -103,7 +103,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * @param mss
 	 *            The MaxShiftSpec containing the scaling values for all
 	 *            tile-components
-	 * */
+	 */
 	public ROIDeScaler(CBlkQuantDataSrcDec src, MaxShiftSpec mss)
 	{
 		super(src);
@@ -127,7 +127,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 *            The index of the component, from 0 to C-1.
 	 * 
 	 * @return The root of the tree structure.
-	 * */
+	 */
 	@Override
 	public SubbandSyn getSynSubbandTree(int t, int c)
 	{
@@ -137,7 +137,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	/**
 	 * Returns the horizontal code-block partition origin. Allowable values are
 	 * 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -147,7 +147,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	/**
 	 * Returns the vertical code-block partition origin. Allowable values are 0
 	 * and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -166,7 +166,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -225,7 +225,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	@Override
 	public DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk)
 	{
@@ -283,7 +283,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * @return The requested code-block in the current tile for component 'c'.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk)
 	{
@@ -357,7 +357,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * 
 	 * @exception IllegalArgumentException
 	 *                If an error occurs while parsing the options in 'pl'
-	 * */
+	 */
 	public static ROIDeScaler createInstance(CBlkQuantDataSrcDec src, ParameterList pl, DecoderSpecs decSpec)
 	{
 		String noRoi;

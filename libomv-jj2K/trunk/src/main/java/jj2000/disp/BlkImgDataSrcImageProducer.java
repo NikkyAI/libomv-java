@@ -114,7 +114,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * 
 	 * @param once
 	 *            If the image is to be produced only once or not.
-	 * */
+	 */
 	public BlkImgDataSrcImageProducer(BlkImgDataSrc src)
 	{
 		int i;
@@ -168,7 +168,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * 
 	 * @return An image which has a J2KImageProducer object as the underlying
 	 *         image producer.
-	 * */
+	 */
 	public static Image createImage(BlkImgDataSrc src)
 	{
 		// Use the system toolkit's createImage method
@@ -194,7 +194,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * 
 	 * @return An image which has a J2KImageProducer object as the underlying
 	 *         image producer.
-	 * */
+	 */
 	public static Image createImage(BlkImgDataSrc src, Component c)
 	{
 		// Use the component's toolkit createImage method
@@ -210,7 +210,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 *            The image consumer to which image data has to be delivered.
 	 * 
 	 * @see #startProduction
-	 * */
+	 */
 	@Override
 	public final synchronized void addConsumer(ImageConsumer ic)
 	{
@@ -229,7 +229,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * 
 	 * @return True if 'ic' is registered with this image producer, false
 	 *         otherwise.
-	 * */
+	 */
 	@Override
 	public boolean isConsumer(ImageConsumer ic)
 	{
@@ -244,7 +244,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * 
 	 * @param ic
 	 *            The image consumer to be removed
-	 * */
+	 */
 	@Override
 	public synchronized void removeConsumer(ImageConsumer ic)
 	{
@@ -283,7 +283,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * 
 	 * @param ic
 	 *            The image consumer to register
-	 * */
+	 */
 	@Override
 	public void startProduction(ImageConsumer ic)
 	{
@@ -549,7 +549,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * @param ic
 	 *            The image consumer to which the data is sent in top-down,
 	 *            left-right order.
-	 * */
+	 */
 	@Override
 	public void requestTopDownLeftRightResend(ImageConsumer ic)
 	{

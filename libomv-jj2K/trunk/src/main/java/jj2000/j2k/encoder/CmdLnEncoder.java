@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.encoder;
 
 import jj2000.j2k.util.*;
@@ -51,7 +51,7 @@ import java.io.*;
  * This class runs JJ2000's encoder from the command line interface. It parses
  * command-line arguments to fill a ParameterList object which will be
  * provided to an Encoder object.
- * */
+ */
 public class CmdLnEncoder{
     /** The parameter list (arguments) */
     private ParameterList pl;
@@ -67,7 +67,7 @@ public class CmdLnEncoder{
      * object, initializes it, and performs coding.
      *
      * @param argv The command line arguments
-     * */
+     */
     public static void main(String argv[]) {
         if (argv.length == 0) {
             FacilityManager.getMsgLogger()
@@ -90,7 +90,7 @@ public class CmdLnEncoder{
      * @exception IllegalArgumentException If 'argv' is empty
      *
      * @see Encoder#getExitCode
-     * */
+     */
     public CmdLnEncoder(String argv[]) {
         // Initialize default parameters
         defpl = new ParameterList();

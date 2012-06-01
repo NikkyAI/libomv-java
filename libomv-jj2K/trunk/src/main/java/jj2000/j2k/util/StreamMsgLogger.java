@@ -57,7 +57,7 @@ import java.io.*;
  * Messages are printed to the 'err' stream if they are of severity WARNING or
  * ERROR, otherwise they are printed to the 'out' stream. Simple strings are
  * always printed the 'out' stream.
- * */
+ */
 public class StreamMsgLogger implements MsgLogger
 {
 
@@ -85,7 +85,7 @@ public class StreamMsgLogger implements MsgLogger
 	 *            The line width to use in formatting
 	 * 
 	 * 
-	 * */
+	 */
 	public StreamMsgLogger(OutputStream outstr, OutputStream errstr, int lw)
 	{
 		out = new PrintWriter(outstr, true);
@@ -108,7 +108,7 @@ public class StreamMsgLogger implements MsgLogger
 	 *            The line width to use in formatting
 	 * 
 	 * 
-	 * */
+	 */
 	public StreamMsgLogger(Writer outstr, Writer errstr, int lw)
 	{
 		out = new PrintWriter(outstr, true);
@@ -131,7 +131,7 @@ public class StreamMsgLogger implements MsgLogger
 	 *            The line width to use in formatting
 	 * 
 	 * 
-	 * */
+	 */
 	public StreamMsgLogger(PrintWriter outstr, PrintWriter errstr, int lw)
 	{
 		out = outstr;
@@ -150,7 +150,7 @@ public class StreamMsgLogger implements MsgLogger
 	 *            The message to display
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public void printmsg(int sev, String msg)
 	{
@@ -204,7 +204,7 @@ public class StreamMsgLogger implements MsgLogger
 	 *            Indentation of any other lines.
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public void println(String str, int flind, int ind)
 	{
@@ -216,7 +216,7 @@ public class StreamMsgLogger implements MsgLogger
 	 * device.
 	 * 
 	 * 
-	 * */
+	 */
 	@Override
 	public void flush()
 	{

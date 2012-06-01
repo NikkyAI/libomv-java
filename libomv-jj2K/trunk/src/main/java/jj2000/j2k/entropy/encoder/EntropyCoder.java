@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.quantization.quantizer.*;
@@ -76,7 +76,7 @@ import jj2000.j2k.*;
  * 
  * @see Quantizer
  * @see CBlkQuantDataSrcEnc
- * */
+ */
 public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDataSrcEnc, StdEntropyCoderOptions
 {
 
@@ -174,7 +174,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 * 
 	 * @param src
 	 *            The source of quantized wavelet coefficients.
-	 * */
+	 */
 	public EntropyCoder(CBlkQuantDataSrcEnc src)
 	{
 		super(src);
@@ -191,7 +191,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 *            the component index
 	 * 
 	 * @return The code-block width for the specified tile and component
-	 * */
+	 */
 	public abstract int getCBlkWidth(int t, int c);
 
 	/**
@@ -204,7 +204,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 *            the component index
 	 * 
 	 * @return The code-block height for the specified tile and component
-	 * */
+	 */
 	public abstract int getCBlkHeight(int t, int c);
 
 	/**
@@ -226,7 +226,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 * @return true is the data is reversible, false if not.
 	 * 
 	 * @see jj2000.j2k.roi.encoder.ROIScaler
-	 * */
+	 */
 	@Override
 	public boolean isReversible(int t, int c)
 	{
@@ -248,7 +248,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 * @see SubbandAn
 	 * 
 	 * @see Subband
-	 * */
+	 */
 	@Override
 	public SubbandAn getAnSubbandTree(int t, int c)
 	{
@@ -258,7 +258,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	/**
 	 * Returns the horizontal offset of the code-block partition. Allowable
 	 * values are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULX()
 	{
@@ -268,7 +268,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	/**
 	 * Returns the vertical offset of the code-block partition. Allowable values
 	 * are 0 and 1, nothing else.
-	 * */
+	 */
 	@Override
 	public int getCbULY()
 	{
@@ -287,7 +287,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -333,7 +333,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 	 * 
 	 * @exception IllegalArgumentException
 	 *                If an error occurs while parsing the options in 'pl'
-	 * */
+	 */
 	public static EntropyCoder createInstance(CBlkQuantDataSrcEnc src, ParameterList pl, CBlkSizeSpec cblks,
 			PrecinctSizeSpec pss, StringSpec bms, StringSpec mqrs, StringSpec rts, StringSpec css, StringSpec sss,
 			StringSpec lcs, StringSpec tts)

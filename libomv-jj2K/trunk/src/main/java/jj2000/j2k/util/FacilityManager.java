@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.util;
 
 import java.util.*;
@@ -66,7 +66,7 @@ import java.util.*;
  * 
  * @see MsgLogger
  * @see StreamMsgLogger
- * */
+ */
 public class FacilityManager
 {
 
@@ -85,7 +85,7 @@ public class FacilityManager
 	 */
 	private static ProgressWatch defWatchProg = null;
 
-	/** */
+	/*/
 	public static void registerProgressWatch(Thread t, ProgressWatch pw)
 	{
 		if (pw == null)
@@ -106,7 +106,7 @@ public class FacilityManager
 	 * Returns the ProgressWatch instance registered with the current thread
 	 * (the thread that calls this method). If the current thread has no
 	 * registered ProgressWatch, then the default one is used.
-	 * */
+	 */
 	public static ProgressWatch getProgressWatch()
 	{
 		ProgressWatch pw = watchProgList.get(Thread.currentThread());
@@ -125,7 +125,7 @@ public class FacilityManager
 	 * 
 	 * @param ml
 	 *            The MsgLogger to associate with therad ml
-	 * */
+	 */
 	public static void registerMsgLogger(Thread t, MsgLogger ml)
 	{
 		if (ml == null)
@@ -149,7 +149,7 @@ public class FacilityManager
 	 * 
 	 * @return The MsgLogger registerd for the current thread, or the default
 	 *         one if there is none registered for it.
-	 * */
+	 */
 	public static MsgLogger getMsgLogger()
 	{
 		MsgLogger ml = loggerList.get(Thread.currentThread());
@@ -166,7 +166,7 @@ public class FacilityManager
 	 * 
 	 * @return The MsgLogger registerd for the current thread, or the default
 	 *         one if there is none registered for it.
-	 * */
+	 */
 	public static MsgLogger getMsgLogger(Thread t)
 	{
 		MsgLogger ml = loggerList.get(t);

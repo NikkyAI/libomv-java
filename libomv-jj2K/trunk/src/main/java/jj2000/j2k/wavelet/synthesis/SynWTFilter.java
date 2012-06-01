@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.codestream.*;
@@ -83,7 +83,7 @@ import jj2000.j2k.wavelet.*;
  *
  * @see SynWTFilterInt
  * @see SynWTFilterFloat
- * */
+ */
 public abstract class SynWTFilter implements WaveletFilter, Markers {
     
     /**
@@ -152,7 +152,7 @@ public abstract class SynWTFilter implements WaveletFilter, Markers {
      *
      * @param outStep This is the step, or interleave factor, of the output
      * samples in the outSig array. See above.
-     * */
+     */
     public abstract 
         void synthetize_lpf(Object lowSig, int lowOff, int lowLen, int lowStep, 
                         Object highSig, int highOff, int highLen, int highStep, 
@@ -224,7 +224,7 @@ public abstract class SynWTFilter implements WaveletFilter, Markers {
      *
      * @param outStep This is the step, or interleave factor, of the output
      * samples in the outSig array. See above.
-     * */
+     */
     public abstract 
         void synthetize_hpf(Object lowSig, int lowOff, int lowLen, 
                             int lowStep, Object highSig, int highOff, 

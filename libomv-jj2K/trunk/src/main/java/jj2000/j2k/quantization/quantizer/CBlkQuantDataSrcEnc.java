@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.quantization.quantizer;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -74,7 +74,7 @@ import jj2000.j2k.entropy.encoder.*;
  * @see CBlkWTDataSrc
  * @see Quantizer
  * @see EntropyCoder
- * */
+ */
 public interface CBlkQuantDataSrcEnc extends ForwWTDataProps {
 
     /**
@@ -111,7 +111,7 @@ public interface CBlkQuantDataSrcEnc extends ForwWTDataProps {
      * null if all code-blocks for the current tile have been returned.
      *
      * @see CBlkWTData
-     * */
+     */
     public CBlkWTData getNextCodeBlock(int c,CBlkWTData cblk);
 
     /**
@@ -147,6 +147,6 @@ public interface CBlkQuantDataSrcEnc extends ForwWTDataProps {
      * null if all code-blocks for the current tile have been returned.
      *
      * @see CBlkWTData
-     * */
+     */
     public CBlkWTData getNextInternCodeBlock(int c,CBlkWTData cblk);
 }

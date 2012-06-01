@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.io;
 
 import java.io.*;
@@ -52,7 +52,7 @@ import java.io.*;
  * @see BinaryDataOutput
  * @see BinaryDataInput
  * @see BufferedRandomAccessFile
- * */
+ */
 public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile implements RandomAccessIO, EndianType
 {
 
@@ -72,7 +72,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public BEBufferedRandomAccessFile(File file, String mode, int bufferSize) throws IOException
 	{
 		super(file, mode, bufferSize);
@@ -92,7 +92,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public BEBufferedRandomAccessFile(File file, String mode) throws IOException
 	{
 		super(file, mode);
@@ -115,7 +115,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public BEBufferedRandomAccessFile(String name, String mode, int bufferSize) throws IOException
 	{
 		super(name, mode, bufferSize);
@@ -135,7 +135,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public BEBufferedRandomAccessFile(String name, String mode) throws IOException
 	{
 		super(name, mode);
@@ -159,7 +159,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void writeShort(int v) throws IOException
 	{
@@ -176,7 +176,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void writeInt(int v) throws IOException
 	{
@@ -195,7 +195,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void writeLong(long v) throws IOException
 	{
@@ -218,7 +218,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void writeFloat(float v) throws IOException
 	{
@@ -239,7 +239,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final void writeDouble(double v) throws IOException
 	{
@@ -267,7 +267,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final short readShort() throws IOException, EOFException
 	{
@@ -288,7 +288,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final int readUnsignedShort() throws IOException, EOFException
 	{
@@ -307,7 +307,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final int readInt() throws IOException, EOFException
 	{
@@ -328,7 +328,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final long readUnsignedInt() throws IOException, EOFException
 	{
@@ -347,7 +347,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final long readLong() throws IOException, EOFException
 	{
@@ -368,7 +368,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final float readFloat() throws EOFException, IOException
 	{
@@ -388,7 +388,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	@Override
 	public final double readDouble() throws IOException, EOFException
 	{
@@ -399,7 +399,7 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 
 	/**
 	 * Returns a string of information about the file and the endianess
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

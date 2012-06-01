@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.writer;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -60,7 +60,7 @@ import jj2000.j2k.util.*;
  * packet header is returned by the method, and the packet body can be obtained
  * with the getLastBodyBuf() and getLastBodyLen() methods.
  * </p>
- * */
+ */
 public class PktEncoder
 {
 
@@ -103,7 +103,7 @@ public class PktEncoder
 	 * <li>4th index: precinct index</li>
 	 * <li>5th index: subband index</li>
 	 * </ul>
-	 **/
+	 */
 	private TagTreeEncoder ttIncl[][][][][];
 
 	/**
@@ -120,7 +120,7 @@ public class PktEncoder
 	 * <li>4th index: precinct index</li>
 	 * <li>5th index: subband index</li>
 	 * </ul>
-	 * */
+	 */
 	private TagTreeEncoder ttMaxBP[][][][][];
 
 	/**
@@ -138,7 +138,7 @@ public class PktEncoder
 	 * <li>4th index: subband index</li>
 	 * <li>5th index: code-block index, in lexicographical order</li>
 	 * </ul>
-	 * */
+	 */
 	private int lblock[][][][][];
 
 	/**
@@ -160,7 +160,7 @@ public class PktEncoder
 	 * <li>4th index: subband index</li>
 	 * <li>5th index: code-block index, in lexicographical order</li>
 	 * </ul>
-	 * */
+	 */
 	private int prevtIdxs[][][][][];
 
 	/**
@@ -178,7 +178,7 @@ public class PktEncoder
 	 * <li>4th index: subband index</li>
 	 * <li>5th index: code-block index, in lexicographical order</li>
 	 * </ul>
-	 * */
+	 */
 	private int bak_lblock[][][][][];
 
 	/**
@@ -197,7 +197,7 @@ public class PktEncoder
 	 * <li>4th index: subband index</li>
 	 * <li>5th index: code-block index, in lexicographical order</li>
 	 * </ul>
-	 * */
+	 */
 	private int bak_prevtIdxs[][][][][];
 
 	/** The body buffer of the last encoded packet */
@@ -225,7 +225,7 @@ public class PktEncoder
 	 * <li>3rd dim: resolution level index.</li>
 	 * <li>4th dim: precinct index.</li>
 	 * </ul>
-	 * */
+	 */
 	private PrecInfo ppinfo[][][][];
 
 	/** Whether or not the current packet is writable */
@@ -247,7 +247,7 @@ public class PktEncoder
 	 * 
 	 * @param pl
 	 *            ParameterList instance that holds command line options
-	 * */
+	 */
 	public PktEncoder(CodedCBlkDataSrcEnc infoSrc, EncoderSpecs encSpec, Coord[][][] numPrec, ParameterList pl)
 	{
 		this.infoSrc = infoSrc;
@@ -334,7 +334,7 @@ public class PktEncoder
 	 * 
 	 * @param r
 	 *            Resolution level index.
-	 * */
+	 */
 	private void fillPrecInfo(int t, int c, int r)
 	{
 		if (ppinfo[t][c][r].length == 0)
@@ -688,7 +688,7 @@ public class PktEncoder
 	 *            The precinct index.
 	 * 
 	 * @return The buffer containing the packet header.
-	 * */
+	 */
 	public BitOutputBuffer encodePacket(int ly, int c, int r, int t, CBlkRateDistStats cbs[][], int tIndx[][],
 			BitOutputBuffer hbuf, byte bbuf[], int pIdx)
 	{
@@ -1089,7 +1089,7 @@ public class PktEncoder
 	 *                restore(), or object creation.
 	 * 
 	 * @see #getLastBodyLen
-	 * */
+	 */
 	public byte[] getLastBodyBuf()
 	{
 		if (lbbuf == null)
@@ -1106,7 +1106,7 @@ public class PktEncoder
 	 * @return The length of the body of last encoded packet, in bytes.
 	 * 
 	 * @see #getLastBodyBuf
-	 * */
+	 */
 	public int getLastBodyLen()
 	{
 		return lblen;
@@ -1117,7 +1117,7 @@ public class PktEncoder
 	 * restored with the restore() method.
 	 * 
 	 * @see #restore
-	 * */
+	 */
 	public void save()
 	{
 		int maxsbi, minsbi;
@@ -1215,7 +1215,7 @@ public class PktEncoder
 	 * is thrown if no state has been saved.
 	 * 
 	 * @see #save
-	 * */
+	 */
 	public void restore()
 	{
 		int maxsbi, minsbi;
@@ -1286,7 +1286,7 @@ public class PktEncoder
 	/**
 	 * Resets the state of the object to the initial state, as if the object was
 	 * just created.
-	 * */
+	 */
 	public void reset()
 	{
 		int maxsbi, minsbi;
@@ -1352,7 +1352,7 @@ public class PktEncoder
 	/**
 	 * Returns true if the current packet is writable i.e. should be written.
 	 * Returns false otherwise.
-	 * */
+	 */
 	public boolean isPacketWritable()
 	{
 		return packetWritable;
@@ -1360,7 +1360,7 @@ public class PktEncoder
 
 	/**
 	 * Tells if there was ROI information in the last written packet
-	 * */
+	 */
 	public boolean isROIinPkt()
 	{
 		return roiInPkt;
@@ -1387,7 +1387,7 @@ public class PktEncoder
 	 * 
 	 * @return the options name, their synopsis and their explanation, or null
 	 *         if no options are supported.
-	 * */
+	 */
 	public static String[][] getParameterInfo()
 	{
 		return pinfo;
@@ -1407,7 +1407,7 @@ public class PktEncoder
 	 * 
 	 * @param p
 	 *            Precinct index
-	 * */
+	 */
 	public PrecInfo getPrecInfo(int t, int c, int r, int p)
 	{
 		return ppinfo[t][c][r][p];

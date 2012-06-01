@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.io;
 
 import java.io.*;
@@ -61,7 +61,7 @@ import java.io.*;
  * </p>
  * 
  * @see EndianType
- * */
+ */
 public interface BinaryDataInput
 {
 
@@ -77,7 +77,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public byte readByte() throws EOFException, IOException;
 
 	/**
@@ -94,7 +94,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int readUnsignedByte() throws EOFException, IOException;
 
 	/**
@@ -109,7 +109,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public short readShort() throws EOFException, IOException;
 
 	/**
@@ -126,7 +126,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int readUnsignedShort() throws EOFException, IOException;
 
 	/**
@@ -141,7 +141,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int readInt() throws EOFException, IOException;
 
 	/**
@@ -158,7 +158,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public long readUnsignedInt() throws EOFException, IOException;
 
 	/**
@@ -173,7 +173,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public long readLong() throws EOFException, IOException;
 
 	/**
@@ -189,7 +189,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public float readFloat() throws EOFException, IOException;
 
 	/**
@@ -205,7 +205,7 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public double readDouble() throws EOFException, IOException;
 
 	/**
@@ -217,7 +217,7 @@ public interface BinaryDataInput
 	 *         <tt>EndianType.LITTLE_ENDIAN</tt>
 	 * 
 	 * @see EndianType
-	 * */
+	 */
 	public int getByteOrdering();
 
 	/**
@@ -233,6 +233,6 @@ public interface BinaryDataInput
 	 * 
 	 * @exception IOException
 	 *                If an I/O error ocurred.
-	 * */
+	 */
 	public int skipBytes(int n) throws EOFException, IOException;
 }

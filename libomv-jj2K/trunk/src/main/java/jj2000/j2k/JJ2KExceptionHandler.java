@@ -69,7 +69,7 @@ public class JJ2KExceptionHandler {
      * @param e The exception to handle
      *
      *
-     * */
+     */
     public static void handleException(Throwable e) {
         // Test if there is an special action (not implemented yet)
         

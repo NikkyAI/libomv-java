@@ -4,7 +4,7 @@
  *
  * Copyright Eastman Kodak Company, 343 State Street, Rochester, NY 14650
  * $Date $
- *****************************************************************************/
+ ****************************************************************************/
 package colorspace;
 
 import jj2000.j2k.image.*;
@@ -347,7 +347,7 @@ public class Resampler extends ColorSpaceMapper
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getInternCompData
-	 **/
+	 */
 	@Override
 	public DataBlk getCompData(DataBlk outblk, int c)
 	{

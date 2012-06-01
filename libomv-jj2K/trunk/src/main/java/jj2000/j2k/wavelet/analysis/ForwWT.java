@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.analysis;
 
 import jj2000.j2k.wavelet.*;
@@ -55,7 +55,7 @@ import jj2000.j2k.wavelet.*;
  * to forward wavelet transform. Different data transfer methods are evisageable
  * for different transforms.
  * </p>
- * */
+ */
 public interface ForwWT extends WaveletTransform, ForwWTDataProps
 {
 
@@ -85,7 +85,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 *            The index of the component for which to return the filters.
 	 * 
 	 * @return The horizontal analysis wavelet filters used in each level.
-	 * */
+	 */
 	public AnWTFilter[] getHorAnWaveletFilters(int t, int c);
 
 	/**
@@ -114,7 +114,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 *            The index of the component for which to return the filters.
 	 * 
 	 * @return The vertical analysis wavelet filters used in each level.
-	 * */
+	 */
 	public AnWTFilter[] getVertAnWaveletFilters(int t, int c);
 
 	/**
@@ -130,7 +130,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 * 
 	 * @return The number of decompositions applied to obtain the LL subband (0
 	 *         for no wavelet transform).
-	 * */
+	 */
 	public int getDecompLevels(int t, int c);
 
 	/**
@@ -144,6 +144,6 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 *            The index of the component.
 	 * 
 	 * @return The wavelet decomposition.
-	 * */
+	 */
 	public int getDecomp(int t, int c);
 }

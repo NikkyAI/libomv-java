@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 /**
@@ -56,7 +56,7 @@ package jj2000.j2k.wavelet.synthesis;
  * 
  * @see SynWTFilter
  * @see SynWTFilterInt
- * */
+ */
 public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 {
 
@@ -115,7 +115,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 *            in the outSig array.
 	 * 
 	 * @see SynWTFilter#synthetize_lpf
-	 * */
+	 */
 	@Override
 	public void synthetize_lpf(int[] lowSig, int lowOff, int lowLen, int lowStep, int[] highSig, int highOff,
 			int highLen, int highStep, int[] outSig, int outOff, int outStep)
@@ -244,7 +244,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 *            in the outSig array.
 	 * 
 	 * @see SynWTFilter#synthetize_hpf
-	 * */
+	 */
 	@Override
 	public void synthetize_hpf(int[] lowSig, int lowOff, int lowLen, int lowStep, int[] highSig, int highOff,
 			int highLen, int highStep, int[] outSig, int outOff, int outStep)
@@ -320,7 +320,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * number of taps of the filter in the negative direction.
 	 * 
 	 * @return 2
-	 * */
+	 */
 	@Override
 	public int getAnLowNegSupport()
 	{
@@ -333,7 +333,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the low-pass analysis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getAnLowPosSupport()
 	{
@@ -346,7 +346,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass analysis filter in the
 	 *         negative direction
-	 * */
+	 */
 	@Override
 	public int getAnHighNegSupport()
 	{
@@ -359,7 +359,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass analysis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getAnHighPosSupport()
 	{
@@ -372,7 +372,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         negative direction
-	 * */
+	 */
 	@Override
 	public int getSynLowNegSupport()
 	{
@@ -385,7 +385,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getSynLowPosSupport()
 	{
@@ -398,7 +398,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         negative direction
-	 * */
+	 */
 	@Override
 	public int getSynHighNegSupport()
 	{
@@ -411,7 +411,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         positive direction
-	 * */
+	 */
 	@Override
 	public int getSynHighPosSupport()
 	{
@@ -423,7 +423,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * such as WT_FILTER_INT_LIFT, WT_FILTER_FLOAT_LIFT, WT_FILTER_FLOAT_CONVOL.
 	 * 
 	 * @return WT_FILTER_INT_LIFT.
-	 * */
+	 */
 	@Override
 	public int getImplType()
 	{
@@ -436,7 +436,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return true since the 5x3 is reversible, provided the appropriate
 	 *         rounding is performed.
-	 * */
+	 */
 	@Override
 	public boolean isReversible()
 	{
@@ -473,7 +473,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * @return true if both overlaps are greater than 2, and correct processing
 	 *         is applied in the analyze() method.
-	 * */
+	 */
 	@Override
 	public boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen)
 	{
@@ -491,7 +491,7 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * Returns a string of information about the synthesis wavelet filter
 	 * 
 	 * @return wavelet filter type.
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

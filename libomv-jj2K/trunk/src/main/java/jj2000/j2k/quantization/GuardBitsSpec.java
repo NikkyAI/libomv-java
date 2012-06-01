@@ -53,7 +53,7 @@ import java.util.*;
  * number of guard bits in each tile-component.
  * 
  * @see ModuleSpec
- * */
+ */
 public class GuardBitsSpec extends ModuleSpec
 {
 
@@ -70,7 +70,7 @@ public class GuardBitsSpec extends ModuleSpec
 	 * @param type
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both.
-	 * */
+	 */
 	public GuardBitsSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -92,7 +92,7 @@ public class GuardBitsSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList
-	 * */
+	 */
 	public GuardBitsSpec(int nt, int nc, byte type, ParameterList pl)
 	{
 		super(nt, nc, type);

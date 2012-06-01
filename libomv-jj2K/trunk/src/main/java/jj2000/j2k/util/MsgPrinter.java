@@ -52,7 +52,7 @@ import java.io.*;
 /**
  * This utility class formats messages to the specified line width, by inserting
  * line-breaks between words, and printing the resulting lines.
- * */
+ */
 public class MsgPrinter
 {
 
@@ -73,7 +73,7 @@ public class MsgPrinter
 	 *            The line width for which to format (in characters)
 	 * 
 	 * 
-	 * */
+	 */
 	public MsgPrinter(int linewidth)
 	{
 		lw = linewidth;
@@ -85,7 +85,7 @@ public class MsgPrinter
 	 * @return The line width used for formatting
 	 * 
 	 * 
-	 * */
+	 */
 	public int getLineWidth()
 	{
 		return lw;
@@ -99,7 +99,7 @@ public class MsgPrinter
 	 *            The new line width to use (in cahracters)
 	 * 
 	 * 
-	 * */
+	 */
 	public void setLineWidth(int linewidth)
 	{
 		if (linewidth < 1)
@@ -129,7 +129,7 @@ public class MsgPrinter
 	 *            The message to format and print.
 	 * 
 	 * 
-	 * */
+	 */
 	public void print(PrintWriter out, int flind, int ind, String msg)
 	{
 		int start, end, pend, efflw, lind, i;
@@ -226,7 +226,7 @@ public class MsgPrinter
 	 *         IS_NEWLINE, or IS_EOS if there are no more words.
 	 * 
 	 * 
-	 * */
+	 */
 	private int nextLineEnd(String str, int from)
 	{
 		final int len = str.length();
@@ -275,7 +275,7 @@ public class MsgPrinter
 	 *         of the newline plus 1, or IS_EOS.
 	 * 
 	 * 
-	 * */
+	 */
 	private int nextWord(String str, int from)
 	{
 		final int len = str.length();

@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.image;
 
 import jj2000.j2k.util.*;
@@ -70,7 +70,7 @@ import jj2000.j2k.*;
  * 
  * @see ImgData
  * @see BlkImgDataSrc
- * */
+ */
 public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 {
 
@@ -181,7 +181,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * @exception IllegalArgumentException
 	 *                If src is tiled or "canvased", or if the arguments do not
 	 *                satisfy the specified constraints.
-	 * */
+	 */
 	public Tiler(BlkImgDataSrc src, int ax, int ay, int px, int py, int nw, int nh)
 	{
 		super(src);
@@ -247,7 +247,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * tile's width without accounting for any component subsampling.
 	 * 
 	 * @return The total current tile width in pixels.
-	 * */
+	 */
 	@Override
 	public final int getTileWidth()
 	{
@@ -259,7 +259,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * tile's width without accounting for any component subsampling.
 	 * 
 	 * @return The total current tile height in pixels.
-	 * */
+	 */
 	@Override
 	public final int getTileHeight()
 	{
@@ -276,7 +276,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The width of specified tile-component.
-	 * */
+	 */
 	@Override
 	public final int getTileCompWidth(int t, int c)
 	{
@@ -298,7 +298,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The index of the component, from 0 to N-1.
 	 * 
 	 * @return The height of specified tile-component.
-	 * */
+	 */
 	@Override
 	public final int getTileCompHeight(int t, int c)
 	{
@@ -323,7 +323,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
-	 * */
+	 */
 	@Override
 	public int getFixedPoint(int c)
 	{
@@ -376,7 +376,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getCompData
-	 * */
+	 */
 	@Override
 	public final DataBlk getInternCompData(DataBlk blk, int c)
 	{
@@ -443,7 +443,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * @return The requested DataBlk
 	 * 
 	 * @see #getInternCompData
-	 * */
+	 */
 	@Override
 	public final DataBlk getCompData(DataBlk blk, int c)
 	{
@@ -476,7 +476,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The vertical index of the new tile.
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public final int setTile(int x, int y)
 	{
@@ -523,7 +523,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * last one (i.e. there is no next tile).
 	 *            
 	 * @return The new tile index
-	 * */
+	 */
 	@Override
 	public final int nextTile()
 	{
@@ -551,7 +551,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 *            null a new one is created and returned.
 	 * 
 	 * @return The current tile's horizontal and vertical indexes..
-	 * */
+	 */
 	@Override
 	public final Coord getTile(Coord co)
 	{
@@ -569,7 +569,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * order.
 	 * 
 	 * @return The current tile's index (starts at 0).
-	 * */
+	 */
 	@Override
 	public final int getTileIdx()
 	{
@@ -582,7 +582,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public final int getCompULX(int c)
 	{
@@ -595,7 +595,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @param c
 	 *            The component index.
-	 * */
+	 */
 	@Override
 	public final int getCompULY(int c)
 	{
@@ -622,7 +622,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
-	 * */
+	 */
 	@Override
 	public final int getImgULX()
 	{
@@ -635,7 +635,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
-	 * */
+	 */
 	@Override
 	public final int getImgULY()
 	{
@@ -651,7 +651,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 *         (Coord.y) directions.
-	 * */
+	 */
 	@Override
 	public final Coord getNumTiles(Coord co)
 	{
@@ -668,7 +668,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * Returns the total number of tiles in the image.
 	 * 
 	 * @return The total number of tiles in the image.
-	 * */
+	 */
 	@Override
 	public final int getNumTiles()
 	{
@@ -679,7 +679,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * Returns the nominal width of the tiles in the reference grid.
 	 * 
 	 * @return The nominal tile width, in the reference grid.
-	 * */
+	 */
 	@Override
 	public final int getNomTileWidth()
 	{
@@ -690,7 +690,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * Returns the nominal width of the tiles in the reference grid.
 	 * 
 	 * @return The nominal tile width, in the reference grid.
-	 * */
+	 */
 	@Override
 	public final int getNomTileHeight()
 	{
@@ -709,7 +709,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 *         reference grid.
 	 * 
 	 * @see ImgData
-	 * */
+	 */
 	public final Coord getTilingOrigin(Coord co)
 	{
 		if (co != null)
@@ -725,7 +725,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * Returns a String object representing Tiler's informations
 	 * 
 	 * @return Tiler's infos in a string
-	 * */
+	 */
 	@Override
 	public String toString()
 	{

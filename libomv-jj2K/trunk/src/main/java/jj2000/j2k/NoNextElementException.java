@@ -57,7 +57,7 @@ public class NoNextElementException extends RuntimeException
 	/**
 	 * Constructs a new <tt>NoNextElementException</tt> exception with no detail
 	 * message.
-	 * */
+	 */
 	public NoNextElementException()
 	{
 		super();
@@ -69,7 +69,7 @@ public class NoNextElementException extends RuntimeException
 	 * 
 	 * @param s
 	 *            The detail message.
-	 * */
+	 */
 	public NoNextElementException(String s)
 	{
 		super(s);

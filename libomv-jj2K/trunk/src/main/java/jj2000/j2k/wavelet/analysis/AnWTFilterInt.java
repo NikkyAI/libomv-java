@@ -63,7 +63,7 @@ import jj2000.j2k.image.*;
  * are performed.
  *
  * @see AnWTFilter
- * */
+ */
 public abstract class AnWTFilterInt extends AnWTFilter {
     
     /**
@@ -106,7 +106,7 @@ public abstract class AnWTFilterInt extends AnWTFilter {
      *
      *
      *
-     * */
+     */
     public abstract
         void analyze_lpf(int inSig[], int inOff, int inLen, int inStep,
                      int lowSig[], int lowOff, int lowStep,
@@ -152,7 +152,7 @@ public abstract class AnWTFilterInt extends AnWTFilter {
      *
      *
      *
-     * */
+     */
      
     @Override
 	public void analyze_lpf(Object inSig, int inOff, int inLen, int inStep,
@@ -204,7 +204,7 @@ public abstract class AnWTFilterInt extends AnWTFilter {
      *
      *
      *
-     * */
+     */
     public abstract
         void analyze_hpf(int inSig[], int inOff, int inLen, int inStep,
                      int lowSig[], int lowOff, int lowStep,
@@ -249,7 +249,7 @@ public abstract class AnWTFilterInt extends AnWTFilter {
      *
      *
      *
-     * */
+     */
      
     @Override
 	public void analyze_hpf(Object inSig, int inOff, int inLen, int inStep,
@@ -270,7 +270,7 @@ public abstract class AnWTFilterInt extends AnWTFilter {
      * @see jj2000.j2k.image.DataBlk
      *
      *
-     * */
+     */
     @Override
 	public int getDataType() {
         return DataBlk.TYPE_INT;

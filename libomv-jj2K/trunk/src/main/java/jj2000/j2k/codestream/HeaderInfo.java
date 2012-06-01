@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream;
 
 import jj2000.j2k.wavelet.*;
@@ -51,7 +51,7 @@ import java.util.*;
  * Classe that holds information found in the marker segments of the main and
  * tile-part headers. There is one inner-class per marker segment type found
  * in these headers.
- * */
+ */
 public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
                                    Cloneable {
 
@@ -86,7 +86,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
          * @param t Tile index
          *
          * @param c Component index
-         * */
+         */
         public int getCompImgWidth(int c) {
             if (compWidth==null) {
                 compWidth = new int[csiz];
@@ -755,7 +755,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
      * @param t index of the tile
      *
      * @param tp Number of tile-parts
-     * */
+     */
     public String toStringTileHeader(int t, int ntp) {
         int nc = siz.csiz;
         String str = "";
@@ -804,7 +804,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
      * @param t index of the tile
      *
      * @param tp Number of tile-parts
-     * */
+     */
     public String toStringThNoSOT(int t, int ntp) {
         int nc = siz.csiz;
         String str = "";

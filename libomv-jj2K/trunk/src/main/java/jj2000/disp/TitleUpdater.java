@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.disp;
 
 import java.awt.*;
@@ -48,7 +48,7 @@ import java.awt.*;
  * This class should run as an independent thread to update tha main
  * display window title with current image scroll position and
  * zoom.
- * */
+ */
 public class TitleUpdater implements Runnable {
 
     /** The update perion, in milliseconds: 100 */
@@ -77,7 +77,7 @@ public class TitleUpdater implements Runnable {
      * @param win The window which title to update
      *
      * @param btitle The base of the title.
-     * */
+     */
     public TitleUpdater(ImgScrollPane isp, Frame win, String btitle) {
         this.isp = isp;
         this.win = win;
@@ -90,7 +90,7 @@ public class TitleUpdater implements Runnable {
      * for 100 msec. This method never returns. If the sleep of the
      * thread is interrupted, the title will be updated earlier and
      * the cycle will continue.
-     * */
+     */
     @Override
 	public void run() {
         // Periodically update the window title

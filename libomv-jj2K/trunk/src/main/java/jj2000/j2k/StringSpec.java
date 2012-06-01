@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k;
 
 import jj2000.j2k.util.*;
@@ -51,7 +51,7 @@ import java.util.*;
  * specifications using Strings.
  * 
  * @see ModuleSpec
- * */
+ */
 public class StringSpec extends ModuleSpec
 {
 
@@ -68,7 +68,7 @@ public class StringSpec extends ModuleSpec
 	 * @param type
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both.
-	 * */
+	 */
 	public StringSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -102,7 +102,7 @@ public class StringSpec extends ModuleSpec
 	 * 
 	 * @param pl
 	 *            The ParameterList
-	 * */
+	 */
 	public StringSpec(int nt, int nc, byte type, String optName, String[] list, ParameterList pl)
 	{
 		super(nt, nc, type);

@@ -40,7 +40,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *  */
+ */
 package jj2000.j2k.decoder;
 
 import jj2000.j2k.util.*;
@@ -70,7 +70,7 @@ import java.net.*;
  * &nbsp;&nbsp;&nbsp;&lt;param name="res" value"3"&gt;<BR>
  * &lt;/applet&gt;</tt><BR>
  * 
- * */
+ */
 public class SimpleAppletDecoder extends Applet implements Runnable
 {
 	private static final long serialVersionUID = 1L;
@@ -96,7 +96,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 	/**
 	 * Initializes the applet. It reads the parameters and creates the decoder
 	 * thread.
-	 * */
+	 */
 	@Override
 	public void init()
 	{
@@ -160,7 +160,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 
 	/**
 	 * Starts the decoding thread.
-	 * */
+	 */
 	@Override
 	public void start()
 	{
@@ -172,7 +172,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 
 	/**
 	 * Does nothing, since the decoder thread can not be stopped.
-	 * */
+	 */
 	@Override
 	public void stop()
 	{
@@ -181,7 +181,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 
 	/**
 	 * Waits for the decoder thread to end and sets it to null.
-	 * */
+	 */
 	@Override
 	public void destroy()
 	{
@@ -203,7 +203,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 	/**
 	 * The run method for the decoding thread. Instantiates the decoder, runs it
 	 * and updates the status message.
-	 * */
+	 */
 	@Override
 	public void run()
 	{
@@ -263,7 +263,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 	 * 
 	 * @return A multi-line string containing the applet name, version,
 	 *         copyright and bug reporting address.
-	 * */
+	 */
 	@Override
 	public String getAppletInfo()
 	{
@@ -275,7 +275,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 	 * Returns the applet parameter information. See Applet class.
 	 * 
 	 * @see Applet#getParameterInfo
-	 * */
+	 */
 	@Override
 	public String[][] getParameterInfo()
 	{

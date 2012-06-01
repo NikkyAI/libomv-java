@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.decoder;
 
 import jj2000.j2k.wavelet.synthesis.*;
@@ -77,7 +77,7 @@ import jj2000.j2k.util.*;
  * ('DO_TIMING' is false) there is no penalty if the compiler performs some
  * basic optimizations. Even if not the penalty should be negligeable.
  * </p>
- * */
+ */
 public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoderOptions
 {
 
@@ -110,7 +110,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * 'OPT_SEG_SYMBOLS' as defined in the StdEntropyCoderOptions interface
 	 * 
 	 * @see StdEntropyCoderOptions
-	 **/
+	 */
 	private int options;
 
 	/**
@@ -226,12 +226,12 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * <P>
 	 * The lower 16 bits are referred to as "row 1" ("R1") while the upper 16
 	 * bits are referred to as "row 2" ("R2").
-	 * */
+	 */
 	private final int state[];
 
 	/**
 	 * The separation between the upper and lower bits in the state array: 16
-	 * */
+	 */
 	private static final int STATE_SEP = 16;
 
 	/** The flag bit for the significance in the state array, for row 1. */
@@ -723,7 +723,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * @param mQuit
 	 *            the maximum number of bit planes to decode according to the m
 	 *            quit condition
-	 * */
+	 */
 	public StdEntropyDecoder(CodedCBlkDataSrcDec src, DecoderSpecs decSpec, boolean doer, boolean verber, int mQuit)
 	{
 		super(src);
@@ -748,7 +748,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	/**
 	 * Prints the timing information, if collected, and calls 'finalize' on the
 	 * super class.
-	 * */
+	 */
 	@Override
 	public void finalize() throws Throwable
 	{
@@ -821,7 +821,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	@Override
 	public DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk)
 	{
@@ -1097,7 +1097,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see DataBlk
-	 * */
+	 */
 	@Override
 	public DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk)
 	{
@@ -1141,7 +1141,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *            terminated it can be used to check error resilience.
 	 * 
 	 * @return True if an error was detected in the bit stream, false otherwise.
-	 * */
+	 */
 	private boolean sigProgPass(DataBlk cblk, MQDecoder mq, int bp, int state[], int zc_lut[], boolean isterm)
 	{
 		int j, sj; // The state index for line and stripe
@@ -1470,7 +1470,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *            terminated it can be used to check error resilience.
 	 * 
 	 * @return True if an error was detected in the bit stream, false otherwise.
-	 * */
+	 */
 	private boolean rawSigProgPass(DataBlk cblk, ByteToBitInput bin, int bp, int state[], boolean isterm)
 	{
 		int j, sj; // The state index for line and stripe
@@ -1781,7 +1781,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *            terminated it can be used to check error resilience.
 	 * 
 	 * @return True if an error was detected in the bit stream, false otherwise.
-	 * */
+	 */
 	private boolean magRefPass(DataBlk cblk, MQDecoder mq, int bp, int state[], boolean isterm)
 	{
 		int j, sj; // The state index for line and stripe
@@ -1956,7 +1956,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *            terminated it can be used to check error resilience.
 	 * 
 	 * @return True if an error was detected in the bit stream, false otherwise.
-	 * */
+	 */
 	private boolean rawMagRefPass(DataBlk cblk, ByteToBitInput bin, int bp, int state[], boolean isterm)
 	{
 		int j, sj; // The state index for line and stripe
@@ -2117,7 +2117,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *            terminated it can be used to check error resilience.
 	 * 
 	 * @return True if an error was detected in the bit stream, false otherwise.
-	 * */
+	 */
 	private boolean cleanuppass(DataBlk cblk, MQDecoder mq, int bp, int state[], int zc_lut[], boolean isterm)
 	{
 		int j, sj; // The state index for line and stripe
@@ -2555,7 +2555,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * 
 	 * @param bp
 	 *            The last decoded bit-plane (which contains errors).
-	 * */
+	 */
 	private void conceal(DataBlk cblk, int bp)
 	{
 		int l; // line index

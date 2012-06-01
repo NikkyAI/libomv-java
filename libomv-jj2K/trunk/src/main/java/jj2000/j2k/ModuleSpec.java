@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k;
 
 import jj2000.j2k.image.*;
@@ -64,7 +64,7 @@ import java.util.*;
  * <li>Main default attribute</li>
  * </ul>
  * </p>
- * */
+ */
 public class ModuleSpec implements Cloneable
 {
 
@@ -189,7 +189,7 @@ public class ModuleSpec implements Cloneable
 	 * @param nT
 	 *            Number of tiles along horizontal and vertical axis after
 	 *            rotation.
-	 * */
+	 */
 	public void rotate90(Coord anT)
 	{
 		// Rotate specValType
@@ -264,7 +264,7 @@ public class ModuleSpec implements Cloneable
 	 * @param type
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both.
-	 * */
+	 */
 	public ModuleSpec(int nt, int nc, byte type)
 	{
 		nTiles = nt;
@@ -286,7 +286,7 @@ public class ModuleSpec implements Cloneable
 
 	/**
 	 * Sets default value for this module
-	 * */
+	 */
 	public void setDefault(Object value)
 	{
 		def = value;
@@ -296,7 +296,7 @@ public class ModuleSpec implements Cloneable
 	 * Gets default value for this module.
 	 * 
 	 * @return The default value (Must be casted before use)
-	 * */
+	 */
 	public Object getDefault()
 	{
 		return def;
@@ -308,7 +308,7 @@ public class ModuleSpec implements Cloneable
 	 * 
 	 * @param c
 	 *            Component index
-	 * */
+	 */
 	public void setCompDef(int c, Object value)
 	{
 		if (specType == SPEC_TYPE_TILE)
@@ -341,7 +341,7 @@ public class ModuleSpec implements Cloneable
 	 * @return The default value for this component (Must be casted before use)
 	 * 
 	 * @see #setCompDef
-	 * */
+	 */
 	public Object getCompDef(int c)
 	{
 		if (specType == SPEC_TYPE_TILE)
@@ -361,7 +361,7 @@ public class ModuleSpec implements Cloneable
 	 * 
 	 * @param c
 	 *            Tile index.
-	 * */
+	 */
 	public void setTileDef(int t, Object value)
 	{
 		if (specType == SPEC_TYPE_COMP)
@@ -394,7 +394,7 @@ public class ModuleSpec implements Cloneable
 	 * @return The default value for this tile (Must be casted before use)
 	 * 
 	 * @see #setTileDef
-	 * */
+	 */
 	public Object getTileDef(int t)
 	{
 		if (specType == SPEC_TYPE_COMP)
@@ -416,7 +416,7 @@ public class ModuleSpec implements Cloneable
 	 * 
 	 * @param c
 	 *            Component index
-	 * */
+	 */
 	public void setTileCompVal(int t, int c, Object value)
 	{
 		if (specType != SPEC_TYPE_TILE_COMP)
@@ -454,7 +454,7 @@ public class ModuleSpec implements Cloneable
 	 * @see #setTileCompVal
 	 * 
 	 * @see #getSpec
-	 * */
+	 */
 	public Object getTileCompVal(int t, int c)
 	{
 		if (specType != SPEC_TYPE_TILE_COMP)
@@ -478,7 +478,7 @@ public class ModuleSpec implements Cloneable
 	 *            Component index
 	 * 
 	 * @return Value for this tile component.
-	 * */
+	 */
 	protected Object getSpec(int t, int c)
 	{
 		switch (specValType[t][c])
@@ -504,7 +504,7 @@ public class ModuleSpec implements Cloneable
 	 * 
 	 * @param c
 	 *            Component index
-	 * */
+	 */
 	public byte getSpecValType(int t, int c)
 	{
 		return specValType[t][c];
@@ -517,7 +517,7 @@ public class ModuleSpec implements Cloneable
 	 *            Index of the component
 	 * 
 	 * @return True if component specification has been defined
-	 * */
+	 */
 	public boolean isCompSpecified(int c)
 	{
 		if (compDef == null || compDef[c] == null)
@@ -534,7 +534,7 @@ public class ModuleSpec implements Cloneable
 	 *            Index of the tile
 	 * 
 	 * @return True if tile specification has been entered
-	 * */
+	 */
 	public boolean isTileSpecified(int t)
 	{
 		if (tileDef == null || tileDef[t] == null)
@@ -554,7 +554,7 @@ public class ModuleSpec implements Cloneable
 	 *            Component index
 	 * 
 	 * @return True if a tile-component specification has been defined.
-	 * */
+	 */
 	public boolean isTileCompSpecified(int t, int c)
 	{
 		if (tileCompVal == null || tileCompVal.get("t" + t + "c" + c) == null)
@@ -587,7 +587,7 @@ public class ModuleSpec implements Cloneable
 	 *            Maximum authorized index
 	 * 
 	 * @return Indexes concerned by this parameter.
-	 * */
+	 */
 	public static final boolean[] parseIdx(String word, int maxIdx)
 	{
 		int nChar = word.length(); // Number of characters

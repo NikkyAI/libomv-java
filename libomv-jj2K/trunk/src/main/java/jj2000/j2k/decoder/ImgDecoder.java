@@ -35,7 +35,7 @@ public class ImgDecoder
 	 * constructor and when the run method returns.
 	 * 
 	 * @return The exit code of the constructor and the run() method.
-	 * */
+	 */
 	public int getExitCode()
 	{
 		return exitCode;
@@ -243,7 +243,7 @@ public class ImgDecoder
 	/**
 	 * Return the information found in the COM marker segments encountered in
 	 * the decoded codestream.
-	 * */
+	 */
 	public String[] getCOMInfo()
 	{
 		if (hi == null)
@@ -271,7 +271,7 @@ public class ImgDecoder
 	 * 
 	 * @param code
 	 *            The exit code to set
-	 * */
+	 */
 	protected void error(String msg, int code)
 	{
 		exitCode = code;
@@ -292,7 +292,7 @@ public class ImgDecoder
 	 * 
 	 * @param ex
 	 *            The exception associated with the call
-	 * */
+	 */
 	protected void error(String msg, int code, Throwable ex)
 	{
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.ERROR, msg);

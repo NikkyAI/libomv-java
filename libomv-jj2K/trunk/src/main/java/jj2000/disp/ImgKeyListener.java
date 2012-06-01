@@ -76,7 +76,7 @@ import java.awt.*;
  * between unit and block increments, while the Shift key selects between
  * normal and accelerated mode.
  *
- * */
+ */
 public class ImgKeyListener extends KeyAdapter {
 
     /** Frame used to display tools */
@@ -99,7 +99,7 @@ public class ImgKeyListener extends KeyAdapter {
      * operate.
      *
      * @param dec The decoder instance
-     * */
+     */
     public ImgKeyListener(ImgScrollPane isp,Decoder dec) {
         this.isp = isp;
         this.dec = dec;
@@ -110,7 +110,7 @@ public class ImgKeyListener extends KeyAdapter {
      * some don't have a defined keycode (as incredible as it might seem!).
      *
      * @param evt The key event to process.
-     * */
+     */
     @Override
 	public void keyPressed(KeyEvent evt) {
         Adjustable adj;
@@ -163,7 +163,7 @@ public class ImgKeyListener extends KeyAdapter {
      * here.
      *
      * @param evt The key event to process.
-     * */
+     */
     @Override
 	public void keyTyped(KeyEvent evt) {
 
@@ -227,7 +227,7 @@ public class ImgKeyListener extends KeyAdapter {
      * @param evt The KeyEvent fom where to obtain the modifiers
      *
      * @param adj The Adjustable from where to obtain the increments
-     * */
+     */
     private int calcIncrement(KeyEvent evt, Adjustable adj) {
         int incr;
         // Control selects block instead of unit

@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.entropy.encoder;
 
 import jj2000.j2k.wavelet.analysis.*;
@@ -65,7 +65,7 @@ import jj2000.j2k.wavelet.analysis.*;
  * @see PostCompRateAllocator
  * @see CBlkRateDistStats
  * @see EntropyCoder
- * */
+ */
 public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 {
 
@@ -105,7 +105,7 @@ public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 	 *         returned.
 	 * 
 	 * @see CBlkRateDistStats
-	 * */
+	 */
 	public CBlkRateDistStats getNextCodeBlock(int c, CBlkRateDistStats ccb);
 
 	/**
@@ -123,7 +123,7 @@ public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 	 * 
 	 * @return The width of a packet for the specified tile- component and
 	 *         resolution level.
-	 * */
+	 */
 	public int getPPX(int t, int c, int r);
 
 	/**
@@ -141,7 +141,7 @@ public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 	 * 
 	 * @return The height of a packet for the specified tile- component and
 	 *         resolution level.
-	 * */
+	 */
 	public int getPPY(int t, int c, int r);
 
 	/**
@@ -153,6 +153,6 @@ public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 	 * 
 	 * @param t
 	 *            The tile
-	 * */
+	 */
 	public boolean precinctPartitionUsed(int c, int t);
 }

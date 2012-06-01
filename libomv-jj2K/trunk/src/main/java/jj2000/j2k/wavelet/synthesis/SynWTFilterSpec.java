@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.*;
@@ -49,7 +49,7 @@ import jj2000.j2k.*;
  * holding purpose.
  * 
  * @see ModuleSpec
- * */
+ */
 public class SynWTFilterSpec extends ModuleSpec
 {
 
@@ -66,7 +66,7 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * @param type
 	 *            the type of the specification module i.e. tile specific,
 	 *            component specific or both.
-	 * */
+	 */
 	public SynWTFilterSpec(int nt, int nc, byte type)
 	{
 		super(nt, nc, type);
@@ -85,7 +85,7 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * @return The data type of the filters in this object
 	 * 
 	 * @see jj2000.j2k.image.DataBlk
-	 * */
+	 */
 	public int getWTDataType(int t, int c)
 	{
 		SynWTFilter[][] an = (SynWTFilter[][]) getSpec(t, c);
@@ -113,7 +113,7 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * 
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 *         tile 't'.
-	 * */
+	 */
 	public SynWTFilter[] getHFilters(int t, int c)
 	{
 		SynWTFilter[][] an = (SynWTFilter[][]) getSpec(t, c);
@@ -141,7 +141,7 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * 
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 *         tile 't'.
-	 * */
+	 */
 	public SynWTFilter[] getVFilters(int t, int c)
 	{
 		SynWTFilter[][] an = (SynWTFilter[][]) getSpec(t, c);
@@ -188,7 +188,7 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * 
 	 * @param c
 	 *            The index of the component
-	 * */
+	 */
 	public boolean isReversible(int t, int c)
 	{
 		// Note: no need to buffer the result since this method is normally

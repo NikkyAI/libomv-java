@@ -56,7 +56,7 @@ package jj2000.j2k.fileformat;
  */
 public interface FileFormatBoxes{
 
-    /**** Main boxes ****/
+    /**** Main boxes */
 
     public static final int JP2_SIGNATURE_BOX = 0x6a502020;
 

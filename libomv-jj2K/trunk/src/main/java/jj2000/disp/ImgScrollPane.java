@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.disp;
 
 import java.awt.event.*;
@@ -102,7 +102,7 @@ import java.awt.*;
  * @see ScrollPane
  *
  * @see Adjustable
- * */
+ */
 public class ImgScrollPane extends Container
 {
 	private static final long serialVersionUID = 1L;
@@ -182,7 +182,7 @@ public class ImgScrollPane extends Container
 
     /**
      * Creates a new ImgScrollPane with SCROLLBARS_AS_NEEDED scrollbars.
-     * */
+     */
     public ImgScrollPane() {
         this(SCROLLBARS_AS_NEEDED);
     }
@@ -192,7 +192,7 @@ public class ImgScrollPane extends Container
      * visibility.
      *
      * @param svt The scrollbar visibility type
-     * */
+     */
     public ImgScrollPane(int svt) {
         // Initialize
         super.setLayout(new BorderLayout(INTERNAL_GAP,INTERNAL_GAP));
@@ -240,7 +240,7 @@ public class ImgScrollPane extends Container
      * @param img The image to display.
      *
      * @see Component#imageUpdate
-     * */
+     */
     public void setImage(Image img) {
         imgDisplay.setImage(img);
     }
@@ -249,7 +249,7 @@ public class ImgScrollPane extends Container
      * Returns the image that is displayed in this component.
      *
      * @return The image displayed in this component, or null if none.
-     * */
+     */
     public synchronized Image getImage() {
         return imgDisplay.img;
     }
@@ -264,7 +264,7 @@ public class ImgScrollPane extends Container
      * larger than MAX_ZOOM, then MAX_ZOOM will be used.
      *
      * @param zf The zoom factor
-     * */
+     */
     public synchronized void setZoom(float zf) {
         if (zf == zoom || (zf > MAX_ZOOM && zoom == MAX_ZOOM)) {
             // No change => do nothing
@@ -291,7 +291,7 @@ public class ImgScrollPane extends Container
      * than MAX_ZOOM, then MAX_ZOOM will be used.
      *
      * @param zm The zoom multiplier to apply.
-     * */
+     */
     public synchronized void zoom(float zm) {
         setZoom(zoom*zm);
     }
@@ -300,7 +300,7 @@ public class ImgScrollPane extends Container
      * Returns the current zoom factor.
      *
      * @return The current zoom factor
-     * */
+     */
     public synchronized float getZoom() {
         return zoom;
     }
@@ -308,7 +308,7 @@ public class ImgScrollPane extends Container
     /**
      * Returns the Adjustable object which represents the state of the
      * horizontal scrollbar.
-     * */
+     */
     public Adjustable getHAdjustable() {
         return hsbar;
     }
@@ -316,7 +316,7 @@ public class ImgScrollPane extends Container
     /**
      * Returns the Adjustable object which represents the state of the
      * vertical scrollbar.
-     * */
+     */
     public Adjustable getVAdjustable() {
         return vsbar;
     }
@@ -325,7 +325,7 @@ public class ImgScrollPane extends Container
      * Returns the display policy for the scrollbars.
      *
      * @return the display policy for the scrollbars
-     * */
+     */
     public int getScrollbarDisplayPolicy() {
         return sbType;
     }
@@ -334,7 +334,7 @@ public class ImgScrollPane extends Container
      * Sets the display policy for the scrollbars.
      *
      * @param v the display policy for the scrollbars
-     * */
+     */
     public void setScrollbarDisplayPolicy(int v) {
         // If no change do nothing
         if (v == sbType) return;
@@ -365,7 +365,7 @@ public class ImgScrollPane extends Container
      * @param x the x position to scroll to 
      *
      * @param y the y position to scroll to 
-     * */
+     */
     public synchronized void setScrollPosition(int x, int y) {
         hsbar.setValueI(x);
         vsbar.setValueI(y);
@@ -389,7 +389,7 @@ public class ImgScrollPane extends Container
      * scrollbars.
      *
      * @param p the position to scroll to 
-     * */
+     */
     public synchronized void setScrollPosition(Point p) {
         setScrollPosition(p.x,p.y);
     }
@@ -401,7 +401,7 @@ public class ImgScrollPane extends Container
      * represent the state of the scrollbars.
      *
      * @return the coordinate position for the current scroll position
-     * */
+     */
     public Point getScrollPosition() {
         return new Point(hsbar.getValue(),vsbar.getValue());
     }
@@ -412,7 +412,7 @@ public class ImgScrollPane extends Container
      * layed out yet the value is not defined.
      *
      * @return The size of the image display area
-     * */
+     */
     public Dimension getViewportSize() {
         return imgDisplay.getSize();
     }
@@ -424,7 +424,7 @@ public class ImgScrollPane extends Container
      * produces less annoying effects. See the class description.
      *
      * @param v If true scrolling will be done by copying.
-     * */
+     */
     public synchronized void setCopyScroll(boolean v) {
         copyScroll = v;
     }
@@ -433,7 +433,7 @@ public class ImgScrollPane extends Container
      * Returns true if the scrolling is done by copying.
      *
      * @return If the copy is done by scrolling
-     * */
+     */
     public synchronized boolean getCopyScroll() {
         return copyScroll;
     }
@@ -442,7 +442,7 @@ public class ImgScrollPane extends Container
      * Causes this container to lay out its components. Most programs should
      * not call this method directly, but should invoke the validate method
      * instead.
-     * */
+     */
     @Override
 	public synchronized void doLayout() {
         // Let's see if we should include the scrollbars or not
@@ -506,7 +506,7 @@ public class ImgScrollPane extends Container
      * component. It is added to the image and scrollbar areas.
      *
      * @param l the focus listener
-     * */
+     */
     @Override
 	public synchronized void addFocusListener(FocusListener l) {
         super.addFocusListener(l);
@@ -520,7 +520,7 @@ public class ImgScrollPane extends Container
      * focus events from this component.
      *
      * @param l the focus listener
-     * */
+     */
     @Override
 	public synchronized void removeFocusListener(FocusListener l) {
         super.removeFocusListener(l);
@@ -534,7 +534,7 @@ public class ImgScrollPane extends Container
      * component. It is added to the image and scrollbar areas.
      *
      * @param l the key listener
-     * */
+     */
     @Override
 	public synchronized void addKeyListener(KeyListener l) {
         super.addKeyListener(l);
@@ -548,7 +548,7 @@ public class ImgScrollPane extends Container
      * events from this component.
      *
      * @param l the key listener
-     * */
+     */
     @Override
 	public synchronized void removeKeyListener(KeyListener l) {
         super.removeKeyListener(l);
@@ -563,7 +563,7 @@ public class ImgScrollPane extends Container
      * scrollbar areas.
      *
      * @param l the mouse listener
-     * */
+     */
     @Override
 	public synchronized void addMouseListener(MouseListener l) {
         super.addMouseListener(l);
@@ -575,7 +575,7 @@ public class ImgScrollPane extends Container
      * mouse events from this component.
      *
      * @param l the mouse listener
-     * */
+     */
     @Override
 	public synchronized void removeMouseListener(MouseListener l) {
         super.removeMouseListener(l);
@@ -588,7 +588,7 @@ public class ImgScrollPane extends Container
      * not to the scrollbar areas.
      *
      * @param l the mouse motion listener
-     * */
+     */
     @Override
 	public synchronized void addMouseMotionListener(MouseMotionListener l) {
         super.addMouseMotionListener(l);
@@ -600,7 +600,7 @@ public class ImgScrollPane extends Container
      * receives mouse motion events from this component.
      *
      * @param l the mouse motion listener
-     * */
+     */
     @Override
 	public synchronized void removeMouseMotionListener(MouseMotionListener l) {
         super.removeMouseMotionListener(l);
@@ -611,7 +611,7 @@ public class ImgScrollPane extends Container
      * the 3 areas (image and scrollbars) plus the container itself.
      *
      * @param c The color to become background color for this component
-     * */
+     */
     @Override
 	public synchronized void setBackground(Color c) {
         super.setBackground(c);
@@ -626,7 +626,7 @@ public class ImgScrollPane extends Container
      * cursor of the scrollbars.
      *
      * @param cursor One of the constants defined by the Cursor class.
-     * */
+     */
     @Override
 	public synchronized void setCursor(Cursor cursor) {
         super.setCursor(cursor);
@@ -640,7 +640,7 @@ public class ImgScrollPane extends Container
      *
      * @param b If true, this component is enabled; otherwise this component
      * is disabled.
-     * */
+     */
     @Override
 	public synchronized void setEnabled(boolean b) {
         super.setEnabled(b);
@@ -655,7 +655,7 @@ public class ImgScrollPane extends Container
      * foreground.
      *
      * @param c The color to become this component's foreground color.
-     * */
+     */
     @Override
 	public synchronized void setForeground(Color c) {
         super.setForeground(c);
@@ -667,7 +667,7 @@ public class ImgScrollPane extends Container
    /**
      * Throws an IllegalArgumentException since no components can be added to
      * this container.
-     * */
+     */
     @Override
 	public Component add(Component comp) {
         throw new IllegalArgumentException();
@@ -676,7 +676,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since no components can be added to
      * this container.
-     * */
+     */
     @Override
 	public Component add(String name,Component comp) {
         throw new IllegalArgumentException();
@@ -685,7 +685,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since no components can be added to
      * this container.
-     * */
+     */
     @Override
 	public Component add(Component comp, int index) {
         throw new IllegalArgumentException();
@@ -694,7 +694,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since no components can be added to
      * this container.
-     * */
+     */
     @Override
 	public void add(Component comp, Object constraints) {
         throw new IllegalArgumentException();
@@ -703,7 +703,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since no components can be added to
      * this container.
-     * */
+     */
     @Override
 	public void add(Component comp, Object constraints, int index) {
         throw new IllegalArgumentException();
@@ -712,7 +712,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since the components should never be 
      * removed from this container.
-     * */
+     */
     @Override
 	public void remove(int index) {
         throw new IllegalArgumentException();
@@ -721,7 +721,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since the components should never be 
      * removed from this container.
-     * */
+     */
     @Override
 	public void remove(Component comp) {
         throw new IllegalArgumentException();
@@ -730,7 +730,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since the components should never be 
      * removed from this container.
-     * */
+     */
     @Override
 	public void removeAll() {
         throw new IllegalArgumentException();
@@ -739,7 +739,7 @@ public class ImgScrollPane extends Container
     /**
      * Throws an IllegalArgumentException since the layout manager is
      * internally set and can not be changed.
-     * */
+     */
     @Override
 	public void setLayout(LayoutManager mgr) {
         throw new IllegalArgumentException();
@@ -749,7 +749,7 @@ public class ImgScrollPane extends Container
      * Sets the scrollbars values, according to the image display area and
      * image size. The current scroll position is kept.
      *
-     * */
+     */
     private void setScrollbars() {
         Dimension asz; // actual image area size
         Dimension psz; // preferred size
@@ -811,7 +811,7 @@ public class ImgScrollPane extends Container
      * flickering problem of lightweight components which are in heavyweight
      * containers.
      *
-     * */
+     */
     private class ImageScrollDisplay extends Canvas
     {
 		private static final long serialVersionUID = 1L;
@@ -872,7 +872,7 @@ public class ImgScrollPane extends Container
          *
          * @see Component#imageUpdate
          *
-         * */
+         */
         void setImage(Image img) {
             // Update object state
             synchronized (ImgScrollPane.this) {
@@ -903,7 +903,7 @@ public class ImgScrollPane extends Container
          *
          * @return The minimum size
          *
-         * */
+         */
         @Override
 		public Dimension getMinimumSize() {
             return new Dimension(0,0);
@@ -914,7 +914,7 @@ public class ImgScrollPane extends Container
          *
          * @return The maximum size
          *
-         * */
+         */
         @Override
 		public Dimension getMaximumSize() {
             return new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE);
@@ -927,7 +927,7 @@ public class ImgScrollPane extends Container
          *
          * @return The preferred size for this component.
          *
-         * */
+         */
         @Override
 		public Dimension getPreferredSize() {
             return dim;
@@ -945,7 +945,7 @@ public class ImgScrollPane extends Container
          *
          * @see Component#imageUpdate
          *
-         * */
+         */
         @Override
 		public boolean imageUpdate(Image img, int infoflags,
                                    int x, int y, int w, int h) {
@@ -987,7 +987,7 @@ public class ImgScrollPane extends Container
          *
          * @param g The graphics context to paint on.
          *
-         * */
+         */
         @Override
 		public void paint(Graphics g) {
             // Now call update as usual
@@ -1006,7 +1006,7 @@ public class ImgScrollPane extends Container
          *
          * @see #setImage
          *
-         * */
+         */
         @Override
 		public void update(Graphics g) {
             Image img;         // The image to display
@@ -1258,7 +1258,7 @@ public class ImgScrollPane extends Container
          * @return True if the dimensions could be calculated, false if not
          * (i.e. not enough info is available).
          *
-         * */
+         */
         boolean calcDim() {
             // We need the image dimensions
             if (dimFlags != (ImageObserver.WIDTH|ImageObserver.HEIGHT)) {
@@ -1287,7 +1287,7 @@ public class ImgScrollPane extends Container
      * Adjustable interface are overriden and throw IllegalArgumentException
      * since they are not to be used externally.
      *
-     * */
+     */
     class ISPScrollbar extends Scrollbar
     {
 		private static final long serialVersionUID = 1L;
@@ -1313,7 +1313,7 @@ public class ImgScrollPane extends Container
          * @param max  the maximum value of the scroll bar.
          *
          * @param svt The scrollbar visible type
-         **/
+         */
         ISPScrollbar(int orientation,
                      int value, int visible, int min, int max) {
             super(orientation,value,visible,min,max);
@@ -1325,7 +1325,7 @@ public class ImgScrollPane extends Container
          * ImgScrollPane.SCROLLBAR_THICKNESS.
          *
          * @return The Scrollbar preferred size
-         * */
+         */
         @Override
 		public Dimension getPreferredSize() {
             Dimension psz = super.getPreferredSize();
@@ -1341,7 +1341,7 @@ public class ImgScrollPane extends Container
         /**
          * Throws an IllegalArgumentException since the minimum value should
          * never be set externally.
-         * */
+         */
         @Override
 		public void setMinimum(int min) {
             throw new IllegalArgumentException();
@@ -1350,7 +1350,7 @@ public class ImgScrollPane extends Container
         /**
          * Throws an IllegalArgumentException since the maximum value should
          * never be set externally.
-         * */
+         */
         @Override
 		public void setMaximum(int max) {
             throw new IllegalArgumentException();
@@ -1359,7 +1359,7 @@ public class ImgScrollPane extends Container
         /**
          * Throws an IllegalArgumentException since the visible amount should
          * never be set externally.
-         * */
+         */
         @Override
 		public void setVisibleAmount(int v) {
             throw new IllegalArgumentException();
@@ -1368,7 +1368,7 @@ public class ImgScrollPane extends Container
         /**
          * Throws an IllegalArgumentException since the block increment should
          * never be set externally.
-         * */
+         */
         @Override
 		public void setBlockIncrement(int b) {
             throw new IllegalArgumentException();
@@ -1386,7 +1386,7 @@ public class ImgScrollPane extends Container
          *
          * @param v the amount by which to increment or decrement the scroll
          * bar's value.
-         * */
+         */
         void setBlockIncrementI(int v) {
             super.setBlockIncrement(v);
         }    
@@ -1401,7 +1401,7 @@ public class ImgScrollPane extends Container
          * <P>This is a version to be used by The ImgScrollPane class only.
          *
          * @param newValue he new value of the scroll bar.
-         * */
+         */
         void setValueI(int newValue) {
             super.setValue(newValue);
         }
@@ -1415,7 +1415,7 @@ public class ImgScrollPane extends Container
          * substituted, as appropriate.
          *
          * @param newValue he new value of the scroll bar.
-         * */
+         */
         @Override
 		public void setValue(int newValue) {
             // Set the value and check if we need to repaint

@@ -39,7 +39,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.codestream.reader;
 
 import jj2000.j2k.io.*;
@@ -48,7 +48,7 @@ import java.io.*;
 /**
  * This class provides a bit based reading facility from a byte based one,
  * applying the bit unstuffing procedure as required by the packet headers.
- * */
+ */
 class PktHeaderBitReader {
 
     /** The byte based source of data */
@@ -77,7 +77,7 @@ class PktHeaderBitReader {
      * given source.
      *
      * @param in The source of byte data
-     * */
+     */
     PktHeaderBitReader(RandomAccessIO in) {
         this.in = in;
         usebais=false;
@@ -88,7 +88,7 @@ class PktHeaderBitReader {
      * given source.
      *
      * @param bais The source of byte data
-     * */
+     */
     PktHeaderBitReader(ByteArrayInputStream bais) {
         this.bais = bais;
         usebais=true;
@@ -101,7 +101,7 @@ class PktHeaderBitReader {
      *
      * @exception IOException If an I/O error occurred
      * @exception EOFException If teh end of file has been reached
-     * */
+     */
     final int readBit() throws IOException {
         if (bpos==0) { // Is bit buffer empty?
             if (bbuf!=0xFF) { // No bit stuffing
@@ -137,7 +137,7 @@ class PktHeaderBitReader {
      *
      * @exception IOException If an I/O error occurred
      * @exception EOFException If teh end of file has been reached
-     * */
+     */
     final int readBits(int n) throws IOException {
         int bits; // The read bits
 
@@ -192,7 +192,7 @@ class PktHeaderBitReader {
      * directly from the underlying byte based input since the last call to
      * 'readBits()' or 'readBit()' before a new call to any of those
      * methods.</p>
-     * */
+     */
     void sync() {
         bbuf = 0;
         bpos = 0;
@@ -207,7 +207,7 @@ class PktHeaderBitReader {
      * object.</p>
      *
      * @param in The source of byte data
-     * */
+     */
     void setInput(RandomAccessIO in) {
         this.in = in;
         bbuf = 0;
@@ -223,7 +223,7 @@ class PktHeaderBitReader {
      * object.</p>
      *
      * @param bais The source of byte data
-     * */
+     */
     void setInput(ByteArrayInputStream bais) {
         this.bais = bais;
         bbuf = 0;

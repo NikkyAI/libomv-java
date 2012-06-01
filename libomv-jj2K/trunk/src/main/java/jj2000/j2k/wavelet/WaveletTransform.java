@@ -41,7 +41,7 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * */
+ */
 package jj2000.j2k.wavelet;
 
 import jj2000.j2k.image.*;
@@ -59,20 +59,20 @@ import jj2000.j2k.image.*;
  * all this flexibility (e.g., it may provide the same implementation type and
  * decomposition levels for all tiles and components).
  * </p>
- * */
+ */
 public interface WaveletTransform extends ImgData
 {
 
 	/**
 	 * ID for line based implementations of wavelet transforms.
-	 * */
+	 */
 	public final static int WT_IMPL_LINE = 0;
 
 	/**
 	 * ID for full-page based implementations of wavelet transforms. Full-page
 	 * based implementations should be avoided since they require large amounts
 	 * of memory.
-	 * */
+	 */
 	public final static int WT_IMPL_FULL = 2;
 
 	/**
@@ -87,7 +87,7 @@ public interface WaveletTransform extends ImgData
 	 *            The index of the component.
 	 * 
 	 * @return true is the wavelet transform is reversible, false if not.
-	 * */
+	 */
 	public boolean isReversible(int t, int c);
 
 	/**
@@ -99,6 +99,6 @@ public interface WaveletTransform extends ImgData
 	 * 
 	 * @return WT_IMPL_LINE or WT_IMPL_FULL for line, block or full-page based
 	 *         transforms.
-	 * */
+	 */
 	public int getImplementationType(int c);
 }

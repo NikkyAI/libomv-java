@@ -4,7 +4,7 @@
  *
  * Copyright Eastman Kodak Company, 343 State Street, Rochester, NY 14650
  * $Date $
- *****************************************************************************/
+ ****************************************************************************/
 package colorspace.boxes;
 
 import jj2000.j2k.util.*;
@@ -41,7 +41,7 @@ public final class ColorSpecificationBox extends JP2Box
 	 *            offset to the start of the box in the image
 	 * @exception IOException
 	 *                , ColorSpaceException
-	 * */
+	 */
 	public ColorSpecificationBox(RandomAccessIO in, int boxStart) throws IOException, ColorSpaceException
 	{
 		super(in, boxStart);
