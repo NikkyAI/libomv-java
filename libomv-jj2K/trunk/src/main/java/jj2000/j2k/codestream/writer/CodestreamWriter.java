@@ -182,11 +182,9 @@ public abstract class CodestreamWriter {
 
 
     /**
-     * Closes the underlying resource (file, stream, network connection,
-     * etc.). After a CodestreamWriter is closed no more data can be written
-     * to it.
+     * Terminates the codestream
      *
-     * @exception IOException If an I/O error occurs while closing the
+     * @exception IOException If an I/O error occurs while writing to the
      * resource.
      */
     public abstract void close() throws IOException;

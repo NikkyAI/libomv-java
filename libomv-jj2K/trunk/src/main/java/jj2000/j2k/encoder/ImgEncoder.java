@@ -1,6 +1,9 @@
 package jj2000.j2k.encoder;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.NoSuchElementException;
@@ -300,11 +303,12 @@ public class ImgEncoder
 			throw new IllegalArgumentException("Invalid value in 'tref' option ");
 		}
 
+		OutputStream os = new BufferedOutputStream(new FileOutputStream(outname));
 		// **** CodestreamWriter ****
 		try
 		{
 			// Rely on rate allocator to limit amount of data
-			bwriter = new FileCodestreamWriter(outname, Integer.MAX_VALUE);
+			bwriter = new FileCodestreamWriter(os, Integer.MAX_VALUE);
 		}
 		catch (IOException e)
 		{
@@ -430,7 +434,8 @@ public class ImgEncoder
 
 		// **** Done ****
 		bwriter.close();
-
+		os.close();
+		
 		// **** Calculate file length ****
 		int fileLength = bwriter.getLength();
 

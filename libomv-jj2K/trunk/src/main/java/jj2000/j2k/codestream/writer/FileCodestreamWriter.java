@@ -67,12 +67,12 @@ public class FileCodestreamWriter extends CodestreamWriter
     /** Index of the current tile */
 //    private int tileIdx = 0;
 
-    /** The file to write */
+    /** The output stream to write */
     private OutputStream out;
-
+    
     /** The number of bytes already written to the codestream, excluding the
      * header length, magic number and header length info. */
-    int ndata=0;
+    int ndata = 0;
 
     /** The default buffer length, 1024 bytes */
     public static int DEF_BUF_LEN = 1024;
@@ -92,51 +92,6 @@ public class FileCodestreamWriter extends CodestreamWriter
 
     /** Length of last packets containing no ROI information */
     private int lenLastNoROI = 0;
-
-    /**
-     * Opens the file 'file' for writing the codestream. The magic number is
-     * written to the bit stream. Normally, the header encoder must be empty
-     * (i.e. no data has been written to it yet). A BufferedOutputStream is
-     * used on top of the file to increase throughput, the length of the
-     * buffer is DEF_BUF_LEN.
-     *
-     * @param file The file where to write the bit stream
-     *
-     * @param mb The maximum number of bytes that can be written to the bit
-     * stream.
-     *
-     * @exception IOException If an error occurs while trying to open the file
-     * for writing or while writing the magic number.
-     */
-    public FileCodestreamWriter(File file, int mb) throws IOException {
-        super(mb);
-        out = new BufferedOutputStream(new FileOutputStream(file),DEF_BUF_LEN);
-        initSOP_EPHArrays();
-    }
-
-    /**
-     * Opens the file named 'fname' for writing the bit stream, using the 'he'
-     * header encoder. The magic number is written to the bit
-     * stream. Normally, the header encoder must be empty (i.e. no data has
-     * been written to it yet). A BufferedOutputStream is used on top of the
-     * file to increase throughput, the length of the buffer is DEF_BUF_LEN.
-     *
-     * @param fname The name of file where to write the bit stream
-     *
-     * @param mb The maximum number of bytes that can be written to the bit
-     * stream.
-     *
-     * @param encSpec The encoder's specifications
-     *
-     * @exception IOException If an error occurs while trying to open the file
-     * for writing or while writing the magic number.
-     */
-    public FileCodestreamWriter(String fname, int mb) throws IOException {
-        super(mb);
-        out = new BufferedOutputStream(new FileOutputStream(fname),
-                                       DEF_BUF_LEN);
-        initSOP_EPHArrays();
-    }
 
     /**
      * Uses the output stream 'os' for writing the bit stream, using the 'he'
@@ -333,21 +288,18 @@ public class FileCodestreamWriter extends CodestreamWriter
     }
 
     /**
-     * Writes the EOC marker and closes the underlying stream.
+     * Writes the EOC marker.
      *
-     * @exception IOException If an error occurs while closing the underlying
+     * @exception IOException If an error occurs while writing to the underlying
      * stream.
      */
     @Override
 	public void close() throws IOException {
-
-	// Write the EOC marker and close the codestream.
-        out.write(EOC>>8);
-        out.write(EOC);
-        
-        ndata += 2; // Add two to length of codestream for EOC marker
-        
-        out.close();
+    	// Write the EOC marker.
+    	out.write(EOC>>8);
+    	out.write(EOC);
+    
+    	ndata += 2; // Add two to length of codestream for EOC marker
     }
 
     /** 
