@@ -11,7 +11,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import jj2000.j2k.codestream.writer.CodestreamWriter;
-import jj2000.j2k.codestream.writer.FileCodestreamWriter;
 import jj2000.j2k.codestream.writer.HeaderEncoder;
 import jj2000.j2k.codestream.writer.PktEncoder;
 import jj2000.j2k.entropy.encoder.EntropyCoder;
@@ -303,19 +302,6 @@ public class ImgEncoder
 			throw new IllegalArgumentException("Invalid value in 'tref' option ");
 		}
 
-		OutputStream os = new BufferedOutputStream(new FileOutputStream(outname));
-		// **** CodestreamWriter ****
-		try
-		{
-			// Rely on rate allocator to limit amount of data
-			bwriter = new FileCodestreamWriter(os, Integer.MAX_VALUE);
-		}
-		catch (IOException e)
-		{
-			error("Could not open output file" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
-			return -1;
-		}
-
 		// Instantiate tiler
 		try
 		{
@@ -402,6 +388,22 @@ public class ImgEncoder
 			return -1;
 		}
 
+		// **** CodestreamWriter ****
+		OutputStream cs = null;
+		try
+		{
+			cs = new BufferedOutputStream(new FileOutputStream(outname));
+			// Rely on rate allocator to limit amount of data
+			bwriter = new CodestreamWriter(cs, Integer.MAX_VALUE);
+		}
+		catch (Exception e)
+		{
+			if (cs != null)
+				cs.close();
+			error("Could not open codestream output" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
+			return -1;
+		}
+
 		// **** Rate allocator ****
 		try
 		{
@@ -436,11 +438,11 @@ public class ImgEncoder
 		ralloc.runAndWrite();
 
 		// **** Done ****
-		bwriter.close();
-		os.close();
+		bwriter.terminate();
 
 		// **** Calculate file length ****
 		int fileLength = bwriter.getLength();
+		cs.close();
 
 		// **** Tile-parts and packed packet headers ****
 		if (pktspertp > 0 || pphTile || pphMain)

@@ -304,7 +304,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 */
 	public void writeTo(OutputStream out) throws IOException
 	{
-		out.write(getBuffer(), 0, getBufferLength());
+		baos.writeTo(out);
 	}
 
 	/**
