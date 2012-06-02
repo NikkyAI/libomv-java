@@ -54,14 +54,12 @@ import jj2000.j2k.wavelet.*;
  * The element can be either a node or a leaf of the tree. If it is a node then
  * ther are 4 descendants (LL, HL, LH and HH). If it is a leaf there are no
  * descendants.
- * </p>
  * 
  * <p>
  * The tree is bidirectional. Each element in the tree structure has a "parent",
  * which is the subband from which the element was obtained by decomposition.
  * The only exception is the root element which has no parent (i.e.it's null),
  * for obvious reasons.
- * </p>
  */
 public class SubbandSyn extends Subband
 {
@@ -127,7 +125,6 @@ public class SubbandSyn extends Subband
 	 * 
 	 * <p>
 	 * This constructor just calls the same constructor of the super class.
-	 * </p>
 	 * 
 	 * @param w
 	 *            The top-level width
@@ -227,7 +224,6 @@ public class SubbandSyn extends Subband
 	 * 
 	 * <p>
 	 * It uses the initChilds() method to initialize the childs.
-	 * </p>
 	 * 
 	 * @param hfilter
 	 *            The horizontal wavelet filter used to decompose this subband.

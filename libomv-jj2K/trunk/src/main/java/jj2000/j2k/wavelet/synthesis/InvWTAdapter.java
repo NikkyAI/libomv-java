@@ -56,19 +56,16 @@ import jj2000.j2k.image.*;
  * This abstract class can be used to facilitate the development of other
  * classes that implement the 'InvWT' interface, because most of the trivial
  * methods are already implemented.
- * </p>
  * 
  * <p>
  * If the default implementation of a method provided in this class does not
  * suit a particular implementation of the 'InvWT' interface, the method can be
  * overriden to implement the proper behaviour.
- * </p>
  * 
  * <p>
  * If the 'setImgResLevel()' method is overriden then it is very important that
  * the one of this class is called from the overriding method, so that the other
  * methods in this class return the correct values.
- * </p>
  * 
  * @see InvWT
  */
@@ -113,7 +110,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * Note: Image resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (1 tile) with 2 components (component 0 having 2
@@ -121,7 +117,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * first (tile-) component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the image has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The image resolution level.
@@ -147,7 +142,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * <p>
 	 * This default implementation returns the value of the source at the
 	 * current reconstruction resolution level.
-	 * </p>
 	 * 
 	 * @return The total current tile's width in pixels.
 	 */
@@ -177,7 +171,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * <p>
 	 * This default implementation returns the value of the source at the
 	 * current reconstruction resolution level.
-	 * </p>
 	 * 
 	 * @return The total current tile's height in pixels.
 	 */
@@ -312,7 +305,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * <p>
 	 * This default implementation returns the value of the source at the
 	 * current reconstruction resolution level.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index.
@@ -356,7 +348,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * <p>
 	 * This default implementation returns the value of the source at the
 	 * current reconstruction resolution level.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.
@@ -380,7 +371,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * <p>
 	 * This default implementation calls the same method on the source.
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal index of the tile.
@@ -403,7 +393,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * <p>
 	 * This default implementation calls the same method on the source.
-	 * </p>
 	 * 
 	 * @returns The new tile index
 	 */
@@ -419,7 +408,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param co
 	 *            If not null this object is used to return the information. If
@@ -439,7 +427,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The current tile's index (starts at 0).
 	 */
@@ -490,7 +477,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * <p>
 	 * This default implementation returns the value of the source at the
 	 * current reconstruction resolution level.
-	 * </p>
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
@@ -508,7 +494,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * <p>
 	 * This default implementation returns the value of the source at the
 	 * current reconstruction resolution level.
-	 * </p>
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
@@ -538,7 +523,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param co
 	 *            If not null this object is used to return the information. If
@@ -558,7 +542,6 @@ public abstract class InvWTAdapter implements InvWT
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total number of tiles in the image.
 	 */

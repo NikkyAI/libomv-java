@@ -55,7 +55,6 @@ import jj2000.j2k.util.*;
  * <p>
  * The type of length calculation and termination can be chosen at construction
  * time.
- * </p>
  * 
  * ---- Tricks that have been tried to improve speed ----
  * 
@@ -74,7 +73,6 @@ import jj2000.j2k.util.*;
  * decrease, probably due to the fact that often Q has to be negated. Also the
  * fact that a brach of the type "if (bit==mPS[li])" is replaced by two simpler
  * braches of the type "if (bit==0)" and "if (q<0)" may contribute to that.
- * </p>
  * 
  * <p>
  * 2) Removing cT
@@ -92,7 +90,6 @@ import jj2000.j2k.util.*;
  * the number of operations whenever a renormalization occurs is decreased.
  * Maybe it is due to the number of extra operations in the byteOut(),
  * terminate() and getNumCodedBytes() procedures.
- * </p>
  * 
  * <p>
  * 3) Change the convention of MPS and LPS.
@@ -106,7 +103,6 @@ import jj2000.j2k.util.*;
  * bit-stuffing as well.
  * 
  * This has not been tested yet.
- * </p>
  *
  * <p>
  * 4) Removing normalization while loop on MPS path
@@ -115,7 +111,6 @@ import jj2000.j2k.util.*;
  * (decimal 0.375) it is never necessary to do more than 1 renormalization
  * shift. Therefore the test of the while loop, and the loop itself, can be
  * removed.
- * </p>
  * 
  * <p>
  * 5) Simplifying test on A register
@@ -126,7 +121,6 @@ import jj2000.j2k.util.*;
  * converted to only one operation by smart Just-In-Time compilers)
  * 
  * This change has been integrated in the decoding procedures.
- * </p>
  * 
  * <p>
  * 6) Speedup mode
@@ -138,7 +132,6 @@ import jj2000.j2k.util.*;
  * the same as if no speedup mode would have been used.
  * 
  * Implemented but performance not tested yet.
- * </p>
  * 
  * <p>
  * 7) Multiple-symbol coding
@@ -149,7 +142,6 @@ import jj2000.j2k.util.*;
  * implementation of the entropy coder has to explicitely use it.
  * 
  * Implemented but performance not tested yet.
- * </p>
  */
 public class MQCoder
 {
@@ -413,13 +405,11 @@ public class MQCoder
 	 * symbols, with a high probability distribution, must be coded with the
 	 * same context. The generated bit stream is the same as if the normal mode
 	 * was used.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method is also faster than the 'codeSymbols()' and 'codeSymbol()'
 	 * ones, for coding the same symbols with the same context several times,
 	 * when speedup mode can not be used, although not significantly.
-	 * </p>
 	 * 
 	 * @param bit
 	 *            The symbol do code, 0 or 1.
@@ -595,13 +585,11 @@ public class MQCoder
 	 * <p>
 	 * The advantage of using this function is that the cost of the method call
 	 * is amortized by the number of coded symbols per method call.
-	 * </p>
 	 * 
 	 * <p>
 	 * Each context has a current MPS and an index describing what the current
 	 * probability is for the LPS. Each bit is encoded and if the probability of
 	 * the LPS exceeds .5, the MPS and LPS are switched.
-	 * </p>
 	 * 
 	 * @param bits
 	 *            An array containing the symbols to be encoded. Valid symbols
@@ -733,7 +721,6 @@ public class MQCoder
 	 * Each context has a current MPS and an index describing what the current
 	 * probability is for the LPS. Each bit is encoded and if the probability of
 	 * the LPS exceeds .5, the MPS and LPS are switched.
-	 * </p>
 	 * 
 	 * @param bit
 	 *            The symbol to be encoded, must be 0 or 1.
@@ -927,12 +914,10 @@ public class MQCoder
 	 * After calling this method the 'finishLengthCalculation()' method should
 	 * be called, after compensating the returned length for the length of
 	 * previous coded segments, so that the length calculation is finalized.
-	 * </p>
 	 * 
 	 * <p>
 	 * The type of termination used depends on the one specified at the
 	 * constructor.
-	 * </p>
 	 * 
 	 * @return The length of the arithmetic codeword after termination, in
 	 *         bytes.
@@ -1239,17 +1224,14 @@ public class MQCoder
 	 * length calculation with the 'finishLengthCalculation()' method, after
 	 * compensation of the offset in the number of bytes due to previous
 	 * terminated segments.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method should not be called if the current coding pass is to be
 	 * terminated. The 'terminate()' method should be called instead.
-	 * </p>
 	 * 
 	 * <p>
 	 * The calculation is done based on the type of length calculation specified
 	 * at the constructor.
-	 * </p>
 	 * 
 	 * @return The number of bytes in the compressed output stream necessary to
 	 *         decode all the information coded this far.
@@ -1382,7 +1364,6 @@ public class MQCoder
 	 * The values in 'rates' must have been compensated for any offset due to
 	 * previous terminated segments, so that the correct index to the stored
 	 * coded data is used.
-	 * </p>
 	 * 
 	 * @param rates
 	 *            The array containing the values returned by

@@ -52,13 +52,11 @@ import java.io.*;
  * Byte level input (i.e., for byte, int, long, float, etc.) should always be
  * byte aligned. For example, a request to read an <tt>int</tt> should always
  * realign the input at the byte level.
- * </p>
  * 
  * <p>
  * The implementation of this interface should clearly define if multi-byte
  * input data is read in little- or big-endian byte ordering (least significant
  * byte first or most significant byte first, respectively).
- * </p>
  * 
  * @see EndianType
  */

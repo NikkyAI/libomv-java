@@ -56,12 +56,10 @@ import jj2000.j2k.*;
  * image origin must be the canvas origin. The different inputs can have
  * different dimensions though (this will lead to different subsampling factors
  * for each component).
- * </p>
  * 
  * <p>
  * The input ImgData and component index list must be defined when constructing
  * this class and can not be modified later.
- * </p>
  * 
  * @see ImgData
  * @see jj2000.j2k.image.input.ImgReader

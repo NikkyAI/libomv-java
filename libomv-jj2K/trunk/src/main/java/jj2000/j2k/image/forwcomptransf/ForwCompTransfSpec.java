@@ -67,7 +67,6 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes
 	 * This constructor chose the component transformation type depending on the
 	 * wavelet filters : RCT with w5x3 filter and ICT with w9x7 filter. Note:
 	 * All filters must use the same data type.
-	 * </p>
 	 * 
 	 * @param nt
 	 *            The number of tiles

@@ -60,18 +60,15 @@ package jj2000.j2k.entropy.encoder;
  * bitrate order of the other optimization points. The rate allocator is
  * responsible for eliminating layers that have target bitrates larger than the
  * overall target bitrate.
- * </p>
  * 
  * <p>
  * Optimization points can be added with the addOptPoint() method. It takes the
  * target bitrate for the optimized layer and the number of extra layers to add
  * after it.
- * </p>
  * 
  * <p>
  * Information about the total number of layers, total number of optimization
  * points, target bitrates, etc. can be obtained with the other methods.
- * </p>
  */
 public class LayersInfo
 {

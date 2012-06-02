@@ -54,7 +54,6 @@ import jj2000.j2k.wavelet.*;
  * See the AnWTFilter class for details such as normalization, how to split
  * odd-length signals, etc. In particular, this method assumes that the low-pass
  * coefficient is computed first.
- * </p>
  * 
  * @see AnWTFilter
  * @see AnWTFilterInt
@@ -75,11 +74,9 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [-1/2 1 -1/2].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [1/4 1 1/4].
-	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal.
@@ -195,11 +192,9 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [-1/2 1 -1/2].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [1/4 1 1/4].
-	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal.
@@ -423,7 +418,6 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
-	 * </p>
 	 * 
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
 	 */
@@ -443,7 +437,6 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
-	 * </p>
 	 * 
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
 	 */
@@ -491,7 +484,6 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
-	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the
@@ -529,7 +521,6 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * <p>
 	 * Currently the implementation of this method only tests if 'obj' is also
 	 * of the class AnWTFilterIntLift5x3.
-	 * </p>
 	 * 
 	 * @param The
 	 *            object against which to test inequality.

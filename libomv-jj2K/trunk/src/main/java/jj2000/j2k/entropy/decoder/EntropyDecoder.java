@@ -53,7 +53,6 @@ import jj2000.j2k.wavelet.synthesis.*;
  * <p>
  * Default implementations of the methods in 'MultiResImgData' are provided
  * through the 'MultiResImgDataAdapter' abstract class.
- * </p>
  * 
  * <p>
  * Sign magnitude representation is used (instead of two's complement) for the

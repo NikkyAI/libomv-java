@@ -57,7 +57,6 @@ import jj2000.j2k.image.*;
  * resolution levels indicates the number of wavelet recompositions that will be
  * used, if it is equal as the number of decomposition levels then the full
  * resolution image is reconstructed.
- * </p>
  * 
  * <p>
  * It is assumed in this class that all tiles and components the same
@@ -66,7 +65,6 @@ import jj2000.j2k.image.*;
  * tile. However, the 'recResLvl' member variable always contain the values
  * applicable to the current tile, since many methods implemented here rely on
  * them.
- * </p>
  */
 public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc
 {
@@ -79,7 +77,6 @@ public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc
 	 * It is assumed here that all tiles and components have the same
 	 * reconstruction resolution level. If that was not the case it should be
 	 * the value for the current tile of the source.
-	 * </p>
 	 * 
 	 * @param src
 	 *            from where the wavelet coefficinets should be obtained.

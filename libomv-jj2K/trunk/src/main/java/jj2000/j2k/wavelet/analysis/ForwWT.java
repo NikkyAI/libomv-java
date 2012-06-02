@@ -54,7 +54,6 @@ import jj2000.j2k.wavelet.*;
  * This class does not define the methods to transfer data, just the specifics
  * to forward wavelet transform. Different data transfer methods are evisageable
  * for different transforms.
- * </p>
  */
 public interface ForwWT extends WaveletTransform, ForwWTDataProps
 {
@@ -70,12 +69,10 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 * <p>
 	 * The returned filters are applicable only to the specified component and
 	 * in the current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The resolution level of a subband is the resolution level to which a
 	 * subband contributes, which is different from its decomposition level.
-	 * </p>
 	 *
 	 * @param t
 	 *            The index of the tile for which to return the filters.
@@ -99,12 +96,10 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 * <p>
 	 * The returned filters are applicable only to the specified component and
 	 * in the current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The resolution level of a subband is the resolution level to which a
 	 * subband contributes, which is different from its decomposition level.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile for which to return the filters.

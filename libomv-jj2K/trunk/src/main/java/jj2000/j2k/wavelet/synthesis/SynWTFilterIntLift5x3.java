@@ -52,7 +52,6 @@ package jj2000.j2k.wavelet.synthesis;
  * See the SynWTFilter class for details such as normalization, how to split
  * odd-length signals, etc. In particular, this method assumes that the low-pass
  * coefficient is computed first.
- * </p>
  * 
  * @see SynWTFilter
  * @see SynWTFilterInt
@@ -67,11 +66,9 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [-1/4 1 -1/4].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [1/2 1 1/2].
-	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal.
@@ -196,11 +193,9 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [-1/4 1 -1/4].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [1/2 1 1/2].
-	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal.
@@ -455,7 +450,6 @@ public class SynWTFilterIntLift5x3 extends SynWTFilterInt
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
-	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the

@@ -57,7 +57,6 @@ import jj2000.j2k.util.*;
  * <p>
  * Default implementations of the methods in 'MultiResImgData' are provided
  * through the 'MultiResImgDataAdapter' abstract class.
- * </p>
  * 
  * <p>
  * Sign-magnitude representation is used (instead of two's complement) for the
@@ -65,7 +64,6 @@ import jj2000.j2k.util.*;
  * if negative). Then the magnitude of the quantized coefficient is stored in
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
- * </p>
  */
 public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec
 {
@@ -118,7 +116,6 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * <p>
 	 * The number of magnitude bits ('magBits' member variable) for each subband
 	 * is not initialized.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile, from 0 to T-1.
@@ -185,7 +182,6 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
@@ -193,13 +189,11 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the code-block width. See the 'DataBlk'
 	 * class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -245,20 +239,17 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.

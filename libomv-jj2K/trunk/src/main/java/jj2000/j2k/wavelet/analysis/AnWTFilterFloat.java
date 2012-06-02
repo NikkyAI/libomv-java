@@ -53,11 +53,9 @@ import jj2000.j2k.image.*;
  * <p>
  * See the AnWTFilter class for details such as normalization, how to split
  * odd-length signals, etc.
- * </p>
  *
  * <p>
  * The advantage of using the specialized method is that no casts are performed.
- * </p>
  *
  * @see AnWTFilter
  */

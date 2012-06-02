@@ -53,18 +53,15 @@ import java.util.*;
  * 
  * <p>
  * Currently the only kind of facilities managed is MsgLogger.
- * </p>
  * 
  * <p>
  * An example use of this class is if 2 instances of a decoder are running in
  * different threads and the messages of the 2 instances should be separated.
- * </p>
  * 
  * <p>
  * The default MsgLogger is a StreamMsgLogger that uses System.out as the 'out'
  * stream and System.err as the 'err' stream, and a line width of 78. This can
  * be changed using the registerMsgLogger() method.
- * </p>
  * 
  * @see MsgLogger
  * @see StreamMsgLogger

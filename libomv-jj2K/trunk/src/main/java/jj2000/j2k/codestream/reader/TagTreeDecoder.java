@@ -58,12 +58,10 @@ import java.io.*;
  * In general the decoding procedure must follow the same sequence of elements
  * and thresholds as the encoding one. The encoder is implemented by the
  * TagTreeEncoder class.
- * </p>
  * 
  * <p>
  * Tag trees that have one dimension, or both, as 0 are allowed for convenience.
  * Of course no values can be set or coded in such cases.
- * </p>
  * 
  * @see jj2000.j2k.codestream.writer.TagTreeEncoder
  */
@@ -101,7 +99,6 @@ public class TagTreeDecoder
 	 * <p>
 	 * The values of all elements are initialized to Integer.MAX_VALUE (i.e. no
 	 * information decoded so far). The states are initialized all to 0.
-	 * </p>
 	 * 
 	 * @param h
 	 *            The number of elements along the vertical direction.

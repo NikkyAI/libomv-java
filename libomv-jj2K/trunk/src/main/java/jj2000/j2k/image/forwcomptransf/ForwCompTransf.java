@@ -157,7 +157,6 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * <p>
 	 * This default implementation assumes that the number of fractional bits is
 	 * not modified by the component mixer.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component.
@@ -406,7 +405,6 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * This method calls the getInternCompData() method, but respects the
 	 * definitions of the getCompData() method defined in the BlkImgDataSrc
 	 * interface.
-	 * </p>
 	 * 
 	 * @param blk
 	 *            Determines the rectangular area to return, and the data is
@@ -802,7 +800,6 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * <p>
 	 * This default implementation changes the tile in the source and
 	 * re-initializes properly component transformation variables..
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal index of the tile.
@@ -848,7 +845,6 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * <p>
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
-	 * </p>
 	 * 
 	 * @return The new tile index
 	 */

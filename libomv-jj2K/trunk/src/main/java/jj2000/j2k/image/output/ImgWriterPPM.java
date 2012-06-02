@@ -112,7 +112,6 @@ public class ImgWriterPPM extends ImgWriter
 	 * <p>
 	 * The three components that will be written as R, G and B must be specified
 	 * through the b1, b2 and b3 arguments.
-	 * </p>
 	 * 
 	 * @param out
 	 *            The file where to write the data
@@ -185,7 +184,6 @@ public class ImgWriterPPM extends ImgWriter
 	 * <p>
 	 * The three components that will be written as R, G and B must be specified
 	 * through the b1, b2 and b3 arguments.
-	 * </p>
 	 * 
 	 * @param fname
 	 *            The name of the file where to write the data
@@ -263,12 +261,10 @@ public class ImgWriterPPM extends ImgWriter
 	 * 
 	 * <p>
 	 * This method may not be called concurrently from different threads.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data returned from the BlkImgDataSrc source is progressive, then
 	 * it is requested over and over until it is not progressive anymore.
-	 * </p>
 	 * 
 	 * @param ulx
 	 *            The horizontal coordinate of the upper-left corner of the area

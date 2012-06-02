@@ -51,7 +51,6 @@ import java.io.*;
  * 
  * <p>
  * This interface supports streams of up to 2 GB in length.
- * </p>
  * 
  * @see BinaryDataInput
  * @see BinaryDataOutput

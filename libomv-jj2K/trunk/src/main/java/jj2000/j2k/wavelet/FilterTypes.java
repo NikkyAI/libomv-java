@@ -49,7 +49,6 @@ package jj2000.j2k.wavelet;
  * <p>
  * The identifier values are the same as those used in the codestream syntax,
  * for the filters that are defined in the standard.
- * </p>
  */
 public interface FilterTypes
 {

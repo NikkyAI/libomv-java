@@ -58,26 +58,22 @@ import jj2000.j2k.util.*;
  * The image can be reconstructed at different (image) resolution levels indexed
  * from the lowest resolution available for each tile-component. This is
  * controlled by the setImgResLevel() method.
- * </p>
  * 
  * <p>
  * Note: Image resolution level indexes may differ from tile-component
  * resolution index. They are indeed indexed starting from the lowest number of
  * decomposition levels of each component of each tile.
- * </p>
  * 
  * <p>
  * Example: For an image (1 tile) with 2 components (component 0 having 2
  * decomposition levels and component 1 having 3 decomposition levels), the
  * first (tile-) component has 3 resolution levels and the second one has 4
  * resolution levels, whereas the image has only 3 resolution levels available.
- * </p>
  * 
  * <p>
  * This implementation does not support progressive data, all data is considered
  * to be non-progressive (i.e. "final" data) and the 'progressive' attribute of
  * the 'DataBlk' class is always set to false, see the 'DataBlk' class.
- * </p>
  * 
  * @see DataBlk
  */
@@ -196,13 +192,11 @@ public class InvWTFull extends InverseWT
 	 * reconstructed image data, as long as the getNomRangeBits() method of the
 	 * source returns a value corresponding to the nominal dynamic range of the
 	 * image data and not not of the wavelet coefficients.
-	 * </p>
 	 * 
 	 * <p>
 	 * If this number is <i>b</b> then for unsigned data the nominal range is
 	 * between 0 and 2^b-1, and for signed data it is between -2^(b-1) and
 	 * 2^(b-1)-1.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component.
@@ -228,7 +222,6 @@ public class InvWTFull extends InverseWT
 	 * This default implementation assumes that the wavelet transform does not
 	 * modify the fixed point. If that were the case this method should be
 	 * overriden.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component.
@@ -251,18 +244,15 @@ public class InvWTFull extends InverseWT
 	 * <p>
 	 * The area to return is specified by the 'ulx', 'uly', 'w' and 'h' members
 	 * of the 'blk' argument. These members are not modified by this method.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned data has its 'progressive' attribute unset (i.e. false).
-	 * </p>
 	 * 
 	 * @param blk
 	 *            Its coordinates and dimensions specify the area to return.
@@ -336,7 +326,6 @@ public class InvWTFull extends InverseWT
 	 * <p>
 	 * The area to return is specified by the 'ulx', 'uly', 'w' and 'h' members
 	 * of the 'blk' argument. These members are not modified by this method.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
@@ -344,18 +333,15 @@ public class InvWTFull extends InverseWT
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the block's width. See the 'DataBlk'
 	 * class.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data array in 'blk' is <tt>null</tt>, then a new one is created.
 	 * If the data array is not <tt>null</tt> then it must be big enough to
 	 * contain the requested area.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned data always has its 'progressive' attribute unset (i.e
 	 * false)
-	 * </p>
 	 * 
 	 * @param blk
 	 *            Its coordinates and dimensions specify the area to return. If

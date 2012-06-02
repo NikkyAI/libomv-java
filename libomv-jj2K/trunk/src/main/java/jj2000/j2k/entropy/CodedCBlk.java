@@ -49,7 +49,6 @@ package jj2000.j2k.entropy;
  * <p>
  * This class is normally not used. Instead the EncRDCBlk, EncLyrdCBlk and the
  * DecLyrdCBlk subclasses are used.
- * </p>
  * 
  * @see jj2000.j2k.entropy.encoder.CBlkRateDistStats
  * @see jj2000.j2k.entropy.decoder.DecLyrdCBlk

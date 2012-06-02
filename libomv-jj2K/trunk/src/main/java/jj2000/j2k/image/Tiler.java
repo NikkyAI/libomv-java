@@ -61,12 +61,10 @@ import jj2000.j2k.*;
  * nominal tile size, tiling origin, component subsampling and other factors.
  * Therefore it might not be assumed that all tiles are of the same width and
  * height.
- * </p>
  * 
  * <p>
  * The nominal dimension of the tiles is the maximal one, in the reference grid.
  * All the components of the image have the same number of tiles.
- * </p>
  * 
  * @see ImgData
  * @see BlkImgDataSrc
@@ -341,14 +339,12 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 'h' members of the 'blk' argument, relative to the current tile. These
 	 * members are not modified by this method. The 'offset' and 'scanw' of the
 	 * returned data can be arbitrary. See the 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method, in general, is more efficient than the 'getCompData()'
 	 * method since it may not copy the data. However if the array of returned
 	 * data is to be modified by the caller then the other method is probably
 	 * preferable.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data array in <tt>blk</tt> is <tt>null</tt>, then a new one is
@@ -358,12 +354,10 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * not be considered to contain the returned data, a new array may have been
 	 * created. Instead, get the array from <tt>blk</tt> after the method has
 	 * returned.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned data may have its 'progressive' attribute set. In this case
 	 * the returned data is only an approximation of the "final" data.
-	 * </p>
 	 * 
 	 * @param blk
 	 *            Its coordinates and dimensions specify the area to return,
@@ -409,26 +403,22 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * members are not modified by this method. The 'offset' of the returned
 	 * data is 0, and the 'scanw' is the same as the block's width. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method, in general, is less efficient than the 'getInternCompData()'
 	 * method since, in general, it copies the data. However if the array of
 	 * returned data is to be modified by the caller then this method is
 	 * preferable.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data array in 'blk' is 'null', then a new one is created. If the
 	 * data array is not 'null' then it is reused, and it must be large enough
 	 * to contain the block's data. Otherwise an 'ArrayStoreException' or an
 	 * 'IndexOutOfBoundsException' is thrown by the Java system.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned data may have its 'progressive' attribute set. In this case
 	 * the returned data is only an approximation of the "final" data.
-	 * </p>
 	 * 
 	 * @param blk
 	 *            Its coordinates and dimensions specify the area to return,

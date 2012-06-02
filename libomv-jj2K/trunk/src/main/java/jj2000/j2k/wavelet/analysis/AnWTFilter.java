@@ -51,7 +51,6 @@ import jj2000.j2k.wavelet.*;
  * provide more specific method calls while retaining the generality of this
  * one. See the AnWTFilterInt and AnWTFilterFloat classes. Implementations of
  * analysis filters should inherit from one of those classes.
- * </p>
  *
  * All analysis wavelet filters should follow the following conventions:
  * 
@@ -116,7 +115,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * inLen. This array must be of the same type as the one for which the
 	 * particular implementation works with (which is returned by the
 	 * getDataType() method).
-	 * </p>
 	 * 
 	 * <p>
 	 * The input signal can be interleaved with other signals in the same inSig
@@ -127,7 +125,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * filter columns of a 2-D signal, when it is stored in a line by line order
 	 * in inSig, without having to copy the data, in this case the inStep
 	 * argument should be the line width.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method also allows to apply the analysis wavelet filter by parts in
@@ -145,21 +142,18 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * which case it will only be used when filtering the columns) or for
 	 * overlapping block-based wavelet transforms (in which case it will be used
 	 * when filtering lines and columns).
-	 * </p>
 	 * 
 	 * <p>
 	 * The low-pass output signal is placed in the lowSig array. The lowOff and
 	 * lowStep arguments are analogous to the inOff and inStep ones, but they
 	 * apply to the lowSig array. The lowSig array must be long enough to hold
 	 * the low-pass output signal.
-	 * </p>
 	 * 
 	 * <p>
 	 * The high-pass output signal is placed in the highSig array. The highOff
 	 * and highStep arguments are analogous to the inOff and inStep ones, but
 	 * they apply to the highSig array. The highSig array must be long enough to
 	 * hold the high-pass output signal.
-	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal. It must be
@@ -228,7 +222,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * inLen. This array must be of the same type as the one for which the
 	 * particular implementation works with (which is returned by the
 	 * getDataType() method).
-	 * </p>
 	 * 
 	 * <p>
 	 * The input signal can be interleaved with other signals in the same inSig
@@ -239,21 +232,18 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * filter columns of a 2-D signal, when it is stored in a line by line order
 	 * in inSig, without having to copy the data, in this case the inStep
 	 * argument should be the line width.
-	 * </p>
 	 * 
 	 * <p>
 	 * The low-pass output signal is placed in the lowSig array. The lowOff and
 	 * lowStep arguments are analogous to the inOff and inStep ones, but they
 	 * apply to the lowSig array. The lowSig array must be long enough to hold
 	 * the low-pass output signal.
-	 * </p>
 	 * 
 	 * <p>
 	 * The high-pass output signal is placed in the highSig array. The highOff
 	 * and highStep arguments are analogous to the inOff and inStep ones, but
 	 * they apply to the highSig array. The highSig array must be long enough to
 	 * hold the high-pass output signal.
-	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal. It must be
@@ -311,7 +301,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
-	 * </p>
 	 * 
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
 	 */
@@ -327,7 +316,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
-	 * </p>
 	 * 
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
 	 */
@@ -344,7 +332,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * <p>
 	 * The length of the low-pass synthesis filter is
 	 * getSynLowNegSupport()+getSynLowPosSupport().
-	 * </p>
 	 * 
 	 * @param in
 	 *            The synthesis waveform of the previous stage.
@@ -373,7 +360,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * <p>
 	 * The length of the high-pass synthesis filter is
 	 * getSynHighNegSupport()+getSynHighPosSupport().
-	 * </p>
 	 * 
 	 * @param in
 	 *            The synthesis waveform of the previous stage.
@@ -401,7 +387,6 @@ public abstract class AnWTFilter implements WaveletFilter
 	 * The 'wf' signal has to be already time-reversed, therefore only a
 	 * dot-product is performed (instead of a convolution). This is equivalent
 	 * to convolving with the non-time-reversed 'wf' signal.
-	 * </p>
 	 * 
 	 * @param in
 	 *            The signal to upsample and filter. If null it is considered to

@@ -54,12 +54,10 @@ import jj2000.j2k.wavelet.synthesis.*;
  * <p>
  * This interface is the source of data for the entropy decoder. See the
  * 'EntropyDecoder' class.
- * </p>
  * 
  * <p>
  * For each coded-code-block the entropy-coded data is returned along with its
  * truncation point information in a 'DecLyrdCBlk' object.
- * </p>
  * 
  * @see EntropyDecoder
  * @see DecLyrdCBlk
@@ -80,7 +78,6 @@ public interface CodedCBlkDataSrcDec extends InvWTData
 	 * later time. The fact that data from more than one layer can be returned
 	 * means that several packets from the same code-block, of the same
 	 * component, and the same tile, have been concatenated.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned compressed code-block can have its progressive attribute
@@ -88,19 +85,16 @@ public interface CodedCBlkDataSrcDec extends InvWTData
 	 * subsequent calls to this method (subject to transmission delays, etc). If
 	 * the progressive attribute is not set it means that the returned data is
 	 * all the data that can be obtained for the specified subblock.
-	 * </p>
 	 * 
 	 * <p>
 	 * The compressed code-block is uniquely specified by the current tile, the
 	 * component (identified by 'c'), the subband (indentified by 'sb') and the
 	 * code-bock vertical and horizontal indexes 'm' and 'n'.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DecLyrdCBlk' object contain
 	 * the coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.

@@ -102,7 +102,6 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * resolution level 1 to resolution level 0). If there are less elements
 	 * than the maximum resolution level, then the last element is assumed to be
 	 * repeated.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index, in raster scan order
@@ -130,7 +129,6 @@ public class SynWTFilterSpec extends ModuleSpec
 	 * resolution level 1 to resolution level 0). If there are less elements
 	 * than the maximum resolution level, then the last element is assumed to be
 	 * repeated.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index, in raster scan order

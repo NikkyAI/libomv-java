@@ -59,20 +59,17 @@ import java.io.*;
  * known prior to the creation of a ISRandomAccessIO object, it is best to
  * specify that as the initial in-memory buffer size. That will minimize data
  * copying and multiple allocation.
- * </p>
  * 
  * <p>
  * Multi-byte data is read in big-endian order. The in-memory buffer storage is
  * released when 'close()' is called. This class can only be used for data
  * input, not output. The wrapped InputStream is closed when all the input data
  * is cached or when 'close()' is called.
- * </p>
  * 
  * <p>
  * If an out of memory condition is encountered when growing the in-memory
  * buffer an IOException is thrown instead of an OutOfMemoryError. The exception
  * message is "Out of memory to cache input data".
- * </p>
  * 
  * <p>
  * This class is intended for use as a "quick and dirty" way to give network
@@ -80,12 +77,10 @@ import java.io.*;
  * efficient means of implementing network connectivity. Doing such requires
  * reimplementing the RandomAccessIO based classes to directly use network
  * connections.
- * </p>
  * 
  * <p>
  * This class does not use temporary files as buffers, because that would
  * preclude the use in unsigned applets.
- * </p>
  */
 public class ISRandomAccessIO implements RandomAccessIO
 {

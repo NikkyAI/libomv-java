@@ -73,26 +73,22 @@ import java.util.*;
  * to 'getNextCodeBlock()' will be done on the same component. If this is not
  * the case, the speed-up that can be expected on multiprocessor machines might
  * be significantly decreased.
- * </p>
  * 
  * <p>
  * The code-blocks are rectangular, with dimensions which must be powers of 2.
  * Each dimension has to be no smaller than 4 and no larger than 256. The
  * product of the two dimensions (i.e. area of the code-block) may not exceed
  * 4096.
- * </p>
  * 
  * <p>
  * Context 0 of the MQ-coder is used as the uniform one (uniform, non-adaptive
  * probability distribution). Context 1 is used for RLC coding. Contexts 2-10
  * are used for zero-coding (ZC), contexts 11-15 are used for sign-coding (SC)
  * and contexts 16-18 are used for magnitude-refinement (MR).
- * </p>
  * 
  * <p>
  * This implementation buffers the symbols and calls the MQ coder only once per
  * stripe and per coding pass, to reduce the method call overhead.
- * </p>
  * 
  * <p>
  * This implementation also provides some timing features. They can be enabled
@@ -104,13 +100,11 @@ import java.util.*;
  * (i.e. some time might be counted in several places). When timing is disabled
  * ('DO_TIMING' is false) there is no penalty if the compiler performs some
  * basic optimizations. Even if not the penalty should be negligeable.
- * </p>
  * 
  * <p>
  * The source module must implement the CBlkQuantDataSrcEnc interface and
  * code-block's data is received in a CBlkWTData instance. This modules sends
  * code-block's information in a CBlkRateDistStats instance.
- * </p>
  * 
  * @see CBlkQuantDataSrcEnc
  * @see CBlkWTData
@@ -327,17 +321,14 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * significant, 0 for non significant). Bits 3 to 0 store the significance
 	 * of the diagonal coefficients (up-left, up-right, down-left and
 	 * down-right; 1 for significant, 0 for non significant).
-	 * </p>
 	 * 
 	 * <p>
 	 * The upper 16 bits the state is stored as in the lower 16 bits, but with
 	 * the bits shifted up by 16.
-	 * </p>
 	 * 
 	 * <p>
 	 * The lower 16 bits are referred to as "row 1" ("R1") while the upper 16
 	 * bits are referred to as "row 2" ("R2").
-	 * </p>
 	 */
 	private int stateT[][];
 
@@ -1036,7 +1027,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * <p>
 	 * If the 'OPT_PRED_TERM' option is given then the MQ termination must be
 	 * 'TERM_PRED_ER' or an exception is thrown.
-	 * </p>
 	 * 
 	 * @param src
 	 *            The source of data
@@ -1295,13 +1285,11 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * When changing the current tile (through 'setTile()' or 'nextTile()') this
 	 * method will always return the first code-block, as if this method was
 	 * never called before for the new current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
 	 * this object, if any, and it can be modified "in place" without any
 	 * problems after being returned.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -1457,7 +1445,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * <p>
 	 * This default implementation just changes the tile in the source.
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal index of the tile.
@@ -1488,7 +1475,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * <p>
 	 * This default implementation just advances to the next tile in the source.
-	 * </p>
 	 * 
 	 * @return The new tile index
 	 */
@@ -2201,7 +2187,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * In this method, the arithmetic coder is bypassed, and raw bits are
 	 * directly written in the bit stream (useful when distribution are close to
 	 * uniform, for intance, at high bit-rates and at lossless compression).
-	 * </p>
 	 * 
 	 * @param srcblk
 	 *            The code-block data to code
@@ -2791,7 +2776,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * uniform, for intance, at high bit-rates and at lossless compression). The
 	 * 'STATE_PREV_MR_R1' and 'STATE_PREV_MR_R2' bits are not set because they
 	 * are used only when the arithmetic coder is not bypassed.
-	 * </p>
 	 * 
 	 * @param srcblk
 	 *            The code-block data to code
@@ -3528,21 +3512,18 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * pass if necessary. The ommitted 0xFF will be synthetized by the decoder
 	 * if necessary, as required by JPEG 2000. This method should only be called
 	 * once that the entire code-block is coded.
-	 * </p>
 	 * 
 	 * <p>
 	 * Passes that are terminated are not checked for the 0xFF byte, since it is
 	 * assumed that the termination procedure does not output any trailing 0xFF.
 	 * Checking the terminated segments would involve much more than just
 	 * modifying the stored rates.
-	 * </p>
 	 * 
 	 * <p>
 	 * NOTE: It is assumed by this method that the coded data does not contain
 	 * consecutive 0xFF bytes, as is the case with the MQ and 'arithemetic
 	 * coding bypass' bit stuffing policy. However, the termination policies
 	 * used should also respect this requirement.
-	 * </p>
 	 * 
 	 * @param data
 	 *            The coded data for the code-block

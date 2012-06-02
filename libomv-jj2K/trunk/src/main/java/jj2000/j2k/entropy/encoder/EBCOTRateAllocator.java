@@ -71,7 +71,6 @@ import java.io.*;
  * (i.e. some time might be counted in several places). When timing is disabled
  * ('DO_TIMING' is false) there is no penalty if the compiler performs some
  * basic optimizations. Even if not the penalty should be negligeable.
- * </p>
  * 
  * @see PostCompRateAllocator
  * @see CodedCBlkDataSrcEnc
@@ -176,12 +175,10 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * code-block data that would be obtained if the truncation slope was chosen
 	 * as '2*(k-RD_SUMMARY_OFF)', without counting the overhead associated with
 	 * the packet heads.
-	 * </p>
 	 * 
 	 * <p>
 	 * This summary is used to estimate the relation of the R-D slope to coded
 	 * length, and to obtain absolute minimums on the slope given a length.
-	 * </p>
 	 */
 	private int RDSlopesRates[];
 
@@ -2283,7 +2280,6 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * <p>
 	 * If the value to return is lower than 0, 0 is returned. If it is larger
 	 * than the maximum table index, then the maximum is returned.
-	 * </p>
 	 * 
 	 * @param slope
 	 *            The slope value

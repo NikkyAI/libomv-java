@@ -71,11 +71,9 @@ import java.io.*;
  * executes. The exit code of the class can be obtained with the getExitCode()
  * method, after the constructor and after the run method. A non-zero value
  * indicates that an error has occurred.
- * </p>
  * 
  * <p>
  * The modules are inserted in the encoding chain with the following order:
- * </p>
  * 
  * <ul>
  * <li>ImgReader</li>
@@ -93,24 +91,20 @@ import java.io.*;
  * <p>
  * The encoder uses a pull model. This means that the last module
  * (PostCompRateAllocator) requests data from its source (EntropyCoder), ...
- * </p>
  * 
  * <p>
  * Writing of the codestream writing (header+bit stream) is realized by
  * HeaderEncoder and CodestreamWriter modules.
- * </p>
  * 
  * <p>
  * Packed packet headers and file-format creation are carried out by
  * CodestreamManipulator and FileFormatWriter modules respectively.
- * </p>
  * 
  * <p>
  * Many modules of the encoder may behave differently depending on the
  * tile-component. The specifications of their behaviour are kept in specialized
  * modules extending ModuleSpec class. All these modules are accessible through
  * an instance of EncoderSpecs class.
- * </p>
  * 
  * @see ImgReader
  * @see ImgDataJoiner

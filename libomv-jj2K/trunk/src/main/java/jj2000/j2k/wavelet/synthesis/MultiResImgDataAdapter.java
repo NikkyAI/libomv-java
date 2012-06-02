@@ -57,13 +57,11 @@ import jj2000.j2k.image.*;
  * classes that implement 'MultiResImgData'. For example a dequantizer can
  * inherit from this class and all the trivial methods do not have to be
  * reimplemented.
- * </p>
  * 
  * <p>
  * If the default implementation of a method provided in this class does not
  * suit a particular implementation of the 'MultiResImgData' interface, the
  * method can be overriden to implement the proper behaviour.
- * </p>
  * 
  * @see MultiResImgData
  */
@@ -94,7 +92,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -114,7 +111,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -148,7 +144,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -168,7 +163,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -186,7 +180,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The number of components in the image.
 	 */
@@ -204,7 +197,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component (between 0 and N-1)
@@ -227,7 +219,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component (between 0 and N-1)
@@ -248,7 +239,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param t
 	 *            Tile index.
@@ -274,7 +264,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index.
@@ -299,7 +288,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.
@@ -344,7 +332,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation just changes the tile in the source.
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal indexes the tile.
@@ -368,7 +355,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation just changes the tile in the source.
-	 * </p>
 	 * 
 	 * @return The new tile index
 	 */
@@ -385,7 +371,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param co
 	 *            If not null this object is used to return the information. If
@@ -405,7 +390,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The current tile's index (starts at 0).
 	 */
@@ -421,7 +405,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component index.
@@ -441,7 +424,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component index.
@@ -476,7 +458,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -497,7 +478,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -516,7 +496,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param co
 	 *            If not null this object is used to return the information. If
@@ -536,7 +515,6 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total number of tiles in the image.
 	 */

@@ -68,13 +68,11 @@ public class StdDequantizerParams extends DequantizerParams
 	 * range of 1. The true quantization step size is (2^R)*D', where R is
 	 * ceil(log2(dr)), where 'dr' is the dynamic range of the subband samples,
 	 * in the corresponding subband.
-	 * </p>
 	 * 
 	 * <p>
 	 * For reversible systems the exponent value in 'exp' is used to determine
 	 * the number of magnitude bits in the quantized coefficients. It is, in
 	 * fact, the dynamic range of the subband data.
-	 * </p>
 	 * 
 	 * <p>
 	 * In general the index of the first subband in a resolution level is not 0.
@@ -82,7 +80,6 @@ public class StdDequantizerParams extends DequantizerParams
 	 * index, and not in the subband order starting from 0. For instance,
 	 * resolution level 3, the first subband has the index 16, then the exponent
 	 * of the subband is exp[3][16], not exp[3][0].
-	 * </p>
 	 * 
 	 * @see Subband
 	 */
@@ -100,12 +97,10 @@ public class StdDequantizerParams extends DequantizerParams
 	 * The true step size D is obtained as follows: D=(2^R)*D', where
 	 * 'R=ceil(log2(dr))' and 'dr' is the dynamic range of the subband samples,
 	 * in the corresponding subband.
-	 * </p>
 	 * 
 	 * <p>
 	 * This value is 'null' for reversible systems (i.e. there is no true
 	 * quantization, 'D' is always 1).
-	 * </p>
 	 * 
 	 * <p>
 	 * In general the index of the first subband in a resolution level is not 0.
@@ -113,7 +108,6 @@ public class StdDequantizerParams extends DequantizerParams
 	 * and not in the subband order starting from 0. For instance, if resolution
 	 * level 3, the first subband has the index 16, then the step of the subband
 	 * is nStep[3][16], not nStep[3][0].
-	 * </p>
 	 * 
 	 * @see Subband
 	 */

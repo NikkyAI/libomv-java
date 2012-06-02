@@ -54,7 +54,6 @@ import jj2000.j2k.wavelet.*;
  * See the AnWTFilter class for details such as normalization, how to split
  * odd-length signals, etc. In particular, this method assumes that the low-pass
  * coefficient is computed first.
- * </p>
  * 
  * @see AnWTFilter
  * @see AnWTFilterFloat
@@ -95,24 +94,19 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [ALPHA 1 ALPHA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [BETA 1 BETA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the third lifting step are [GAMMA 1 GAMMA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the fourth lifting step are [DELTA 1 DELTA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of KL and a factor of KH
-	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal.
@@ -299,24 +293,19 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [ALPHA 1 ALPHA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [BETA 1 BETA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the third lifting step are [GAMMA 1 GAMMA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the fourth lifting step are [DELTA 1 DELTA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of KL and a factor of KH
-	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal.
@@ -609,7 +598,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
-	 * </p>
 	 * 
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
 	 */
@@ -629,7 +617,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
-	 * </p>
 	 * 
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
 	 */
@@ -677,7 +664,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
-	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the
@@ -715,7 +701,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * <p>
 	 * Currently the implementation of this method only tests if 'obj' is also
 	 * of the class AnWTFilterFloatLift9x7
-	 * </p>
 	 * 
 	 * @param The
 	 *            object against which to test inequality.

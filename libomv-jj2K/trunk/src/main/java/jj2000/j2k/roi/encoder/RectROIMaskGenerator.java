@@ -55,13 +55,11 @@ import jj2000.j2k.image.*;
  * with which to scale are equal to u-umin where umin is the lowest scaling
  * factor within the block. The umin value is sent to the entropy coder to be
  * used for scaling the distortion values.
- * </p>
  * 
  * <p>
  * To generate and to store the boundaries of the ROIs, the class
  * SubbandRectROIMask is used. There is one tree of SubbandMasks for each
  * component.
- * </p>
  * 
  * @see SubbandRectROIMask
  * @see ROIMaskGenerator
@@ -124,7 +122,6 @@ public class RectROIMaskGenerator extends ROIMaskGenerator
 	 * In order to get the mask for a particular Subband, the subband tree is
 	 * traversed and at each decomposition, the ROI masks are computed. The roi
 	 * bondaries for each subband are stored in the SubbandRectROIMask tree.
-	 * </p>
 	 * 
 	 * @param db
 	 *            The data block that is to be filled with the mask

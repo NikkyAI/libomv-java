@@ -152,7 +152,6 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile impleme
 	 * the <tt>short</tt> value as an argument. To write unsigned data pass the
 	 * <tt>int</tt> value as an argument (it will be automatically casted, and
 	 * only the 16 least significant bits will be written).
-	 * </p>
 	 * 
 	 * @param v
 	 *            The value to write to the output

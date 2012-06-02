@@ -58,14 +58,12 @@ import jj2000.j2k.image.*;
  * <p>
  * This interface is very similar to the 'ImgData' one. It differs only by the
  * fact that it handles multiple resolutions.
- * </p>
  * 
  * <p>
  * Resolution levels are counted from 0 to L. Resolution level 0 is the lower
  * resolution, while L is the maximum resolution level, or full resolution,
  * which is returned by 'getMaxResLvl()'. Note that there are L+1 resolution
  * levels available.
- * </p>
  * 
  * <p>
  * As in the 'ImgData' interface a multi-resolution image lies on top of a
@@ -74,17 +72,14 @@ import jj2000.j2k.image.*;
  * reference grid by '(x_l,y_l) = (ceil(x_l/2^(L-l)),ceil(y_l/2^(L-l)))', where
  * '(x,y)' are the full resolution reference grid coordinates and '(x_l,y_l)'
  * are the level 'l' reference grid coordinates.
- * </p>
  * 
  * <p>
  * For details on the canvas system and its implications consult the 'ImgData'
  * interface.
- * </p>
  * 
  * <p>
  * Note that tile sizes may not be obtained by simply dividing the tile size in
  * the reference grid by the subsampling factor.
- * </p>
  * 
  * @see jj2000.j2k.image.ImgData
  * @see jj2000.j2k.quantization.dequantizer.CBlkQuantDataSrcDec

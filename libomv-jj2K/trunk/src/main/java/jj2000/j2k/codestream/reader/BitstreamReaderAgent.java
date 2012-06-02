@@ -67,16 +67,13 @@ import java.io.*;
  * in any order. The amount of data returned would normally depend on the data
  * available at the time of the request, be it from a file or from a network
  * connection.
- * </p>
  * 
  * <p>
  * The bit stream reader agent has the notion of a current tile, and coordinates
  * are relative to the current tile, where applicable.
- * </p>
  * 
  * <p>
  * Resolution level 0 is the lowest resolution level, i.e. the LL subband alone.
- * </p>
  */
 public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 {
@@ -356,7 +353,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Tile resolution level indexes may be different from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of the tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * For an image (1 tile) with 2 components (component 0 having 2
@@ -364,7 +360,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * first (tile-)component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the tile has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The (tile) resolution level.
@@ -404,7 +399,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Tile resolution level indexes may be different from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of the tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * For an image (1 tile) with 2 components (component 0 having 2
@@ -412,7 +406,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * first (tile-)component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the tile has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The (tile) resolution level.
@@ -452,7 +445,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Image resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (1 tile) with 2 components (component 0 having 2
@@ -460,7 +452,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * first (tile-) component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the image has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The image resolution level.
@@ -493,7 +484,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Image resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (1 tile) with 2 components (component 0 having 2
@@ -501,7 +491,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * first (tile-) component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the image has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The image resolution level, from 0 to L.
@@ -532,7 +521,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Image resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (1 tile) with 2 components (component 0 having 2
@@ -540,7 +528,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * first (tile-) component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the image has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -572,7 +559,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Image resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (1 tile) with 2 components (component 0 having 2
@@ -580,7 +566,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * first (tile-) component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the image has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The resolution level, from 0 to L.
@@ -680,7 +665,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Component resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of same component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (2 tiles) with 1 component (tile 0 having 2
@@ -688,7 +672,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * tile(-component) has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the component has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.
@@ -720,7 +703,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * Note: Component resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of same component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (2 tiles) with 1 component (tile 0 having 2
@@ -728,7 +710,6 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * tile(-component) has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the component has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.
@@ -902,12 +883,10 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec
 	 * <p>
 	 * Note: this method is not able to return subband tree for a tile different
 	 * than the current one.
-	 * </p>
 	 * 
 	 * <p>
 	 * The number of magnitude bits ('magBits' member variable) for each subband
 	 * is not initialized.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index

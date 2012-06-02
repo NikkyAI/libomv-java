@@ -58,7 +58,6 @@ package jj2000.j2k.codestream;
  * any other class you can either use the fully qualified name (e.g.,
  * <tt>ProgressionType.LY_RES_COMP_POS_PROG</tt>) or declare this interface in
  * the implements clause of the class and then access the identifier directly.
- * </p>
  */
 public interface ProgressionType
 {

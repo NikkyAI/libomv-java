@@ -63,7 +63,6 @@ import java.util.*;
  * <li>Component main default attribute</li>
  * <li>Main default attribute</li>
  * </ul>
- * </p>
  */
 public class ModuleSpec implements Cloneable
 {

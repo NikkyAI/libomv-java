@@ -51,11 +51,9 @@ import java.io.*;
  * <p>
  * After being read the coefficients are level shifted by subtracting 2^(nominal
  * bit range-1)
- * </p>
  * 
  * <p>
  * The TransferType (see ImgData) of this class is TYPE_INT.
- * </p>
  * 
  * <P>
  * NOTE: This class is not thread safe, for reasons of internal buffering.

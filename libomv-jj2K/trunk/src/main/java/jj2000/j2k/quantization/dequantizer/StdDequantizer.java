@@ -63,20 +63,17 @@ import jj2000.j2k.image.*;
  * if negative). Then the magnitude of the quantized coefficient is stored in
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
- * </p>
  * 
  * <p>
  * When reversible quantization is used, this class only converts between the
  * sign-magnitude representation and the integer (or eventually fixed-point)
  * output, since there is no true quantization.
- * </p>
  * 
  * <p>
  * The output data is fixed-point two's complement for 'int' output and
  * floating-point for 'float' output. The type of output and the number number
  * of fractional bits for 'int' output are defined at the constructor. Each
  * component may have a different number of fractional bits.
- * </p>
  * 
  * <p>
  * The reconstruction levels used by the dequantizer are exactly what is
@@ -84,7 +81,6 @@ import jj2000.j2k.image.*;
  * always returns codewords that are midways in the decoded intervals. In this
  * way the dequantized values will always lie midways in the quantization
  * intervals.
- * </p>
  */
 public class StdDequantizer extends Dequantizer
 {
@@ -160,7 +156,6 @@ public class StdDequantizer extends Dequantizer
 	 * 
 	 * <p>
 	 * <u>Note:</u> Fractional bits are no more supported by JJ2000.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component.
@@ -187,7 +182,6 @@ public class StdDequantizer extends Dequantizer
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
@@ -195,7 +189,6 @@ public class StdDequantizer extends Dequantizer
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the code-block width. See the 'DataBlk'
 	 * class.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -241,14 +234,12 @@ public class StdDequantizer extends Dequantizer
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.

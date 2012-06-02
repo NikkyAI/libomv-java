@@ -58,14 +58,12 @@ import java.awt.*;
  * <p>
  * The image data is not rescaled to fit the available dynamic range (not even
  * the alpha values for RGBA data).
- * </p>
  * 
  * <p>
  * BlkImgDataSrc sources with 1, 3 and 4 components are supported. If 1, it is
  * assumed to be gray-level data. If 3 it is assumed to be RGB data, in that
  * order. If 4 it is assumed to be RGBA data (RGB plus alpha plane), in that
  * order. All components must have the same size.
- * </p>
  * 
  * @see ImageProducer
  * @see BlkImgDataSrc
@@ -160,7 +158,6 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * <p>
 	 * This method uses the JVM default Toolkit, which might not be what it is
 	 * desired.
-	 * </p>
 	 * 
 	 * @param src
 	 *            The source of image data.
@@ -182,7 +179,6 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * This method uses the component's toolkit. The toolkit of a component may
 	 * change if it is moved from one frame to another one, since it is the
 	 * frame that controls which toolkit is used.
-	 * </p>
 	 * 
 	 * @param src
 	 *            The source of image data.
@@ -260,25 +256,21 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * Delivery is performed in "parallel" to all the registered image
 	 * consumers. By "parallel" it is meant that each line of the image is
 	 * delivered to all consumers before delivering the next line.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data returned by the BlkImgDataSrc source happens to be
 	 * progressive (see BlkImgDataSrc and DataBlk) then the abort condition is
 	 * sent to the image consumers and no further data is delivered.
-	 * </p>
 	 * 
 	 * <p>
 	 * Once all the data is sent to a consumer this one is automatically removed
 	 * from the list of registered ones, unless an abort happens.
-	 * </p>
 	 * 
 	 * <p>
 	 * To start the BlkImgDataSrc is set to tile (0,0), and the tiles are
 	 * produced in raster sacn order. Once the last tile is produced,
 	 * setTile(0,0) is called again, which signals that we are done with the
 	 * current tile, which might free up resources.
-	 * </p>
 	 * 
 	 * @param ic
 	 *            The image consumer to register
@@ -543,7 +535,6 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 	 * <p>
 	 * Currently this call is ignored (which is perfectly legal according to the
 	 * ImageProducer interface specification).
-	 * </p>
 	 * 
 	 * @param ic
 	 *            The image consumer to which the data is sent in top-down,

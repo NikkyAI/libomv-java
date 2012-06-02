@@ -59,12 +59,10 @@ import jj2000.j2k.*;
  * <p>
  * The source of data for objects of this class are 'CBlkQuantDataSrcEnc'
  * objects.
- * </p>
  * 
  * <p>
  * For more details on the sign magnitude representation used see the Quantizer
  * class.
- * </p>
  * 
  * <p>
  * This class provides default implemenations for most of the methods (wherever
@@ -72,7 +70,6 @@ import jj2000.j2k.*;
  * dimensions, and the tiles, are not modifed by the entropy coder. If that is
  * not the case for a particular implementation then the methods should be
  * overriden.
- * </p>
  * 
  * @see Quantizer
  * @see CBlkQuantDataSrcEnc

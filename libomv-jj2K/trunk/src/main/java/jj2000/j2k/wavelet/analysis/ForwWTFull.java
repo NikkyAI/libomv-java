@@ -73,7 +73,6 @@ public class ForwWTFull extends ForwardWT
 	 * The subband tree for a component in the current tile is created on the
 	 * first call to getAnSubbandTree() for that component, in the current tile.
 	 * Before that, the element in 'subbTrees' is null.
-	 * </p>
 	 */
 	private SubbandAn subbTrees[][];
 
@@ -233,12 +232,10 @@ public class ForwWTFull extends ForwardWT
 	 * <p>
 	 * The returned filters are applicable only to the specified component and
 	 * in the current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The resolution level of a subband is the resolution level to which a
 	 * subband contributes, which is different from its decomposition level.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile for which to return the filters.
@@ -266,12 +263,10 @@ public class ForwWTFull extends ForwardWT
 	 * <p>
 	 * The returned filters are applicable only to the specified component and
 	 * in the current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The resolution level of a subband is the resolution level to which a
 	 * subband contributes, which is different from its decomposition level.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile for which to return the filters.
@@ -358,7 +353,6 @@ public class ForwWTFull extends ForwardWT
 	 * When changing the current tile (through 'setTile()' or 'nextTile()') this
 	 * method will always return the first code-block, as if this method was
 	 * never called before for the new current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is the data in the internal buffer of
@@ -366,13 +360,11 @@ public class ForwWTFull extends ForwardWT
 	 * 'scanw' of the returned data have, in general, some non-zero value. The
 	 * 'magbits' of the returned data is not set by this method and should be
 	 * ignored. See the 'CBlkWTData' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'CBlkWTData' object contain
 	 * the coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -590,7 +582,6 @@ public class ForwWTFull extends ForwardWT
 	 * When changing the current tile (through 'setTile()' or 'nextTile()') this
 	 * method will always return the first code-block, as if this method was
 	 * never called before for the new current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
@@ -599,13 +590,11 @@ public class ForwWTFull extends ForwardWT
 	 * is the same as the code-block width. The 'magbits' of the returned data
 	 * is not set by this method and should be ignored. See the 'CBlkWTData'
 	 * class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'CBlkWTData' object contain
 	 * the coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -985,7 +974,6 @@ public class ForwWTFull extends ForwardWT
 	 * <p>
 	 * This method resets the 'subbTrees' array, and recalculates the values of
 	 * the 'reversible' array. It also resets the decomposed component buffers.
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal coordinate of the tile.
@@ -1019,7 +1007,6 @@ public class ForwWTFull extends ForwardWT
 	 * <p>
 	 * This method resets the 'subbTrees' array, and recalculates the values of
 	 * the 'reversible' array. It also resets the decomposed component buffers.
-	 * </p>
 	 * 
 	 * @returns The new tile index
 	 */

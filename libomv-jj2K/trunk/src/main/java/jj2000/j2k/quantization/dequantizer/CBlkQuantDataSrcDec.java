@@ -90,7 +90,6 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
@@ -98,13 +97,11 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the code-block width. See the 'DataBlk'
 	 * class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -146,20 +143,17 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.

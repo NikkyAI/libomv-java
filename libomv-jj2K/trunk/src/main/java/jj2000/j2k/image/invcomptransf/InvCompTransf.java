@@ -740,7 +740,6 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * <p>
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
-	 * </p>
 	 * 
 	 * @return The new tile index
 	 */

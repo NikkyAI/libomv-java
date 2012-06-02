@@ -56,12 +56,10 @@ import java.io.*;
  * Unlike the ByteArrayInputStream this class is not thread safe (i.e. no two
  * threads can use the same object at the same time, but different objects may
  * be used in different threads).
- * </p>
  * 
  * <p>
  * This class can modify the contents of the buffer given to the constructor,
  * when the addByteArray() method is called.
- * </p>
  * 
  * @see InputStream
  */
@@ -102,7 +100,6 @@ public class ByteInputBuffer
 	 * 
 	 * <p>
 	 * The byte array is not copied.
-	 * </p>
 	 * 
 	 * @param buf
 	 *            the input buffer.
@@ -129,7 +126,6 @@ public class ByteInputBuffer
 	 * 
 	 * <p>
 	 * The byte array is not copied.
-	 * </p>
 	 * 
 	 * @param buf
 	 *            the input buffer. If null it is the current input buffer.
@@ -232,7 +228,6 @@ public class ByteInputBuffer
 	 * 
 	 * <p>
 	 * This method is not synchronized, so it is not thread safe.
-	 * </p>
 	 * 
 	 * @return The byte read in the range 0-255.
 	 * 
@@ -255,7 +250,6 @@ public class ByteInputBuffer
 	 * 
 	 * <p>
 	 * This method is not synchronized, so it is not thread safe.
-	 * </p>
 	 * 
 	 * @return The byte read in the range 0-255, or -1 if the end of stream has
 	 *         been reached.

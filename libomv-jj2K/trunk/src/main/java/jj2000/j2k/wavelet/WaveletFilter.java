@@ -54,7 +54,6 @@ package jj2000.j2k.wavelet;
  * and positive support for both synthesis and analysis sides. This simplifies
  * the sue of some functionalities that need extra information about the
  * filters.
- * </p>
  * 
  * @see jj2000.j2k.wavelet.analysis.AnWTFilter
  * @see jj2000.j2k.wavelet.synthesis.SynWTFilter
@@ -183,7 +182,6 @@ public interface WaveletFilter
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
-	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the

@@ -233,7 +233,6 @@ class PktHeaderBitReader
 	 * This method should always be called when some data has been read directly
 	 * from the underlying byte based input since the last call to 'readBits()'
 	 * or 'readBit()' before a new call to any of those methods.
-	 * </p>
 	 */
 	void sync()
 	{
@@ -248,7 +247,6 @@ class PktHeaderBitReader
 	 * 
 	 * <p>
 	 * This method is equivalent to creating a new 'PktHeaderBitReader' object.
-	 * </p>
 	 * 
 	 * @param in
 	 *            The source of byte data
@@ -267,7 +265,6 @@ class PktHeaderBitReader
 	 * 
 	 * <p>
 	 * This method is equivalent to creating a new 'PktHeaderBitReader' object.
-	 * </p>
 	 * 
 	 * @param bais
 	 *            The source of byte data

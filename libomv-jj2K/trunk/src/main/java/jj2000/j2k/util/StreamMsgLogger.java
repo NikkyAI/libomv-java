@@ -54,7 +54,6 @@ import java.io.*;
  * Messages are printed to the 'err' stream if they are of severity WARNING or
  * ERROR, otherwise they are printed to the 'out' stream. Simple strings are
  * always printed the 'out' stream.
- * </p>
  */
 public class StreamMsgLogger implements MsgLogger
 {

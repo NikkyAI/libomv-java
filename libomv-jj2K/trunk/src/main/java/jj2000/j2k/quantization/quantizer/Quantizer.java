@@ -58,7 +58,6 @@ import jj2000.j2k.image.*;
  * it makes sense), under the assumption that the image, component dimensions,
  * and the tiles, are not modifed by the quantizer. If it is not the case for a
  * particular implementation, then the methods should be overriden.
- * </p>
  * 
  * <p>
  * Sign magnitude representation is used (instead of two's complement) for the
@@ -68,32 +67,26 @@ import jj2000.j2k.image.*;
  * bits) can contain a fractional value of the quantized coefficient. This
  * fractional value is not to be coded by the entropy coder. However, it can be
  * used to compute rate-distortion measures with greater precision.
- * </p>
  * 
  * <p>
  * The value of M is determined for each subband as the sum of the number of
  * guard bits G and the nominal range of quantized wavelet coefficients in the
  * corresponding subband (Rq), minus 1:
- * </p>
  * 
  * <p>
  * M = G + Rq -1
- * </p>
  * 
  * <p>
  * The value of G should be the same for all subbands. The value of Rq depends
  * on the quantization step size, the nominal range of the component before the
  * wavelet transform and the analysis gain of the subband (see Subband).
- * </p>
  * 
  * <p>
  * The blocks of data that are requested should not cross subband boundaries.
- * </p>
  * 
  * <p>
  * NOTE: At the moment only quantizers that implement the 'CBlkQuantDataSrcEnc'
  * interface are supported.
- * </p>
  * 
  * @see Subband
  */

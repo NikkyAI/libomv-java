@@ -60,16 +60,13 @@ import java.io.*;
  * <br>
  * <tt>if coeff<0, output=0<br> if coeff>255, output=255<br> else
  * output=coeff</tt>
- * </p>
  * 
  * <p>
  * The write() methods of an object of this class may not be called concurrently
  * from different threads.
- * </p>
  * 
  * <p>
  * NOTE: This class is not thread safe, for reasons of internal buffering.
- * </p>
  */
 public class ImgWriterPGM extends ImgWriter
 {
@@ -107,7 +104,6 @@ public class ImgWriterPGM extends ImgWriter
 	 * The size of the image that is written to the file is the size of the
 	 * component from which to get the data, specified by b, not the size of the
 	 * source image (they differ if there is some sub-sampling).
-	 * </p>
 	 * 
 	 * @param out
 	 *            The file where to write the data
@@ -225,12 +221,10 @@ public class ImgWriterPGM extends ImgWriter
 	 * 
 	 * <p>
 	 * This method may not be called concurrently from different threads.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data returned from the BlkImgDataSrc source is progressive, then
 	 * it is requested over and over until it is not progressive anymore.
-	 * </p>
 	 * 
 	 * @param ulx
 	 *            The horizontal coordinate of the upper-left corner of the area
@@ -327,7 +321,6 @@ public class ImgWriterPGM extends ImgWriter
 	 * <p>
 	 * If the data returned from the BlkImgDataSrc source is progressive, then
 	 * it is requested over and over until it is not progressive anymore.
-	 * </p>
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurs.

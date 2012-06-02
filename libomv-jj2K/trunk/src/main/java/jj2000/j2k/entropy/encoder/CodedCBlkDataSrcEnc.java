@@ -55,12 +55,10 @@ import jj2000.j2k.wavelet.analysis.*;
  * <p>
  * This interface is the source of data for the rate allocator. See the
  * 'PostCompRateAllocator' class.
- * </p>
  * 
  * <p>
  * For each coded-code-block the entropy-coded data is returned along with the
  * rate-distortion statistics in a 'CBlkRateDistStats' object.
- * </p>
  * 
  * @see PostCompRateAllocator
  * @see CBlkRateDistStats
@@ -81,13 +79,11 @@ public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 	 * When changing the current tile (through 'setTile()' or 'nextTile()') this
 	 * method will always return the first code-block, as if this method was
 	 * never called before for the new current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
 	 * this object, if any, and it can be modified "in place" without any
 	 * problems after being returned.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.

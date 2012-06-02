@@ -74,13 +74,11 @@ import java.io.*;
  * <li>Pointer: TLM,PLM,PLT,PPM,PPT.</li>
  * <li>Informational: CRG,COM.</li>
  * </ul>
- * </p>
  * 
  * <p>
  * Main Header is written when Encoder instance calls encodeMainHeader whereas
  * tile-part headers are written when the EBCOTRateAllocator instance calls
  * encodeTilePartHeader.
- * </p>
  * 
  * @see Encoder
  * @see Markers
@@ -400,7 +398,6 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * <p>
 	 * The values can be overriden for an individual component by a COC marker
 	 * in either the main or the tile header.
-	 * </p>
 	 * 
 	 * @param mh
 	 *            Flag indicating whether this marker belongs to the main header
@@ -686,7 +683,6 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * <p>
 	 * Its values overrides any value previously set in COD in the main header
 	 * or in the tile header.
-	 * </p>
 	 * 
 	 * @param mh
 	 *            Flag indicating whether the main header is to be written.
@@ -1773,7 +1769,6 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * <p>
 	 * This marker is currently written in main header and indicates the JJ2000
 	 * encoder's version that has created the codestream.
-	 * </p>
 	 */
 	private void writeCOM() throws IOException
 	{
@@ -1836,7 +1831,6 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * May be used in tile or main header. If used in main header, it refers to
 	 * a ROI of the whole image, regardless of tiling. When used in tile header,
 	 * only the particular tile is affected.
-	 * </p>
 	 * 
 	 * @param tIdx
 	 *            The tile index

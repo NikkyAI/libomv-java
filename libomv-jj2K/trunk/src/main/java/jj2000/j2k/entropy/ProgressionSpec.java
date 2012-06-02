@@ -55,7 +55,6 @@ import jj2000.j2k.*;
  * It stores the progression type(s) used in the codestream. There can be
  * several progression type(s) if progression order changes are used (POC
  * markers).
- * </p>
  */
 public class ProgressionSpec extends ModuleSpec
 {

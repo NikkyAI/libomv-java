@@ -56,7 +56,6 @@ import jj2000.j2k.entropy.encoder.*;
  * <p>
  * This class is the source of data for the entropy coder. See the
  * 'EntropyCoder' class.
- * </p>
  * 
  * <p>
  * Code-block data is returned in sign-magnitude representation, instead of the
@@ -68,12 +67,10 @@ import jj2000.j2k.entropy.encoder.*;
  * contain a fractional value of the quantized coefficient. The number 'M' of
  * magnitude bits is communicated in the 'magbits' member variable of the
  * 'CBlkWTData'.
- * </p>
  * 
  * <p>
  * Note that no more of one object may request data, otherwise one object would
  * get some of the data and another one another part, in no defined manner.
- * </p>
  * 
  * @see ForwWTDataProps
  * @see CBlkWTDataSrc
@@ -96,7 +93,6 @@ public interface CBlkQuantDataSrcEnc extends ForwWTDataProps
 	 * When changing the current tile (through 'setTile()' or 'nextTile()') this
 	 * method will always return the first code-block, as if this method was
 	 * never called before for the new current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
@@ -104,13 +100,11 @@ public interface CBlkQuantDataSrcEnc extends ForwWTDataProps
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the code-block width. See the 'CBlkWTData'
 	 * class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'CBlkWTData' object contain
 	 * the coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -140,20 +134,17 @@ public interface CBlkQuantDataSrcEnc extends ForwWTDataProps
 	 * When changing the current tile (through 'setTile()' or 'nextTile()') this
 	 * method will always return the first code-block, as if this method was
 	 * never called before for the new current tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'CBlkWTData' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'CBlkWTData' object contain
 	 * the coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.

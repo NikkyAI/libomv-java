@@ -85,23 +85,18 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of 1/KL and a factor of 1/KH
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [-DELTA 1 -DELTA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [-GAMMA 1 -GAMMA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the third lifting step are [-BETA 1 -BETA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the fourth lifting step are [-ALPHA 1 -ALPHA].
-	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal.
@@ -262,23 +257,18 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of 1/KL and a factor of 1/KH
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the first lifting step are [-DELTA 1 -DELTA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the second lifting step are [-GAMMA 1 -GAMMA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the third lifting step are [-BETA 1 -BETA].
-	 * </p>
 	 * 
 	 * <p>
 	 * The coefficients of the fourth lifting step are [-ALPHA 1 -ALPHA].
-	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal.
@@ -518,7 +508,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * 
 	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
-	 * </p>
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         negative direction
@@ -535,7 +524,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * 
 	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
-	 * </p>
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         positive direction
@@ -552,7 +540,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * 
 	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
-	 * </p>
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         negative direction
@@ -569,7 +556,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * 
 	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
-	 * </p>
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         positive direction
@@ -618,7 +604,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
-	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the

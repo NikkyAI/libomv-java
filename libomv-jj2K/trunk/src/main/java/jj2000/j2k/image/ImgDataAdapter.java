@@ -54,13 +54,11 @@ package jj2000.j2k.image;
  * classes that implement 'ImgData'. For example a YCbCr color transform can
  * inherit from this class and all the trivial methods do not have to be
  * re-implemented.
- * </p>
  * 
  * <p>
  * If the default implementation of a method provided in this class does not
  * suit a particular implementation of the 'ImgData' interface, the method can
  * be overridden to implement the proper behavior.
- * </p>
  * 
  * @see ImgData
  */
@@ -91,7 +89,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total current tile's width in pixels.
 	 */
@@ -108,7 +105,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total current tile's height in pixels.
 	 */
@@ -138,7 +134,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total image's width in pixels.
 	 */
@@ -154,7 +149,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total image's height in pixels.
 	 */
@@ -169,7 +163,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The number of components in the image.
 	 */
@@ -187,7 +180,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component (between 0 and N-1)
@@ -210,7 +202,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component (between 0 and N-1)
@@ -230,7 +221,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param t
 	 *            Tile index
@@ -251,7 +241,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index.
@@ -273,7 +262,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.
@@ -292,7 +280,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.
@@ -317,7 +304,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component.
@@ -338,7 +324,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation just changes the tile in the source.
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal index of the tile.
@@ -362,7 +347,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation just advances to the next tile in the source.
-	 * </p>
 	 * 
 	 * @return The new tile index
 	 */
@@ -379,7 +363,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param co
 	 *            If not null this object is used to return the information. If
@@ -399,7 +382,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The current tile's index (starts at 0).
 	 */
@@ -415,7 +397,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component index.
@@ -432,7 +413,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component index.
@@ -463,7 +443,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 *         system, on the reference grid.
@@ -480,7 +459,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 *         on the reference grid.
@@ -496,7 +474,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @param co
 	 *            If not null this object is used to return the information. If
@@ -516,7 +493,6 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * <p>
 	 * This default implementation returns the value of the source.
-	 * </p>
 	 * 
 	 * @return The total number of tiles in the image.
 	 */

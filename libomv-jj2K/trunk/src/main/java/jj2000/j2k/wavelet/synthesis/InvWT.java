@@ -54,7 +54,6 @@ import jj2000.j2k.wavelet.*;
  * This class does not define the methods to transfer data, just the specifics
  * to inverse wavelet transform. Different data transfer methods are
  * envisageable for different transforms.
- * </p>
  */
 public interface InvWT extends WaveletTransform
 {
@@ -67,7 +66,6 @@ public interface InvWT extends WaveletTransform
 	 * Note: Image resolution level indexes may differ from tile-component
 	 * resolution index. They are indeed indexed starting from the lowest number
 	 * of decomposition levels of each component of each tile.
-	 * </p>
 	 * 
 	 * <p>
 	 * Example: For an image (1 tile) with 2 components (component 0 having 2
@@ -75,7 +73,6 @@ public interface InvWT extends WaveletTransform
 	 * first (tile-) component has 3 resolution levels and the second one has 4
 	 * resolution levels, whereas the image has only 3 resolution levels
 	 * available.
-	 * </p>
 	 * 
 	 * @param rl
 	 *            The image resolution level.

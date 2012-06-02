@@ -60,7 +60,6 @@ package jj2000.j2k.util;
  * CONCURRENCY_PROP_NAME to some non-negative number. This will make use of the
  * 'NativeServices' class and supporting native libraries. See 'NativeServices'
  * for details. See 'CONCURRENCY_PROP_NAME' for the name of the property.
- * </p>
  * 
  * <p>
  * Initially the thread pool contains a user specified number of idle threads.
@@ -68,7 +67,6 @@ package jj2000.j2k.util;
  * thread temporarily leaves the idle list. When the target finishes, it joins
  * the idle list again, waiting for a new target. When a target is finished a
  * thread can be notified on a particular object that is given as a lock.
- * </p>
  * 
  * <p>
  * Jobs can be submitted using Runnable interfaces, using the 'runTarget()'
@@ -77,7 +75,6 @@ package jj2000.j2k.util;
  * completes the thread will be returned to the idle list. In general the
  * 'run()' method should complete in a rather short time, so that the threds of
  * the pool are not starved.
- * </p>
  * 
  * <p>
  * If using the non-asynchronous calls to 'runTarget()', it is important that
@@ -85,7 +82,6 @@ package jj2000.j2k.util;
  * non-asynchronous calls to 'runTarget()' on the same thread pool where it was
  * started. Otherwise this could create a dead-lock when there are not enough
  * idle threads.
- * </p>
  * 
  * <p>
  * The pool also has a global error and runtime exception condition (one for
@@ -99,7 +95,6 @@ package jj2000.j2k.util;
  * calls to 'checkTargetErrors()' only the last one is saved. Any 'Error'
  * condition has precedence on all 'RuntimeException' conditions. The threads in
  * the pool are unaffected by any exceptions thrown by targets.
- * </p>
  * 
  * <p>
  * The only exception to the above is the 'ThreadDeath' exception. If a target's
@@ -109,12 +104,10 @@ package jj2000.j2k.util;
  * 'ThreadDeath' exception should never be thrown by the program. It is thrown
  * by the Java(TM) Virtual Machine when Thread.stop() is called. This method is
  * deprecated and should never be called.
- * </p>
  * 
  * <p>
  * All the threads in the pool are "daemon" threads and will automatically
  * terminate when no daemon threads are running.
- * </p>
  * 
  * @see NativeServices
  * @see #CONCURRENCY_PROP_NAME
@@ -191,7 +184,6 @@ public class ThreadPool
 		 * An interrupt on this thread has no effect other than forcing a check
 		 * on the target. Normally the target is checked every time the thread
 		 * is woken up by notify, no interrupts should be done.
-		 * </p>
 		 * 
 		 * <p>
 		 * Any exception thrown by the target's 'run()' method is catched and
@@ -202,7 +194,6 @@ public class ThreadPool
 		 * corresponding error condition is set and this thread is not affected.
 		 * For any other exceptions a new 'RuntimeException' is created and the
 		 * error condition is set, this thread is not affected.
-		 * </p>
 		 */
 		@Override
 		public void run()
@@ -320,7 +311,6 @@ public class ThreadPool
 	 * library that supports concurrency setting (see 'NativeServices'). If that
 	 * succeds the concurrency level will be set to the specified value.
 	 * Otherwise a warning is printed.
-	 * </p>
 	 * 
 	 * @param size
 	 *            The size of the pool (number of threads to create in the
@@ -448,7 +438,6 @@ public class ThreadPool
 	 * 
 	 * <p>
 	 * This method is the same as <tt>runTarget(t,l,true,false)</tt>.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The target. The 'run()' method of this object will be run in
@@ -479,7 +468,6 @@ public class ThreadPool
 	 * 
 	 * <p>
 	 * This method is the same as <tt>runTarget(t,l,async,false)</tt>.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The target. The 'run()' method of this object will be run in
@@ -580,7 +568,6 @@ public class ThreadPool
 	 * In order to ensure that no error conditions exist when returning from
 	 * this method cooperation from the targets and the thread using this pool
 	 * is necessary (i.e. currently no targets running or waiting to run).
-	 * </p>
 	 */
 	public void clearTargetErrors()
 	{
@@ -597,13 +584,11 @@ public class ThreadPool
 	 * An idle thread that is already in the list should never add itself to the
 	 * list before it is removed. For efficiency reasons there is no check to
 	 * see if the thread is already in the list of idle threads.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the idle list was empty 'notify()' will be called on the 'idle' array,
 	 * to wake up a thread that might be waiting (within the 'getIdle()' method)
 	 * on an idle thread to become available.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The thread to put in the idle list.
@@ -634,7 +619,6 @@ public class ThreadPool
 	 * available the calling thread will wait on the 'idle' array lock, until
 	 * notified by 'putInIdleList()' that an idle thread might have become
 	 * available.
-	 * </p>
 	 * 
 	 * @param async
 	 *            If true asynchronous mode is used.

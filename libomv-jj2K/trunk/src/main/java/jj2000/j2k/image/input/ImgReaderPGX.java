@@ -58,13 +58,11 @@ import java.io.*;
  * 
  * <p>
  * The file consists of a one line text header followed by the data.
- * </p>
  * 
  * <p>
  * <u>Header:</u> "PG"+ <i>ws</i> +&lt;<i>endianess</i>&gt;+ <i>ws</i>
  * +[<i>sign</i>]+<i>ws</i> + &lt;<i>bit-depth</i>&gt;+"
  * "+&lt;<i>width</i>&gt;+" "+&lt;<i>height</i>&gt;+'\n'
- * </p>
  * 
  * <p>
  * where:<br>
@@ -81,12 +79,10 @@ import java.io.*;
  * order) immediately after the last header character ('\n') and are
  * byte-aligned (they are packed into 1,2 or 4 bytes per sample, depending upon
  * the bit-depth value).
- * </p>
  * 
  * <p>
  * If the data is unisigned, level shifting is applied subtracting 2^(bitdepth -
  * 1)
- * </p>
  * 
  * <p>
  * Since it is not possible to know the input file byte-ordering before reading
@@ -94,11 +90,9 @@ import java.io.*;
  * constructor has to open first the input file, to read only its header, and
  * then it can create the appropriate BufferedRandomAccessFile (Big-Endian or
  * Little-Endian byte-ordering).
- * </p>
  * 
  * <p>
  * NOTE: This class is not thread safe, for reasons of internal buffering.
- * </p>
  * 
  * @see jj2000.j2k.image.ImgData
  * @see RandomAccessIO
@@ -327,7 +321,6 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * 'h' members of the 'blk' argument, relative to the current tile. These
 	 * members are not modified by this method. The 'offset' and 'scanw' of the
 	 * returned data can be arbitrary. See the 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data array in <tt>blk</tt> is <tt>null</tt>, then a new one is
@@ -337,19 +330,16 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * not be considered to contain the returned data, a new array may have been
 	 * created. Instead, get the array from <tt>blk</tt> after the method has
 	 * returned.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned data always has its 'progressive' attribute unset (i.e.
 	 * false).
-	 * </p>
 	 * 
 	 * <p>
 	 * When an I/O exception is encountered the JJ2KExceptionHandler is used.
 	 * The exception is passed to its handleException method. The action that is
 	 * taken depends on the action that has been registered in
 	 * JJ2KExceptionHandler. See JJ2KExceptionHandler for details.
-	 * </p>
 	 * 
 	 * @param blk
 	 *            Its coordinates and dimensions specify the area to return.
@@ -590,22 +580,18 @@ public class ImgReaderPGX extends ImgReader implements EndianType
 	 * members are not modified by this method. The 'offset' of the returned
 	 * data is 0, and the 'scanw' is the same as the block's width. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data array in 'blk' is 'null', then a new one is created. If the
 	 * data array is not 'null' then it is reused, and it must be large enough
 	 * to contain the block's data. Otherwise an 'ArrayStoreException' or an
 	 * 'IndexOutOfBoundsException' is thrown by the Java system.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned data has its 'progressive' attribute unset (i.e. false).
-	 * </p>
 	 * 
 	 * <p>
 	 * This method just calls 'getInternCompData(blk,c)'.
-	 * </p>
 	 * 
 	 * <P>
 	 * When an I/O exception is encountered the JJ2KExceptionHandler is used.

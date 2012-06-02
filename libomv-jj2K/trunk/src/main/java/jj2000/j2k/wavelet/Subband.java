@@ -54,14 +54,12 @@ import jj2000.j2k.image.*;
  * <p>
  * The element can be either a node or a leaf of the tree. If it is a node, it
  * has 4 descendants (LL, HL, LH and HH). If it is a leaf, it has no descendants.
- * </p>
  * 
  * <p>
  * The tree is bidirectional. Each element in the tree structure has a "parent",
  * which is the subband from which the element was obtained by decomposition.
  * The only exception is the root element which, for obvious reasons, has no
  * parent (i.e. it is null).
- * </p>
  * 
  * @see jj2000.j2k.wavelet.analysis.SubbandAn
  * @see jj2000.j2k.wavelet.synthesis.SubbandSyn
@@ -126,7 +124,6 @@ public abstract class Subband
 	 * powers of 2. However this is perfectly compatible to the filter
 	 * normalization policy assumed here. See the split() method for more
 	 * details.
-	 * </p>
 	 * 
 	 * @see #split
 	 */
@@ -143,7 +140,6 @@ public abstract class Subband
 	 * node, with a subband index 'b', its LL descendant gets 4*b, its HL
 	 * descendant 4*b+1, its LH descendant 4*b+2, and its HH descendant 4*b+3,
 	 * for their subband indexes.
-	 * </p>
 	 */
 	public int sbandIdx = 0;
 
@@ -244,7 +240,6 @@ public abstract class Subband
 	 * <p>
 	 * For the analysis subband gain calculation it is assumed that analysis
 	 * filters are normalized with a DC gain of 1 and a Nyquist gain of 2.
-	 * </p>
 	 */
 	protected void initChilds()
 	{
@@ -321,13 +316,11 @@ public abstract class Subband
 	 * <p>
 	 * For the analysis subband gain calculation it is assumed that analysis
 	 * filters are normalized with a DC gain of 1 and a Nyquist gain of 2.
-	 * </p>
 	 * 
 	 * <p>
 	 * This constructor does not initialize the value of the magBits member
 	 * variable. This variable is normally initialized by the quantizer, on the
 	 * encoder side, or the bit stream reader, on the decoder side.
-	 * </p>
 	 * 
 	 * @param w
 	 *            The top-level width

@@ -56,7 +56,6 @@ import jj2000.j2k.wavelet.*;
  * <p>
  * The length of the output signal is always the sum of the length of the
  * low-pass and high-pass input signals.
- * </p>
  * 
  * <p>
  * All synthesis wavelet filters should follow the following conventions:
@@ -83,7 +82,6 @@ import jj2000.j2k.wavelet.*;
  * the amount of data copying and redundant calculations when used for
  * block-based or line-based wavelet transform implementations, while being
  * applicable to full-frame transforms as well.
- * </p>
  * 
  * @see SynWTFilterInt
  * @see SynWTFilterFloat
@@ -102,7 +100,6 @@ public abstract class SynWTFilter implements WaveletFilter, Markers
 	 * (second) output sample). is given by lowOff (highOff). This array must be
 	 * of the same type as the one for which the particular implementation works
 	 * with (which is returned by the getDataType() method).
-	 * </p>
 	 * 
 	 * <p>
 	 * The low-pass (high-pass) input signal can be interleaved with other
@@ -116,14 +113,12 @@ public abstract class SynWTFilter implements WaveletFilter, Markers
 	 * line by line order in lowSig (highSig), without having to copy the data,
 	 * in this case the lowStep (highStep) argument should be the line width of
 	 * the low-pass (high-pass) signal.
-	 * </p>
 	 * 
 	 * <p>
 	 * The output signal is placed in the outSig array. The outOff and outStep
 	 * arguments are analogous to the lowOff and lowStep ones, but they apply to
 	 * the outSig array. The outSig array must be long enough to hold the
 	 * low-pass output signal.
-	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal. It
@@ -185,7 +180,6 @@ public abstract class SynWTFilter implements WaveletFilter, Markers
 	 * (second) output sample). is given by lowOff (highOff). This array must be
 	 * of the same type as the one for which the particular implementation works
 	 * with (which is returned by the getDataType() method).
-	 * </p>
 	 * 
 	 * <p>
 	 * The low-pass (high-pass) input signal can be interleaved with other
@@ -199,14 +193,12 @@ public abstract class SynWTFilter implements WaveletFilter, Markers
 	 * line by line order in lowSig (highSig), without having to copy the data,
 	 * in this case the lowStep (highStep) argument should be the line width of
 	 * the low-pass (high-pass) signal.
-	 * </p>
 	 * 
 	 * <p>
 	 * The output signal is placed in the outSig array. The outOff and outStep
 	 * arguments are analogous to the lowOff and lowStep ones, but they apply to
 	 * the outSig array. The outSig array must be long enough to hold the
 	 * low-pass output signal.
-	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal. It

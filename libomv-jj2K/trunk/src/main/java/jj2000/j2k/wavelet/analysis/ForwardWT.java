@@ -60,7 +60,6 @@ import java.util.*;
  * 'CBlkWTDataSrc' interface. The internal calculation of the wavelet transform
  * may be done differently but a buffering class should convert to that type of
  * transfer.
- * </p>
  */
 public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWTDataSrc
 {

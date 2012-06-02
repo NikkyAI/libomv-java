@@ -54,13 +54,11 @@ import java.io.*;
  * 
  * <p>
  * The file consists of a one line text header followed by the data.
- * </p>
  * 
  * <p>
  * <u>Header:</u> "PG"+ <i>ws</i> +&lt;<i>endianess</i>&gt;+ <i>ws</i>
  * +[<i>sign</i>]+<i>ws</i> + &lt;<i>bit-depth</i>&gt;+"
  * "+&lt;<i>width</i>&gt;+" "+&lt;<i>height</i>&gt;+'\n'
- * </p>
  * 
  * <p>
  * where:<br>
@@ -77,16 +75,13 @@ import java.io.*;
  * order) immediately after the last header character ('\n') and are
  * byte-aligned (they are packed into 1,2 or 4 bytes per sample, depending upon
  * the bit-depth value).
- * </p>
  * 
  * <p>
  * If the data is unsigned, level shifting is applied adding 2^(bit depth - 1)
- * </p>
  * 
  * <p>
  * <u>NOTE</u>: This class is not thread safe, for reasons of internal
  * buffering.
- * </p>
  * 
  * @see ImgWriter
  * 
@@ -152,14 +147,12 @@ public class ImgWriterPGX extends ImgWriter
 	 * The size of the image that is written to the file is the size of the
 	 * component from which to get the data, specified by b, not the size of the
 	 * source image (they differ if there is some sub-sampling).
-	 * </p>
 	 * 
 	 * <p>
 	 * All the header informations are given by the BlkImgDataSrc source
 	 * (component width, component height, bit-depth) and sign flag, which are
 	 * provided to the constructor. The endianness is always big-endian (MSB
 	 * first).
-	 * </p>
 	 * 
 	 * @param out
 	 *            The file where to write the data
@@ -237,7 +230,6 @@ public class ImgWriterPGX extends ImgWriter
 	 * The size of the image that is written to the file is the size of the
 	 * component from which to get the data, specified by b, not the size of the
 	 * source image (they differ if there is some sub-sampling).
-	 * </p>
 	 * 
 	 * <p>
 	 * All header information is given by the BlkImgDataSrc source (component
@@ -317,16 +309,13 @@ public class ImgWriterPGX extends ImgWriter
 	 * <p>
 	 * If the data is unisigned, level shifting is applied adding 2^(bit depth -
 	 * 1)
-	 * </p>
 	 * 
 	 * <p>
 	 * This method may not be called concurrently from different threads.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the data returned from the BlkImgDataSrc source is progressive, then
 	 * it is requested over and over until it is not progressive anymore.
-	 * </p>
 	 * 
 	 * @param ulx
 	 *            The horizontal coordinate of the upper-left corner of the area
@@ -502,7 +491,6 @@ public class ImgWriterPGX extends ImgWriter
 	 * <p>
 	 * If the data returned from the BlkImgDataSrc source is progressive, then
 	 * it is requested over and over until it is not progressive anymore.
-	 * </p>
 	 * 
 	 * @exception IOException
 	 *                If an I/O error occurs.

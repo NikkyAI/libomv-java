@@ -64,14 +64,12 @@ import java.io.*;
  * <p>
  * Note: All tile-parts headers are read by the constructor whereas packets are
  * processed when decoding related tile (when setTile method is called).
- * </p>
  * 
  * <p>
  * In parsing mode, the reader simulates a virtual layer-resolution progressive
  * bit stream with the same truncation points in each code-block, whereas in
  * truncation mode, only the first bytes are taken into account (it behaves like
  * if it is a real truncated codestream).
- * </p>
  * 
  * @see HeaderDecoder
  * @see PktDecoder
@@ -1946,7 +1944,6 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * layers only. This operation simulates a creation of a
 	 * layer-resolution-component progressive bit-stream which will be next
 	 * truncated and decoded.
-	 * </p>
 	 * 
 	 * @param t
 	 *            Tile index
@@ -2399,7 +2396,6 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * later time. The fact that data from more than one layer can be returned
 	 * means that several packets from the same code-block, of the same
 	 * component, and the same tile, have been concatenated.
-	 * </p>
 	 * 
 	 * <p>
 	 * The returned compressed code-block can have its progressive attribute
@@ -2407,19 +2403,16 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * subsequent calls to this method (subject to transmission delays, etc). If
 	 * the progressive attribute is not set it means that the returned data is
 	 * all the data that can be obtained for the specified code-block.
-	 * </p>
 	 * 
 	 * <p>
 	 * The compressed code-block is uniquely specified by the current tile, the
 	 * component (identified by 'c'), the subband (indentified by 'sb') and the
 	 * code-block vertical and horizontal indexes 'n' and 'm'.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DecLyrdCBlk' object contain
 	 * the coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component, from 0 to N-1.

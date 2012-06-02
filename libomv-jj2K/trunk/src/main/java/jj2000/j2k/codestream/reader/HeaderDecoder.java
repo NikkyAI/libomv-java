@@ -85,7 +85,6 @@ import java.util.*;
  * 
  * <li>Informational: CRG, COM.</li>
  * </ul>
- * </p>
  * 
  * <p>
  * The main header is read when the constructor is called whereas tile-part
@@ -100,17 +99,14 @@ import java.util.*;
  * are stored in appropriate member of DecoderSpecs instance
  * (readFoundMainMarkSeg and readFoundTilePartMarkSeg methods).</li>
  * </ol>
- * </p>
  * 
  * <p>
  * Whenever a marker segment is not recognized a warning message is displayed
  * and its length parameter is used to skip it.
- * </p>
  * 
  * <p>
  * The information found in this header is stored in HeaderInfo and DecoderSpecs
  * instances.
- * </p>
  * 
  * @see DecoderSpecs
  * @see HeaderInfo
@@ -574,7 +570,6 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * SIZ is a fixed information marker segment containing informations about
 	 * image and tile sizes. It is required in the main header immediately after
 	 * SOC.
-	 * </p>
 	 * 
 	 * @param ehs
 	 *            The encoded header stream
@@ -1883,7 +1878,6 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * May be used in tile or main header. If used in main header, it refers to
 	 * the maxshift value of a component in all tiles. When used in tile header,
 	 * only the particular tile-component is affected.
-	 * </p>
 	 * 
 	 * @param ehs
 	 *            The encoder header stream.
@@ -2050,11 +2044,9 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 * <p>
 	 * If the marker is not recognized, it prints a warning and skips it
 	 * according to its length.
-	 * </p>
 	 * 
 	 * <p>
 	 * SIZ marker segment shall be the first encountered marker segment.
-	 * </p>
 	 * 
 	 * @param marker
 	 *            The marker segment to process

@@ -59,19 +59,16 @@ import jj2000.j2k.entropy.*;
  * itself. Normally they are selected so as to lye in a convex hull, which can
  * be achived by using the 'selectConvexHull' method of this class, but some
  * other strategies might be employed.
- * </p>
  * 
  * <p>
  * The rate (in bytes) for each truncation point (valid or not) is stored in the
  * 'truncRates' array. The rate of a truncation point is the total number of
  * bytes in 'data' (see super class) that have to be decoded to reach the
  * truncation point.
- * </p>
  * 
  * <p>
  * The slope (reduction of distortion divided by the increase in rate) at each
  * of the valid truncation points is stored in 'truncSlopes'.
- * </p>
  * 
  * <p>
  * The index of each valid truncation point is stored in 'truncIdxs'. The index
@@ -80,19 +77,16 @@ import jj2000.j2k.entropy.*;
  * 'truncRates[truncIdxs[n]]' and the slope 'truncSlopes[n]'. The arrays
  * 'truncIdxs' and 'truncRates' have at least 'nVldTrunc' elements. The
  * 'truncRates' array has at least 'nTotTrunc' elements.
- * </p>
  * 
  * <p>
  * In addition the 'isTermPass' array contains a flag for each truncation point
  * (valid and non-valid ones) that tells if the pass is terminated or not. If
  * this variable is null then it means that no pass is terminated, except the
  * last one which always is.
- * </p>
  * 
  * <p>
  * The compressed data is stored in the 'data' member variable of the super
  * class.
- * </p>
  * 
  * @see CodedCBlk
  */
@@ -154,12 +148,10 @@ public class CBlkRateDistStats extends CodedCBlk
 	 * <p>
 	 * The valid truncation points are selected by taking them as lying on a
 	 * convex hull. This is done by calling the method selectConvexHull().
-	 * </p>
 	 * 
 	 * <p>
 	 * Note that the arrays 'rates' and 'termp' are copied, not referenced, so
 	 * they can be modified after a call to this constructor.
-	 * </p>
 	 * 
 	 * @param m
 	 *            The horizontal index of the code-block, within the subband.
@@ -219,7 +211,6 @@ public class CBlkRateDistStats extends CodedCBlk
 	 * <p>
 	 * Note that the arrays 'rates' and 'termp' are copied, not referenced, so
 	 * they can be modified after a call to this method.
-	 * </p>
 	 * 
 	 * @param rates
 	 *            The rates (in bytes) for each truncation point in the

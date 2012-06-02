@@ -74,11 +74,9 @@ import java.io.*;
  * executes. The exit code of the class can be obtained with the getExitCode()
  * method, after the constructor and after the run method. A non-zero value
  * indicates that an error has ocurred.
- * </p>
  * 
  * <p>
  * The decoding chain corresponds to the following sequence of modules:
- * </p>
  * 
  * <ul>
  * <li>BitstreamReaderAgent</li>
@@ -98,13 +96,11 @@ import java.io.*;
  * The 2 last modules cannot be used at the same time and corresponds
  * respectively to the writing of decoded image into a file or the graphical
  * display of this same image.
- * </p>
  * 
  * <p>
  * The behaviour of each module may be modified according to the current
  * tile-component. All the specifications are kept in modules extending
  * ModuleSpec and accessible through an instance of DecoderSpecs class.
- * </p>
  * 
  * @see BitstreamReaderAgent
  * @see EntropyDecoder

@@ -54,14 +54,12 @@ import jj2000.j2k.wavelet.*;
  * The element can be either a node or a leaf of the tree. If it is a node then
  * ther are 4 descendants (LL, HL, LH and HH). If it is a leaf there are no
  * descendants.
- * </p>
  *
  * <p>
  * The tree is bidirectional. Each element in the tree structure has a "parent",
  * which is the subband from which the element was obtained by decomposition.
  * The only exception is the root element which has no parent (i.e.it's null),
  * for obvious reasons.
- * </p>
  */
 public class SubbandAn extends Subband
 {
@@ -140,13 +138,11 @@ public class SubbandAn extends Subband
 	 * <p>
 	 * This constructor just calls the same constructor of the super class, and
 	 * then calculates the L2-norm (or energy weight) of each leaf.
-	 * </p>
 	 * 
 	 * <p>
 	 * This constructor does not initialize the value of the magBits or stepWMSE
 	 * member variables. This variables are normally initialized by the
 	 * quantizer (see Quantizer).
-	 * </p>
 	 * 
 	 * @param w
 	 *            The top-level width
@@ -250,7 +246,6 @@ public class SubbandAn extends Subband
 	 * 
 	 * <p>
 	 * It uses the initChilds() method to initialize the childs.
-	 * </p>
 	 * 
 	 * @param hfilter
 	 *            The horizontal wavelet filter used to decompose this subband.
@@ -307,12 +302,10 @@ public class SubbandAn extends Subband
 	 * The wfs argument should be a size 2 array of float arrays (i.e. 2D array)
 	 * and it must be of length 2 (or more). When returning, wfs[0] will contain
 	 * the line waveform, and wfs[1] will contain the column waveform.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method can not be called on an element that ahs a non-negative value
 	 * in l2Norm, since that means that we are done.
-	 * </p>
 	 * 
 	 * @param wfs
 	 *            An size 2 array where the line and column waveforms will be
@@ -386,7 +379,6 @@ public class SubbandAn extends Subband
 	 * <p>
 	 * This method can not be called on an element that ahs a non-negative value
 	 * in l2Norm, since that means that we are done.
-	 * </p>
 	 * 
 	 * @param l2n
 	 *            The L2-norm to assign.

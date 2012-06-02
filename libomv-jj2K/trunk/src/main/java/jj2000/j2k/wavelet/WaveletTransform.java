@@ -58,7 +58,6 @@ import jj2000.j2k.image.*;
  * and each tile. An implementation of this interface does not need to support
  * all this flexibility (e.g., it may provide the same implementation type and
  * decomposition levels for all tiles and components).
- * </p>
  */
 public interface WaveletTransform extends ImgData
 {

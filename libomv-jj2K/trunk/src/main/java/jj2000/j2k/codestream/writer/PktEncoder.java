@@ -59,7 +59,6 @@ import jj2000.j2k.util.*;
  * Each time the encodePacket() method is called a new packet is encoded, the
  * packet header is returned by the method, and the packet body can be obtained
  * with the getLastBodyBuf() and getLastBodyLen() methods.
- * </p>
  */
 public class PktEncoder
 {
@@ -655,7 +654,6 @@ public class PktEncoder
 	 * tile, component and resolution level (e.g., layer 1, then layer 2, etc.).
 	 * For different tile, component and/or resolution level no particular order
 	 * must be followed.
-	 * </p>
 	 * 
 	 * @param ly
 	 *            The layer index (starts at 1).

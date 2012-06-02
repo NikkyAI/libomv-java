@@ -66,12 +66,10 @@ import java.io.*;
  * ones. By scaling the coefficients sufficiently, the ROI coefficients can be
  * recognized by their amplitude alone and no ROI mask needs to be generated at
  * the decoder side.
- * </p>
  * 
  * <p>
  * The source module must be a quantizer and code-block's data is exchange with
  * thanks to CBlkWTData instances.
- * </p>
  * 
  * @see Quantizer
  * @see CBlkWTData
@@ -254,7 +252,6 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * The ROI Scaler creates a ROIMaskGenerator depending on what ROI
 	 * information is in the ParameterList. If only rectangular ROI are
 	 * used, the fast mask generator for rectangular ROI can be used.
-	 * </p>
 	 * 
 	 * @param src
 	 *            The source of data to scale
@@ -332,17 +329,14 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * <p>
 	 * A rectangular ROI is indicated by a 'R' followed the coordinates for the
 	 * upper left corner of the ROI and then its width and height.
-	 * </p>
 	 * 
 	 * <p>
 	 * A circular ROI is indicated by a 'C' followed by the coordinates of the
 	 * circle center and then the radius.
-	 * </p>
 	 * 
 	 * <p>
 	 * Before the R and C values, the component that are affected by the ROI are
 	 * indicated.
-	 * </p>
 	 * 
 	 * @param roiopt
 	 *            The info on the ROIs
@@ -513,14 +507,12 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * <p>
 	 * The function calls on a ROIMaskGenerator to get the mask for scaling the
 	 * coefficients in the current block.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method is a copy of the orignal data. Therfore
 	 * it can be modified "in place" without any problems after being returned.
 	 * The 'offset' of the returned data is 0, and the 'scanw' is the same as
 	 * the code-block width. See the 'CBlkWTData' class.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -550,7 +542,6 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * <p>
 	 * The function calls on a ROIMaskGenerator to get the mask for scaling the
 	 * coefficients in the current block.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.

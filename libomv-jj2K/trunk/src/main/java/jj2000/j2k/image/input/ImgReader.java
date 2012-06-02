@@ -56,12 +56,10 @@ import java.io.*;
  * through the getInternCompData() or getCompData() methods, the image data will
  * be read (if it is not buffered) and returned. Implementing classes should not
  * buffer large amounts of data, so as to reduce memory usage.
- * </p>
  * 
  * <p>
  * This class sets the image origin to (0,0). All default implementations of the
  * methods assume this.
- * </p>
  * 
  * <p>
  * This class provides default implementations of many methods. These default
@@ -69,7 +67,6 @@ import java.io.*;
  * entire image), that the image origin is (0,0) in the canvas system and that
  * there is no component subsampling (all components are the same size), but
  * they can be overloaded by the implementating class if need be.
- * </p>
  */
 public abstract class ImgReader implements BlkImgDataSrc
 {

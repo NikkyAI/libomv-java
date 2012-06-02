@@ -53,7 +53,6 @@ import jj2000.j2k.util.*;
  * 
  * <p>
  * The tag tree saves encoded information to a BitOutputBuffer.
- * </p>
  * 
  * <p>
  * A particular and useful property of tag trees is that it is possible to
@@ -61,26 +60,21 @@ import jj2000.j2k.util.*;
  * are both greater than or equal to the largest threshold which has yet been
  * supplied to the coding procedure 'encode()'. This property can be exploited
  * through the 'setValue()' method.
- * </p>
  * 
  * <p>
  * This class allows saving the state of the tree at any point and restoring it
  * at a later time, by calling save() and restore().
- * </p>
  * 
  * <p>
  * A tag tree can also be reused, or restarted, if one of the reset() methods is
  * called.
- * </p>
  * 
  * <p>
  * The TagTreeDecoder class implements the tag tree decoder.
- * </p>
  * 
  * <p>
  * Tag trees that have one dimension, or both, as 0 are allowed for convenience.
  * Of course no values can be set or coded in such cases.
- * </p>
  * 
  * @see BitOutputBuffer
  * 
@@ -139,7 +133,6 @@ public class TagTreeEncoder
 	 * 
 	 * <p>
 	 * The values of all elements are initialized to Integer.MAX_VALUE.
-	 * </p>
 	 * 
 	 * @param h
 	 *            The number of elements along the horizontal direction.
@@ -173,7 +166,6 @@ public class TagTreeEncoder
 	 * <p>
 	 * The values in the 'val' array are supposed to appear in lexicographical
 	 * order, starting at index 0.
-	 * </p>
 	 * 
 	 * @param h
 	 *            The number of elements along the horizontal direction.
@@ -383,7 +375,6 @@ public class TagTreeEncoder
 	 * proportion of the leafs change their value. Note that for leafs which
 	 * don't have their value defined yet the value should be Integer.MAX_VALUE
 	 * (which is the default initialization value).
-	 * </p>
 	 * 
 	 * @param val
 	 *            The new values for the leafs, in lexicographical order.

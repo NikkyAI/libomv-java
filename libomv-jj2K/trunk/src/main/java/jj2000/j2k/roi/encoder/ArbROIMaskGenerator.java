@@ -57,7 +57,6 @@ import jj2000.j2k.image.*;
  * with which to scale are equal to u-umin where umin is the lowest scaling
  * factor within the block. The umin value is sent to the entropy coder to be
  * used for scaling the distortion values.
- * </p>
  * 
  * @see ROIMaskGenerator
  * @see ArbROIMaskGenerator
@@ -108,13 +107,11 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 	 * <p>
 	 * In order to get the mask for a particular Subband, the subband tree is
 	 * traversed and at each decomposition, the ROI masks are computed.
-	 * </p>
 	 * 
 	 * <p>
 	 * The widths of the synthesis filters corresponding to the wavelet filters
 	 * used in the wavelet transform are used to expand the ROI masks in the
 	 * decompositions.
-	 * </p>
 	 * 
 	 * @param db
 	 *            The data block that is to be filled with the mask
@@ -184,7 +181,6 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 	 * <p>
 	 * Once the mask is generated in the pixel domain. it is decomposed
 	 * following the same decomposition scheme as the wavelet transform.
-	 * </p>
 	 * 
 	 * @param sb
 	 *            The root of the subband tree used in the decomposition

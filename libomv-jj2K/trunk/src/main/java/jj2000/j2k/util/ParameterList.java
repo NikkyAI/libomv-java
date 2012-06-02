@@ -54,22 +54,18 @@ import java.util.*;
  * offers facilities to load and write parameters from/to a file. In the
  * meantime, a ParameterList object can also handle default parameters for each
  * option.
- * </p>
  * 
  * <p>
  * Each parameter can be retrieved as a string or as an specific primitive type
  * (int, float, etc).
- * </p>
  * 
  * <p>
  * For more details see the Properties class.
- * </p>
  * 
  * <p>
  * Note that this class does not support multiple occurrences of parameters (for
  * a parameter name, only one value is possible). Also there is no particular
  * order of the parameters.
- * </p>
  * 
  * @see Properties
  */
@@ -125,12 +121,10 @@ public class ParameterList extends Properties
 	 * precede any word which would be a value for an option unless they are
 	 * numeric values (otherwise it would be considered as a boolean option).
 	 * Note also that the name of an option can not start with a number.
-	 * </p>
 	 * 
 	 * <p>
 	 * No option can appear more than once. If so happens an exception is
 	 * thrown.
-	 * </p>
 	 * 
 	 * <p>
 	 * For instance the string:
@@ -146,7 +140,6 @@ public class ParameterList extends Properties
 	 * Qtype    reversible
 	 * </pre>
 	 * 
-	 * </p>
 	 * 
 	 * @param argv
 	 *            The argument list.

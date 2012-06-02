@@ -54,7 +54,6 @@ package jj2000.j2k.image;
  * (i.e. for 'int' it's an 'int[]'). The data should be stored in the array in
  * standard scan-line order. That is the samples go from the top-left corner of
  * the code-block to the lower-right corner by line and then column.
- * </p>
  * 
  * <p>
  * The member variable 'offset' gives the index in the array of the first data
@@ -63,19 +62,16 @@ package jj2000.j2k.image;
  * be different from the width of the block. Element '(x,y)' of the code-block
  * (i.e. '(ulx,uly)' is the top-left coefficient), will appear at position
  * 'offset+(y-uly)*scanw+(x-ulx)' in the array of data.
- * </p>
  * 
  * <p>
  * A block of data can have the <i>progressive</i> attribute set. Data is
  * progressive when it is obtained by successive refinement and the values in
  * this block are approximations of the "final" values. When the final values
  * are returned the progressive attribute must be turned off.
- * </p>
  * 
  * <p>
  * The classes <tt>DataBlkInt</tt> and <tt>DataBlkFloat</tt> provide
  * implementations for <tt>int</tt> and <tt>float</tt> types respectively.
- * </p>
  * 
  * @see DataBlkInt
  * 
@@ -168,7 +164,6 @@ public abstract class DataBlk
 	 * Each implementing class should provide a type specific equivalent method
 	 * (e.g., <tt>getDataInt()</tt> in <tt>DataBlkInt</tt>) which returns an
 	 * array of the correct type explicetely and not through an <tt>Object</tt>.
-	 * </p>
 	 * 
 	 * @return The array containing the data, or <tt>null</tt> if there is no
 	 *         data.
@@ -186,13 +181,11 @@ public abstract class DataBlk
 	 * <p>
 	 * The size of the array is not necessarily checked for consistency with
 	 * <tt>w</tt> and <tt>h</tt> or any other fields.
-	 * </p>
 	 * 
 	 * <p>
 	 * Each implementing class should provide a type specific equivalent method
 	 * (e.g., <tt>setDataInt()</tt> in <tt>DataBlkInt</tt>) which takes an array
 	 * of the correct type explicetely and not through an <tt>Object</tt>.
-	 * </p>
 	 * 
 	 * @param arr
 	 *            The new data array to use

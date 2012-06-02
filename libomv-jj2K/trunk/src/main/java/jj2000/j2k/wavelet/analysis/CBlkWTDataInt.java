@@ -51,7 +51,6 @@ import jj2000.j2k.image.*;
  * <p>
  * The methods in this class are declared final, so that they can be inlined by
  * inlining compilers.
- * </p>
  * 
  * @see CBlkWTData
  */

@@ -60,13 +60,11 @@ import jj2000.j2k.codestream.Markers;
  * effectively written to the codestream but the resulting number of bytes is
  * calculated and returned (although it is not accounted in the bit stream).
  * This can be used in rate control loops.
- * </p>
  * 
  * <p>
  * Implementing classes should write the header of the bit stream before writing
  * any packets. The bit stream header can be written with the help of the
  * HeaderEncoder class.
- * </p>
  * 
  * @see HeaderEncoder
  */
@@ -163,7 +161,6 @@ public class CodestreamWriter
 	 * the rest is discarded. However the value returned by the method is the
 	 * total length of the packet, as if all of it was written to the bit
 	 * stream.
-	 * </p>
 	 * 
 	 * <p>
 	 * If the codestream header has not been commited yet and if 'sim' is false,
@@ -258,7 +255,6 @@ public class CodestreamWriter
 	 * the rest is discarded. However the value returned by the method is the
 	 * total length of the packet, as if all of it was written to the bit
 	 * stream.
-	 * </p>
 	 * 
 	 * @param body
 	 *            The packet body data.

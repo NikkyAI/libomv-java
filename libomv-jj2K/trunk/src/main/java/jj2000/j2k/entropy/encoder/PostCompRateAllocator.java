@@ -64,7 +64,6 @@ import java.io.*;
  * CodestreamWriter. Since the rate allocator sends the packets to the bit
  * stream then it should output the packets to the bit stream in the order
  * imposed by the bit stream profiles.
- * </p>
  * 
  * @see CodedCBlkDataSrcEnc
  * @see jj2000.j2k.codestream.writer.CodestreamWriter

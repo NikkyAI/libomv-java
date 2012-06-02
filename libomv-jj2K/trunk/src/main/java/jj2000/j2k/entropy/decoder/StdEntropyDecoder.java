@@ -57,14 +57,12 @@ import jj2000.j2k.util.*;
  * The code-blocks are rectangular and their dimensions must be powers of 2.
  * Each dimension cannot be smaller than 4 and larger than 256. The product of
  * the two dimensions (i.e. area of the code-block) cannot exceed 4096.
- * </p>
  * 
  * <p>
  * Context 0 of the MQ-coder is used as the uniform one (uniform, non-adaptive
  * probability distribution). Context 1 is used for RLC coding. Contexts 2-10
  * are used for zero-coding (ZC), contexts 11-15 are used for sign-coding (SC)
  * and contexts 16-18 are used for magnitude-refinement (MR).
- * </p>
  * 
  * <p>
  * This implementation also provides some timing features. They can be enabled
@@ -76,7 +74,6 @@ import jj2000.j2k.util.*;
  * (i.e. some time might be counted in several places). When timing is disabled
  * ('DO_TIMING' is false) there is no penalty if the compiler performs some
  * basic optimizations. Even if not the penalty should be negligeable.
- * </p>
  */
 public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoderOptions
 {
@@ -1058,20 +1055,17 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * </p>
 	 * 
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * </p>
 	 * 
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The component for which to return the next code-block.
@@ -1119,7 +1113,6 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * last decoded bit-plane (i.e. 'bp'). If 'true' is returned the 'conceal'
 	 * method should be called and no more passes should be decoded for this
 	 * code-block's bit stream.
-	 * </p>
 	 * 
 	 * @param cblk
 	 *            The code-block data to decode
@@ -1441,7 +1434,6 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * <p>
 	 * This method bypasses the arithmetic coder and reads "raw" symbols from
 	 * the bit stream.
-	 * </p>
 	 * 
 	 * <p>
 	 * This method also checks for segmentation markers if those are present and
@@ -1451,7 +1443,6 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * last decoded bit-plane (i.e. 'bp'). If 'true' is returned the 'conceal'
 	 * method should be called and no more passes should be decoded for this
 	 * code-block's bit stream.
-	 * </p>
 	 * 
 	 * @param cblk
 	 *            The code-block data to decode

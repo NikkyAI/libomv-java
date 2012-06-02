@@ -57,7 +57,6 @@ import jj2000.j2k.entropy.*;
  * true). If a code-block is progressive then it means that more data for it may
  * be obtained for an improved quality. If the progressive flag is false then no
  * more data is available from the source for this code-block.
- * </p>
  * 
  * @see CodedCBlk
  */

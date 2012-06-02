@@ -54,23 +54,19 @@ package jj2000.j2k.util;
  * of any such methods. All methods that require the shared library will
  * automatically load the library if that has not been already done. The library
  * might also be manually loaded with the 'loadLibrary()' method of this class.
- * </p>
  * 
  * <p>
  * This class provides only static methods. It should not be instantiated.
- * </p>
  * 
  * <p>
  * Currently the only native services available is settings relative to POSIX
  * threads, which are not accessible from the Java API.
- * </p>
  * 
  * <p>
  * Currently the methods in this class make sense with POSIX threads only, since
  * they access POSIX threads settings. POSIX threads are most used under UNIX
  * and UNIX-like operating systems and are mostly referred to as "native"
  * threads in Java Virtual Machine (JVM) implementations.
- * </p>
  * 
  * <p>
  * The shared library SHLIB_NAME uses functions of the POSIX thread library
@@ -79,14 +75,12 @@ package jj2000.j2k.util;
  * the POSIX threads, due to unsatisfied references. For instance, JVMs that use
  * "green" threads will most certainly crash. POSIX threads are referred to as
  * "native" threads in JVMs under UNIX operating systems.
- * </p>
  * 
  * <p>
  * On Operating Systems where POSIX threads are not available (typically Windows
  * 95/98/NT/2000, MacIntosh, OS/2) there is no problem since the SHLIB_NAME, if
  * available, will not make use of POSIX threads library functions, thus no
  * problem should occur.
- * </p>
  */
 public final class NativeServices
 {
@@ -147,7 +141,6 @@ public final class NativeServices
 	 * maybe others, setting the concurrency level has no effect. In this cases
 	 * the number of CPUs that can be exploited by the JVM is not limited in
 	 * principle, all CPUs are available to the JVM.
-	 * </p>
 	 * 
 	 * <p>
 	 * For JVM implementations that use "green" threads setting the concurrency
@@ -155,7 +148,6 @@ public final class NativeServices
 	 * threads are all contained in one user process and can not use multiple
 	 * CPUs. In fact calling this method can result in a JVM crash is the shared
 	 * library SHLIB_NAME has been compiled to use POSIX threads.
-	 * </p>
 	 * 
 	 * @param n
 	 *            The new concurrency level to set.

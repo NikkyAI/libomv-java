@@ -203,7 +203,6 @@ public class MsgPrinter
 	 * <p>
 	 * Non-whitespace characters are defined as in the Character.isWhitespace
 	 * method (that method is used).
-	 * </p>
 	 * 
 	 * @param str
 	 *            The string to parse

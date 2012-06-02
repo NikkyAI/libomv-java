@@ -59,7 +59,6 @@ import jj2000.j2k.image.*;
  * dimensions, and the tiles, are not modifed by the dequantizer. If that is not
  * the case for a particular implementation then the methods should be
  * overriden.
- * </p>
  * 
  * <p>
  * Sign magnitude representation is used (instead of two's complement) for the
@@ -67,7 +66,6 @@ import jj2000.j2k.image.*;
  * if negative). Then the magnitude of the quantized coefficient is stored in
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
- * </p>
  * 
  * <p>
  * The output data is either in floating-point, or in fixed-point two's
@@ -76,7 +74,6 @@ import jj2000.j2k.image.*;
  * fractional bits must be defined at the constructor of the implementing class
  * and all operations must be performed accordingly. Each component may have a
  * different number of fractional bits.
- * </p>
  */
 public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlkWTDataSrcDec
 {
@@ -146,13 +143,11 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * subband the subband analysis gain value from the subband tree structure,
 	 * returned by the getSynSubbandTree() method, can be used. See the Subband
 	 * class for more details.
-	 * </p>
 	 * 
 	 * <p>
 	 * If this number is <i>b</b> then for unsigned data the nominal range is
 	 * between 0 and 2^b-1, and for signed data it is between -2^(b-1) and
 	 * 2^(b-1)-1.
-	 * </p>
 	 * 
 	 * @param c
 	 *            The index of the component
@@ -178,7 +173,6 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * may have not been not initialized (it depends on the actual dequantizer
 	 * and its implementation). However, they are not necessary for the
 	 * subsequent steps in the decoder chain.
-	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile, from 0 to T-1.
@@ -240,7 +234,6 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * <p>
 	 * This default implementation changes the tile in the source and
 	 * re-initializes properly component transformation variables..
-	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal index of the tile.
@@ -308,7 +301,6 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * <p>
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
-	 * </p>
 	 * 
 	 * @return The new tile index
 	 */
