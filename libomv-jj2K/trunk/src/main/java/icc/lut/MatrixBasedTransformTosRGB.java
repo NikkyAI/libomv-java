@@ -38,7 +38,8 @@ public class MatrixBasedTransformTosRGB
 	private static final double // Define the PCS to linear sRGB matrix
 								// coefficients
 			SRGB00 = 3.1337,
-			SRGB01 = -1.6173, SRGB02 = -0.4907, SRGB10 = -0.9785, SRGB11 = 1.9162, SRGB12 = 0.0334,
+			SRGB01 = -1.6173, SRGB02 = -0.4907, SRGB10 = -0.9785, SRGB11 = 1.9162,
+			SRGB12 = 0.0334,
 			SRGB20 = 0.0720,
 			SRGB21 = -0.2290, SRGB22 = 1.4056;
 

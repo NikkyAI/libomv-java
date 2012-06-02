@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy.encoder;
@@ -79,7 +79,6 @@ import java.io.*;
  */
 public class EBCOTRateAllocator extends PostCompRateAllocator
 {
-
 	/**
 	 * Whether to collect timing information or not: false. Used as a compile
 	 * time directive.
@@ -664,8 +663,8 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 				}
 				if (nValidProg == 0)
 				{
-					throw new Error("Unable to initialize rate allocator: No default progression type has been "
-							+ "defined for tile " + t);
+					throw new Error("Unable to initialize rate allocator: No "
+							+ "progression type has been defined for tile " + t);
 				}
 			}
 		} // End loop on tiles
@@ -858,8 +857,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 			{
 				if (l <= 0 || l >= numLayers - 1)
 				{
-					throw new IllegalArgumentException("The first and the last layer thresholds"
-							+ " must be optimized");
+					throw new IllegalArgumentException("The first and the last layer thresholds must be optimized");
 				}
 				rdThreshold = estimateLayerThreshold(maxBytes, layers[l - 1]);
 			}

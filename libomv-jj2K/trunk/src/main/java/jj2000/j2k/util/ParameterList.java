@@ -429,7 +429,7 @@ public class ParameterList extends Properties
 		int i;
 		boolean isvalid;
 
-		args = (Enumeration<String>)propertyNames();
+		args = (Enumeration<String>) propertyNames();
 
 		while (args.hasMoreElements())
 		{

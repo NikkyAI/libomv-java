@@ -58,8 +58,8 @@ import java.util.*;
 import java.io.*;
 
 /**
- * This class writes most of the markers and marker segments in main header
- * and in tile-part headers. It is created by the run() method of the Encoder
+ * This class writes most of the markers and marker segments in main header and
+ * in tile-part headers. It is created by the run() method of the Encoder
  * instance.
  * 
  * <p>
@@ -707,7 +707,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 		int tmp;
 		int mrl = 0, a = 0;
 		int ppx = 0, ppy = 0;
-//		Progression[] prog;
+		// Progression[] prog;
 
 		if (mh)
 		{
@@ -715,7 +715,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 			// Get precinct size for specified component
 			ppx = encSpec.pss.getPPX(-1, compIdx, mrl);
 			ppy = encSpec.pss.getPPY(-1, compIdx, mrl);
-//			prog = (Progression[]) (encSpec.pocs.getCompDef(compIdx));
+			// prog = (Progression[]) (encSpec.pocs.getCompDef(compIdx));
 		}
 		else
 		{
@@ -723,7 +723,8 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 			// Get precinct size for specified component/tile
 			ppx = encSpec.pss.getPPX(tileIdx, compIdx, mrl);
 			ppy = encSpec.pss.getPPY(tileIdx, compIdx, mrl);
-//			prog = (Progression[]) (encSpec.pocs.getTileCompVal(tileIdx, compIdx));
+			// prog = (Progression[]) (encSpec.pocs.getTileCompVal(tileIdx,
+			// compIdx));
 		}
 
 		if (ppx != Markers.PRECINCT_PARTITION_DEF_SIZE || ppy != Markers.PRECINCT_PARTITION_DEF_SIZE)
@@ -1921,8 +1922,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 		// Isot
 		if (tileIdx > 65534)
 		{
-			throw new IllegalArgumentException("Trying to write a tile-part header whose tile index is "
-					+ "too high");
+			throw new IllegalArgumentException("Trying to write a tile-part header whose tile index is " + "too high");
 		}
 		hbuf.writeByte(tileIdx >> 8);
 		hbuf.writeByte(tileIdx);

@@ -4,13 +4,13 @@
  * $Id: CBlkWTData.java,v 1.18 2001/08/15 17:15:14 grosbois Exp $
  * 
  * Class:                   CBlkWTData
- * 
+ *
  * Description:             Storage for code-blocks of WT data.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -84,7 +84,6 @@ import jj2000.j2k.image.*;
  */
 public abstract class CBlkWTData
 {
-
 	/** The horizontal coordinate of the upper-left corner of the code-block */
 	public int ulx;
 
@@ -221,9 +220,9 @@ public abstract class CBlkWTData
 				break;
 		}
 
-		return "ulx=" + ulx + ", uly=" + uly + ", idx=(" + m + "," + n + "), w=" + w + ", h=" + h + ", off=" + offset
-				+ ", scanw=" + scanw + ", wmseScaling=" + wmseScaling + ", convertFactor=" + convertFactor
-				+ ", stepSize=" + stepSize + ", type=" + typeString + ", magbits=" + magbits + ", nROIcoeff="
-				+ nROIcoeff + ", nROIbp=" + nROIbp;
+		return "CBlkWTData: ulx=" + ulx + ", uly=" + uly + ", code-block(" + m + "," + n + "), width=" + w
+				+ ", height=" + h + ", offset=" + offset + ", scan-width=" + scanw + ", type=" + typeString
+				+ ", wmseScaling= " + wmseScaling + ", convertFactor=" + convertFactor + ", stepSize=" + stepSize
+				+  ", magbits=" + magbits + ", nROIcoeff=" + nROIcoeff + ", nROIbp=" + nROIbp;
 	}
 }

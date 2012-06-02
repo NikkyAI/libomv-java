@@ -57,7 +57,6 @@ package jj2000.j2k.wavelet;
  * </p>
  * 
  * @see jj2000.j2k.wavelet.analysis.AnWTFilter
- * 
  * @see jj2000.j2k.wavelet.synthesis.SynWTFilter
  */
 public interface WaveletFilter

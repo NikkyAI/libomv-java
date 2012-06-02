@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.util;
@@ -54,7 +54,6 @@ import java.io.*;
  */
 public class CodestreamManipulator
 {
-
 	/**
 	 * Flag indicating whether packed packet headers in main header is used
 	 */
@@ -167,7 +166,6 @@ public class CodestreamManipulator
 	 */
 	public int doCodestreamManipulation() throws IOException
 	{
-		BEBufferedRandomAccessFile fi;
 		int addedHeaderBytes = 0;
 		ppt = new int[nt];
 		tileParts = new byte[nt][][];
@@ -181,7 +179,7 @@ public class CodestreamManipulator
 			return 0;
 
 		// Open file for reading and writing
-		fi = new BEBufferedRandomAccessFile(outname, "rw+");
+		BEBufferedRandomAccessFile fi = new BEBufferedRandomAccessFile(outname, "rw+");
 		addedHeaderBytes -= fi.length();
 
 		// Parse the codestream for SOT, SOP and EPH markers
@@ -430,7 +428,7 @@ public class CodestreamManipulator
 				pptp = ppt[t];
 			prem = ppt[t];
 			numTileParts = (int) Math.ceil(((double) prem) / pptp);
-//			numPackets = packetHeaders[t].length;
+			// numPackets = packetHeaders[t].length;
 			maxtp = (numTileParts > maxtp) ? numTileParts : maxtp;
 			tileParts[t] = new byte[numTileParts][];
 
@@ -474,7 +472,6 @@ public class CodestreamManipulator
 						// than MAX_LPPT, several PPT markers are needed
 						if (pptLength + phLength > Markers.MAX_LPPT)
 						{
-
 							temp.write(Markers.PPT >>> 8);
 							temp.write(Markers.PPT);
 							temp.write(pptLength >>> 8);
@@ -549,8 +546,8 @@ public class CodestreamManipulator
 					tempByteArr[1] = (byte) (Markers.SOT);
 					tempByteArr[2] = (byte) (0); // Lsot
 					tempByteArr[3] = (byte) (10);
-					tempByteArr[4] = (byte) (t >>> 8); // Isot
-					tempByteArr[5] = (byte) (t); //
+					tempByteArr[4] = (byte) (t >> 8); // Isot
+					tempByteArr[5] = (byte) (t);
 					tempByteArr[6] = (byte) (length >>> 24); // Psot
 					tempByteArr[7] = (byte) (length >>> 16);
 					tempByteArr[8] = (byte) (length >>> 8);

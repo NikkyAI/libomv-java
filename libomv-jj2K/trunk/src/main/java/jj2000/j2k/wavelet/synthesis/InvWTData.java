@@ -4,13 +4,13 @@
  * $Id: InvWTData.java,v 1.15 2001/09/20 13:07:09 grosbois Exp $
  * 
  * Class:                   InvWTData
- * 
+ *
  * Description:             <short description of class>
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -47,32 +47,33 @@ package jj2000.j2k.wavelet.synthesis;
  * are necessary for inverse wavelet data (i.e. data that is the source to an
  * inverse wavlet trasnform).
  */
-public interface InvWTData extends MultiResImgData {
+public interface InvWTData extends MultiResImgData
+{
+	/**
+	 * Returns the subband tree, for the specified tile-component. This method
+	 * returns the root element of the subband tree structure, see 'Subband' and
+	 * 'SubbandSyn'. The tree comprises all the available resolution levels.
+	 * 
+	 * @param t
+	 *            The index of the tile, from 0 to T-1.
+	 * 
+	 * @param c
+	 *            The index of the component, from 0 to C-1.
+	 * 
+	 * @return The root of the tree structure.
+	 */
+	@Override
+	public SubbandSyn getSynSubbandTree(int t, int c);
 
-    /**
-     * Returns the subband tree, for the specified tile-component. This method
-     * returns the root element of the subband tree structure, see 'Subband'
-     * and 'SubbandSyn'. The tree comprises all the available resolution
-     * levels.
-     *
-     * @param t The index of the tile, from 0 to T-1.
-     *
-     * @param c The index of the component, from 0 to C-1.
-     *
-     * @return The root of the tree structure.
-     */
-    @Override
-	public SubbandSyn getSynSubbandTree(int t,int c);
+	/**
+	 * Returns the horizontal code-block partition origin. Allowable values are
+	 * 0 and 1, nothing else.
+	 */
+	public int getCbULX();
 
-    /**
-     * Returns the horizontal code-block partition origin. Allowable values
-     * are 0 and 1, nothing else.
-     */
-    public int getCbULX();
-
-    /**
-     * Returns the vertical code-block partition origin Allowable values are 0
-     * and 1, nothing else.
-     */
-    public int getCbULY();
+	/**
+	 * Returns the vertical code-block partition origin Allowable values are 0
+	 * and 1, nothing else.
+	 */
+	public int getCbULY();
 }

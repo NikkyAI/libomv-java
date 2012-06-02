@@ -44,39 +44,47 @@
 package jj2000.j2k.codestream;
 
 /**
- * This interface defines the identifiers for the different codestream
- * profiles and progression types.
- *
- * <p>Each progressive type has a different number: 'LY_RES_COMP_POS_PROG',
+ * This interface defines the identifiers for the different codestream profiles
+ * and progression types.
+ * 
+ * <p>
+ * Each progressive type has a different number: 'LY_RES_COMP_POS_PROG',
  * 'RES_LY_COMP_POS_PROG', 'RES_POS_COMP_LY_PROG', 'POS_COMP_RES_LY_PROG' or
- * 'COMP_POS_RES_LY_PROG'.  These are the same identifiers are used in the
+ * 'COMP_POS_RES_LY_PROG'. These are the same identifiers are used in the
  * codestream syntax.
- *
- * <p>This interface defines the constants only. In order to use the constants
- * in any other class you can either use the fully qualified name (e.g.,
+ * 
+ * <p>
+ * This interface defines the constants only. In order to use the constants in
+ * any other class you can either use the fully qualified name (e.g.,
  * <tt>ProgressionType.LY_RES_COMP_POS_PROG</tt>) or declare this interface in
- * the implements clause of the class and then access the identifier
- * directly.</p>
+ * the implements clause of the class and then access the identifier directly.
+ * </p>
  */
-public interface ProgressionType {
+public interface ProgressionType
+{
 
-    /** The codestream is Layer/Resolution/Component/Position progressive : 0
-     */ 
-    public final static int LY_RES_COMP_POS_PROG = 0;
+	/**
+	 * The codestream is Layer/Resolution/Component/Position progressive : 0
+	 */
+	public final static int LY_RES_COMP_POS_PROG = 0;
 
-    /** The codestream is Resolution/Layer/Component/Position progressive : 1
-     */ 
-    public final static int RES_LY_COMP_POS_PROG = 1;
+	/**
+	 * The codestream is Resolution/Layer/Component/Position progressive : 1
+	 */
+	public final static int RES_LY_COMP_POS_PROG = 1;
 
-    /** The codestream is Resolution/Position/Component/Layer progressive : 2
-     */ 
-    public final static int RES_POS_COMP_LY_PROG = 2;
+	/**
+	 * The codestream is Resolution/Position/Component/Layer progressive : 2
+	 */
+	public final static int RES_POS_COMP_LY_PROG = 2;
 
-    /** The codestream is Position/Component/Resolution/Layer progressive : 3
-     */ 
-    public final static int POS_COMP_RES_LY_PROG = 3;
+	/**
+	 * The codestream is Position/Component/Resolution/Layer progressive : 3
+	 */
+	public final static int POS_COMP_RES_LY_PROG = 3;
 
-    /** The codestream is Component/Position/Resolution/Layer progressive : 4
-     */ 
-    public final static int COMP_POS_RES_LY_PROG = 4;
+	/**
+	 * The codestream is Component/Position/Resolution/Layer progressive : 4
+	 */
+	public final static int COMP_POS_RES_LY_PROG = 4;
 }

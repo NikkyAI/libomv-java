@@ -4,16 +4,16 @@
  * $Id: InvWTFull.java,v 1.20 2002/05/22 15:01:32 grosbois Exp $
  * 
  * Class:                   InvWTFull
- * 
+ *
  * Description:             This class implements a full page inverse DWT for
  *                          int and float data.
- * 
+ *
  *                          the InvWTFullInt and InvWTFullFloat
  *                          classes by Bertrand Berthelot, Apr-19-1999
- * 
- * 
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -40,7 +40,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -74,16 +74,15 @@ import jj2000.j2k.util.*;
  * </p>
  * 
  * <p>
- * This implementation does not support progressive data: Data is considered to
- * be non-progressive (i.e. "final" data) and the 'progressive' attribute of the
- * 'DataBlk' class is always set to false, see the 'DataBlk' class.
+ * This implementation does not support progressive data, all data is considered
+ * to be non-progressive (i.e. "final" data) and the 'progressive' attribute of
+ * the 'DataBlk' class is always set to false, see the 'DataBlk' class.
  * </p>
  * 
  * @see DataBlk
  */
 public class InvWTFull extends InverseWT
 {
-
 	/** Reference to the ProgressWatch instance if any */
 	private ProgressWatch pw = null;
 

@@ -383,7 +383,7 @@ public class PktEncoder
 		// Precincts are located at (cb0x+i*twoppx,cb0y+j*twoppy)
 		// Valid precincts are those which intersect with the current
 		// resolution level
-//		int maxPrec = ppinfo[t][c][r].length;
+		// int maxPrec = ppinfo[t][c][r].length;
 		int nPrec = 0;
 
 		int istart = (int) Math.floor((try0 - cb0y) / twoppy);
@@ -894,8 +894,7 @@ public class PktEncoder
 								}
 								else
 								{
-									throw new ArithmeticException("Maximum number of truncation "
-											+ "points exceeded");
+									throw new ArithmeticException("Maximum number of truncation " + "points exceeded");
 								}
 						}
 					}

@@ -44,25 +44,29 @@
 import jj2000.j2k.encoder.*;
 
 /**
- * This class is a wrapper for the CmdLnEncoder class in the
- * jj2000.j2k.encoder package. It is used to avoid having to list the whole
- * package hierarchy in the java virtual machine command line.
+ * This class is a wrapper for the CmdLnEncoder class in the jj2000.j2k.encoder
+ * package. It is used to avoid having to list the whole package hierarchy in
+ * the java virtual machine command line.
  */
-public class JJ2KEncoder {
+public class JJ2KEncoder
+{
 
-    /**
-     * The starting point of the program. It forwards the call to the
-     * CmdLnEncoder class.
-     *
-     * @param argv The command line arguments.
-     */
-    public static void main(String argv[]) {
-        if (argv.length == 0) {
-            System.err.println("JJ2KEncoder: JJ2000's JPEG 2000 Encoder\n");
-            System.err.println("    use JJ2KEncoder -u to get help\n");
-            System.exit(1);
-        }
+	/**
+	 * The starting point of the program. It forwards the call to the
+	 * CmdLnEncoder class.
+	 * 
+	 * @param argv
+	 *            The command line arguments.
+	 */
+	public static void main(String argv[])
+	{
+		if (argv.length == 0)
+		{
+			System.err.println("JJ2KEncoder: JJ2000's JPEG 2000 Encoder\n");
+			System.err.println("    use JJ2KEncoder -u to get help\n");
+			System.exit(1);
+		}
 
-        CmdLnEncoder.main(argv);
-    }
+		CmdLnEncoder.main(argv);
+	}
 }

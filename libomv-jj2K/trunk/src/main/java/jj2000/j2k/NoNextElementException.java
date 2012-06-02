@@ -41,7 +41,6 @@
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
-
 package jj2000.j2k;
 
 /**
@@ -51,7 +50,6 @@ package jj2000.j2k;
  */
 public class NoNextElementException extends RuntimeException
 {
-
 	private static final long serialVersionUID = 1L;
 
 	/**

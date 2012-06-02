@@ -515,7 +515,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * 
 	 * @param y
 	 *            The vertical coordinate of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -533,7 +533,7 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * columns). A NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile). This default implementation
 	 * assumes no tiling, so NoNextElementException() is always thrown.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

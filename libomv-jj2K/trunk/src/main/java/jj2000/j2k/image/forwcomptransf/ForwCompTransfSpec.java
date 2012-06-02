@@ -261,8 +261,7 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes
 					}
 					else
 					{
-						throw new IllegalArgumentException("Default parameter of option Mct not recognized: "
-								+ param);
+						throw new IllegalArgumentException("Default parameter of option Mct not recognized: " + param);
 					}
 
 					// Re-initialize

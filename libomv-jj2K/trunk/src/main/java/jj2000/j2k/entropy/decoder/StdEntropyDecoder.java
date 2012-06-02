@@ -4,13 +4,13 @@
  * $Id: StdEntropyDecoder.java,v 1.30 2001/10/25 12:12:16 qtxjoas Exp $
  * 
  * Class:                   StdEntropyDecoder
- * 
+ *
  * Description:             Entropy decoding engine of stripes in code-blocks
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy.decoder;
@@ -80,7 +80,6 @@ import jj2000.j2k.util.*;
  */
 public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoderOptions
 {
-
 	/**
 	 * Whether to collect timing information or not: false. Used as a compile
 	 * time directive.
@@ -839,7 +838,6 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 
 		// Get the code-block to decode
 		srcblk = src.getCodeBlock(c, m, n, sb, 1, -1, srcblk);
-
 		if (DO_TIMING)
 			stime = System.currentTimeMillis();
 
@@ -851,7 +849,9 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 
 		// Initialize output code-block
 		if (cblk == null)
+		{
 			cblk = new DataBlkInt();
+		}
 		cblk.progressive = srcblk.prog;
 		cblk.ulx = srcblk.ulx;
 		cblk.uly = srcblk.uly;
@@ -2266,8 +2266,8 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 							// Update the data
 							data[k] = (sym << 31) | setmask;
 							// Update state information (significant bit,
-							// neighbor significant bit of neighbors, non zero
-							// context of neighbors, sign of neighbors)
+							// neighbor significant bit of neighbors,
+							// non zero context of neighbors, sign of neighbors)
 							state[j + off_dl] |= STATE_NZ_CTXT_R1 | STATE_D_UR_R1;
 							state[j + off_dr] |= STATE_NZ_CTXT_R1 | STATE_D_UL_R1;
 							// Update sign state information of neighbors

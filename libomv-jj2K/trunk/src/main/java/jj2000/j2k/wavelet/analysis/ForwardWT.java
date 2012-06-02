@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -64,7 +64,6 @@ import java.util.*;
  */
 public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWTDataSrc
 {
-
 	/**
 	 * ID for the dyadic wavelet tree decomposition (also called "Mallat" in
 	 * JPEG 2000): 0x00.
@@ -149,7 +148,7 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 */
 	public static ForwardWT createInstance(BlkImgDataSrc src, ParameterList pl, EncoderSpecs encSpec)
 	{
-		int deflev = ((Integer)encSpec.dls.getDefault()).intValue();
+		int deflev = ((Integer) encSpec.dls.getDefault()).intValue();
 
 		// Check parameters
 		pl.checkList(OPT_PREFIX, ParameterList.toNameArray(pinfo));
@@ -204,5 +203,4 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 
 		return new ForwWTFull(src, encSpec, cb0x, cb0y);
 	}
-
 }

@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,13 +38,9 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
  */
-
 package jj2000.j2k.wavelet.synthesis;
 
 import jj2000.j2k.image.*;
@@ -65,7 +61,6 @@ import jj2000.j2k.image.*;
  */
 public abstract class SynWTFilterFloat extends SynWTFilter
 {
-
 	/**
 	 * A specific version of the synthetize_lpf() method that works on float
 	 * data. See the general description of the synthetize_lpf() method in the
@@ -112,10 +107,6 @@ public abstract class SynWTFilterFloat extends SynWTFilter
 	 *            in the outSig array.
 	 * 
 	 * @see SynWTFilter#synthetize_lpf
-	 * 
-	 * 
-	 * 
-	 * 
 	 */
 	public abstract void synthetize_lpf(float[] lowSig, int lowOff, int lowLen, int lowStep, float[] highSig,
 			int highOff, int highLen, int highStep, float[] outSig, int outOff, int outStep);
@@ -168,10 +159,6 @@ public abstract class SynWTFilterFloat extends SynWTFilter
 	 *            in the outSig array.
 	 * 
 	 * @see SynWTFilter#synthetize_hpf
-	 * 
-	 * 
-	 * 
-	 * 
 	 */
 	@Override
 	public void synthetize_lpf(Object lowSig, int lowOff, int lowLen, int lowStep, Object highSig, int highOff,
@@ -228,10 +215,6 @@ public abstract class SynWTFilterFloat extends SynWTFilter
 	 *            in the outSig array.
 	 * 
 	 * @see SynWTFilter#synthetize_hpf
-	 * 
-	 * 
-	 * 
-	 * 
 	 */
 	public abstract void synthetize_hpf(float[] lowSig, int lowOff, int lowLen, int lowStep, float[] highSig,
 			int highOff, int highLen, int highStep, float[] outSig, int outOff, int outStep);
@@ -284,10 +267,6 @@ public abstract class SynWTFilterFloat extends SynWTFilter
 	 *            in the outSig array.
 	 * 
 	 * @see SynWTFilter#synthetize_hpf
-	 * 
-	 * 
-	 * 
-	 * 
 	 */
 	@Override
 	public void synthetize_hpf(Object lowSig, int lowOff, int lowLen, int lowStep, Object highSig, int highOff,
@@ -305,13 +284,10 @@ public abstract class SynWTFilterFloat extends SynWTFilter
 	 * @return The type of data as defined in the DataBlk interface.
 	 * 
 	 * @see jj2000.j2k.image.DataBlk
-	 * 
-	 * 
 	 */
 	@Override
 	public int getDataType()
 	{
 		return DataBlk.TYPE_FLOAT;
 	}
-
 }

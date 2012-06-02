@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.quantization.quantizer;
@@ -99,7 +99,6 @@ import jj2000.j2k.image.*;
  */
 public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 {
-
 	/** The prefix for quantizer options: 'Q' */
 	public final static char OPT_PREFIX = 'Q';
 
@@ -127,8 +126,7 @@ public abstract class Quantizer extends ImgDataAdapter implements CBlkQuantDataS
 							+ "ignored in reversible coding. The default value is '1/128' (i.e. 0.0078125).",
 					"0.0078125" },
 			{ "Qguard_bits", "[<tile-component idx>] <gb> [ [<tile-component idx>] <gb> ...]",
-					"The number of bits used for each tile-component in the quantizer to avoid overflow (gb).",
-					"2" }, };
+					"The number of bits used for each tile-component in the quantizer to avoid overflow (gb).", "2" }, };
 
 	/** The source of wavelet transform coefficients */
 	protected CBlkWTDataSrc src;

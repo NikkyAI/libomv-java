@@ -94,11 +94,11 @@ public interface WaveletTransform extends ImgData
 	 * Returns the implementation type of this wavelet transform (WT_IMPL_LINE
 	 * or WT_IMPL_FRAME) for the specified component, in the current tile.
 	 * 
-	 * @param c
+	 * @param n
 	 *            The index of the component.
 	 * 
 	 * @return WT_IMPL_LINE or WT_IMPL_FULL for line, block or full-page based
 	 *         transforms.
 	 */
-	public int getImplementationType(int c);
+	public int getImplementationType(int n);
 }

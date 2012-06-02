@@ -73,7 +73,9 @@ public class ModuleSpec implements Cloneable
 	 */
 	public final static byte SPEC_TYPE_COMP = 0;
 
-	/** The identifier for a specification module that applies only to tiles */
+	/**
+	 * The identifier for a specification module that applies only to tiles
+     */
 	public final static byte SPEC_TYPE_TILE = 1;
 
 	/**
@@ -134,6 +136,40 @@ public class ModuleSpec implements Cloneable
 	public ModuleSpec getCopy()
 	{
 		return (ModuleSpec) this.clone();
+	}
+
+	/**
+	 * Constructs a 'ModuleSpec' object, initializing all the components and
+	 * tiles to the 'SPEC_DEF' spec val type, for the specified number of
+	 * components and tiles.
+	 * 
+	 * @param nt
+	 *            The number of tiles
+	 * 
+	 * @param nc
+	 *            The number of components
+	 * 
+	 * @param type
+	 *            the type of the specification module i.e. tile specific,
+	 *            component specific or both.
+	 */
+	public ModuleSpec(int nt, int nc, byte type)
+	{
+		nTiles = nt;
+		nComp = nc;
+		specValType = new byte[nt][nc];
+		switch (type)
+		{
+			case SPEC_TYPE_TILE:
+				specType = SPEC_TYPE_TILE;
+				break;
+			case SPEC_TYPE_COMP:
+				specType = SPEC_TYPE_COMP;
+				break;
+			case SPEC_TYPE_TILE_COMP:
+				specType = SPEC_TYPE_TILE_COMP;
+				break;
+		}
 	}
 
 	@Override
@@ -247,40 +283,6 @@ public class ModuleSpec implements Cloneable
 				tmptcv.put("t" + atIdx + tmpKey.substring(i2), tmpVal);
 			}
 			tileCompVal = tmptcv;
-		}
-	}
-
-	/**
-	 * Constructs a 'ModuleSpec' object, initializing all the components and
-	 * tiles to the 'SPEC_DEF' spec val type, for the specified number of
-	 * components and tiles.
-	 * 
-	 * @param nt
-	 *            The number of tiles
-	 * 
-	 * @param nc
-	 *            The number of components
-	 * 
-	 * @param type
-	 *            the type of the specification module i.e. tile specific,
-	 *            component specific or both.
-	 */
-	public ModuleSpec(int nt, int nc, byte type)
-	{
-		nTiles = nt;
-		nComp = nc;
-		specValType = new byte[nt][nc];
-		switch (type)
-		{
-			case SPEC_TYPE_TILE:
-				specType = SPEC_TYPE_TILE;
-				break;
-			case SPEC_TYPE_COMP:
-				specType = SPEC_TYPE_COMP;
-				break;
-			case SPEC_TYPE_TILE_COMP:
-				specType = SPEC_TYPE_TILE_COMP;
-				break;
 		}
 	}
 
@@ -569,8 +571,8 @@ public class ModuleSpec implements Cloneable
 	 * indexes set for an option. Such an argument must follow the following
 	 * policy:<br>
 	 * 
-	 * <tt>t&lt;indexes set&gt;</tt> or <tt>c&lt;indexes set&gt;</tt> where tile
-	 * or component indexes are separated by commas or a dashes.
+	 * <tt>t\<indexes set\></tt> or <tt>c\<indexes set\></tt> where tile or
+	 * component indexes are separated by commas or a dashes.
 	 * 
 	 * <p>
 	 * <u>Example:</u><br>
@@ -618,8 +620,7 @@ public class ModuleSpec implements Cloneable
 				}
 				if (idx < 0 || idx >= maxIdx)
 				{
-					throw new IllegalArgumentException("Out of range index in parameter `" + word + "' : "
-							+ idx);
+					throw new IllegalArgumentException("Out of range index in parameter `" + word + "' : " + idx);
 				}
 
 				// Found a comma

@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.fileformat.writer;
@@ -191,7 +191,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	public void writeFileTypeBox() throws IOException
+	private void writeFileTypeBox() throws IOException
 	{
 		// Write box length (LBox)
 		// LBox(4) + TBox (4) + BR(4) + MinV(4) + CL(4) = 20
@@ -218,7 +218,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	public void writeJP2HeaderBox() throws IOException
+	private void writeJP2HeaderBox() throws IOException
 	{
 
 		// Write box length (LBox)
@@ -249,7 +249,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 *                If an I/O error ocurred.
 	 * 
 	 */
-	public void writeBitsPerComponentBox() throws IOException
+	private void writeBitsPerComponentBox() throws IOException
 	{
 
 		// Write box length (LBox)
@@ -272,7 +272,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 *                If an I/O error ocurred.
 	 * 
 	 */
-	public void writeColourSpecificationBox() throws IOException
+	private void writeColourSpecificationBox() throws IOException
 	{
 
 		// Write box length (LBox)
@@ -303,7 +303,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	public void writeImageHeaderBox() throws IOException
+	private void writeImageHeaderBox() throws IOException
 	{
 
 		// Write box length
@@ -349,7 +349,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	public void writeContiguousCodeStreamBox(byte[] cs) throws IOException
+	private void writeContiguousCodeStreamBox(byte[] cs) throws IOException
 	{
 
 		// Write box length (LBox)

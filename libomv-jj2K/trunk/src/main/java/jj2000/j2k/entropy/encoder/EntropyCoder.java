@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy.encoder;
@@ -79,7 +79,6 @@ import jj2000.j2k.*;
  */
 public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDataSrcEnc, StdEntropyCoderOptions
 {
-
 	/** The prefix for entropy coder options: 'C' */
 	public final static char OPT_PREFIX = 'C';
 
@@ -93,11 +92,10 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 					"[<tile-component idx>] <width> <height> [[<tile-component idx>] <width> <height>]",
 					"Specifies the maximum code-block size to use for tile-component. "
 							+ "The maximum width and height is 1024, however the surface area "
-							+ "(i.e. width x height) must not exceed 4096. The minimum width and height is 4.",
-					"64 64" },
+							+ "(i.e. width x height) must not exceed 4096. The minimum width and height is 4.", "64 64" },
 			{
 					"Cbypass",
-					"[<tile-component idx>] on|off[ [<tile-component idx>] on|off ...]",
+					"[<tile-component idx>] on|off [ [<tile-component idx>] on|off ...]",
 					"Uses the lazy coding mode with the entropy coder. This will bypass "
 							+ "the MQ coder for some of the coding passes, where the distribution "
 							+ "is often close to uniform. Since the MQ codeword will be terminated "
@@ -106,26 +104,26 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 							+ "'on' enables, 'off' disables it.", "off" },
 			{
 					"CresetMQ",
-					"[<tile-component idx>] on|off[ [<tile-component idx>] on|off ...]",
+					"[<tile-component idx>] on|off [ [<tile-component idx>] on|off ...]",
 					"If this is enabled the probability estimates of the MQ coder are "
 							+ "reset after each arithmetically coded (i.e. non-lazy) coding pass. "
 							+ "'on' enables, 'off' disables it.", "off" },
 			{
 					"Cterminate",
-					"[<tile-component idx>] on|off[ [<tile-component idx>] on|off ...]",
+					"[<tile-component idx>] on|off [ [<tile-component idx>] on|off ...]",
 					"If this is enabled the codeword (raw or MQ) is terminated on a "
 							+ "byte boundary after each coding pass. In this case it is important "
 							+ "to use an efficient termination algorithm, see the 'Cterm' option. "
 							+ "'on' enables, 'off' disables it.", "off" },
 			{
 					"Ccausal",
-					"[<tile-component idx>] on|off[ [<tile-component idx>] on|off ...]",
+					"[<tile-component idx>] on|off [ [<tile-component idx>] on|off ...]",
 					"Uses vertically stripe causal context formation. If this is enabled "
 							+ "the context formation process in one stripe is independant of the "
 							+ "next stripe (i.e. the one below it). 'on' enables, 'off' disables it.", "off" },
 			{
 					"Cseg_symbol",
-					"[<tile-component idx>] on|off[ [<tile-component idx>] on|off ...]",
+					"[<tile-component idx>] on|off [ [<tile-component idx>] on|off ...]",
 					"Inserts an error resilience segmentation symbol in the MQ codeword at the end of "
 							+ "each bit-plane (cleanup pass). Decoders can use this information to detect and "
 							+ "conceal errors.'on' enables, 'off' disables it.", "off" },
@@ -149,7 +147,7 @@ public abstract class EntropyCoder extends ImgDataAdapter implements CodedCBlkDa
 							+ "it will be done almost 3 times per bit-plane in each code-block).", "near_opt" },
 			{
 					"Clen_calc",
-					"[<tile-component idx>] near_opt|lazy_good|lazy[ [<tile-component idx>] ...]",
+					"[<tile-component idx>] near_opt|lazy_good|lazy [ [<tile-component idx>] ...]",
 					"Specifies the algorithm to use in calculating the necessary MQ "
 							+ "length for each decoding pass. The best one is 'near_opt', which "
 							+ "performs a rather sophisticated calculation and provides the best "

@@ -39,53 +39,51 @@
  * derivative works of this software module.
  * 
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
  */
-
 
 package jj2000.j2k;
 
 /**
- * This class handles exceptions. It should be used in places where it
- * is not known how to handle the exception, and the exception can not
- * be thrown higher in the stack.
- *
- * <P>Different options can be registered for each Thread and
- * ThreadGroup. <i>This feature is not implemented yet</i>
- *
+ * This class handles exceptions. It should be used in places where it is not
+ * known how to handle the exception, and the exception can not be thrown higher
+ * in the stack.
+ * 
+ * <P>
+ * Different options can be registered for each Thread and ThreadGroup. <i>This
+ * feature is not implemented yet</i>
+ * 
  */
-public class JJ2KExceptionHandler {
+public class JJ2KExceptionHandler
+{
 
-    /**
-     * Handles the exception. If no special action is registered for
-     * the current thread, then the Exception's stack trace and a
-     * descriptive message are printed to standard error and the
-     * current thread is stopped.
-     *
-     * <P><i>Registration of special actions is not implemented yet.</i>
-     *
-     * @param e The exception to handle
-     *
-     *
-     */
-    public static void handleException(Throwable e) {
-        // Test if there is an special action (not implemented yet)
-        
-        // If no special action
-        
-        // Print the Exception message and stack to standard error
-        // including this method in the stack.
-        e.fillInStackTrace();
-        e.printStackTrace();
-        // Print an explicative message
-        System.err.println("The Thread is being terminated bacause an " +
-                           "Exception (shown above)\n" +
-                           "has been thrown and no special action was " +
-                           "defined for this Thread.");
-        // Stop the thread (do not use stop, since it's deprecated in
-        // Java 1.2)
-        throw new ThreadDeath();
-    }
+	/**
+	 * Handles the exception. If no special action is registered for the current
+	 * thread, then the Exception's stack trace and a descriptive message are
+	 * printed to standard error and the current thread is stopped.
+	 * 
+	 * <P>
+	 * <i>Registration of special actions is not implemented yet.</i>
+	 * 
+	 * @param e
+	 *            The exception to handle
+	 * 
+	 * 
+	 */
+	public static void handleException(Throwable e)
+	{
+		// Test if there is an special action (not implemented yet)
+
+		// If no special action
+
+		// Print the Exception message and stack to standard error
+		// including this method in the stack.
+		e.fillInStackTrace();
+		e.printStackTrace();
+		// Print an explicative message
+		System.err.println("The Thread is being terminated bacause an " + "Exception (shown above)\n"
+				+ "has been thrown and no special action was " + "defined for this Thread.");
+		// Stop the thread (do not use stop, since it's deprecated in
+		// Java 1.2)
+		throw new ThreadDeath();
+	}
 }

@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.util;
@@ -48,10 +48,12 @@ package jj2000.j2k.util;
  * terminal, text file, text area in a GUI display, dialog boxes in a GUI
  * display, etc., or a combination of those.
  * 
- * <>Messages are short strings (a couple of lines) that indicate some state of
+ * <p>
+ * Messages are short strings (a couple of lines) that indicate some state of
  * the program, and that have a severity code associated with them (see below).
  * Simple strings is text (can be long) that has no severity code associated
- * with it. Typical use of simple strings is to display help texts.</p>
+ * with it. Typical use of simple strings is to display help texts.
+ * </p>
  * 
  * <p>
  * Each message has a severity code, which can be one of the following: LOG,
@@ -69,7 +71,6 @@ package jj2000.j2k.util;
  */
 public interface MsgLogger
 {
-
 	/**
 	 * Severity of message. LOG messages are just for bookkeeping and do not
 	 * need to be displayed in the majority of cases

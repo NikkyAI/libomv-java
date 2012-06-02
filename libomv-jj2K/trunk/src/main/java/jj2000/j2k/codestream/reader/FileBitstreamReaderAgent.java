@@ -518,8 +518,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 					targetRes = pl.getIntParameter("res");
 					if (targetRes < 0)
 					{
-						throw new IllegalArgumentException("Specified negative resolution level index: "
-								+ targetRes);
+						throw new IllegalArgumentException("Specified negative resolution level index: " + targetRes);
 					}
 				}
 				catch (NumberFormatException f)
@@ -1801,7 +1800,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 		int start;
 		boolean status = false;
 		int lastByte = firstPackOff[t][curTilePart] + tilePartLen[t][curTilePart] - 1 - tilePartHeadLen[t][curTilePart];
-//		int numLayers = ((Integer) decSpec.nls.getTileDef(t)).intValue();
+		// int numLayers = ((Integer) decSpec.nls.getTileDef(t)).intValue();
 		String strInfo = "Tile " + getTileIdx() + " (tile-part:" + curTilePart + "): offset, length, header length\n";
 		;
 		boolean pph = false;
@@ -2286,7 +2285,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * 
 	 * @param y
 	 *            The vertical indexes of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -2366,7 +2365,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	 * Advances to the next tile, in standard scan-line order (by rows then
 	 * columns). A NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile).
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

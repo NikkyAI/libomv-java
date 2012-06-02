@@ -40,90 +40,110 @@
  */
 package jj2000.j2k.codestream;
 
-/** 
- * Class that holds precinct coordinates and references to contained
- * code-blocks in each subband. 
+/**
+ * Class that holds precinct coordinates and references to contained code-blocks
+ * in each subband.
  */
-public class PrecInfo {
-    
-    /** Precinct horizontal upper-left coordinate in the reference grid */
-    public int rgulx;
-    
-    /** Precinct vertical upper-left coordinate in the reference grid */
-    public int rguly;
-    
-    /** Precinct width reported in the reference grid */
-    public int rgw;
+public class PrecInfo
+{
 
-    /** Precinct height reported in the reference grid */
-    public int rgh;
+	/** Precinct horizontal upper-left coordinate in the reference grid */
+	public int rgulx;
 
-    /** Precinct horizontal upper-left coordinate in the corresponding
-     * resolution level*/
-    public int ulx;
+	/** Precinct vertical upper-left coordinate in the reference grid */
+	public int rguly;
 
-    /** Precinct vertical upper-left coordinate in the corresponding
-     * resolution level*/
-    public int uly;
+	/** Precinct width reported in the reference grid */
+	public int rgw;
 
-    /** Precinct width in the corresponding resolution level */
-    public int w;
-    
-    /** Precinct height in the corresponding resolution level */
-    public int h;
+	/** Precinct height reported in the reference grid */
+	public int rgh;
 
-    /** Resolution level index */
-    public int r;
+	/**
+	 * Precinct horizontal upper-left coordinate in the corresponding resolution
+	 * level
+	 */
+	public int ulx;
 
-    /** Code-blocks belonging to this precinct in each subbands of the
-     * resolution level */
-    public CBlkCoordInfo[][][] cblk;
+	/**
+	 * Precinct vertical upper-left coordinate in the corresponding resolution
+	 * level
+	 */
+	public int uly;
 
-    /** Number of code-blocks in each subband belonging to this precinct */
-    public int[] nblk;
+	/** Precinct width in the corresponding resolution level */
+	public int w;
 
-    /** 
-     * Class constructor.
-     *
-     * @param r Resolution level index.
-     * @param ulx Precinct horizontal offset.
-     * @param uly Precinct vertical offset.
-     * @param w Precinct width.
-     * @param h Precinct height.
-     * @param rgulx Precinct horizontal offset in the image reference grid.
-     * @param rguly Precinct horizontal offset in the image reference grid.
-     * @param rgw Precinct width in the reference grid.
-     * @param rgh Precinct height in the reference grid.
-     */
-    public PrecInfo(int r,int ulx,int uly,int w,int h,int rgulx,int rguly,
-                    int rgw,int rgh) {
-        this.r = r;
-        this.ulx = ulx;
-        this.uly = uly;
-        this.w = w;
-        this.h = h;
-        this.rgulx = rgulx;
-        this.rguly = rguly;
-        this.rgw = rgw;
-        this.rgh = rgh;
+	/** Precinct height in the corresponding resolution level */
+	public int h;
 
-        if (r==0) {
-            cblk = new CBlkCoordInfo[1][][];
-            nblk = new int[1];
-        } else {
-            cblk = new CBlkCoordInfo[4][][];
-            nblk = new int[4];
-        }
-    }
+	/** Resolution level index */
+	public int r;
 
-    /** 
-     * Returns PrecInfo object information in a String
-     *
-     * @return PrecInfo information 
-     */
-    @Override
-	public String toString() {
-        return "ulx="+ulx+",uly="+uly+",w="+w+",h="+h+",rgulx="+rgulx+
-            ",rguly="+rguly+",rgw="+rgw+",rgh="+rgh;
-    }
+	/**
+	 * Code-blocks belonging to this precinct in each subbands of the resolution
+	 * level
+	 */
+	public CBlkCoordInfo[][][] cblk;
+
+	/** Number of code-blocks in each subband belonging to this precinct */
+	public int[] nblk;
+
+	/**
+	 * Class constructor.
+	 * 
+	 * @param r
+	 *            Resolution level index.
+	 * @param ulx
+	 *            Precinct horizontal offset.
+	 * @param uly
+	 *            Precinct vertical offset.
+	 * @param w
+	 *            Precinct width.
+	 * @param h
+	 *            Precinct height.
+	 * @param rgulx
+	 *            Precinct horizontal offset in the image reference grid.
+	 * @param rguly
+	 *            Precinct horizontal offset in the image reference grid.
+	 * @param rgw
+	 *            Precinct width in the reference grid.
+	 * @param rgh
+	 *            Precinct height in the reference grid.
+	 */
+	public PrecInfo(int r, int ulx, int uly, int w, int h, int rgulx, int rguly, int rgw, int rgh)
+	{
+		this.r = r;
+		this.ulx = ulx;
+		this.uly = uly;
+		this.w = w;
+		this.h = h;
+		this.rgulx = rgulx;
+		this.rguly = rguly;
+		this.rgw = rgw;
+		this.rgh = rgh;
+
+		if (r == 0)
+		{
+			cblk = new CBlkCoordInfo[1][][];
+			nblk = new int[1];
+		}
+		else
+		{
+			cblk = new CBlkCoordInfo[4][][];
+			nblk = new int[4];
+		}
+	}
+
+	/**
+	 * Returns PrecInfo object information in a String
+	 * 
+	 * @return PrecInfo information
+	 */
+	@Override
+	public String toString()
+	{
+		return "ulx=" + ulx + ",uly=" + uly + ",w=" + w + ",h=" + h + ",rgulx=" + rgulx + ",rguly=" + rguly + ",rgw="
+				+ rgw + ",rgh=" + rgh;
+	}
 }

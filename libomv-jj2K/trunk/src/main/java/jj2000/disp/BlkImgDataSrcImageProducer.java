@@ -146,8 +146,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 			}
 			if (src.getNomRangeBits(i) > 8)
 			{
-				throw new IllegalArgumentException("Depths greater than 8 bits per component is "
-						+ "not supported");
+				throw new IllegalArgumentException("Depths greater than 8 bits per component is " + "not supported");
 			}
 		}
 		this.src = src;
@@ -479,7 +478,7 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 								pixbuf[i] = (0xFF << 24) | (tmp1 << 16) | (tmp2 << 8) | tmp3;
 							}
 							break;
-							
+
 						case RGBA:
 							data1 = db1.data; // red
 							data2 = db2.data; // green

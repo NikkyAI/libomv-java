@@ -4,15 +4,15 @@
  * $Id: CodedCBlkDataSrcEnc.java,v 1.15 2001/09/14 09:23:22 grosbois Exp $
  * 
  * Class:                   CodedCBlkDataSrcEnc
- * 
+ *
  * Description:             Interface that defines a source of entropy coded
  *                          data that is transferred in a code-block by
  *                          code-block basis.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -39,7 +39,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy.encoder;
@@ -68,7 +68,6 @@ import jj2000.j2k.wavelet.analysis.*;
  */
 public interface CodedCBlkDataSrcEnc extends ForwWTDataProps
 {
-
 	/**
 	 * Returns the next coded code-block in the current tile for the specified
 	 * component, as a copy (see below). The order in which code-blocks are

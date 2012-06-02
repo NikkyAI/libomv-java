@@ -4,13 +4,13 @@
  * $Id: AnWTFilterSpec.java,v 1.27 2001/05/08 16:11:37 grosbois Exp $
  * 
  * Class:                   AnWTFilterSpec
- * 
+ *
  * Description:             Analysis filters specification
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -56,7 +56,6 @@ import java.util.*;
  */
 public class AnWTFilterSpec extends ModuleSpec
 {
-
 	/** The reversible default filter */
 	private final static String REV_FILTER_STR = "w5x3";
 
@@ -426,13 +425,14 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * Returns the horizontal analysis filters to be used in component 'n' and
 	 * tile 't'.
 	 * 
-	 * <P>
+	 * <p>
 	 * The horizontal analysis filters are returned in an array of AnWTFilter.
 	 * Each element contains the horizontal filter for each resolution level
 	 * starting with resolution level 1 (i.e. the analysis filter to go from
 	 * resolution level 1 to resolution level 0). If there are less elements
 	 * than the maximum resolution level, then the last element is assumed to be
 	 * repeated.
+	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index, in raster scan order
@@ -453,13 +453,14 @@ public class AnWTFilterSpec extends ModuleSpec
 	 * Returns the vertical analysis filters to be used in component 'n' and
 	 * tile 't'.
 	 * 
-	 * <P>
+	 * <p>
 	 * The vertical analysis filters are returned in an array of AnWTFilter.
 	 * Each element contains the vertical filter for each resolution level
 	 * starting with resolution level 1 (i.e. the analysis filter to go from
 	 * resolution level 1 to resolution level 0). If there are less elements
 	 * than the maximum resolution level, then the last element is assumed to be
 	 * repeated.
+	 * </p>
 	 * 
 	 * @param t
 	 *            The tile index, in raster scan order

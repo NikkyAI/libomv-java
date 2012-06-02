@@ -462,8 +462,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 			case FORW_ICT:
 				return forwICT(blk, c);
 			default:
-				throw new IllegalArgumentException("Non JPEG 2000 part 1 component transformation for tile: "
-						+ tIdx);
+				throw new IllegalArgumentException("Non JPEG 2000 part 1 component transformation for tile: " + tIdx);
 		}
 	}
 
@@ -810,7 +809,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -850,7 +849,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
 	 * </p>
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

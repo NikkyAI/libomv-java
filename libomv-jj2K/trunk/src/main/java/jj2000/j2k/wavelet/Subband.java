@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet;
@@ -49,11 +49,11 @@ import jj2000.j2k.image.*;
  * This abstract class represents a subband in a bidirectional tree structure
  * that describes the subband decomposition for a wavelet transform. This class
  * is implemented by the SubbandAn and SubbandSyn classes, which are for the
- * analysis and synthesis sides respectively.
+ * analysis and synthesis sides, respectively.
  * 
  * <p>
  * The element can be either a node or a leaf of the tree. If it is a node, it
- * has 4 descendants (LL, HL, LH and HH). If it is a leaf, it has no descendant.
+ * has 4 descendants (LL, HL, LH and HH). If it is a leaf, it has no descendants.
  * </p>
  * 
  * <p>
@@ -81,25 +81,29 @@ public abstract class Subband
 	/** The ID for the HH orientation */
 	public final static int WT_ORIENT_HH = 3;
 
-	/** True if it is a node in the tree, false if it is a leaf. */
+	/** True if it is a node in the tree, false if it is a leaf. False by default. */
 	public boolean isNode;
 
 	/**
 	 * The orientation of this subband (WT_ORIENT_LL, WT_ORIENT_HL,
-	 * WT_ORIENT_LH, WT_ORIENT_HH).
+	 * WT_ORIENT_LH, WT_ORIENT_HH). It is WT_ORIENT_LL by default. The
+	 * orientation of the top-level node (i.e. the full image before any
+	 * decomposition) is WT_ORIENT_LL.
 	 */
+	// The default value is always 0, which is WT_ORIENT_LL.
 	public int orientation;
 
 	/**
 	 * The level in the tree to which this subband belongs, which is the number
 	 * of performed wavelet decompositions to get this subband. It is 0 for the
-	 * top-level (i.e. root) node.
+	 * top-level (i.e. root) node. It is 0 by default.
 	 */
 	public int level;
 
 	/**
 	 * The resolution level to which this subband contributes. 0 is the smallest
 	 * resolution level (the one with the lowest frequency LL subband).
+	 * It is 0 by default.
 	 */
 	public int resLvl;
 
@@ -597,9 +601,9 @@ public abstract class Subband
 	@Override
 	public String toString()
 	{
-		String string = "w=" + w + ",h=" + h + ",ulx=" + ulx + ",uly=" + uly + ",ulcx=" + ulcx + ",ulcy=" + ulcy
-				+ ",idx=" + sbandIdx + ",orient=" + orientation + ",node=" + isNode + ",level=" + level + ",resLvl="
-				+ resLvl + ",nomCBlkW=" + nomCBlkW + ",nomCBlkH=" + nomCBlkH + ",numCb=" + numCb;
+		String string = "w=" + w + ", h=" + h + ", ulx=" + ulx + ", uly=" + uly + ", ulcx=" + ulcx + ", ulcy=" + ulcy
+                + ", idx=" + sbandIdx + ", orient=" + orientation + ", node=" + isNode + ", level=" + level
+                + ", resLvl=" + resLvl + ", nomCBlkW=" + nomCBlkW + ", nomCBlkH=" + nomCBlkH + ", numCb=" + numCb;
 
 		return string;
 	}

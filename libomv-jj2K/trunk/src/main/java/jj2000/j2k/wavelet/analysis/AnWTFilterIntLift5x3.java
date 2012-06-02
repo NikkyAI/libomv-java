@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -61,7 +61,6 @@ import jj2000.j2k.wavelet.*;
  */
 public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 {
-
 	/** The low-pass synthesis filter of the 5x3 wavelet transform */
 	private final static float LPSynthesisFilter[] = { 0.5f, 1f, 0.5f };
 
@@ -194,11 +193,11 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	 * general description of the analyze_hpf() method in the AnWTFilter class
 	 * for more details.
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the first lifting step are [-1/2 1 -1/2].
 	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the second lifting step are [1/4 1 1/4].
 	 * </p>
 	 * 
@@ -513,7 +512,6 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	@Override
 	public boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen)
 	{
-
 		// If the input signal has even length.
 		if (inLen % 2 == 0)
 		{
@@ -569,5 +567,4 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt
 	{
 		return "w5x3";
 	}
-
 }

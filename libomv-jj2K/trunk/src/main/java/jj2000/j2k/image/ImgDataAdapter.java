@@ -345,7 +345,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -363,7 +363,7 @@ public abstract class ImgDataAdapter implements ImgData
 	 * <p>
 	 * This default implementation just advances to the next tile in the source.
 	 * </p>
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

@@ -4,14 +4,14 @@
  * $Id: CBlkWTDataSrc.java,v 1.18 2001/09/14 08:45:25 grosbois Exp $
  * 
  * Class:                   CBlkWTDataSrc
- * 
+ *
  * Description:             Interface that define methods for transfer of WT
  *                          data in a code-block basis.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -68,7 +68,6 @@ import jj2000.j2k.wavelet.*;
  */
 public interface CBlkWTDataSrc extends ForwWTDataProps
 {
-
 	/**
 	 * Returns the position of the fixed point in the specified component, or
 	 * equivalently the number of fractional bits. This is the position of the
@@ -78,13 +77,13 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 * does not apply and 0 should be returned. Position 0 is the position of
 	 * the least significant bit in the data.
 	 * 
-	 * @param c
+	 * @param n
 	 *            The index of the component.
 	 * 
 	 * @return The position of the fixed-point, which is the same as the number
 	 *         of fractional bits. For floating-point data 0 is returned.
 	 */
-	public int getFixedPoint(int c);
+	public int getFixedPoint(int n);
 
 	/**
 	 * Return the data type of this CBlkWTDataSrc for the given component in the
@@ -132,7 +131,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 * tile, not the subband.
 	 * </p>
 	 * 
-	 * @param c
+	 * @param n
 	 *            The component for which to return the next code-block.
 	 * 
 	 * @param cblk
@@ -141,12 +140,12 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 *            If the "data" array of the object is non-null it will be
 	 *            reused, if possible, to return the data.
 	 * 
-	 * @return The next code-block in the current tile for component 'c', or
+	 * @return The next code-block in the current tile for component 'n', or
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
 	 */
-	public abstract CBlkWTData getNextCodeBlock(int c, CBlkWTData cblk);
+	public abstract CBlkWTData getNextCodeBlock(int n, CBlkWTData cblk);
 
 	/**
 	 * Returns the next code-block in the current tile for the specified
@@ -176,7 +175,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 * tile, not the subband.
 	 * </p>
 	 * 
-	 * @param c
+	 * @param n
 	 *            The component for which to return the next code-block.
 	 * 
 	 * @param cblk
@@ -190,5 +189,5 @@ public interface CBlkWTDataSrc extends ForwWTDataProps
 	 * 
 	 * @see CBlkWTData
 	 */
-	public abstract CBlkWTData getNextInternCodeBlock(int c, CBlkWTData cblk);
+	public abstract CBlkWTData getNextInternCodeBlock(int n, CBlkWTData cblk);
 }

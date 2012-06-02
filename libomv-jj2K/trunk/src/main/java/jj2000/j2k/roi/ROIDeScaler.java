@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.roi;
@@ -69,7 +69,6 @@ import jj2000.j2k.util.*;
  */
 public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec
 {
-
 	/**
 	 * The MaxShiftSpec containing the scaling values for all tile-components
 	 */
@@ -116,9 +115,10 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * returns the root element of the subband tree structure, see Subband and
 	 * SubbandSyn. The tree comprises all the available resolution levels.
 	 * 
-	 * <P>
+	 * <p>
 	 * The number of magnitude bits ('magBits' member variable) for each subband
 	 * is not initialized.
+	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile, from 0 to T-1.

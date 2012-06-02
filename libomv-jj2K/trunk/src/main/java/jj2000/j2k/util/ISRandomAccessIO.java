@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.util;
@@ -59,7 +59,7 @@ import java.io.*;
  * known prior to the creation of a ISRandomAccessIO object, it is best to
  * specify that as the initial in-memory buffer size. That will minimize data
  * copying and multiple allocation.
- * <p>
+ * </p>
  * 
  * <p>
  * Multi-byte data is read in big-endian order. The in-memory buffer storage is
@@ -89,7 +89,6 @@ import java.io.*;
  */
 public class ISRandomAccessIO implements RandomAccessIO
 {
-
 	/** The InputStream that is wrapped */
 	private InputStream is;
 

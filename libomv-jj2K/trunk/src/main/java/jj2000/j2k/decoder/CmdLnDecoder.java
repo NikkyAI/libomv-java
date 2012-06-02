@@ -142,8 +142,7 @@ public class CmdLnDecoder
 			}
 			catch (IOException e)
 			{
-				System.err.println("An error ocurred while reading from the argument file "
-						+ pl.getParameter("pfile"));
+				System.err.println("An error ocurred while reading from the argument file " + pl.getParameter("pfile"));
 				return;
 			}
 			try

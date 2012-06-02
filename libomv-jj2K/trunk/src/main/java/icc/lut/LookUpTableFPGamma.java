@@ -21,7 +21,8 @@ public class LookUpTableFPGamma extends LookUpTableFP
 {
 
 	double dfE = -1;
-//	private static final String eol = System.getProperty("line.separator");
+
+	// private static final String eol = System.getProperty("line.separator");
 
 	public LookUpTableFPGamma(ICCCurveType curve, // Pointer to the curve data
 			int dwNumInput // Number of input values in created LUT

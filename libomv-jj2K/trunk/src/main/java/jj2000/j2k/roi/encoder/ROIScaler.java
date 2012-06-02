@@ -5,13 +5,13 @@
  *
  * Class:                   ROIScaler
  *
- * Description:             This class takes care of the scaling of the 
+ * Description:             This class takes care of the scaling of the
  *                          samples
  *
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.roi.encoder;
@@ -66,17 +66,18 @@ import java.io.*;
  * ones. By scaling the coefficients sufficiently, the ROI coefficients can be
  * recognized by their amplitude alone and no ROI mask needs to be generated at
  * the decoder side.
+ * </p>
  * 
  * <p>
  * The source module must be a quantizer and code-block's data is exchange with
  * thanks to CBlkWTData instances.
+ * </p>
  * 
  * @see Quantizer
  * @see CBlkWTData
  */
 public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 {
-
 	/** The prefix for ROI Scaler options: 'R' */
 	public final static char OPT_PREFIX = 'R';
 
@@ -251,8 +252,8 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * 
 	 * <p>
 	 * The ROI Scaler creates a ROIMaskGenerator depending on what ROI
-	 * information is in the ParameterList. If only rectangular ROI are used,
-	 * the fast mask generator for rectangular ROI can be used.
+	 * information is in the ParameterList. If only rectangular ROI are
+	 * used, the fast mask generator for rectangular ROI can be used.
 	 * </p>
 	 * 
 	 * @param src
@@ -393,8 +394,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 					}
 					catch (NoSuchElementException f)
 					{
-						throw new IllegalArgumentException("Wrong number of parameters for  "
-								+ "h'-Rroi R' option.");
+						throw new IllegalArgumentException("Wrong number of parameters for h'-Rroi R' option.");
 					}
 
 					// If the ROI is component-specific, check which comps.
@@ -502,7 +502,6 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 					throw new Error("Bad parameters for ROI nr " + roiVector.size());
 			}
 		}
-
 		return roiVector;
 	}
 
@@ -532,7 +531,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 *            If the "data" array of the object is non-null it will be
 	 *            reused, if possible, to return the data.
 	 * 
-	 * @return The next code-block in the current tile for component 'n', or
+	 * @return The next code-block in the current tile for component 'c', or
 	 *         null if all code-blocks for the current tile have been returned.
 	 * 
 	 * @see CBlkWTData
@@ -639,7 +638,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 		{
 			// Scale the wmse so that instead of scaling the coefficients, the
 			// wmse is scaled.
-			cblk.wmseScaling *= 1 << (maxBits << 1);
+			cblk.wmseScaling *= (1 << (maxBits << 1));
 			cblk.nROIcoeff = w * h;
 			return cblk;
 		}
@@ -771,7 +770,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -787,7 +786,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	 * Advances to the next tile, in standard scan-line order (by rows then
 	 * columns). An NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile).
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

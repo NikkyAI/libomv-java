@@ -4,13 +4,13 @@
  * $Id: InvWTAdapter.java,v 1.14 2002/07/25 15:11:03 grosbois Exp $
  * 
  * Class:                   InvWTAdapter
- * 
+ *
  * Description:             <short description of class>
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -74,7 +74,6 @@ import jj2000.j2k.image.*;
  */
 public abstract class InvWTAdapter implements InvWT
 {
-
 	/** The decoder specifications */
 	protected DecoderSpecs decSpec;
 

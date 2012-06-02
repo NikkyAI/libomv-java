@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.quantization.dequantizer;
@@ -173,11 +173,12 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * returns the root element of the subband tree structure, see Subband and
 	 * SubbandSyn. The tree comprises all the available resolution levels.
 	 * 
-	 * <P>
+	 * <p>
 	 * The number of magnitude bits ('magBits' member variable) for each subband
 	 * may have not been not initialized (it depends on the actual dequantizer
 	 * and its implementation). However, they are not necessary for the
 	 * subsequent steps in the decoder chain.
+	 * </p>
 	 * 
 	 * @param t
 	 *            The index of the tile, from 0 to T-1.
@@ -236,16 +237,17 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * IllegalArgumentException is thrown if the indexes do not correspond to a
 	 * valid tile.
 	 * 
-	 * <P>
+	 * <p>
 	 * This default implementation changes the tile in the source and
 	 * re-initializes properly component transformation variables..
+	 * </p>
 	 * 
 	 * @param x
 	 *            The horizontal index of the tile.
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -293,8 +295,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 				rb = InvCompTransf.calcMixedBitDepths(utrb, InvCompTransf.INV_ICT, null);
 				break;
 			default:
-				throw new IllegalArgumentException("Non JPEG 2000 part I component transformation for tile: "
-						+ tIdx);
+				throw new IllegalArgumentException("Non JPEG 2000 part I component transformation for tile: " + tIdx);
 		}
 		return tIdx;
 	}
@@ -304,10 +305,11 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * columns). An NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile).
 	 * 
-	 * <P>
+	 * <p>
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
-	 *            
+	 * </p>
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -329,10 +331,8 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 				rb = InvCompTransf.calcMixedBitDepths(utrb, InvCompTransf.INV_ICT, null);
 				break;
 			default:
-				throw new IllegalArgumentException("Non JPEG 2000 part I component transformation for tile: "
-						+ tIdx);
+				throw new IllegalArgumentException("Non JPEG 2000 part I component transformation for tile: " + tIdx);
 		}
 		return tIdx;
 	}
-
 }

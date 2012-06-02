@@ -4,14 +4,14 @@
  * $Id: ForwWTDataProps.java,v 1.10 2001/09/20 12:42:42 grosbois Exp $
  * 
  * Class:                   ForwWTDataProps
- * 
+ *
  * Description:             Extends ImgData with forward wavelet specific
  *                          things.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -53,7 +53,6 @@ import jj2000.j2k.wavelet.*;
  */
 public interface ForwWTDataProps extends ImgData
 {
-
 	/**
 	 * Returns the reversibility of the given tile-component. Data is reversible
 	 * when it is suitable for lossless and lossy-to-lossless compression.
@@ -81,7 +80,6 @@ public interface ForwWTDataProps extends ImgData
 	 * @return The root of the subband tree structure, see Subband.
 	 * 
 	 * @see SubbandAn
-	 * 
 	 * @see Subband
 	 */
 	public SubbandAn getAnSubbandTree(int t, int c);

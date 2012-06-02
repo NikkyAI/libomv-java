@@ -119,7 +119,7 @@ public class BitOutputBuffer
 			// There is still place in current byte for next bit
 			return;
 		}
-		
+
 		if (buf[curbyte] != (byte) 0xFF)
 		{ // We don't need bit stuffing
 			avbits = 8;

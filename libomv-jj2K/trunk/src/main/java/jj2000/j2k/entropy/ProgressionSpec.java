@@ -9,7 +9,7 @@
  *                          changes of progression.
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -36,7 +36,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy;
@@ -59,7 +59,6 @@ import jj2000.j2k.*;
  */
 public class ProgressionSpec extends ModuleSpec
 {
-
 	/**
 	 * Creates a new ProgressionSpec object for the specified number of tiles
 	 * and components.
@@ -193,8 +192,7 @@ public class ProgressionSpec extends ModuleSpec
 				default:
 					// Here, words is either a Integer (progression bound index)
 					// or a String (progression order type). This is determined
-					// by
-					// the value of needInteger.
+					// by the value of needInteger.
 					if (needInteger)
 					{ // Progression bound info
 						try
@@ -212,22 +210,19 @@ public class ProgressionSpec extends ModuleSpec
 						{
 							case 0: // cs
 								if (tmp < 0 || tmp > (dls.getMax() + 1))
-									throw new IllegalArgumentException("Invalid res_start in '-Aptype'"
-											+ " option: " + tmp);
+									throw new IllegalArgumentException("Invalid res_start in '-Aptype' option: " + tmp);
 								curProg.rs = tmp;
 								break;
 							case 1: // rs
 								if (tmp < 0 || tmp > nc)
 								{
-									throw new IllegalArgumentException("Invalid comp_start in '-Aptype' "
-											+ "option: " + tmp);
+									throw new IllegalArgumentException("Invalid comp_start in '-Aptype' option: " + tmp);
 								}
 								curProg.cs = tmp;
 								break;
 							case 2: // lye
 								if (tmp < 0)
-									throw new IllegalArgumentException("Invalid layer_end in '-Aptype'"
-											+ " option: " + tmp);
+									throw new IllegalArgumentException("Invalid layer_end in '-Aptype' option: " + tmp);
 								if (tmp > nl)
 								{
 									tmp = nl;
@@ -236,8 +231,7 @@ public class ProgressionSpec extends ModuleSpec
 								break;
 							case 3: // ce
 								if (tmp < 0)
-									throw new IllegalArgumentException("Invalid res_end in '-Aptype'"
-											+ " option: " + tmp);
+									throw new IllegalArgumentException("Invalid res_end in '-Aptype' option: " + tmp);
 								if (tmp > (dls.getMax() + 1))
 								{
 									tmp = dls.getMax() + 1;
@@ -246,8 +240,7 @@ public class ProgressionSpec extends ModuleSpec
 								break;
 							case 4: // re
 								if (tmp < 0)
-									throw new IllegalArgumentException("Invalid comp_end in '-Aptype'"
-											+ " option: " + tmp);
+									throw new IllegalArgumentException("Invalid comp_end in '-Aptype'" + " option: " + tmp);
 								if (tmp > nc)
 								{
 									tmp = nc;

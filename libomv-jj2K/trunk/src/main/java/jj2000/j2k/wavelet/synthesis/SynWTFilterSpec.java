@@ -4,13 +4,13 @@
  * $Id: SynWTFilterSpec.java,v 1.15 2001/08/02 10:01:30 grosbois Exp $
  * 
  * Class:                   SynWTFilterSpec
- * 
+ *
  * Description:             Synthesis filters specification
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -52,7 +52,6 @@ import jj2000.j2k.*;
  */
 public class SynWTFilterSpec extends ModuleSpec
 {
-
 	/**
 	 * Constructs a new 'SynWTFilterSpec' for the specified number of components
 	 * and tiles.
@@ -176,7 +175,6 @@ public class SynWTFilterSpec extends ModuleSpec
 				str += "\n";
 			}
 		}
-
 		return str;
 	}
 
@@ -191,8 +189,8 @@ public class SynWTFilterSpec extends ModuleSpec
 	 */
 	public boolean isReversible(int t, int c)
 	{
-		// Note: no need to buffer the result since this method is normally
-		// called once per tile-component.
+		// Note: no need to buffer the result since this method is
+		// normally called once per tile-component.
 		SynWTFilter[] hfilter = getHFilters(t, c), vfilter = getVFilters(t, c);
 
 		// As soon as a filter is not reversible, false can be returned

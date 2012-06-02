@@ -132,16 +132,16 @@ import java.io.*;
 public class Encoder extends ImgEncoder implements Runnable
 {
 	/** The valid list of options prefixes */
-	public final static char vprfxs[] = {
-		ForwCompTransf.OPT_PREFIX, // Mixer module
-		AnWTFilter.OPT_PREFIX, // Filters type spec
-		ForwardWT.OPT_PREFIX, // Wavelets module
-		Quantizer.OPT_PREFIX, // Quantizer module
-		ROIScaler.OPT_PREFIX, // ROI module
-		HeaderEncoder.OPT_PREFIX, // HeaderEncoder module
-		EntropyCoder.OPT_PREFIX, // Coding modules
-		PostCompRateAllocator.OPT_PREFIX, // Rate allocator
-		PktEncoder.OPT_PREFIX, // Packet encoder
+	public final static char vprfxs[] = { ForwCompTransf.OPT_PREFIX, // Mixer
+																		// module
+			AnWTFilter.OPT_PREFIX, // Filters type spec
+			ForwardWT.OPT_PREFIX, // Wavelets module
+			Quantizer.OPT_PREFIX, // Quantizer module
+			ROIScaler.OPT_PREFIX, // ROI module
+			HeaderEncoder.OPT_PREFIX, // HeaderEncoder module
+			EntropyCoder.OPT_PREFIX, // Coding modules
+			PostCompRateAllocator.OPT_PREFIX, // Rate allocator
+			PktEncoder.OPT_PREFIX, // Packet encoder
 	};
 
 	/**
@@ -250,10 +250,12 @@ public class Encoder extends ImgEncoder implements Runnable
 				{
 					if (!pl.getBooleanParameter("disable_jp2_extension"))
 					{
-						FacilityManager.getMsgLogger().printmsg(
-								MsgLogger.INFO,
-								"JPEG 2000 file names end with .jp2 extension when using the file format of part 1. This "
-								+ "extension is automatically added by JJ2000. Use '-disable_jp2_extension' to disable it.");
+						FacilityManager
+								.getMsgLogger()
+								.printmsg(
+										MsgLogger.INFO,
+										"JPEG 2000 file names end with .jp2 extension when using the file format of part 1. This "
+												+ "extension is automatically added by JJ2000. Use '-disable_jp2_extension' to disable it.");
 
 						outname = outns + ".jp2";
 					}
@@ -262,8 +264,7 @@ public class Encoder extends ImgEncoder implements Runnable
 
 			if (pl.getBooleanParameter("lossless") && pl.getParameter("rate") != null
 					&& pl.getFloatParameter("rate") != defpl.getFloatParameter("rate"))
-				throw new IllegalArgumentException("Cannot use '-rate' and '-lossless' option at "
-						+ " the same time.");
+				throw new IllegalArgumentException("Cannot use '-rate' and '-lossless' option at " + " the same time.");
 
 			// **** ImgReader ****
 			sgtok = new StringTokenizer(pl.getParameter("i"), ",");
@@ -365,7 +366,7 @@ public class Encoder extends ImgEncoder implements Runnable
 			int fileLength = encode(imgsrc, imsigned, ncomp, ppminput, outname, useFileFormat, verbose);
 			if (fileLength < 0)
 				return;
-			
+
 			// **** Close image reader(s) ***
 			for (i = 0; i < imreader.length; i++)
 			{

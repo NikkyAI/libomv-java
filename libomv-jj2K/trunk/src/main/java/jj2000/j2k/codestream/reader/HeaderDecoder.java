@@ -629,8 +629,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		ms.yt0siz = ehs.readInt();
 		if (ms.xt0siz < 0 || ms.yt0siz < 0)
 		{
-			throw new IOException("JJ2000 does not support tiles whose offset is not in  "
-					+ "the range: 0 -- (2^31)-1");
+			throw new IOException("JJ2000 does not support tiles whose offset is not in  " + "the range: 0 -- (2^31)-1");
 		}
 
 		// Read number of components and initialize related arrays
@@ -1394,8 +1393,8 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		int ecOptions = ms.spcod_cs = ehs.readUnsignedByte();
 		if ((ecOptions & ~(OPT_BYPASS | OPT_RESET_MQ | OPT_TERM_PASS | OPT_VERT_STR_CAUSAL | OPT_PRED_TERM | OPT_SEG_SYMBOLS)) != 0)
 		{
-			throw new CorruptedCodestreamException("Unknown \"code-block style\" in SPcod field, "
-					+ "COD marker: 0x" + Integer.toHexString(ecOptions));
+			throw new CorruptedCodestreamException("Unknown \"code-block style\" in SPcod field, " + "COD marker: 0x"
+					+ Integer.toHexString(ecOptions));
 		}
 
 		// Read wavelet filter for tile or image
@@ -1573,8 +1572,8 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		ecOptions = ms.spcoc_cs = ehs.readUnsignedByte();
 		if ((ecOptions & ~(OPT_BYPASS | OPT_RESET_MQ | OPT_TERM_PASS | OPT_VERT_STR_CAUSAL | OPT_PRED_TERM | OPT_SEG_SYMBOLS)) != 0)
 		{
-			throw new CorruptedCodestreamException("Unknown \"code-block context\" in SPcoc field, "
-					+ "COC marker: 0x" + Integer.toHexString(ecOptions));
+			throw new CorruptedCodestreamException("Unknown \"code-block context\" in SPcoc field, " + "COC marker: 0x"
+					+ Integer.toHexString(ecOptions));
 		}
 
 		// Read wavelet filter for tile or image
@@ -2167,8 +2166,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 			case POC:
 				if ((nfMarkSeg & POC_FOUND) != 0)
 				{
-					throw new CorruptedCodestreamException("More than one POC marker segment found "
-							+ "in main header");
+					throw new CorruptedCodestreamException("More than one POC marker segment found " + "in main header");
 				}
 				nfMarkSeg |= POC_FOUND;
 				htKey = "POC";
@@ -2250,8 +2248,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 			case COD:
 				if ((nfMarkSeg & COD_FOUND) != 0)
 				{
-					throw new CorruptedCodestreamException("More than one COD marker found in tile-part"
-							+ " header");
+					throw new CorruptedCodestreamException("More than one COD marker found in tile-part" + " header");
 				}
 				nfMarkSeg |= COD_FOUND;
 				htKey = "COD";
@@ -2263,8 +2260,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 			case QCD:
 				if ((nfMarkSeg & QCD_FOUND) != 0)
 				{
-					throw new CorruptedCodestreamException("More than one QCD marker found in tile-part"
-							+ " header");
+					throw new CorruptedCodestreamException("More than one QCD marker found in tile-part" + " header");
 				}
 				nfMarkSeg |= QCD_FOUND;
 				htKey = "QCD";

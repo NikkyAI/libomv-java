@@ -432,7 +432,7 @@ public class Decoder extends ImgDecoder implements Runnable
 									|| csMap.isOutputSigned(0) || csMap.isOutputSigned(1) || csMap.isOutputSigned(2)))
 					{
 						error("Specified PPM output file but compressed image is not of the correct format "
-							  + "for PPM or limited decoded components to less than 3.", 1);
+								+ "for PPM or limited decoded components to less than 3.", 1);
 						return;
 					}
 				}
@@ -444,7 +444,7 @@ public class Decoder extends ImgDecoder implements Runnable
 									|| hd.isOriginalSigned(0) || hd.isOriginalSigned(1) || hd.isOriginalSigned(2)))
 					{
 						error("Specified PPM output file but compressed image is not of the correct format "
-							  + "for PPM or limited decoded components to less than 3.", 1);
+								+ "for PPM or limited decoded components to less than 3.", 1);
 						return;
 					}
 				}

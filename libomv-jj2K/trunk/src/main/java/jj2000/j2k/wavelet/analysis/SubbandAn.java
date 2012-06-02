@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -55,7 +55,7 @@ import jj2000.j2k.wavelet.*;
  * ther are 4 descendants (LL, HL, LH and HH). If it is a leaf there are no
  * descendants.
  * </p>
- * 
+ *
  * <p>
  * The tree is bidirectional. Each element in the tree structure has a "parent",
  * which is the subband from which the element was obtained by decomposition.
@@ -65,7 +65,6 @@ import jj2000.j2k.wavelet.*;
  */
 public class SubbandAn extends Subband
 {
-
 	/**
 	 * The reference to the parent of this subband. It is null for the root
 	 * element. It is null by default.
@@ -371,8 +370,8 @@ public class SubbandAn extends Subband
 		}
 		else
 		{
-			// This is an error! The calcBasisWaveForms() method is never
-			// called on an element with non-negative l2norm
+			// This is an error! The calcBasisWaveForms() method is
+			// never called on an element with non-negative l2norm
 			throw new Error("You have found a bug in JJ2000!");
 		}
 	}
@@ -436,8 +435,8 @@ public class SubbandAn extends Subband
 		}
 		else
 		{
-			// This is an error! The assignL2Norm() method is never called on
-			// an element with non-negative l2norm
+			// This is an error! The assignL2Norm() method is never
+			// called on an element with non-negative l2norm
 			throw new Error("You have found a bug in JJ2000!");
 		}
 	}
@@ -453,8 +452,8 @@ public class SubbandAn extends Subband
 		double acc;
 		float l2n;
 
-		// While we are not done on the root element, compute basis functions
-		// and assign L2-norm
+		// While we are not done on the root element, compute basis
+		// functions and assign L2-norm
 		while (l2Norm < 0f)
 		{
 			calcBasisWaveForms(wfs);

@@ -4,15 +4,15 @@
  * $Id: MultiResImgDataAdapter.java,v 1.10 2002/07/25 15:11:55 grosbois Exp $
  * 
  * Class:                   MultiResImgDataAdapter
- * 
+ *
  * Description:             A default implementation of the MultiResImgData
  *                          interface that has and MultiResImgData source
  *                          and just returns the values of the source.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -39,7 +39,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -69,7 +69,6 @@ import jj2000.j2k.image.*;
  */
 public abstract class MultiResImgDataAdapter implements MultiResImgData
 {
-
 	/** Index of the current tile */
 	protected int tIdx = 0;
 
@@ -352,7 +351,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * 
 	 * @param y
 	 *            The vertical indexes of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -370,7 +369,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData
 	 * <p>
 	 * This default implementation just changes the tile in the source.
 	 * </p>
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

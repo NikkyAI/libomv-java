@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy.decoder;
@@ -198,7 +198,7 @@ public class MQDecoder
 				bits[0] = mPS[ctxt];
 				return true; // Done, used speedup mode
 			}
-			
+
 			// renormalization needed
 			I[ctxt] = nMPS[idx];
 			// Renormalize (MPS: no need for while loop)
@@ -307,7 +307,6 @@ public class MQDecoder
 		I[ctxt] = idx; // save current index for context
 		return false; // done, did not use speedup mode
 	} // End normal mode
-
 
 	/**
 	 * This function performs the arithmetic decoding. The function receives an

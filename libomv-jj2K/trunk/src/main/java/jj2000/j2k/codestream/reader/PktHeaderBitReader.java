@@ -49,184 +49,233 @@ import java.io.*;
  * This class provides a bit based reading facility from a byte based one,
  * applying the bit unstuffing procedure as required by the packet headers.
  */
-class PktHeaderBitReader {
+class PktHeaderBitReader
+{
 
-    /** The byte based source of data */
-    RandomAccessIO in;
+	/** The byte based source of data */
+	RandomAccessIO in;
 
-    /** The byte array that is the source of data if the PktHeaderBitReader
-     * is instantiated with a buffer instead of a RandomAccessIO*/
-    ByteArrayInputStream bais;
+	/**
+	 * The byte array that is the source of data if the PktHeaderBitReader is
+	 * instantiated with a buffer instead of a RandomAccessIO
+	 */
+	ByteArrayInputStream bais;
 
-    /** Flag indicating whether the data should be read from the buffer */
-    boolean usebais;
+	/** Flag indicating whether the data should be read from the buffer */
+	boolean usebais;
 
-    /** The current bit buffer */
-    int bbuf;
+	/** The current bit buffer */
+	int bbuf;
 
-    /** The position of the next bit to read in the bit buffer (0 means 
-     *  empty, 8 full) */
-    int bpos;
+	/**
+	 * The position of the next bit to read in the bit buffer (0 means empty, 8
+	 * full)
+	 */
+	int bpos;
 
-    /** The next bit buffer, if bit stuffing occurred (i.e. current bit 
-     *  buffer holds 0xFF) */
-    int nextbbuf;
+	/**
+	 * The next bit buffer, if bit stuffing occurred (i.e. current bit buffer
+	 * holds 0xFF)
+	 */
+	int nextbbuf;
 
-    /**
-     * Instantiates a 'PktHeaderBitReader' that gets the byte data from the
-     * given source.
-     *
-     * @param in The source of byte data
-     */
-    PktHeaderBitReader(RandomAccessIO in) {
-        this.in = in;
-        usebais=false;
-    }
+	/**
+	 * Instantiates a 'PktHeaderBitReader' that gets the byte data from the
+	 * given source.
+	 * 
+	 * @param in
+	 *            The source of byte data
+	 */
+	PktHeaderBitReader(RandomAccessIO in)
+	{
+		this.in = in;
+		usebais = false;
+	}
 
-    /**
-     * Instantiates a 'PktHeaderBitReader' that gets the byte data from the
-     * given source.
-     *
-     * @param bais The source of byte data
-     */
-    PktHeaderBitReader(ByteArrayInputStream bais) {
-        this.bais = bais;
-        usebais=true;
-    }
+	/**
+	 * Instantiates a 'PktHeaderBitReader' that gets the byte data from the
+	 * given source.
+	 * 
+	 * @param bais
+	 *            The source of byte data
+	 */
+	PktHeaderBitReader(ByteArrayInputStream bais)
+	{
+		this.bais = bais;
+		usebais = true;
+	}
 
-    /**
-     * Reads a single bit from the input.
-     *
-     * @return The read bit (0 or 1)
-     *
-     * @exception IOException If an I/O error occurred
-     * @exception EOFException If teh end of file has been reached
-     */
-    final int readBit() throws IOException {
-        if (bpos==0) { // Is bit buffer empty?
-            if (bbuf!=0xFF) { // No bit stuffing
-                if(usebais) {
-                    bbuf = bais.read();
-                } else {
-                    bbuf = in.read();
-                }
-                bpos = 8;
-                if (bbuf==0xFF) { // If new bit stuffing get next byte
-                    if(usebais) {
-                        nextbbuf = bais.read();
-                    } else {
-                        nextbbuf = in.read();
-                    }
-                }
-            } else { // We had bit stuffing, nextbuf can not be 0xFF
-                bbuf = nextbbuf;
-                bpos = 7;
-            }
-        }
-        return (bbuf >> --bpos) & 0x01;
-    }
+	/**
+	 * Reads a single bit from the input.
+	 * 
+	 * @return The read bit (0 or 1)
+	 * 
+	 * @exception IOException
+	 *                If an I/O error occurred
+	 * @exception EOFException
+	 *                If teh end of file has been reached
+	 */
+	final int readBit() throws IOException
+	{
+		if (bpos == 0)
+		{ // Is bit buffer empty?
+			if (bbuf != 0xFF)
+			{ // No bit stuffing
+				if (usebais)
+				{
+					bbuf = bais.read();
+				}
+				else
+				{
+					bbuf = in.read();
+				}
+				bpos = 8;
+				if (bbuf == 0xFF)
+				{ // If new bit stuffing get next byte
+					if (usebais)
+					{
+						nextbbuf = bais.read();
+					}
+					else
+					{
+						nextbbuf = in.read();
+					}
+				}
+			}
+			else
+			{ // We had bit stuffing, nextbuf can not be 0xFF
+				bbuf = nextbbuf;
+				bpos = 7;
+			}
+		}
+		return (bbuf >> --bpos) & 0x01;
+	}
 
-    /**
-     * Reads a specified number of bits and returns them in a single
-     * integer. The bits are returned in the 'n' least significant bits of the
-     * returned integer. The maximum number of bits that can be read is 31.
-     *
-     * @param n The number of bits to read
-     *
-     * @return The read bits, packed in the 'n' LSBs.
-     *
-     * @exception IOException If an I/O error occurred
-     * @exception EOFException If teh end of file has been reached
-     */
-    final int readBits(int n) throws IOException {
-        int bits; // The read bits
+	/**
+	 * Reads a specified number of bits and returns them in a single integer.
+	 * The bits are returned in the 'n' least significant bits of the returned
+	 * integer. The maximum number of bits that can be read is 31.
+	 * 
+	 * @param n
+	 *            The number of bits to read
+	 * 
+	 * @return The read bits, packed in the 'n' LSBs.
+	 * 
+	 * @exception IOException
+	 *                If an I/O error occurred
+	 * @exception EOFException
+	 *                If teh end of file has been reached
+	 */
+	final int readBits(int n) throws IOException
+	{
+		int bits; // The read bits
 
-        // Can we get all bits from the bit buffer?
-        if (n<=bpos) {
-            return (bbuf >> (bpos-=n)) & ((1<<n)-1);
-        }
-        
+		// Can we get all bits from the bit buffer?
+		if (n <= bpos)
+		{
+			return (bbuf >> (bpos -= n)) & ((1 << n) - 1);
+		}
+
 		// NOTE: The implementation need not be recursive but the not
 		// recursive one exploits a bug in the IBM x86 JIT and caused
 		// incorrect decoding (Diego Santa Cruz).
 		bits = 0;
-		do {
-		    // Get all the bits we can from the bit buffer
-		    bits <<= bpos;
-		    n -= bpos;
-		    bits |= readBits(bpos);
-		    // Get an extra bit to load next byte (here bpos is 0)
-		    if (bbuf != 0xFF) { // No bit stuffing
-		        if(usebais) {
-		            bbuf = bais.read();
-		        } else {
-		            bbuf = in.read();
-		        }
-		      
-		        bpos = 8;
-		        if (bbuf==0xFF) { // If new bit stuffing get next byte
-		            if(usebais) {
-		                nextbbuf = bais.read();
-		            } else {
-		                nextbbuf = in.read();
-		            }
-		        }
-		    } else { // We had bit stuffing, nextbuf can not be 0xFF
-		        bbuf = nextbbuf;
-		        bpos = 7;
-		    }
+		do
+		{
+			// Get all the bits we can from the bit buffer
+			bits <<= bpos;
+			n -= bpos;
+			bits |= readBits(bpos);
+			// Get an extra bit to load next byte (here bpos is 0)
+			if (bbuf != 0xFF)
+			{ // No bit stuffing
+				if (usebais)
+				{
+					bbuf = bais.read();
+				}
+				else
+				{
+					bbuf = in.read();
+				}
+
+				bpos = 8;
+				if (bbuf == 0xFF)
+				{ // If new bit stuffing get next byte
+					if (usebais)
+					{
+						nextbbuf = bais.read();
+					}
+					else
+					{
+						nextbbuf = in.read();
+					}
+				}
+			}
+			else
+			{ // We had bit stuffing, nextbuf can not be 0xFF
+				bbuf = nextbbuf;
+				bpos = 7;
+			}
 		} while (n > bpos);
 		// Get the last bits, if any
 		bits <<= n;
-		bits |= (bbuf >> (bpos-=n)) & ((1<<n)-1);
+		bits |= (bbuf >> (bpos -= n)) & ((1 << n) - 1);
 		// Return result
 		return bits;
-    }
+	}
 
-    /**
-     * Synchronizes this object with the underlying byte based input. It
-     * discards and buffered bits and gets ready to read bits from the current 
-     * position in the underlying byte based input.
-     *
-     * <p>This method should always be called when some data has been read
-     * directly from the underlying byte based input since the last call to
-     * 'readBits()' or 'readBit()' before a new call to any of those
-     * methods.</p>
-     */
-    void sync() {
-        bbuf = 0;
-        bpos = 0;
-    }
+	/**
+	 * Synchronizes this object with the underlying byte based input. It
+	 * discards and buffered bits and gets ready to read bits from the current
+	 * position in the underlying byte based input.
+	 * 
+	 * <p>
+	 * This method should always be called when some data has been read directly
+	 * from the underlying byte based input since the last call to 'readBits()'
+	 * or 'readBit()' before a new call to any of those methods.
+	 * </p>
+	 */
+	void sync()
+	{
+		bbuf = 0;
+		bpos = 0;
+	}
 
-    /**
-     * Sets the underlying byte based input to the given object. This method
-     * discards any currently buffered bits and gets ready to start reading
-     * bits from 'in'.
-     *
-     * <p>This method is equivalent to creating a new 'PktHeaderBitReader'
-     * object.</p>
-     *
-     * @param in The source of byte data
-     */
-    void setInput(RandomAccessIO in) {
-        this.in = in;
-        bbuf = 0;
-        bpos = 0;
-    }
+	/**
+	 * Sets the underlying byte based input to the given object. This method
+	 * discards any currently buffered bits and gets ready to start reading bits
+	 * from 'in'.
+	 * 
+	 * <p>
+	 * This method is equivalent to creating a new 'PktHeaderBitReader' object.
+	 * </p>
+	 * 
+	 * @param in
+	 *            The source of byte data
+	 */
+	void setInput(RandomAccessIO in)
+	{
+		this.in = in;
+		bbuf = 0;
+		bpos = 0;
+	}
 
-    /**
-     * Sets the underlying byte based input to the given object. This method
-     * discards any currently buffered bits and gets ready to start reading
-     * bits from 'in'.
-     *
-     * <p>This method is equivalent to creating a new 'PktHeaderBitReader'
-     * object.</p>
-     *
-     * @param bais The source of byte data
-     */
-    void setInput(ByteArrayInputStream bais) {
-        this.bais = bais;
-        bbuf = 0;
-        bpos = 0;
-    }
+	/**
+	 * Sets the underlying byte based input to the given object. This method
+	 * discards any currently buffered bits and gets ready to start reading bits
+	 * from 'in'.
+	 * 
+	 * <p>
+	 * This method is equivalent to creating a new 'PktHeaderBitReader' object.
+	 * </p>
+	 * 
+	 * @param bais
+	 *            The source of byte data
+	 */
+	void setInput(ByteArrayInputStream bais)
+	{
+		this.bais = bais;
+		bbuf = 0;
+		bpos = 0;
+	}
 }

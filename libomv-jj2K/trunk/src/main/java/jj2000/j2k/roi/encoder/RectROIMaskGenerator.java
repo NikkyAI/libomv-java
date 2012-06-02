@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.roi.encoder;
@@ -50,26 +50,25 @@ import jj2000.j2k.image.*;
  * the image. The ROI mask generation can then be simplified by only calculating
  * the boundaries of the ROI mask in the particular subbands
  * 
- * <P>
+ * <p>
  * The values are calculated from the scaling factors of the ROIs. The values
  * with which to scale are equal to u-umin where umin is the lowest scaling
  * factor within the block. The umin value is sent to the entropy coder to be
  * used for scaling the distortion values.
+ * </p>
  * 
- * <P>
+ * <p>
  * To generate and to store the boundaries of the ROIs, the class
  * SubbandRectROIMask is used. There is one tree of SubbandMasks for each
  * component.
+ * </p>
  * 
  * @see SubbandRectROIMask
- * 
  * @see ROIMaskGenerator
- * 
  * @see ArbROIMaskGenerator
  */
 public class RectROIMaskGenerator extends ROIMaskGenerator
 {
-
 	/** The upper left xs of the ROIs */
 	private int[] ulxs;
 
@@ -121,10 +120,11 @@ public class RectROIMaskGenerator extends ROIMaskGenerator
 	 * This functions gets a DataBlk the size of the current code-block and
 	 * fills this block with the ROI mask.
 	 * 
-	 * <P>
+	 * <p>
 	 * In order to get the mask for a particular Subband, the subband tree is
 	 * traversed and at each decomposition, the ROI masks are computed. The roi
 	 * bondaries for each subband are stored in the SubbandRectROIMask tree.
+	 * </p>
 	 * 
 	 * @param db
 	 *            The data block that is to be filled with the mask

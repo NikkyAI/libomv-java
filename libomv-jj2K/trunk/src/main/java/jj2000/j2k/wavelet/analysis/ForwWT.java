@@ -4,14 +4,14 @@
  * $Id: ForwWT.java,v 1.9 2001/10/24 12:02:13 grosbois Exp $
  * 
  * Class:                   ForwWT
- * 
+ *
  * Description:             The interface for implementations of a forward
  *                          wavelet transform.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -58,7 +58,6 @@ import jj2000.j2k.wavelet.*;
  */
 public interface ForwWT extends WaveletTransform, ForwWTDataProps
 {
-
 	/**
 	 * Returns the horizontal analysis wavelet filters used in each level, for
 	 * the specified tile-component. The first element in the array is the
@@ -77,7 +76,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 * The resolution level of a subband is the resolution level to which a
 	 * subband contributes, which is different from its decomposition level.
 	 * </p>
-	 * 
+	 *
 	 * @param t
 	 *            The index of the tile for which to return the filters.
 	 * 
@@ -128,8 +127,8 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps
 	 * @param c
 	 *            The index of the component.
 	 * 
-	 * @return The number of decompositions applied to obtain the LL subband (0
-	 *         for no wavelet transform).
+	 * @return The number of decompositions applied to obtain the LL subband
+	 *         (0 for no wavelet transform).
 	 */
 	public int getDecompLevels(int t, int c);
 

@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,11 +37,8 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
  */
 
 package jj2000.j2k.util;
@@ -53,10 +50,11 @@ import java.io.*;
  * simple files, terminals, stdout, stderr, etc. The messages or simple strings
  * are formatted using the linewidth given to the constructor.
  * 
- * <P>
+ * <p>
  * Messages are printed to the 'err' stream if they are of severity WARNING or
  * ERROR, otherwise they are printed to the 'out' stream. Simple strings are
  * always printed the 'out' stream.
+ * </p>
  */
 public class StreamMsgLogger implements MsgLogger
 {
@@ -83,8 +81,6 @@ public class StreamMsgLogger implements MsgLogger
 	 * 
 	 * @param lw
 	 *            The line width to use in formatting
-	 * 
-	 * 
 	 */
 	public StreamMsgLogger(OutputStream outstr, OutputStream errstr, int lw)
 	{
@@ -106,8 +102,6 @@ public class StreamMsgLogger implements MsgLogger
 	 * 
 	 * @param lw
 	 *            The line width to use in formatting
-	 * 
-	 * 
 	 */
 	public StreamMsgLogger(Writer outstr, Writer errstr, int lw)
 	{
@@ -129,8 +123,6 @@ public class StreamMsgLogger implements MsgLogger
 	 * 
 	 * @param lw
 	 *            The line width to use in formatting
-	 * 
-	 * 
 	 */
 	public StreamMsgLogger(PrintWriter outstr, PrintWriter errstr, int lw)
 	{
@@ -148,8 +140,6 @@ public class StreamMsgLogger implements MsgLogger
 	 * 
 	 * @param msg
 	 *            The message to display
-	 * 
-	 * 
 	 */
 	@Override
 	public void printmsg(int sev, String msg)
@@ -178,7 +168,6 @@ public class StreamMsgLogger implements MsgLogger
 			default:
 				throw new IllegalArgumentException("Severity " + sev + " not valid.");
 		}
-
 		mp.print(lout, 0, prefix.length(), prefix + msg);
 		lout.flush();
 	}
@@ -202,8 +191,6 @@ public class StreamMsgLogger implements MsgLogger
 	 * 
 	 * @param ind
 	 *            Indentation of any other lines.
-	 * 
-	 * 
 	 */
 	@Override
 	public void println(String str, int flind, int ind)
@@ -214,13 +201,10 @@ public class StreamMsgLogger implements MsgLogger
 	/**
 	 * Writes any buffered data from the print() and println() methods to the
 	 * device.
-	 * 
-	 * 
 	 */
 	@Override
 	public void flush()
 	{
 		out.flush();
 	}
-
 }

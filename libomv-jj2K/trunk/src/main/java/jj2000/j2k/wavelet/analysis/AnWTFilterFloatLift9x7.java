@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -50,17 +50,17 @@ import jj2000.j2k.wavelet.*;
  * It implements the forward wavelet transform specifically for the 9x7 filter.
  * The implementation is based on the lifting scheme.
  * 
- * <P>
+ * <p>
  * See the AnWTFilter class for details such as normalization, how to split
  * odd-length signals, etc. In particular, this method assumes that the low-pass
  * coefficient is computed first.
+ * </p>
  * 
  * @see AnWTFilter
  * @see AnWTFilterFloat
  */
 public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 {
-
 	/** The low-pass synthesis filter of the 9x7 wavelet transform */
 	private final static float LPSynthesisFilter[] = { -0.091272f, -0.057544f, 0.591272f, 1.115087f, 0.591272f,
 			-0.057544f, -0.091272f };
@@ -93,21 +93,26 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * general description of the analyze_lpf() method in the AnWTFilter class
 	 * for more details.
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the first lifting step are [ALPHA 1 ALPHA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the second lifting step are [BETA 1 BETA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the third lifting step are [GAMMA 1 GAMMA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the fourth lifting step are [DELTA 1 DELTA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of KL and a factor of KH
+	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal.
@@ -292,21 +297,26 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * general description of the analyze_hpf() method in the AnWTFilter class
 	 * for more details.
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the first lifting step are [ALPHA 1 ALPHA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the second lifting step are [BETA 1 BETA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the third lifting step are [GAMMA 1 GAMMA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the fourth lifting step are [DELTA 1 DELTA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of KL and a factor of KH
+	 * </p>
 	 * 
 	 * @param inSig
 	 *            This is the array that contains the input signal.
@@ -541,9 +551,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * Returns the negative support of the low-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
 	 * 
-	 * <P>
-	 * A MORE PRECISE DEFINITION IS NEEDED
-	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         negative direction
 	 */
@@ -556,9 +563,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	/**
 	 * Returns the positive support of the low-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
-	 * <P>
-	 * A MORE PRECISE DEFINITION IS NEEDED
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         positive direction
@@ -573,9 +577,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * Returns the negative support of the high-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
 	 * 
-	 * <P>
-	 * A MORE PRECISE DEFINITION IS NEEDED
-	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         negative direction
 	 */
@@ -588,9 +589,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	/**
 	 * Returns the positive support of the high-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
-	 * <P>
-	 * A MORE PRECISE DEFINITION IS NEEDED
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         positive direction
@@ -608,9 +606,10 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * the synthesis basis functions for a particular subband (also called
 	 * energy weight).
 	 * 
-	 * <P>
+	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
+	 * </p>
 	 * 
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
 	 */
@@ -627,9 +626,10 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * the synthesis basis functions for a particular subband (also called
 	 * energy weight).
 	 * 
-	 * <P>
+	 * <p>
 	 * The returned array may not be modified (i.e. a reference to the internal
 	 * array may be returned by the implementation of this method).
+	 * </p>
 	 * 
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
 	 */
@@ -673,10 +673,11 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * by image boundaries processings such as symmetric extension, since there
 	 * is not reference method for this.
 	 * 
-	 * <P>
+	 * <p>
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
+	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the
@@ -697,7 +698,6 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	@Override
 	public boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen)
 	{
-
 		// If the input signal has even length.
 		if (inLen % 2 == 0)
 		{
@@ -712,9 +712,10 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	 * the same if the same filter code should be output for both filters by the
 	 * encodeFilterCode() method.
 	 * 
-	 * <P>
+	 * <p>
 	 * Currently the implementation of this method only tests if 'obj' is also
 	 * of the class AnWTFilterFloatLift9x7
+	 * </p>
 	 * 
 	 * @param The
 	 *            object against which to test inequality.
@@ -722,7 +723,7 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	@Override
 	public boolean equals(Object obj)
 	{
-		// To spped up test, first test for reference equality
+		// To speed up test, first test for reference equality
 		return obj == null ? false : obj == this || obj instanceof AnWTFilterFloatLift9x7;
 	}
 
@@ -752,5 +753,4 @@ public class AnWTFilterFloatLift9x7 extends AnWTFilterFloat
 	{
 		return "w9x7";
 	}
-
 }

@@ -4,13 +4,13 @@
  * $Id: CBlkWTDataInt.java,v 1.10 2001/08/15 17:18:51 grosbois Exp $
  * 
  * Class:                   CBlkWTDataInt
- * 
+ *
  * Description:             Implementation of CBlkWTData for 'int' data
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -57,7 +57,6 @@ import jj2000.j2k.image.*;
  */
 public class CBlkWTDataInt extends CBlkWTData
 {
-
 	/** The array where the data is stored */
 	public int[] data;
 
@@ -120,5 +119,4 @@ public class CBlkWTDataInt extends CBlkWTData
 	{
 		data = arr;
 	}
-
 }

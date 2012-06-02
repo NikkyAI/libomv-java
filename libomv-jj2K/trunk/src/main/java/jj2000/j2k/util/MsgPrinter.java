@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,11 +38,8 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
  */
 
 package jj2000.j2k.util;
@@ -55,7 +52,6 @@ import java.io.*;
  */
 public class MsgPrinter
 {
-
 	/** The line width to use */
 	public int lw;
 
@@ -71,8 +67,6 @@ public class MsgPrinter
 	 * 
 	 * @param linewidth
 	 *            The line width for which to format (in characters)
-	 * 
-	 * 
 	 */
 	public MsgPrinter(int linewidth)
 	{
@@ -83,8 +77,6 @@ public class MsgPrinter
 	 * Returns the line width that is used for formatting.
 	 * 
 	 * @return The line width used for formatting
-	 * 
-	 * 
 	 */
 	public int getLineWidth()
 	{
@@ -97,8 +89,6 @@ public class MsgPrinter
 	 * 
 	 * @param linewidth
 	 *            The new line width to use (in cahracters)
-	 * 
-	 * 
 	 */
 	public void setLineWidth(int linewidth)
 	{
@@ -127,8 +117,6 @@ public class MsgPrinter
 	 * 
 	 * @param msg
 	 *            The message to format and print.
-	 * 
-	 * 
 	 */
 	public void print(PrintWriter out, int flind, int ind, String msg)
 	{
@@ -212,9 +200,10 @@ public class MsgPrinter
 	 * the last valid index in the tsring, but it is always suitable to be used
 	 * in the String.substring() method.
 	 * 
-	 * <P>
+	 * <p>
 	 * Non-whitespace characters are defined as in the Character.isWhitespace
 	 * method (that method is used).
+	 * </p>
 	 * 
 	 * @param str
 	 *            The string to parse
@@ -224,8 +213,6 @@ public class MsgPrinter
 	 * 
 	 * @return The index of the last character in the next word, plus 1,
 	 *         IS_NEWLINE, or IS_EOS if there are no more words.
-	 * 
-	 * 
 	 */
 	private int nextLineEnd(String str, int from)
 	{
@@ -273,8 +260,6 @@ public class MsgPrinter
 	 * 
 	 * @return The index of the first character of the next word, or the index
 	 *         of the newline plus 1, or IS_EOS.
-	 * 
-	 * 
 	 */
 	private int nextWord(String str, int from)
 	{

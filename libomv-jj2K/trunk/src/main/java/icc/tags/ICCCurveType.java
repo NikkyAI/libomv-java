@@ -18,7 +18,7 @@ import icc.ICCProfile;
  */
 public class ICCCurveType extends ICCTag
 {
-//	private static final String eol = System.getProperty("line.separator");
+	// private static final String eol = System.getProperty("line.separator");
 	/** Tag fields */
 	public final int type;
 	/** Tag fields */

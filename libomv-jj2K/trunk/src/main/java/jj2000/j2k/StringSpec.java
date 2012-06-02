@@ -42,9 +42,9 @@
  */
 package jj2000.j2k;
 
-import jj2000.j2k.util.*;
-
 import java.util.*;
+
+import jj2000.j2k.util.ParameterList;
 
 /**
  * This class extends ModuleSpec class in order to hold tile-component
@@ -54,7 +54,6 @@ import java.util.*;
  */
 public class StringSpec extends ModuleSpec
 {
-
 	/**
 	 * Constructs an empty 'StringSpec' with specified number of tile and
 	 * components. This constructor is called by the decoder.
@@ -117,8 +116,8 @@ public class StringSpec extends ModuleSpec
 				if (param.equalsIgnoreCase(list[i]))
 					recognized = true;
 			if (!recognized)
-				throw new IllegalArgumentException("Default parameter of option -" + optName + " not"
-						+ " recognized: " + param);
+				throw new IllegalArgumentException("Default parameter of option -" + optName + " not" + " recognized: "
+						+ param);
 			setDefault(param);
 			return;
 		}
@@ -269,5 +268,4 @@ public class StringSpec extends ModuleSpec
 			}
 		}
 	}
-
 }

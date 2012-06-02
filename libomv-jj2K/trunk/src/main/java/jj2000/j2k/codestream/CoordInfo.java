@@ -43,58 +43,68 @@
 package jj2000.j2k.codestream;
 
 /**
- * This class is used to store the coordinates of objects such as code-blocks
- * or precincts. As this is an abstract class, it cannot be used directly but
- * derived classes have been created for code-blocks and packets
- * (CBlkCoordInfo and PrecCoordInfo).
- *
+ * This class is used to store the coordinates of objects such as code-blocks or
+ * precincts. As this is an abstract class, it cannot be used directly but
+ * derived classes have been created for code-blocks and packets (CBlkCoordInfo
+ * and PrecCoordInfo).
+ * 
  * @see PrecCoordInfo
  * @see CBlkCoordInfo
  */
-public abstract class CoordInfo {
+public abstract class CoordInfo
+{
 
-    /** Horizontal upper left coordinate in the subband */
-    public int ulx;
+	/** Horizontal upper left coordinate in the subband */
+	public int ulx;
 
-    /** Vertical upper left coordinate in the subband */ 
-    public int uly;
+	/** Vertical upper left coordinate in the subband */
+	public int uly;
 
-    /** Object's width */
-    public int w;
+	/** Object's width */
+	public int w;
 
-    /** Object's height */
-    public int h;
-    
-    /** 
-     * Constructor. Creates a CoordInfo object.
-     *
-     * @param ulx The horizontal upper left coordinate in the subband
-     *
-     * @param uly The vertical upper left coordinate in the subband
-     *
-     * @param w The width
-     *
-     * @param h The height
-     *
-     * @param idx The object's index
-     */
-    public CoordInfo(int ulx, int uly, int w, int h) {
-        this.ulx = ulx;
-        this.uly = uly;
-        this.w = w;
-        this.h = h;
-    }
-    
-    /** Empty contructor */
-    public CoordInfo() { }
+	/** Object's height */
+	public int h;
 
-    /** 
-     * Returns object's information in a String 
-     * 
-     * @return String with object's information
-     */
-    @Override
-	public String toString() {
-        return "ulx="+ulx+",uly="+uly+",w="+w+",h="+h;
-    }
+	/**
+	 * Constructor. Creates a CoordInfo object.
+	 * 
+	 * @param ulx
+	 *            The horizontal upper left coordinate in the subband
+	 * 
+	 * @param uly
+	 *            The vertical upper left coordinate in the subband
+	 * 
+	 * @param w
+	 *            The width
+	 * 
+	 * @param h
+	 *            The height
+	 * 
+	 * @param idx
+	 *            The object's index
+	 */
+	public CoordInfo(int ulx, int uly, int w, int h)
+	{
+		this.ulx = ulx;
+		this.uly = uly;
+		this.w = w;
+		this.h = h;
+	}
+
+	/** Empty contructor */
+	public CoordInfo()
+	{
+	}
+
+	/**
+	 * Returns object's information in a String
+	 * 
+	 * @return String with object's information
+	 */
+	@Override
+	public String toString()
+	{
+		return "ulx=" + ulx + ",uly=" + uly + ",w=" + w + ",h=" + h;
+	}
 }

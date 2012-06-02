@@ -4,13 +4,13 @@
  * $Id: QuantTypeSpec.java,v 1.18 2001/10/24 12:05:18 grosbois Exp $
  * 
  * Class:                   QuantTypeSpec
- * 
+ *
  * Description:             Quantization type specifications
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.quantization;
@@ -136,7 +136,6 @@ public class QuantTypeSpec extends ModuleSpec
 			{
 				case 't': // Tiles specification
 					tileSpec = parseIdx(word, nTiles);
-
 					if (curSpecValType == SPEC_COMP_DEF)
 					{
 						curSpecValType = SPEC_TILE_COMP;
@@ -148,7 +147,6 @@ public class QuantTypeSpec extends ModuleSpec
 					break;
 				case 'c': // Components specification
 					compSpec = parseIdx(word, nComp);
-
 					if (curSpecValType == SPEC_TILE_DEF)
 					{
 						curSpecValType = SPEC_TILE_COMP;
@@ -175,7 +173,8 @@ public class QuantTypeSpec extends ModuleSpec
 					}
 
 					if (curSpecValType == SPEC_DEF)
-					{ // Default specification
+					{
+						// Default specification
 						setDefault(word);
 					}
 					else if (curSpecValType == SPEC_TILE_DEF)
@@ -199,7 +198,8 @@ public class QuantTypeSpec extends ModuleSpec
 							}
 					}
 					else
-					{ // Tile-component specification
+					{
+						// Tile-component specification
 						for (int i = tileSpec.length - 1; i >= 0; i--)
 						{
 							for (int j = compSpec.length - 1; j >= 0; j--)
@@ -300,11 +300,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 */
 	public boolean isDerived(int t, int c)
 	{
-		if (((String) getTileCompVal(t, c)).equals("derived"))
-		{
-			return true;
-		}
-		return false;
+		return ((String) getTileCompVal(t, c)).equals("derived");
 	}
 
 	/**
@@ -320,11 +316,7 @@ public class QuantTypeSpec extends ModuleSpec
 	 */
 	public boolean isReversible(int t, int c)
 	{
-		if (((String) getTileCompVal(t, c)).equals("reversible"))
-		{
-			return true;
-		}
-		return false;
+		return ((String) getTileCompVal(t, c)).equals("reversible");
 	}
 
 	/**

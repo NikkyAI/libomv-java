@@ -50,82 +50,92 @@ import java.awt.event.*;
 import java.awt.*;
 
 /**
- * This class handles the dragging of an image displayed in an
- * ImgScrollPane. When the mouse is dragged the image scrolls accordingly.
- *
- * <P>Objects of this class must be registerd as both mouse listener and mouse 
+ * This class handles the dragging of an image displayed in an ImgScrollPane.
+ * When the mouse is dragged the image scrolls accordingly.
+ * 
+ * <P>
+ * Objects of this class must be registerd as both mouse listener and mouse
  * motion listener.
- *
- * <P>While the dragging is taking place the cursor is changed to the
- * MOVE_CURSOR type. The original cursor is restored when the mouse is
- * released after the drag.
- *
+ * 
+ * <P>
+ * While the dragging is taking place the cursor is changed to the MOVE_CURSOR
+ * type. The original cursor is restored when the mouse is released after the
+ * drag.
+ * 
  */
-public class ImgMouseListener extends MouseAdapter 
-    implements MouseMotionListener {
-    /** The component where the image is displayed */
-    ImgScrollPane isp;
+public class ImgMouseListener extends MouseAdapter implements MouseMotionListener
+{
+	/** The component where the image is displayed */
+	ImgScrollPane isp;
 
-    /** The horizontal coordinate where the drag starts */
-    int startMouseX;
+	/** The horizontal coordinate where the drag starts */
+	int startMouseX;
 
-    /** The vertical coordinate where the drag starts */
-    int startMouseY;
+	/** The vertical coordinate where the drag starts */
+	int startMouseY;
 
-    /** The horizontal scroll position when the drag started */
-    int startScrollX;
+	/** The horizontal scroll position when the drag started */
+	int startScrollX;
 
-    /** The vertical scroll position when the drag started */
-    int startScrollY;
+	/** The vertical scroll position when the drag started */
+	int startScrollY;
 
-    Cursor prevCursor;
+	Cursor prevCursor;
 
-    /**
-     * Instantiate a new ImgMouseListener that will work on the specified
-     * ImgScrollPane.
-     *
-     * @param isp The image scroll pane on which the actions should operate.
-     */
-    public ImgMouseListener(ImgScrollPane isp) {
-        this.isp = isp;
-    }
+	/**
+	 * Instantiate a new ImgMouseListener that will work on the specified
+	 * ImgScrollPane.
+	 * 
+	 * @param isp
+	 *            The image scroll pane on which the actions should operate.
+	 */
+	public ImgMouseListener(ImgScrollPane isp)
+	{
+		this.isp = isp;
+	}
 
-    @Override
-	public void mousePressed(MouseEvent e) {
-        // Get the possibly start drag position
-        startMouseX = e.getX();
-        startMouseY = e.getY();
-        // Get the start scroll position
-        startScrollX = isp.getHAdjustable().getValue();
-        startScrollY = isp.getVAdjustable().getValue();
-    }
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		// Get the possibly start drag position
+		startMouseX = e.getX();
+		startMouseY = e.getY();
+		// Get the start scroll position
+		startScrollX = isp.getHAdjustable().getValue();
+		startScrollY = isp.getVAdjustable().getValue();
+	}
 
-    @Override
-	public void mouseReleased(MouseEvent e) {
-        // Restore the last cursor, if any
-        if (prevCursor != null) {
-            isp.setCursor(prevCursor);
-            prevCursor = null;
-        }
-    }
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		// Restore the last cursor, if any
+		if (prevCursor != null)
+		{
+			isp.setCursor(prevCursor);
+			prevCursor = null;
+		}
+	}
 
-    @Override
-	public void mouseDragged(MouseEvent evt) {
-        int scrollX,scrollY;
+	@Override
+	public void mouseDragged(MouseEvent evt)
+	{
+		int scrollX, scrollY;
 
-        // Set the drag cursor
-        if (prevCursor == null) {
-            prevCursor = isp.getCursor();
-            isp.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-        }
+		// Set the drag cursor
+		if (prevCursor == null)
+		{
+			prevCursor = isp.getCursor();
+			isp.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		}
 
-        // Calculate new scroll position and set it
-        scrollX = startScrollX + startMouseX - evt.getX();
-        scrollY = startScrollY + startMouseY - evt.getY();
-        isp.setScrollPosition(scrollX,scrollY);
-    }
+		// Calculate new scroll position and set it
+		scrollX = startScrollX + startMouseX - evt.getX();
+		scrollY = startScrollY + startMouseY - evt.getY();
+		isp.setScrollPosition(scrollX, scrollY);
+	}
 
-    @Override
-	public void mouseMoved(MouseEvent evt) {
-    }
+	@Override
+	public void mouseMoved(MouseEvent evt)
+	{
+	}
 }

@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -52,7 +52,7 @@ import jj2000.j2k.wavelet.*;
  * one. See the AnWTFilterInt and AnWTFilterFloat classes. Implementations of
  * analysis filters should inherit from one of those classes.
  * </p>
- * 
+ *
  * All analysis wavelet filters should follow the following conventions:
  * 
  * <ul>
@@ -86,7 +86,6 @@ import jj2000.j2k.wavelet.*;
  */
 public abstract class AnWTFilter implements WaveletFilter
 {
-
 	/** The prefix for wavelet filter options: 'F' */
 	public final static char OPT_PREFIX = 'F';
 
@@ -97,7 +96,7 @@ public abstract class AnWTFilter implements WaveletFilter
 	private final static String[][] pinfo = { {
 			"Ffilters",
 			"[<tile-component idx>] <id> [ [<tile-component idx>] <id> ...]",
-			"Specifies which filters to use for specified tile-component. "
+			"Specifies which filters to use for specified tile-component.\n"
 					+ "If this option is not used, the encoder choses the filters "
 					+ " of the tile-components according to their quantization  type."
 					+ " If this option is used, a component transformation is applied "
@@ -492,5 +491,4 @@ public abstract class AnWTFilter implements WaveletFilter
 	{
 		return pinfo;
 	}
-
 }

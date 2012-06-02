@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.util;
@@ -55,21 +55,22 @@ import java.util.*;
  * Currently the only kind of facilities managed is MsgLogger.
  * </p>
  * 
- * <P>
+ * <p>
  * An example use of this class is if 2 instances of a decoder are running in
  * different threads and the messages of the 2 instances should be separated.
+ * </p>
  * 
- * <P>
+ * <p>
  * The default MsgLogger is a StreamMsgLogger that uses System.out as the 'out'
  * stream and System.err as the 'err' stream, and a line width of 78. This can
  * be changed using the registerMsgLogger() method.
+ * </p>
  * 
  * @see MsgLogger
  * @see StreamMsgLogger
  */
 public class FacilityManager
 {
-
 	/** The loggers associated to different threads */
 	private final static Hashtable<Thread, MsgLogger> loggerList = new Hashtable<Thread, MsgLogger>();
 
@@ -85,25 +86,12 @@ public class FacilityManager
 	 */
 	private static ProgressWatch defWatchProg = null;
 
-	/*/
-	public static void registerProgressWatch(Thread t, ProgressWatch pw)
-	{
-		if (pw == null)
-		{
-			throw new NullPointerException();
-		}
-		if (t == null)
-		{
-			defWatchProg = pw;
-		}
-		else
-		{
-			watchProgList.put(t, pw);
-		}
-	}
-
-	/**
-	 * Returns the ProgressWatch instance registered with the current thread
+	/*
+	 * / public static void registerProgressWatch(Thread t, ProgressWatch pw) {
+	 * if (pw == null) { throw new NullPointerException(); } if (t == null) {
+	 * defWatchProg = pw; } else { watchProgList.put(t, pw); } }
+	 * 
+	 * /** Returns the ProgressWatch instance registered with the current thread
 	 * (the thread that calls this method). If the current thread has no
 	 * registered ProgressWatch, then the default one is used.
 	 */

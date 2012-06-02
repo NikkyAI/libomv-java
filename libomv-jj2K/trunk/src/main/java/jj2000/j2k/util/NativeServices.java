@@ -4,14 +4,14 @@
  * $Id: NativeServices.java,v 1.7 2000/09/05 09:25:26 grosbois Exp $
  * 
  * Class:                   NativeServices
- * 
+ *
  * Description:             Static methods allowing to access to some
  *                          native services. It uses native methods.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,13 +38,9 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
  */
-
 package jj2000.j2k.util;
 
 /**
@@ -52,43 +48,48 @@ package jj2000.j2k.util;
  * native methods. It makes use of native methods to access those thread
  * properties.
  * 
- * <P>
+ * <p>
  * Since the methods in this class require the presence of a shared library with
  * the name defined in SHLIB_NAME it is necessary to load it prior to making use
  * of any such methods. All methods that require the shared library will
  * automatically load the library if that has not been already done. The library
  * might also be manually loaded with the 'loadLibrary()' method of this class.
+ * </p>
  * 
- * <P>
+ * <p>
  * This class provides only static methods. It should not be instantiated.
+ * </p>
  * 
- * <P>
+ * <p>
  * Currently the only native services available is settings relative to POSIX
  * threads, which are not accessible from the Java API.
+ * </p>
  * 
- * <P>
+ * <p>
  * Currently the methods in this class make sense with POSIX threads only, since
  * they access POSIX threads settings. POSIX threads are most used under UNIX
  * and UNIX-like operating systems and are mostly referred to as "native"
  * threads in Java Virtual Machine (JVM) implementations.
+ * </p>
  * 
- * <P>
+ * <p>
  * The shared library SHLIB_NAME uses functions of the POSIX thread library
  * (i.e. 'pthread'). Calling the methods that use the 'pthread' library will
  * most prbably cause the Java Virtual Machine (JVM) to crash if it is not using
  * the POSIX threads, due to unsatisfied references. For instance, JVMs that use
  * "green" threads will most certainly crash. POSIX threads are referred to as
  * "native" threads in JVMs under UNIX operating systems.
+ * </p>
  * 
- * <P>
+ * <p>
  * On Operating Systems where POSIX threads are not available (typically Windows
  * 95/98/NT/2000, MacIntosh, OS/2) there is no problem since the SHLIB_NAME, if
  * available, will not make use of POSIX threads library functions, thus no
  * problem should occur.
+ * </p>
  */
 public final class NativeServices
 {
-
 	/**
 	 * The name of the shared library containing the implementation of the
 	 * native methods: 'jj2000'. The actual file name of the library is system
@@ -140,19 +141,21 @@ public final class NativeServices
 	 * level if set to more than the number of available processors in the
 	 * machine the performance might degrade.
 	 * 
-	 * <P>
+	 * <p>
 	 * For JVM implementations that use POSIX threads with PTHREAD_SCOPE_SYSTEM
 	 * scheduling scope or JVM implementations that use Windows(R) threads and
 	 * maybe others, setting the concurrency level has no effect. In this cases
 	 * the number of CPUs that can be exploited by the JVM is not limited in
 	 * principle, all CPUs are available to the JVM.
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * For JVM implementations that use "green" threads setting the concurrency
 	 * level, and thus calling this method, makes no sense, since "green"
 	 * threads are all contained in one user process and can not use multiple
 	 * CPUs. In fact calling this method can result in a JVM crash is the shared
 	 * library SHLIB_NAME has been compiled to use POSIX threads.
+	 * </p>
 	 * 
 	 * @param n
 	 *            The new concurrency level to set.
@@ -260,5 +263,4 @@ public final class NativeServices
 				throw new UnsatisfiedLinkError("NativeServices: native shared library could not be loaded");
 		}
 	}
-
 }

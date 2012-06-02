@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,42 +38,36 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
  */
-
 
 package jj2000.j2k.util;
 
 /**
- * Thrown to indicate that the application has attempted to parse a
- * badly formatted string.
+ * Thrown to indicate that the application has attempted to parse a badly
+ * formatted string.
  */
 public class StringFormatException extends IllegalArgumentException
 {
 	private static final long serialVersionUID = 1L;
 
 	/**
-     * Creates the exception with an empty messgage.
-     *
-     *
-     */
-    public StringFormatException() {
-        super();
-    }
+	 * Creates the exception with an empty messgage.
+	 */
+	public StringFormatException()
+	{
+		super();
+	}
 
-    /**
-     * Creates the exception with the specified detail message.
-     *
-     * @param s The detail message
-     *
-     *
-     */
-    public StringFormatException(String s) {
-        super(s);
-    }
+	/**
+	 * Creates the exception with the specified detail message.
+	 * 
+	 * @param s
+	 *            The detail message
+	 */
+	public StringFormatException(String s)
+	{
+		super(s);
+	}
 }
-

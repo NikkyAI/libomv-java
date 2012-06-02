@@ -12,7 +12,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -39,7 +39,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.analysis;
@@ -60,7 +60,6 @@ import jj2000.j2k.*;
  */
 public class ForwWTFull extends ForwardWT
 {
-
 	/** Boolean to know if one are currently dealing with int or float data. */
 	private boolean intData;
 
@@ -123,7 +122,7 @@ public class ForwWTFull extends ForwardWT
 	SubbandAn currentSubband[];
 
 	/**
-	 * Cache object to avoid excessive allocation/desallocation. This variable
+	 * Cache object to avoid excessive allocation/deallocation. This variable
 	 * makes the class inheritently thread unsafe.
 	 */
 	Coord ncblks;
@@ -138,22 +137,22 @@ public class ForwWTFull extends ForwardWT
 	 * @param encSpec
 	 *            The encoder specifications
 	 * 
-	 * @param cb0x
-	 *            The horizontal coordinate of the code-block partition origin
-	 *            on the reference grid.
+	 * @param pox
+	 *            The horizontal coordinate of the cell and code-block partition
+	 *            origin with respect to the canvas origin, on the reference grid.
 	 * 
-	 * @param cb0y
-	 *            The vertical coordinate of the code-block partition origin on
-	 *            the reference grid.
+	 * @param poy
+	 *            The vertical coordinate of the cell and code-block partition
+	 *            origin with respect to the canvas origin, on the reference grid.
 	 * 
 	 * @see ForwardWT
 	 */
-	public ForwWTFull(BlkImgDataSrc src, EncoderSpecs encSpec, int cb0x, int cb0y)
+	public ForwWTFull(BlkImgDataSrc src, EncoderSpecs encSpec, int pox, int poy)
 	{
 		super(src);
 		this.src = src;
-		this.cb0x = cb0x;
-		this.cb0y = cb0y;
+		this.cb0x = pox;
+		this.cb0y = poy;
 		this.dls = encSpec.dls;
 		this.filters = encSpec.wfs;
 		this.cblks = encSpec.cblks;
@@ -503,7 +502,6 @@ public class ForwWTFull extends ForwardWT
 			default:
 				throw new Error("Internal JJ2000 error");
 		}
-
 		// Initialize output code-block
 		if (cblk == null)
 		{
@@ -738,16 +736,10 @@ public class ForwWTFull extends ForwardWT
 		// Find the next subband to send
 		do
 		{
-			// If the current subband is null then break
-			if (nextsb == null)
-			{
-				break;
-			}
-
 			// If the current subband is a leaf then select the next leaf to
 			// send or go up in the decomposition tree if the leaf was a LL
 			// one.
-			else if (!nextsb.isNode)
+			if (!nextsb.isNode)
 			{
 				switch (nextsb.orientation)
 				{
@@ -805,12 +797,7 @@ public class ForwWTFull extends ForwardWT
 					}
 				}
 			}
-
-			if (nextsb == null)
-			{
-				break;
-			}
-		} while (nextsb.isNode);
+		} while (nextsb != null && nextsb.isNode);
 		return nextsb;
 	}
 
@@ -830,7 +817,6 @@ public class ForwWTFull extends ForwardWT
 	 */
 	private void waveletTreeDecomposition(DataBlk band, SubbandAn subband, int c)
 	{
-
 		// If the current subband is a leaf then nothing to be done (a leaf is
 		// not decomposed).
 		if (!subband.isNode)

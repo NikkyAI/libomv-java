@@ -693,7 +693,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -741,7 +741,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
 	 * </p>
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

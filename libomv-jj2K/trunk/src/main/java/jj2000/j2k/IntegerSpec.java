@@ -162,8 +162,7 @@ public class IntegerSpec extends ModuleSpec
 					}
 					catch (NumberFormatException e)
 					{
-						throw new IllegalArgumentException("Non recognized value for option -" + optName + ": "
-								+ word);
+						throw new IllegalArgumentException("Non recognized value for option -" + optName + ": " + word);
 					}
 
 					if (curSpecType == SPEC_DEF)
@@ -234,8 +233,7 @@ public class IntegerSpec extends ModuleSpec
 				}
 				catch (NumberFormatException e)
 				{
-					throw new IllegalArgumentException("Non recognized value for option -" + optName + ": "
-							+ param);
+					throw new IllegalArgumentException("Non recognized value for option -" + optName + ": " + param);
 				}
 			}
 			else

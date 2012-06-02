@@ -117,8 +117,8 @@ public class ImgEncoder
 							+ "file to which the codestream will be written.", null },
 			{ "verbose", null, "Prints information about the obtained bit stream.", "on" },
 			{ "v", "[on|off]", "Prints version and copyright information.", "off" },
-			{ "u", "[on|off]",
-					"Prints usage information. If specified all other arguments (except 'v') are ignored", "off" }, };
+			{ "u", "[on|off]", "Prints usage information. If specified all other arguments (except 'v') are ignored",
+					"off" }, };
 
 	/** The default parameter list (arguments) */
 	protected ParameterList defpl;
@@ -132,8 +132,8 @@ public class ImgEncoder
 		defpl = pl.getDefaultParameterList();
 	}
 
-	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, String outname, 
-			          boolean useFileFormat, boolean verbose) throws IOException
+	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, String outname,
+			boolean useFileFormat, boolean verbose) throws IOException
 	{
 		Tiler imgtiler;
 		ForwCompTransf fctransf;
@@ -157,7 +157,7 @@ public class ImgEncoder
 		boolean tempSop = false;
 		boolean tempEph = false;
 		float rate;
-		
+
 		if (pl.getParameter("pph_tile").equals("on"))
 		{
 			pphTile = true;
@@ -195,7 +195,7 @@ public class ImgEncoder
 			error("Can't have packed packet headers in both main and tile headers", 2);
 			return -1;
 		}
-		
+
 		if (pl.getParameter("tiles") == null)
 		{
 			error("No tiles option specified", 2);
@@ -334,9 +334,12 @@ public class ImgEncoder
 		// **** Component transformation ****
 		if (ppminput && pl.getParameter("Mct") != null && pl.getParameter("Mct").equals("off"))
 		{
-			FacilityManager.getMsgLogger().printmsg(MsgLogger.WARNING,
-					"Input image is RGB and no color transform has been specified. Compression performance and "
-					+ "image quality might be greatly degraded. Use the 'Mct' option to specify a color transform");
+			FacilityManager
+					.getMsgLogger()
+					.printmsg(
+							MsgLogger.WARNING,
+							"Input image is RGB and no color transform has been specified. Compression performance and "
+									+ "image quality might be greatly degraded. Use the 'Mct' option to specify a color transform");
 		}
 		try
 		{
@@ -394,8 +397,8 @@ public class ImgEncoder
 		}
 		catch (IllegalArgumentException e)
 		{
-			error("Could not instantiate entropy coder"
-					+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
+			error("Could not instantiate entropy coder" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
+					2, e);
 			return -1;
 		}
 
@@ -406,8 +409,8 @@ public class ImgEncoder
 		}
 		catch (IllegalArgumentException e)
 		{
-			error("Could not instantiate rate allocator"
-					+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
+			error("Could not instantiate rate allocator" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
+					2, e);
 			return -1;
 		}
 
@@ -435,7 +438,7 @@ public class ImgEncoder
 		// **** Done ****
 		bwriter.close();
 		os.close();
-		
+
 		// **** Calculate file length ****
 		int fileLength = bwriter.getLength();
 
@@ -480,7 +483,8 @@ public class ImgEncoder
 					bpc[comp] = imgsrc.getNomRangeBits(comp);
 				}
 
-				FileFormatWriter ffw = new FileFormatWriter(outname, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc, bpc, fileLength);
+				FileFormatWriter ffw = new FileFormatWriter(outname, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc,
+						bpc, fileLength);
 				fileLength += ffw.writeFileFormat();
 			}
 			catch (IOException e)
@@ -488,16 +492,16 @@ public class ImgEncoder
 				throw new Error("Error while writing JP2 file format");
 			}
 		}
-		
+
 		// **** Report results ****
 		if (verbose)
 		{
 			// Print target rate info
 			if (rate != -1)
 			{
-				FacilityManager.getMsgLogger().println("Target bitrate = " + rate + " bpp (i.e. "
-											+ (int) (rate * imgsrc.getImgWidth() * imgsrc.getImgHeight() / 8)
-											+ " bytes)", 4, 6);
+				FacilityManager.getMsgLogger().println(
+						"Target bitrate = " + rate + " bpp (i.e. "
+								+ (int) (rate * imgsrc.getImgWidth() * imgsrc.getImgHeight() / 8) + " bytes)", 4, 6);
 			}
 			// Print achieved rate
 			FacilityManager.getMsgLogger().println(
@@ -508,9 +512,10 @@ public class ImgEncoder
 			if (pl.getParameter("Rroi") != null && !useFileFormat && pl.getIntParameter("tile_parts") == 0)
 			{
 				int roiLen = bwriter.getOffLastROIPkt();
-				FacilityManager.getMsgLogger().printmsg(MsgLogger.INFO,
+				FacilityManager.getMsgLogger().printmsg(
+						MsgLogger.INFO,
 						"The Region Of Interest is encoded in the first " + roiLen + " bytes of the codestream (i.e "
-					    + (8f * roiLen / (imgsrc.getImgWidth() * imgsrc.getImgHeight())) + " bpp)");
+								+ (8f * roiLen / (imgsrc.getImgWidth() * imgsrc.getImgHeight())) + " bpp)");
 
 			}
 			FacilityManager.getMsgLogger().flush();
@@ -649,7 +654,7 @@ public class ImgEncoder
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.ERROR, msg);
 	}
 
-	protected void error(String msg, int code, Throwable e) 
+	protected void error(String msg, int code, Throwable e)
 	{
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.ERROR, msg);
 		if (pl.getParameter("debug").equals("on"))

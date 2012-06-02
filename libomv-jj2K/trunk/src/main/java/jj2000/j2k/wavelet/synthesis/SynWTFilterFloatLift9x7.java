@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -58,7 +58,6 @@ package jj2000.j2k.wavelet.synthesis;
  */
 public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 {
-
 	/** The value of the first lifting step coefficient */
 	public final static float ALPHA = -1.586134342f;
 
@@ -83,21 +82,26 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * general description of the synthetize_lpf() method in the SynWTFilter
 	 * class for more details.
 	 * 
-	 * <P>
+	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of 1/KL and a factor of 1/KH
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the first lifting step are [-DELTA 1 -DELTA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the second lifting step are [-GAMMA 1 -GAMMA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the third lifting step are [-BETA 1 -BETA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the fourth lifting step are [-ALPHA 1 -ALPHA].
+	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal.
@@ -255,21 +259,26 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * general description of the synthetize_hpf() method in the SynWTFilter
 	 * class for more details.
 	 * 
-	 * <P>
+	 * <p>
 	 * The low-pass and high-pass subbands are normalized by respectively a
 	 * factor of 1/KL and a factor of 1/KH
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the first lifting step are [-DELTA 1 -DELTA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the second lifting step are [-GAMMA 1 -GAMMA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the third lifting step are [-BETA 1 -BETA].
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The coefficients of the fourth lifting step are [-ALPHA 1 -ALPHA].
+	 * </p>
 	 * 
 	 * @param lowSig
 	 *            This is the array that contains the low-pass input signal.
@@ -507,8 +516,9 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * Returns the negative support of the low-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
 	 * 
-	 * <P>
+	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
+	 * </p>
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         negative direction
@@ -523,8 +533,9 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * Returns the positive support of the low-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
 	 * 
-	 * <P>
+	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
+	 * </p>
 	 * 
 	 * @return The number of taps of the low-pass synthesis filter in the
 	 *         positive direction
@@ -539,8 +550,9 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * Returns the negative support of the high-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
 	 * 
-	 * <P>
+	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
+	 * </p>
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         negative direction
@@ -555,8 +567,9 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * Returns the positive support of the high-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
 	 * 
-	 * <P>
+	 * <p>
 	 * A MORE PRECISE DEFINITION IS NEEDED
+	 * </p>
 	 * 
 	 * @return The number of taps of the high-pass synthesis filter in the
 	 *         positive direction
@@ -601,10 +614,11 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * by image boundaries processings such as symmetric extension, since there
 	 * is not reference method for this.
 	 * 
-	 * <P>
+	 * <p>
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
+	 * </p>
 	 * 
 	 * @param tailOvrlp
 	 *            This is the number of samples in the input signal before the
@@ -621,9 +635,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * 
 	 * @return true if both overlaps are greater than 2, and correct processing
 	 *         is applied in the analyze() method.
-	 * 
-	 * 
-	 * 
 	 */
 	@Override
 	public boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen)
@@ -642,8 +653,6 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat
 	 * Returns a string of information about the synthesis wavelet filter
 	 * 
 	 * @return wavelet filter type.
-	 * 
-	 * 
 	 */
 	@Override
 	public String toString()

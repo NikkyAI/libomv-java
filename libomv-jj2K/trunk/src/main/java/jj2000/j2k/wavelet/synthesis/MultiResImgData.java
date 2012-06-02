@@ -4,14 +4,14 @@
  * $Id: MultiResImgData.java,v 1.11 2002/07/25 15:11:33 grosbois Exp $
  * 
  * Class:                   MultiResImgData
- * 
+ *
  * Description:             The interface for classes that provide
  *                          multi-resolution image data.
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -87,12 +87,10 @@ import jj2000.j2k.image.*;
  * </p>
  * 
  * @see jj2000.j2k.image.ImgData
- * 
  * @see jj2000.j2k.quantization.dequantizer.CBlkQuantDataSrcDec
  */
 public interface MultiResImgData
 {
-
 	/**
 	 * Returns the overall width of the current tile in pixels for the given
 	 * resolution level. This is the tile's width without accounting for any

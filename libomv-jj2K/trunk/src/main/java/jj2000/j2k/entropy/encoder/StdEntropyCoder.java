@@ -4,13 +4,13 @@
  * $Id: StdEntropyCoder.java,v 1.41 2002/07/04 15:53:32 grosbois Exp $
  * 
  * Class:                   StdEntropyCoder
- * 
+ *
  * Description:             Entropy coding engine of stripes in code-blocks
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.entropy.encoder;
@@ -118,7 +118,6 @@ import java.util.*;
  */
 public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOptions
 {
-
 	/**
 	 * Whether to collect timing information or not: false. Used as a compile
 	 * time directive.
@@ -1096,7 +1095,15 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		// Get the number of threads to use, or default to one
 		try
 		{
-			nt = Integer.parseInt(System.getProperty(THREADS_PROP_NAME, DEF_THREADS_NUM));
+			try
+			{
+				nt = Integer.parseInt(System.getProperty(THREADS_PROP_NAME, DEF_THREADS_NUM));
+			}
+			catch (SecurityException se)
+			{
+				// Use the default value.
+				nt = Integer.parseInt(DEF_THREADS_NUM);
+			}
 			if (nt < 0)
 				throw new NumberFormatException();
 		}
@@ -1223,7 +1230,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 				sb.append("\nStdEntropyCoder compressor threads wall clock time:");
 				while (e.hasMoreElements())
 				{
-					compr = (e.nextElement());
+					compr = e.nextElement();
 					for (c = 0; c < time.length; c++)
 					{
 						sb.append("\n  compressor ");
@@ -1457,7 +1464,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -1482,7 +1489,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * <p>
 	 * This default implementation just advances to the next tile in the source.
 	 * </p>
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -1641,7 +1648,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		totdist = 0f;
 		npass = 0;
 		ltpidx = -1;
-
 		// First significant bit-plane has only the pass pass
 		if (curbp >= lmb)
 		{
@@ -1720,7 +1726,6 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 			totdist += cleanuppass(srcblk, mq, istermbuf[npass], curbp, state, fs, zc_lut, symbuf, ctxtbuf, ratebuf,
 					npass, ltpidx, options) * msew;
 			distbuf[npass] = totdist;
-
 			if (istermbuf[npass])
 				ltpidx = npass;
 			npass++;
@@ -1741,7 +1746,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		mq.reset();
 		if (bout != null)
 			bout.reset();
-
+		// Done
 	}
 
 	/**
@@ -3683,14 +3688,12 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 								"Using error resilient MQ termination, but terminating only at "
 										+ "the end of code-blocks. The error "
 										+ "protection offered by this option will be very weak. Specify the "
-										+ "'Cterminate' and/or 'Cbypass' option for "
-										+ "increased error resilience.");
+										+ "'Cterminate' and/or 'Cbypass' option for increased error resilience.");
 					}
 				}
 				else
 				{
-					throw new IllegalArgumentException("Unrecognized or unsupported MQ coder "
-							+ "termination.");
+					throw new IllegalArgumentException("Unrecognized or unsupported MQ coder termination.");
 				}
 
 			} // End loop on components

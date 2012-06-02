@@ -151,7 +151,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	private int nl = 0;
 
 	/** The number of components */
-//	private int nc;
+	// private int nc;
 
 	/** Whether or not SOP marker segment are used */
 	private boolean sopUsed = false;
@@ -264,7 +264,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	public CBlkInfo[][][][][] restart(int nc, int[] mdl, int nl, CBlkInfo[][][][][] cbI, boolean pph,
 			ByteArrayInputStream pphbais)
 	{
-//		this.nc = nc;
+		// this.nc = nc;
 		this.nl = nl;
 		this.tIdx = src.getTileIdx();
 		this.pph = pph;
@@ -395,9 +395,9 @@ public class PktDecoder implements StdEntropyCoderOptions
 		// resolution level
 
 		Coord tileI = src.getTile(null);
-//		Coord nTiles = src.getNumTiles(null);
+		// Coord nTiles = src.getNumTiles(null);
 
-//		int xsiz, ysiz;
+		// int xsiz, ysiz;
 		int x0siz, y0siz;
 		int xt0siz, yt0siz;
 		int xtsiz, ytsiz;
@@ -408,13 +408,15 @@ public class PktDecoder implements StdEntropyCoderOptions
 		ytsiz = src.getNomTileHeight();
 		x0siz = hd.getImgULX();
 		y0siz = hd.getImgULY();
-//		xsiz = hd.getImgWidth();
-//		ysiz = hd.getImgHeight();
+		// xsiz = hd.getImgWidth();
+		// ysiz = hd.getImgHeight();
 
 		int tx0 = (tileI.x == 0) ? x0siz : xt0siz + tileI.x * xtsiz;
 		int ty0 = (tileI.y == 0) ? y0siz : yt0siz + tileI.y * ytsiz;
-//		int tx1 = (tileI.x != nTiles.x - 1) ? xt0siz + (tileI.x + 1) * xtsiz : xsiz;
-//		int ty1 = (tileI.y != nTiles.y - 1) ? yt0siz + (tileI.y + 1) * ytsiz : ysiz;
+		// int tx1 = (tileI.x != nTiles.x - 1) ? xt0siz + (tileI.x + 1) * xtsiz
+		// : xsiz;
+		// int ty1 = (tileI.y != nTiles.y - 1) ? yt0siz + (tileI.y + 1) * ytsiz
+		// : ysiz;
 
 		int xrsiz = hd.getCompSubsX(c);
 		int yrsiz = hd.getCompSubsY(c);
@@ -441,7 +443,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 		// Precincts are located at (cb0x+i*twoppx,cb0y+j*twoppy)
 		// Valid precincts are those which intersect with the current
 		// resolution level
-//		int maxPrec = ppinfo[c][r].length;
+		// int maxPrec = ppinfo[c][r].length;
 		int nPrec = 0;
 
 		int istart = (int) Math.floor((try0 - cb0y) / twoppy);
@@ -853,9 +855,9 @@ public class PktDecoder implements StdEntropyCoderOptions
 		int tIdx = src.getTileIdx();
 		PktHeaderBitReader bin;
 		int mend, nend;
-//		int b;
-//		SubbandSyn sb;
-//		SubbandSyn root = src.getSynSubbandTree(tIdx, c);
+		// int b;
+		// SubbandSyn sb;
+		// SubbandSyn root = src.getSynSubbandTree(tIdx, c);
 
 		// If packed packet headers was used, use separate stream for reading
 		// of packet headers
@@ -939,7 +941,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 			{
 				cblks[s].removeAllElements();
 			}
-//			sb = (SubbandSyn) root.getSubbandByIdx(r, s);
+			// sb = (SubbandSyn) root.getSubbandByIdx(r, s);
 			// No code-block in this precinct
 			if (prec.nblk[s] == 0)
 			{
@@ -957,7 +959,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 				for (int n = 0; n < nend; n++)
 				{ // Horizontal code-blocks
 					cbc = prec.cblk[s][m][n].idx;
-//					b = cbc.x + cbc.y * sb.numCb.x;
+					// b = cbc.x + cbc.y * sb.numCb.x;
 
 					ccb = cbI[s][cbc.y][cbc.x];
 

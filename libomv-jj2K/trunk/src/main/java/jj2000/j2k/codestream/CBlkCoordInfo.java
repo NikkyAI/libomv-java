@@ -47,37 +47,43 @@ import jj2000.j2k.image.*;
 /**
  * This class is used to store the coordinates of code-blocks.
  */
-public class CBlkCoordInfo extends CoordInfo {
+public class CBlkCoordInfo extends CoordInfo
+{
 
-    /** The code-block horizontal and vertical indexes */
-    public Coord idx;
-    
-    /** 
-     * Constructor. Creates a CBlkCoordInfo object.
-     */
-    public CBlkCoordInfo() {
-        this.idx = new Coord(); 
-    }
+	/** The code-block horizontal and vertical indexes */
+	public Coord idx;
 
-    /** 
-     * Constructor. Creates a CBlkCoordInfo object width specified code-block
-     * vertical and horizontal indexes.
-     *
-     * @param m Code-block vertical index.
-     *
-     * @param n Code-block horizontal index.
-     */
-    public CBlkCoordInfo(int m,int n) {
-        this.idx = new Coord(n,m);
-    }
-    
-    /** 
-     * Returns code-block's information in a String 
-     * 
-     * @return String with code-block's information
-     */
-    @Override
-	public String toString() {
-        return super.toString() + ",idx="+idx;
-    }
+	/**
+	 * Constructor. Creates a CBlkCoordInfo object.
+	 */
+	public CBlkCoordInfo()
+	{
+		this.idx = new Coord();
+	}
+
+	/**
+	 * Constructor. Creates a CBlkCoordInfo object width specified code-block
+	 * vertical and horizontal indexes.
+	 * 
+	 * @param m
+	 *            Code-block vertical index.
+	 * 
+	 * @param n
+	 *            Code-block horizontal index.
+	 */
+	public CBlkCoordInfo(int m, int n)
+	{
+		this.idx = new Coord(n, m);
+	}
+
+	/**
+	 * Returns code-block's information in a String
+	 * 
+	 * @return String with code-block's information
+	 */
+	@Override
+	public String toString()
+	{
+		return super.toString() + ",idx=" + idx;
+	}
 }

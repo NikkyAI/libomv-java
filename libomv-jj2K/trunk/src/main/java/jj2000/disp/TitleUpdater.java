@@ -45,75 +45,80 @@ package jj2000.disp;
 import java.awt.*;
 
 /**
- * This class should run as an independent thread to update tha main
- * display window title with current image scroll position and
- * zoom.
+ * This class should run as an independent thread to update tha main display
+ * window title with current image scroll position and zoom.
  */
-public class TitleUpdater implements Runnable {
+public class TitleUpdater implements Runnable
+{
 
-    /** The update perion, in milliseconds: 100 */
-    static final int UPDATE_T = 100;
+	/** The update perion, in milliseconds: 100 */
+	static final int UPDATE_T = 100;
 
-    /** The ImgScrollPane where the image is displayed */
-    ImgScrollPane isp;
+	/** The ImgScrollPane where the image is displayed */
+	ImgScrollPane isp;
 
-    /** The frame which title to update */
-    Frame win;
+	/** The frame which title to update */
+	Frame win;
 
-    /** The base of the title */
-    String btitle;
+	/** The base of the title */
+	String btitle;
 
-    /** The thread exits when this is true */
-    volatile public boolean done = false;
+	/** The thread exits when this is true */
+	volatile public boolean done = false;
 
-    /**
-     * Instantiates the title updater. The title of 'win' will be
-     * regularly updated with the current zoom and scroll point. The
-     * current zoom and scroll point are added to the basic title
-     * given by 'btitle'.
-     *
-     * @param isp Where the image is displayed
-     *
-     * @param win The window which title to update
-     *
-     * @param btitle The base of the title.
-     */
-    public TitleUpdater(ImgScrollPane isp, Frame win, String btitle) {
-        this.isp = isp;
-        this.win = win;
-        this.btitle = btitle;
-    }
+	/**
+	 * Instantiates the title updater. The title of 'win' will be regularly
+	 * updated with the current zoom and scroll point. The current zoom and
+	 * scroll point are added to the basic title given by 'btitle'.
+	 * 
+	 * @param isp
+	 *            Where the image is displayed
+	 * 
+	 * @param win
+	 *            The window which title to update
+	 * 
+	 * @param btitle
+	 *            The base of the title.
+	 */
+	public TitleUpdater(ImgScrollPane isp, Frame win, String btitle)
+	{
+		this.isp = isp;
+		this.win = win;
+		this.btitle = btitle;
+	}
 
-    /**
-     * The method that executes this thread. The method periodically
-     * updates the title, if necessary, and puts to sleep the thread
-     * for 100 msec. This method never returns. If the sleep of the
-     * thread is interrupted, the title will be updated earlier and
-     * the cycle will continue.
-     */
-    @Override
-	public void run() {
-        // Periodically update the window title
-        Point lsp,sp;
-        float lzf,zf;
-        lsp = isp.getScrollPosition();
-        lzf = isp.getZoom();
-        while (!done) {
-            sp = isp.getScrollPosition();
-            zf = isp.getZoom();
-            // Update title only if necessary
-            if (zf != lzf || !sp.equals(lsp)) {
-                win.setTitle(btitle+
-                             " @ ("+(int)(sp.x/zf)+","+
-                             (int)(sp.y/zf)+") : "+isp.getZoom());
-            }
-            lsp = sp;
-            lzf = zf;
-            try {
+	/**
+	 * The method that executes this thread. The method periodically updates the
+	 * title, if necessary, and puts to sleep the thread for 100 msec. This
+	 * method never returns. If the sleep of the thread is interrupted, the
+	 * title will be updated earlier and the cycle will continue.
+	 */
+	@Override
+	public void run()
+	{
+		// Periodically update the window title
+		Point lsp, sp;
+		float lzf, zf;
+		lsp = isp.getScrollPosition();
+		lzf = isp.getZoom();
+		while (!done)
+		{
+			sp = isp.getScrollPosition();
+			zf = isp.getZoom();
+			// Update title only if necessary
+			if (zf != lzf || !sp.equals(lsp))
+			{
+				win.setTitle(btitle + " @ (" + (int) (sp.x / zf) + "," + (int) (sp.y / zf) + ") : " + isp.getZoom());
+			}
+			lsp = sp;
+			lzf = zf;
+			try
+			{
 				Thread.sleep(UPDATE_T);
-            }
-            catch (InterruptedException e) {
-            }
-        }
-    }
+			}
+			catch (InterruptedException e)
+			{
+			}
+		}
+	}
 }

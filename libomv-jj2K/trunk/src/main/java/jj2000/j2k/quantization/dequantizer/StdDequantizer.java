@@ -14,7 +14,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -41,7 +41,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.quantization.dequantizer;
@@ -88,7 +88,6 @@ import jj2000.j2k.image.*;
  */
 public class StdDequantizer extends Dequantizer
 {
-
 	/** The quantizer type spec */
 	private QuantTypeSpec qts;
 
@@ -317,7 +316,8 @@ public class StdDequantizer extends Dequantizer
 				outiarr = (int[]) cblk.getData();
 				break;
 			case DataBlk.TYPE_FLOAT:
-				// With float data we must use a different DataBlk objects to get
+				// With float data we must use a different DataBlk objects to
+				// get
 				// the data from the source and to return the dequantized data.
 				inblk = (DataBlkInt) src.getInternCodeBlock(c, m, n, sb, inblk);
 				inarr = inblk.getDataInt();
@@ -359,7 +359,8 @@ public class StdDequantizer extends Dequantizer
 			}
 		}
 		else
-		{ // Not reversible
+		{
+			// Not reversible
 			if (derived)
 			{
 				// Max resolution level

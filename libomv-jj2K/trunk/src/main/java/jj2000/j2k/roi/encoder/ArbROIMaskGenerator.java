@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package jj2000.j2k.roi.encoder;
@@ -52,19 +52,18 @@ import jj2000.j2k.image.*;
  * rectangular. In this case, the fast ROI bit-mask algorithm generation can not
  * be used.
  * 
- * <P>
+ * <p>
  * The values are calculated from the scaling factors of the ROIs. The values
  * with which to scale are equal to u-umin where umin is the lowest scaling
  * factor within the block. The umin value is sent to the entropy coder to be
  * used for scaling the distortion values.
+ * </p>
  * 
  * @see ROIMaskGenerator
- * 
  * @see ArbROIMaskGenerator
  */
 public class ArbROIMaskGenerator extends ROIMaskGenerator
 {
-
 	/** The source of quantized wavelet transform coefficients */
 	private Quantizer src;
 
@@ -106,14 +105,16 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 	 * This functions gets a DataBlk the size of the current code-block an fills
 	 * this block with the ROI mask.
 	 * 
-	 * <P>
+	 * <p>
 	 * In order to get the mask for a particular Subband, the subband tree is
 	 * traversed and at each decomposition, the ROI masks are computed.
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * The widths of the synthesis filters corresponding to the wavelet filters
 	 * used in the wavelet transform are used to expand the ROI masks in the
 	 * decompositions.
+	 * </p>
 	 * 
 	 * @param db
 	 *            The data block that is to be filled with the mask
@@ -180,9 +181,10 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 	/**
 	 * This function generates the ROI mask for one tile-component.
 	 * 
-	 * <P>
+	 * <p>
 	 * Once the mask is generated in the pixel domain. it is decomposed
 	 * following the same decomposition scheme as the wavelet transform.
+	 * </p>
 	 * 
 	 * @param sb
 	 *            The root of the subband tree used in the decomposition
@@ -242,8 +244,7 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 					ImgReaderPGM maskPGM = rois[r].maskPGM; // Local copy
 
 					if ((src.getImgWidth() != maskPGM.getImgWidth()) || (src.getImgHeight() != maskPGM.getImgHeight()))
-						throw new IllegalArgumentException("Input image and ROI mask must have the same "
-								+ "size");
+						throw new IllegalArgumentException("Input image and ROI mask must have the same size");
 					x = src.getImgULX();
 					y = src.getImgULY();
 					lrx = x + src.getImgWidth() - 1;
@@ -618,6 +619,5 @@ public class ArbROIMaskGenerator extends ROIMaskGenerator
 			decomp(sb.getHL(), tilew, tileh, c);
 			decomp(sb.getLL(), tilew, tileh, c);
 		}
-
 	}
 }

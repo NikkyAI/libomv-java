@@ -31,11 +31,14 @@ public class ImgDecoder
 {
 	/** The parameter information for this class */
 	private final static String[][] pinfo = {
-			{ "u", "[on|off]",
-					"Prints usage information. If specified all other arguments (except 'v') are ignored", "off" },
+			{ "u", "[on|off]", "Prints usage information. If specified all other arguments (except 'v') are ignored",
+					"off" },
 			{ "v", "[on|off]", "Prints version and copyright information", "off" },
 			{ "verbose", "[on|off]", "Prints information about the decoded codestream", "on" },
-			{ "pfile", "<filename>", "Loads the arguments from the specified file. Arguments that are specified on the "
+			{
+					"pfile",
+					"<filename>",
+					"Loads the arguments from the specified file. Arguments that are specified on the "
 							+ "command line override the ones from the file.\nThe arguments file is a simple text file "
 							+ "with one argument per line of the following form:\n  <argument name>=<argument value>\n"
 							+ "If the argument is of boolean type (i.e. its presence turns a feature on), then the"
@@ -43,20 +46,29 @@ public class ImgDecoder
 							+ "include the '-' or '+' character. Long lines can be broken into several lines by "
 							+ "terminating them with '\\'. Lines starting with '#' are considered as comments. This "
 							+ "option is not recursive: any 'pfile' argument appearing in the file is ignored.", null },
-			{ "res", "<resolution level index>", "The resolution level at which to reconstruct the image (0 means the "
+			{
+					"res",
+					"<resolution level index>",
+					"The resolution level at which to reconstruct the image (0 means the "
 							+ "lowest available resolution whereas the maximum resolution level corresponds to the "
 							+ "original image resolution). If the given index is greater than the number of available "
 							+ "resolution levels of the compressed image, the image is reconstructed at its highest "
 							+ "resolution (among all tile-components). Note that this option affects only the inverse "
 							+ "wavelet transform and not the number of bytes read by the codestream parser: this "
 							+ "number of bytes depends only on options '-nbytes' or '-rate'.", null },
-			{ "i", "<filename or url>", "The file containing the JPEG 2000 compressed data. This can be either a "
+			{
+					"i",
+					"<filename or url>",
+					"The file containing the JPEG 2000 compressed data. This can be either a "
 							+ "JPEG 2000 codestream or a JP2 file containing a JPEG 2000 codestream. In the latter "
 							+ "case the first codestream in the file will be decoded. If an URL is specified (e.g., "
 							+ "http://...) the data will be downloaded and cached in memory before decoding. This is "
 							+ "intended for easy use in applets, but it is not a very efficient way of decoding "
 							+ "network served data.", null },
-			{ "o", "<filename>", "This is the name of the file to which the decompressed image "
+			{
+					"o",
+					"<filename>",
+					"This is the name of the file to which the decompressed image "
 							+ "is written. If no output filename is given, the image is displayed on the screen. "
 							+ "Output file format is PGX by default. If the extension"
 							+ " is '.pgm' then a PGM file is written as output, however this is "
@@ -67,22 +79,34 @@ public class ImgDecoder
 							+ "suffices '-1', '-2', '-3', ... are added to the file name, just "
 							+ "before the extension, except for PPM files where all three "
 							+ "components are written to the same file.", null },
-			{ "rate", "<decoding rate in bpp>", "Specifies the decoding rate in bits per pixel (bpp) where the "
+			{
+					"rate",
+					"<decoding rate in bpp>",
+					"Specifies the decoding rate in bits per pixel (bpp) where the "
 							+ "number of pixels is related to the image's original size (Note:"
 							+ " this number is not affected by the '-res' option). If it is equal"
 							+ "to -1, the whole codestream is decoded. "
 							+ "The codestream is either parsed (default) or truncated depending "
 							+ "the command line option '-parsing'. To specify the decoding "
 							+ "rate in bytes, use '-nbytes' options instead.", "-1" },
-			{ "nbytes", "<decoding rate in bytes>", "Specifies the decoding rate in bytes. The codestream is either "
+			{
+					"nbytes",
+					"<decoding rate in bytes>",
+					"Specifies the decoding rate in bytes. The codestream is either "
 							+ "parsed (default) or truncated depending the command line option '-parsing'. To specify "
 							+ "the decoding rate in bits per pixel, use '-rate' options instead.", "-1" },
-			{ "parsing", null, "Enable or not the parsing mode when decoding rate is specified "
+			{
+					"parsing",
+					null,
+					"Enable or not the parsing mode when decoding rate is specified "
 							+ "('-nbytes' or '-rate' options). If it is false, the codestream "
 							+ "is decoded as if it were truncated to the given rate. If it is "
 							+ "true, the decoder creates, truncates and decodes a virtual layer"
 							+ " progressive codestream with the same truncation points in each code-block.", "on" },
-			{ "ncb_quit", "<max number of code blocks>", "Use the ncb and lbody quit conditions. If state information "
+			{
+					"ncb_quit",
+					"<max number of code blocks>",
+					"Use the ncb and lbody quit conditions. If state information "
 							+ "is found for more code blocks than is indicated with this option, the decoder "
 							+ "will decode using only information found before that point. "
 							+ "Using this otion implies that the 'rate' or 'nbyte' parameter "
@@ -92,14 +116,20 @@ public class ImgDecoder
 					"Specifies the maximum number of layers to decode for any code-block", "-1" },
 			{ "m_quit", "<max number of bit planes>",
 					"Specifies the maximum number of bit planes to decode for any code-block", "-1" },
-			{ "poc_quit", null, "Specifies the whether the decoder should only decode code-blocks "
+			{
+					"poc_quit",
+					null,
+					"Specifies the whether the decoder should only decode code-blocks "
 							+ "included in the first progression order.", "off" },
-			{ "one_tp", null,
-					"Specifies whether the decoder should only decode the first tile part of each tile.", "off" },
+			{ "one_tp", null, "Specifies whether the decoder should only decode the first tile part of each tile.",
+					"off" },
 			{ "comp_transf", null,
 					"Specifies whether the component transform indicated in the codestream should be used.", "on" },
 			{ "debug", null, "Print debugging messages when an error is encountered.", "off" },
-			{ "cdstr_info", null, "Display information about the codestream. This information is: "
+			{
+					"cdstr_info",
+					null,
+					"Display information about the codestream. This information is: "
 							+ "\n- Marker segments value in main and tile-part headers,"
 							+ "\n- Tile-part length and position within the code-stream.", "off" },
 			{ "nocolorspace", null, "Ignore any colorspace information in the image.", "off" },
@@ -118,13 +148,12 @@ public class ImgDecoder
 
 	/** Information contained in the codestream's headers */
 	private HeaderInfo hi;
-	
 
 	public ImgDecoder(ParameterList pl)
 	{
 		this.pl = pl;
 	}
-	
+
 	/**
 	 * Returns the parameters that are used in this class. It returns a 2D
 	 * String array. Each of the 1D arrays is for a different option, and they
@@ -202,8 +231,9 @@ public class ImgDecoder
 		return str;
 	}
 
-	public BlkImgDataSrc decode(RandomAccessIO in, FileFormatReader ff, boolean verbose) throws IOException, ICCProfileException
-	{		
+	public BlkImgDataSrc decode(RandomAccessIO in, FileFormatReader ff, boolean verbose) throws IOException,
+			ICCProfileException
+	{
 		EntropyDecoder entdec;
 		ROIDeScaler roids;
 		Dequantizer deq;
@@ -259,7 +289,7 @@ public class ImgDecoder
 		}
 
 		// Get demixed bitdepths
-		int [] depth = new int[nCompCod];
+		int[] depth = new int[nCompCod];
 		for (i = 0; i < nCompCod; i++)
 		{
 			depth[i] = hd.getOriginalBitDepth(i);
@@ -268,7 +298,8 @@ public class ImgDecoder
 		// **** Bit stream reader ****
 		try
 		{
-			breader = BitstreamReaderAgent.createInstance(in, hd, pl, decSpec, pl.getBooleanParameter("cdstr_info"), hi);
+			breader = BitstreamReaderAgent
+					.createInstance(in, hd, pl, decSpec, pl.getBooleanParameter("cdstr_info"), hi);
 		}
 		catch (IOException e)
 		{
@@ -278,8 +309,8 @@ public class ImgDecoder
 		}
 		catch (IllegalArgumentException e)
 		{
-			error("Cannot instantiate bit stream reader"
-					+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
+			error("Cannot instantiate bit stream reader" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
+					2, e);
 			return null;
 		}
 
@@ -290,8 +321,8 @@ public class ImgDecoder
 		}
 		catch (IllegalArgumentException e)
 		{
-			error("Cannot instantiate entropy decoder" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
-					2, e);
+			error("Cannot instantiate entropy decoder" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2,
+					e);
 			return null;
 		}
 
@@ -302,8 +333,8 @@ public class ImgDecoder
 		}
 		catch (IllegalArgumentException e)
 		{
-			error("Cannot instantiate roi de-scaler." + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
-					2, e);
+			error("Cannot instantiate roi de-scaler." + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2,
+					e);
 			return null;
 		}
 
@@ -361,8 +392,8 @@ public class ImgDecoder
 			}
 			catch (IllegalArgumentException e)
 			{
-				error("Could not instantiate ICC profiler"
-						+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 1, e);
+				error("Could not instantiate ICC profiler" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
+						1, e);
 				return null;
 			}
 			catch (ColorSpaceException e)
@@ -401,7 +432,7 @@ public class ImgDecoder
 			infoCOM[i] = com.nextElement().toString();
 		}
 		return infoCOM;
-	}	
+	}
 
 	/** The exit code of the run method */
 	private int exitCode;

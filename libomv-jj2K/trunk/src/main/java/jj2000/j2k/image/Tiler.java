@@ -474,7 +474,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * 
 	 * @param y
 	 *            The vertical index of the new tile.
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override
@@ -521,7 +521,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc
 	 * Advances to the next tile, in standard scan-line order (by rows then
 	 * columns). An NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile).
-	 *            
+	 * 
 	 * @return The new tile index
 	 */
 	@Override

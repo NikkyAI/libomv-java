@@ -40,19 +40,20 @@
  */
 package jj2000.j2k.util;
 
-public interface ProgressWatch {
-   /** 
-     * Initialize the progress watching process 
-     */
-    public void initProgressWatch(int min, int max,String info);
+public interface ProgressWatch
+{
+	/**
+	 * Initialize the progress watching process
+	 */
+	public void initProgressWatch(int min, int max, String info);
 
-    /** 
-     * Update the progress watching process to the specified value
-     */
-    public void updateProgressWatch(int val,String info);
+	/**
+	 * Update the progress watching process to the specified value
+	 */
+	public void updateProgressWatch(int val, String info);
 
-    /** 
-     * Terminate the progress watch process
-     */
-    public void terminateProgressWatch();
+	/**
+	 * Terminate the progress watch process
+	 */
+	public void terminateProgressWatch();
 }
