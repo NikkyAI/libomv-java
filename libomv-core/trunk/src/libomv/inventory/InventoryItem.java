@@ -242,6 +242,12 @@ public class InventoryItem extends InventoryNode
 		return InventoryType.Unknown;
 	}
 	
+	@Override
+	public Date getModifyTime()
+	{
+		return CreationDate;
+	}
+
 	/**
 	 * Indicates inventory item is a link
 	 * 

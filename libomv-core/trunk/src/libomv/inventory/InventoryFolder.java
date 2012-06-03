@@ -31,12 +31,14 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.UUID;
 
 /**
@@ -86,6 +88,19 @@ public class InventoryFolder extends InventoryNode
 		return InventoryType.Folder;
 	}
 	
+	@Override
+	public Date getModifyTime()
+	{
+		Date newest = new Date(); //.MinValue;
+		for (InventoryNode node : children)
+		{
+			Date t = node.getModifyTime();
+			if (t.after(newest))
+				newest = t;
+		}
+		return newest;
+	}
+
 	/**
 	 * Returns a copy of the arraylist of children. We return a copy so nobody can mess with
 	 * our tree structure.

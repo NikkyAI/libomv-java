@@ -31,6 +31,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Date;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
@@ -168,6 +169,25 @@ public abstract class InventoryNode implements Serializable
 		return ownerID;
 	}
 
+	public abstract Date getModifyTime();
+	{
+		if (getType() == InventoryType.Folder)
+		{
+			Date newest = new Date(); //.MinValue;
+			if (this instanceof InventoryFolder)
+			{
+				for (InventoryNode node : ((InventoryFolder)this).children)
+				{
+					Date t = node.getModifyTime();
+					if (t.after(newest))
+						newest = t;
+				}
+			}
+			return newest;
+		}
+		return ((InventoryItem)this).CreationDate;
+	}
+	
 	protected InventoryNode()
 	{
 	}
