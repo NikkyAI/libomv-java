@@ -44,6 +44,7 @@ public class InventoryGesture extends InventoryItem
 	{
 		super(itemID);
 	}
+
 	@Override
 	public InventoryType getType()
 	{

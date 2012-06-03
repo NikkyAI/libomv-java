@@ -348,6 +348,13 @@ public class InventoryItem extends InventoryNode
 		info.writeObject(LastOwnerID);
 	}
 
+	@Override
+	public String toString()
+	{
+		return assetType + " " + AssetID + " (" + assetType + " " + itemID + ") '" + name + "'/'" +
+                    Description + "' " + Permissions;
+	}
+	
 	/**
 	 * Generates a number corresponding to the value of the object to support
 	 * the use of a hash table. Suitable for use in hashing algorithms and data

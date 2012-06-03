@@ -3446,6 +3446,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		@Override
 		public void completed(OSD result)
 		{
+			if (result.getType() == OSD.OSDType.Unknown)
+			{
+				failed(new Exception("Failed to parse asset and item UUIDs"));
+			}
+
 			OSDMap contents = (OSDMap) result;
 
 			String status = contents.get("state").AsString().toLowerCase();
