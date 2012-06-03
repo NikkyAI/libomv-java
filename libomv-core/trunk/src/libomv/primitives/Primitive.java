@@ -297,7 +297,7 @@ public class Primitive
 		Light(0x20),
 		// Whether this object is a sculpted prim
 		Sculpt(0x30),
-        // Whether this object is a mesh</summary>
+        // Whether this object is a mesh
         Mesh(0x60);
 
 		public static ExtraParamType setValue(int value)
