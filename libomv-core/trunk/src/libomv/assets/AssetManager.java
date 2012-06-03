@@ -1559,7 +1559,7 @@ public class AssetManager implements PacketCallback
     }
 	// #region Helpers
 
-	private AssetItem CreateAssetWrapper(AssetType type)
+	public AssetItem CreateAssetWrapper(AssetType type)
 	{
 		switch (type)
 		{
@@ -1585,10 +1585,12 @@ public class AssetManager implements PacketCallback
 				return new AssetLandmark();
 			case Gesture:
 				return new AssetGesture();
+            case CallingCard:
+              	return new AssetCallingCard();
 			default:
 				Logger.Log("Unimplemented asset type: " + type, LogLevel.Error, _Client);
 		}
-		return null;
+		return new AssetMutable(type);
 	}
 
 	private AssetItem WrapAsset(AssetDownload download)
