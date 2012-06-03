@@ -97,29 +97,30 @@ public class ManagedImage
 		Width = width;
 		Height = height;
 		Channels = channels;
-		initialize(this);
+		initialize();
 	}
 
-	protected static int initialize(ManagedImage image)
+	protected int initialize()
 	{
-		int n = image.Width * image.Height;
+		int n = Width * Height;
 
-		if ((image.Channels & ImageChannels.Gray) != 0)
+
+		if ((Channels & ImageChannels.Gray) != 0)
 		{
-			image.Red = new byte[n];
+			Red = new byte[n];
 		}
-		else if ((image.Channels & ImageChannels.Color) != 0)
+		else if ((Channels & ImageChannels.Color) != 0)
 		{
-			image.Red = new byte[n];
-			image.Green = new byte[n];
-			image.Blue = new byte[n];
+			Red = new byte[n];
+			Green = new byte[n];
+			Blue = new byte[n];
 		}
 
-		if ((image.Channels & ImageChannels.Alpha) != 0)
-			image.Alpha = new byte[n];
+		if ((Channels & ImageChannels.Alpha) != 0)
+			Alpha = new byte[n];
 
-		if ((image.Channels & ImageChannels.Bump) != 0)
-			image.Bump = new byte[n];
+		if ((Channels & ImageChannels.Bump) != 0)
+			Bump = new byte[n];
 		
 		return n;
 	}

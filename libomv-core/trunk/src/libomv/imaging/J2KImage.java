@@ -107,6 +107,8 @@ public class J2KImage extends ManagedImage
 				throw new IllegalArgumentException("Decoded image with unhandled number of components: " + ncomps);
 		}		
 
+		initialize();
+		
 		int height; // tile height
 		int width; // tile width
 		int tOffx, tOffy; // Active tile offset
@@ -163,8 +165,6 @@ public class J2KImage extends ManagedImage
 						case 1:
 							dataSrc.getInternCompData(block, 0);
 							fillLine(block, scale[0], Red, off);
-							System.arraycopy(Red, off, Green, off, width);
-							System.arraycopy(Red, off, Blue, off, width);
 							break;
 					}
 				}
