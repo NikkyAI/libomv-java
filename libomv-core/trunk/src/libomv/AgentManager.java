@@ -6522,13 +6522,27 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		/**
 		 * Rotates the avatar body and camera toward a target position. This
-		 * will also anchor the camera position on the avatar
+		 * This will also anchor the camera position on the avatar
 		 * 
-		 * @param target
-		 *            Region coordinates to turn toward
+		 * @param target Region coordinates to turn toward
+		 * @return True for success, false otherwise
 		 * @throws Exception
 		 */
 		public final boolean TurnToward(Vector3 target) throws Exception
+		{
+			return TurnToward(target, true);
+		}
+		
+		/**
+		 * Rotates the avatar body and camera toward a target position.
+		 * This will also anchor the camera position on the avatar
+		 * 
+		 * @param target Region coordinates to turn toward
+		 * @param sendUpdate wether to send update or not
+		 * @return True for success, false otherwise
+		 * @throws Exception
+		 */
+		public boolean TurnToward(Vector3 target, boolean sendUpdate) throws Exception
 		{
 			if (_Client.Settings.SEND_AGENT_UPDATES)
 			{
@@ -6559,7 +6573,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HeadRotation = rot;
 				Camera.LookAt(_Client.Self.getSimPosition(), target);
 
-				SendUpdate(false, _Client.Network.getCurrentSim());
+				if (sendUpdate) 
+					SendUpdate(false, _Client.Network.getCurrentSim());
 
 				return true;
 			}
