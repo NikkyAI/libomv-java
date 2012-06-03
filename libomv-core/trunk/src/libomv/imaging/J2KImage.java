@@ -30,9 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import jj2000.j2k.decoder.Decoder;
+
 import jj2000.j2k.decoder.ImgDecoder;
-import jj2000.j2k.encoder.Encoder;
 import jj2000.j2k.encoder.ImgEncoder;
 import jj2000.j2k.fileformat.reader.FileFormatReader;
 import jj2000.j2k.image.BlkImgDataSrc;
@@ -55,7 +54,7 @@ public class J2KImage extends ManagedImage
 		int ls, mv, fb;
 	}
 
-    /**
+	/**
      * create a <seealso cref="ManagedImage"/> object from a JPEG2K stream
      *
      * @param is The input stream
@@ -80,8 +79,6 @@ public class J2KImage extends ManagedImage
 				throw new IllegalArgumentException("Depths greater than 8 bits per component is not supported");
 			}
 		}
-
-		Channels = ManagedImage.ImageChannels.Color;
 				
 		PixelScale[] scale = new PixelScale[ncomps];
 		
@@ -94,14 +91,17 @@ public class J2KImage extends ManagedImage
 		
 		switch (ncomps)
 		{
-			case 1:
-			case 3:
-				break;
 			case 5:
-				Channels |= ManagedImage.ImageChannels.Bump;
-			case 2:
+				Channels = ManagedImage.ImageChannels.Bump;
 			case 4:
 				Channels |= ManagedImage.ImageChannels.Alpha;
+			case 3:
+				Channels |= ManagedImage.ImageChannels.Color;
+				break;
+			case 2:
+				Channels = ManagedImage.ImageChannels.Alpha;
+			case 1:
+				Channels |= ManagedImage.ImageChannels.Gray;
 				break;
 			default:
 				throw new IllegalArgumentException("Decoded image with unhandled number of components: " + ncomps);
@@ -201,17 +201,24 @@ public class J2KImage extends ManagedImage
      */
     public static int encode(OutputStream os, ManagedImage image, boolean lossless)
     {
-        if ((image.Channels & ManagedImage.ImageChannels.Color) == 0 ||
-            ((image.Channels & ManagedImage.ImageChannels.Bump) != 0 && (image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
+        if (((image.Channels & ManagedImage.ImageChannels.Gray) != 0 && 
+             ((image.Channels & ManagedImage.ImageChannels.Color) != 0) ||
+             ((image.Channels & ManagedImage.ImageChannels.Bump) != 0))||
+        	((image.Channels & ManagedImage.ImageChannels.Bump) != 0 && 
+        	 (image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
             throw new IllegalArgumentException("JPEG2000 encoding is not supported for this channel combination");
 
-        int components = 3;
-        if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0) components++;
-        if ((image.Channels & ManagedImage.ImageChannels.Bump) != 0) components++;
+        int components = 1;
+        if ((image.Channels & ManagedImage.ImageChannels.Color) != 0)
+        	components = 3;
+        if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+        	components++;
+        if ((image.Channels & ManagedImage.ImageChannels.Bump) != 0)
+        	components++;
 
         // Initialize default parameters
         ParameterList defpl = new ParameterList();
-        String[][] param = Encoder.getAllParameters();
+        String[][] param = ImgEncoder.getAllParameters();
 
         for (int i = param.length - 1; i >= 0; i--)
         {
@@ -225,9 +232,9 @@ public class J2KImage extends ManagedImage
         ImgEncoder enc = new ImgEncoder(new ParameterList(defpl));
  
         boolean[] imsigned = new boolean[components];
-        BlkImgDataSrc imgsrc;
+//		BlkImgDataSrc imgsrc = new ImgReaderMI(image);
 
-//    	enc.encode(imgsrc, imsigned, components, ppminput, outname, useFileFormat);
+//  	enc.encode(imgsrc, imsigned, components, false, os, true, false);
 
         
         
@@ -246,7 +253,6 @@ public class J2KImage extends ManagedImage
 		}
 	}
 
-
 	public static J2KLayerInfo[] decodeLayerBoundaries(byte[] encoded)
 	{
 		return null;
@@ -254,8 +260,8 @@ public class J2KImage extends ManagedImage
 	
 	private static BlkImgDataSrc decodeInternal(InputStream is) throws IOException, ICCProfileException
 	{
-		ParameterList pl, defpl = new ParameterList();
-    	String[][] param = Decoder.getAllParameters();
+		ParameterList defpl = new ParameterList();
+    	String[][] param = ImgDecoder.getAllParameters();
 
         for (int i = param.length - 1; i >= 0; i--)
         {
@@ -264,9 +270,8 @@ public class J2KImage extends ManagedImage
     	    	defpl.put(param[i][0], param[i][3]);
             }
         }
-        // Create parameter list using defaults
-        pl = new ParameterList(defpl);
-        ImgDecoder decoder = new ImgDecoder(pl);
+
+        ImgDecoder decoder = new ImgDecoder(new ParameterList(defpl));
         
         RandomAccessIO in = new ISRandomAccessIO(is);
 
