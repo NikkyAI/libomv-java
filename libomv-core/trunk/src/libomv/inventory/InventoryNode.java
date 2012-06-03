@@ -157,37 +157,20 @@ public abstract class InventoryNode implements Serializable
 	// parent of item/folder in tree hierarchy
 	protected InventoryFolder parent;
 	
+	public abstract InventoryType getType();
+	
+	public abstract Date getModifyTime();
+	
 	public UUID getParentID()
 	{
 		return parent.itemID;
 	}
-	
-	public abstract InventoryType getType();
-	
+
 	public UUID getOwnerID()
 	{
 		return ownerID;
 	}
 
-	public abstract Date getModifyTime();
-	{
-		if (getType() == InventoryType.Folder)
-		{
-			Date newest = new Date(); //.MinValue;
-			if (this instanceof InventoryFolder)
-			{
-				for (InventoryNode node : ((InventoryFolder)this).children)
-				{
-					Date t = node.getModifyTime();
-					if (t.after(newest))
-						newest = t;
-				}
-			}
-			return newest;
-		}
-		return ((InventoryItem)this).CreationDate;
-	}
-	
 	protected InventoryNode()
 	{
 	}
