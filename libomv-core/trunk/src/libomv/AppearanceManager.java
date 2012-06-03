@@ -1742,6 +1742,13 @@ public class AppearanceManager implements PacketCallback
      */
     private void RequestAgentSetAppearance() throws Exception
     {
+        AgentSetAppearancePacket set = MakeAppearancePacket();
+        _Client.Network.SendPacket(set);
+        Logger.DebugLog("Send AgentSetAppearance packet");        
+    }
+    
+    public AgentSetAppearancePacket MakeAppearancePacket() throws Exception
+    {
         AgentSetAppearancePacket set = new AgentSetAppearancePacket();
         set.AgentData.AgentID = _Client.Self.getAgentID();
         set.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1930,8 +1937,7 @@ public class AppearanceManager implements PacketCallback
                 }
             }
         }
-        _Client.Network.SendPacket(set);
-        Logger.DebugLog("Send AgentSetAppearance packet");
+        return set;
     }
 
     private void DelayedRequestSetAppearance()
