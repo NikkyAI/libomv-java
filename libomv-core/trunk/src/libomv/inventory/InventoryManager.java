@@ -2199,14 +2199,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Rez an object from inventory
 	 * 
-	 * @param simulator
-	 *            Simulator to place object in
-	 * @param rotation
-	 *            Rotation of the object when rezzed
-	 * @param position
-	 *            Vector of where to place object
-	 * @param item
-	 *            InventoryItem object containing item details
+	 * @param simulator Simulator to place object in
+	 * @param rotation Rotation of the object when rezzed
+	 * @param position Vector of where to place object
+	 * @param item InventoryItem object containing item details
+	 * @return the @see UUID that identifies this query 
 	 * @throws Exception
 	 */
 	public final UUID RequestRezFromInventory(Simulator simulator, Quaternion rotation, Vector3 position,
@@ -2219,16 +2216,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Rez an object from inventory
 	 * 
-	 * @param simulator
-	 *            Simulator to place object in
-	 * @param rotation
-	 *            Rotation of the object when rezzed
-	 * @param position
-	 *            Vector of where to place object
-	 * @param item
-	 *            InventoryItem object containing item details
-	 * @param groupOwner
-	 *            UUID of group to own the object
+	 * @param simulator Simulator to place object in
+	 * @param rotation Rotation of the object when rezzed
+	 * @param position Vector of where to place object
+	 * @param item InventoryItem object containing item details
+	 * @param groupOwner UUID of group to own the object
+	 * @return the @see UUID that identifies this query 
 	 * @throws Exception
 	 */
 	public final UUID RequestRezFromInventory(Simulator simulator, Quaternion rotation, Vector3 position,
@@ -2240,24 +2233,37 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Rez an object from inventory
 	 * 
-	 * @param simulator
-	 *            Simulator to place object in
-	 * @param rotation
-	 *            Rotation of the object when rezzed
-	 * @param position
-	 *            Vector of where to place object
-	 * @param item
-	 *            InventoryItem object containing item details
-	 * @param groupOwner
-	 *            UUID of group to own the object
-	 * @param queryID
-	 *            User defined queryID to correlate replies
-	 * @param rezSelected
-	 *            If set to true, the CreateSelected flag will be set on the
+	 * @param simulator Simulator to place object in
+	 * @param rotation Rotation of the object when rezzed
+	 * @param position Vector of where to place object
+	 * @param item InventoryItem object containing item details
+	 * @param groupOwner UUID of group to own the object
+	 * @param rezSelected If set to true, the CreateSelected flag will be set on the
 	 *            rezzed object
+	 * @return the @see UUID that identifies this query 
 	 * @throws Exception
 	 */
 	public final UUID RequestRezFromInventory(Simulator simulator, Quaternion rotation, Vector3 position,
+			InventoryItem item, UUID groupOwner, UUID queryID, boolean rezSelected) throws Exception
+	{
+		return RequestRezFromInventory(simulator, new UUID(), rotation, position, item, groupOwner, queryID, rezSelected);
+	}
+
+	/**
+	 * Rez an object from inventory
+	 * 
+	 * @param simulator Simulator to place object in
+	 * @param taskID TaskID object when rezzed
+	 * @param rotation Rotation of the object when rezzed
+	 * @param position Vector of where to place object
+	 * @param item InventoryItem object containing item details
+	 * @param groupOwner UUID of group to own the object
+	 * @param rezSelected If set to true, the CreateSelected flag will be set on the
+	 *            rezzed object
+	 * @return the @see UUID that identifies this query 
+	 * @throws Exception
+	 */
+	public final UUID RequestRezFromInventory(Simulator simulator, UUID taskID, Quaternion rotation, Vector3 position,
 			InventoryItem item, UUID groupOwner, UUID queryID, boolean rezSelected) throws Exception
 	{
 		RezObjectPacket add = new RezObjectPacket();
@@ -2266,7 +2272,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.AgentData.SessionID = _Client.Self.getSessionID();
 		add.AgentData.GroupID = groupOwner;
 
-		add.RezData.FromTaskID = UUID.Zero;
+		add.RezData.FromTaskID = taskID;
 		add.RezData.BypassRaycast = 1;
 		add.RezData.RayStart = position;
 		add.RezData.RayEnd = position;
