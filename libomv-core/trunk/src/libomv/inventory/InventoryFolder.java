@@ -38,7 +38,6 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
-import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.UUID;
 
 /**

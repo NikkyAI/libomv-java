@@ -66,27 +66,6 @@ import libomv.utils.Logger.LogLevel;
 // A linkset asset, containing a parent primitive and zero or more children
 public class AssetPrim extends AssetItem
 {
-	// Only used internally for XML serialization/deserialization
-	private enum ProfileShape
-	{
-		Circle, Square, IsometricTriangle, EquilateralTriangle, RightTriangle, HalfCircle;
-
-		public static ProfileShape setValue(int value)
-		{
-			return values()[value];
-		}
-
-		public static byte getValue(ProfileShape value)
-		{
-			return (byte) value.ordinal();
-		}
-
-		public byte getValue()
-		{
-			return (byte) ordinal();
-		}
-	}
-
 	public PrimObject Parent;
 	public ArrayList<PrimObject> Children;
 
@@ -261,7 +240,7 @@ public class AssetPrim extends AssetItem
         writeInt(writer, "ProfileHollow", Primitive.PackProfileHollow(prim.Shape.ProfileHollow));
         writeVector3(writer, "Scale", prim.Scale);
         writeInt(writer, "State", prim.State);
-        writeText(writer, "ProfileShape", ProfileShape.setValue(prim.Shape.ProfileCurve & 0x0F).toString());
+        writeText(writer, "ProfileShape", ProfileCurve.setValue(prim.Shape.ProfileCurve & 0x0F).toString());
         writeText(writer, "HollowShape", HoleType.setValue((prim.Shape.ProfileCurve & 0xF0) >> 4).toString());
         
         // FIXME: write sculpt, flexy and light data
@@ -708,7 +687,7 @@ public class AssetPrim extends AssetItem
 			}
 			else if (name.equals("ProfileShape"))
 			{
-				obj.Shape.ProfileCurve |= ProfileShape.valueOf(parser.nextText()).getValue();
+				obj.Shape.ProfileCurve |= ProfileCurve.valueOf(parser.nextText()).getValue();
 			}
 			else if (name.equals("HollowShape"))
 			{

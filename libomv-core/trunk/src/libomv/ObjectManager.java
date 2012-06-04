@@ -1693,7 +1693,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.ObjectData.PathTwist = Primitive.PackPathTwist(prim.PathTwist);
 		packet.ObjectData.PathTwistBegin = Primitive.PackPathTwist(prim.PathTwistBegin);
 
-		packet.ObjectData.ProfileCurve = prim.ProfileCurve.getValue();
+		packet.ObjectData.ProfileCurve = prim.getProfileValue();
 		packet.ObjectData.ProfileBegin = Primitive.PackBeginCut(prim.ProfileBegin);
 		packet.ObjectData.ProfileEnd = Primitive.PackEndCut(prim.ProfileEnd);
 		packet.ObjectData.ProfileHollow = Primitive.PackProfileHollow(prim.ProfileHollow);
@@ -2594,14 +2594,14 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		s.Statistics.Dilation = dilation / 65535.0f;
 	}
 
-	private ConstructionData CreateConstructionData(Primitive enclosing, PCode pcode,
+	private static ConstructionData CreateConstructionData(Primitive enclosing, PCode pcode,
 			ObjectUpdatePacket.ObjectDataBlock block)
 	{
 		ConstructionData data = enclosing.new ConstructionData();
 		data.State = block.State;
 		data.Material = Material.setValue(block.Material);
 		data.PathCurve = PathCurve.setValue(block.PathCurve);
-		data.setProfileCurve(ProfileCurve.setValue(block.ProfileCurve));
+		data.setProfileValue(block.ProfileCurve);
 		data.PathBegin = Primitive.UnpackBeginCut(block.PathBegin);
 		data.PathEnd = Primitive.UnpackEndCut(block.PathEnd);
 		data.PathScaleX = Primitive.UnpackPathScale(block.PathScaleX);
@@ -3787,7 +3787,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
         shape.ObjectData[0].PathRevolutions = Primitive.PackPathRevolutions(prim.PathRevolutions);
         shape.ObjectData[0].PathSkew = Primitive.PackPathTwist(prim.PathSkew);
 
-        shape.ObjectData[0].ProfileCurve = prim.ProfileCurve.getValue();
+        shape.ObjectData[0].ProfileCurve = prim.getProfileValue();
         shape.ObjectData[0].ProfileBegin = Primitive.PackBeginCut(prim.ProfileBegin);
         shape.ObjectData[0].ProfileEnd = Primitive.PackEndCut(prim.ProfileEnd);
         shape.ObjectData[0].ProfileHollow = Primitive.PackProfileHollow(prim.ProfileHollow);

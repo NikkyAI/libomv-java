@@ -180,7 +180,8 @@ public class Primitive
 
 	public enum ProfileCurve
 	{
-		Circle, Square, IsoTriangle, EqualTriangle, RightTriangle, HalfCircle;
+//		Circle, Square, IsoTriangle, EqualTriangle, RightTriangle, HalfCircle;
+		Circle, Square, IsometricTriangle, EquilateralTriangle, RightTriangle, HalfCircle;
 
 		public static ProfileCurve setValue(int value)
 		{
@@ -768,7 +769,7 @@ public class Primitive
 	                PathRevolutions = 1f;
 	                break;
 	            case Prism:
-	                ProfileCurve = Primitive.ProfileCurve.EqualTriangle;
+	                ProfileCurve = Primitive.ProfileCurve.EquilateralTriangle;
 	                PathCurve = Primitive.PathCurve.Line;
 	                ProfileEnd = 1f;
 	                PathEnd = 1f;
@@ -777,7 +778,7 @@ public class Primitive
 	                PathRevolutions = 1f;
 	                break;
 	            case Ring:
-	                ProfileCurve = Primitive.ProfileCurve.EqualTriangle;
+	                ProfileCurve = Primitive.ProfileCurve.EquilateralTriangle;
 	                PathCurve = Primitive.PathCurve.Circle;
 	                ProfileEnd = 1f;
 	                PathEnd = 1f;
@@ -963,32 +964,38 @@ public class Primitive
 		@Override
 		public int hashCode()
 		{
-			return Material != null ? Material.hashCode() : 0 ^ (int) PathBegin ^ PathCurve.hashCode() ^ (int) PathEnd
-					^ (int) PathRadiusOffset ^ (int) PathRevolutions ^ (int) PathScaleX ^ (int) PathScaleY
-					^ (int) PathShearX ^ (int) PathShearY ^ (int) PathSkew ^ (int) PathTaperX ^ (int) PathTaperY
-					^ (int) PathTwist ^ (int) PathTwistBegin ^ PCode.hashCode() ^ (int) ProfileBegin
-					^ ProfileCurve.hashCode() ^ (int) ProfileEnd ^ (int) ProfileHollow ^ State;
+			return ((Float)PathBegin).hashCode()  ^	((Float)PathEnd).hashCode() ^ ((Float)PathRadiusOffset).hashCode() ^
+					((Float)PathRevolutions).hashCode() ^ ((Float)PathScaleX).hashCode() ^ ((Float)PathScaleY).hashCode() ^
+					((Float)PathShearX).hashCode() ^ ((Float)PathShearY).hashCode() ^ ((Float)PathSkew).hashCode() ^
+					((Float)PathTaperX).hashCode() ^ ((Float)PathTaperY).hashCode() ^ ((Float)PathTwist).hashCode() ^
+					((Float)PathTwistBegin).hashCode() ^ ((Float)ProfileBegin).hashCode() ^ ((Float)ProfileEnd).hashCode() ^
+					((Float)ProfileHollow).hashCode() ^ State ^
+					(Material == null ? 0 : Material.hashCode()) ^ (PCode == null ? 0 : PCode.hashCode()) ^ 
+					(ProfileCurve == null ? 0 : ProfileCurve.hashCode()) ^ (PathCurve == null ? 0 : PathCurve.hashCode());
 		}
 
 		@Override
 		public boolean equals(Object o)
 		{
-			return o != null && o instanceof ConstructionData ? equals((ConstructionData) o) : false;
+			return o != null && o instanceof ConstructionData && equals((ConstructionData) o);
 		}
 
 		public boolean equals(ConstructionData o)
 		{
-			if (o == null) return false;
-			return Material == null ? Material == o.Material : Material.equals(o.Material)
-					&& PathBegin == o.PathBegin && PathCurve.getValue() == o.PathCurve.getValue()
-					&& PathEnd == o.PathEnd && PathRadiusOffset == o.PathRadiusOffset
-					&& PathRevolutions == o.PathRevolutions && PathScaleX == o.PathScaleX && PathScaleY == o.PathScaleY
-					&& PathShearX == o.PathShearX && PathShearY == o.PathShearY && PathSkew == o.PathSkew
-					&& PathTaperX == o.PathTaperX && PathTaperY == o.PathTaperY && PathTwist == o.PathTwist
-					&& PathTwistBegin == o.PathTwistBegin && PCode.getValue() == o.PCode.getValue()
-					&& ProfileCurve.getValue() == o.ProfileCurve.getValue() && ProfileBegin == o.ProfileBegin
-					&& ProfileEnd == o.ProfileEnd && ProfileHollow == o.ProfileHollow && State == o.State;
-
+			if (o != null)
+			{
+				return PathBegin == o.PathBegin && PathEnd == o.PathEnd && PathRadiusOffset == o.PathRadiusOffset && 
+					PathRevolutions == o.PathRevolutions && PathScaleX == o.PathScaleX && PathScaleY == o.PathScaleY && 
+					PathShearX == o.PathShearX && PathShearY == o.PathShearY && PathSkew == o.PathSkew && 
+					PathTaperX == o.PathTaperX && PathTaperY == o.PathTaperY && PathTwist == o.PathTwist && 
+					PathTwistBegin == o.PathTwistBegin && ProfileBegin == o.ProfileBegin && ProfileEnd == o.ProfileEnd &&
+					ProfileHollow == o.ProfileHollow && State == o.State &&
+					(Material == null ? Material == o.Material : Material.equals(o.Material)) && 
+					(PCode == null ? PCode == o.PCode : PCode.equals(o.PCode)) && 
+					(ProfileCurve == null ? ProfileCurve == o.ProfileCurve : ProfileCurve.equals(o.ProfileCurve)) && 
+					(PathCurve == null ? PathCurve == o.PathCurve : PathCurve.equals(o.PathCurve));
+			}
+			return false;
 		}
 	}
 
@@ -1398,8 +1405,8 @@ public class Primitive
 					return PrimType.Cylinder;
 				case Square:
 					return PrimType.Box;
-				case IsoTriangle:
-				case EqualTriangle:
+				case IsometricTriangle:
+				case EquilateralTriangle:
 				case RightTriangle:
 					return PrimType.Prism;
 				case HalfCircle:
@@ -1421,7 +1428,7 @@ public class Primitive
 						return PrimType.Torus;
 					case HalfCircle:
 						return PrimType.Sphere;
-					case EqualTriangle:
+					case EquilateralTriangle:
 						return PrimType.Ring;
 					case Square:
 						if (scaleY <= 0.75f)

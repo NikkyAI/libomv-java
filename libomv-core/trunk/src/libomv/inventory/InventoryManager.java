@@ -4131,6 +4131,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     {
                         folder = _Store.getFolder(dataBlock.FolderID);
                         folder.parentID = dataBlock.ParentID;
+                        folder.ownerID = update.AgentData.AgentID;
                     }
 					if (dataBlock.getName() != null)
 						folder.name = Helpers.BytesToString(dataBlock.getName());
