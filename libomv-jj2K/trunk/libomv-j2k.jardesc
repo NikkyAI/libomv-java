@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="libomv-java/lib/jj2000-1.0.3.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/libomv-j2k/libomv-j2k.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="/libomv-java/src/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;icc.types"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.entropy"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.encoder{ImgEncoder.java"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.decoder{ImgDecoder.java"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.codestream.writer"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;icc.lut"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;icc"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.image.forwcomptransf"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.fileformat.reader"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.image"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.encoder{EncoderSpecs.java"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.quantization"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.image.output"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.roi.encoder"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;colorspace"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.wavelet"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.entropy.encoder"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.quantization.dequantizer"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.io"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.fileformat.writer"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.image.invcomptransf"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.entropy.decoder"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;colorspace.boxes"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.quantization.quantizer"/>
+        <file path="/libomv-j2k/COPYRIGHT"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.codestream"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.roi"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.wavelet.analysis"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;icc.tags"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.fileformat"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.decoder{DecoderSpecs.java"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.wavelet.synthesis"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.image.input"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.codestream.reader"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.disp"/>
+        <javaElement handleIdentifier="=libomv-j2k/src\/main\/java&lt;jj2000.j2k.util"/>
+    </selectedElements>
+</jardesc>
