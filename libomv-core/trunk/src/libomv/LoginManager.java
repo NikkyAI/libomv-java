@@ -934,19 +934,31 @@ public class LoginManager
 		return String.format("uri:%s&%d&%d&%d", sim, x, y, z);
 	}
 
+	public void AbortLogin()
+	{
+		// FIXME: Now that we're using CAPS we could cancel the current login and start a new one	
+		if (LoginEvents.size() != 0)
+		{
+			UpdateLoginStatus(LoginStatus.Failed, "Abort Requested", " aborted", null);
+		}
+		else
+		{
+			Logger.DebugLog("No Login was in progress", _Client);
+		}
+	}
+
 	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
 	{
 		// #region Sanity Check loginParams
 		if (loginParams.Options == null)
-		{
 			loginParams.Options = new String[] {};
-		}
+
+		if (loginParams.Password == null)
+			loginParams.Password = Helpers.EmptyString;
 
 		// Convert the password to MD5 if it isn't already
 		if (loginParams.Password.length() != 35 && !loginParams.Password.startsWith("$1$"))
-		{
 			loginParams.Password = Helpers.MD5Password(loginParams.Password);
-		}
 		
         if (loginParams.ViewerDigest == null)
         	loginParams.ViewerDigest = Helpers.EmptyString;
