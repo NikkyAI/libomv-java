@@ -3826,16 +3826,29 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Find the object with localID in the simulator and add it with fullID if
 	 * it is not there
 	 * 
-	 * @param simulator
-	 *            The simulator in which the object is located
-	 * @param localID
-	 *            The simulator localID for this object
-	 * @param fullID
-	 *            The full object ID used to add a new object to the simulator
+	 * @param simulator The simulator in which the object is located
+	 * @param localID The simulator localID for this object
+	 * @param fullID The full object ID used to add a new object to the simulator
 	 *            list, when the object could not be found.
 	 * @return the object that corresponds to the localID
 	 */
 	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
+	{
+		return GetPrimitive(simulator, localID, fullID, true);
+	}
+	
+	/**
+	 * Find the object with localID in the simulator and add it with fullID if
+	 * it is not there
+	 * 
+	 * @param simulator The simulator in which the object is located
+	 * @param localID The simulator localID for this object
+	 * @param fullID The full object ID used to add a new object to the simulator
+	 *            list, when the object could not be found.
+	 * @param createIfMissing Create the item if it doesn't exist
+	 * @return the object that corresponds to the localID
+	 */
+	public Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, boolean createIfMissing)
 	{
 		if (Client.Settings.OBJECT_TRACKING)
 		{
@@ -3846,7 +3859,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				{
 					return prim;
 				}
-
+				
+				if (!createIfMissing)
+					return null; 
+				
 				prim = new Primitive();
 				prim.LocalID = localID;
 				prim.ID = fullID;
