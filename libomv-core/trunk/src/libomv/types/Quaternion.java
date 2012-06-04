@@ -294,7 +294,7 @@ public class Quaternion
 	@Override
 	public int hashCode()
 	{
-		return (((Float) X).hashCode() ^ ((Float) Y).hashCode() ^ ((Float) Z).hashCode() ^ ((Float) W).hashCode());
+		return ((Float)X).hashCode() ^ ((Float)Y).hashCode() ^ ((Float)Z).hashCode() ^ ((Float)W).hashCode();
 	}
 
 	/**
@@ -732,12 +732,12 @@ public class Quaternion
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Quaternion) ? equals((Quaternion)obj) : false;
+		return obj != null && obj instanceof Quaternion && equals((Quaternion)obj);
 	}
 
 	public boolean equals(Quaternion other)
 	{
-		return W == other.W && X == other.X && Y == other.Y && Z == other.Z;
+		return other != null && W == other.W && X == other.X && Y == other.Y && Z == other.Z;
 	}
 
 	public boolean isIdentity()

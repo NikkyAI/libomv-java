@@ -214,7 +214,7 @@ public final class Vector2
 	@Override
 	public int hashCode()
 	{
-		return ((Float) X).hashCode() ^ ((Float) Y).hashCode();
+		return ((Float)X).hashCode() ^ ((Float)Y).hashCode();
 	}
 
 	/**
@@ -432,13 +432,13 @@ public final class Vector2
 
 	public boolean equals(Vector3 val)
 	{
-		return X == val.X && Y == val.Y;
+		return val != null && X == val.X && Y == val.Y;
 	}
 
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector2) ? equals((Vector2) obj) : false;
+		return obj != null && (obj instanceof Vector2) && equals((Vector2)obj);
 	}
 
 	public boolean equals(Vector2 o)

@@ -176,7 +176,7 @@ public class Permissions implements Serializable
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Permissions) ? equals(this, (Permissions) obj) : false;
+		return obj != null & (obj instanceof Permissions) && equals(this, (Permissions) obj);
 	}
 
 	public boolean equals(Permissions other)

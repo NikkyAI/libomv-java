@@ -208,17 +208,13 @@ public class Vector3
 	@Override
 	public String toString()
 	{
-		return "" + X + " " + Y + " " + Z;
+		return X + " " + Y + " " + Z;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		int x = (int) X;
-		int y = (int) Y;
-		int z = (int) Z;
-
-		return (x ^ y ^ z);
+		return ((Float)X).hashCode() ^ ((Float)Y).hashCode() ^ ((Float)Z).hashCode();
 	}
 
 	/**
@@ -533,7 +529,7 @@ public class Vector3
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector3) ? equals((Vector3) obj) : false;
+		return obj != null && (obj instanceof Vector3) && equals((Vector3)obj);
 	}
 
 	public static Vector3 negate(Vector3 value)

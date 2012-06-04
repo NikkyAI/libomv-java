@@ -782,25 +782,24 @@ public final class Matrix4
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Matrix4) ? equals((Matrix4) obj) : false;
+		return obj != null && obj instanceof Matrix4 && equals((Matrix4)obj);
 	}
 
 	public boolean equals(Matrix4 other)
 	{
-		return (M11 == other.M11 && M12 == other.M12 && M13 == other.M13 && M14 == other.M14 && M21 == other.M21
-				&& M22 == other.M22 && M23 == other.M23 && M24 == other.M24 && M31 == other.M31 && M32 == other.M32
-				&& M33 == other.M33 && M34 == other.M34 && M41 == other.M41 && M42 == other.M42 && M43 == other.M43 && M44 == other.M44);
+		return (other != null && M11 == other.M11 && M12 == other.M12 && M13 == other.M13 && M14 == other.M14 && 
+				M21 == other.M21 && M22 == other.M22 && M23 == other.M23 && M24 == other.M24 && M31 == other.M31 &&
+				M32 == other.M32 && M33 == other.M33 && M34 == other.M34 && M41 == other.M41 && M42 == other.M42 &&
+				M43 == other.M43 && M44 == other.M44);
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return ((Float) M11).hashCode() ^ ((Float) M12).hashCode() ^ ((Float) M13).hashCode()
-				^ ((Float) M14).hashCode() ^ ((Float) M21).hashCode() ^ ((Float) M22).hashCode()
-				^ ((Float) M23).hashCode() ^ ((Float) M24).hashCode() ^ ((Float) M31).hashCode()
-				^ ((Float) M32).hashCode() ^ ((Float) M33).hashCode() ^ ((Float) M34).hashCode()
-				^ ((Float) M41).hashCode() ^ ((Float) M42).hashCode() ^ ((Float) M43).hashCode()
-				^ ((Float) M44).hashCode();
+		return ((Float)M11).hashCode() ^ ((Float)M12).hashCode() ^ ((Float)M13).hashCode() ^ ((Float)M14).hashCode() ^
+			   ((Float)M21).hashCode() ^ ((Float)M22).hashCode() ^ ((Float)M23).hashCode() ^ ((Float)M24).hashCode() ^
+			   ((Float)M31).hashCode() ^ ((Float)M32).hashCode() ^ ((Float)M33).hashCode() ^ ((Float)M34).hashCode() ^
+			   ((Float)M41).hashCode() ^ ((Float)M42).hashCode() ^ ((Float)M43).hashCode() ^ ((Float)M44).hashCode();
 	}
 
 	/**

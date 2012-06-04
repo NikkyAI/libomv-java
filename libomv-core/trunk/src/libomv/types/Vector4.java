@@ -220,13 +220,13 @@ public class Vector4
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector4) ? equals((Vector4) obj) : false;
+		return obj != null && (obj instanceof Vector4) && equals((Vector4)obj);
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return (int) X + (int) Y + (int) Z + (int) S;
+		return ((Float)X).hashCode() ^ ((Float)Y).hashCode() ^ ((Float)Z).hashCode() ^ ((Float)S).hashCode();
 	}
 
 	/** A vector with a value of 0,0,0,0 */

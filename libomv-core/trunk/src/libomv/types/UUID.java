@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -319,14 +320,14 @@ public class UUID implements Serializable
 	}
 
 	/**
-	 * Return a hash code for this UUID, used by .NET for hash tables
+	 * Return a hash code for this UUID
 	 * 
 	 * @return An integer composed of all the UUID bytes XORed together
 	 */
 	@Override
 	public int hashCode()
 	{
-		return toString().hashCode();
+		return Arrays.hashCode(data);
 	}
 
 	/**
@@ -337,21 +338,9 @@ public class UUID implements Serializable
 	 * @return True if the object is a UUID and both UUIDs are equal
 	 */
 	@Override
-	public boolean equals(Object o)
+	public boolean equals(Object obj)
 	{
-		if ((o.getClass() != this.getClass()))
-		{
-			return false;
-		}
-		UUID uuid = (UUID) o;
-		for (int i = 0; i < 16; ++i)
-		{
-			if (data[i] != uuid.data[i])
-			{
-				return false;
-			}
-		}
-		return true;
+		return obj != null && obj instanceof UUID && equals((UUID)obj);
 	}
 
 	/**
@@ -363,14 +352,11 @@ public class UUID implements Serializable
 	 */
 	public boolean equals(UUID uuid)
 	{
-		for (int i = 0; i < 16; ++i)
+		if (uuid != null)
 		{
-			if (data[i] != uuid.data[i])
-			{
-				return false;
-			}
+			return Arrays.equals(this.data, uuid.data);
 		}
-		return true;
+		return false;
 	}
 
 	/**

@@ -559,23 +559,23 @@ public final class Color4
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Color4) ? this == (Color4) obj : false;
+		return obj != null && obj instanceof Color4 && equals((Color4)obj);
 	}
 
 	public boolean equals(Color4 other)
 	{
-		return equals(this, other);
+		return other != null && R == other.R && G == other.G && B == other.B && A == other.A;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return ((Float) R).hashCode() ^ ((Float) G).hashCode() ^ ((Float) B).hashCode() ^ ((Float) A).hashCode();
+		return ((Float)R).hashCode() ^ ((Float)G).hashCode() ^ ((Float)B).hashCode() ^ ((Float)A).hashCode();
 	}
 
 	public static boolean equals(Color4 lhs, Color4 rhs)
 	{
-		return (lhs.R == rhs.R) && (lhs.G == rhs.G) && (lhs.B == rhs.B) && (lhs.A == rhs.A);
+		return lhs == null ? lhs == rhs : lhs.equals(rhs);
 	}
 
 	public static Color4 add(Color4 lhs, Color4 rhs)

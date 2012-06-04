@@ -219,13 +219,13 @@ public class Vector3d
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof Vector3d) ? equals((Vector3d) obj) : false;
+		return obj != null && (obj instanceof Vector3d) && equals((Vector3d)obj);
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return (int) X + (int) Y + (int) Z;
+		return ((Double)X).hashCode() + ((Double)Y).hashCode() + ((Double)Z).hashCode();
 	}
 
 	/** A vector with a value of 0,0,0 */
