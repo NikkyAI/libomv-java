@@ -94,7 +94,6 @@ public class AssetCallingCard extends AssetItem
 			if (text.toLowerCase().contains("callingcard version 2"))
 			{
 				AvatarID = new UUID(text.substring(text.indexOf("avatar_id") + 10, 36));
-				String vecDelim = " ";
 				return true;
 			}
 		}
