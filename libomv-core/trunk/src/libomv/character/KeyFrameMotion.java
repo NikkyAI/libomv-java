@@ -27,6 +27,7 @@
 package libomv.character;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
@@ -74,6 +75,30 @@ public class KeyFrameMotion
 
         // Custom application data that can be attached to a joint
         public Object Tag;
+
+        @Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && obj instanceof Joint && equals((Joint)obj);
+		}
+		
+		public boolean equals(Joint other)
+		{
+			if (other != null)
+			{
+				return Name == null ? Name == other.Name : Name.equals(other.Name) && Priority == other.Priority && 
+					Tag == null ? Tag == other.Tag : Tag.equals(other.Tag) &&
+					Arrays.equals(rotationkeys, other.rotationkeys) && Arrays.equals(positionkeys, other.positionkeys);
+			}
+			return false;	
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return  (Name == null ? 0 : Name.hashCode()) ^ Priority ^ (Tag == null ? 0 : Tag.hashCode()) ^
+					Arrays.hashCode(rotationkeys) ^ Arrays.hashCode(positionkeys);
+		}
     }
 
     // A Joint Keyframe.  This is either a position or a rotation.
@@ -83,7 +108,28 @@ public class KeyFrameMotion
         public float time;
 
         // Either a Vector3 position or a Vector3 Euler rotation
-        public Vector3 key_element;
+        public Vector3 keyElement;
+
+        @Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && obj instanceof JointKey && equals((JointKey)obj);
+		}
+		
+		public boolean equals(JointKey other)
+		{
+			if (other != null)
+			{
+				return time == other.time && keyElement == null ? keyElement == other.keyElement : keyElement.equals(other.keyElement);
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return ((Float)time).hashCode() ^ (keyElement == null ? 0 : keyElement.hashCode());
+		}
     }
 
 	enum EConstraintType
@@ -113,6 +159,39 @@ public class KeyFrameMotion
 		float		EaseOutStart;
 		float		EaseOutStop;
 		EConstraintType ConstraintType;
+		
+		@Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && equals((Constraint)obj);
+		}
+		
+		public boolean equals(Constraint other)
+		{
+			if (other != null)
+			{
+				return ChainLength == other.ChainLength && EaseInStart == other.EaseInStart && EaseInStop == other.EaseInStop && 
+					EaseOutStart == other.EaseOutStart && EaseOutStop == other.EaseOutStop &&
+					SourceJointName == null ? SourceJointName == other.SourceJointName : SourceJointName.equals(other.SourceJointName) &&
+					TargetJointName == null ? TargetJointName == other.TargetJointName : TargetJointName.equals(other.TargetJointName) &&
+					SourceOffset == null ? SourceOffset == other.SourceOffset : SourceOffset.equals(other.SourceOffset) &&
+					TargetOffset == null ? TargetOffset == other.TargetOffset : TargetOffset.equals(other.TargetOffset) &&
+					TargetDir == null ? TargetDir == other.TargetDir : TargetDir.equals(other.TargetDir);
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return ChainLength ^ ((Float)EaseInStart).hashCode() ^ ((Float)EaseInStop).hashCode() ^ 
+			    ((Float)EaseOutStart).hashCode() ^ ((Float)EaseOutStop).hashCode() ^
+				(SourceJointName == null ? 0 : SourceJointName.hashCode()) ^
+				(TargetJointName == null ? 0 : TargetJointName.hashCode()) ^
+				(TargetDir == null ? 0 : TargetDir.hashCode()) ^
+				(SourceOffset == null ? 0 : SourceOffset.hashCode()) ^
+				(TargetOffset != null ? 0 : TargetOffset.hashCode());
+		}
 	}
 
 	public int version; // Always 1
@@ -268,11 +347,11 @@ public class KeyFrameMotion
 
         // Read in rotation keyframes
         pJoint.rotationkeys = readKeys(data, i, -1.0f, 1.0f);
-        i += 4 + pJoint.rotationkeys.length * 8;
+        i += 4 + (pJoint.rotationkeys != null ? pJoint.rotationkeys.length * 8 : 0);
 
         // Read in position keyframes
         pJoint.positionkeys = readKeys(data, i, -0.5f, 1.5f);
-        i += 4 + pJoint.positionkeys.length * 8;
+        i += 4 + (pJoint.rotationkeys != null ? pJoint.positionkeys.length * 8 : 0);;
 
         return i;
     }
@@ -288,9 +367,7 @@ public class KeyFrameMotion
      */
     public JointKey[] readKeys(byte[] data, int i, float min, float max)
     {
-        float x;
-        float y;
-        float z;
+        float x, y, z;
 
         // int32: number of key frames 
         int keycount = Helpers.BytesToInt32L(data, i); i += 4; // How many rotation keyframes
@@ -309,12 +386,12 @@ public class KeyFrameMotion
         		x = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
         		y = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
         		z = Helpers.UInt16ToFloatL(data, i, min, max); i += 2;
-        		pJKey.key_element = new Vector3(x, y, z);
+        		pJKey.keyElement = new Vector3(x, y, z);
         		m_keys[j] = pJKey;
         	}
             return m_keys;
         }
-        return new JointKey[0];
+        return null;
     }
 
     public int readConstraint(byte[] data, int i, Constraint constraint)
@@ -331,4 +408,26 @@ public class KeyFrameMotion
     	constraint.EaseOutStop = Helpers.BytesToFloatL(data, i); i += 4;
     	return i;
     }
+    
+    @Override
+	public boolean equals(Object obj)
+    {
+    	return obj != null && obj instanceof KeyFrameMotion && equals((KeyFrameMotion)obj);
+    }
+    
+    public boolean equals(KeyFrameMotion other)
+    {
+    	return other != null && version == other.version && sub_version == other.sub_version && Loop == other.Loop &&
+    		InPoint == other.InPoint && OutPoint == other.OutPoint && Length == other.Length && HandPose == other.HandPose && 
+    		EaseInTime == other.EaseInTime && EaseOutTime == other.EaseOutTime && Priority == other.Priority && 
+    		Arrays.equals(Joints, other.Joints) && Arrays.equals(Constraints, other.Constraints);
+    }
+
+	@Override
+	public int hashCode()
+	{
+		return version ^ sub_version ^ (Loop ? 1 : 0) ^ ((Float)InPoint).hashCode() ^ ((Float)OutPoint).hashCode() ^
+				((Float)EaseInTime).hashCode() ^ ((Float)EaseOutTime).hashCode() ^ ((Float)Length).hashCode() ^ 
+				HandPose ^ Priority ^ Arrays.hashCode(Joints) ^ Arrays.hashCode(Constraints);
+	}
 }

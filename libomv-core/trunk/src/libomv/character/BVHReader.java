@@ -844,7 +844,7 @@ public class BVHReader extends KeyFrameMotion
 
 				joint.rotationkeys[frame] = new JointKey();
 				joint.rotationkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
-				joint.rotationkeys[frame].key_element = outRot.toVector3();
+				joint.rotationkeys[frame].keyElement = outRot.toVector3();
 
 				outcount++;
 				frame++;
@@ -879,7 +879,7 @@ public class BVHReader extends KeyFrameMotion
 
 					joint.positionkeys[frame] = new JointKey();
 					joint.positionkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
-					joint.positionkeys[frame].key_element = outPos.clamp(-KeyFrameMotion.MAX_PELVIS_OFFSET, KeyFrameMotion.MAX_PELVIS_OFFSET);
+					joint.positionkeys[frame].keyElement = outPos.clamp(-KeyFrameMotion.MAX_PELVIS_OFFSET, KeyFrameMotion.MAX_PELVIS_OFFSET);
 					frame++;
 				}
 				j++;
