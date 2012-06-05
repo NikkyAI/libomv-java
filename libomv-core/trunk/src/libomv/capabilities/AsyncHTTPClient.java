@@ -82,19 +82,14 @@ public abstract class AsyncHTTPClient<T>
 	
 	private final HttpAsyncClient client;
 	private X509Certificate certificate;
-	Boolean executing = new Boolean(false);
 	private Timer timeout;
-	private FutureCallback<T> callback;
-	private ProgressCallback progress;
+	Future<T> resultFuture;
+	private FutureCallback<T> resultCb;
+	private ProgressCallback progressCb;
 
-	public void setResultCallback(FutureCallback<T> callback)
-	{
-		this.callback = callback;
-	}
-	
 	public void setProgressCallback(ProgressCallback callback)
 	{
-		this.progress = callback;
+		this.progressCb = callback;
 	}
 	
 	public void setCertificate(X509Certificate cert)
@@ -102,22 +97,26 @@ public abstract class AsyncHTTPClient<T>
 		this.certificate = cert;
 	}
 	
-	private void cancel()
+	private void cancel(boolean mayInterruptIfRunning)
 	{
-		synchronized (executing)
+		synchronized (this)
 		{
 			if (timeout != null)
 			{
 				timeout.cancel();
 				timeout = null;
 			}
-			executing = false;
+			if (resultFuture != null && resultFuture.isDone())
+			{
+				resultFuture.cancel(mayInterruptIfRunning);
+				resultFuture = null;
+			}
 		}
 	}
 	
 	public void shutdown() throws InterruptedException
 	{
-		cancel();
+		cancel(true);
 		client.shutdown();
 	}
 
@@ -131,44 +130,59 @@ public abstract class AsyncHTTPClient<T>
 	 * Do a HTTP Get Request from the server without any timeout
 	 * 
 	 * @param address The document uri to fetch
-	 * @return A Future that can be used to retrieve the data
+	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
 	public Future<T> executeHttpGet(URI address)
 	{
-		return executeHttp(new HttpGet(address), TIMEOUT_INFINITE);
+		return executeHttp(new HttpGet(address), null, TIMEOUT_INFINITE);
 	}
 	
 	/**
-	 * Do a HTTP Get Request from the server
+	 * Do a HTTP Get Request from the server without any timeout
 	 * 
 	 * @param address The document uri to fetch
 	 * @param acceptHeader The content type to add as Accept: header or null
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
-	 * @return A Future that can be used to retrieve the data
+	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpGet(URI address, String acceptHeader, long millisecondTimeout)
+	public Future<T> executeHttpGet(URI address, String acceptHeader)
 	{
 		HttpGet request = new HttpGet(address);
 		if (acceptHeader != null && !acceptHeader.isEmpty())
 		{
 			request.addHeader("Accept", acceptHeader);
 		}
-		return executeHttp(request, millisecondTimeout);
+		return executeHttp(request, null, TIMEOUT_INFINITE);
 	}
 
 	/**
-	 * Do a HTTP Post Request from the server for string data
+	 * Do a HTTP Get Request from the server
+	 * 
+	 * @param address The document uri to fetch
+	 * @param acceptHeader The content type to add as Accept: header or null
+	 * @param callback The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @return A Future that can be used to cancel the request
+	 */
+	public Future<T> executeHttpGet(URI address, String acceptHeader, FutureCallback<T> callback, long millisecondTimeout)
+	{
+		HttpGet request = new HttpGet(address);
+		if (acceptHeader != null && !acceptHeader.isEmpty())
+		{
+			request.addHeader("Accept", acceptHeader);
+		}
+		return executeHttp(request, callback, millisecondTimeout);
+	}
+
+	/**
+	 * Do a HTTP Post Request from the server from string data
 	 * 
 	 * @param address The uri to post
 	 * @param data The string data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
-	 * @return A Future that can be used to retrieve the data
+	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, String data, String contentType, long millisecondTimeout)
-			throws UnsupportedEncodingException
+	public Future<T> executeHttpPost(URI address, String data, String contentType) throws UnsupportedEncodingException
 	{
 		// Create the request
 		HttpPost request = new HttpPost(address);
@@ -179,20 +193,44 @@ public abstract class AsyncHTTPClient<T>
 
 		// set POST body
 		request.setEntity(new StringEntity(data));
-		return executeHttp(request, millisecondTimeout);
+		return executeHttp(request, null, TIMEOUT_INFINITE);
 	}
 
 	/**
-	 * Do a HTTP Post Request from the server for binary data
+	 * Do a HTTP Post Request from the server from string data
+	 * 
+	 * @param address The uri to post
+	 * @param data The string data to add as entity content
+	 * @param contentType The content type to add as ContentType: header or null
+	 * @param callback The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @return A Future that can be used to cancel the request
+	 */
+	public Future<T> executeHttpPost(URI address, String data, String contentType,
+							FutureCallback<T> callback, long millisecondTimeout) throws UnsupportedEncodingException
+	{
+		// Create the request
+		HttpPost request = new HttpPost(address);
+		if (contentType != null && !contentType.isEmpty())
+		{
+			request.addHeader("Content-Type", contentType);
+		}
+
+		// set POST body
+		request.setEntity(new StringEntity(data));
+		return executeHttp(request, callback, millisecondTimeout);
+	}
+
+	/**
+	 * Do a HTTP Post Request from the server from binary data
 	 * 
 	 * @param address The uri to post
 	 * @param data The binary data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
-	 * @return A Future that can be used to retrieve the data
+	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, long millisecondTimeout)
+	public Future<T> executeHttpPost(URI address, byte[] data, String contentType)
 	{
 		// Create the request
 		HttpPost request = new HttpPost(address);
@@ -203,7 +241,33 @@ public abstract class AsyncHTTPClient<T>
 
 		// set POST body
 		request.setEntity(new ByteArrayEntity(data));
-		return executeHttp(request, millisecondTimeout);
+		return executeHttp(request, null, TIMEOUT_INFINITE);
+	}
+
+	/**
+	 * Do a HTTP Post Request from the server from binary data
+	 * 
+	 * @param address The uri to post
+	 * @param data The binary data to add as entity content
+	 * @param contentType The content type to add as ContentType: header or null
+	 * @param callback The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @return A Future that can be used to cancel the request
+	 */
+	public Future<T> executeHttpPost(URI address, byte[] data, String contentType,
+							FutureCallback<T> callback, long millisecondTimeout)
+	{
+		// Create the request
+		HttpPost request = new HttpPost(address);
+		if (contentType != null && !contentType.isEmpty())
+		{
+			request.addHeader("Content-Type", contentType);
+		}
+
+		// set POST body
+		request.setEntity(new ByteArrayEntity(data));
+		return executeHttp(request, callback, millisecondTimeout);
 	}
 
 	private HttpHost determineTarget(URI address) throws ClientProtocolException
@@ -246,9 +310,9 @@ public abstract class AsyncHTTPClient<T>
 		return target;
 	}
 
-	private Future<T> executeHttp(HttpRequestBase request, long millisecondTimeout)
+	private Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback, long millisecondTimeout)
 	{
-		synchronized (executing)
+		synchronized (this)
 		{
 			if (timeout != null)
 			{
@@ -256,10 +320,13 @@ public abstract class AsyncHTTPClient<T>
 				return null;
 			}
 
+			if (resultCb != null)
+				resultCb = callback;
+
 			try
 			{
-				final Future<T> result = client.execute(new CapsHttpAsyncRequestProducer(determineTarget(request.getURI()), request),
-					                                	new CapsHttpAsyncResponseConsumer(), new AsyncHttpResultCallback());
+				resultFuture = client.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
+					                                	new AsyncHttpResponseConsumer(), new AsyncHttpResultCallback());
 
 				if (millisecondTimeout >= 0)
 				{
@@ -269,15 +336,15 @@ public abstract class AsyncHTTPClient<T>
 						@Override
 						public void run()
 						{
-							result.cancel(true);
+							AsyncHTTPClient.this.cancel(true);
 						}
 					}, millisecondTimeout);
-				}	
-				return result;
+				}
+				return resultFuture;
 			}
 			catch (Exception ex)
 			{
-				BasicFuture<T> failed = new BasicFuture<T>(callback);
+				BasicFuture<T> failed = new BasicFuture<T>(resultCb);
 				failed.failed(ex);
 				return failed;
 			}
@@ -289,34 +356,34 @@ public abstract class AsyncHTTPClient<T>
 		@Override
 		public void completed(T result)
 		{
-			if (callback != null)
-				callback.completed(result);
-			cancel();
+			if (resultCb != null)
+				resultCb.completed(result);
+			cancel(false);
 		}
 
 		@Override
 		public void failed(Exception ex)
 		{
-			if (callback != null)
-				callback.failed(ex);
-			cancel();
+			if (resultCb != null)
+				resultCb.failed(ex);
+			cancel(false);
 		}
 
 		@Override
 		public void cancelled()
 		{
-			if (callback != null)
-				callback.cancelled();
-			cancel();
+			if (resultCb != null)
+				resultCb.cancelled();
+			cancel(false);
 		}
 	}
-	private class CapsHttpAsyncRequestProducer implements HttpAsyncRequestProducer
+	private class AsyncHttpRequestProducer implements HttpAsyncRequestProducer
 	{
 		private final HttpHost target;
 		private final HttpRequestBase request;
 		private final ProducingNHttpEntity producer;
 
-		public CapsHttpAsyncRequestProducer(final HttpHost target, final HttpRequestBase request) throws IOException
+		public AsyncHttpRequestProducer(final HttpHost target, final HttpRequestBase request) throws IOException
 		{
 			super();
 			if (target == null)
@@ -406,7 +473,7 @@ public abstract class AsyncHTTPClient<T>
 
 	protected abstract T convertContent(InputStreamReader in) throws IOException;
 	
-	private class CapsHttpAsyncResponseConsumer implements HttpAsyncResponseConsumer<T>
+	private class AsyncHttpResponseConsumer implements HttpAsyncResponseConsumer<T>
 	{
 		private volatile Charset charset;
 		private volatile long length;
@@ -658,8 +725,8 @@ public abstract class AsyncHTTPClient<T>
 			private void progress(int bytes)
 			{
 				pos += bytes;
-				if (progress != null)
-					progress.progress(pos, length);
+				if (progressCb != null)
+					progressCb.progress(pos, length);
 			}
 		}
 	}

@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
@@ -725,6 +726,7 @@ public class LoginManager
 	// #region Private Members
 	private GridClient _Client;
 
+	private Future<OSD> capsCallback = null;
 	private TimeoutEventQueue<LoginStatus> LoginEvents = new TimeoutEventQueue<LoginStatus>();
 
 	// #endregion
@@ -1056,8 +1058,8 @@ public class LoginManager
 
 				// Make the CAPS POST for login
 				CapsClient loginRequest = new CapsClient();
-				loginRequest.setResultCallback(new LoginReplyLLSDHandler(loginParams));
-				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, loginParams.Timeout);
+				capsCallback = loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml,
+						new LoginReplyLLSDHandler(loginParams), loginParams.Timeout);
 				// #endregion
 			}
 			else

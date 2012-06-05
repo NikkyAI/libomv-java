@@ -191,8 +191,8 @@ public class CapsManager
 		try
 		{
 			CapsClient request = new CapsClient();
-			request.setResultCallback(new SeedRequestHandler());
-			_SeedRequest = request.executeHttpPost(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml, _Simulator.getClient().Settings.CAPS_TIMEOUT);
+			_SeedRequest = request.executeHttpPost(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml,
+					new SeedRequestHandler(), _Simulator.getClient().Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception e)
 		{

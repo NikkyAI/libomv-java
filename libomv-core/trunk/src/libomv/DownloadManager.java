@@ -204,8 +204,8 @@ public class DownloadManager
 	                                    }
 	                                }
 	                            });
-	                            activeDownload.setResultCallback(new FutureCallback<byte[]>()
-	                            {
+	                            activeDownload.executeHttpGet(item.address, item.contentType, new FutureCallback<byte[]>()
+	    	                    {
 	                                @Override
 									public void completed(byte[] responseData)
 	                                {
@@ -247,8 +247,7 @@ public class DownloadManager
 	                                    }
 	                                    enquePending();
 									}
-	                            });
-	                            activeDownload.executeHttpGet(item.address, item.contentType, item.millisecondsTimeout); 
+	                            }, item.millisecondsTimeout); 
 	                            activeDownloads.put(addr, activeDownload);
 							}
                         }

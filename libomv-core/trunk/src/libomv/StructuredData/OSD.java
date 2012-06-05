@@ -77,6 +77,18 @@ public class OSD
 	public enum OSDFormat
 	{
 		Xml, Json, Binary;
+		
+		public static String contentType(OSDFormat format)
+		{
+			switch (format)
+			{
+				case Xml:
+					return "application/llsd+xml";
+				case Binary:
+					return "application/llsd+binary";
+			}
+			return "application/llsd+json";
+		}
 	}
 
 	/** The OSD class implementation */

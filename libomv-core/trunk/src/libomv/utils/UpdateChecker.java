@@ -159,7 +159,7 @@ public class UpdateChecker
 		@Override
 		public void failed(Exception ex)
 		{
-            Logger.Log("Failed fetching updatede information: ", Logger.LogLevel.Warning, ex);
+            Logger.Log("Failed fetching updated information: ", Logger.LogLevel.Warning, ex);
             OnUpdateInfoReceived.dispatch(checkArgs);
 		}
     }
@@ -169,8 +169,7 @@ public class UpdateChecker
         if (client == null)
         {
             client = new CapsClient();
-            client.setResultCallback(new OnDownloadCallback());
-            client.executeHttpGet(updateCheckUri);
+            client.executeHttpGet(updateCheckUri, null, new OnDownloadCallback(), 60000);
         }
     }
 }

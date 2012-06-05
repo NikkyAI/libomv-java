@@ -2799,7 +2799,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		{
 			ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
 			acceptInvite.SessionID = session_id;
-			new CapsClient().executeHttpPost(uri, acceptInvite.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(uri, acceptInvite.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
 
 			synchronized (GroupChatSessions)
 			{
@@ -2839,7 +2839,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				startConference.AgentsBlock[i] = participants[i];
 			}
 			startConference.SessionID = tmp_session_id;
-			new CapsClient().executeHttpPost(url, startConference.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(url, startConference.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -4707,8 +4707,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (url != null)
 		{
 			CapsClient request = new CapsClient();
-			request.setResultCallback(new AttachmentResourceReplyHandler(callback));
-			request.executeHttpGet(url, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+			request.executeHttpGet(url, Helpers.EmptyString, new AttachmentResourceReplyHandler(callback), _Client.Settings.CAPS_TIMEOUT);
 		}
 	}
 
@@ -4734,7 +4733,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		msg.OldDisplayName = oldName;
 		msg.NewDisplayName = newName;
 
-		new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+		new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
 	}
 
 	/**
@@ -4755,7 +4754,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			msg.LanguagePublic = isPublic;
 
 			URI url = _Client.Network.getCapabilityURI("UpdateAgentLanguage");
-			new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception ex)
 		{

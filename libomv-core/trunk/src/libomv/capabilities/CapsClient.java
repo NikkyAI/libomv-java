@@ -34,6 +34,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.StructuredData.OSD;
@@ -48,63 +49,134 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 
 	/**
 	 * Synchronous HTTP Get request from a capability that requires no further
-	 * request entity This function returns either after the server responded
+	 * request entity. This function returns either after the server responded
 	 * with any data or when the timeout expired
 	 * 
-	 * @param timeout
-	 *            The timeout in ms to wait for a request
+	 * @param address The timeout in ms to wait for a request
+	 * @param acceptHeader The content type to add as Accept: header or null
+	 * @param timeout The timeout in ms to wait for a request
 	 * @return Returns the response parsed into OSD data
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
-	 * @throws ClientProtocolException
 	 */
-	public OSD getResponse(URI address, String acceptHeader, long timeout) throws InterruptedException, ExecutionException, TimeoutException
+	public OSD getResponse(URI address, String acceptHeader, long timeout)
+				throws InterruptedException, ExecutionException, TimeoutException
 	{
-		Future<OSD> result = executeHttpGet(address, acceptHeader, -1);
+		Future<OSD> result = executeHttpGet(address, acceptHeader);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public OSD getResponse(URI address, OSD data, OSD.OSDFormat format, long timeout) throws InterruptedException,
-			ExecutionException, TimeoutException, IOException
+	/**
+	 * Synchronous HTTP Post request from a capability that requires a OSD formated
+	 * request entity. This function returns either after the server responded
+	 * with any data or when the timeout expired
+	 * 
+	 * @param address The timeout in ms to wait for a request
+	 * @param data The OSD data
+	 * @param format The OSD data format to serialize the data into
+	 * @param timeout The timeout in ms to wait for a request
+	 * @return Returns the response parsed into OSD data
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	public OSD getResponse(URI address, OSD data, OSD.OSDFormat format, long timeout)
+				throws InterruptedException, ExecutionException, TimeoutException, IOException
 	{
-		Future<OSD> result = executeHttpPost(address, data, format, -1);
+		Future<OSD> result = executeHttpPost(address, data, format);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public OSD getResponse(URI address, byte[] postData, String contentType, long timeout) throws InterruptedException,
-			ExecutionException, TimeoutException
+	/**
+	 * Synchronous HTTP Post request from a capability that requires a OSD formated
+	 * request entity. This function returns either after the server responded
+	 * with any data or when the timeout expired
+	 * 
+	 * @param address The timeout in ms to wait for a request
+	 * @param data The OSD data
+	 * @param format The OSD data format to serialize the data into
+	 * @param timeout The timeout in ms to wait for a request
+	 * @return Returns the response parsed into OSD data
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	public OSD getResponse(URI address, byte[] postData, String contentType, long timeout)
+				throws InterruptedException, ExecutionException, TimeoutException
 	{
-		Future<OSD> result = executeHttpPost(address, postData, contentType, -1);
+		Future<OSD> result = executeHttpPost(address, postData, contentType);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	public Future<OSD> executeHttpPost(URI address, IMessage message, long timeout) throws IOException
+	/**
+	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
+	 * request entity. This function returns either after the server responded
+	 * with any data or when the timeout expired
+	 * 
+	 * @param address The timeout in ms to wait for a request
+	 * @param message The Caps message to send
+	 * @param callback The callback to call for reporting of failure or success or null
+	 * @param timeout The timeout in ms to wait for a request
+	 * @return Returns the response parsed into OSD data
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	public Future<OSD> executeHttpPost(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
+				throws IOException
 	{
-		return executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, timeout);
+		return executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, callback, timeout);
 	}
 
-	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, long timeout) throws IOException
+	/**
+	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
+	 * request entity. This function returns either after the server responded
+	 * with any data or when the timeout expired
+	 * 
+	 * @param address The timeout in ms to wait for a request
+	 * @param data The OSD data
+	 * @param format The OSD data format to serialize the data into
+	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format)
+				throws IOException
 	{
 		byte[] postData = null;
-		String contentType;
 
 		if (data != null)
 			postData = data.serializeToBytes(format);
 
-		switch (format)
-		{
-			case Xml:
-				contentType = "application/llsd+xml";
-				break;
-			case Binary:
-				contentType = "application/llsd+binary";
-				break;
-			default:
-				contentType = "application/llsd+json";
-				break;
-		}
-		return executeHttpPost(address, postData, contentType, timeout);
+		return executeHttpPost(address, postData, OSD.OSDFormat.contentType(format));
+	}
+
+	/**
+	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
+	 * request entity. This function returns either after the server responded
+	 * with any data or when the timeout expired
+	 * 
+	 * @param address The timeout in ms to wait for a request
+	 * @param data The OSD data
+	 * @param format The OSD data format to serialize the data into
+	 * @param callback The callback to call for reporting of failure or success or null
+	 * @param timeout The timeout in ms to wait for a request
+	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, FutureCallback<OSD> callback, long timeout)
+				throws IOException
+	{
+		byte[] postData = null;
+
+		if (data != null)
+			postData = data.serializeToBytes(format);
+
+		return executeHttpPost(address, postData, OSD.OSDFormat.contentType(format), callback, timeout);
 	}
 
 	@Override

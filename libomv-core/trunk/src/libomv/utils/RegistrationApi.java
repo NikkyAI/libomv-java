@@ -149,7 +149,7 @@ public class RegistrationApi
         byte[] postData = String.format("first_name=%s&last_name=%s&password=%s", _userInfo.FirstName, _userInfo.LastName, 
                                         _userInfo.Password).getBytes(Helpers.ASCII_ENCODING);
 
-        Future<OSD> future = new CapsClient().executeHttpPost(getRegistrationApiCaps(), postData, "application/x-www-form-urlencoded", REQUEST_TIMEOUT);
+        Future<OSD> future = new CapsClient().executeHttpPost(getRegistrationApiCaps(), postData, "application/x-www-form-urlencoded");
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {
@@ -180,7 +180,7 @@ public class RegistrationApi
     {
         final Map<Integer, ErrorCode> errorCodes = new HashMap<Integer, ErrorCode>();
 
-        Future<OSD> future = new CapsClient().executeHttpGet(capability, null, REQUEST_TIMEOUT);
+        Future<OSD> future = new CapsClient().executeHttpGet(capability);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDArray)
         {
@@ -209,7 +209,7 @@ public class RegistrationApi
     {
         final SortedMap<String, Integer> lastNames = new TreeMap<String, Integer>();
         
-        Future<OSD> future = new CapsClient().executeHttpGet(capability, null, REQUEST_TIMEOUT);
+        Future<OSD> future = new CapsClient().executeHttpGet(capability);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {
@@ -264,7 +264,7 @@ public class RegistrationApi
         query.put("username", OSD.FromString(firstName));
         query.put("last_name_id", OSD.FromInteger(lastNameID));
 
-        Future<OSD> future = new CapsClient().executeHttpPost(_caps.GetLastNames, query, OSDFormat.Xml, -1);
+        Future<OSD> future = new CapsClient().executeHttpPost(_caps.GetLastNames, query, OSDFormat.Xml);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response.getType() != OSDType.Boolean)
         	throw new Exception("check_name did not return a boolean as the only element inside the <llsd> tag.");
@@ -316,7 +316,7 @@ public class RegistrationApi
         }
 
         // Make the request
-        Future<OSD> future = new CapsClient().executeHttpPost(_caps.CreateUser, query, OSDFormat.Xml, -1);
+        Future<OSD> future = new CapsClient().executeHttpPost(_caps.CreateUser, query, OSDFormat.Xml);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {
