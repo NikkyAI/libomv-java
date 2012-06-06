@@ -80,7 +80,7 @@ public class OSDDate extends OSD
 	@Override
 	public byte[] AsBinary()
 	{
-		return Helpers.DoubleToBytesB(Helpers.DateTimeToUnixTime(value));
+		return Helpers.DoubleToBytesL(Helpers.DateTimeToUnixTime(value));
 	}
 
 	@Override

@@ -305,7 +305,7 @@ public final class LLSDBinary
 				osd = OSD.FromUri(uri);
 				break;
 			case dateBinaryMarker:
-				double timestamp = Helpers.BytesToDoubleB(consumeBytes(stream, doubleLength), 0);
+				double timestamp = Helpers.BytesToDoubleL(consumeBytes(stream, doubleLength), 0);
 				osd = OSD.FromDate(Helpers.UnixTimeToDateTime(timestamp));
 				break;
 			case arrayBeginBinaryMarker:
