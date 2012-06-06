@@ -63,42 +63,40 @@ public class FacetedMesh extends Mesh
                 return null;
             }
 
-            OSDMap MeshData = meshAsset.MeshData;
-
-            FacetedMesh mesh = new FacetedMesh();
-
-            mesh.Faces = new ArrayList<Face>();
-            mesh.Prim = prim;
-            mesh.Profile.Faces = new ArrayList<ProfileFace>();
-            mesh.Profile.Positions = new ArrayList<Vector3>();
-            mesh.Path.Points = new ArrayList<PathPoint>();
-
+            OSDMap meshData = meshAsset.MeshData;
             OSD facesOSD = null;
 
             switch (LOD)
             {
                 default:
                 case Highest:
-                    facesOSD = MeshData.get("high_lod");
+                    facesOSD = meshData.get("high_lod");
                     break;
 
                 case High:
-                    facesOSD = MeshData.get("medium_lod");
+                    facesOSD = meshData.get("medium_lod");
                     break;
 
                 case Medium:
-                    facesOSD = MeshData.get("low_lod");
+                    facesOSD = meshData.get("low_lod");
                     break;
 
                 case Low:
-                    facesOSD = MeshData.get("lowest_lod");
+                    facesOSD = meshData.get("lowest_lod");
                     break;
             }
 
             if (facesOSD == null || !(facesOSD instanceof OSDArray))
             {
-                return mesh;
+                return null;
             }
+
+            FacetedMesh mesh = new FacetedMesh();
+            mesh.Faces = new ArrayList<Face>();
+            mesh.Prim = prim;
+            mesh.Profile.Faces = new ArrayList<ProfileFace>();
+            mesh.Profile.Positions = new ArrayList<Vector3>();
+            mesh.Path.Points = new ArrayList<PathPoint>();
 
             OSDArray decodedMeshOsdArray = (OSDArray)facesOSD;
 
