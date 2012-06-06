@@ -898,15 +898,32 @@ public class LoginManager
 	 */
 	public final boolean Login(LoginParams loginParams) throws Exception
 	{
-		// FIXME: Now that we're using CAPS we could cancel the current login
-		// and start a new one
+		return Login(loginParams, null);
+	}
+	
+	/**
+	 * Login that takes a struct of all the values that will be passed to the
+	 * login server
+	 * 
+	 * @param loginParams
+	 *            The values that will be passed to the login server, all fields
+	 *            must be set even if they are ""
+	 * @param callback the progress callback to invoke with login progress updates 
+	 * @return Whether the login was successful or not. Register to the
+	 *         OnLoginResponse callback to receive more detailed information
+	 *         about the errors that have occurred
+	 * @throws Exception
+	 */
+	public final boolean Login(LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
+	{
+		// FIXME: Now that we're using CAPS we could cancel the current login and start a new one
 		if (LoginEvents.size() != 0)
 		{
 			throw new Exception("Login already in progress");
 		}
 
 		TimeoutEvent<LoginStatus> loginEvent = LoginEvents.create();
-		RequestLogin(loginParams, null);
+		RequestLogin(loginParams, callback);
 		LoginStatus status = loginEvent.waitOne(loginParams.Timeout);
 		LoginEvents.cancel(loginEvent);
 		if (status == null)
