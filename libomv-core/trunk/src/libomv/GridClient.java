@@ -601,7 +601,7 @@ public class GridClient
 		return info;
 	}
 
-	private void initializeGridList() throws IOException, ParseException, IllegalStateException, URISyntaxException,
+	private void initializeGridList() throws IOException, IllegalStateException, URISyntaxException,
 			IllegalArgumentException, IllegalAccessException
 	{
 		boolean modified = setList(loadSettings(), false);
@@ -680,7 +680,7 @@ public class GridClient
 		prefs.put(DEFAULT_GRID, defaultGrid);
 	}
 
-	private OSD loadDefaults() throws IOException, ParseException
+	private OSD loadDefaults() throws IOException
 	{
 		OSD osd = null;
 		InputStream stream = getClass().getResourceAsStream(DEFAULT_GRIDS_LIST);
@@ -690,6 +690,8 @@ public class GridClient
 			{
 				osd = OSD.parse(stream, Helpers.UTF8_ENCODING);
 			}
+			catch (ParseException ex)
+			{}
 			finally
 			{
 				stream.close();
@@ -698,14 +700,21 @@ public class GridClient
 		return osd;
 	}
 
-	private OSD loadSettings() throws IOException, ParseException
+	private OSD loadSettings() throws IOException
 	{
-		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-		defaultGrid = prefs.get(DEFAULT_GRID, Helpers.EmptyString);
-		return OSD.parse(prefs.get(GRID_LIST, Helpers.EmptyString));
+		OSD osd = null;
+		try
+		{
+			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+			defaultGrid = prefs.get(DEFAULT_GRID, Helpers.EmptyString);
+			osd = OSD.parse(prefs.get(GRID_LIST, Helpers.EmptyString));
+		}
+		catch (ParseException ex)
+		{}
+		return osd;
 	}
 
-	private OSD downloadList() throws IOException, IllegalStateException, ParseException, URISyntaxException
+	private OSD downloadList() throws IOException, IllegalStateException, URISyntaxException
 	{
 		OSD osd = null;
 		HttpClient client = new DefaultHttpClient();
@@ -743,6 +752,8 @@ public class GridClient
 				osd = OSD.parse(stream, charset);
 			}
 		}
+		catch (ParseException ex)
+		{}
 		finally
 		{
 			getMethod.abort();
