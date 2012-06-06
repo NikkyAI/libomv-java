@@ -497,7 +497,7 @@ public class OSD
 		switch (type)
 		{
 			case Binary:
-				LLSDBinary.serialize(new WriterOutputStream(writer), this);
+				LLSDBinary.serialize(writer, this, Helpers.UTF8_ENCODING);
 				break;
 			case Json:
 				LLSDJson.serialize(writer, this);

@@ -112,7 +112,7 @@ public final class LLSDBinary
 		StringWriter writer = new StringWriter();
 		try
 		{
-			serialize(new WriterOutputStream(writer, encoding), data);
+			serialize(new WriterOutputStream(writer, encoding), data, true);
 			return writer.toString();
 		}
 		finally
@@ -127,11 +127,12 @@ public final class LLSDBinary
 	 * @param data The hierarchical OSD object to serialize
 	 * @param encoding The text encoding to use when converting the text into
 	 *            a byte stream
+	 * @param prependHead The hierarchical OSD object to serialize
 	 * @throws IOException
 	 */
 	public static void serialize(Writer writer, OSD data, String encoding) throws IOException
 	{
-		serialize(new WriterOutputStream(writer, encoding), data);
+		serialize(new WriterOutputStream(writer, encoding), data, true);
 	}
 	
 	/**
@@ -143,8 +144,24 @@ public final class LLSDBinary
 	 */
 	public static void serialize(OutputStream stream, OSD data) throws IOException
 	{
-		stream.write(llsdBinaryHead);
-		stream.write('\n');
+		serialize(stream, data, true);
+	}
+	
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD binary stream
+	 * 
+	 * @param stream The binary byte stream to write the OSD object into
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHead The hierarchical OSD object to serialize
+	 * @throws IOException
+	 */
+	public static void serialize(OutputStream stream, OSD data, boolean prependHeader) throws IOException
+	{
+		if (prependHeader)
+		{
+			stream.write(llsdBinaryHead);
+			stream.write('\n');
+		}
 		serializeLLSDBinaryElement(stream, data);
 	}
 
