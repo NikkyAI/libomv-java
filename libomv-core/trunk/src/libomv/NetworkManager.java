@@ -123,7 +123,8 @@ public class NetworkManager implements PacketCallback
 		public final Simulator Simulator;
 		/** Packet that needs to be sent */
 		public final ByteBuffer Buffer;
-		public int bytes;
+		/** PacketType */
+		public PacketType Type;
 		/** Sequence number of the wrapped packet */
 		public int SequenceNumber;
 		/** Number of times this packet has been resent */
@@ -131,9 +132,10 @@ public class NetworkManager implements PacketCallback
 		/** Environment.TickCount when this packet was last sent over the wire */
 		public long TickCount;
 
-		public OutgoingPacket(Simulator simulator, ByteBuffer buffer)
+		public OutgoingPacket(Simulator simulator, PacketType type, ByteBuffer buffer)
 		{
 			Simulator = simulator;
+			Type = type;
 			Buffer = buffer;
 		}
 	}

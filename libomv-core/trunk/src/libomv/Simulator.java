@@ -884,7 +884,7 @@ public class Simulator extends Thread
 						   LogLevel.Info, _Client);
 				break;
 			}
-			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.SIMULATOR_TIMEOUT)
+			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
 			{
 				Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Warning, _Client);
 				return false;
@@ -1368,7 +1368,7 @@ public class Simulator extends Thread
 		}
 
 		// #region Queue or Send
-		NetworkManager.OutgoingPacket outgoingPacket = _Client.Network.new OutgoingPacket(this, data);
+		NetworkManager.OutgoingPacket outgoingPacket = _Client.Network.new OutgoingPacket(this, type, data);
 
 		// Send ACK and logout packets directly, everything else goes through
 		// the queue
@@ -1449,8 +1449,8 @@ public class Simulator extends Thread
 					{
 						if (_Client.Settings.LOG_RESENDS)
 						{
-							Logger.DebugLog(String.format("Resending packet #%d, %d ms have passed",
-									outgoing.SequenceNumber, now - outgoing.TickCount), _Client);
+							Logger.DebugLog(String.format("Resending %s packet #%d, %d ms have passed",
+									outgoing.Type, outgoing.SequenceNumber, now - outgoing.TickCount), _Client);
 						}
 
 						// The TickCount will be set to the current time when
