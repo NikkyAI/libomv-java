@@ -81,10 +81,10 @@ public class Helpers
 
 	public static final double DOUBLE_MAG_THRESHOLD = 1E-14f;
 	public static final float FLOAT_MAG_THRESHOLD = 1E-7f;
-	public static final float E = (float) Math.E;
+//	public static final float E = (float) Math.E;
 	public static final float LOG10E = 0.4342945f;
 	public static final float LOG2E = 1.442695f;
-	public static final float PI = (float) Math.PI;
+//	public static final float PI = (float) Math.PI;
 	public static final float TWO_PI = (float) (Math.PI * 2.0d);
 	public static final float PI_OVER_TWO = (float) (Math.PI / 2.0d);
 	public static final float PI_OVER_FOUR = (float) (Math.PI / 4.0d);
@@ -1170,51 +1170,62 @@ public class Helpers
 		return Double.longBitsToDouble(BytesToInt64B(bytes, pos));
 	}
 
-	private static float FixedToFloat(float fixedVal, boolean signed, int intBits, int fracBits)
+	/**
+	 * Convert a fixed point binary value in a byte array into a floating point value
+	 * 
+	 * Note: This is a specific floating point format used by the Second Life protocol
+	 * and works somewhat different for signed numbers, than what IEEE-754 derived schemes
+	 * would use.
+	 * 
+	 * number          SL-FP               IEEE-754
+	 *   MIN_NUM       000000000           11111111111
+	 *   0.0           100000000           00000000000
+	 *   MAX_NUM       111111111           01111111111
+	 *   
+	 * @param fixedVal
+	 * @param signed
+	 * @param intBits
+	 * @param fracBits
+	 * @return
+	 */
+	private static float FixedToFloat(long fixedVal, boolean signed, int intBits, int fracBits)
 	{
-		int minVal;
-		int maxVal;
+		int maxVal = 1 << intBits;
+		double floatVal = fixedVal / (1 << fracBits);
 
 		if (signed)
 		{
-			minVal = 1 << intBits;
-			minVal *= -1;
+			floatVal -= maxVal;
 		}
-		maxVal = 1 << intBits;
-		fixedVal /= (1 << fracBits);
-
-		if (signed)
-		{
-			fixedVal -= maxVal;
-		}
-		return fixedVal;
+		return (float)floatVal;
 	}
 
 	public static float BytesToFixedL(byte[] bytes, int pos, boolean signed, int intBits, int fracBits)
 	{
 		int totalBits = intBits + fracBits;
-		float fixedVal;
+		long fixedVal, mask;
 
 		if (signed)
 		{
 			totalBits++;
 		}
 
+		mask = (1 << totalBits) - 1;
 		if (totalBits <= 8)
 		{
-			fixedVal = bytes[pos];
+			fixedVal = bytes[pos] & mask;
 		}
 		else if (totalBits <= 16)
 		{
-			fixedVal = BytesToUInt16L(bytes, pos);
+			fixedVal = BytesToUInt16L(bytes, pos) & mask;
 		}
 		else if (totalBits <= 32)
 		{
-			fixedVal = BytesToUInt32L(bytes, pos);
+			fixedVal = BytesToUInt32L(bytes, pos) & mask;
 		}
 		else
 		{
-			fixedVal = BytesToUInt64L(bytes, pos);
+			return 0.0f;
 		}
 		return FixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
@@ -1222,29 +1233,29 @@ public class Helpers
 	public static float BytesToFixedB(byte[] bytes, int pos, boolean signed, int intBits, int fracBits)
 	{
 		int totalBits = intBits + fracBits;
-		;
-		float fixedVal;
+		long fixedVal, mask;
 
 		if (signed)
 		{
 			totalBits++;
 		}
 
+		mask = (1 << totalBits) - 1;
 		if (totalBits <= 8)
 		{
-			fixedVal = bytes[pos];
+			fixedVal = bytes[pos] & mask;
 		}
 		else if (totalBits <= 16)
 		{
-			fixedVal = BytesToUInt16B(bytes, pos);
+			fixedVal = BytesToUInt16B(bytes, pos) & mask;
 		}
 		else if (totalBits <= 32)
 		{
-			fixedVal = BytesToUInt32B(bytes, pos);
+			fixedVal = BytesToUInt32B(bytes, pos) & mask;
 		}
 		else
 		{
-			fixedVal = BytesToUInt64B(bytes, pos);
+			return 0.0f;
 		}
 		return FixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
@@ -2036,14 +2047,14 @@ public class Helpers
 
 	public static short TERotationShort(float rotation)
 	{
-		final double TWO_PI = Math.PI * 2.0d;
+		final double TWO_PI = 6.283185307179586476925286766559d;
 		double remainder = Math.IEEEremainder(rotation, TWO_PI);
-		return (short) Math.round((remainder / TWO_PI) * 32767.0d);
+		return (short) Math.round(((remainder / TWO_PI) * 32767.0f) + 0.5f);
 	}
 
 	public static float TERotationFloat(byte[] bytes, int pos)
 	{
-		final float TWO_PI = (float) (Math.PI * 2.0d);
+		final float TWO_PI = 6.283185307179586476925286766559f;
 		return ((bytes[pos] | (bytes[pos + 1] << 8)) / 32767.0f) * TWO_PI;
 	}
 
@@ -2425,14 +2436,15 @@ public class Helpers
 			}
 		};
 
-		URL dirURL = clazz.getClassLoader().getResource(path);
+		URL dirURL = getBaseFileURL(clazz);
 		if (dirURL != null && dirURL.getProtocol().equals("file"))
 		{
 			/* A file path: easy enough */
+			File filepath = new File(dirURL.toURI().resolve(path));
 			if (excludeDirs && regex == null)
-				return new File(dirURL.toURI()).list();
+				return filepath.list();
 			
-			File[] files = new File(dirURL.toURI()).listFiles(filter);
+			File[] files = filepath.listFiles(filter);
 			String[] names = new String[files.length];
 			for (int i = 0; i < files.length; i++)
 			{
