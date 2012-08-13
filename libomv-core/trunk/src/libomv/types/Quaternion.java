@@ -672,8 +672,8 @@ public class Quaternion
 			q2.Z = -q1.W;
 			q2.W = q1.Z;
 
-			scale = (float) Math.sin(Helpers.PI * (0.5f - amount));
-			invscale = (float) Math.sin(Helpers.PI * amount);
+			scale = (float) Math.sin(Math.PI * (0.5f - amount));
+			invscale = (float) Math.sin(Math.PI * amount);
 		}
 		return new Quaternion(q1.X * scale + q2.X * invscale, q1.Y * scale + q2.Y * invscale,
 				              q1.Z * scale + q2.Z * invscale, q1.W * scale + q2.W * invscale);
