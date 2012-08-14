@@ -50,7 +50,7 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.PushbackReader;
 
-public final class LLSDJson
+public final class LLSDNotation
 {
 	private static final String baseIndent = "  ";
 

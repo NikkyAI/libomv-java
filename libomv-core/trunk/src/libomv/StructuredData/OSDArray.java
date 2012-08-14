@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import libomv.StructuredData.LLSD.LLSDJson;
+import libomv.StructuredData.LLSD.LLSDNotation;
 import libomv.types.Color4;
 import libomv.types.Quaternion;
 import libomv.types.Vector2;
@@ -362,7 +362,7 @@ public class OSDArray extends OSD implements List<OSD>
 	{
 		try
 		{
-			return LLSDJson.serializeToString(this);
+			return LLSDNotation.serializeToString(this);
 		}
 		catch (IOException ex)
 		{

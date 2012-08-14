@@ -46,10 +46,9 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.commons.io.input.ReaderInputStream;
-import org.apache.commons.io.output.WriterOutputStream;
 
 import libomv.StructuredData.LLSD.LLSDBinary;
-import libomv.StructuredData.LLSD.LLSDJson;
+import libomv.StructuredData.LLSD.LLSDNotation;
 import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.types.Color4;
 import libomv.types.UUID;
@@ -500,7 +499,7 @@ public class OSD
 				LLSDBinary.serialize(writer, this, Helpers.UTF8_ENCODING);
 				break;
 			case Json:
-				LLSDJson.serialize(writer, this);
+				LLSDNotation.serialize(writer, this);
 				break;
 			case Xml:
 				LLSDXml.serialize(writer, this);
@@ -516,7 +515,7 @@ public class OSD
 				LLSDBinary.serialize(stream, this);
 				break;
 			case Json:
-				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDNotation.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
 				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
@@ -531,7 +530,7 @@ public class OSD
 			case Binary:
 				return LLSDBinary.serializeToString(this, Helpers.UTF8_ENCODING);
 			case Json:
-				return LLSDJson.serializeToString(this);
+				return LLSDNotation.serializeToString(this);
 			case Xml:
 				return LLSDXml.serializeToString(this);
 		}
@@ -547,7 +546,7 @@ public class OSD
 				LLSDBinary.serialize(stream, this);
 				break;
 			case Json:
-				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDNotation.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
 				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
@@ -574,7 +573,7 @@ public class OSD
 		{
 			return LLSDXml.parse(reader);
 		}
-		return LLSDJson.parse(reader);
+		return LLSDNotation.parse(reader);
 	}
 
 	public static OSD parse(InputStream instream, String encoding) throws IOException, ParseException
@@ -595,7 +594,7 @@ public class OSD
 		{
 			return LLSDXml.parse(stream, encoding);
 		}
-		return LLSDJson.parse(stream, encoding);
+		return LLSDNotation.parse(stream, encoding);
 	}
 
 	public static OSD parse(String string) throws IOException, ParseException
@@ -611,7 +610,7 @@ public class OSD
 		{
 			return LLSDXml.parse(string);
 		}
-		return LLSDJson.parse(string);
+		return LLSDNotation.parse(string);
 	}
 
 	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
@@ -627,7 +626,7 @@ public class OSD
 		{
 			return LLSDXml.parse(data, encoding);
 		}
-		return LLSDJson.parse(data, encoding);
+		return LLSDNotation.parse(data, encoding);
 	}
 
 	/**
