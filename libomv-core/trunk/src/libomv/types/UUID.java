@@ -210,6 +210,9 @@ public class UUID implements Serializable
 	 */
 	public boolean FromString(String string)
 	{
+		// Always create new data array to prevent overwriting byref data
+		data = new byte[16];
+
 		if (string.length() >= 38 && string.charAt(0) == '{' && string.charAt(37) == '}')
 		{
 			string = string.substring(1, 37);
@@ -218,24 +221,23 @@ public class UUID implements Serializable
 		{
 			string = string.substring(0, 36);
 		}
-
-		if (string.length() == 36)
+		// Any valid string is now either 32 or 36 bytes long
+		if (string.length() == 36 && string.charAt(8) == '-' && string.charAt(13) == '-' && 
+				                     string.charAt(18) == '-' && string.charAt(23) == '-')
 		{
 			string = string.substring(0, 36).replaceAll("-", "");
 		}
 
-		if (string.length() != 32)
+		// Any valid string contains now only hexadecimal characters in its first 32 bytes	
+		if (string.length() >= 32 && !string.substring(0, 32).matches("^0-9a-fA-F"))
 		{
-			string = string.substring(0, 32);
+			for (int i = 0; i < 16; ++i)
+			{
+				data[i] = (byte) Integer.parseInt(string.substring(i * 2, (i * 2) + 2), 16);
+			}
+			return true;
 		}
-
-		// Always create new data array to prevent overwriting byref data
-		data = new byte[16];
-		for (int i = 0; i < 16; ++i)
-		{
-			data[i] = (byte) Integer.parseInt(string.substring(i * 2, (i * 2) + 2), 16);
-		}
-		return true;
+		return false;
 	}
 
 	/**
