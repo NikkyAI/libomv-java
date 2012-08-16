@@ -93,7 +93,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	{
 		try
 		{
-			return LLSDJson.serializeToString(this);
+			return LLSDNotation.serializeToString(this);
 		}
 		catch (IOException e)
 		{
