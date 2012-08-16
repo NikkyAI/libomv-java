@@ -49,7 +49,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.LLSD.LLSDJson;
+import libomv.StructuredData.LLSD.LLSDNotation;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsClient;
 import libomv.inventory.InventoryFolder;
@@ -87,8 +87,7 @@ public class LoginManager
 		 */
 		public int Timeout;
 		/**
-		 * The request method login_to_simulator is currently the only supported
-		 * method
+		 * The request method login_to_simulator is currently the only supported method
 		 */
 		public String MethodName;
 		/** The Agents First name */
@@ -311,57 +310,58 @@ public class LoginManager
 		 */
 		private void ParseLoginReply(OSDMap reply)
 		{
-			AgentID = reply.get("agent_id").AsUUID();
-			SessionID = reply.get("session_id").AsUUID();
-			SecureSessionID = reply.get("secure_session_id").AsUUID();
-			FirstName = reply.get("first_name").AsString();
-			LastName = reply.get("last_name").AsString();
-			StartLocation = reply.get("start_location").AsString();
-			AgentAccess = reply.get("agent_access").AsString();
-			LookAt = reply.get("look_at").AsVector3();
-			Reason = reply.get("reason").AsString();
-			Message = reply.get("message").AsString();
-
-			Login = reply.get("login").AsString();
-			Success = reply.get("login").AsBoolean();
-
-			// Home
-			OSD osdHome = null;
 			try
 			{
-				osdHome = LLSDJson.parse(reply.get("home").AsString());
+				AgentID = reply.get("agent_id").AsUUID();
+				SessionID = reply.get("session_id").AsUUID();
+				SecureSessionID = reply.get("secure_session_id").AsUUID();
+				FirstName = reply.get("first_name").AsString();
+				LastName = reply.get("last_name").AsString();
+				StartLocation = reply.get("start_location").AsString();
+				AgentAccess = reply.get("agent_access").AsString();
+				LookAt = ParseVector3("look_at", reply);
+				Reason = reply.get("reason").AsString();
+				Message = reply.get("message").AsString();
+
+				if (reply.containsKey("login"))	
+				{
+					Login = reply.get("login").AsString();
+					Success = reply.get("login").AsBoolean();
+
+					// Parse redirect options
+					if (Login.equals("indeterminate"))
+					{
+						if (reply.containsKey("next_url"))
+							NextUrl = reply.get("next_url").AsString();
+						if (reply.containsKey("next_duration"))
+							NextDuration = reply.get("next_duration").AsUInteger();
+						if (reply.containsKey("next_method"))
+							NextMethod = reply.get("next_method").AsString();
+						if (reply.containsKey("next_options"))
+						{
+							OSD osd = reply.get("next_options");
+							if (osd.getType().equals(OSDType.Array))
+								NextOptions = ((OSDArray)osd).toArray(NextOptions);
+						}
+					}
+				}
+
+				// Home
+				HomeRegion = 0;
+				HomePosition = Vector3.Zero;
+				HomeLookAt = Vector3.Zero;
+				if (reply.containsKey("home"))
+				{
+					ParseHome(reply.get("home").AsString());
+				}
 			}
 			catch (Exception ex)
 			{
 				Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
 			}
 
-			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
-			{
-				OSDMap home = (OSDMap) osdHome;
-
-				OSD homeRegion = home.get("region_handle");
-				if (homeRegion != null && homeRegion.getType().equals(OSDType.Array))
-				{
-					OSDArray homeArray = (OSDArray) homeRegion;
-					if (homeArray.size() == 2)
-					{
-						HomeRegion = Helpers.UIntsToLong(homeArray.get(0).AsInteger(), homeArray.get(1).AsInteger());
-					}
-					else
-					{
-						HomeRegion = 0;
-					}
-				}
-				HomePosition = home.get("position").AsVector3();
-				HomeLookAt = home.get("look_at").AsVector3();
-			}
-			else
-			{
-				HomeRegion = 0;
-				HomePosition = Vector3.Zero;
-				HomeLookAt = Vector3.Zero;
-			}
+			if (!Success)
+				return;
 
 			CircuitCode = reply.get("circuit_code").AsUInteger();
 			RegionX = reply.get("region_x").AsUInteger();
@@ -473,6 +473,15 @@ public class LoginManager
 						NextOptions = ParseArray("next_options", reply);
 					}
 				}
+
+				// Home
+				HomeRegion = 0;
+				HomePosition = Vector3.Zero;
+				HomeLookAt = Vector3.Zero;
+				if (reply.containsKey("home"))
+				{
+					ParseHome(reply.get("home").toString());
+				}
 			}
 			catch (Exception ex)
 			{
@@ -480,51 +489,7 @@ public class LoginManager
 			}
 
 			if (!Success)
-			{
 				return;
-			}
-
-			// Home
-			if (reply.containsKey("home"))
-			{
-				OSD osdHome = null;
-				try
-				{
-					osdHome = LLSDJson.parse(reply.get("home").toString());
-				}
-				catch (Exception ex)
-				{
-					Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
-				}
-
-				if (osdHome != null && osdHome.getType().equals(OSDType.Map))
-				{
-					OSDMap home = (OSDMap) osdHome;
-
-					OSD homeRegion = home.get("region_handle");
-					if (homeRegion != null && homeRegion.getType().equals(OSDType.Array))
-					{
-						OSDArray homeArray = (OSDArray) homeRegion;
-						if (homeArray.size() == 2)
-						{
-							HomeRegion = Helpers.UIntsToLong(homeArray.get(0).AsUInteger(), homeArray.get(1)
-									.AsUInteger());
-						}
-						else
-						{
-							HomeRegion = 0;
-						}
-					}
-					HomePosition = home.get("position").AsVector3();
-					HomeLookAt = home.get("look_at").AsVector3();
-				}
-			}
-			else
-			{
-				HomeRegion = 0;
-				HomePosition = Vector3.Zero;
-				HomeLookAt = Vector3.Zero;
-			}
 
 			CircuitCode = ParseUInt("circuit_code", reply);
 			RegionX = ParseUInt("region_x", reply);
@@ -592,6 +557,27 @@ public class LoginManager
             {
                 XMPPHost = ParseString("xmpp_host", reply);
             }
+		}
+
+		private void ParseHome(String value) throws ParseException, IOException
+		{
+			OSD osdHome = LLSDNotation.parse(value);
+			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
+			{
+				OSDMap home = (OSDMap) osdHome;
+
+				OSD homeRegion = home.get("region_handle");
+				if (homeRegion != null && homeRegion.getType().equals(OSDType.Array))
+				{
+					OSDArray homeArray = (OSDArray) homeRegion;
+					if (homeArray.size() == 2)
+					{
+						HomeRegion = Helpers.UIntsToLong(homeArray.get(0).AsInteger(), homeArray.get(1).AsInteger());
+					}
+				}
+				HomePosition = ParseVector3("position", home);
+				HomeLookAt = ParseVector3("look_at", home);
+			}
 		}
 
 		private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply)
@@ -1385,6 +1371,23 @@ public class LoginManager
 		return Helpers.EmptyString;
 	}
 
+	private static Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException
+	{
+		if (reply.containsKey(key))
+		{
+			OSD osd = reply.get(key);
+			if (osd.getType().equals(OSDType.String))
+			{
+				osd = LLSDNotation.parse(osd.AsString());
+			}
+			if (osd != null && osd.getType().equals(OSDType.Array))
+			{
+				return osd.AsVector3();
+			}
+		}
+		return Vector3.Zero;
+	}
+
 	private static Vector3 ParseVector3(String key, Map<String, Object> reply) throws ParseException, IOException
 	{
 		if (reply.containsKey(key))
@@ -1406,7 +1409,7 @@ public class LoginManager
 			}
 			else if (value instanceof String)
 			{
-				OSD osd = LLSDJson.parse((String) value);
+				OSD osd = LLSDNotation.parse((String) value);
 				if (osd != null && osd.getType().equals(OSDType.Array))
 					return ((OSDArray) osd).AsVector3();
 			}
