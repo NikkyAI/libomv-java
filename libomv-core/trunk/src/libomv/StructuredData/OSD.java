@@ -48,6 +48,7 @@ import java.util.Date;
 import org.apache.commons.io.input.ReaderInputStream;
 
 import libomv.StructuredData.LLSD.LLSDBinary;
+import libomv.StructuredData.LLSD.LLSDJson;
 import libomv.StructuredData.LLSD.LLSDNotation;
 import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.types.Color4;
@@ -62,8 +63,9 @@ import libomv.utils.Helpers;
 public class OSD
 {
 	protected static final String FRACT_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss.SS'Z'";
-	protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";;
+	protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";
 	private static final String LLSD_BINARY_HEADER = "<?llsd/binary?>";
+	private static final String LLSD_NOTATION_HEADER = "<?llsd/notation?>";
 	private static final String LLSD_XML_HEADER = "<llsd>";
 	private static final String LLSD_XML_ALT_HEADER = "<?xml";
 	private static final String LLSD_XML_ALT2_HEADER = "<?llsd/xml?>";
@@ -75,7 +77,7 @@ public class OSD
 
 	public enum OSDFormat
 	{
-		Xml, Json, Binary;
+		Xml, Json, Notation, Binary;
 		
 		public static String contentType(OSDFormat format)
 		{
@@ -85,6 +87,8 @@ public class OSD
 					return "application/llsd+xml";
 				case Binary:
 					return "application/llsd+binary";
+				case Notation:
+					return "application/llsd+notation";
 			}
 			return "application/llsd+json";
 		}
@@ -498,11 +502,14 @@ public class OSD
 			case Binary:
 				LLSDBinary.serialize(writer, this, Helpers.UTF8_ENCODING);
 				break;
-			case Json:
+			case Notation:
 				LLSDNotation.serialize(writer, this);
 				break;
 			case Xml:
 				LLSDXml.serialize(writer, this);
+				break;
+			case Json:
+				LLSDJson.serialize(writer, this);
 				break;
 		}
 	}
@@ -514,11 +521,14 @@ public class OSD
 			case Binary:
 				LLSDBinary.serialize(stream, this);
 				break;
-			case Json:
+			case Notation:
 				LLSDNotation.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
 				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
+				break;
+			case Json:
+				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 		}
 	}
@@ -529,10 +539,12 @@ public class OSD
 		{
 			case Binary:
 				return LLSDBinary.serializeToString(this, Helpers.UTF8_ENCODING);
-			case Json:
+			case Notation:
 				return LLSDNotation.serializeToString(this);
 			case Xml:
 				return LLSDXml.serializeToString(this);
+			case Json:
+				return LLSDJson.serializeToString(this);
 		}
 		return null;
 	}
@@ -545,11 +557,14 @@ public class OSD
 			case Binary:
 				LLSDBinary.serialize(stream, this);
 				break;
-			case Json:
+			case Notation:
 				LLSDNotation.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
 				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
+				break;
+			case Json:
+				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 		}
 		return stream.toByteArray();
@@ -567,13 +582,17 @@ public class OSD
 		{
 			return LLSDBinary.parse(new ReaderInputStream(reader, Helpers.ASCII_ENCODING));
 		}
+		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		{
+			return LLSDNotation.parse(reader);
+		}
 		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
 			return LLSDXml.parse(reader);
 		}
-		return LLSDNotation.parse(reader);
+		return LLSDJson.parse(reader);
 	}
 
 	public static OSD parse(InputStream instream, String encoding) throws IOException, ParseException
@@ -588,13 +607,17 @@ public class OSD
 		{
 			return LLSDBinary.parse(stream);
 		}
+		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		{
+			return LLSDNotation.parse(stream, encoding);
+		}
 		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
 			return LLSDXml.parse(stream, encoding);
 		}
-		return LLSDNotation.parse(stream, encoding);
+		return LLSDJson.parse(stream, encoding);
 	}
 
 	public static OSD parse(String string) throws IOException, ParseException
@@ -604,13 +627,17 @@ public class OSD
 			InputStream stream = new ReaderInputStream(new StringReader(string));
 			return LLSDBinary.parse(stream);
 		}
+		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		{
+			return LLSDNotation.parse(string);
+		}
 		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
 			return LLSDXml.parse(string);
 		}
-		return LLSDNotation.parse(string);
+		return LLSDJson.parse(string);
 	}
 
 	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
@@ -620,13 +647,17 @@ public class OSD
 		{
 			return LLSDBinary.parse(new ByteArrayInputStream(data));
 		}
+		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		{
+			return LLSDNotation.parse(data, encoding);
+		}
 		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
 				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
 		{
 			return LLSDXml.parse(data, encoding);
 		}
-		return LLSDNotation.parse(data, encoding);
+		return LLSDJson.parse(data, encoding);
 	}
 
 	/**

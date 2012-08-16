@@ -26,6 +26,7 @@
  */
 package libomv.StructuredData;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -68,7 +69,11 @@ public class OSDBinary extends OSD
 	@Override
 	public String AsString()
 	{
-		return new String(Base64.encodeBase64(value));
+		try {
+			return Helpers.BytesToString(value);
+		}
+		catch (UnsupportedEncodingException e) { }
+		return null;
 	}
 
 	@Override

@@ -362,7 +362,7 @@ public class OSDArray extends OSD implements List<OSD>
 	{
 		try
 		{
-			return LLSDNotation.serializeToString(this);
+			return LLSDJson.serializeToString(this);
 		}
 		catch (IOException ex)
 		{
