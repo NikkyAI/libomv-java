@@ -1557,7 +1557,7 @@ public class Helpers
 
 	private static float FloatToFixed(float data, boolean isSigned, int intBits, int fracBits)
 	{
-		int min, max;
+		int min, max = 1 << intBits;
 
 		if (isSigned)
 		{
@@ -1568,8 +1568,6 @@ public class Helpers
 		{
 			min = 0;
 		}
-
-		max = 1 << intBits;
 
 		float fixedVal = Clamp(data, min, max);
 		if (isSigned)
