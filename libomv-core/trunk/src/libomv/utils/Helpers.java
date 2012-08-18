@@ -947,8 +947,8 @@ public class Helpers
 		{
 			return 0;
 		}
-		long low = (((bytes[pos + 0] & 0xff) >> 0) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
-		long high = (((bytes[pos + 4] & 0xff) >> 0) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
+		long low = (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
+		long high = (((bytes[pos + 4] & 0xff) << 0) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
 		return (high << 32) + (low & 0xffffffff);
 	}
 
@@ -963,8 +963,8 @@ public class Helpers
 		{
 			return 0;
 		}
-		long high = (((bytes[pos + 0] & 0xff) >> 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
-		long low = (((bytes[pos + 4] & 0xff) >> 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + ((bytes[pos + 7] & 0xff) << 0));
+		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
+		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + ((bytes[pos + 7] & 0xff) << 0));
 		return (high << 32) + (low & 0xffffffff);
 	}
 
