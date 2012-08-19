@@ -280,6 +280,8 @@ public final class LLSDXml
 	 * Serialize an hierarchical OSD object into an OSD XML string
 	 * 
 	 * @param data The hierarchical OSD object to serialize
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
 	 * @return an OSD XML formatted string
 	 * @throws IOException
 	 */

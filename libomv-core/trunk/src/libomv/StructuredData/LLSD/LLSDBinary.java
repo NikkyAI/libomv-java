@@ -58,7 +58,7 @@ public final class LLSDBinary
 	private static final int doubleLength = 8;
 
 	private static final byte[] llsdBinaryHead = { '<','?','l','l','s','d','/','b','i','n','a','r','y','?','>'};
-    private static final byte[] llsdBinaryHead2 = { '<','?',' ','l','l','s','d','/','b','i','n','a','r','y',' ','?','>'};
+	private static final byte[] llsdBinaryHead2 = { '<','?',' ','l','l','s','d','/','b','i','n','a','r','y',' ','?','>'};
 
 	private static final byte undefBinaryValue = (byte) '!';
 	private static final byte trueBinaryValue = (byte) '1';
@@ -75,6 +75,8 @@ public final class LLSDBinary
 	private static final byte mapBeginBinaryMarker = (byte) '{';
 	private static final byte mapEndBinaryMarker = (byte) '}';
 	private static final byte keyBinaryMarker = (byte) 'k';
+	private static final byte doubleQuotesNotationMarker = '"';
+	private static final byte singleQuotesNotationMarker = '\'';
 
 	/**
 	 * Creates an OSD (object structured data) object from a LLSD binary data stream
@@ -104,6 +106,8 @@ public final class LLSDBinary
 	 * Serialize an hierarchical OSD object into an LLSD Binary string
 	 * 
 	 * @param data The hierarchical OSD object to serialize
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
 	 * @return an OSD XML formatted string
 	 * @throws IOException
 	 */
@@ -120,6 +124,31 @@ public final class LLSDBinary
 			writer.close();
 		}
 	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Binary string
+	 * 
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader The hierarchical OSD object to serialize
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
+	 * @return an OSD XML formatted string
+	 * @throws IOException
+	 */
+	public static String serializeToString(OSD data, boolean prependHeader, String encoding) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(new WriterOutputStream(writer, encoding), data, prependHeader);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();
+		}
+	}
+
 	/**
 	 * Serialize an hierarchical OSD object into an LLSD Binary writer
 	 * 
@@ -133,6 +162,22 @@ public final class LLSDBinary
 	public static void serialize(Writer writer, OSD data, String encoding) throws IOException
 	{
 		serialize(new WriterOutputStream(writer, encoding), data, true);
+	}
+	
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Binary writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
+	 * @param prependHead The hierarchical OSD object to serialize
+	 * @throws IOException
+	 */
+	public static void serialize(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
+	{
+		serialize(new WriterOutputStream(writer, encoding), data, prependHeader);
 	}
 	
 	/**
@@ -152,7 +197,7 @@ public final class LLSDBinary
 	 * 
 	 * @param stream The binary byte stream to write the OSD object into
 	 * @param data The hierarchical OSD object to serialize
-	 * @param prependHead The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
 	 * @throws IOException
 	 */
 	public static void serialize(OutputStream stream, OSD data, boolean prependHeader) throws IOException
@@ -162,10 +207,10 @@ public final class LLSDBinary
 			stream.write(llsdBinaryHead);
 			stream.write('\n');
 		}
-		serializeLLSDBinaryElement(stream, data);
+		serializeElement(stream, data);
 	}
 
-	private static void serializeLLSDBinaryElement(OutputStream stream, OSD osd) throws IOException
+	private static void serializeElement(OutputStream stream, OSD osd) throws IOException
 	{
 		byte[] rawBinary;
 
@@ -212,29 +257,29 @@ public final class LLSDBinary
 				stream.write(rawBinary, 0, rawBinary.length);
 				break;
 			case Array:
-				serializeLLSDBinaryArray(stream, (OSDArray) osd);
+				serializeArray(stream, (OSDArray) osd);
 				break;
 			case Map:
-				serializeLLSDBinaryMap(stream, (OSDMap) osd);
+				serializeMap(stream, (OSDMap) osd);
 				break;
 			default:
 				throw new IOException("Binary serialization: Not existing element discovered.");
 		}
 	}
 
-	private static void serializeLLSDBinaryArray(OutputStream stream, OSDArray osdArray) throws IOException
+	private static void serializeArray(OutputStream stream, OSDArray osdArray) throws IOException
 	{
 		stream.write(arrayBeginBinaryMarker);
 		stream.write(Helpers.Int32ToBytesB(osdArray.size()));
 
 		for (OSD osd : osdArray)
 		{
-			serializeLLSDBinaryElement(stream, osd);
+			serializeElement(stream, osd);
 		}
 		stream.write(arrayEndBinaryMarker);
 	}
 
-	private static void serializeLLSDBinaryMap(OutputStream stream, OSDMap osdMap) throws IOException
+	private static void serializeMap(OutputStream stream, OSDMap osdMap) throws IOException
 	{
 		stream.write(mapBeginBinaryMarker);
 		stream.write(Helpers.Int32ToBytesB(osdMap.size()));
@@ -244,7 +289,7 @@ public final class LLSDBinary
 			stream.write(keyBinaryMarker);
 			stream.write(Helpers.Int32ToBytesB(kvp.getKey().length()));
 			stream.write(kvp.getKey().getBytes(Helpers.UTF8_ENCODING), 0, kvp.getKey().length());
-			serializeLLSDBinaryElement(stream, kvp.getValue());
+			serializeElement(stream, kvp.getValue());
 		}
 		stream.write(mapEndBinaryMarker);
 	}
@@ -286,6 +331,9 @@ public final class LLSDBinary
 				int binaryLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 				osd = OSD.FromBinary(consumeBytes(stream, binaryLength));
 				break;
+			case doubleQuotesNotationMarker:
+			case singleQuotesNotationMarker:
+				throw new ParseException("Binary LLSD parsing: LLSD Notation Format strings are not yet supported",	stream.getBytePosition());
 			case stringBinaryMarker:
 				int stringLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 				osd = OSD.FromString(new String(consumeBytes(stream, stringLength), Helpers.UTF8_ENCODING));
@@ -305,6 +353,9 @@ public final class LLSDBinary
 				osd = OSD.FromUri(uri);
 				break;
 			case dateBinaryMarker:
+				/* LLSD Wiki says that the double is also in network byte order, like the real numbers but Openmetaverse as well as the
+				 * LLSDBinaryParser::doParse in llsdserialize.cpp clearly do not do any byteswapping. 
+				 */
 				double timestamp = Helpers.BytesToDoubleL(consumeBytes(stream, doubleLength), 0);
 				osd = OSD.FromDate(Helpers.UnixTimeToDateTime(timestamp));
 				break;

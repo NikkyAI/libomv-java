@@ -52,6 +52,7 @@ import libomv.utils.PushbackReader;
 
 public final class LLSDJson
 {
+	private static final String llsdJSONHeader = "<?llsd/json?>";
 	private static final String baseIndent = "  ";
 
 	private static final char[] newLine = { '\n' };
@@ -153,7 +154,22 @@ public final class LLSDJson
 	 */
 	public static void serialize(OutputStream stream, OSD data, String encoding) throws IOException
 	{
-		serializeElement(new OutputStreamWriter(stream, encoding), data);
+		serialize(new OutputStreamWriter(stream, encoding), data, true);
+	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an JSON string
+	 * 
+	 * @param stream The hierarchical JSON byte stream
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
+	 * @throws IOException
+	 */
+	public static void serialize(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
+	{
+		serialize(new OutputStreamWriter(stream, encoding), data, prependHeader);
 	}
 
 	/**
@@ -165,9 +181,27 @@ public final class LLSDJson
 	 */
 	public static void serialize(Writer writer, OSD data) throws IOException
 	{
-		serializeElement(writer, data);
+		serialize(writer, data, true);
 	}
 	
+	/**
+	 * Serialize an hierarchical OSD object into an JSON writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @throws IOException
+	 */
+	public static void serialize(Writer writer, OSD data, boolean prependHeader) throws IOException
+	{
+		if (prependHeader)
+		{
+			writer.write(llsdJSONHeader);
+			writer.write('\n');
+		}
+		serializeElement(writer, data);
+	}
+
 	/**
 	 * Serialize an hierarchical OSD object into an JSON string
 	 * 
@@ -180,7 +214,29 @@ public final class LLSDJson
 		Writer writer = new StringWriter();
 		try
 		{
-			serializeElement(writer, data);
+			serialize(writer, data, true);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();
+		}
+	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an JSON string
+	 * 
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @return an JSON formatted string
+	 * @throws IOException
+	 */
+	public static String serializeToString(OSD data, boolean prependHeader) throws IOException
+	{
+		Writer writer = new StringWriter();
+		try
+		{
+			serialize(writer, data, prependHeader);
 			return writer.toString();
 		}
 		finally

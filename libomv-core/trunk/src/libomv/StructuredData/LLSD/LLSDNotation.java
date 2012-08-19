@@ -52,6 +52,8 @@ import libomv.utils.PushbackReader;
 
 public final class LLSDNotation
 {
+	private static final String llsdNotationHeader = "<?llsd/notation?>";
+
 	private static final String baseIndent = "  ";
 
 	private static final char[] newLine = { '\n' };
@@ -174,7 +176,22 @@ public final class LLSDNotation
 	 */
 	public static void serialize(OutputStream stream, OSD data, String encoding) throws IOException
 	{
-		serializeElement(new OutputStreamWriter(stream, encoding), data);
+		serialize(new OutputStreamWriter(stream, encoding), data, true);
+	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation string
+	 * 
+	 * @param stream The hierarchical LLSD Notation byte stream
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @param encoding The text encoding to use when converting the text into
+	 *            a byte stream
+	 * @throws IOException
+	 */
+	public static void serialize(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
+	{
+		serialize(new OutputStreamWriter(stream, encoding), data, prependHeader);
 	}
 
 	/**
@@ -186,6 +203,24 @@ public final class LLSDNotation
 	 */
 	public static void serialize(Writer writer, OSD data) throws IOException
 	{
+		serialize(writer, data, true);
+	}
+	
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @throws IOException
+	 */
+	public static void serialize(Writer writer, OSD data, boolean prependHeader) throws IOException
+	{
+		if (prependHeader)
+		{
+			writer.write(llsdNotationHeader);
+			writer.write('\n');
+		}
 		serializeElement(writer, data);
 	}
 	
@@ -193,7 +228,7 @@ public final class LLSDNotation
 	 * Serialize an hierarchical OSD object into an LLSD Notation string
 	 * 
 	 * @param data The hierarchical OSD object to serialize
-	 * @return an JSON formatted string
+	 * @return an LLSD Notation formatted string
 	 * @throws IOException
 	 */
 	public static String serializeToString(OSD data) throws IOException
@@ -201,7 +236,29 @@ public final class LLSDNotation
 		Writer writer = new StringWriter();
 		try
 		{
-			serializeElement(writer, data);
+			serialize(writer, data, true);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();
+		}
+	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation string
+	 * 
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @return an JSON formatted string
+	 * @throws IOException
+	 */
+	public static String serializeToString(OSD data, boolean prependHeader) throws IOException
+	{
+		Writer writer = new StringWriter();
+		try
+		{
+			serialize(writer, data, prependHeader);
 			return writer.toString();
 		}
 		finally

@@ -497,74 +497,102 @@ public class OSD
 
 	public void serialize(Writer writer, OSDFormat type) throws IOException
 	{
+		serialize(writer, type, true);
+	}
+	
+	public void serialize(Writer writer, OSDFormat type, boolean prependHeader) throws IOException
+	{
 		switch (type)
 		{
 			case Binary:
-				LLSDBinary.serialize(writer, this, Helpers.UTF8_ENCODING);
+				LLSDBinary.serialize(writer, this, prependHeader, Helpers.ASCII_ENCODING);
 				break;
 			case Notation:
-				LLSDNotation.serialize(writer, this);
+				LLSDNotation.serialize(writer, this, prependHeader);
 				break;
 			case Xml:
+				if (!prependHeader)
+					throw new IOException("Serialization to XML format without header is not supported");
 				LLSDXml.serialize(writer, this);
 				break;
 			case Json:
-				LLSDJson.serialize(writer, this);
+				LLSDJson.serialize(writer, this, prependHeader);
 				break;
 		}
 	}
 
 	public void serialize(OutputStream stream, OSDFormat type) throws IOException
 	{
+		serialize(stream, type, true);
+	}
+	
+	public void serialize(OutputStream stream, OSDFormat type, boolean prependHeader) throws IOException
+	{
 		switch (type)
 		{
 			case Binary:
-				LLSDBinary.serialize(stream, this);
+				LLSDBinary.serialize(stream, this, prependHeader);
 				break;
 			case Notation:
-				LLSDNotation.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDNotation.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
+				if (!prependHeader)
+					throw new IOException("Serialization to XML format without header is not supported");
 				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Json:
-				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDJson.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
 				break;
 		}
 	}
 
 	public String serializeToString(OSDFormat type) throws IOException
 	{
+		return serializeToString(type, true);
+	}
+	
+	public String serializeToString(OSDFormat type, boolean prependHeader) throws IOException
+	{
 		switch (type)
 		{
 			case Binary:
-				return LLSDBinary.serializeToString(this, Helpers.UTF8_ENCODING);
+				return LLSDBinary.serializeToString(this, prependHeader, Helpers.UTF8_ENCODING);
 			case Notation:
-				return LLSDNotation.serializeToString(this);
+				return LLSDNotation.serializeToString(this, prependHeader);
 			case Xml:
+				if (!prependHeader)
+					throw new IOException("Serialization to XML format without header is not supported");
 				return LLSDXml.serializeToString(this);
 			case Json:
-				return LLSDJson.serializeToString(this);
+				return LLSDJson.serializeToString(this, prependHeader);
 		}
 		return null;
 	}
 
 	public byte[] serializeToBytes(OSDFormat type) throws IOException
 	{
+		return serializeToBytes(type, true);
+	}
+	
+	public byte[] serializeToBytes(OSDFormat type, boolean prependHeader) throws IOException
+	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		switch (type)
 		{
 			case Binary:
-				LLSDBinary.serialize(stream, this);
+				LLSDBinary.serialize(stream, this, prependHeader);
 				break;
 			case Notation:
-				LLSDNotation.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDNotation.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
 				break;
 			case Xml:
+				if (!prependHeader)
+					throw new IOException("Serialization to XML format without header is not supported");
 				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
 				break;
 			case Json:
-				LLSDJson.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDJson.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
 				break;
 		}
 		return stream.toByteArray();
