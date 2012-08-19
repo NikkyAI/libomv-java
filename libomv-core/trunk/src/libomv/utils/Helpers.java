@@ -899,7 +899,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) >> 0) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
+		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
 	}
 
 	public static int BytesToInt32B(byte[] bytes)
@@ -913,7 +913,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) >> 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
+		return (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + (bytes[pos + 3] & 0xff));
 	}
 
 	/**
@@ -947,9 +947,9 @@ public class Helpers
 		{
 			return 0;
 		}
-		long low = (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
-		long high = (((bytes[pos + 4] & 0xff) << 0) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
-		return (high << 32) + (low & 0xffffffff);
+		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
+		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
+		return (high << 32) + (low & 0xffffffffL);
 	}
 
 	public static long BytesToInt64B(byte[] bytes)
@@ -963,9 +963,9 @@ public class Helpers
 		{
 			return 0;
 		}
-		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
-		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + ((bytes[pos + 7] & 0xff) << 0));
-		return (high << 32) + (low & 0xffffffff);
+		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + (bytes[pos + 3] & 0xff));
+		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + (bytes[pos + 7] & 0xff));
+		return (high << 32) + (low & 0xffffffffL);
 	}
 
 	/**
@@ -997,7 +997,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8));
+		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8));
 	}
 
 	public static int BytesToUInt16B(byte[] bytes)
@@ -1011,7 +1011,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 0));
+		return (((bytes[pos + 0] & 0xff) << 8) + (bytes[pos + 1] & 0xff));
 	}
 
 	/**
@@ -1045,7 +1045,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		long low = (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16));
+		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16));
 		long high = bytes[pos + 3] & 0xff;
 		return (high << 24) + (0xffffffffL & low);
 	}
@@ -1061,7 +1061,7 @@ public class Helpers
 		{
 			return 0;
 		}
-		long low = (((bytes[pos + 3] & 0xff) << 0) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 16));
+		long low = ((bytes[pos + 3] & 0xff) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 16));
 		long high = bytes[pos + 0] & 0xff;
 		return (high << 24) + (0xffffffffL & low);
 	}
@@ -1101,8 +1101,8 @@ public class Helpers
 		{
 			return 0x7fffffff;
 		}
-		long low = (((bytes[pos + 0] & 0xff) >> 0) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
-		long high = (((bytes[pos + 4] & 0xff) >> 0) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
+		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
+		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
 		return (high << 32) + (low & 0xffffffff);
 	}
 
@@ -1122,8 +1122,8 @@ public class Helpers
 		{
 			return 0x7fffffff;
 		}
-		long high = (((bytes[pos + 0] & 0xff) >> 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 3] & 0xff) << 0));
-		long low = (((bytes[pos + 4] & 0xff) >> 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + ((bytes[pos + 7] & 0xff) << 0));
+		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + (bytes[pos + 3] & 0xff));
+		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + (bytes[pos + 7] & 0xff));
 		return (high << 32) + (low & 0xffffffff);
 	}
 
