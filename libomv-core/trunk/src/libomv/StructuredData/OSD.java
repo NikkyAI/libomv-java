@@ -31,10 +31,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
-import java.io.PushbackReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -45,7 +45,7 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.commons.io.input.ReaderInputStream;
+import org.apache.commons.io.output.WriterOutputStream;
 
 import libomv.StructuredData.LLSD.LLSDBinary;
 import libomv.StructuredData.LLSD.LLSDJson;
@@ -59,16 +59,13 @@ import libomv.types.Vector3d;
 import libomv.types.Vector4;
 import libomv.types.Quaternion;
 import libomv.utils.Helpers;
+import libomv.utils.PushbackInputStream;
+import libomv.utils.PushbackReader;
 
 public class OSD
 {
 	protected static final String FRACT_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss.SS'Z'";
 	protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";
-	private static final String LLSD_BINARY_HEADER = "<?llsd/binary?>";
-	private static final String LLSD_NOTATION_HEADER = "<?llsd/notation?>";
-	private static final String LLSD_XML_HEADER = "<llsd>";
-	private static final String LLSD_XML_ALT_HEADER = "<?xml";
-	private static final String LLSD_XML_ALT2_HEADER = "<?llsd/xml?>";
 
 	public enum OSDType
 	{
@@ -495,153 +492,169 @@ public class OSD
 		}
 	}
 
-	public void serialize(Writer writer, OSDFormat type) throws IOException
+	public static void serialize(Writer writer, OSD data, OSDFormat format) throws IOException
 	{
-		serialize(writer, type, true);
+		serializeToString(data, format, true, null);
+	}
+
+	public static void serialize(Writer writer, OSD data, OSDFormat format, boolean prependHeader) throws IOException
+	{
+		serializeToString(data, format, prependHeader, null);
 	}
 	
-	public void serialize(Writer writer, OSDFormat type, boolean prependHeader) throws IOException
+	public static void serialize(Writer writer, OSD data, OSDFormat format, boolean prependHeader, String encoding) throws IOException
 	{
-		switch (type)
+		switch (format)
 		{
 			case Binary:
-				LLSDBinary.serialize(writer, this, prependHeader, Helpers.ASCII_ENCODING);
+				LLSDBinary.serialize(new WriterOutputStream(writer, encoding != null ? encoding : Helpers.ASCII_ENCODING), data, prependHeader);
 				break;
 			case Notation:
-				LLSDNotation.serialize(writer, this, prependHeader);
+				LLSDNotation.serialize(writer, data, prependHeader);
 				break;
 			case Xml:
-				if (!prependHeader)
-					throw new IOException("Serialization to XML format without header is not supported");
-				LLSDXml.serialize(writer, this);
+				LLSDNotation.serialize(writer, data, prependHeader);
 				break;
 			case Json:
-				LLSDJson.serialize(writer, this, prependHeader);
+				LLSDJson.serialize(writer, data, prependHeader);
 				break;
 		}
 	}
 
-	public void serialize(OutputStream stream, OSDFormat type) throws IOException
+	public static void serialize(OutputStream stream, OSD data, OSDFormat type) throws IOException
 	{
-		serialize(stream, type, true);
+		serialize(stream, data, type, true, null);
 	}
 	
-	public void serialize(OutputStream stream, OSDFormat type, boolean prependHeader) throws IOException
+	public static void serialize(OutputStream stream, OSD data, OSDFormat type, boolean prependHeader) throws IOException
 	{
-		switch (type)
+		serialize(stream, data, type, prependHeader, null);
+	}
+
+	public static void serialize(OutputStream stream, OSD data, OSDFormat format, boolean prependHeader, String encoding) throws IOException
+	{
+		switch (format)
 		{
 			case Binary:
-				LLSDBinary.serialize(stream, this, prependHeader);
+				LLSDBinary.serialize(stream, data, prependHeader);
 				break;
 			case Notation:
-				LLSDNotation.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
+				LLSDNotation.serialize(new OutputStreamWriter(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING), data, prependHeader);
 				break;
 			case Xml:
-				if (!prependHeader)
-					throw new IOException("Serialization to XML format without header is not supported");
-				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
+				LLSDXml.serialize(new OutputStreamWriter(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING), data, prependHeader);
 				break;
 			case Json:
-				LLSDJson.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
+				LLSDJson.serialize(new OutputStreamWriter(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING), data, prependHeader);
 				break;
 		}
 	}
 
-	public String serializeToString(OSDFormat type) throws IOException
+	public static String serializeToString(OSD data, OSDFormat format) throws IOException
 	{
-		return serializeToString(type, true);
-	}
-	
-	public String serializeToString(OSDFormat type, boolean prependHeader) throws IOException
-	{
-		switch (type)
+		StringWriter writer = new StringWriter();
+		try
 		{
-			case Binary:
-				return LLSDBinary.serializeToString(this, prependHeader, Helpers.UTF8_ENCODING);
-			case Notation:
-				return LLSDNotation.serializeToString(this, prependHeader);
-			case Xml:
-				if (!prependHeader)
-					throw new IOException("Serialization to XML format without header is not supported");
-				return LLSDXml.serializeToString(this);
-			case Json:
-				return LLSDJson.serializeToString(this, prependHeader);
+			serialize(writer, data, format, true, null);
+			return writer.toString();
 		}
-		return null;
+		finally
+		{
+			writer.close();			
+		}
 	}
 
-	public byte[] serializeToBytes(OSDFormat type) throws IOException
+	public static String serializeToString(OSD data, OSDFormat format, boolean prependHeader) throws IOException
 	{
-		return serializeToBytes(type, true);
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(writer, data, format, prependHeader, null);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();			
+		}
 	}
 	
-	public byte[] serializeToBytes(OSDFormat type, boolean prependHeader) throws IOException
+	public static String serializeToString(OSD data, OSDFormat format, boolean prependHeader, String encoding) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(writer, data, format, prependHeader, encoding);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();			
+		}
+	}
+
+	public static byte[] serializeToBytes(OSD data, OSDFormat type) throws IOException
+	{
+		return serializeToBytes(data, type, true, null);
+	}
+	
+	public static byte[] serializeToBytes(OSD data, OSDFormat type, boolean prependHeader) throws IOException
+	{
+		return serializeToBytes(data, type, prependHeader, null);
+	}
+
+	public static byte[] serializeToBytes(OSD data, OSDFormat format, boolean prependHeader, String encoding) throws IOException
 	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		switch (type)
+		try
 		{
-			case Binary:
-				LLSDBinary.serialize(stream, this, prependHeader);
-				break;
-			case Notation:
-				LLSDNotation.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
-				break;
-			case Xml:
-				if (!prependHeader)
-					throw new IOException("Serialization to XML format without header is not supported");
-				LLSDXml.serialize(stream, this, Helpers.UTF8_ENCODING);
-				break;
-			case Json:
-				LLSDJson.serialize(stream, this, prependHeader, Helpers.UTF8_ENCODING);
-				break;
+			serialize(stream, data, format, prependHeader, encoding);
+			return stream.toByteArray();
 		}
-		return stream.toByteArray();
+		finally
+		{
+			stream.close();
+		}
 	}
 
 	public static OSD parse(Reader inread) throws IOException, ParseException
 	{
-		char[] head = new char[15];
-		PushbackReader reader = new PushbackReader(inread, 15);
-		int num = reader.read(head, 0, 15);
-		reader.unread(head, 0, num);
-		String string = new String(head, 0, num);
-
-		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
+		return parse(inread, null);
+	}
+	
+	public static OSD parse(Reader reader, String encoding) throws IOException, ParseException
+	{
+		if (LLSDBinary.isFormat(reader, encoding))
 		{
-			return LLSDBinary.parse(new ReaderInputStream(reader, Helpers.ASCII_ENCODING));
+			return LLSDBinary.parse(reader, encoding);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		else if (LLSDNotation.isFormat(reader))
 		{
 			return LLSDNotation.parse(reader);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
+		else if (LLSDXml.isFormat(reader))
 		{
 			return LLSDXml.parse(reader);
 		}
 		return LLSDJson.parse(reader);
 	}
 
+	public static OSD parse(InputStream instream) throws IOException, ParseException
+	{
+		return parse(instream, null);
+	}
+
 	public static OSD parse(InputStream instream, String encoding) throws IOException, ParseException
 	{
-		byte[] head = new byte[15];
-		PushbackInputStream stream = new PushbackInputStream(instream, 15);
-		int num = stream.read(head, 0, 15);
-		String string = new String(head, 0, num, encoding);
-		stream.unread(head, 0, num);
-
-		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
+		PushbackInputStream stream = new PushbackInputStream(instream);
+		if (LLSDBinary.isFormat(stream))
 		{
 			return LLSDBinary.parse(stream);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		else if (LLSDNotation.isFormat(stream, encoding))
 		{
 			return LLSDNotation.parse(stream, encoding);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
+		else if (LLSDXml.isFormat(stream, encoding))
 		{
 			return LLSDXml.parse(stream, encoding);
 		}
@@ -650,42 +663,57 @@ public class OSD
 
 	public static OSD parse(String string) throws IOException, ParseException
 	{
-		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
+		return parse(string, null);
+	}
+	
+	public static OSD parse(String string, String encoding) throws IOException, ParseException
+	{
+		PushbackReader reader = new PushbackReader(new StringReader(string));
+		try
 		{
-			InputStream stream = new ReaderInputStream(new StringReader(string));
-			return LLSDBinary.parse(stream);
+			if (LLSDBinary.isFormat(string, encoding))
+			{
+				return LLSDBinary.parse(reader, encoding);
+			}
+			else if (LLSDNotation.isFormat(string))
+			{
+				return LLSDNotation.parse(reader);
+			}
+			else if (LLSDXml.isFormat(string))
+			{
+				return LLSDXml.parse(reader);
+			}
+			return LLSDJson.parse(reader);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		finally
 		{
-			return LLSDNotation.parse(string);
+			reader.close();
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
-		{
-			return LLSDXml.parse(string);
-		}
-		return LLSDJson.parse(string);
 	}
 
 	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
 	{
-		String string = new String(data, 0, 15, encoding);
-		if (string.toLowerCase().startsWith(LLSD_BINARY_HEADER))
+		PushbackInputStream stream = new PushbackInputStream(new ByteArrayInputStream(data));
+		try
 		{
-			return LLSDBinary.parse(new ByteArrayInputStream(data));
+			if (LLSDBinary.isFormat(data))
+			{
+				return LLSDBinary.parse(stream);
+			}
+			else if (LLSDNotation.isFormat(data, encoding))
+			{
+				return LLSDNotation.parse(stream, encoding);
+			}
+			else if (LLSDXml.isFormat(data, encoding))
+			{
+				return LLSDXml.parse(stream, encoding);
+			}
+			return LLSDJson.parse(stream, encoding);
 		}
-		else if (string.toLowerCase().startsWith(LLSD_NOTATION_HEADER))
+		finally
 		{
-			return LLSDNotation.parse(data, encoding);
+			stream.close();
 		}
-		else if (string.toLowerCase().startsWith(LLSD_XML_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT_HEADER)
-				|| string.toLowerCase().startsWith(LLSD_XML_ALT2_HEADER))
-		{
-			return LLSDXml.parse(data, encoding);
-		}
-		return LLSDJson.parse(data, encoding);
 	}
 
 	/**

@@ -27,13 +27,11 @@
 package libomv.StructuredData.LLSD;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,12 +48,15 @@ import org.xmlpull.v1.XmlSerializer;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public final class LLSDXml
+public final class LLSDXml extends OSDParser
 {
+	private static final String llsdXmlHeader = "xml" ;
+
 	private static final String LLSD_TAG = "llsd";
 	private static final String UNDEF_TAG = "undef";
 	private static final String BOOLEAN_TAG = "boolean";
@@ -70,109 +71,64 @@ public final class LLSDXml
 	private static final String KEY_TAG = "key";
 	private static final String ARRAY_TAG = "array";
 
-	/*
-	 * private static String LastXmlErrors = Helpers.EmptyString; private static
-	 * Object XmlValidationLock = new Object();
-	 * 
-	 * "\r\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
-	 * "<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
-	 * + "\r\n" +
-	 * "  <xs:import schemaLocation=\"xml.xsd\" namespace=\"http://www.w3.org/XML/1998/namespace\" />"
-	 * + "\r\n  <xs:element name=\"uri\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"uuid\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"KEYDATA\">\r\n    <xs:complexType>" +
-	 * "\r\n      <xs:sequence>\r\n" +
-	 * "        <xs:element ref=\"key\" />\r\n" +
-	 * "        <xs:element ref=\"DATA\" />\r\n      </xs:sequence>" +
-	 * "\r\n    </xs:complexType>\r\n  </xs:element>\r\n" +
-	 * "  <xs:element name=\"date\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"key\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"boolean\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"undef\">\r\n    <xs:complexType>" +
-	 * "\r\n      <xs:sequence>\r\n" +
-	 * "        <xs:element ref=\"EMPTY\" />\r\n      </xs:sequence>"
-	 * + "\r\n    </xs:complexType>\r\n  </xs:element>\r\n"
-	 * + "  <xs:element name=\"map\">\r\n    <xs:complexType>" +
-	 * "\r\n      <xs:sequence>\r\n" +
-	 * "        <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" ref=\"KEYDATA\" />"
-	 * + "\r\n      </xs:sequence>\r\n    </xs:complexType>" +
-	 * "\r\n  </xs:element>\r\n" +
-	 * "  <xs:element name=\"real\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"ATOMIC\">\r\n    <xs:complexType>" +
-	 * "\r\n      <xs:choice>\r\n" +
-	 * "        <xs:element ref=\"undef\" />\r\n" +
-	 * "        <xs:element ref=\"boolean\" />\r\n" +
-	 * "        <xs:element ref=\"integer\" />\r\n" +
-	 * "        <xs:element ref=\"real\" />\r\n" +
-	 * "        <xs:element ref=\"uuid\" />\r\n" +
-	 * "        <xs:element ref=\"string\" />\r\n" +
-	 * "        <xs:element ref=\"date\" />\r\n" +
-	 * "        <xs:element ref=\"uri\" />\r\n" +
-	 * "        <xs:element ref=\"binary\" />\r\n      </xs:choice>" +
-	 * "\r\n    </xs:complexType>\r\n  </xs:element>\r\n" +
-	 * "  <xs:element name=\"DATA\">\r\n    <xs:complexType>\r\n"
-	 * + "      <xs:choice>\r\n        <xs:element ref=\"ATOMIC\" />"
-	 * + "\r\n        <xs:element ref=\"map\" />\r\n" +
-	 * "        <xs:element ref=\"array\" />\r\n      </xs:choice>" +
-	 * "\r\n    </xs:complexType>\r\n  </xs:element>\r\n" +
-	 * "  <xs:element name=\"llsd\">\r\n    <xs:complexType>\r\n"
-	 * + "      <xs:sequence>\r\n        <xs:element ref=\"DATA\" />"
-	 * + "\r\n      </xs:sequence>\r\n    </xs:complexType>" +
-	 * "\r\n  </xs:element>\r\n  <xs:element name=\"binary\">" +
-	 * "\r\n    <xs:complexType>\r\n      <xs:simpleContent>" +
-	 * "\r\n        <xs:extension base=\"xs:string\">\r\n" +
-	 * "          <xs:attribute default=\"base64\" name=\"encoding\" type=\"xs:string\" />"
-	 * + "\r\n        </xs:extension>\r\n" +
-	 * "      </xs:simpleContent>\r\n    </xs:complexType>\r\n" +
-	 * "  </xs:element>\r\n  <xs:element name=\"array\">\r\n" +
-	 * "    <xs:complexType>\r\n      <xs:sequence>\r\n" +
-	 * "        <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" ref=\"DATA\" />"
-	 * + "\r\n      </xs:sequence>\r\n    </xs:complexType>" +
-	 * "\r\n  </xs:element>\r\n" +
-	 * "  <xs:element name=\"integer\" type=\"xs:string\" />\r\n" +
-	 * "  <xs:element name=\"string\">\r\n    <xs:complexType>" +
-	 * "\r\n      <xs:simpleContent>\r\n" +
-	 * "        <xs:extension base=\"xs:string\">\r\n" +
-	 * "          <xs:attribute ref=\"xml:space\" />\r\n" +
-	 * "        </xs:extension>\r\n      </xs:simpleContent>\r\n"
-	 * + "    </xs:complexType>\r\n  </xs:element>\r\n" +
-	 * "</xs:schema>\r\n" + \"; MemoryStream stream = new
-	 * MemoryStream(Encoding.ASCII.GetBytes(schemaText)); XmlSchema = new
-	 * XmlSchema(); XmlSchema = XmlSchema.Read(stream, new
-	 * ValidationEventHandler(LLSDXmlSchemaValidationHandler)); } } private
-	 * static void LLSDXmlSchemaValidationHandler(Object sender,
-	 * ValidationEventArgs args) { String error =
-	 * String.format("Line: %d - Position: %d - %s", XmlTextReader.LineNumber,
-	 * XmlTextReader.LinePosition, args.Message); if
-	 * (LastXmlErrors.equals(String.Empty)) LastXmlErrors = error; else
-	 * LastXmlErrors += Helpers.NewLine + error; }
-	 */
+
+	public static boolean isFormat(InputStream stream) throws IOException
+	{
+		return isFormat(stream, null);
+	}
+
+	public static boolean isFormat(InputStream stream, String encoding) throws IOException
+	{
+		int character = skipWhiteSpace(stream);
+		if (character == '<')
+		{
+			return header(stream, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+		}
+		return false;
+	}
+	
+	public static boolean isFormat(Reader reader) throws IOException
+	{
+		int character = skipWhiteSpace(reader);
+		if (character == '<')
+		{
+			return header(reader, llsdXmlHeader, '>');
+		}
+		return false;
+	}
+
+	public static boolean isFormat(String string)
+	{
+		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(llsdXmlHeader);
+	}
+	
+	public static boolean isFormat(byte[] data) throws UnsupportedEncodingException
+	{
+		return isFormat(data, null);
+	}
+	
+	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
+	{
+		int character = skipWhiteSpace(data);
+		if (character == '<')
+		{
+			return header(data, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+		}
+		return false;
+	}
 
 	/**
-	 * Parse an OSD XML string and convert it into an hierarchical OSD object
+	 * Parse an LLSD XML reader and convert it into an hierarchical OSD object
 	 * 
-	 * @param string The OSD XML string to parse
+	 * @param stream The LLSD XML stream to parse
+	 * @param encoding The encoding to use for the stream, can be null which uses UTF8
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(String string) throws IOException, ParseException
+	public static OSD parse(InputStream stream, String encoding) throws ParseException, IOException
 	{
-		StringReader reader = new StringReader(string);
-		try
-		{
-			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-			parser.setInput(reader);
-			return parse(parser);
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new ParseException(ex.getMessage(), ex.getLineNumber());
-		}
-		finally
-		{
-			reader.close();
-		}
+		return parse(new InputStreamReader(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING));
 	}
 
 	/**
@@ -226,121 +182,21 @@ public final class LLSDXml
 	}
 
 	/**
-	 * Parse an OSD XML byte stream and convert it into an hierarchical OSD
-	 * object
-	 * 
-	 * @param stream The OSD XML byte stream to parse
-	 * @param encoding The text encoding to use when converting the stream to text
-	 * @return hierarchical OSD object
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public static OSD parse(InputStream stream, String encoding) throws IOException, ParseException
-	{
-		try
-		{
-			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-			parser.setInput(stream, encoding);
-			return parse(parser);
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new ParseException(ex.getMessage(), ex.getLineNumber());
-		}
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an OSD XML string
-	 * 
-	 * @param data The hierarchical OSD object to serialize
-	 * @return an OSD XML formatted string
-	 * @throws IOException
-	 */
-	public static String serializeToString(OSD data) throws IOException
-	{
-		StringWriter writer = new StringWriter();
-		try
-		{
-			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-			xmlWriter.setOutput(writer);
-			serialize(xmlWriter, data);
-			return writer.toString();
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new IOException(ex.getMessage());
-		}
-		finally
-		{
-			writer.close();
-		}
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an OSD XML string
-	 * 
-	 * @param data The hierarchical OSD object to serialize
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @return an OSD XML formatted string
-	 * @throws IOException
-	 */
-	public static byte[] serializeToBytes(OSD data, String encoding) throws IOException
-	{
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try
-		{
-			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-			xmlWriter.setOutput(stream, encoding);
-			serialize(xmlWriter, data);
-			return stream.toByteArray();
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new IOException(ex.getMessage());
-		}
-		finally
-		{
-			stream.close();
-		}
-	}
-
-	/**
 	 * Serialize an hierarchical OSD object into an OSD XML writer
 	 * 
 	 * @param writer The writer to format the serialized data into
 	 * @param data The hierarchical OSD object to serialize
 	 * @throws IOException
 	 */
-	public static void serialize(Writer writer, OSD data) throws IOException
+	public static void serialize(Writer writer, OSD data, boolean prependHeader) throws IOException
 	{
+		if (!prependHeader)
+			throw new IOException("Serialization to XML format without header is not supported");
+
 		try
 		{
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 			xmlWriter.setOutput(writer);
-			serialize(xmlWriter, data);
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new IOException(ex.getMessage());
-		}
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an OSD XML string
-	 * 
-	 * @param stream The hierarchical OSD object byte stream
-	 * @param data The hierarchical OSD object to serialize
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @throws IOException
-	 */
-	public static void serialize(OutputStream stream, OSD data, String encoding) throws IOException
-	{
-		try
-		{
-			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-			xmlWriter.setOutput(stream, encoding);
 			serialize(xmlWriter, data);
 		}
 		catch (XmlPullParserException ex)

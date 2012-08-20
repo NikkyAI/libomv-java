@@ -55,6 +55,7 @@ import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDInteger;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -76,7 +77,7 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeUndef() throws IOException
     {
         OSD llsdUndef = new OSD();
-        byte[] binaryUndefSerialized = llsdUndef.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryUndefSerialized = OSD.serializeToBytes(llsdUndef, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryUndef, binaryUndefSerialized));
     }
 
@@ -101,11 +102,11 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeBool() throws IOException
     {
         OSD llsdTrue = OSD.FromBoolean(true);
-        byte[] binaryTrueSerialized = llsdTrue.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryTrueSerialized = OSD.serializeToBytes(llsdTrue, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryTrue, binaryTrueSerialized));
 
         OSD llsdFalse = OSD.FromBoolean(false);
-        byte[] binaryFalseSerialized = llsdFalse.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryFalseSerialized = OSD.serializeToBytes(llsdFalse, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryFalse, binaryFalseSerialized));
     }
 
@@ -130,17 +131,17 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeInteger() throws IOException
     {
         OSD llsdZeroInt = OSD.FromInteger(0);
-        byte[] binaryZeroIntSerialized = llsdZeroInt.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryZeroIntSerialized = OSD.serializeToBytes(llsdZeroInt, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryZeroInt, binaryZeroIntSerialized));
 
-        binaryZeroIntSerialized = llsdZeroInt.serializeToBytes(OSDFormat.Binary, false);
+        binaryZeroIntSerialized = OSD.serializeToBytes(llsdZeroInt, OSDFormat.Binary, false);
         Assert.assertTrue(Arrays.equals(binaryZeroIntValue, binaryZeroIntSerialized));
 
         OSD llsdAnInt = OSD.FromInteger(1234843);
-        byte[] binaryAnIntSerialized = llsdAnInt.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryAnIntSerialized = OSD.serializeToBytes(llsdAnInt, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryAnInt, binaryAnIntSerialized));
 
-        binaryAnIntSerialized = llsdAnInt.serializeToBytes(OSDFormat.Binary, false);
+        binaryAnIntSerialized = OSD.serializeToBytes(llsdAnInt, OSDFormat.Binary, false);
         Assert.assertTrue(Arrays.equals(binaryAnIntValue, binaryAnIntSerialized));
     }
 
@@ -158,10 +159,10 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeReal() throws IOException
     {
         OSD llsdReal = OSD.FromReal(947835.234d);
-        byte[] binaryRealSerialized = llsdReal.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryRealSerialized = OSD.serializeToBytes(llsdReal, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryReal, binaryRealSerialized));
 
-        binaryRealSerialized = llsdReal.serializeToBytes(OSDFormat.Binary);
+        binaryRealSerialized = OSD.serializeToBytes(llsdReal, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryReal, binaryRealSerialized));
     }
     
@@ -187,17 +188,17 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeUUID() throws IOException
     {
         OSD llsdAUUID = OSD.FromUUID(new UUID("97f4aeca-88a1-42a1-b385-b97b18abb255"));
-        byte[] binaryAUUIDSerialized = llsdAUUID.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryAUUIDSerialized = OSD.serializeToBytes(llsdAUUID, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryAUUID, binaryAUUIDSerialized));
 
-        binaryAUUIDSerialized = llsdAUUID.serializeToBytes(OSDFormat.Binary);
+        binaryAUUIDSerialized = OSD.serializeToBytes(llsdAUUID, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryAUUID, binaryAUUIDSerialized));
 
         OSD llsdZeroUUID = OSD.FromUUID(new UUID("00000000-0000-0000-0000-000000000000"));
-        byte[] binaryZeroUUIDSerialized = llsdZeroUUID.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryZeroUUIDSerialized = OSD.serializeToBytes(llsdZeroUUID, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryZeroUUID, binaryZeroUUIDSerialized));
 
-        binaryZeroUUIDSerialized = llsdZeroUUID.serializeToBytes(OSDFormat.Binary);
+        binaryZeroUUIDSerialized = OSD.serializeToBytes(llsdZeroUUID, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryZeroUUID, binaryZeroUUIDSerialized));
     }
 
@@ -226,7 +227,7 @@ public class BinaryLLSDTests extends TestCase
                 0x6e, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x20, 0x66, 0x6f, 0x72, 0x20, 0x74, 0x68,
                 0x69, 0x73, 0x20, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0xa, 0xd };
         OSD llsdBinary = OSD.FromBinary(contentBinString);
-        byte[] binaryBinarySerialized = llsdBinary.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryBinarySerialized = OSD.serializeToBytes(llsdBinary, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryBinString, binaryBinarySerialized));
     }
 
@@ -257,7 +258,7 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeString() throws IOException
     {
         OSD llsdString = OSD.FromString("abcdefghijklmnopqrstuvwxyz01234567890");
-        byte[] binaryLongStringSerialized = llsdString.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryLongStringSerialized = OSD.serializeToBytes(llsdString, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryLongString, binaryLongStringSerialized));
 
         // A test with some utf8 characters
@@ -308,7 +309,7 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeURI() throws IOException, URISyntaxException
     {
         OSD llsdUri = OSD.FromUri(new URI("http://www.testurl.test/"));
-        byte[] binaryURISerialized = llsdUri.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryURISerialized = OSD.serializeToBytes(llsdUri, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryURI, binaryURISerialized));
     }
 
@@ -337,7 +338,7 @@ public class BinaryLLSDTests extends TestCase
         cal.clear();
         cal.set(2008, 0, 1, 20, 10, 31);
         OSD llsdDate = OSD.FromDate(cal.getTime());
-        byte[] binaryDateSerialized = llsdDate.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryDateSerialized = OSD.serializeToBytes(llsdDate, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryDateTime, binaryDateSerialized));
 
         // check if a *local* time can be serialized and deserialized
@@ -345,7 +346,7 @@ public class BinaryLLSDTests extends TestCase
         calOne.clear();
         calOne.set(2009, 12, 30, 8, 25, 10);
         OSD llsdDateOne = OSD.FromDate(calOne.getTime());
-        byte[] binaryDateOneSerialized = llsdDateOne.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryDateOneSerialized = OSD.serializeToBytes(llsdDateOne, OSDFormat.Binary);
         OSD llsdDateOneDS = OSD.parse(binaryDateOneSerialized, Helpers.ASCII_ENCODING);
         Assert.assertEquals(OSDType.Date, llsdDateOneDS.getType());
         Assert.assertEquals(calOne.getTime(), llsdDateOneDS.AsDate());
@@ -354,7 +355,7 @@ public class BinaryLLSDTests extends TestCase
         calTwo.clear();
         calTwo.set(2010, 11, 11, 10, 8, 20);
         OSD llsdDateTwo = OSD.FromDate(calTwo.getTime());
-        byte[] binaryDateTwoSerialized = llsdDateTwo.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryDateTwoSerialized = OSD.serializeToBytes(llsdDateTwo, OSDFormat.Binary);
         OSD llsdDateTwoDS = OSD.parse(binaryDateTwoSerialized, Helpers.ASCII_ENCODING);
         Assert.assertEquals(OSDType.Date, llsdDateOneDS.getType());
         Assert.assertEquals(calTwo.getTime(), llsdDateTwoDS.AsDate());
@@ -404,27 +405,27 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeArray() throws IOException
     {
         OSDArray llsdEmptyArray = new OSDArray();
-        byte[] binaryEmptyArraySerialized = llsdEmptyArray.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryEmptyArraySerialized = OSD.serializeToBytes(llsdEmptyArray, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryEmptyArray, binaryEmptyArraySerialized));
 
-        binaryEmptyArraySerialized = llsdEmptyArray.serializeToBytes(OSDFormat.Binary, false);
+        binaryEmptyArraySerialized = OSD.serializeToBytes(llsdEmptyArray, OSDFormat.Binary, false);
         Assert.assertTrue(Arrays.equals(binaryEmptyArrayValue, binaryEmptyArraySerialized));
 
         OSDArray llsdSimpleArray = new OSDArray();
         llsdSimpleArray.add(OSD.FromInteger(0));
-        byte[] binarySimpleArraySerialized = llsdSimpleArray.serializeToBytes(OSDFormat.Binary);
+        byte[] binarySimpleArraySerialized = OSD.serializeToBytes(llsdSimpleArray, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binarySimpleArray, binarySimpleArraySerialized));
 
-        binarySimpleArraySerialized = llsdSimpleArray.serializeToBytes(OSDFormat.Binary, false);
+        binarySimpleArraySerialized = OSD.serializeToBytes(llsdSimpleArray, OSDFormat.Binary, false);
         Assert.assertTrue(Arrays.equals(binarySimpleArrayValue, binarySimpleArraySerialized));
 
         OSDArray llsdSimpleArrayTwo = new OSDArray();
         llsdSimpleArrayTwo.add(OSD.FromInteger(0));
         llsdSimpleArrayTwo.add(OSD.FromInteger(0));
-        byte[] binarySimpleArrayTwoSerialized = llsdSimpleArrayTwo.serializeToBytes(OSDFormat.Binary);
+        byte[] binarySimpleArrayTwoSerialized = OSD.serializeToBytes(llsdSimpleArrayTwo, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binarySimpleArrayTwo, binarySimpleArrayTwoSerialized));
 
-        binarySimpleArrayTwoSerialized = llsdSimpleArrayTwo.serializeToBytes(OSDFormat.Binary, false);
+        binarySimpleArrayTwoSerialized = OSD.serializeToBytes(llsdSimpleArrayTwo, OSDFormat.Binary, false);
         Assert.assertTrue(Arrays.equals(binarySimpleArrayTwoValue, binarySimpleArrayTwoSerialized));
     }
 
@@ -480,19 +481,19 @@ public class BinaryLLSDTests extends TestCase
     public void testSerializeDictionary() throws IOException, ParseException
     {
         OSDMap llsdEmptyMap = new OSDMap();
-        byte[] binaryEmptyMapSerialized = llsdEmptyMap.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryEmptyMapSerialized = OSD.serializeToBytes(llsdEmptyMap, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryEmptyMap, binaryEmptyMapSerialized));
 
         OSDMap llsdSimpleMap = new OSDMap();
         llsdSimpleMap.put("test", OSD.FromInteger(0));
-        byte[] binarySimpleMapSerialized = llsdSimpleMap.serializeToBytes(OSDFormat.Binary);
+        byte[] binarySimpleMapSerialized = OSD.serializeToBytes(llsdSimpleMap, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binarySimpleMap, binarySimpleMapSerialized));
 
         OSDMap llsdSimpleMapTwo = new OSDMap();
         llsdSimpleMapTwo.put("t0st", OSD.FromInteger(241));
         llsdSimpleMapTwo.put("tes1", OSD.FromString("aha"));
         llsdSimpleMapTwo.put("test", new OSD());
-        byte[] binarySimpleMapTwoSerialized = llsdSimpleMapTwo.serializeToBytes(OSDFormat.Binary);
+        byte[] binarySimpleMapTwoSerialized = OSD.serializeToBytes(llsdSimpleMapTwo, OSDFormat.Binary);
 
         // We dont compare here to the original serialized value, because, as maps dont preserve order,
         // the original serialized value is not *exactly* the same. Instead we compare to a deserialized
@@ -587,7 +588,7 @@ public class BinaryLLSDTests extends TestCase
         llsdNested.add(OSD.FromInteger(124));
         llsdNested.add(OSD.FromInteger(987));
 
-        byte[] binaryNestedSerialized = llsdNested.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryNestedSerialized = OSD.serializeToBytes(llsdNested, OSDFormat.Binary);
         // Because maps don't preserve order, we compare here to a deserialized value. 
         OSDArray llsdNestedDeserialized = (OSDArray)OSD.parse(binaryNestedSerialized, Helpers.ASCII_ENCODING);
         Assert.assertEquals(OSDType.Array, llsdNestedDeserialized.getType());
@@ -637,7 +638,7 @@ public class BinaryLLSDTests extends TestCase
         llsdMap.put("testNine", stringOne);
         llsdMap.put("testTen", stringTwo);
 
-        byte[] binaryData = llsdMap.serializeToBytes(OSDFormat.Binary);
+        byte[] binaryData = OSD.serializeToBytes(llsdMap, OSDFormat.Binary);
 
         OSDMap llsdMapDS = (OSDMap)OSD.parse(binaryData, Helpers.ASCII_ENCODING );
         Assert.assertEquals(OSDType.Map, llsdMapDS.getType());

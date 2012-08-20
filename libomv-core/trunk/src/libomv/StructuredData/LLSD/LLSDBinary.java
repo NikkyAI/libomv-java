@@ -36,29 +36,30 @@ package libomv.StructuredData.LLSD;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.output.WriterOutputStream;
+import org.apache.commons.io.input.ReaderInputStream;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.PushbackInputStream;
 
-public final class LLSDBinary
+public final class LLSDBinary extends OSDParser
 {
 	private static final int int32Length = 4;
 	private static final int doubleLength = 8;
 
+	private static final byte[] llsdBinaryHeader = { 'l','l','s','d','/','b','i','n','a','r','y'};
 	private static final byte[] llsdBinaryHead = { '<','?','l','l','s','d','/','b','i','n','a','r','y','?','>'};
-	private static final byte[] llsdBinaryHead2 = { '<','?',' ','l','l','s','d','/','b','i','n','a','r','y',' ','?','>'};
 
 	private static final byte undefBinaryValue = (byte) '!';
 	private static final byte trueBinaryValue = (byte) '1';
@@ -78,6 +79,52 @@ public final class LLSDBinary
 	private static final byte doubleQuotesNotationMarker = '"';
 	private static final byte singleQuotesNotationMarker = '\'';
 
+
+	public static boolean isFormat(InputStream stream) throws IOException
+	{
+		int character = skipWhiteSpace(stream);
+		if (character == '<')
+		{
+			return header(stream, llsdBinaryHeader, '>');
+		}
+		return false;
+	}
+	
+	public static boolean isFormat(Reader reader) throws IOException
+	{
+		return isFormat(reader, null);
+	}
+
+	public static boolean isFormat(Reader reader, String encoding) throws IOException
+	{
+		int character = skipWhiteSpace(reader);
+		if (character == '<')
+		{
+			return header(reader, new String(llsdBinaryHeader, encoding != null ? encoding : Helpers.ASCII_ENCODING), '>');
+		}
+		return false;
+	}
+
+	public static boolean isFormat(String string) throws UnsupportedEncodingException
+	{
+		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, Helpers.ASCII_ENCODING));
+	}
+	
+	public static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
+	{
+		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, encoding));
+	}
+	
+	public static boolean isFormat(byte[] data)
+	{
+		int character = skipWhiteSpace(data);
+		if (character == '<')
+		{
+			return header(data, llsdBinaryHeader, '>');
+		}
+		return false;
+	}
+	
 	/**
 	 * Creates an OSD (object structured data) object from a LLSD binary data stream
 	 * 
@@ -86,112 +133,36 @@ public final class LLSDBinary
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(InputStream instr) throws IOException, ParseException
+	public static OSD parse(Reader reader, String encoding) throws IOException, ParseException
 	{
-		PushbackInputStream stream = instr instanceof PushbackInputStream ? (PushbackInputStream)instr : new PushbackInputStream(instr);
-		skipWhiteSpace(stream);
-		boolean result = find(stream, llsdBinaryHead);
-		if (!result)
-		{
-			result = find(stream, llsdBinaryHead2);
-			if (!result)
-			{
-				throw new ParseException("Failed to decode binary LLSD", 0);
-			}
-		}
-		return parseElement(stream);
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an LLSD Binary string
-	 * 
-	 * @param data The hierarchical OSD object to serialize
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @return an OSD XML formatted string
-	 * @throws IOException
-	 */
-	public static String serializeToString(OSD data, String encoding) throws IOException
-	{
-		StringWriter writer = new StringWriter();
-		try
-		{
-			serialize(new WriterOutputStream(writer, encoding), data, true);
-			return writer.toString();
-		}
-		finally
-		{
-			writer.close();
-		}
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an LLSD Binary string
-	 * 
-	 * @param data The hierarchical OSD object to serialize
-	 * @param prependHeader The hierarchical OSD object to serialize
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @return an OSD XML formatted string
-	 * @throws IOException
-	 */
-	public static String serializeToString(OSD data, boolean prependHeader, String encoding) throws IOException
-	{
-		StringWriter writer = new StringWriter();
-		try
-		{
-			serialize(new WriterOutputStream(writer, encoding), data, prependHeader);
-			return writer.toString();
-		}
-		finally
-		{
-			writer.close();
-		}
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an LLSD Binary writer
-	 * 
-	 * @param writer The writer to format the serialized data into
-	 * @param data The hierarchical OSD object to serialize
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @param prependHead The hierarchical OSD object to serialize
-	 * @throws IOException
-	 */
-	public static void serialize(Writer writer, OSD data, String encoding) throws IOException
-	{
-		serialize(new WriterOutputStream(writer, encoding), data, true);
+		return parse(new ReaderInputStream(reader, encoding != null ? encoding : Helpers.ASCII_ENCODING));
 	}
 	
 	/**
-	 * Serialize an hierarchical OSD object into an LLSD Binary writer
+	 * Creates an OSD (object structured data) object from a LLSD binary data stream
 	 * 
-	 * @param writer The writer to format the serialized data into
-	 * @param data The hierarchical OSD object to serialize
-	 * @param prependHeader Indicates if the format header should be prepended
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @param prependHead The hierarchical OSD object to serialize
+	 * @param stream The byte stream to read from
+	 * @return and OSD object
 	 * @throws IOException
+	 * @throws ParseException
 	 */
-	public static void serialize(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
+	public static OSD parse(InputStream stream) throws IOException, ParseException
 	{
-		serialize(new WriterOutputStream(writer, encoding), data, prependHeader);
+		PushbackInputStream push = stream instanceof PushbackInputStream ? (PushbackInputStream)stream : new PushbackInputStream(stream);
+		int marker = skipWhiteSpace(push);
+		if (marker < 0)
+		{
+			return new OSD();
+		}
+		else if (marker == '<')
+		{
+			int offset = push.getBytePosition();
+			if (!header(push, llsdBinaryHeader, '>'))
+				throw new ParseException("Failed to decode binary LLSD", offset);	
+		}		
+		return parseElement(push);
 	}
-	
-	/**
-	 * Serialize an hierarchical OSD object into an LLSD binary stream
-	 * 
-	 * @param stream The binary byte stream to write the OSD object into
-	 * @param data The hierarchical OSD object to serialize
-	 * @throws IOException
-	 */
-	public static void serialize(OutputStream stream, OSD data) throws IOException
-	{
-		serialize(stream, data, true);
-	}
-	
+
 	/**
 	 * Serialize an hierarchical OSD object into an LLSD binary stream
 	 * 
@@ -296,15 +267,13 @@ public final class LLSDBinary
 
 	private static OSD parseElement(PushbackInputStream stream) throws IOException, ParseException
 	{
-		skipWhiteSpace(stream);
-		OSD osd;
-
-		int marker = stream.read();
+		int marker = skipWhiteSpace(stream);
 		if (marker < 0)
 		{
 			throw new ParseException("Binary LLSD parsing: Unexpected end of stream.", 1);
 		}
 
+		OSD osd;
 		switch ((byte) marker)
 		{
 			case undefBinaryValue:
@@ -410,75 +379,5 @@ public final class LLSDBinary
 			throw new ParseException("Binary LLSD parsing: Missing end marker in map.", stream.getBytePosition());
 		}
 		return osdMap;
-	}
-
-	/**
-	 * @param stream
-	 * @throws IOException
-	 */
-	private static void skipWhiteSpace(PushbackInputStream stream) throws IOException
-	{
-		int bt;
-		while (((bt = stream.read()) > 0)
-				&& ((byte) bt == ' ' || (byte) bt == '\t' || (byte) bt == '\n' || (byte) bt == '\r'));
-		stream.unread(bt);
-	}
-
-	private static boolean find(PushbackInputStream stream, byte toFind) throws IOException
-	{
-		int bt = stream.read();
-		if (bt < 0)
-		{
-			return false;
-		}
-		if ((byte) bt == toFind)
-		{
-			return true;
-		}
-		stream.unread(bt);
-		return false;
-	}
-
-	public static boolean find(PushbackInputStream stream, byte[] toFind) throws IOException
-	{
-		if (toFind.length == 0)
-		{
-			return false;
-		}
-
-		boolean found = true;
-		int crrIndex = 0;
-		int bt = 0;
-
-		while (found && ((bt = stream.read()) > 0) && (crrIndex < toFind.length))
-		{
-			if (toFind[crrIndex] == (byte) bt)
-			{
-				found = true;
-				crrIndex++;
-			}
-			else
-			{
-				found = false;
-			}
-		}
-
-		if (found && crrIndex >= toFind.length)
-		{
-			stream.unread(bt);
-			return true;
-		}
-		stream.unread(toFind, 0, crrIndex);
-		return false;
-	}
-
-	private static byte[] consumeBytes(PushbackInputStream stream, int consumeBytes) throws IOException, ParseException
-	{
-		byte[] bytes = new byte[consumeBytes];
-		if (stream.read(bytes, 0, consumeBytes) < consumeBytes)
-		{
-			throw new ParseException("Binary LLSD parsing: Unexpected end of stream.", stream.getBytePosition());
-		}
-		return bytes;
 	}
 }

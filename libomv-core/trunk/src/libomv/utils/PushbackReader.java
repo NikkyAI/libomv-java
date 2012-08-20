@@ -50,40 +50,60 @@ public class PushbackReader extends FilterReader
 	}
 
 	/**
-	 * Constructs a new {@code PushbackReader} with the specified reader as
-	 * source. The size of the pushback buffer is set to the default value of 1
-	 * character.
+	 * Constructs a new {@code PushbackReader} with {@code in} as source reader.
+	 * The size of the pushback buffer is set to the default value of 1 character.
 	 * 
 	 * @param in
 	 *            the source reader.
 	 */
 	public PushbackReader(Reader in)
 	{
-		super(in);
-		buf = new char[1];
-		pos = 1;
+		this(in, 0, 1);
 	}
 
+	/**
+	 * Constructs a new {@code PushbackReader} with {@code in} as source reader.
+	 * The size of the pushback buffer is set to the default value of 1 character.
+	 * 
+	 * @param in
+	 *            the source reader.
+	 * @param offset
+	 *            the offset in characters into the original reader data
+	 * @throws IllegalArgumentException
+	 *            if {@code offset} is negative..
+	 */
+	public PushbackReader(Reader in, int offset)
+	{
+		this(in, offset, 1);
+	}
+	
 	/**
 	 * Constructs a new {@code PushbackReader} with {@code in} as source reader.
 	 * The size of the pushback buffer is set to {@code size}.
 	 * 
 	 * @param in
 	 *            the source reader.
+	 * @param offset
+	 *            the offset in characters into the original reader data
 	 * @param size
 	 *            the size of the pushback buffer.
 	 * @throws IllegalArgumentException
-	 *             if {@code size} is negative.
+	 *            if {@code size} is zero or negative or if {@code offset} is negative..
 	 */
-	public PushbackReader(Reader in, int size)
+	public PushbackReader(Reader in, int offset, int size)
 	{
 		super(in);
 		if (size <= 0)
 		{
 			throw new IllegalArgumentException("size <= 0");
 		}
+		if (offset < 0)
+		{
+			throw new IllegalArgumentException("offset < 0");
+		}
 		buf = new char[size];
 		pos = size;
+		bytes = offset;
 	}
 
 	/**

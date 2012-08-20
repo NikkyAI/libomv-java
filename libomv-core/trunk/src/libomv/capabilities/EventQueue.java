@@ -110,7 +110,7 @@ public class EventQueue extends CapsClient
 
 		try
 		{
-			byte[] postData = osdRequest.serializeToBytes(OSD.OSDFormat.Xml);
+			byte[] postData = OSD.serializeToBytes(osdRequest, OSD.OSDFormat.Xml);
 			// Start or resume the connection
 			Request = executeHttpPost(address, postData, "application/xml", new EventClientCallback(first), REQUEST_TIMEOUT);
 		}

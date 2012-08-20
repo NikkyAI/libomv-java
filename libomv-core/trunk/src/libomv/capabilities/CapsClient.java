@@ -148,7 +148,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		byte[] postData = null;
 
 		if (data != null)
-			postData = data.serializeToBytes(format);
+			postData = OSD.serializeToBytes(data, format);
 
 		return executeHttpPost(address, postData, OSD.OSDFormat.contentType(format));
 	}
@@ -174,7 +174,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		byte[] postData = null;
 
 		if (data != null)
-			postData = data.serializeToBytes(format);
+			postData = OSD.serializeToBytes(data, format);
 
 		return executeHttpPost(address, postData, OSD.OSDFormat.contentType(format), callback, timeout);
 	}

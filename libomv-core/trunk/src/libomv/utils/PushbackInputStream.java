@@ -29,21 +29,63 @@ public class PushbackInputStream extends FilterInputStream
 		return bytes;
 	}
 
-	public PushbackInputStream(InputStream in, int size)
+	/**
+	 * Constructs a new {@code PushbackInputStream} with {@code in} as source stream.
+	 * The size of the pushback buffer is set to 1.
+	 * 
+	 * @param in
+	 *            the source stream.
+	 * @param offset
+	 *            the offset in bytes into the original source data
+	 */
+	public PushbackInputStream(InputStream in)
+	{
+		this(in, 0, 1);
+	}
+
+	/**
+	 * Constructs a new {@code PushbackInputStream} with {@code in} as source stream.
+	 * The size of the pushback buffer is set to 1.
+	 * 
+	 * @param in
+	 *            the source stream.
+	 * @param offset
+	 *            the offset in bytes into the original source data
+	 * @throws IllegalArgumentException
+	 *            if {@code offset} is negative..
+	 */
+	public PushbackInputStream(InputStream in, int offset)
+	{
+		this(in, offset, 1);
+	}
+
+	/**
+	 * Constructs a new {@code PushbackInputStream} with {@code in} as source stream.
+	 * The size of the pushback buffer is set to {@code size}.
+	 * 
+	 * @param in
+	 *            the source stream.
+	 * @param offset
+	 *            the offset in bytes into the original source data
+	 * @param size
+	 *            the size of the pushback buffer.
+	 * @throws IllegalArgumentException
+	 *            if {@code size} is zero or negative or if {@code offset} is negative..
+	 */
+	public PushbackInputStream(InputStream in, int offset, int size)
 	{
 		super(in);
 		if (size <= 0)
 		{
 			throw new IllegalArgumentException("size <= 0");
 		}
+		if (offset < 0)
+		{
+			throw new IllegalArgumentException("offset < 0");
+		}
 		this.buf = new byte[size];
 		this.pos = size;
-		this.bytes = 0;
-	}
-
-	public PushbackInputStream(InputStream in)
-	{
-		this(in, 1);
+		this.bytes = offset;
 	}
 
 	@Override

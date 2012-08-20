@@ -49,6 +49,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
@@ -60,7 +62,6 @@ import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.ContentEncoder;
 import org.apache.http.nio.IOControl;
-import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.nio.client.HttpAsyncRequestProducer;
 import org.apache.http.nio.client.HttpAsyncResponseConsumer;
 import org.apache.http.nio.concurrent.BasicFuture;
@@ -75,12 +76,13 @@ import org.apache.http.protocol.HTTP;
 public abstract class AsyncHTTPClient<T>
 {
 	public static final long TIMEOUT_INFINITE = -1;
+
 	public interface ProgressCallback
 	{
-		public void progress(long bytesReceived, long totalBytes);
+		public void progress(long bytesTransceived, long totalBytes);
 	}
 	
-	private final HttpAsyncClient client;
+	private final DefaultHttpAsyncClient client;
 	private X509Certificate certificate;
 	private Timer timeout;
 	Future<T> resultFuture;
@@ -97,6 +99,33 @@ public abstract class AsyncHTTPClient<T>
 		this.certificate = cert;
 	}
 	
+	/**
+	 * Sets basic authentication on web request using plain credentials
+	 *
+	 * @param uri The uri for which the authentication credentials should be applied
+	 * @param username The plain text username
+	 * @param password The plain text password
+	 */
+	public void setBasicAuthentication(URI uri, String username, String password)
+	{
+		client.getCredentialsProvider().setCredentials(
+				new AuthScope(uri.getHost(), uri.getPort(), AuthScope.ANY_REALM),
+				new UsernamePasswordCredentials(username, password));
+	}
+
+	/**
+	 * Registers a new scheme for this client. Useful to provide a scheme with
+	 * custom security provider such as for certificate verification for the
+	 * HTTPS scheme
+	 *
+	 * @param scheme The scheme to add to the connection manager for this connection
+	 * @return The scheme registered
+	 */
+	public Scheme register(Scheme scheme)
+	{
+		return client.getConnectionManager().getSchemeRegistry().register(scheme);
+	}
+
 	private void cancel(boolean mayInterruptIfRunning)
 	{
 		synchronized (this)
@@ -106,9 +135,12 @@ public abstract class AsyncHTTPClient<T>
 				timeout.cancel();
 				timeout = null;
 			}
-			if (resultFuture != null && resultFuture.isDone())
+			if (resultFuture != null)
 			{
-				resultFuture.cancel(mayInterruptIfRunning);
+				if (!resultFuture.isDone())
+				{
+					resultFuture.cancel(mayInterruptIfRunning);
+				}
 				resultFuture = null;
 			}
 		}
@@ -290,7 +322,7 @@ public abstract class AsyncHTTPClient<T>
 				{
 					KeyStore store = Helpers.getExtendedKeyStore();
 					store.setCertificateEntry(host, certificate);
-					client.getConnectionManager().getSchemeRegistry().register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
+					register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 				}
 			}
 			catch (Exception ex)

@@ -676,7 +676,7 @@ public class GridClient
 			array.add(members);
 		}
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-		prefs.put(GRID_LIST, array.serializeToString(OSDFormat.Xml));
+		prefs.put(GRID_LIST, OSD.serializeToString(array, OSDFormat.Xml));
 		prefs.put(DEFAULT_GRID, defaultGrid);
 	}
 

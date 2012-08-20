@@ -33,11 +33,10 @@ import java.lang.reflect.Modifier;
 import java.text.ParseException;
 
 import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.LLSD.LLSDBinary;
-import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.Quaternion;
@@ -54,7 +53,7 @@ public class CapsToPacket
 	public static String ToXmlString(Packet packet) throws IOException, IllegalArgumentException,
 			IllegalAccessException
 	{
-		return LLSDXml.serializeToString(GetLLSD(packet));
+		return OSD.serializeToString(GetLLSD(packet), OSDFormat.Xml);
 	}
 
 	public static OSD GetLLSD(Packet packet) throws IllegalArgumentException, IllegalAccessException
@@ -90,13 +89,13 @@ public class CapsToPacket
 	public static byte[] ToBinary(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException
 	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		LLSDBinary.serialize(stream, GetLLSD(packet));
+		OSD.serialize(stream, GetLLSD(packet), OSDFormat.Binary);
 		return stream.toByteArray();
 	}
 
 	public static Packet FromXmlString(String xml) throws IOException, ParseException
 	{
-		return FromLLSD(LLSDXml.parse(xml));
+		return FromLLSD(OSD.parse(xml));
 	}
 
 	public static Packet FromLLSD(OSD osd)

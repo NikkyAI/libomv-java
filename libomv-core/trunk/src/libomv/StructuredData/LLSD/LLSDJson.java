@@ -30,8 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -46,11 +44,12 @@ import org.apache.commons.codec.binary.Base64;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.PushbackReader;
 
-public final class LLSDJson
+public final class LLSDJson extends OSDParser
 {
 	private static final String llsdJSONHeader = "<?llsd/json?>";
 	private static final String baseIndent = "  ";
@@ -144,47 +143,6 @@ public final class LLSDJson
 	}
 
 	/**
-	 * Serialize an hierarchical OSD object into an JSON string
-	 * 
-	 * @param stream The hierarchical JSON byte stream
-	 * @param data The hierarchical OSD object to serialize
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @throws IOException
-	 */
-	public static void serialize(OutputStream stream, OSD data, String encoding) throws IOException
-	{
-		serialize(new OutputStreamWriter(stream, encoding), data, true);
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an JSON string
-	 * 
-	 * @param stream The hierarchical JSON byte stream
-	 * @param data The hierarchical OSD object to serialize
-	 * @param prependHeader Indicates if the format header should be prepended
-	 * @param encoding The text encoding to use when converting the text into
-	 *            a byte stream
-	 * @throws IOException
-	 */
-	public static void serialize(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
-	{
-		serialize(new OutputStreamWriter(stream, encoding), data, prependHeader);
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an JSON writer
-	 * 
-	 * @param writer The writer to format the serialized data into
-	 * @param data The hierarchical OSD object to serialize
-	 * @throws IOException
-	 */
-	public static void serialize(Writer writer, OSD data) throws IOException
-	{
-		serialize(writer, data, true);
-	}
-	
-	/**
 	 * Serialize an hierarchical OSD object into an JSON writer
 	 * 
 	 * @param writer The writer to format the serialized data into
@@ -259,7 +217,7 @@ public final class LLSDJson
 	 */
 	private static OSD parseElement(PushbackReader reader) throws ParseException, IOException
 	{
-		int character = skipWhitespace(reader);
+		int character = skipWhiteSpace(reader);
 		if (character <= 0)
 		{
 			return new OSD(); // server returned an empty file, so we're going
@@ -340,7 +298,7 @@ public final class LLSDJson
 
 	private static OSD parseString(PushbackReader reader) throws IOException, ParseException
 	{
-		String string = GetStringDelimitedBy(reader, doubleQuotesNotationMarker);
+		String string = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
 		UUID uuid = new UUID();
 		if (uuid.FromString(string))
 			return OSD.FromUUID(uuid);
@@ -358,11 +316,11 @@ public final class LLSDJson
 	{
 		int character = kommaNotationDelimiter;
 		OSDArray osdArray = new OSDArray();
-		while (((char) character == kommaNotationDelimiter) && ((character = skipWhitespace(reader)) > 0))
+		while (((char) character == kommaNotationDelimiter) && ((character = skipWhiteSpace(reader)) > 0))
 		{
 			reader.unread(character);
 			osdArray.add(parseElement(reader));
-			character = skipWhitespace(reader);
+			character = skipWhiteSpace(reader);
 		}
 		if (character < 0)
 		{
@@ -381,7 +339,7 @@ public final class LLSDJson
 	{
 		int character;
 		OSDMap osdMap = new OSDMap();
-		while (((character = skipWhitespace(reader)) > 0) && ((char) character != mapEndNotationMarker))
+		while (((character = skipWhiteSpace(reader)) > 0) && ((char) character != mapEndNotationMarker))
 		{
 			reader.unread(character);
 			OSD osdKey = parseElement(reader);
@@ -391,7 +349,7 @@ public final class LLSDJson
 			}
 			String key = osdKey.AsString();
 
-			character = skipWhitespace(reader);
+			character = skipWhiteSpace(reader);
 			if ((char) character != keyNotationDelimiter)
 			{
 				throw new ParseException("LLSD JSON parsing: Invalid key delimiter in map.",
@@ -581,77 +539,6 @@ public final class LLSDJson
 		writer.write(newLine);
 		writer.write(indent);
 		writer.write(mapEndNotationMarker);
-	}
-
-	public static int skipWhitespace(PushbackReader reader) throws IOException
-	{
-		int character;
-		while ((character = reader.read()) >= 0)
-		{
-			char c = (char) character;
-			if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
-			{
-				break;
-			}
-		}
-		return character;
-	}
-
-	public static String GetStringDelimitedBy(PushbackReader reader, char delimiter) throws IOException, ParseException
-	{
-		int character;
-		boolean foundEscape = false;
-		StringBuilder s = new StringBuilder();
-		while (((character = reader.read()) >= 0)
-				&& (((char) character != delimiter) || ((char) character == delimiter && foundEscape)))
-		{
-			if (foundEscape)
-			{
-				foundEscape = false;
-				switch ((char) character)
-				{
-					case 'a':
-						s.append('\005');
-						break;
-					case 'b':
-						s.append('\b');
-						break;
-					case 'f':
-						s.append('\f');
-						break;
-					case 'n':
-						s.append('\n');
-						break;
-					case 'r':
-						s.append('\r');
-						break;
-					case 't':
-						s.append('\t');
-						break;
-					case 'v':
-						s.append('\013');
-						break;
-					default:
-						s.append((char) character);
-						break;
-				}
-			}
-			else if ((char) character == '\\')
-			{
-				foundEscape = true;
-			}
-			else
-			{
-				s.append((char) character);
-			}
-		}
-		if (character < 0)
-		{
-			throw new ParseException(
-					"Notation LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
-							+ delimiter + "' character.", reader.getBytePosition());
-		}
-		return s.toString();
 	}
 
 	public static int BufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
