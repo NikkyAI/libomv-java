@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import libomv.StructuredData.LLSD.LLSDNotation;
-
 public class OSDMap extends OSD implements Map<String, OSD>
 {
 	private HashMap<String, OSD> value;

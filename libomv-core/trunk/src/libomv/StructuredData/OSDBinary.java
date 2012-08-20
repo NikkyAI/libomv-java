@@ -30,8 +30,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.apache.commons.codec.binary.Base64;
-
 import libomv.utils.Helpers;
 
 public class OSDBinary extends OSD
