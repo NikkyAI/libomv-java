@@ -55,7 +55,6 @@ import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDInteger;
 import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
 import libomv.types.UUID;
 import libomv.utils.Helpers;

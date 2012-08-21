@@ -133,7 +133,7 @@ public abstract class OSDParser
 		while ((character = stream.read()) >= 0)
 		{
 			byte b = (byte) character;
-			if (b != ' ' || b != '\t' || b != '\n' || b != '\r')
+			if (b != ' ' && b != '\t' && b != '\n' && b != '\r')
 			{
 				break;
 			}
@@ -178,11 +178,11 @@ public abstract class OSDParser
 	protected static boolean header(byte[] input, byte[] data, int ending)
 	{
 		int pos = 0, off = 0;
-		while (input.length > off && data[pos] != ending)
+		while (input.length > off && input[off] != ending)
 		{
 			if (pos < data.length)
 			{
-				if (input[off++] == data[pos])
+				if (input[off] == data[pos])
 				{
 					pos++;
 				}
@@ -191,6 +191,7 @@ public abstract class OSDParser
 					pos = 0;
 				}
 			}
+			off++;
 		}
 		return pos == data.length;
 	}
