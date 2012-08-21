@@ -55,7 +55,15 @@ import libomv.utils.Helpers;
 
 public final class LLSDXml extends OSDParser
 {
+	/*
+	 * Possible header formats
+	 *    <llsd>
+	 *    <?llsd/xml?>
+	 *    <? llsd/xml ?>
+	 *    <?xml..?>
+	 */
 	private static final String llsdXmlHeader = "xml" ;
+	private static final String llsdXmlHeader2 = "llsd" ;
 
 	private static final String LLSD_TAG = "llsd";
 	private static final String UNDEF_TAG = "undef";
@@ -99,7 +107,8 @@ public final class LLSDXml extends OSDParser
 
 	public static boolean isFormat(String string)
 	{
-		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(llsdXmlHeader);
+		String sub = string.substring(string.indexOf('<'), string.indexOf('<')).toLowerCase();
+		return sub.contains(llsdXmlHeader) || sub.contains(llsdXmlHeader2);
 	}
 	
 	public static boolean isFormat(byte[] data) throws UnsupportedEncodingException
@@ -112,7 +121,8 @@ public final class LLSDXml extends OSDParser
 		int character = skipWhiteSpace(data);
 		if (character == '<')
 		{
-			return header(data, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+			return header(data, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>') ||
+				   header(data, llsdXmlHeader2.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
 		}
 		return false;
 	}

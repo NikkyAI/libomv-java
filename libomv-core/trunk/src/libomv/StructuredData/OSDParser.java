@@ -196,54 +196,6 @@ public abstract class OSDParser
 		return pos == data.length;
 	}
 
-	protected static boolean find(PushbackInputStream stream, byte toFind) throws IOException
-	{
-		int bt = stream.read();
-		if (bt < 0)
-		{
-			return false;
-		}
-		if ((byte) bt == toFind)
-		{
-			return true;
-		}
-		stream.unread(bt);
-		return false;
-	}
-
-	protected static boolean find(PushbackInputStream stream, byte[] toFind) throws IOException
-	{
-		if (toFind.length == 0)
-		{
-			return false;
-		}
-
-		boolean found = true;
-		int crrIndex = 0;
-		int bt = 0;
-
-		while (found && ((bt = stream.read()) > 0) && (crrIndex < toFind.length))
-		{
-			if (toFind[crrIndex] == (byte) bt)
-			{
-				found = true;
-				crrIndex++;
-			}
-			else
-			{
-				found = false;
-			}
-		}
-
-		if (found && crrIndex >= toFind.length)
-		{
-			stream.unread(bt);
-			return true;
-		}
-		stream.unread(toFind, 0, crrIndex);
-		return false;
-	}
-
 	protected static byte[] consumeBytes(PushbackInputStream stream, int consumeBytes) throws IOException, ParseException
 	{
 		byte[] bytes = new byte[consumeBytes];

@@ -49,6 +49,11 @@ import libomv.utils.PushbackReader;
 
 public final class LLSDNotation extends OSDParser
 {
+	/*
+	 * Possible header formats
+	 *    <?llsd/notation?>
+	 *    <? llsd/notation ?>
+	 */
 	private static final String llsdNotationHeader = "llsd/notation";
 	private static final String llsdNotationHead = "<?llsd/notation?>";
 

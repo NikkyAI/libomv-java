@@ -58,6 +58,11 @@ public final class LLSDBinary extends OSDParser
 	private static final int int32Length = 4;
 	private static final int doubleLength = 8;
 
+	/*
+	 * Possible header formats
+	 *    <?llsd/binary?>
+	 *    <? llsd/binary ?>
+	 */
 	private static final byte[] llsdBinaryHeader = { 'l','l','s','d','/','b','i','n','a','r','y'};
 	private static final byte[] llsdBinaryHead = { '<','?','l','l','s','d','/','b','i','n','a','r','y','?','>'};
 
@@ -350,7 +355,7 @@ public final class LLSDBinary extends OSDParser
 			osdArray.add(parseElement(stream));
 			crrElement++;
 		}
-		if (!find(stream, arrayEndBinaryMarker))
+		if (skipWhiteSpace(stream) != arrayEndBinaryMarker)
 		{
 			throw new ParseException("Binary LLSD parsing: Missing end marker in array.", stream.getBytePosition());
 		}
@@ -365,7 +370,7 @@ public final class LLSDBinary extends OSDParser
 		OSDMap osdMap = new OSDMap();
 		while (crrElement < numElements)
 		{
-			if (!find(stream, keyBinaryMarker))
+			if (skipWhiteSpace(stream) != keyBinaryMarker)
 			{
 				throw new ParseException("Binary LLSD parsing: Missing key marker in map.", stream.getBytePosition());
 			}
@@ -374,7 +379,7 @@ public final class LLSDBinary extends OSDParser
 			osdMap.put(key, parseElement(stream));
 			crrElement++;
 		}
-		if (!find(stream, mapEndBinaryMarker))
+		if (skipWhiteSpace(stream) != mapEndBinaryMarker)
 		{
 			throw new ParseException("Binary LLSD parsing: Missing end marker in map.", stream.getBytePosition());
 		}
