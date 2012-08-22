@@ -26,10 +26,9 @@
  */
 package libomv.StructuredData.LLSD;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -80,40 +79,10 @@ public final class LLSDXml extends OSDParser
 	private static final String ARRAY_TAG = "array";
 
 
-	public static boolean isFormat(InputStream stream) throws IOException
-	{
-		return isFormat(stream, null);
-	}
-
-	public static boolean isFormat(InputStream stream, String encoding) throws IOException
-	{
-		int character = skipWhiteSpace(stream);
-		if (character == '<')
-		{
-			return header(stream, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
-		}
-		return false;
-	}
-	
-	public static boolean isFormat(Reader reader) throws IOException
-	{
-		int character = skipWhiteSpace(reader);
-		if (character == '<')
-		{
-			return header(reader, llsdXmlHeader, '>');
-		}
-		return false;
-	}
-
 	public static boolean isFormat(String string)
 	{
 		String sub = string.substring(string.indexOf('<'), string.indexOf('<')).toLowerCase();
 		return sub.contains(llsdXmlHeader) || sub.contains(llsdXmlHeader2);
-	}
-	
-	public static boolean isFormat(byte[] data) throws UnsupportedEncodingException
-	{
-		return isFormat(data, null);
 	}
 	
 	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
@@ -121,52 +90,10 @@ public final class LLSDXml extends OSDParser
 		int character = skipWhiteSpace(data);
 		if (character == '<')
 		{
-			return header(data, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>') ||
-				   header(data, llsdXmlHeader2.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+			return isHeader(data, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>') ||
+				   isHeader(data, llsdXmlHeader2.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
 		}
 		return false;
-	}
-
-	/**
-	 * Parse an LLSD XML reader and convert it into an hierarchical OSD object
-	 * 
-	 * @param stream The LLSD XML stream to parse
-	 * @param encoding The encoding to use for the stream, can be null which uses UTF8
-	 * @return hierarchical OSD object
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public static OSD parse(InputStream stream, String encoding) throws ParseException, IOException
-	{
-		return parse(new InputStreamReader(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING));
-	}
-
-	/**
-	 * Parse an OSD XML byte array and convert it into an hierarchical OSD object
-	 * 
-	 * @param data The OSD XML byte array to parse
-	 * @param encoding The text encoding to use when converting the stream to text
-	 * @return hierarchical OSD object
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
-	{
-		InputStream stream = new ByteArrayInputStream(data);
-		try
-		{
-			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-			parser.setInput(stream, encoding);
-			return parse(parser);
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new ParseException(ex.getMessage(), ex.getLineNumber());
-		}
-		finally
-		{
-			stream.close();
-		}
 	}
 
 	/**
@@ -177,12 +104,34 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(Reader reader) throws IOException, ParseException
+	public OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
 		try
 		{
 			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
 			parser.setInput(reader);
+			return parse(parser);
+		}
+		catch (XmlPullParserException ex)
+		{
+			throw new ParseException(ex.getMessage(), ex.getLineNumber());
+		}
+	}
+
+	/**
+	 * Parse an OSD XML reader and convert it into an hierarchical OSD object
+	 * 
+	 * @param stream The OSD XML stream to parse
+	 * @return hierarchical OSD object
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
+	{
+		try
+		{
+			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+			parser.setInput(stream, encoding);
 			return parse(parser);
 		}
 		catch (XmlPullParserException ex)
@@ -198,7 +147,7 @@ public final class LLSDXml extends OSDParser
 	 * @param data The hierarchical OSD object to serialize
 	 * @throws IOException
 	 */
-	public static void serialize(Writer writer, OSD data, boolean prependHeader) throws IOException
+	public void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (!prependHeader)
 			throw new IOException("Serialization to XML format without header is not supported");
@@ -207,6 +156,30 @@ public final class LLSDXml extends OSDParser
 		{
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 			xmlWriter.setOutput(writer);
+			serialize(xmlWriter, data);
+		}
+		catch (XmlPullParserException ex)
+		{
+			throw new IOException(ex.getMessage());
+		}
+	}
+
+	/**
+	 * Serialize an hierarchical OSD object into an OSD XML writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @throws IOException
+	 */
+	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
+	{
+		if (!prependHeader)
+			throw new IOException("Serialization to XML format without header is not supported");
+
+		try
+		{
+			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
+			xmlWriter.setOutput(stream, encoding);
 			serialize(xmlWriter, data);
 		}
 		catch (XmlPullParserException ex)

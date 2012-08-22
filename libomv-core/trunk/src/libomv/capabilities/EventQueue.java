@@ -41,6 +41,7 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSD.OSDType;
+import libomv.StructuredData.OSDParser;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.packets.Packet;
 import libomv.utils.Logger;
@@ -110,7 +111,7 @@ public class EventQueue extends CapsClient
 
 		try
 		{
-			byte[] postData = OSD.serializeToBytes(osdRequest, OSD.OSDFormat.Xml);
+			byte[] postData = OSDParser.serializeToBytes(osdRequest, OSD.OSDFormat.Xml);
 			// Start or resume the connection
 			Request = executeHttpPost(address, postData, "application/xml", new EventClientCallback(first), REQUEST_TIMEOUT);
 		}

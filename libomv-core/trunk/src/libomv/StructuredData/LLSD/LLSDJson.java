@@ -26,13 +26,12 @@
  */
 package libomv.StructuredData.LLSD;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.text.ParseException;
@@ -52,6 +51,7 @@ import libomv.utils.PushbackReader;
 public final class LLSDJson extends OSDParser
 {
 	private static final String llsdJSONHeader = "<?llsd/json?>";
+
 	private static final String baseIndent = "  ";
 
 	private static final char[] newLine = { '\n' };
@@ -71,24 +71,34 @@ public final class LLSDJson extends OSDParser
 	private static final char doubleQuotesNotationMarker = '"';
 
 	/**
-	 * Parse an JSON string and convert it into an hierarchical OSD object
+	 * Parse an JSON byte stream and convert it into an hierarchical OSD
+	 * object
 	 * 
-	 * @param string The JSON string to parse
+	 * @param stream The JSON reader to parse from
+	 * @param encoding The text encoding to use (not used)
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(String string) throws ParseException, IOException
+	protected OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
 	{
-		StringReader reader = new StringReader(string);
-		try
+		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
+		int marker = skipWhiteSpace(push);
+		if (marker < 0)
 		{
-			return parseElement(new PushbackReader(reader));
+			return new OSD();
 		}
-		finally
+		else if (marker == '<')
 		{
-			reader.close();
+			int offset = push.getBytePosition();
+			if (!isHeader(push, llsdJSONHeader, '>'))
+				throw new ParseException("Failed to decode binary LLSD", offset);	
 		}
+		else
+		{
+			push.unread(marker);
+		}	
+		return parseElement(push);
 	}
 
 	/**
@@ -101,45 +111,25 @@ public final class LLSDJson extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(byte[] data, String encoding) throws ParseException, IOException
+	protected OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
-		PushbackReader reader = new PushbackReader(new InputStreamReader(new ByteArrayInputStream(data), encoding));
-		try
+		PushbackReader push = new PushbackReader(new InputStreamReader(stream, encoding));
+		int marker = skipWhiteSpace(push);
+		if (marker < 0)
 		{
-			return parseElement(reader);
+			return new OSD();
 		}
-		finally
+		else if (marker == '<')
 		{
-			reader.close();
+			int offset = push.getBytePosition();
+			if (!isHeader(push, llsdJSONHeader, '>'))
+				throw new ParseException("Failed to decode binary LLSD", offset);	
 		}
-	}
-
-	/**
-	 * Parse an JSON reader and convert it into an hierarchical OSD object
-	 * 
-	 * @param reader The JSON reader to parse
-	 * @return hierarchical OSD object
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public static OSD parse(Reader reader) throws ParseException, IOException
-	{
-		return parseElement(reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader));
-	}
-	
-	/**
-	 * Parse an JSON byte stream and convert it into an hierarchical OSD
-	 * object
-	 * 
-	 * @param stream The JSON byte stream to parse
-	 * @param encoding The text encoding to use when converting the stream to text
-	 * @return hierarchical OSD object
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public static OSD parse(InputStream stream, String encoding) throws ParseException, IOException
-	{
-		return parseElement(new PushbackReader(new InputStreamReader(stream, encoding)));
+		else
+		{
+			push.unread(marker);
+		}	
+		return parseElement(push);
 	}
 
 	/**
@@ -148,9 +138,10 @@ public final class LLSDJson extends OSDParser
 	 * @param writer The writer to format the serialized data into
 	 * @param data The hierarchical OSD object to serialize
 	 * @param prependHeader Indicates if the format header should be prepended
+	 * @param encoding The text encoding to use (not used)
 	 * @throws IOException
 	 */
-	public static void serialize(Writer writer, OSD data, boolean prependHeader) throws IOException
+	protected void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (prependHeader)
 		{
@@ -161,46 +152,22 @@ public final class LLSDJson extends OSDParser
 	}
 
 	/**
-	 * Serialize an hierarchical OSD object into an JSON string
+	 * Serialize an hierarchical OSD object into an JSON writer
 	 * 
-	 * @param data The hierarchical OSD object to serialize
-	 * @return an JSON formatted string
-	 * @throws IOException
-	 */
-	public static String serializeToString(OSD data) throws IOException
-	{
-		Writer writer = new StringWriter();
-		try
-		{
-			serialize(writer, data, true);
-			return writer.toString();
-		}
-		finally
-		{
-			writer.close();
-		}
-	}
-
-	/**
-	 * Serialize an hierarchical OSD object into an JSON string
-	 * 
+	 * @param stream The output stream to write the serialized data into
 	 * @param data The hierarchical OSD object to serialize
 	 * @param prependHeader Indicates if the format header should be prepended
-	 * @return an JSON formatted string
 	 * @throws IOException
 	 */
-	public static String serializeToString(OSD data, boolean prependHeader) throws IOException
+	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
-		Writer writer = new StringWriter();
-		try
+		Writer writer = new OutputStreamWriter(stream, encoding);
+		if (prependHeader)
 		{
-			serialize(writer, data, prependHeader);
-			return writer.toString();
+			writer.write(llsdJSONHeader);
+			writer.write('\n');
 		}
-		finally
-		{
-			writer.close();
-		}
+		serializeElement(writer, data);
 	}
 
 	public static void serializeFormatted(Writer writer, OSD data) throws IOException

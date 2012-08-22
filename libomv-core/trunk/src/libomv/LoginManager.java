@@ -49,6 +49,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsClient;
 import libomv.inventory.InventoryFolder;
@@ -560,7 +561,7 @@ public class LoginManager
 
 		private void ParseHome(String value) throws ParseException, IOException
 		{
-			OSD osdHome = OSD.parse(value);
+			OSD osdHome = OSDParser.deserialize(value);
 			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
 			{
 				OSDMap home = (OSDMap) osdHome;
@@ -1377,7 +1378,7 @@ public class LoginManager
 			OSD osd = reply.get(key);
 			if (osd.getType().equals(OSDType.String))
 			{
-				osd = OSD.parse(osd.AsString());
+				osd = OSDParser.deserialize(osd.AsString());
 			}
 			if (osd != null && osd.getType().equals(OSDType.Array))
 			{
@@ -1408,7 +1409,7 @@ public class LoginManager
 			}
 			else if (value instanceof String)
 			{
-				OSD osd = OSD.parse((String) value);
+				OSD osd = OSDParser.deserialize((String) value);
 				if (osd != null && osd.getType().equals(OSDType.Array))
 					return ((OSDArray) osd).AsVector3();
 			}

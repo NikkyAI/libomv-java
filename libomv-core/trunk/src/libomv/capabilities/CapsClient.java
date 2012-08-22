@@ -38,6 +38,7 @@ import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDParser;
 import libomv.utils.Logger;
 
 public class CapsClient extends AsyncHTTPClient<OSD>
@@ -148,7 +149,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		byte[] postData = null;
 
 		if (data != null)
-			postData = OSD.serializeToBytes(data, format);
+			postData = OSDParser.serializeToBytes(data, format);
 
 		return executeHttpPost(address, postData, OSD.OSDFormat.contentType(format));
 	}
@@ -174,7 +175,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		byte[] postData = null;
 
 		if (data != null)
-			postData = OSD.serializeToBytes(data, format);
+			postData = OSDParser.serializeToBytes(data, format);
 
 		return executeHttpPost(address, postData, OSD.OSDFormat.contentType(format), callback, timeout);
 	}
@@ -184,7 +185,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	{
 		try
 		{
-			return OSD.parse(in);
+			return OSDParser.deserialize(in);
 		}
 		catch (ParseException ex)
 		{

@@ -361,7 +361,7 @@ public class OSDArray extends OSD implements List<OSD>
 	{
 		try
 		{
-			return serializeToString(this, OSDFormat.Notation);
+			return OSDParser.serializeToString(this, OSDFormat.Notation);
 		}
 		catch (IOException ex)
 		{

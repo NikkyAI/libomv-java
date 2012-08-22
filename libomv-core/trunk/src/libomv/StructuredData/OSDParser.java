@@ -26,16 +26,421 @@
  */
 package libomv.StructuredData;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.ParseException;
 
+import libomv.StructuredData.OSD.OSDFormat;
+import libomv.StructuredData.LLSD.LLSDBinary;
+import libomv.StructuredData.LLSD.LLSDJson;
+import libomv.StructuredData.LLSD.LLSDNotation;
+import libomv.StructuredData.LLSD.LLSDXml;
 import libomv.utils.PushbackInputStream;
 import libomv.utils.PushbackReader;
 
 public abstract class OSDParser
 {
+	public static OSDParser createInstance(OSDFormat format)
+	{
+		switch (format)
+		{
+			case Binary:
+				return new LLSDBinary();
+			case Notation:
+				return new LLSDNotation();
+			case Xml:
+				return new LLSDXml();
+			case Json:
+				return new LLSDJson();
+		}
+		return null;
+	}
+
+	public static OSDParser createInstance(String header, String encoding) throws UnsupportedEncodingException
+	{
+		if (LLSDBinary.isFormat(header, encoding))
+		{
+			return new LLSDBinary();
+		}
+		else if (LLSDNotation.isFormat(header))
+		{
+			return new LLSDNotation();			
+		}
+		else if (LLSDXml.isFormat(header))
+		{
+			return new LLSDXml();			
+		}
+		return new LLSDJson();			
+	}
+
+	public static OSDParser createInstance(byte[] header, String encoding) throws UnsupportedEncodingException
+	{
+		if (LLSDBinary.isFormat(header))
+		{
+			return new LLSDBinary();
+		}
+		else if (LLSDNotation.isFormat(header, encoding))
+		{
+			return new LLSDNotation();			
+		}
+		else if (LLSDXml.isFormat(header, encoding))
+		{
+			return new LLSDXml();			
+		}
+		return new LLSDJson();			
+	}
+	
+	protected abstract OSD unflatten(Reader reader, String encoding) throws IOException, ParseException;
+
+	private static OSD deserialize(OSDParser parser, String string, String encoding) throws IOException, ParseException
+	{
+		PushbackReader push = new PushbackReader(new StringReader(string));
+		try
+		{
+			 return parser.unflatten(push, encoding);
+		}
+		finally
+		{
+			push.close();
+		}	
+	}
+
+	public static OSD deserialize(String string) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(string, null);
+		if (parser != null)
+		{
+			return deserialize(parser, string, null);
+		}
+		return null;
+	}
+	
+	public static OSD deserialize(String string, String encoding) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(string, encoding);
+		if (parser != null)
+		{
+			return deserialize(parser, string, encoding);
+		}
+		return null;
+	}
+	
+	public static OSD deserialize(String string, OSDFormat format) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		if (parser != null)
+		{
+			return deserialize(parser, string, null);
+		}
+		return null;
+	}
+
+	public static OSD deserialize(String string, OSDFormat format, String encoding) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		if (parser != null)
+		{
+			return deserialize(parser, string, encoding);
+		}
+		return null;
+	}
+	
+	private static String header(Reader reader) throws IOException
+	{
+		int ch = skipWhiteSpace(reader);
+		if (ch == '<')
+		{
+			StringBuilder string = new StringBuilder();
+			while ((ch = reader.read()) > 0)
+			{
+				string.append(ch);
+				if (ch == '>')
+					break;
+			}
+
+			if (ch > 0)
+			{
+				return string.toString();
+			}
+		}
+		return null;
+	}
+	
+	public static OSD deserialize(Reader reader) throws IOException, ParseException
+	{
+		String string = header(reader);
+		if (string != null)
+		{
+			OSDParser parser = createInstance(string.toString(), null);
+			return parser.unflatten(new PushbackReader(reader, string.length()), null);
+		}
+		return null;
+	}
+
+	public static OSD deserialize(Reader reader, String encoding) throws IOException, ParseException
+	{
+		String string = header(reader);
+		if (string != null)
+		{
+			OSDParser parser = createInstance(string.toString(), encoding);
+			return parser.unflatten(new PushbackReader(reader, string.length()), encoding);
+		}
+		return null;
+	}
+	
+	public static OSD deserialize(Reader reader, OSDFormat format) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		return parser.unflatten(reader, null);
+	}
+
+	public static OSD deserialize(Reader reader, OSDFormat format, String encoding) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		return parser.unflatten(reader, encoding);
+	}
+
+	protected abstract OSD unflatten(InputStream reader, String encoding) throws IOException, ParseException;
+	
+	private static OSD deserialize(OSDParser parser, byte[] bytes, String encoding) throws IOException, ParseException
+	{
+		PushbackInputStream push = new PushbackInputStream(new ByteArrayInputStream(bytes));
+		try
+		{
+			 return parser.unflatten(push, encoding);
+		}
+		finally
+		{
+			push.close();
+		}	
+	}
+
+	public static OSD deserialize(byte[] bytes) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(bytes, null);
+		if (parser != null)
+		{
+			return deserialize(parser, bytes, null);
+		}
+		return null;
+	}
+
+	public static OSD deserialize(byte[] bytes, String encoding) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(bytes, encoding);
+		if (parser != null)
+		{
+			return deserialize(parser, bytes, encoding);
+		}
+		return null;
+	}
+	
+	public static OSD deserialize(byte[] bytes, OSDFormat format) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		if (parser != null)
+		{
+			return deserialize(parser, bytes, null);
+		}
+		return null;
+	}
+
+	public static OSD deserialize(byte[] bytes, OSDFormat format, String encoding) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		if (parser != null)
+		{
+			return deserialize(parser, bytes, encoding);
+		}
+		return null;
+	}
+
+	private static byte[] header(InputStream stream) throws IOException
+	{
+		int ch = skipWhiteSpace(stream);
+		if (ch == '<')
+		{
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			while ((ch = stream.read()) > 0)
+				
+			{
+				bytes.write((byte)ch);
+				if (ch == '>')
+					break;
+			}
+
+			if (ch == '>')
+			{
+				return bytes.toByteArray();
+			}
+		}
+		return null;
+	}
+	
+	public static OSD deserialize(InputStream stream) throws IOException, ParseException
+	{
+		byte[] bytes = header(stream);
+		if (bytes != null)
+		{
+			OSDParser parser = createInstance(bytes, null);
+			return parser.unflatten(new PushbackInputStream(stream, bytes.length), null);
+		}
+		return null;
+	}
+
+	public static OSD deserialize(InputStream stream, String encoding) throws IOException, ParseException
+	{
+		byte[] bytes = header(stream);
+		if (bytes != null)
+		{
+			OSDParser parser = createInstance(bytes, encoding);
+			return parser.unflatten(new PushbackInputStream(stream, bytes.length), encoding);
+		}
+		return null;
+	}
+
+	public static OSD deserialize(InputStream stream, OSDFormat format) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		return parser.unflatten(stream, null);
+	}
+
+	public static OSD deserialize(InputStream stream, OSDFormat format, String encoding) throws IOException, ParseException
+	{
+		OSDParser parser = createInstance(format);
+		return parser.unflatten(stream, encoding);
+	}
+
+	protected abstract void flatten(Writer writer, OSD osd, boolean header, String encoding) throws IOException;
+
+	public static String serializeToString(OSD osd, OSDFormat format) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(writer, osd, format, true, null);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();			
+		}
+	}
+
+	public static String serializeToString(OSD osd, OSDFormat format, boolean prependHeader) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(writer, osd, format, prependHeader, null);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();			
+		}
+	}
+
+	public static String serializeToString(OSD osd, OSDFormat format, boolean prependHeader, String encoding) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try
+		{
+			serialize(writer, osd, format, prependHeader, null);
+			return writer.toString();
+		}
+		finally
+		{
+			writer.close();
+		}
+	}
+	
+	public static void serialize(Writer writer, OSD osd, OSDFormat format) throws IOException
+	{
+		serialize(writer, osd, format, true, null);
+	}
+
+	public static void serialize(Writer writer, OSD osd, OSDFormat format, boolean prependHeader) throws IOException
+	{
+		serialize(writer, osd, format, prependHeader, null);
+	}
+	
+	public static void serialize(Writer writer, OSD osd, OSDFormat format, boolean prependHeader, String encoding) throws IOException
+	{
+		OSDParser parser = createInstance(format);
+		parser.flatten(writer, osd, prependHeader, encoding);
+	}
+	
+	protected abstract void flatten(OutputStream stream, OSD osd, boolean prependHeader, String encoding) throws IOException;
+
+	public static byte[] serializeToBytes(OSD osd, OSDFormat format) throws IOException
+	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try
+		{
+			serialize(stream, osd, format, true, null);
+			return stream.toByteArray();
+		}
+		finally
+		{
+			stream.close();
+		}
+	}
+	
+	public static byte[] serializeToBytes(OSD osd, OSDFormat format, boolean prependHeader) throws IOException
+	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try
+		{
+			serialize(stream, osd, format, prependHeader, null);
+			return stream.toByteArray();
+		}
+		finally
+		{
+			stream.close();
+		}
+	}
+
+	public static byte[] serializeToBytes(OSD osd, OSDFormat format, boolean prependHeader, String encoding) throws IOException
+	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try
+		{
+			serialize(stream, osd, format, prependHeader, encoding);
+			return stream.toByteArray();
+		}
+		finally
+		{
+			stream.close();
+		}
+	}
+	
+	public static void serialize(OutputStream stream, OSD osd, OSDFormat format) throws IOException
+	{
+		serialize(stream, osd, format, true, null);
+	}
+	
+	public static void serialize(OutputStream stream, OSD osd, OSDFormat format, boolean prependHeader) throws IOException
+	{
+		serialize(stream, osd, format, prependHeader, null);
+	}
+
+	public static void serialize(OutputStream stream, OSD osd, OSDFormat format, boolean prependHeader, String encoding) throws IOException
+	{
+		OSDParser parser = createInstance(format);
+		parser.flatten(stream, osd, prependHeader, encoding);
+	}
+	
+	
+	
 	protected static int bufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
 	{
 
@@ -126,7 +531,7 @@ public abstract class OSDParser
 		return character;
 	}
 
-	protected static boolean header(Reader reader, String string, int ending) throws IOException
+	protected static boolean isHeader(Reader reader, String string, int ending) throws IOException
 	{
 		int ch, pos = 0;
 		while (((ch = reader.read())) >= 0 && ch != ending)
@@ -160,7 +565,7 @@ public abstract class OSDParser
 		return character;
 	}
 
-	protected static boolean header(InputStream stream, byte[] data, int ending) throws IOException
+	protected static boolean isHeader(InputStream stream, byte[] data, int ending) throws IOException
 	{
 		int ch, pos = 0;
 		while (((ch = stream.read())) >= 0 && ch != ending)
@@ -194,7 +599,7 @@ public abstract class OSDParser
 		return -1;
 	}
 
-	protected static boolean header(byte[] input, byte[] data, int ending)
+	protected static boolean isHeader(byte[] input, byte[] data, int ending)
 	{
 		int pos = 0, off = 0;
 		while (input.length > off && input[off] != ending)

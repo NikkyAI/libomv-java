@@ -40,6 +40,7 @@ import libomv.GroupManager.GroupAccountTransactions.TransactionEntry;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.AgentDropGroupMessage;
@@ -393,7 +394,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			att.put("item_id", OSD.FromUUID(AttachmentID));
 			att.put("owner_id", OSD.FromUUID(OwnerID));
 
-			return OSD.serializeToBytes(att, OSDFormat.Xml, true, Helpers.UTF8_ENCODING);
+			return OSDParser.serializeToBytes(att, OSDFormat.Xml, true, Helpers.UTF8_ENCODING);
 		}
 	}
 

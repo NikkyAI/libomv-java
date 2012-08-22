@@ -7,6 +7,7 @@ import java.util.zip.InflaterInputStream;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
@@ -59,7 +60,7 @@ public class AssetMesh extends AssetItem
             MeshData = new OSDMap();
 
             InputStream data = new ByteArrayInputStream(AssetData);
-            OSDMap header = (OSDMap)OSD.parse(data, Helpers.UTF8_ENCODING);
+            OSDMap header = (OSDMap)OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
             data.mark(AssetData.length);
 
             for (String partName : header.keySet())
@@ -80,7 +81,7 @@ public class AssetMesh extends AssetItem
                 data.reset();
                 data.skip(partInfo.get("offset").AsInteger());
                 InflaterInputStream inflate = new InflaterInputStream(data);
-                MeshData.put(partName, OSD.parse(inflate, Helpers.UTF8_ENCODING)); 
+                MeshData.put(partName, OSDParser.deserialize(inflate, Helpers.UTF8_ENCODING)); 
             }
             return true;
         }

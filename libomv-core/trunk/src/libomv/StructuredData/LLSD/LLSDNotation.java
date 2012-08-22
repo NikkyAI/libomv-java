@@ -29,7 +29,10 @@ package libomv.StructuredData.LLSD;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
@@ -96,40 +99,9 @@ public final class LLSDNotation extends OSDParser
 	private static final char doubleQuotesNotationMarker = '"';
 	private static final char singleQuotesNotationMarker = '\'';
 
-
-	public static boolean isFormat(InputStream stream) throws IOException
-	{
-		return isFormat(stream, null);
-	}
-
-	public static boolean isFormat(InputStream stream, String encoding) throws IOException
-	{
-		int character = skipWhiteSpace(stream);
-		if (character == '<')
-		{
-			return header(stream, llsdNotationHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
-		}
-		return false;
-	}
-	
-	public static boolean isFormat(Reader reader) throws IOException
-	{
-		int character = skipWhiteSpace(reader);
-		if (character == '<')
-		{
-			return header(reader, llsdNotationHeader, '>');
-		}
-		return false;
-	}
-
 	public static boolean isFormat(String string)
 	{
 		return string.substring(string.indexOf('<'), string.indexOf('>')).contains(llsdNotationHeader);
-	}
-	
-	public static boolean isFormat(byte[] data) throws UnsupportedEncodingException
-	{
-		return isFormat(data, null);
 	}
 	
 	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
@@ -137,7 +109,7 @@ public final class LLSDNotation extends OSDParser
 		int character = skipWhiteSpace(data);
 		if (character == '<')
 		{
-			return header(data, llsdNotationHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+			return isHeader(data, llsdNotationHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
 		}
 		return false;
 	}
@@ -151,20 +123,21 @@ public final class LLSDNotation extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(InputStream stream, String encoding) throws ParseException, IOException
+	public OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
-		return parse(new InputStreamReader(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING));
+		return unflatten(new InputStreamReader(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING), encoding);
 	}
 	
 	/**
 	 * Parse an LLSD Notation reader and convert it into an hierarchical OSD object
 	 * 
 	 * @param reader The LLSD Notation reader to parse
+	 * @param encoding The encoding to use for reader (not used)
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OSD parse(Reader reader) throws ParseException, IOException
+	public OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
 	{
 		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
 		int marker = skipWhiteSpace(push);
@@ -175,7 +148,7 @@ public final class LLSDNotation extends OSDParser
 		else if (marker == '<')
 		{
 			int offset = push.getBytePosition();
-			if (!header(push, llsdNotationHeader, '>'))
+			if (!isHeader(push, llsdNotationHeader, '>'))
 				throw new ParseException("Failed to decode binary LLSD", offset);	
 		}
 		else
@@ -193,7 +166,22 @@ public final class LLSDNotation extends OSDParser
 	 * @param prependHeader Indicates if the format header should be prepended
 	 * @throws IOException
 	 */
-	public static void serialize(Writer writer, OSD data, boolean prependHeader) throws IOException
+	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
+	{
+		Writer writer = new OutputStreamWriter(stream, encoding);
+		flatten(writer, data, prependHeader, encoding);
+		writer.flush();
+	}
+	
+	/**
+	 * Serialize an hierarchical OSD object into an LLSD Notation writer
+	 * 
+	 * @param writer The writer to format the serialized data into
+	 * @param data The hierarchical OSD object to serialize
+	 * @param prependHeader Indicates if the format header should be prepended
+	 * @throws IOException
+	 */
+	public void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (prependHeader)
 		{
@@ -203,6 +191,13 @@ public final class LLSDNotation extends OSDParser
 		serializeElement(writer, data);
 	}
 	
+	public static String serializeToStringFormatted(OSD data) throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		serializeElementFormatted(writer, "", data);
+		return writer.toString();
+	}
+
 	public static void serializeFormatted(Writer writer, OSD data) throws IOException
 	{
 		serializeElementFormatted(writer, "", data);
@@ -277,7 +272,7 @@ public final class LLSDNotation extends OSDParser
 					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in UUID.",
 							reader.getBytePosition());
 				}
-				return OSD.FromUUID(new UUID(uuidBuf.toString()));
+				return OSD.FromUUID(new UUID(new String(uuidBuf)));
 			case binaryNotationMarker:
 				byte[] bytes = Helpers.EmptyBytes;
 				int bChar = reader.read();

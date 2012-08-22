@@ -52,6 +52,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
+import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
 import libomv.assets.AssetManager;
 import libomv.capabilities.CapsMessage;
@@ -676,7 +677,7 @@ public class GridClient
 			array.add(members);
 		}
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-		prefs.put(GRID_LIST, OSD.serializeToString(array, OSDFormat.Xml));
+		prefs.put(GRID_LIST, OSDParser.serializeToString(array, OSDFormat.Xml));
 		prefs.put(DEFAULT_GRID, defaultGrid);
 	}
 
@@ -688,7 +689,7 @@ public class GridClient
 		{
 			try
 			{
-				osd = OSD.parse(stream, Helpers.UTF8_ENCODING);
+				osd = OSDParser.deserialize(stream, Helpers.UTF8_ENCODING);
 			}
 			catch (ParseException ex)
 			{}
@@ -707,7 +708,7 @@ public class GridClient
 		{
 			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 			defaultGrid = prefs.get(DEFAULT_GRID, Helpers.EmptyString);
-			osd = OSD.parse(prefs.get(GRID_LIST, Helpers.EmptyString));
+			osd = OSDParser.deserialize(prefs.get(GRID_LIST, Helpers.EmptyString));
 		}
 		catch (ParseException ex)
 		{}
@@ -749,7 +750,7 @@ public class GridClient
 				{
 					charset = HTTP.DEFAULT_CONTENT_CHARSET;
 				}
-				osd = OSD.parse(stream, charset);
+				osd = OSDParser.deserialize(stream, charset);
 			}
 		}
 		catch (ParseException ex)

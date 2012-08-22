@@ -37,6 +37,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.Quaternion;
@@ -53,7 +54,7 @@ public class CapsToPacket
 	public static String ToXmlString(Packet packet) throws IOException, IllegalArgumentException,
 			IllegalAccessException
 	{
-		return OSD.serializeToString(GetLLSD(packet), OSDFormat.Xml);
+		return OSDParser.serializeToString(GetLLSD(packet), OSDFormat.Xml);
 	}
 
 	public static OSD GetLLSD(Packet packet) throws IllegalArgumentException, IllegalAccessException
@@ -89,13 +90,13 @@ public class CapsToPacket
 	public static byte[] ToBinary(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException
 	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		OSD.serialize(stream, GetLLSD(packet), OSDFormat.Binary);
+		OSDParser.serialize(stream, GetLLSD(packet), OSDFormat.Binary);
 		return stream.toByteArray();
 	}
 
 	public static Packet FromXmlString(String xml) throws IOException, ParseException
 	{
-		return FromLLSD(OSD.parse(xml));
+		return FromLLSD(OSDParser.deserialize(xml));
 	}
 
 	public static Packet FromLLSD(OSD osd)
