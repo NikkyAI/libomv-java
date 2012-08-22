@@ -36,6 +36,25 @@ import libomv.utils.PushbackReader;
 
 public abstract class OSDParser
 {
+	protected static int bufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
+	{
+
+		boolean charactersEqual = true;
+		int character;
+
+		while ((character = reader.read()) >= 0 && offset < buffer.length && charactersEqual)
+		{
+			if (((char) character) != buffer[offset])
+			{
+				charactersEqual = false;
+				reader.unread(character);
+				break;
+			}
+			offset++;
+		}
+		return offset;
+	}
+
 	protected static String getStringDelimitedBy(PushbackReader reader, char delimiter) throws IOException, ParseException
 	{
 		int character;

@@ -233,7 +233,7 @@ public final class LLSDNotation extends OSDParser
 			case trueNotationValueOne:
 				return OSD.FromBoolean(true);
 			case trueNotationValueTwo:
-				matching = BufferCharactersEqual(reader, trueNotationValueTwoFull, 1);
+				matching = bufferCharactersEqual(reader, trueNotationValueTwoFull, 1);
 				if (matching > 1 && matching < trueNotationValueTwoFull.length)
 				{
 					throw new ParseException("Notation LLSD parsing: True value parsing error:",
@@ -241,7 +241,7 @@ public final class LLSDNotation extends OSDParser
 				}
 				return OSD.FromBoolean(true);
 			case trueNotationValueThree:
-				matching = BufferCharactersEqual(reader, trueNotationValueThreeFull, 1);
+				matching = bufferCharactersEqual(reader, trueNotationValueThreeFull, 1);
 				if (matching > 1 && matching < trueNotationValueThreeFull.length)
 				{
 					throw new ParseException("Notation LLSD parsing: True value parsing error:",
@@ -251,7 +251,7 @@ public final class LLSDNotation extends OSDParser
 			case falseNotationValueOne:
 				return OSD.FromBoolean(false);
 			case falseNotationValueTwo:
-				matching = BufferCharactersEqual(reader, falseNotationValueTwoFull, 1);
+				matching = bufferCharactersEqual(reader, falseNotationValueTwoFull, 1);
 				if (matching > 1 && matching < falseNotationValueTwoFull.length)
 				{
 					throw new ParseException("Notation LLSD parsing: True value parsing error:",
@@ -259,7 +259,7 @@ public final class LLSDNotation extends OSDParser
 				}
 				return OSD.FromBoolean(false);
 			case falseNotationValueThree:
-				matching = BufferCharactersEqual(reader, falseNotationValueThreeFull, 1);
+				matching = bufferCharactersEqual(reader, falseNotationValueThreeFull, 1);
 				if (matching > 1 && matching < falseNotationValueThreeFull.length)
 				{
 					throw new ParseException("Notation LLSD parsing: True value parsing error:",
@@ -307,7 +307,7 @@ public final class LLSDNotation extends OSDParser
 							throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.",
 									reader.getBytePosition());
 						}
-						String bytes64 = GetStringDelimitedBy(reader, doubleQuotesNotationMarker);
+						String bytes64 = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
 						bytes = Base64.decodeBase64(bytes64);
 					}
 					else
@@ -337,11 +337,9 @@ public final class LLSDNotation extends OSDParser
 				}
 				return OSD.FromString(new String(chars));
 			case singleQuotesNotationMarker:
-				String sOne = GetStringDelimitedBy(reader, singleQuotesNotationMarker);
-				return OSD.FromString(sOne);
 			case doubleQuotesNotationMarker:
-				String sTwo = GetStringDelimitedBy(reader, doubleQuotesNotationMarker);
-				return OSD.FromString(sTwo);
+				String string = getStringDelimitedBy(reader, (char)character);
+				return OSD.FromString(string);
 			case uriNotationMarker:
 				if (reader.read() < 0)
 				{
@@ -351,7 +349,7 @@ public final class LLSDNotation extends OSDParser
 				URI uri;
 				try
 				{
-					uri = new URI(GetStringDelimitedBy(reader, doubleQuotesNotationMarker));
+					uri = new URI(getStringDelimitedBy(reader, doubleQuotesNotationMarker));
 				}
 				catch (Throwable t)
 				{
@@ -365,7 +363,7 @@ public final class LLSDNotation extends OSDParser
 					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in date.",
 							reader.getBytePosition());
 				}
-				String date = GetStringDelimitedBy(reader, doubleQuotesNotationMarker);
+				String date = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
 				return OSD.FromDate(new OSDString(date).AsDate());
 			case arrayBeginNotationMarker:
 				return parseArray(reader);
@@ -721,82 +719,6 @@ public final class LLSDNotation extends OSDParser
 		}
 		reader.unread(character);
 		return new Integer(s.toString());
-	}
-
-	public static String GetStringDelimitedBy(PushbackReader reader, char delimiter) throws IOException, ParseException
-	{
-		int character;
-		boolean foundEscape = false;
-		StringBuilder s = new StringBuilder();
-		while (((character = reader.read()) >= 0)
-				&& (((char) character != delimiter) || ((char) character == delimiter && foundEscape)))
-		{
-			if (foundEscape)
-			{
-				foundEscape = false;
-				switch ((char) character)
-				{
-					case 'a':
-						s.append('\005');
-						break;
-					case 'b':
-						s.append('\b');
-						break;
-					case 'f':
-						s.append('\f');
-						break;
-					case 'n':
-						s.append('\n');
-						break;
-					case 'r':
-						s.append('\r');
-						break;
-					case 't':
-						s.append('\t');
-						break;
-					case 'v':
-						s.append('\013');
-						break;
-					default:
-						s.append((char) character);
-						break;
-				}
-			}
-			else if ((char) character == '\\')
-			{
-				foundEscape = true;
-			}
-			else
-			{
-				s.append((char) character);
-			}
-		}
-		if (character < 0)
-		{
-			throw new ParseException(
-					"Notation LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
-							+ delimiter + "' character.", reader.getBytePosition());
-		}
-		return s.toString();
-	}
-
-	public static int BufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
-	{
-
-		boolean charactersEqual = true;
-		int character;
-
-		while ((character = reader.read()) >= 0 && offset < buffer.length && charactersEqual)
-		{
-			if (((char) character) != buffer[offset])
-			{
-				charactersEqual = false;
-				reader.unread(character);
-				break;
-			}
-			offset++;
-		}
-		return offset;
 	}
 
 	private static String escapeCharacter(String s, char c)
