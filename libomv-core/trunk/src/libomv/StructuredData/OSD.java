@@ -691,6 +691,30 @@ public class OSD
 		}
 	}
 
+	public static OSD parse(String string, String encoding, OSDFormat format) throws IOException, ParseException
+	{
+		PushbackReader reader = new PushbackReader(new StringReader(string));
+		try
+		{
+			switch (format)
+			{
+			    case Binary:
+			    	return LLSDBinary.parse(reader, encoding);
+			    case Notation:
+			     	return LLSDNotation.parse(reader);
+				case Xml:
+					return LLSDXml.parse(reader);
+				case Json:
+				default:
+					return LLSDJson.parse(reader);
+			}
+		}
+		finally
+		{
+			reader.close();
+		}
+	}
+
 	public static OSD parse(byte[] data, String encoding) throws IOException, ParseException
 	{
 		PushbackInputStream stream = new PushbackInputStream(new ByteArrayInputStream(data));

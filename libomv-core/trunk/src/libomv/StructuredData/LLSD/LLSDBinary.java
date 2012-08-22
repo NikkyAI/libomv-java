@@ -117,7 +117,7 @@ public final class LLSDBinary extends OSDParser
 	
 	public static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
 	{
-		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, encoding));
+		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, encoding != null ? encoding : Helpers.ASCII_ENCODING));
 	}
 	
 	public static boolean isFormat(byte[] data)
@@ -164,7 +164,11 @@ public final class LLSDBinary extends OSDParser
 			int offset = push.getBytePosition();
 			if (!header(push, llsdBinaryHeader, '>'))
 				throw new ParseException("Failed to decode binary LLSD", offset);	
-		}		
+		}
+		else
+		{
+			push.unread(marker);
+		}
 		return parseElement(push);
 	}
 

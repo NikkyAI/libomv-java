@@ -124,7 +124,7 @@ public final class LLSDNotation extends OSDParser
 
 	public static boolean isFormat(String string)
 	{
-		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(llsdNotationHeader);
+		return string.substring(string.indexOf('<'), string.indexOf('>')).contains(llsdNotationHeader);
 	}
 	
 	public static boolean isFormat(byte[] data) throws UnsupportedEncodingException
@@ -167,10 +167,21 @@ public final class LLSDNotation extends OSDParser
 	public static OSD parse(Reader reader) throws ParseException, IOException
 	{
 		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
-		int character = skipWhiteSpace(push);
-		if (character == '<')
-			
-		push.unread(character);
+		int marker = skipWhiteSpace(push);
+		if (marker < 0)
+		{
+			return new OSD();
+		}
+		else if (marker == '<')
+		{
+			int offset = push.getBytePosition();
+			if (!header(push, llsdNotationHeader, '>'))
+				throw new ParseException("Failed to decode binary LLSD", offset);	
+		}
+		else
+		{
+			push.unread(marker);
+		}
 		return parseElement(push);
 	}
 	
@@ -373,8 +384,9 @@ public final class LLSDNotation extends OSDParser
 		if (((character = reader.read()) > 0) && ((char) character == '-' || (char) character == '+'))
 		{
 			s.append((char) character);
+			character = reader.read();
 		}
-		while (character >= 0 && Character.isDigit((char) character))
+		while (character > 0 && Character.isDigit((char) character))
 		{
 			s.append((char) character);
 			character = reader.read();
@@ -393,8 +405,9 @@ public final class LLSDNotation extends OSDParser
 		if (((character = reader.read()) > 0) && ((char) character == '-' || (char) character == '+'))
 		{
 			s.append((char) character);
+			character = reader.read();
 		}
-		while ((character >= 0)
+		while ((character > 0)
 				&& (Character.isDigit((char) character) || (char) character == '.' || (char) character == 'e'
 						|| (char) character == 'E' || (char) character == '+' || (char) character == '-'))
 		{
