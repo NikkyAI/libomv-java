@@ -323,7 +323,7 @@ public class BinaryLLSDTests extends TestCase
     {
         OSD llsdDateTime = OSDParser.deserialize(binaryDateTime, Helpers.ASCII_ENCODING);
         Assert.assertEquals(OSDType.Date, llsdDateTime.getType());
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.clear();
         cal.set(2008, 0, 1, 20, 10, 31);
         Date dateLocal = llsdDateTime.AsDate();
@@ -332,7 +332,7 @@ public class BinaryLLSDTests extends TestCase
 
     public void testSerializeDateTime() throws IOException, ParseException
     {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.clear();
         cal.set(2008, 0, 1, 20, 10, 31);
         OSD llsdDate = OSD.FromDate(cal.getTime());
@@ -345,7 +345,7 @@ public class BinaryLLSDTests extends TestCase
         calOne.set(2009, 12, 30, 8, 25, 10);
         OSD llsdDateOne = OSD.FromDate(calOne.getTime());
         byte[] binaryDateOneSerialized = OSDParser.serializeToBytes(llsdDateOne, OSDFormat.Binary);
-        OSD llsdDateOneDS = OSDParser.deserialize(binaryDateOneSerialized, Helpers.ASCII_ENCODING);
+        OSD llsdDateOneDS = OSDParser.deserialize(binaryDateOneSerialized, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Date, llsdDateOneDS.getType());
         Assert.assertEquals(calOne.getTime(), llsdDateOneDS.AsDate());
 
@@ -354,7 +354,7 @@ public class BinaryLLSDTests extends TestCase
         calTwo.set(2010, 11, 11, 10, 8, 20);
         OSD llsdDateTwo = OSD.FromDate(calTwo.getTime());
         byte[] binaryDateTwoSerialized = OSDParser.serializeToBytes(llsdDateTwo, OSDFormat.Binary);
-        OSD llsdDateTwoDS = OSDParser.deserialize(binaryDateTwoSerialized, Helpers.ASCII_ENCODING);
+        OSD llsdDateTwoDS = OSDParser.deserialize(binaryDateTwoSerialized, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Date, llsdDateOneDS.getType());
         Assert.assertEquals(calTwo.getTime(), llsdDateTwoDS.AsDate());
     }
@@ -376,20 +376,20 @@ public class BinaryLLSDTests extends TestCase
 
     public void testDeserializeArray() throws IOException, ParseException
     {
-        OSD llsdEmptyArray = OSDParser.deserialize(binaryEmptyArray, Helpers.ASCII_ENCODING);
+        OSD llsdEmptyArray = OSDParser.deserialize(binaryEmptyArray, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Array, llsdEmptyArray.getType());
         OSDArray llsdEmptyArrayArray = (OSDArray)llsdEmptyArray;
         Assert.assertEquals(0, llsdEmptyArrayArray.size());
 
 
-        OSD llsdSimpleArray = OSDParser.deserialize(binarySimpleArray, Helpers.ASCII_ENCODING);
+        OSD llsdSimpleArray = OSDParser.deserialize(binarySimpleArray, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Array, llsdSimpleArray.getType());
         OSDArray llsdArray = (OSDArray)llsdSimpleArray;
         Assert.assertEquals(OSDType.Integer, llsdArray.get(0).getType());
         Assert.assertEquals(0, llsdArray.get(0).AsInteger());
 
 
-        OSD llsdSimpleArrayTwo = OSDParser.deserialize(binarySimpleArrayTwo, Helpers.ASCII_ENCODING);
+        OSD llsdSimpleArrayTwo = OSDParser.deserialize(binarySimpleArrayTwo, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Array, llsdSimpleArrayTwo.getType());
         OSDArray llsdArrayTwo = (OSDArray)llsdSimpleArrayTwo;
         Assert.assertEquals(2, llsdArrayTwo.size());
@@ -456,17 +456,17 @@ public class BinaryLLSDTests extends TestCase
 
     public void testDeserializeDictionary() throws IOException, ParseException
     {
-        OSDMap llsdEmptyMap = (OSDMap)OSDParser.deserialize(binaryEmptyMap, Helpers.ASCII_ENCODING);
+        OSDMap llsdEmptyMap = (OSDMap)OSDParser.deserialize(binaryEmptyMap, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Map, llsdEmptyMap.getType());
         Assert.assertEquals(0, llsdEmptyMap.size());
 
-        OSDMap llsdSimpleMap = (OSDMap)OSDParser.deserialize(binarySimpleMap, Helpers.ASCII_ENCODING);
+        OSDMap llsdSimpleMap = (OSDMap)OSDParser.deserialize(binarySimpleMap, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Map, llsdSimpleMap.getType());
         Assert.assertEquals(1, llsdSimpleMap.size());
         Assert.assertEquals(OSDType.Integer, llsdSimpleMap.get("test").getType());
         Assert.assertEquals(0, llsdSimpleMap.get("test").AsInteger());
 
-        OSDMap llsdSimpleMapTwo = (OSDMap)OSDParser.deserialize(binarySimpleMapTwo, Helpers.ASCII_ENCODING);
+        OSDMap llsdSimpleMapTwo = (OSDMap)OSDParser.deserialize(binarySimpleMapTwo, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Map, llsdSimpleMapTwo.getType());
         Assert.assertEquals(3, llsdSimpleMapTwo.size());
         Assert.assertEquals(OSDType.Unknown, llsdSimpleMapTwo.get("test").getType());
@@ -496,7 +496,7 @@ public class BinaryLLSDTests extends TestCase
         // We dont compare here to the original serialized value, because, as maps dont preserve order,
         // the original serialized value is not *exactly* the same. Instead we compare to a deserialized
         // version created by this deserializer.
-        OSDMap llsdSimpleMapDeserialized = (OSDMap)OSDParser.deserialize(binarySimpleMapTwoSerialized, Helpers.ASCII_ENCODING);
+        OSDMap llsdSimpleMapDeserialized = (OSDMap)OSDParser.deserialize(binarySimpleMapTwoSerialized, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Map, llsdSimpleMapDeserialized.getType());
         Assert.assertEquals(3, llsdSimpleMapDeserialized.size());
         Assert.assertEquals(OSDType.Integer, llsdSimpleMapDeserialized.get("t0st").getType());
@@ -519,7 +519,7 @@ public class BinaryLLSDTests extends TestCase
         Assert.assertEquals(content, llsdSimpleMapThree.get(content).AsString());
 
         byte[] binarySimpleMapThree = llsdSimpleMapThree.serializeToBytes(OSDFormat.Binary);
-        OSDMap llsdSimpleMapThreeDS = (OSDMap)OSDParser.deserialize(binarySimpleMapThree, Helpers.ASCII_ENCODING);
+        OSDMap llsdSimpleMapThreeDS = (OSDMap)OSDParser.deserialize(binarySimpleMapThree, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Map, llsdSimpleMapThreeDS.getType());
         Assert.assertEquals(1, llsdSimpleMapThreeDS.size());
         Assert.assertEquals(content, llsdSimpleMapThreeDS.get(content).AsString());
@@ -543,7 +543,7 @@ public class BinaryLLSDTests extends TestCase
 
     public void testDeserializeNestedComposite() throws IOException, ParseException
     {
-        OSD llsdNested = OSDParser.deserialize(binaryNested, Helpers.ASCII_ENCODING);
+        OSD llsdNested = OSDParser.deserialize(binaryNested, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Array, llsdNested.getType());
         OSDArray llsdArray = (OSDArray)llsdNested;
         Assert.assertEquals(3, llsdArray.size());
