@@ -113,6 +113,8 @@ public final class LLSDJson extends OSDParser
 	 */
 	protected OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
 		PushbackReader push = new PushbackReader(new InputStreamReader(stream, encoding));
 		int marker = skipWhiteSpace(push);
 		if (marker < 0)
@@ -161,6 +163,8 @@ public final class LLSDJson extends OSDParser
 	 */
 	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
 		Writer writer = new OutputStreamWriter(stream, encoding);
 		if (prependHeader)
 		{

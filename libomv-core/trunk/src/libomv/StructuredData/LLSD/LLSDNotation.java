@@ -101,6 +101,8 @@ public final class LLSDNotation extends OSDParser
 
 	public static boolean isFormat(String string)
 	{
+		if (string == null)
+			return false;
 		return string.substring(string.indexOf('<'), string.indexOf('>')).contains(llsdNotationHeader);
 	}
 	
@@ -125,7 +127,9 @@ public final class LLSDNotation extends OSDParser
 	 */
 	public OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
-		return unflatten(new InputStreamReader(stream, encoding != null ? encoding : Helpers.UTF8_ENCODING), encoding);
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
+		return unflatten(new InputStreamReader(stream, encoding), encoding);
 	}
 	
 	/**
@@ -168,6 +172,8 @@ public final class LLSDNotation extends OSDParser
 	 */
 	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
 		Writer writer = new OutputStreamWriter(stream, encoding);
 		flatten(writer, data, prependHeader, encoding);
 		writer.flush();

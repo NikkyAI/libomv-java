@@ -89,7 +89,11 @@ public final class LLSDBinary extends OSDParser
 
 	public static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
 	{
-		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, encoding != null ? encoding : Helpers.ASCII_ENCODING));
+		if (string == null)
+			return false;
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
+		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, encoding));
 	}
 	
 	public static boolean isFormat(byte[] data)
@@ -113,6 +117,8 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
 		return unflatten(new ReaderInputStream(reader, encoding), encoding);
 	}
 
@@ -157,6 +163,8 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
 		OutputStream stream = new WriterOutputStream(writer, encoding);
 		flatten(stream, data, prependHeader, encoding);
 		stream.flush();
