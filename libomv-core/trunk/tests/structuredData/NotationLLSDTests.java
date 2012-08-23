@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package structuredData;
 
 /* 
  * This tests are based upon the description at
@@ -34,8 +35,6 @@
  * 
  * http://svn.secondlife.com/svn/linden/release/indra/lib/python/indra/base/llsd.py
  */
-
-package structuredData;
 
 import java.io.IOException;
 import java.net.URI;
