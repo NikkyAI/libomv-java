@@ -45,8 +45,8 @@ import libomv.utils.Helpers;
 
 public class OSD
 {
-	protected static final String FRACT_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss.SS'Z'";
-	protected static final String WHOLE_DATE_FMT = "yyyy-MM-DD'T'hh:mm:ss'Z'";
+	protected static final String FRACT_DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
+	protected static final String WHOLE_DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	public enum OSDType
 	{

@@ -289,7 +289,9 @@ public final class LLSDNotation extends OSDParser
 				else if (Character.isDigit((char) bChar))
 				{
 					char[] charsBaseEncoding = new char[2];
-					if (reader.read(charsBaseEncoding, 0, 2) < 2)
+					charsBaseEncoding[0] = (char) bChar;
+					charsBaseEncoding[1] = (char) reader.read();
+					if (charsBaseEncoding[1] < 0)
 					{
 						throw new ParseException("Notation LLSD parsing: Unexpected end of stream in binary.",
 								reader.getBytePosition());
@@ -313,27 +315,9 @@ public final class LLSDNotation extends OSDParser
 				}
 				return OSD.FromBinary(bytes);
 			case stringNotationMarker:
-				int numChars = GetLengthInBrackets(reader);
-				if (reader.read() < 0)
-				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
-							reader.getBytePosition());
-				}
-				char[] chars = new char[numChars];
-				if (reader.read(chars, 0, numChars) < numChars)
-				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
-							reader.getBytePosition());
-				}
-				if (reader.read() < 0)
-				{
-					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
-							reader.getBytePosition());
-				}
-				return OSD.FromString(new String(chars));
 			case singleQuotesNotationMarker:
 			case doubleQuotesNotationMarker:
-				String string = getStringDelimitedBy(reader, (char)character);
+				String string = getString(reader, character);
 				return OSD.FromString(string);
 			case uriNotationMarker:
 				if (reader.read() < 0)
@@ -448,14 +432,11 @@ public final class LLSDNotation extends OSDParser
 		OSDMap osdMap = new OSDMap();
 		while (((character = skipWhiteSpace(reader)) > 0) && ((char) character != mapEndNotationMarker))
 		{
-			reader.unread(character);
-			OSD osdKey = parseElement(reader);
-			if (!osdKey.getType().equals(OSD.OSDType.String))
+			if ((char) character == kommaNotationDelimiter)
 			{
-				throw new ParseException("Notation LLSD parsing: Invalid key in map", reader.getBytePosition());
+				character = skipWhiteSpace(reader);				
 			}
-			String key = osdKey.AsString();
-
+			String key = getString(reader, character);
 			character = skipWhiteSpace(reader);
 			if ((char) character != keyNotationDelimiter)
 			{
@@ -696,23 +677,49 @@ public final class LLSDNotation extends OSDParser
 		writer.write(mapEndNotationMarker);
 	}
 
-	public static int GetLengthInBrackets(PushbackReader reader) throws IOException, ParseException
+	public static String getString(PushbackReader reader, int notationChar) throws IOException, ParseException
+	{
+		switch (notationChar)
+		{
+			case stringNotationMarker:
+				int numChars = getLengthInBrackets(reader);
+				char[] chars = new char[numChars];
+				if (reader.read() < 0 || reader.read(chars, 0, numChars) < numChars || reader.read() < 0)
+				{
+					throw new ParseException("Notation LLSD parsing: Unexpected end of stream in string.",
+							reader.getBytePosition());
+				}
+				return new String(chars);
+			case singleQuotesNotationMarker:
+			case doubleQuotesNotationMarker:
+				return getStringDelimitedBy(reader, (char)notationChar);
+			default:
+				throw new ParseException("Notation LLSD parsing: Invalid string notation character '" + notationChar + "'.",
+						reader.getBytePosition());
+		}
+	}
+	
+	public static int getLengthInBrackets(PushbackReader reader) throws IOException, ParseException
 	{
 		int character;
 		StringBuilder s = new StringBuilder();
 		if (((character = skipWhiteSpace(reader)) > 0) && ((char) character == sizeBeginNotationMarker))
-			;
-		while ((character >= 0) && Character.isDigit((char) character) && ((char) character != sizeEndNotationMarker))
 		{
-			s.append((char) character);
-			reader.read();
+			while ((character = reader.read()) >= 0 && Character.isDigit((char)character))
+			{
+				s.append((char) character);
+			}
 		}
 		if (character < 0)
 		{
 			throw new ParseException("Notation LLSD parsing: Can't parse length value cause unexpected end of stream.",
 					reader.getBytePosition());
 		}
-		reader.unread(character);
+		else if (character != sizeEndNotationMarker)
+		{
+			throw new ParseException("Notation LLSD parsing: Can't parse length value, invalid character.",
+					reader.getBytePosition());
+		}
 		return new Integer(s.toString());
 	}
 

@@ -123,11 +123,6 @@ public class OSDMap extends OSD implements Map<String, OSD>
 		return value.containsKey(key);
 	}
 
-	public final boolean containsKey(String key)
-	{
-		return value.containsKey(key);
-	}
-
 	@Override
 	public final boolean containsValue(Object osd)
 	{
@@ -137,12 +132,8 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	@Override
 	public final OSD get(Object key)
 	{
-		return value.get(key);
-	}
-
-	public final OSD get(String key)
-	{
-		return value.get(key);
+		OSD osd = value.get(key);
+		return osd == null ? new OSD() : osd;
 	}
 
 	@Override
@@ -158,11 +149,6 @@ public class OSDMap extends OSD implements Map<String, OSD>
 
 	@Override
 	public final OSD remove(Object key)
-	{
-		return value.remove(key);
-	}
-
-	public final OSD remove(String key)
 	{
 		return value.remove(key);
 	}

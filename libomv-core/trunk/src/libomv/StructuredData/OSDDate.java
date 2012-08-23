@@ -28,6 +28,7 @@ package libomv.StructuredData;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import libomv.utils.Helpers;
 
@@ -50,6 +51,7 @@ public class OSDDate extends OSD
 	public String AsString()
 	{
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return df.format(value);
 	}
 

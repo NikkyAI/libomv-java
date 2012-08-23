@@ -33,6 +33,7 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -171,6 +172,7 @@ public class OSDString extends OSD
 	public Date AsDate()
 	{
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		try
 		{
 			return df.parse(value);
