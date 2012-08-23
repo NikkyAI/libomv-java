@@ -124,33 +124,7 @@ public class OSDString extends OSD
 	@Override
 	public double AsReal()
 	{
-		if (value.isEmpty())
-		{
-			return 0;
-		}
-		else if	(value.toLowerCase().equals("nan"))
-		{
-			return Double.NaN;
-		}
-		else if	(value.toLowerCase().contains("inf"))
-		{
-			if (value.charAt(0) == '-')
-			{
-				return Double.NEGATIVE_INFINITY;
-			}
-			else
-			{
-				return Double.POSITIVE_INFINITY;
-			}
-		}
-		try
-		{
-			return Math.floor(Double.parseDouble(value));
-		}
-		catch (NumberFormatException ex)
-		{
-			return 0;
-		}
+		return Helpers.TryParseDouble(value);
 	}
 
 	@Override

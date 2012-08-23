@@ -2136,6 +2136,21 @@ public class Helpers
 		{
 			return 0.0d;
 		}
+		else if	(s.toLowerCase().equals("nan"))
+		{
+			return Double.NaN;
+		}
+		else if	(s.toLowerCase().contains("inf"))
+		{
+			if (s.charAt(0) == '-')
+			{
+				return Double.NEGATIVE_INFINITY;
+			}
+			else
+			{
+				return Double.POSITIVE_INFINITY;
+			}
+		}
 		try
 		{
 			return Double.parseDouble(s);
