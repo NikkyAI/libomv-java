@@ -130,6 +130,14 @@ public class OSDReal extends OSD
 	@Override
 	public String AsString()
 	{
+		if (Double.isNaN(value))
+		{
+			return "NaN";
+		}
+		else if (Double.isInfinite(value))
+		{
+			return (value < 0) ? "-Inf" : "Inf";
+		}
 		return Double.toString(value);
 	}
 
