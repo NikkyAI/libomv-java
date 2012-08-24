@@ -88,11 +88,14 @@ public final class LLSDBinary extends OSDParser
 
 	public static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
 	{
-		if (string == null)
-			return false;
-		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
-		return string.substring(string.indexOf('<'), string.indexOf('<')).contains(new String(llsdBinaryHeader, encoding));
+		int character = skipWhiteSpace(string);
+		if (character == '<')
+		{
+			if (encoding == null)
+				encoding = Helpers.UTF8_ENCODING;
+			return isHeader(string, new String(llsdBinaryHeader, encoding), '>');
+		}
+		return false;
 	}
 	
 	public static boolean isFormat(byte[] data)

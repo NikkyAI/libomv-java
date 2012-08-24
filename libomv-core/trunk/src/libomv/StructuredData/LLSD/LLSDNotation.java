@@ -101,9 +101,12 @@ public final class LLSDNotation extends OSDParser
 
 	public static boolean isFormat(String string)
 	{
-		if (string == null)
-			return false;
-		return string.substring(string.indexOf('<'), string.indexOf('>')).contains(llsdNotationHeader);
+		int character = skipWhiteSpace(string);
+		if (character == '<')
+		{
+			return isHeader(string, llsdNotationHeader, '>');
+		}
+		return false;
 	}
 	
 	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
@@ -111,7 +114,9 @@ public final class LLSDNotation extends OSDParser
 		int character = skipWhiteSpace(data);
 		if (character == '<')
 		{
-			return isHeader(data, llsdNotationHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+			if (encoding == null)
+				encoding = Helpers.UTF8_ENCODING;
+			return isHeader(data, llsdNotationHeader.getBytes(encoding), '>');
 		}
 		return false;
 	}

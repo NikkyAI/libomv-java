@@ -32,8 +32,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map.Entry;
@@ -42,6 +42,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
+import libomv.StructuredData.OSDBinary;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;
@@ -50,7 +51,8 @@ import libomv.utils.PushbackReader;
 
 public final class LLSDJson extends OSDParser
 {
-	private static final String llsdJSONHeader = "<?llsd/json?>";
+	private static final String llsdJsonKey = "json";
+	private static final String llsdJsonHeader = "<?llsd/json?>";
 
 	private static final String baseIndent = "  ";
 
@@ -69,6 +71,28 @@ public final class LLSDJson extends OSDParser
 	private static final char keyNotationDelimiter = ':';
 
 	private static final char doubleQuotesNotationMarker = '"';
+
+	public static boolean isFormat(String string)
+	{
+		int character = skipWhiteSpace(string);
+		if (character == '<')
+		{
+			return isHeader(string, llsdJsonKey, '>');
+		}
+		return false;
+	}
+	
+	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
+	{
+		int character = skipWhiteSpace(data);
+		if (character == '<')
+		{
+			if (encoding == null)
+				encoding = Helpers.UTF8_ENCODING;
+			return isHeader(data, llsdJsonKey.getBytes(encoding), '>');
+		}
+		return false;
+	}
 
 	/**
 	 * Parse an JSON byte stream and convert it into an hierarchical OSD
@@ -91,8 +115,8 @@ public final class LLSDJson extends OSDParser
 		else if (marker == '<')
 		{
 			int offset = push.getBytePosition();
-			if (!isHeader(push, llsdJSONHeader, '>'))
-				throw new ParseException("Failed to decode binary LLSD", offset);	
+			if (!isHeader(push, llsdJsonKey, '>'))
+				throw new ParseException("Failed to decode Json LLSD", offset);	
 		}
 		else
 		{
@@ -124,8 +148,8 @@ public final class LLSDJson extends OSDParser
 		else if (marker == '<')
 		{
 			int offset = push.getBytePosition();
-			if (!isHeader(push, llsdJSONHeader, '>'))
-				throw new ParseException("Failed to decode binary LLSD", offset);	
+			if (!isHeader(push, llsdJsonKey, '>'))
+				throw new ParseException("Failed to decode Json LLSD", offset);	
 		}
 		else
 		{
@@ -147,7 +171,7 @@ public final class LLSDJson extends OSDParser
 	{
 		if (prependHeader)
 		{
-			writer.write(llsdJSONHeader);
+			writer.write(llsdJsonHeader);
 			writer.write('\n');
 		}
 		serializeElement(writer, data);
@@ -168,7 +192,7 @@ public final class LLSDJson extends OSDParser
 		Writer writer = new OutputStreamWriter(stream, encoding);
 		if (prependHeader)
 		{
-			writer.write(llsdJSONHeader);
+			writer.write(llsdJsonHeader);
 			writer.write('\n');
 		}
 		serializeElement(writer, data);
@@ -270,16 +294,27 @@ public final class LLSDJson extends OSDParser
 	private static OSD parseString(PushbackReader reader) throws IOException, ParseException
 	{
 		String string = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
-		UUID uuid = new UUID();
-		if (uuid.FromString(string))
-			return OSD.FromUUID(uuid);
+		if (string.length() >=36)
+		{
+			try
+			{
+				UUID uuid = new UUID();
+				if (uuid.FromString(string))
+				    return OSD.FromUUID(uuid);
+			}
+			catch (Exception ex) {}
+		}
 		OSD osd = OSD.FromString(string);
-		Date date = osd.AsDate();
-		if (!date.equals(Helpers.Epoch))
-			return OSD.FromDate(date);
-		URI uri = osd.AsUri();
-		if (uri != null)
-			return OSD.FromUri(uri);
+		
+		if (string.length() > 1)
+		{
+			if (string.length() > 16)
+			{
+				Date date = osd.AsDate();
+				if (!date.equals(Helpers.Epoch))
+					return OSD.FromDate(date);
+			}
+		}
 		return osd;
 	}
 	
@@ -287,7 +322,7 @@ public final class LLSDJson extends OSDParser
 	{
 		int character = kommaNotationDelimiter;
 		OSDArray osdArray = new OSDArray();
-		while (((char) character == kommaNotationDelimiter) && ((character = skipWhiteSpace(reader)) > 0))
+		while (((char) character == kommaNotationDelimiter) && ((character = skipWhiteSpace(reader)) > 0) && character != arrayEndNotationMarker)
 		{
 			reader.unread(character);
 			osdArray.add(parseElement(reader));
@@ -308,18 +343,15 @@ public final class LLSDJson extends OSDParser
 
 	private static OSD parseMap(PushbackReader reader) throws ParseException, IOException
 	{
-		int character;
+		int character = kommaNotationDelimiter;
 		OSDMap osdMap = new OSDMap();
-		while (((character = skipWhiteSpace(reader)) > 0) && ((char) character != mapEndNotationMarker))
+		while (((char) character == kommaNotationDelimiter) && ((character = skipWhiteSpace(reader)) > 0) && ((char) character != mapEndNotationMarker))
 		{
-			reader.unread(character);
-			OSD osdKey = parseElement(reader);
-			if (!osdKey.getType().equals(OSD.OSDType.String))
+			if (character != doubleQuotesNotationMarker)
 			{
 				throw new ParseException("LLSD JSON parsing: Invalid key in map", reader.getBytePosition());
 			}
-			String key = osdKey.AsString();
-
+			String key = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
 			character = skipWhiteSpace(reader);
 			if ((char) character != keyNotationDelimiter)
 			{
@@ -327,10 +359,11 @@ public final class LLSDJson extends OSDParser
 						reader.getBytePosition());
 			}
 			osdMap.put(key, parseElement(reader));
+			character = skipWhiteSpace(reader);
 		}
 		if (character < 0)
 		{
-			throw new ParseException("Notation LLSD parsing: Unexpected end of map discovered.",
+			throw new ParseException("Json LLSD parsing: Unexpected end of map discovered.",
 					reader.getBytePosition());
 		}
 		return osdMap;
@@ -361,14 +394,10 @@ public final class LLSDJson extends OSDParser
 			case UUID:
 			case Date:
 			case URI:
-				writer.write(doubleQuotesNotationMarker);
-				writer.write(escapeCharacters(osd.AsString()));
-				writer.write(doubleQuotesNotationMarker);
+				serializeString(writer, osd.AsString());
 				break;
 			case Binary:
-				writer.write(doubleQuotesNotationMarker);
-				writer.write(osd.AsString());
-				writer.write(doubleQuotesNotationMarker);
+				serializeBinary(writer, (OSDBinary)osd);
 				break;
 			case Array:
 				serializeArray(writer, (OSDArray) osd);
@@ -377,10 +406,85 @@ public final class LLSDJson extends OSDParser
 				serializeMap(writer, (OSDMap) osd);
 				break;
 			default:
-				throw new IOException("Notation serialization: Not existing element discovered.");
+				throw new IOException("Json serialization: Not existing element discovered.");
 		}
 	}
 
+	private static void serializeString(Writer writer, String string) throws IOException
+	{
+		writer.write(doubleQuotesNotationMarker);
+        if (string != null && string.length() > 0)
+        {
+            char b, c = 0;
+            String hhhh;
+            int i, len = string.length();
+
+            for (i = 0; i < len; i += 1)
+            {
+                b = c;
+                c = string.charAt(i);
+                switch (c)
+                {
+                	case '\\':
+                    case '"':
+                        writer.write('\\');
+                        writer.write(c);
+                        break;
+                    case '/':
+                        if (b == '<') {
+                            writer.write('\\');
+                        }
+                        writer.write(c);
+                        break;
+                    case '\b':
+                        writer.write("\\b");
+                        break;
+                    case '\t':
+                        writer.write("\\t");
+                        break;
+                    case '\n':
+                        writer.write("\\n");
+                        break;
+                    case '\f':
+                        writer.write("\\f");
+                        break;
+                    case '\r':
+                        writer.write("\\r");
+                        break;
+                    default:
+                        if (c < ' ' || (c >= '\u0080' && c < '\u00a0')
+                                    || (c >= '\u2000' && c < '\u2100'))
+                        {
+                            hhhh = "000" + Integer.toHexString(c);
+                            writer.write("\\u" + hhhh.substring(hhhh.length() - 4));
+                        }
+                        else
+                        {
+                            writer.write(c);
+                        }
+                }
+            }
+        }
+		writer.write(doubleQuotesNotationMarker);
+	}
+	
+	private static void serializeBinary(Writer writer, OSDBinary osdBinary) throws IOException
+	{
+		writer.write(arrayBeginNotationMarker);
+		byte[] bytes = osdBinary.AsBinary();
+		int lastIndex = bytes.length;
+
+		for (int idx = 0; idx < lastIndex; idx++)
+		{
+			if (idx > 0)
+			{
+				writer.write(kommaNotationDelimiter);
+			}
+			writer.write(Integer.toString(bytes[idx]));
+		}
+		writer.write(arrayEndNotationMarker);
+	}
+	
 	private static void serializeArray(Writer writer, OSDArray osdArray) throws IOException
 	{
 		writer.write(arrayBeginNotationMarker);
@@ -405,9 +509,7 @@ public final class LLSDJson extends OSDParser
 
 		for (Entry<String, OSD> kvp : osdMap.entrySet())
 		{
-			writer.write(doubleQuotesNotationMarker);
-			writer.write(escapeCharacters(kvp.getKey()));
-			writer.write(doubleQuotesNotationMarker);
+			serializeString(writer, kvp.getKey());
 			writer.write(keyNotationDelimiter);
 			serializeElement(writer, kvp.getValue());
 			if (idx < lastIndex)
@@ -444,14 +546,10 @@ public final class LLSDJson extends OSDParser
 			case UUID:
 			case Date:
 			case URI:
-				writer.write(doubleQuotesNotationMarker);
-				writer.write(escapeCharacters(osd.AsString()));
-				writer.write(doubleQuotesNotationMarker);
+				serializeString(writer, osd.AsString());
 				break;
 			case Binary:
-				writer.write(doubleQuotesNotationMarker);
-				writer.write(Base64.encodeBase64String(osd.AsBinary()));
-				writer.write(doubleQuotesNotationMarker);
+				serializeBinary(writer, (OSDBinary)osd);
 				break;
 			case Array:
 				serializeArrayFormatted(writer, indent + baseIndent, (OSDArray) osd);
@@ -460,7 +558,7 @@ public final class LLSDJson extends OSDParser
 				serializeMapFormatted(writer, indent + baseIndent, (OSDMap) osd);
 				break;
 			default:
-				throw new IOException("Notation serialization: Not existing element discovered.");
+				throw new IOException("Json serialization: Not existing element discovered.");
 
 		}
 	}
@@ -495,9 +593,7 @@ public final class LLSDJson extends OSDParser
 		{
 			writer.write(newLine);
 			writer.write(indent);
-			writer.write(doubleQuotesNotationMarker);
-			writer.write(escapeCharacters(kvp.getKey()));
-			writer.write(doubleQuotesNotationMarker);
+			serializeString(writer, kvp.getKey());
 			writer.write(keyNotationDelimiter);
 			serializeElementFormatted(writer, indent + baseIndent, kvp.getValue());
 			if (idx < lastIndex)
@@ -518,7 +614,7 @@ public final class LLSDJson extends OSDParser
 		boolean charactersEqual = true;
 		int character;
 
-		while ((character = reader.read()) >= 0 && offset < buffer.length && charactersEqual)
+		while (offset < buffer.length && (character = reader.read()) >= 0 && charactersEqual)
 		{
 			if (((char) character) != buffer[offset])
 			{
@@ -529,17 +625,5 @@ public final class LLSDJson extends OSDParser
 			offset++;
 		}
 		return offset;
-	}
-
-	private static String escapeCharacters(String s)
-	{
-		char[] escapes = {'"','/','\b','\f','\n','\r','\t'};
-
-		String string = s.replace("\\", "\\\\");
-		for (int i = 0; i < escapes.length; i++)
-		{
-		    string.replace("" + escapes[i], "\\" + escapes[i]);
-		}
-		return string;
 	}
 }

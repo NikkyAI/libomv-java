@@ -81,8 +81,13 @@ public final class LLSDXml extends OSDParser
 
 	public static boolean isFormat(String string)
 	{
-		String sub = string.substring(string.indexOf('<'), string.indexOf('>')).toLowerCase();
-		return sub.contains(llsdXmlHeader) || sub.contains(llsdXmlHeader2);
+		int character = skipWhiteSpace(string);
+		if (character == '<')
+		{
+			return isHeader(string, llsdXmlHeader, '>') ||
+				   isHeader(string, llsdXmlHeader2, '>');
+		}
+		return false;
 	}
 	
 	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
@@ -90,8 +95,10 @@ public final class LLSDXml extends OSDParser
 		int character = skipWhiteSpace(data);
 		if (character == '<')
 		{
-			return isHeader(data, llsdXmlHeader.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>') ||
-				   isHeader(data, llsdXmlHeader2.getBytes(encoding != null ? encoding : Helpers.UTF8_ENCODING), '>');
+			if (encoding == null)
+				encoding = Helpers.UTF8_ENCODING;
+			return isHeader(data, llsdXmlHeader.getBytes(encoding), '>') ||
+				   isHeader(data, llsdXmlHeader2.getBytes(encoding), '>');
 		}
 		return false;
 	}

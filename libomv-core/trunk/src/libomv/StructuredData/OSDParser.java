@@ -74,6 +74,10 @@ public abstract class OSDParser
 		{
 			return new LLSDNotation();			
 		}
+		else if (LLSDJson.isFormat(header))
+		{
+			return new LLSDJson();			
+		}
 		else if (LLSDXml.isFormat(header))
 		{
 			return new LLSDXml();			
@@ -90,6 +94,10 @@ public abstract class OSDParser
 		else if (LLSDNotation.isFormat(header, encoding))
 		{
 			return new LLSDNotation();			
+		}
+		else if (LLSDJson.isFormat(header, encoding))
+		{
+			return new LLSDJson();			
 		}
 		else if (LLSDXml.isFormat(header, encoding))
 		{
@@ -473,9 +481,6 @@ public abstract class OSDParser
 				foundEscape = false;
 				switch ((char) character)
 				{
-					case 'a':
-						s.append('\005');
-						break;
 					case 'b':
 						s.append('\b');
 						break;
@@ -491,8 +496,16 @@ public abstract class OSDParser
 					case 't':
 						s.append('\t');
 						break;
-					case 'v':
-						s.append('\013');
+					case 'u':
+						char[] buf = new char[4];
+						if (reader.read(buf) == 4)
+						{
+							s.append((char)Integer.parseInt(new String(buf), 16));
+						}
+						else
+						{
+							throw new ParseException("Json LLSD parsing: Unexpected end of data in parsing hex string numeric", reader.getBytePosition());
+						}
 						break;
 					default:
 						s.append((char) character);
@@ -511,7 +524,7 @@ public abstract class OSDParser
 		if (character < 0)
 		{
 			throw new ParseException(
-					"Notation LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
+					"Json LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
 							+ delimiter + "' character.", reader.getBytePosition());
 		}
 		return s.toString();
@@ -538,7 +551,7 @@ public abstract class OSDParser
 		{
 			if (pos < string.length())
 			{
-				if (ch == string.codePointAt(pos))
+				if (ch == string.charAt(pos))
 				{
 					pos++;
 				}
@@ -585,6 +598,41 @@ public abstract class OSDParser
 		return pos == data.length;
 	}
 	
+	protected static int skipWhiteSpace(String input)
+	{
+		int off = 0;
+		while (input.length() > off)
+		{
+			char b = input.charAt(off++);
+			if (b != ' ' || b != '\t' || b != '\n' || b != '\r')
+			{
+				return b;
+			}
+		}
+		return -1;
+	}
+
+	protected static boolean isHeader(String input, String string, int ending)
+	{
+		int pos = 0, off = 0;
+		while (input.length() > off && input.charAt(off) != ending)
+		{
+			if (pos < string.length())
+			{
+				if (input.charAt(off) == string.charAt(pos))
+				{
+					pos++;
+				}
+				else
+				{
+					pos = 0;
+				}
+			}
+			off++;
+		}
+		return pos == string.length();
+	}
+
 	protected static int skipWhiteSpace(byte[] input)
 	{
 		int off = 0;
