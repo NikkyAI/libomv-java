@@ -3261,7 +3261,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public final void AutoPilotLocal(int localX, int localY, float z) throws Exception
 	{
 		int[] coord = new int[2];
-		Helpers.LongToUInts(_Client.Network.getCurrentRegionHandle(), coord);
+		Helpers.LongToUInts(_Client.getCurrentRegionHandle(), coord);
 		AutoPilot((coord[0] + localX), (coord[1] + localY), z);
 	}
 
