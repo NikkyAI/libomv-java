@@ -160,7 +160,6 @@ import libomv.utils.Logger.LogLevel;
 import libomv.utils.TimeoutEvent;
 
 import org.apache.http.nio.concurrent.FutureCallback;
-import org.apache.http.nio.reactor.IOReactorException;
 
 // Class to hold Client Avatar's data
 public class AgentManager implements PacketCallback, CapsCallback
@@ -2316,6 +2315,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.TeleportFinish, this);
 		_Client.Network.RegisterCallback(PacketType.TeleportCancel, this);
 		_Client.Network.RegisterCallback(PacketType.TeleportLocal, this);
+
 		// these come in via the EventQueue
 		_Client.Network.RegisterCallback(CapsEventType.TeleportFailed, this);
 		_Client.Network.RegisterCallback(CapsEventType.TeleportFinish, this);
@@ -2802,7 +2802,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		{
 			ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
 			acceptInvite.SessionID = session_id;
-			new CapsClient().executeHttpPost(uri, acceptInvite.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(uri, acceptInvite, null, _Client.Settings.CAPS_TIMEOUT);
 
 			synchronized (GroupChatSessions)
 			{
@@ -2842,7 +2842,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				startConference.AgentsBlock[i] = participants[i];
 			}
 			startConference.SessionID = tmp_session_id;
-			new CapsClient().executeHttpPost(url, startConference.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(url, startConference, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -4394,18 +4394,35 @@ public class AgentManager implements PacketCallback, CapsCallback
      */
     public void SetHome() throws Exception
     {
-        SetStartLocationRequestPacket s = new SetStartLocationRequestPacket();
-        s.AgentData = s.new AgentDataBlock();
-        s.AgentData.AgentID = getAgentID();
-        s.AgentData.SessionID = getSessionID();
-        s.StartLocationData = s.new StartLocationDataBlock();
-        s.StartLocationData.LocationPos = getSimPosition();
-        s.StartLocationData.LocationID = 1;
-        s.StartLocationData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
-        s.StartLocationData.LocationLookAt = _Movement.Camera.getAtAxis();
-        _Client.Network.SendPacket(s);
+		SetHome(getSimPosition(), 1, _Movement.Camera.getAtAxis());
     }
 
+    public void SetHome(Vector3 pos, int id, Vector3 lookAt) throws Exception
+    {
+		URI url = _Client.Network.getCapabilityURI("HomeLocation");
+		if (url != null)
+		{
+			CapsClient request = new CapsClient();
+			OSDMap map = new OSDMap(2);
+			map.put("LocationId", OSD.FromInteger(id));
+			map.put("LocationPos", OSD.FromVector3(pos));
+			map.put("LocationLookAt", OSD.FromVector3(lookAt));
+			request.executeHttpPost(url, map, OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);			
+		}
+		else
+		{
+	        SetStartLocationRequestPacket s = new SetStartLocationRequestPacket();
+	        s.AgentData = s.new AgentDataBlock();
+	        s.AgentData.AgentID = getAgentID();
+	        s.AgentData.SessionID = getSessionID();
+	        s.StartLocationData = s.new StartLocationDataBlock();
+	        s.StartLocationData.LocationPos = pos;
+	        s.StartLocationData.LocationID = id;
+	        s.StartLocationData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
+	        s.StartLocationData.LocationLookAt = lookAt;
+	        _Client.Network.SendPacket(s);
+		}
+    }
     /**
 	 * Acknowledge agent movement complete
 	 * 
@@ -4704,7 +4721,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	public final void GetAttachmentResources(final Callback<AttachmentResourcesCallbackArgs> callback)
-			throws IOReactorException
+			throws IOException
 	{
 		URI url = _Client.Network.getCapabilityURI("AttachmentResources");
 		if (url != null)
@@ -4729,14 +4746,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (url == null)
 		{
 			Logger.Log("Unable to invoke SetDisplyName capability at this time", LogLevel.Warning, _Client);
-			return;
+			throw new IOException("Unable to retrieve SetDisplayName capability");
 		}
 
 		SetDisplayNameMessage msg = _Client.Messages.new SetDisplayNameMessage();
 		msg.OldDisplayName = oldName;
 		msg.NewDisplayName = newName;
 
-		new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
+		new CapsClient().executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
 	}
 
 	/**
@@ -4757,7 +4774,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			msg.LanguagePublic = isPublic;
 
 			URI url = _Client.Network.getCapabilityURI("UpdateAgentLanguage");
-			new CapsClient().executeHttpPost(url, msg.Serialize(), OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient().executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception ex)
 		{
@@ -5444,7 +5461,6 @@ public class AgentManager implements PacketCallback, CapsCallback
     public void ModerateChatSessions(UUID sessionID, UUID memberID, String key, boolean moderate) throws Exception
     {
         URI url = _Client.Network.getCapabilityURI("ChatSessionRequest");
-
         if (url != null)
         {
             ChatSessionRequestMuteUpdate req = _Client.Messages.new ChatSessionRequestMuteUpdate();
@@ -5455,7 +5471,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             req.AgentID = memberID;
 
             CapsClient request = new CapsClient();
-            request.getResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+            request.getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
         }
         else
         {
