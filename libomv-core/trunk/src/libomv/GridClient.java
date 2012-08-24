@@ -276,8 +276,8 @@ public class GridClient
 
 	private String defaultGrid = null;
 
+	private static final String NUMGRIDS = "numgrids";
 	private static final String GRIDINFO = "gridinfo";
-	private static final String GRID_LIST = "gridlist";
 	private static final String DEFAULT_GRID = "defaultGrid";
 	private static final String DEFAULT_GRID_NAME1 = "osgrid";
 	private static final String DEFAULT_GRID_NAME2 = "secondlife";
@@ -661,11 +661,11 @@ public class GridClient
 
 	private void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
 	{
-		OSDArray array = new OSDArray();
-		OSDMap map = new OSDMap();
-		map.put(DEFAULT_GRIDS_VERSION, OSD.FromInteger(listversion));
-		array.add(map);
-
+		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+		prefs.put(DEFAULT_GRIDS_VERSION, Integer.toString(listversion));
+		prefs.put(DEFAULT_GRID, defaultGrid);
+		prefs.put(NUMGRIDS, Integer.toString(gridlist.size()));
+		int i = 0;
 		for (GridInfo info : gridlist.values())
 		{
 			// This doesn't save the transient fields
@@ -679,11 +679,8 @@ public class GridClient
 					members.put("userpassword", OSDString.FromString(info.password));
 				}
 			}
-			array.add(members);
+			prefs.put(GRIDINFO + Integer.toString(++i), OSDParser.serializeToString(members, OSDFormat.Xml));
 		}
-		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-		prefs.put(GRID_LIST, OSDParser.serializeToString(array, OSDFormat.Xml));
-		prefs.put(DEFAULT_GRID, defaultGrid);
 	}
 
 	private OSD loadDefaults() throws IOException
@@ -694,10 +691,9 @@ public class GridClient
 		{
 			try
 			{
-				osd = OSDParser.deserialize(stream, Helpers.UTF8_ENCODING);
+				osd = OSDParser.deserialize(stream, OSDFormat.Xml, Helpers.UTF8_ENCODING);
 			}
-			catch (ParseException ex)
-			{}
+			catch (ParseException ex) {}
 			finally
 			{
 				stream.close();
@@ -708,15 +704,23 @@ public class GridClient
 
 	private OSD loadSettings() throws IOException
 	{
-		OSD osd = null;
+		OSDArray osd = new OSDArray();
 		try
 		{
 			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 			defaultGrid = prefs.get(DEFAULT_GRID, Helpers.EmptyString);
-			osd = OSDParser.deserialize(prefs.get(GRID_LIST, Helpers.EmptyString));
+			String num = prefs.get(NUMGRIDS, Helpers.EmptyString);
+			if (num != null && !num.isEmpty())
+			{
+				int length = Integer.valueOf(num);
+				for (int i = 1; i <= length; i++)
+				{
+					osd.add(OSDParser.deserialize(prefs.get(GRIDINFO + Integer.toString(i), Helpers.EmptyString)));				
+				}
+			}
 		}
-		catch (ParseException ex)
-		{}
+		catch (ParseException ex) {}
+		catch (NumberFormatException ex) {}
 		return osd;
 	}
 
@@ -755,7 +759,7 @@ public class GridClient
 				{
 					charset = HTTP.DEFAULT_CONTENT_CHARSET;
 				}
-				osd = OSDParser.deserialize(stream, charset);
+				osd = OSDParser.deserialize(stream, OSDFormat.Xml, charset);
 			}
 		}
 		catch (ParseException ex)
