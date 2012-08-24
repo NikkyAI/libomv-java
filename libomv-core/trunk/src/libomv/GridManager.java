@@ -321,22 +321,22 @@ public class GridManager implements PacketCallback
 		switch (packet.getType())
 		{
 			case MapLayerReply:
-				MapLayerReplyHandler(packet, simulator);
+				HandleMapLayerReply(packet, simulator);
 				break;
 			case MapBlockReply:
-				MapBlockReplyHandler(packet, simulator);
+				HandleMapBlockReply(packet, simulator);
 				break;
 			case MapItemReply:
-				MapItemReplyHandler(packet, simulator);
+				HandleMapItemReply(packet, simulator);
 				break;
 			case SimulatorViewerTimeMessage:
-				SimulatorViewerTimeMessageHandler(packet, simulator);
+				HandleSimulatorViewerTimeMessage(packet, simulator);
 				break;
 			case CoarseLocationUpdate:
-				CoarseLocationHandler(packet, simulator);
+				HandleCoarseLocation(packet, simulator);
 				break;
 			case RegionIDAndHandleReply:
-				RegionHandleReplyHandler(packet, simulator);
+				HandleRegionHandleReply(packet, simulator);
 				break;
 		}
 	}
@@ -377,6 +377,7 @@ public class GridManager implements PacketCallback
 			@Override
 			public void failed(Exception ex)
 			{
+                Logger.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), LogLevel.Error, Client);
 			}
 
 			@Override
@@ -594,7 +595,7 @@ public class GridManager implements PacketCallback
 		OnGridRegion.remove(grc);
 	}
 
-	/**
+    /**
 	 * Process an incoming packet and raise the appropriate events
 	 * 
 	 * @param simulator
@@ -602,7 +603,7 @@ public class GridManager implements PacketCallback
 	 * @param packet
 	 *            The packet data
 	 */
-	private void MapLayerReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleMapLayerReply(Packet packet, Simulator simulator) throws Exception
 	{
 		MapLayerReplyPacket map = (MapLayerReplyPacket) packet;
 
@@ -631,7 +632,7 @@ public class GridManager implements PacketCallback
 	 * @param packet
 	 *            The packet data
 	 */
-	private void MapBlockReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleMapBlockReply(Packet packet, Simulator simulator) throws Exception
 	{
 		MapBlockReplyPacket map = (MapBlockReplyPacket) packet;
 
@@ -676,7 +677,7 @@ public class GridManager implements PacketCallback
 	 *            The packet data
 	 * @throws Exception
 	 */
-	private void MapItemReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleMapItemReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnGridItems != null)
 		{
@@ -771,7 +772,7 @@ public class GridManager implements PacketCallback
 	 * @param packet
 	 * @param simulator
 	 */
-	protected final void SimulatorViewerTimeMessageHandler(Packet packet, Simulator simulator)
+	private final void HandleSimulatorViewerTimeMessage(Packet packet, Simulator simulator)
 	{
 		SimulatorViewerTimeMessagePacket time = (SimulatorViewerTimeMessagePacket) packet;
 
@@ -795,7 +796,7 @@ public class GridManager implements PacketCallback
 	 * @param packet
 	 *            The packet data
 	 */
-	protected final void CoarseLocationHandler(Packet packet, Simulator simulator)
+	private final void HandleCoarseLocation(Packet packet, Simulator simulator)
 	{
 		CoarseLocationUpdatePacket coarse = (CoarseLocationUpdatePacket) packet;
 
@@ -860,7 +861,7 @@ public class GridManager implements PacketCallback
 	 * @param packet
 	 *            The packet data
 	 */
-	protected final void RegionHandleReplyHandler(Packet packet, Simulator simulator)
+	private final void HandleRegionHandleReply(Packet packet, Simulator simulator)
 	{
 		if (OnRegionHandleReply != null)
 		{
