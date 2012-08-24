@@ -210,6 +210,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 		/* Script wants to control your camera */
 		public static final int ControlCamera = 1 << 11;
 
+		// Script wants the ability to teleport you
+		public static final int Teleport = 1 << 12;
+				
 		public static int setValue(int value)
 		{
 			return (value & _mask);
