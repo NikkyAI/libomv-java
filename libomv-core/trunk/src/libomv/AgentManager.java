@@ -1876,6 +1876,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private Vector3 homePosition;
 	// LookAt point saved/restored with HomePosition
 	private Vector3 homeLookAt;
+	
+	private void setHomePosRegion(long region, Vector3 pos)
+	{
+		homePosition = pos;
+	}
+	
 	private String firstName = Helpers.EmptyString;
 	private String lastName = Helpers.EmptyString;
 	private String fullName;
@@ -2224,7 +2230,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (_Client.Network.getCurrentSim() != null)
 		{
 			int globals[] = new int[2];
-			Helpers.LongToUInts(_Client.Network.getCurrentSim().getHandle(), globals);
+			Helpers.LongToUInts(_Client.getCurrentRegionHandle(), globals);
 			Vector3 pos = getSimPosition();
 
 			return new Vector3d(globals[0] + pos.X, globals[1] + pos.Y, pos.Z);
@@ -3255,7 +3261,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public final void AutoPilotLocal(int localX, int localY, float z) throws Exception
 	{
 		int[] coord = new int[2];
-		Helpers.LongToUInts(_Client.Network.getCurrentSim().getHandle(), coord);
+		Helpers.LongToUInts(_Client.Network.getCurrentRegionHandle(), coord);
 		AutoPilot((coord[0] + localX), (coord[1] + localY), z);
 	}
 
@@ -4215,7 +4221,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 
 		// Teleporting to the sim we're already in
-		return Teleport(_Client.Network.getCurrentSim().getHandle(), position, lookAt);
+		return Teleport(_Client.getCurrentRegionHandle(), position, lookAt);
 	}
 
 	/**
@@ -4394,10 +4400,17 @@ public class AgentManager implements PacketCallback, CapsCallback
      */
     public void SetHome() throws Exception
     {
-		SetHome(getSimPosition(), 1, _Movement.Camera.getAtAxis());
+		SetHome(1, getSimPosition(), _Movement.Camera.getAtAxis());
     }
 
-    public void SetHome(Vector3 pos, int id, Vector3 lookAt) throws Exception
+    /**
+     * Sets home location to the provided position and lookat parameters
+     * Will fire an AlertMessage (<seealso cref="E:OpenMetaverse.AgentManager.OnAlertMessage"/>)
+     * with success or failure message
+     * 
+     * @throws Exception 
+     */
+    public void SetHome(int id, Vector3 pos, Vector3 lookAt) throws Exception
     {
 		URI url = _Client.Network.getCapabilityURI("HomeLocation");
 		if (url != null)
@@ -4421,6 +4434,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 	        s.StartLocationData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
 	        s.StartLocationData.LocationLookAt = lookAt;
 	        _Client.Network.SendPacket(s);
+		}
+		if (id == 1)
+		{
+			setHomePosRegion(_Client.getCurrentRegionHandle(), pos);
 		}
     }
     /**
