@@ -599,7 +599,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Pay group liabilities and receive group dividends
 		public static final long Accountable = 1L << 40;
 
-		// Notices and proposals
+		// List and Host group events 
+		public static final long  HostEvent = 1L << 41;
+
+	    // Notices and proposals
 		// Can send group notices
 		public static final long SendNotices = 1L << 42;
 		// Can receive group notices
