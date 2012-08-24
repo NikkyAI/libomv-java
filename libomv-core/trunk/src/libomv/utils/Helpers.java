@@ -2091,74 +2091,68 @@ public class Helpers
 			{
 				return Boolean.parseBoolean(s);
 			}
-			catch (Throwable t)
-			{
-			}
+			catch (Throwable t)	{ }
 		}
 		return false;
 	}
 
 	public static int TryParseInt(String s)
 	{
-		if (s == null || s.isEmpty())
+		if (s != null && !s.isEmpty())
 		{
-			return 0;
+			try
+			{
+				return Integer.parseInt(s);
+			}
+			catch (Throwable t) { }
 		}
-		try
-		{
-			return Integer.parseInt(s);
-		}
-		catch (Throwable t)
-		{
-			return 0;
-		}
+		return 0;
 	}
 
 	public static float TryParseFloat(String s)
 	{
-		if (s == null || s.isEmpty())
+		if (s != null && !s.isEmpty())
 		{
-			return 0.0f;
+			try
+			{
+				return Float.parseFloat(s);
+			}
+			catch (Throwable t)
+			{
+				s = s.toLowerCase();
+				if	(s.equals("nan"))
+					return Float.NaN;
+				else if	(s.contains("inf"))
+					if (s.charAt(0) == '-')
+						return Float.NEGATIVE_INFINITY;
+					else
+						return Float.POSITIVE_INFINITY;
+			}
 		}
-		try
-		{
-			return Float.parseFloat(s);
-		}
-		catch (Throwable t)
-		{
-			return 0.0f;
-		}
+		return 0.0f;
 	}
 
 	public static double TryParseDouble(String s)
 	{
-		if (s == null || s.isEmpty())
+		if (s != null && !s.isEmpty())
 		{
-			return 0.0d;
-		}
-		else if	(s.toLowerCase().equals("nan"))
-		{
-			return Double.NaN;
-		}
-		else if	(s.toLowerCase().contains("inf"))
-		{
-			if (s.charAt(0) == '-')
+			try
 			{
-				return Double.NEGATIVE_INFINITY;
+				return Double.parseDouble(s);
 			}
-			else
+			catch (Throwable t)
 			{
-				return Double.POSITIVE_INFINITY;
+				s = s.toLowerCase();
+				if	(s.equals("nan"))
+					return Double.NaN;
+				else if	(s.contains("inf"))
+					if (s.charAt(0) == '-')
+						return Double.NEGATIVE_INFINITY;
+					else
+						return Double.POSITIVE_INFINITY;
 			}
 		}
-		try
-		{
-			return Double.parseDouble(s);
-		}
-		catch (Throwable t)
-		{
-			return 0.0d;
-		}
+		return 0.0d;
 	}
 
 	/**
@@ -2172,34 +2166,28 @@ public class Helpers
 	 */
 	public static long TryParseHex(String s)
 	{
-		if (s == null || s.isEmpty())
+		if (s != null && !s.isEmpty())
 		{
-			return 0L;
+			try
+			{
+				return Long.parseLong(s, 16);
+			}
+			catch (Throwable t) { }
 		}
-		try
-		{
-			return Long.parseLong(s, 16);
-		}
-		catch (Throwable t)
-		{
-			return 0L;
-		}
+		return 0L;
 	}
 
 	public static long TryParseLong(String s)
 	{
-		if (s == null || s.isEmpty())
+		if (s != null && !s.isEmpty())
 		{
-			return 0L;
+			try
+			{
+				return Long.parseLong(s, 10);
+			}
+			catch (Throwable t) { }
 		}
-		try
-		{
-			return Long.parseLong(s, 10);
-		}
-		catch (Throwable t)
-		{
-			return 0L;
-		}
+		return 0L;
 	}
 
 	/**
