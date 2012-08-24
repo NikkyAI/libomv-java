@@ -38,8 +38,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map.Entry;
 
-import org.apache.commons.codec.binary.Base64;
-
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDBinary;
