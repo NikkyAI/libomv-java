@@ -156,7 +156,7 @@ public final class LLSDXml extends OSDParser
 		{
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 			xmlWriter.setOutput(writer);
-			serialize(xmlWriter, data);
+			serialize(xmlWriter, data, prependHeader, encoding);
 		}
 		catch (XmlPullParserException ex)
 		{
@@ -180,7 +180,7 @@ public final class LLSDXml extends OSDParser
 		{
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 			xmlWriter.setOutput(stream, encoding);
-			serialize(xmlWriter, data);
+			serialize(xmlWriter, data, prependHeader, encoding);
 		}
 		catch (XmlPullParserException ex)
 		{
@@ -188,9 +188,10 @@ public final class LLSDXml extends OSDParser
 		}
 	}
 
-	private static void serialize(XmlSerializer writer, OSD data) throws IOException
+	private static void serialize(XmlSerializer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
-		writer.startDocument(null, null);
+		if (prependHeader)
+			writer.startDocument(encoding, null);
 		writer.startTag(null, LLSD_TAG);
 		serializeElement(writer, data);
 		writer.endTag(null, LLSD_TAG);
