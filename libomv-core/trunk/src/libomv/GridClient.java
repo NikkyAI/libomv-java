@@ -381,6 +381,11 @@ public class GridClient
 
 		Stats = new Statistics();
 	}
+	
+	public long getCurrentRegionHandle()
+	{
+		return Network.getCurrentSim().getHandle();
+	}
 
 	public GridInfo[] getGridInfos()
 	{

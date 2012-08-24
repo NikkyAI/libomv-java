@@ -2182,7 +2182,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			msg.Target = mono ? "mono" : "lsl2";
 
 			CapsClient request = new CapsClient();
-			request.executeHttpPost(url, msg.Serialize(), OSDFormat.Xml,
+			request.executeHttpPost(url, msg,
 					new UpdateScriptAgentInventoryResponse(callback, data, itemID), _Client.Settings.CAPS_TIMEOUT);
 		}
 		else

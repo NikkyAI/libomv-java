@@ -462,7 +462,7 @@ public class SoundManager implements PacketCallback
      */
     public final void PlaySound(UUID soundID) throws Exception
     {
-        SendSoundTrigger(soundID, _Client.Network.getCurrentSim().getHandle(), _Client.Self.getSimPosition(), 1.0f);
+        SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), _Client.Self.getSimPosition(), 1.0f);
     }
 
     /**
@@ -474,7 +474,7 @@ public class SoundManager implements PacketCallback
      */
     public final void SendSoundTrigger(UUID soundID, Vector3 position) throws Exception
     {
-        SendSoundTrigger(soundID, _Client.Network.getCurrentSim().getHandle(), position, 1.0f);
+        SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), position, 1.0f);
     }
 
     /**
@@ -487,7 +487,7 @@ public class SoundManager implements PacketCallback
      */
     public final void SendSoundTrigger(UUID soundID, Vector3 position, float gain) throws Exception
     {
-        SendSoundTrigger(soundID, _Client.Network.getCurrentSim().getHandle(), position, gain);
+        SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), position, gain);
     }
     
     /**

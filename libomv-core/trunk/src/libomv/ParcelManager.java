@@ -848,9 +848,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				req.UserLocation = this.UserLocation;
 				req.UserLookAt = this.UserLookAt;
 
-				OSDMap body = req.Serialize();
-
-				new CapsClient().executeHttpPost(url, body, OSDFormat.Xml, null, simulator.getClient().Settings.CAPS_TIMEOUT);
+				new CapsClient().executeHttpPost(url, req, null, simulator.getClient().Settings.CAPS_TIMEOUT);
 			}
 			else
 			{
@@ -2243,7 +2241,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 			try
 			{
-				OSD result = new CapsClient().getResponse(url, req.Serialize(), OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT);
+				OSD result = new CapsClient().getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
 				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages.DecodeEvent(
 						CapsEventType.RemoteParcelRequest, (OSDMap) result);
 				return ((RemoteParcelRequestReply) response.Request).ParcelID;

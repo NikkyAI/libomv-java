@@ -74,7 +74,84 @@ public class CapsMessage implements IMessage
 {
 	public enum CapsEventType
 	{
-		Default, AgentGroupDataUpdate, AvatarGroupsReply, ParcelProperties, ParcelObjectOwnersReply, TeleportFinish, EnableSimulator, ParcelPropertiesUpdate, EstablishAgentCommunication, ChatterBoxInvitation, ChatterBoxSessionEventReply, ChatterBoxSessionStartReply, ChatterBoxSessionAgentListUpdates, RequiredVoiceVersion, MapLayer, ChatSessionRequest, CopyInventoryFromNotecard, ProvisionVoiceAccountRequest, Viewerstats, UpdateAgentLanguage, RemoteParcelRequest, UpdateScriptTask, UploadScriptTask, UpdateScriptAgent, SendPostcard, UpdateGestureAgentInventory, UpdateNotecardAgentInventory, LandStatReply, ParcelVoiceInfoRequest, ViewerStats, EventQueueGet, CrossedRegion, TeleportFailed, PlacesReply, UpdateAgentInformation, DirLandReply, ScriptRunningReply, SearchStatRequest, AgentDropGroup, ForceCloseChatterBoxSession, UploadBakedTexture, WebFetchInventoryDescendents, RegionInfo, UploadObjectAsset, ObjectPhysicsProperties, ObjectMediaNavigate, ObjectMedia, AttachmentResources, LandResources, ProductInfoRequest, DispatchRegionInfo, EstateChangeInfo, FetchInventoryDescendents, GroupProposalBallot, MapLayerGod, NewFileAgentInventory, BulkUpdateInventory, RequestTextureDownload, SearchStatTracking, SendUserReport, SendUserReportWithScreenshot, ServerReleaseNotes, StartGroupProposal, UpdateGestureTaskInventory, UpdateNotecardTaskInventory, ViewerStartAuction, UntrustedSimulatorMessage, GetDisplayNames, SetDisplayName, SetDisplayNameReply, DisplayNameUpdate,
+		Default,
+		AgentGroupDataUpdate,
+		AvatarGroupsReply,
+		ParcelProperties,
+		ParcelObjectOwnersReply,
+		TeleportFinish,
+		EnableSimulator,
+		ParcelPropertiesUpdate,
+		EstablishAgentCommunication,
+		ChatterBoxInvitation,
+		ChatterBoxSessionEventReply,
+		ChatterBoxSessionStartReply,
+		ChatterBoxSessionAgentListUpdates,
+		RequiredVoiceVersion,
+		MapLayer,
+		ChatSessionRequest,
+		ChatSessionRequestMuteUpdate,
+		ChatSessionRequestStartConference,
+		ChatSessionAcceptInvitation,
+		CopyInventoryFromNotecard,
+		ProvisionVoiceAccountRequest,
+		Viewerstats,
+		UpdateAgentLanguage,
+		RemoteParcelRequest,
+		RemoteParcelRequestRequest,
+		RemoteParcelRequestReply,
+		UpdateScriptTask,
+		UpdateScriptTaskUpdateMessage,
+		UploadScriptTask,
+		UpdateScriptAgent,
+		UploaderScriptRequestError,
+		SendPostcard,
+		UpdateGestureAgentInventory,
+		UpdateNotecardAgentInventory,
+		LandStatReply,
+		ParcelVoiceInfoRequest,
+		ViewerStats,
+		EventQueueGet,
+		CrossedRegion,
+		TeleportFailed,
+		PlacesReply,
+		UpdateAgentInformation,
+		DirLandReply,
+		ScriptRunningReply,
+		SearchStatRequest,
+		AgentDropGroup,
+		ForceCloseChatterBoxSession,
+		UploadBakedTexture,
+		WebFetchInventoryDescendents,
+		RegionInfo,
+		UploadObjectAsset,
+		ObjectPhysicsProperties,
+		ObjectMediaNavigate,
+		ObjectMedia,
+		AttachmentResources,
+		LandResources,
+		ProductInfoRequest,
+		DispatchRegionInfo,
+		EstateChangeInfo,
+		FetchInventoryDescendents,
+		GroupProposalBallot,
+		MapLayerGod,
+		NewFileAgentInventory,
+		BulkUpdateInventory,
+		RequestTextureDownload,
+		SearchStatTracking,
+		SendUserReport,
+		SendUserReportWithScreenshot,
+		ServerReleaseNotes,
+		StartGroupProposal,
+		UpdateGestureTaskInventory,
+		UpdateNotecardTaskInventory,
+		ViewerStartAuction,
+		UntrustedSimulatorMessage,
+		GetDisplayNames,
+		SetDisplayName,
+		SetDisplayNameReply,
+		DisplayNameUpdate,
 	}
 
 	@Override
@@ -1168,7 +1245,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Base class used for the RemoteParcelRequest message
-	public abstract class RemoteParcelRequestBlock
+	public abstract class RemoteParcelRequestBlock implements IMessage
 	{
 		public abstract OSDMap Serialize();
 
@@ -1185,6 +1262,15 @@ public class CapsMessage implements IMessage
 		public long RegionHandle;
 		// Region <see cref="UUID"/> of the parcel we are looking up
 		public UUID RegionID;
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.RemoteParcelRequestRequest;
+		}
 
 		/**
 		 * Serialize the object
@@ -1222,6 +1308,15 @@ public class CapsMessage implements IMessage
 	{
 		// The grid-wide unique parcel ID
 		public UUID ParcelID;
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.RemoteParcelRequestReply;
+		}
 
 		/**
 		 * Serialize the object
@@ -2522,7 +2617,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the simulator to the viewer which indicates an error
 	// occurred while attempting
 	// to update a script in an agents or tasks inventory
-	public class UploaderScriptRequestError extends AssetUploaderBlock
+	public class UploaderScriptRequestError extends AssetUploaderBlock implements IMessage
 	{
 		// true of the script was successfully compiled by the simulator
 		public boolean Compiled;
@@ -2531,6 +2626,15 @@ public class CapsMessage implements IMessage
 		public String Error;
 		// A new AssetID assigned to the script
 		public UUID AssetID;
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.UploaderScriptRequestError;
+		}
 
 		@Override
 		public OSDMap Serialize()
@@ -2561,7 +2665,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the viewer to the simulator requesting the update of
 	// an existing script contained
 	// within a tasks inventory
-	public class UpdateScriptTaskUpdateMessage extends AssetUploaderBlock
+	public class UpdateScriptTaskUpdateMessage extends AssetUploaderBlock implements IMessage
 	{
 		// if true, set the script mode to running
 		public boolean ScriptRunning;
@@ -2573,6 +2677,15 @@ public class CapsMessage implements IMessage
 		public String Target; // mono or lsl2
 		// The tasks <see cref="UUID"/> which contains the script to update
 		public UUID TaskID;
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.UpdateScriptTaskUpdateMessage;
+		}
 
 		/**
 		 * Serialize the object
@@ -3243,7 +3356,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public abstract class ChatSessionRequestBlock
+	public abstract class ChatSessionRequestBlock implements IMessage
 	{
 		// A string containing the method used
 		public String Method;
@@ -3268,6 +3381,15 @@ public class CapsMessage implements IMessage
 		public ChatSessionRequestStartConference()
 		{
 			Method = "start conference";
+		}
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.ChatSessionRequestStartConference;
 		}
 
 		/**
@@ -3340,6 +3462,15 @@ public class CapsMessage implements IMessage
 		}
 
 		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.ChatSessionRequestMuteUpdate;
+		}
+
+		/**
 		 * Serialize the object
 		 * 
 		 * @return An <see cref="OSDMap"/> containing the objects data
@@ -3399,6 +3530,15 @@ public class CapsMessage implements IMessage
 		public ChatSessionAcceptInvitation()
 		{
 			Method = "accept invitation";
+		}
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.ChatSessionAcceptInvitation;
 		}
 
 		/**

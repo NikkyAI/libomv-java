@@ -68,6 +68,13 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
+	public OSD getResponse(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
+			throws IOException, InterruptedException, ExecutionException, TimeoutException
+	{
+		Future<OSD> result = executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml);
+		return result.get(timeout, TimeUnit.MILLISECONDS);
+	}
+
 	/**
 	 * Synchronous HTTP Post request from a capability that requires a OSD formated
 	 * request entity. This function returns either after the server responded
