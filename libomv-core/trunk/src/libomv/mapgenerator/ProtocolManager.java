@@ -242,7 +242,6 @@ public class ProtocolManager
 		output.close();
 	}
 
-	@SuppressWarnings("null")
 	private void LoadMapFile(String mapFile) throws Exception
 	{
 		FileReader map;
