@@ -66,9 +66,9 @@ to any standard root certification agency. The current library will install a mo
 Linden Lab root certificate, loaded from the res directory, when attempting to open an https connection to
 a server having "lindenlab" in its URI. It actually appears that they use different root certificates for
 the aditi (beta) and agni (release) grid. So the certificate handling for https is now trying to match the
-certificates in the res directory to the URI and if loads it into the keystore for that connection. If no
-stored certificate can be found the Java default keystore will be used, which contains certificates for
-most standard root CAs.
+certificates in the res directory to the URI and if there is a match, loads it into the keystore for that
+connection. If no stored certificate can be found the Java default keystore will be used, which contains
+certificates for most standard root CAs.
 
 
 Running examples
