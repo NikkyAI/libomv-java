@@ -52,7 +52,7 @@ import libomv.StructuredData.OSDUri;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-/// XmlLLSDTests is a suite of tests for libsl implementation of the SD XML format.
+/// XmlLLSDTests is a suite of tests for libomv implementation of the LLSD XML format.
 public class XmlLLSDTest extends TestCase
 {
     /// Test that the sample LLSD supplied by Linden Lab is properly deserialized.

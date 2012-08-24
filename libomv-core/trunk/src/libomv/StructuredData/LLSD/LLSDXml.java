@@ -81,7 +81,7 @@ public final class LLSDXml extends OSDParser
 
 	public static boolean isFormat(String string)
 	{
-		String sub = string.substring(string.indexOf('<'), string.indexOf('<')).toLowerCase();
+		String sub = string.substring(string.indexOf('<'), string.indexOf('>')).toLowerCase();
 		return sub.contains(llsdXmlHeader) || sub.contains(llsdXmlHeader2);
 	}
 	

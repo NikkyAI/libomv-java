@@ -37,6 +37,8 @@ package structuredData;
  */
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -44,6 +46,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -253,40 +259,42 @@ public class BinaryLLSDTests extends TestCase
         Assert.assertEquals(contentLongString, llsdLongString.AsString());
     }
 
-    public void testSerializeString() throws IOException
+    public void testSerializeString() throws IOException, ParseException, XmlPullParserException
     {
         OSD llsdString = OSD.FromString("abcdefghijklmnopqrstuvwxyz01234567890");
         byte[] binaryLongStringSerialized = OSDParser.serializeToBytes(llsdString, OSDFormat.Binary);
         Assert.assertTrue(Arrays.equals(binaryLongString, binaryLongStringSerialized));
 
         // A test with some utf8 characters
-/**        String contentAStringXML = "<x>&#x196;&#x214;&#x220;&#x228;&#x246;&#x252;</x>";
-        byte[] bytes = contentAStringXML.getBytes(Helpers.UTF8_ENCODING);
-        XmlTextReader xtr = new XmlTextReader(new MemoryStream(bytes, false));
-        xtr.Read();
-        xtr.Read();
+        String contentAStringXML = "<x>&#x196;&#x214;&#x220;&#x228;&#x246;&#x252;</x>";
+        Reader reader1 = new StringReader(contentAStringXML);
+        XmlPullParser parser1 = XmlPullParserFactory.newInstance().newPullParser();
+        parser1.setInput(reader1);
+		parser1.nextTag();
+		parser1.require(XmlPullParser.START_TAG, null, "x");
+        String contentAString = parser1.nextText();
 
-        String contentAString = xtr.ReadString();
         OSD llsdAString = OSD.FromString(contentAString);
-        byte[] binaryAString = llsdAString.serializeToBytes(OSDFormat.Binary);
-        OSD llsdAStringDS = OSDParser.deserialize(binaryAString, Helpers.ASCII_ENCODING);
+        byte[] binaryAString = OSDParser.serializeToBytes(llsdAString, OSDFormat.Binary);
+        OSD llsdAStringDS = OSDParser.deserialize(binaryAString);
         Assert.assertEquals(OSDType.String, llsdAStringDS.getType());
         Assert.assertEquals(contentAString, llsdAStringDS.AsString());
 
         // we also test for a 4byte character.
         String xml = "<x>&#x10137;</x>";
-        byte[] bytesTwo = xml.getBytes(Helpers.UTF8_ENCODING);
-        XmlTextReader xtrTwo = new XmlTextReader(new MemoryStream(bytesTwo, false));
-        xtrTwo.Read();
-        xtrTwo.Read();
-        String content = xtrTwo.ReadString();
+        Reader reader2 = new StringReader(xml);
+        XmlPullParser parser2 = XmlPullParserFactory.newInstance().newPullParser();
+        parser2.setInput(reader2);
+		parser2.nextTag();
+		parser2.require(XmlPullParser.START_TAG, null, "x");
+        String content = parser2.nextText();
 
         OSD llsdStringOne = OSD.FromString(content);
-        byte[] binaryAStringOneSerialized = llsdStringOne.serializeToBytes(OSDFormat.Binary);
-        OSD llsdStringOneDS = OSDParser.deserialize(binaryAStringOneSerialized, Helpers.ASCII_ENCODING);
+        byte[] binaryAStringOneSerialized = OSDParser.serializeToBytes(llsdStringOne, OSDFormat.Binary);
+        OSD llsdStringOneDS = OSDParser.deserialize(binaryAStringOneSerialized);
         Assert.assertEquals(OSDType.String, llsdStringOneDS.getType());
         Assert.assertEquals(content, llsdStringOneDS.AsString());
-*/    }
+    }
 
     // Be careful. The current and above mentioned reference implementation has a bug that
     // doesnt allow proper binary Uri encoding.
@@ -476,7 +484,7 @@ public class BinaryLLSDTests extends TestCase
         Assert.assertEquals(241, llsdSimpleMapTwo.get("t0st").AsInteger());
     }
 
-    public void testSerializeDictionary() throws IOException, ParseException
+    public void testSerializeDictionary() throws IOException, ParseException, XmlPullParserException
     {
         OSDMap llsdEmptyMap = new OSDMap();
         byte[] binaryEmptyMapSerialized = OSDParser.serializeToBytes(llsdEmptyMap, OSDFormat.Binary);
@@ -506,24 +514,25 @@ public class BinaryLLSDTests extends TestCase
         Assert.assertEquals(OSDType.Unknown, llsdSimpleMapDeserialized.get("test").getType());
 
         // we also test for a 4byte key character.
-/**        String xml = "<x>&#x10137;</x>";
-        byte[] bytes = xml.getBytes(Helpers.UTF8_ENCODING);
-        XmlTextReader xtr = new XmlTextReader(new MemoryStream(bytes, false));
-        xtr.Read();
-        xtr.Read();
-        String content = xtr.ReadString();
+        String xml = "<x>&#x10137;</x>";
+        Reader reader = new StringReader(xml);
+        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        parser.setInput(reader);
+		parser.nextTag();
+		parser.require(XmlPullParser.START_TAG, null, "x");
+        String content = parser.nextText();
 
         OSDMap llsdSimpleMapThree = new OSDMap();
         OSD llsdSimpleValue = OSD.FromString(content);
         llsdSimpleMapThree.put(content, llsdSimpleValue);
         Assert.assertEquals(content, llsdSimpleMapThree.get(content).AsString());
 
-        byte[] binarySimpleMapThree = llsdSimpleMapThree.serializeToBytes(OSDFormat.Binary);
+        byte[] binarySimpleMapThree = OSDParser.serializeToBytes(llsdSimpleMapThree, OSDFormat.Binary);
         OSDMap llsdSimpleMapThreeDS = (OSDMap)OSDParser.deserialize(binarySimpleMapThree, Helpers.UTF8_ENCODING);
         Assert.assertEquals(OSDType.Map, llsdSimpleMapThreeDS.getType());
         Assert.assertEquals(1, llsdSimpleMapThreeDS.size());
         Assert.assertEquals(content, llsdSimpleMapThreeDS.get(content).AsString());
-*/    }
+    }
 
     private static byte[] binaryNestedValue = { 0x5b, 0x0, 0x0, 0x0, 0x3, 
         0x7b, 0x0, 0x0, 0x0, 0x2, 
@@ -638,7 +647,7 @@ public class BinaryLLSDTests extends TestCase
 
         byte[] binaryData = OSDParser.serializeToBytes(llsdMap, OSDFormat.Binary);
 
-        OSDMap llsdMapDS = (OSDMap)OSDParser.deserialize(binaryData, Helpers.ASCII_ENCODING );
+        OSDMap llsdMapDS = (OSDMap)OSDParser.deserialize(binaryData);
         Assert.assertEquals(OSDType.Map, llsdMapDS.getType());
         Assert.assertEquals(10, llsdMapDS.size());
         Assert.assertEquals(sOne, llsdMapDS.get("testOne").AsString());

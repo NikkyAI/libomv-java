@@ -86,7 +86,6 @@ public final class LLSDBinary extends OSDParser
 	private static final byte doubleQuotesNotationMarker = '"';
 	private static final byte singleQuotesNotationMarker = '\'';
 
-
 	public static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
 	{
 		if (string == null)
@@ -117,8 +116,6 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
-		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
 		return unflatten(new ReaderInputStream(reader, encoding), encoding);
 	}
 
@@ -149,7 +146,9 @@ public final class LLSDBinary extends OSDParser
 		{
 			push.unread(marker);
 		}
-		return parseElement(push);
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
+		return parseElement(push, encoding);
 	}
 
 	/**
@@ -163,8 +162,6 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
-		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
 		OutputStream stream = new WriterOutputStream(writer, encoding);
 		flatten(stream, data, prependHeader, encoding);
 		stream.flush();
@@ -181,18 +178,18 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
+		if (encoding == null)
+			encoding = Helpers.UTF8_ENCODING;
 		if (prependHeader)
 		{
 			stream.write(llsdBinaryHead);
 			stream.write('\n');
 		}
-		serializeElement(stream, data);
+		serializeElement(stream, data, encoding);
 	}
 
-	private static void serializeElement(OutputStream stream, OSD osd) throws IOException
+	private static void serializeElement(OutputStream stream, OSD osd, String encoding) throws IOException
 	{
-		byte[] rawBinary;
-
 		switch (osd.getType())
 		{
 			case Unknown:
@@ -214,51 +211,54 @@ public final class LLSDBinary extends OSDParser
 				stream.write(osd.AsBinary(), 0, 16);
 				break;
 			case String:
-				rawBinary = osd.AsBinary();
 				stream.write(stringBinaryMarker);
-				stream.write(Helpers.Int32ToBytesB(rawBinary.length));
-				stream.write(rawBinary, 0, rawBinary.length);
+				serializeString(stream, osd.AsString(), encoding);
 				break;
 			case Binary:
-				rawBinary = osd.AsBinary();
 				stream.write(binaryBinaryMarker);
-				stream.write(Helpers.Int32ToBytesB(rawBinary.length));
-				stream.write(rawBinary, 0, rawBinary.length);
+				byte[] bytes = osd.AsBinary();
+				stream.write(Helpers.Int32ToBytesB(bytes.length));
+				stream.write(bytes, 0, bytes.length);
 				break;
 			case Date:
 				stream.write(dateBinaryMarker);
 				stream.write(osd.AsBinary(), 0, doubleLength);
 				break;
 			case URI:
-				rawBinary = osd.AsBinary();
 				stream.write(uriBinaryMarker);
-				stream.write(Helpers.Int32ToBytesB(rawBinary.length));
-				stream.write(rawBinary, 0, rawBinary.length);
+				serializeString(stream, osd.AsString(), encoding);
 				break;
 			case Array:
-				serializeArray(stream, (OSDArray) osd);
+				serializeArray(stream, (OSDArray) osd, encoding);
 				break;
 			case Map:
-				serializeMap(stream, (OSDMap) osd);
+				serializeMap(stream, (OSDMap) osd, encoding);
 				break;
 			default:
 				throw new IOException("Binary serialization: Not existing element discovered.");
 		}
 	}
+	
+	private static void serializeString(OutputStream stream, String string, String encoding) throws IOException
+	{
+		byte[] bytes = string.getBytes(encoding);
+		stream.write(Helpers.Int32ToBytesB(bytes.length));
+		stream.write(bytes, 0, bytes.length);
+	}
 
-	private static void serializeArray(OutputStream stream, OSDArray osdArray) throws IOException
+	private static void serializeArray(OutputStream stream, OSDArray osdArray, String encoding) throws IOException
 	{
 		stream.write(arrayBeginBinaryMarker);
 		stream.write(Helpers.Int32ToBytesB(osdArray.size()));
 
 		for (OSD osd : osdArray)
 		{
-			serializeElement(stream, osd);
+			serializeElement(stream, osd, encoding);
 		}
 		stream.write(arrayEndBinaryMarker);
 	}
 
-	private static void serializeMap(OutputStream stream, OSDMap osdMap) throws IOException
+	private static void serializeMap(OutputStream stream, OSDMap osdMap, String encoding) throws IOException
 	{
 		stream.write(mapBeginBinaryMarker);
 		stream.write(Helpers.Int32ToBytesB(osdMap.size()));
@@ -266,14 +266,13 @@ public final class LLSDBinary extends OSDParser
 		for (Entry<String, OSD> kvp : osdMap.entrySet())
 		{
 			stream.write(keyBinaryMarker);
-			stream.write(Helpers.Int32ToBytesB(kvp.getKey().length()));
-			stream.write(kvp.getKey().getBytes(Helpers.UTF8_ENCODING), 0, kvp.getKey().length());
-			serializeElement(stream, kvp.getValue());
+			serializeString(stream, kvp.getKey(), encoding);
+			serializeElement(stream, kvp.getValue(), encoding);
 		}
 		stream.write(mapEndBinaryMarker);
 	}
 
-	private static OSD parseElement(PushbackInputStream stream) throws IOException, ParseException
+	private static OSD parseElement(PushbackInputStream stream, String encoding) throws IOException, ParseException
 	{
 		int marker = skipWhiteSpace(stream);
 		if (marker < 0)
@@ -313,14 +312,14 @@ public final class LLSDBinary extends OSDParser
 				throw new ParseException("Binary LLSD parsing: LLSD Notation Format strings are not yet supported",	stream.getBytePosition());
 			case stringBinaryMarker:
 				int stringLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
-				osd = OSD.FromString(new String(consumeBytes(stream, stringLength), Helpers.UTF8_ENCODING));
+				osd = OSD.FromString(new String(consumeBytes(stream, stringLength), encoding));
 				break;
 			case uriBinaryMarker:
 				int uriLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 				URI uri;
 				try
 				{
-					uri = new URI(new String(consumeBytes(stream, uriLength), Helpers.UTF8_ENCODING));
+					uri = new URI(new String(consumeBytes(stream, uriLength), encoding));
 				}
 				catch (URISyntaxException ex)
 				{
@@ -337,10 +336,10 @@ public final class LLSDBinary extends OSDParser
 				osd = OSD.FromDate(Helpers.UnixTimeToDateTime(timestamp));
 				break;
 			case arrayBeginBinaryMarker:
-				osd = parseArray(stream);
+				osd = parseArray(stream, encoding);
 				break;
 			case mapBeginBinaryMarker:
-				osd = parseMap(stream);
+				osd = parseMap(stream, encoding);
 				break;
 			default:
 				throw new ParseException("Binary LLSD parsing: Unknown type marker.", stream.getBytePosition());
@@ -348,14 +347,14 @@ public final class LLSDBinary extends OSDParser
 		return osd;
 	}
 
-	private static OSD parseArray(PushbackInputStream stream) throws IOException, ParseException
+	private static OSD parseArray(PushbackInputStream stream, String encoding) throws IOException, ParseException
 	{
 		int numElements = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 		int crrElement = 0;
 		OSDArray osdArray = new OSDArray();
 		while (crrElement < numElements)
 		{
-			osdArray.add(parseElement(stream));
+			osdArray.add(parseElement(stream, encoding));
 			crrElement++;
 		}
 		if (skipWhiteSpace(stream) != arrayEndBinaryMarker)
@@ -366,7 +365,7 @@ public final class LLSDBinary extends OSDParser
 		return osdArray;
 	}
 
-	private static OSD parseMap(PushbackInputStream stream) throws IOException, ParseException
+	private static OSD parseMap(PushbackInputStream stream, String encoding) throws IOException, ParseException
 	{
 		int numElements = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 		int crrElement = 0;
@@ -378,8 +377,8 @@ public final class LLSDBinary extends OSDParser
 				throw new ParseException("Binary LLSD parsing: Missing key marker in map.", stream.getBytePosition());
 			}
 			int keyLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
-			String key = new String(consumeBytes(stream, keyLength));
-			osdMap.put(key, parseElement(stream));
+			String key = new String(consumeBytes(stream, keyLength), encoding);
+			osdMap.put(key, parseElement(stream, encoding));
 			crrElement++;
 		}
 		if (skipWhiteSpace(stream) != mapEndBinaryMarker)

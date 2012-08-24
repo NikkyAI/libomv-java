@@ -37,6 +37,8 @@ package structuredData;
  */
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -44,6 +46,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -326,7 +332,7 @@ public class NotationLLSDTests extends TestCase
         Assert.assertEquals(s, llsdOneDS.AsString());
     }
 
-    public void testSerializeString() throws IOException, ParseException
+    public void testSerializeString() throws IOException, ParseException, XmlPullParserException
     {
         DoSomeStringSerializingActionsAndAsserts("");
 
@@ -348,14 +354,14 @@ public class NotationLLSDTests extends TestCase
         DoSomeStringSerializingActionsAndAsserts("very\"british is this.");
 
         // We test here also for 4byte characters
-/*       String xml = "<x>&#x10137;</x>";
-        byte[] bytes = Encoding.UTF8.GetBytes(xml);
-        XmlTextReader xtr = new XmlTextReader(new MemoryStream(bytes, false));
-        xtr.Read();
-        xtr.Read();
-        String content = xtr.ReadString();
+        String xml = "<x>&#x10137;</x>";
+        Reader reader = new StringReader(xml);
+        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        parser.setInput(reader);
+		parser.nextTag();
+		parser.require(XmlPullParser.START_TAG, null, "x");
+        String content = parser.nextText();
         DoSomeStringSerializingActionsAndAsserts(content);
-*/
     }
 
     public void testDeserializeURI() throws IOException, ParseException
@@ -572,7 +578,7 @@ public class NotationLLSDTests extends TestCase
         Assert.assertEquals(2.5d, llsdMapFive.get("t0st").AsReal());
     }
 
-    public void testSerializeMap() throws IOException, ParseException
+    public void testSerializeMap() throws IOException, ParseException, XmlPullParserException
     {
         OSDMap llsdOne = new OSDMap();
         String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Notation);
@@ -608,12 +614,13 @@ public class NotationLLSDTests extends TestCase
         Assert.assertEquals("asedkfjhaqweiurohzasdf", llsdSix.get("test1").AsString());
 
         // We test here also for 4byte characters as map keys
-/*        String xml = "<x>&#x10137;</x>";
-        byte[] bytes = Encoding.UTF8.GetBytes(xml);
-        XmlTextReader xtr = new XmlTextReader(new MemoryStream(bytes, false));
-        xtr.Read();
-        xtr.Read();
-        String content = xtr.ReadString();
+        String xml = "<x>&#x10137;</x>";
+        Reader reader = new StringReader(xml);
+        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        parser.setInput(reader);
+		parser.nextTag();
+		parser.require(XmlPullParser.START_TAG, null, "x");
+        String content = parser.nextText();
 
         OSDMap llsdSeven = new OSDMap();
         llsdSeven.put(content, OSD.FromString(content));
@@ -622,7 +629,7 @@ public class NotationLLSDTests extends TestCase
         Assert.assertEquals(OSDType.Map, llsdSevenDS.getType());
         Assert.assertEquals(1, llsdSevenDS.size());
         Assert.assertEquals(content, llsdSevenDS.get(content).AsString());
-*/    }
+    }
 
     public void testDeserializeRealWorldExamples() throws IOException, ParseException
     {
