@@ -34,6 +34,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import libomv.types.Quaternion;
+import libomv.types.Vector2;
+import libomv.types.Vector3;
+import libomv.types.Vector3d;
+import libomv.types.Vector4;
+
 public class OSDMap extends OSD implements Map<String, OSD>
 {
 	private HashMap<String, OSD> value;
@@ -84,6 +90,74 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	public boolean AsBoolean()
 	{
 		return !isEmpty();
+	}
+
+	@Override
+	public Vector2 AsVector2()
+	{
+		Vector2 vec = new Vector2(Vector2.Zero);
+		if (containsKey("X") && containsKey("Y"))
+		{
+			vec.X = (float)get("X").AsReal();
+			vec.Y = (float)get("Y").AsReal();
+		}
+		return vec;
+	}
+
+	@Override
+	public Vector3 AsVector3()
+	{
+		Vector3 vec = new Vector3(Vector3.Zero);
+		if (containsKey("X") && containsKey("Y") && containsKey("Z"))
+		{
+			vec.X = (float)get("X").AsReal();
+			vec.Y = (float)get("Y").AsReal();
+			vec.Z = (float)get("Z").AsReal();
+		}
+		return vec;
+	}
+
+	@Override
+	public Vector3d AsVector3d()
+	{
+		Vector3d vec = new Vector3d(Vector3d.Zero);
+		if (containsKey("X") && containsKey("Y") && containsKey("Z"))
+		{
+			vec.X = get("X").AsReal();
+			vec.Y = get("Y").AsReal();
+			vec.Z = get("Z").AsReal();
+		}
+		return vec;
+	}
+
+	@Override
+	public Vector4 AsVector4()
+	{
+		Vector4 vector = new Vector4(Vector4.Zero);
+
+		if (this.size() == 4)
+		{
+			vector.X = (float) this.get("X").AsReal();
+			vector.Y = (float) this.get("Y").AsReal();
+			vector.Z = (float) this.get("Z").AsReal();
+			vector.S = (float) this.get("S").AsReal();
+		}
+		return vector;
+	}
+
+	@Override
+	public Quaternion AsQuaternion()
+	{
+		Quaternion quaternion = new Quaternion(Quaternion.Identity);
+
+		if (this.size() == 4)
+		{
+			quaternion.X = (float) this.get("X").AsReal();
+			quaternion.Y = (float) this.get("Y").AsReal();
+			quaternion.Z = (float) this.get("Z").AsReal();
+			quaternion.W = (float) this.get("W").AsReal();
+		}
+		return quaternion;
 	}
 
 	@Override
