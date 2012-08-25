@@ -64,6 +64,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import libomv.types.UUID;
+import libomv.types.Vector3;
+import libomv.types.Vector3d;
 
 public class Helpers
 {
@@ -359,7 +361,7 @@ public class Helpers
 	public static void LongToUInts(long a, int[] b)
 	{
 		b[0] = (int) (a >> 32);
-		b[1] = (int) (a & 0x00000000FFFFFFFF);
+		b[1] = (int) (a & 0x00000000FFFFFFFFL);
 	}
 
 	/**
@@ -673,7 +675,7 @@ public class Helpers
 	 * @param globalY
 	 *            The absolute Y location, a number such as 255360.35
 	 * @param locals
-	 *            [0] The returened sim-local X position of the global X
+	 *            [0] The returned sim-local X position of the global X
 	 * @param locals
 	 *            [1] The returned sim-local Y position of the global Y
 	 * @return A 64-bit region handle that can be used to teleport to
@@ -685,6 +687,13 @@ public class Helpers
 		locals[0] = globalX - x;
 		locals[1] = globalY - y;
 		return IntsToLong(x, y);
+	}
+
+	public static Vector3d RegionHandleToGlobalPos(long regionHandle, Vector3 local)
+	{
+		int[] globals = new int[2];
+		LongToUInts(regionHandle, globals);
+		return new Vector3d(globals[0] + local.X, globals[1] + local.Y, local.Z);
 	}
 
 	// Calculates the CRC (cyclic redundancy check) needed to upload inventory.
