@@ -42,6 +42,6 @@ public class LocationCommand extends Command
 	public String execute(String[] args, UUID fromAgentID)
 	{
         return "CurrentSim: '" + Client.Network.getCurrentSim().toString() +
-               "' Position: " + Client.Self.getSimRotation().toString();
+               "' Position: " + Client.Self.getAgentPosition().toString();
 	}
 }

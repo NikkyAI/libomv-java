@@ -906,7 +906,7 @@ public class FriendsManager implements PacketCallback
 			UUID prey = reply.AgentBlock.Prey;
 			float values[] = new float[2];
 			long regionHandle = Helpers.GlobalPosToRegionHandle((float) reply.LocationBlock[0].GlobalX,
-					(float) reply.LocationBlock[0].GlobalY, values);
+					                                            (float) reply.LocationBlock[0].GlobalY, values);
 
 			OnFriendFoundReply.dispatch(new FriendFoundReplyCallbackArgs(prey, regionHandle, new Vector3(values[0],
 					values[1], 0f)));

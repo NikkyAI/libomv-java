@@ -462,7 +462,7 @@ public class SoundManager implements PacketCallback
      */
     public final void PlaySound(UUID soundID) throws Exception
     {
-        SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), _Client.Self.getSimPosition(), 1.0f);
+        SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), _Client.Self.getAgentPosition(), 1.0f);
     }
 
     /**

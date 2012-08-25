@@ -3379,7 +3379,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					imp.MessageBlock.setMessage(Helpers.EmptyBytes);
 					imp.MessageBlock.ParentEstateID = 0;
 					imp.MessageBlock.RegionID = UUID.Zero;
-					imp.MessageBlock.Position = _Client.Self.getSimPosition();
+					imp.MessageBlock.Position = _Client.Self.getAgentPosition();
 
 					InventoryObjectOfferedCallbackArgs args = new InventoryObjectOfferedCallbackArgs(e.getIM(), type,
 							objectID, fromTask, parent.itemID);

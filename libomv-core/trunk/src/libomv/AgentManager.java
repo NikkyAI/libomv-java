@@ -1871,14 +1871,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private UUID secureSessionID;
 	private String startLocation = Helpers.EmptyString;
 	private String agentAccess = Helpers.EmptyString;
-	// Position avatar client will goto when login to 'home' or during
-	// teleport request to 'home' region.
+	// Position avatar client will goto when login to 'home' or during teleport request to 'home' region.
+	private long homeRegion;
 	private Vector3 homePosition;
 	// LookAt point saved/restored with HomePosition
 	private Vector3 homeLookAt;
 	
 	private void setHomePosRegion(long region, Vector3 pos)
 	{
+		homeRegion = region;
 		homePosition = pos;
 	}
 	
@@ -2012,19 +2013,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 		angularVelocity = val;
 	}
 
-	/*
-	 * Position avatar client will goto when login to 'home' or during /*
-	 * teleport request to 'home' region.
-	 */
-	public final Vector3 getHomePosition()
+	public final Vector3d getGlobalHomePosition()
 	{
-		return homePosition;
-	}
-
-	/* LookAt point saved/restored with HomePosition */
-	public final Vector3 getHomeLookAt()
-	{
-		return homeLookAt;
+		if(homePosition != null)
+		{
+			return Helpers.RegionHandleToGlobalPos(homeRegion, homePosition);
+		}
+		return null;
 	}
 
 	/* Avatar First Name (i.e. Philip) */
@@ -2139,7 +2134,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/* Current position of the agent in the simulator */
-	public final Vector3 getSimPosition()
+	public final Vector3 getAgentPosition()
 	{
 		// simple case, agent not seated
 		if (sittingOn == 0)
@@ -2197,7 +2192,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	/**
 	 * A {@link Quaternion} representing the agents current rotation
 	 */
-	public final Quaternion getSimRotation()
+	public final Quaternion getAgentRotation()
 	{
 		if (sittingOn != 0)
 		{
@@ -2229,11 +2224,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		if (_Client.Network.getCurrentSim() != null)
 		{
-			int globals[] = new int[2];
-			Helpers.LongToUInts(_Client.getCurrentRegionHandle(), globals);
-			Vector3 pos = getSimPosition();
-
-			return new Vector3d(globals[0] + pos.X, globals[1] + pos.Y, pos.Z);
+			return Helpers.RegionHandleToGlobalPos(_Client.getCurrentRegionHandle(), getAgentPosition());
 		}
 		return Vector3d.Zero;
 	}
@@ -2274,6 +2265,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				startLocation = reply.StartLocation;
 				agentAccess = reply.AgentAccess;
 				_Movement.Camera.LookDirection(reply.LookAt);
+				homeRegion = reply.HomeRegion;
 				homePosition = reply.HomePosition;
 				homeLookAt = reply.HomeLookAt;
 			}
@@ -2306,6 +2298,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Movement = new AgentMovement(client);
 		teleportTimeout = new TimeoutEvent<TeleportStatus>();
 		_ThreadPool = Executors.newCachedThreadPool();
+		
+		homePosition = null;
 
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
 		// Login
@@ -2647,7 +2641,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			// for them
 			if (position == null)
-				position = getSimPosition();
+				position = getAgentPosition();
 			im.MessageBlock.Position = position;
 
 
@@ -4400,7 +4394,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      */
     public void SetHome() throws Exception
     {
-		SetHome(1, getSimPosition(), _Movement.Camera.getAtAxis());
+		SetHome(1, getAgentPosition(), _Movement.Camera.getAtAxis());
     }
 
     /**
@@ -5028,7 +5022,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			Logger.DebugLog("TeleportFinish received, Flags: " + flags, _Client);
 
-            // Connect to the new sim
+			// update home location if we are teleporting out of prelude - specific to teleporting to welcome area 
+			if ((flags & TeleportFlags.SetHomeToTarget) != 0)
+			{
+				setHomePosRegion(finish.Info.RegionHandle, getAgentPosition());
+			}
+
+			// Connect to the new sim
             _Client.Network.getCurrentSim().AgentMovementComplete = false; // we're not there anymore
 			InetAddress addr = InetAddress.getByAddress(Helpers.Int32ToBytesB(finish.Info.SimIP));
 			Simulator newSimulator = _Client.Network.Connect(addr, finish.Info.SimPort, finish.Info.RegionHandle, true,
@@ -6545,7 +6545,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 */
 		public final void UpdateFromHeading(double heading, boolean reliable) throws Exception
 		{
-			Camera.setPosition(_Client.Self.getSimPosition());
+			Camera.setPosition(getAgentPosition());
 			Camera.LookDirection(heading);
 
 			BodyRotation.Z = (float) Math.sin(heading / 2.0d);
@@ -6601,12 +6601,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 				}
 
 				Quaternion between = Vector3.rotationBetween(Vector3.UnitX,
-						Vector3.normalize(target.subtract(_Client.Self.getSimPosition())));
+						Vector3.normalize(target.subtract(getAgentPosition())));
 				Quaternion rot = Quaternion.multiply(between, Quaternion.divide(Quaternion.Identity, parentRot));
 
 				BodyRotation = rot;
 				HeadRotation = rot;
-				Camera.LookAt(_Client.Self.getSimPosition(), target);
+				Camera.LookAt(getAgentPosition(), target);
 
 				if (sendUpdate) 
 					SendUpdate(false, _Client.Network.getCurrentSim());
