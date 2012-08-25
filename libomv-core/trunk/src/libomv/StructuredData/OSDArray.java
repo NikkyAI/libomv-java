@@ -264,7 +264,7 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public Vector2 AsVector2()
 	{
-		Vector2 vector = Vector2.Zero;
+		Vector2 vector = new Vector2(Vector2.Zero);
 
 		if (this.size() == 2)
 		{
@@ -278,7 +278,7 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public Vector3 AsVector3()
 	{
-		Vector3 vector = Vector3.Zero;
+		Vector3 vector = new Vector3(Vector3.Zero);
 
 		if (this.size() == 3)
 		{
@@ -293,7 +293,7 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public Vector3d AsVector3d()
 	{
-		Vector3d vector = Vector3d.Zero;
+		Vector3d vector = new Vector3d(Vector3d.Zero);
 
 		if (this.size() == 3)
 		{
@@ -308,7 +308,7 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public Vector4 AsVector4()
 	{
-		Vector4 vector = Vector4.Zero;
+		Vector4 vector = new Vector4(Vector4.Zero);
 
 		if (this.size() == 4)
 		{
@@ -323,7 +323,7 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public Quaternion AsQuaternion()
 	{
-		Quaternion quaternion = Quaternion.Identity;
+		Quaternion quaternion = new Quaternion(Quaternion.Identity);
 
 		if (this.size() == 4)
 		{
@@ -338,7 +338,7 @@ public class OSDArray extends OSD implements List<OSD>
 	@Override
 	public Color4 AsColor4()
 	{
-		Color4 color = Color4.Black;
+		Color4 color = new Color4(Color4.Black);
 
 		if (this.size() == 4)
 		{
