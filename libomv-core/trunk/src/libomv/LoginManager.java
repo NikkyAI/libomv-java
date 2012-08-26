@@ -55,6 +55,7 @@ import libomv.capabilities.CapsClient;
 import libomv.inventory.InventoryFolder;
 import libomv.packets.EconomyDataRequestPacket;
 import libomv.types.UUID;
+import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
@@ -158,8 +159,8 @@ public class LoginManager
 		{
 			this.Options = new String[] { "inventory-root", "inventory-skeleton", "inventory-lib-root",
 					"inventory-lib-owner", "inventory-skel-lib", "initial-outfit", "gestures", "event_categories",
-					"event_notifications", "classified_categories", "buddy-list", "ui-config", "tutorial_settings",
-					"login-flags", "global-textures", "adult_compliant" };
+					"event_notifications", "classified_categories", "adult_compliant", "buddy-list", "ui-config",
+					"map-server-url", "tutorial_settings", "login-flags", "global-textures" };
 			this.MethodName = "login_to_simulator";
 			this.Start = "last";
 			this.Platform = Helpers.getPlatform();
@@ -249,14 +250,15 @@ public class LoginManager
 		public String LastName;
 		public String StartLocation;
 		/** M or PG, also agent_region_access and agent_access_max */
-		public String AgentAccess;
+		public String AgentAccessMax;
+		public String AgentAccessPref;
 		public Vector3 LookAt;
 		public long HomeRegion;
 		public Vector3 HomePosition;
 		public Vector3 HomeLookAt;
 		public int CircuitCode;
-		public int RegionX;
-		public int RegionY;
+		public long Region;
+		public Vector2 RegionSize;
 		public short SimPort;
 		public InetAddress SimIP;
 		public String SeedCapability;
@@ -272,19 +274,20 @@ public class LoginManager
 		public UUID LibraryOwner;
 		// #endregion
 
+		public GridInfo Grid;
+
 		// #region Redirection
 		public String NextMethod;
 		public String NextUrl;
 		public String[] NextOptions;
 		public int NextDuration;
 		// #endregion
-
+		
 		// These aren't currently being utilized by the library
-		public String AgentAccessMax;
-		public String AgentRegionAccess;
-		public int AOTransition;
+		public boolean AOTransition;
 		public String InventoryHost;
         public int MaxAgentGroups;
+        public String MapServerUrl;
         public String OpenIDUrl;
         public String XMPPHost;
         
@@ -310,65 +313,86 @@ public class LoginManager
 		 */
 		private void ParseLoginReply(OSDMap reply)
 		{
-			try
+			if (reply.containsKey("login"))
 			{
-				AgentID = reply.get("agent_id").AsUUID();
-				SessionID = reply.get("session_id").AsUUID();
-				SecureSessionID = reply.get("secure_session_id").AsUUID();
-				FirstName = reply.get("first_name").AsString();
-				LastName = reply.get("last_name").AsString();
-				StartLocation = reply.get("start_location").AsString();
-				AgentAccess = reply.get("agent_access").AsString();
-				LookAt = ParseVector3("look_at", reply);
-				Reason = reply.get("reason").AsString();
-				Message = reply.get("message").AsString();
-
-				if (reply.containsKey("login"))	
+				Login = reply.get("login").AsString();
+			}
+			Success = reply.get("login").AsBoolean();
+			Message = reply.get("message").AsString();
+			if (!Success)
+			{
+				if (Login != null && Login.equals("indeterminate"))
 				{
-					Login = reply.get("login").AsString();
-					Success = reply.get("login").AsBoolean();
-
 					// Parse redirect options
-					if (Login.equals("indeterminate"))
+					if (reply.containsKey("next_url"))
+						NextUrl = reply.get("next_url").AsString();
+					if (reply.containsKey("next_method"))
+						NextMethod = reply.get("next_method").AsString();
+					if (reply.containsKey("next_duration"))
+						NextDuration = reply.get("next_duration").AsUInteger();
+					if (reply.containsKey("next_options"))
 					{
-						if (reply.containsKey("next_url"))
-							NextUrl = reply.get("next_url").AsString();
-						if (reply.containsKey("next_duration"))
-							NextDuration = reply.get("next_duration").AsUInteger();
-						if (reply.containsKey("next_method"))
-							NextMethod = reply.get("next_method").AsString();
-						if (reply.containsKey("next_options"))
-						{
-							OSD osd = reply.get("next_options");
-							if (osd.getType().equals(OSDType.Array))
-								NextOptions = ((OSDArray)osd).toArray(NextOptions);
-						}
+						OSD osd = reply.get("next_options");
+						if (osd.getType().equals(OSDType.Array))
+							NextOptions = ((OSDArray)osd).toArray(NextOptions);
 					}
 				}
+				else
+				{
+					// login failed
+					// Reason can be: tos, critical, key, update, optional, presence
+					Reason = reply.get("reason").AsString();
+				}
+				return;
+			}
 
-				// Home
-				HomeRegion = 0;
-				HomePosition = Vector3.Zero;
-				HomeLookAt = Vector3.Zero;
+			// UDP Blacklist
+            if (reply.containsKey("udp_blacklist"))
+            {
+                UDPBlacklist = reply.get("udp_blacklist").AsString();
+            }
+			AgentID = reply.get("agent_id").AsUUID();
+			SessionID = reply.get("session_id").AsUUID();
+			SecureSessionID = reply.get("secure_session_id").AsUUID();
+			FirstName = reply.get("first_name").AsString();
+			LastName = reply.get("last_name").AsString();
+
+			AgentAccessMax = reply.get("agent_access_max").AsString();
+			if (AgentAccessMax.isEmpty())
+			{
+				// we're on an older sim version (probably an opensim)
+				AgentAccessMax = reply.get("agent_access").AsString();
+			}
+			AgentAccessPref = reply.get("agent_region_access").AsString();
+			AOTransition = reply.get("ao_transition").AsInteger() == 1;
+			StartLocation = reply.get("start_location").AsString();
+
+			CircuitCode = reply.get("circuit_code").AsUInteger();
+			Region = Helpers.UIntsToLong(reply.get("region_x").AsUInteger(), reply.get("region_y").AsUInteger());
+			SimPort = (short) reply.get("sim_port").AsUInteger();
+			SimIP = reply.get("sim_ip").AsInetAddress();
+
+			SeedCapability = reply.get("seed_capability").AsString();
+			SecondsSinceEpoch = reply.get("seconds_since_epoch").AsUInteger();
+
+			// Home
+			HomeRegion = 0;
+			HomePosition = Vector3.Zero;
+			HomeLookAt = Vector3.Zero;
+			try
+			{
 				if (reply.containsKey("home"))
 				{
 					ParseHome(reply.get("home").AsString());
 				}
+				LookAt = ParseVector3("look_at", reply);
 			}
 			catch (Exception ex)
 			{
 				Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
 			}
 
-			if (!Success)
-				return;
-
-			CircuitCode = reply.get("circuit_code").AsUInteger();
-			RegionX = reply.get("region_x").AsUInteger();
-			RegionY = reply.get("region_y").AsUInteger();
-			SimPort = (short) reply.get("sim_port").AsUInteger();
-			SimIP = reply.get("sim_ip").AsInetAddress();
-			SeedCapability = reply.get("seed_capability").AsString();
+			// TODO: add options parsing
 
 			// Buddy list
 			OSD buddyLLSD = reply.get("buddy-list");
@@ -392,8 +416,6 @@ public class LoginManager
 				}
 			}
 
-			SecondsSinceEpoch = reply.get("seconds_since_epoch").AsUInteger();
-
 			InventoryRoot = ParseMappedUUID("inventory-root", "folder_id", reply);
 			InventorySkeleton = ParseInventorySkeleton("inventory-skeleton", reply);
 
@@ -401,22 +423,24 @@ public class LoginManager
 			LibraryRoot = ParseMappedUUID("inventory-lib-root", "folder_id", reply);
 			LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
 
-            // UDP Blacklist
-            if (reply.containsKey("udp_blacklist"))
-            {
-                UDPBlacklist = reply.get("udp_blacklist").AsString();
-            }
-
-            if (reply.containsKey("max-agent-groups"))
+			Grid = ParseGridInfo(reply);
+					
+			if (reply.containsKey("max-agent-groups"))
             {
                 MaxAgentGroups = reply.get("max-agent-groups").AsUInteger();
             }
             else
             {
-                MaxAgentGroups = -1;
+            	// OpenSIM
+    			if (reply.containsKey("max_groups"))
+                    MaxAgentGroups = reply.get("max_groups").AsUInteger();
+    			else
+    				MaxAgentGroups = -1;
             }
 
-            if (reply.containsKey("openid_url"))
+			MapServerUrl = reply.get("map_server_url").AsString();
+
+			if (reply.containsKey("openid_url"))
             {
                 OpenIDUrl = reply.get("openid_url").AsString();
             }
@@ -429,72 +453,70 @@ public class LoginManager
 
 		private void ParseLoginReply(Map<String, Object> reply)
 		{
-			try
+			if (reply.containsKey("login"))
 			{
-				AgentID = ParseUUID("agent_id", reply);
-				SessionID = ParseUUID("session_id", reply);
-				SecureSessionID = ParseUUID("secure_session_id", reply);
-				FirstName = ParseString("first_name", reply);
-				if (FirstName.startsWith("\""))
-				{
-					FirstName.substring(1);
-				}
-				if (FirstName.endsWith("\""))
-				{
-					FirstName.substring(0, FirstName.length() - 1);
-				}
-				LastName = ParseString("last_name", reply);
-				if (LastName.startsWith("\""))
-				{
-					LastName.substring(1);
-				}
-				if (LastName.endsWith("\""))
-				{
-					LastName.substring(0, LastName.length() - 1);
-				}
-				// "first_login" for brand new accounts
-				StartLocation = ParseString("start_location", reply);
-				AgentAccess = ParseString("agent_access", reply);
-				LookAt = ParseVector3("look_at", reply);
-				Reason = ParseString("reason", reply);
-				Message = ParseString("message", reply);
-
-				if (reply.containsKey("login"))
-				{
-					Login = ParseString("login", reply);
-					Success = Login.equals("true");
-
-					// Parse redirect options
-					if (Login.equals("indeterminate"))
-					{
-						NextUrl = ParseString("next_url", reply);
-						NextDuration = ParseUInt("next_duration", reply);
-						NextMethod = ParseString("next_method", reply);
-						NextOptions = ParseArray("next_options", reply);
-					}
-				}
-
-				// Home
-				HomeRegion = 0;
-				HomePosition = Vector3.Zero;
-				HomeLookAt = Vector3.Zero;
-				if (reply.containsKey("home"))
-				{
-					ParseHome(reply.get("home").toString());
-				}
+				Login = ParseString("login", reply);
 			}
-			catch (Exception ex)
-			{
-				Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
-			}
-
+			Success = Login != null && Login.equals("true");
+			Message = ParseString("message", reply);
 			if (!Success)
+			{
+				if (Login != null && Login.equals("indeterminate"))
+				{
+					// Parse redirect options
+					NextUrl = ParseString("next_url", reply);
+					NextMethod = ParseString("next_method", reply);
+					NextDuration = ParseUInt("next_duration", reply);
+					NextOptions = ParseArray("next_options", reply);
+				}
+				else
+				{
+					// login failed
+					// Reason can be: tos, critical, key, update, optional, presence
+					Reason = ParseString("reason", reply);
+				}
 				return;
+			}
+
+			// UDP Blacklist
+			if (reply.containsKey("udp_blacklist"))
+			{
+				UDPBlacklist = ParseString("udp_blacklist", reply);
+			}
+
+			AgentID = ParseUUID("agent_id", reply);
+			SessionID = ParseUUID("session_id", reply);
+			SecureSessionID = ParseUUID("secure_session_id", reply);
+			FirstName = ParseString("first_name", reply);
+			if (FirstName.startsWith("\""))
+			{
+				FirstName.substring(1);
+			}
+			if (FirstName.endsWith("\""))
+			{
+				FirstName.substring(0, FirstName.length() - 1);
+			}
+			LastName = ParseString("last_name", reply);
+			if (LastName.startsWith("\""))
+			{
+				LastName.substring(1);
+			}
+			if (LastName.endsWith("\""))
+			{
+				LastName.substring(0, LastName.length() - 1);
+			}
+			// "first_login" for brand new accounts
+			AgentAccessMax = ParseString("agent_access_max", reply);
+			if (AgentAccessMax.isEmpty())
+			{
+				// we're on an older sim version (probably an opensim)
+				AgentAccessMax = ParseString("agent_access", reply);
+			}
+			AgentAccessPref = ParseString("agent_region_access", reply);
+			AOTransition = ParseUInt("ao_transition", reply) == 1;
+			StartLocation = ParseString("start_location", reply);
 
 			CircuitCode = ParseUInt("circuit_code", reply);
-			RegionX = ParseUInt("region_x", reply);
-			RegionY = ParseUInt("region_y", reply);
-			SimPort = (short) ParseUInt("sim_port", reply);
 			try
 			{
 				SimIP = InetAddress.getByName(ParseString("sim_ip", reply));
@@ -503,7 +525,31 @@ public class LoginManager
 			{
 				SimIP = null;
 			}
+			SimPort = (short) ParseUInt("sim_port", reply);
+			Region = Helpers.UIntsToLong(ParseUInt("region_x", reply), ParseUInt("region_y", reply));
+			RegionSize = new Vector2(ParseUInt("region_size_x", reply), ParseUInt("region_size_y", reply));
+
 			SeedCapability = ParseString("seed_capability", reply);
+			SecondsSinceEpoch = ParseUInt("seconds_since_epoch", reply);
+
+			// Home
+			HomeRegion = 0;
+			HomePosition = Vector3.Zero;
+			HomeLookAt = Vector3.Zero;
+			try
+			{
+				if (reply.containsKey("home"))
+				{
+					ParseHome(reply.get("home").toString());
+				}
+				LookAt = ParseVector3("look_at", reply);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
+			}
+
+			// TODO: add options parsing
 
 			// Buddy list
 			if (reply.containsKey("buddy-list") && reply.get("buddy-list") instanceof Object[])
@@ -524,8 +570,6 @@ public class LoginManager
 				}
 			}
 
-			SecondsSinceEpoch = ParseUInt("seconds_since_epoch", reply);
-
 			InventoryRoot = ParseMappedUUID("inventory-root", "folder_id", reply);
 			InventorySkeleton = ParseInventorySkeleton("inventory-skeleton", reply);
 
@@ -533,20 +577,20 @@ public class LoginManager
 			LibraryRoot = ParseMappedUUID("inventory-lib-root", "folder_id", reply);
 			LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
 
-			// UDP Blacklist
-			if (reply.containsKey("udp_blacklist"))
-			{
-				UDPBlacklist = ParseString("udp_blacklist", reply);
-			}
-
+			Grid = ParseGridInfo(reply);
+			
 			if (reply.containsKey("max-agent-groups"))
             {
                 MaxAgentGroups = ParseUInt("max-agent-groups", reply);
             }
             else
             {
-                MaxAgentGroups = -1;
+            	// OpenSIM
+    			if (reply.containsKey("max_groups"))
+                    MaxAgentGroups = ParseUInt("max_groups", reply);
             }
+			
+			MapServerUrl = ParseString("map_server_url", reply);
 
             if (reply.containsKey("openid_url"))
             {
@@ -561,11 +605,10 @@ public class LoginManager
 
 		private void ParseHome(String value) throws ParseException, IOException
 		{
-			OSD osdHome = OSDParser.deserialize(value);
+			OSD osdHome = OSDParser.deserialize(value, OSDFormat.Notation);
 			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
 			{
 				OSDMap home = (OSDMap) osdHome;
-
 				OSD homeRegion = home.get("region_handle");
 				if (homeRegion != null && homeRegion.getType().equals(OSDType.Array))
 				{
@@ -580,6 +623,194 @@ public class LoginManager
 			}
 		}
 
+		private GridInfo ParseGridInfo(OSDMap reply)
+		{
+			GridInfo grid = _Client.new GridInfo();
+			boolean update = false;
+			if (reply.containsKey("gridname"))
+			{
+				grid.gridname = reply.get("gridname").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.loginuri = reply.get("loginuri").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.loginpage = reply.get("welcome").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.loginpage = reply.get("loginpage").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.helperuri = reply.get("economy").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.helperuri = reply.get("helperuri").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.website = reply.get("about").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.website = reply.get("website").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.support = reply.get("help").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.support = reply.get("support").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.register = reply.get("register").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.register = reply.get("account").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.passworduri = reply.get("password").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.searchurl = reply.get("search").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.currencySym = reply.get("currency").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.realCurrencySym = reply.get("real_currency").AsString();
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.directoryFee = reply.get("directory_fee").AsString();
+				update = true;
+			}
+			if (update)
+				return grid;
+			return null;
+		}
+		
+		private GridInfo ParseGridInfo(Map<String, Object> reply)
+		{
+			GridInfo grid = _Client.new GridInfo();
+			boolean update = false;
+			if (reply.containsKey("gridname"))
+			{
+				grid.gridname = ParseString("gridname", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.loginuri = ParseString("loginuri", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.loginpage = ParseString("welcome", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.loginpage = ParseString("loginpage", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.helperuri = ParseString("economy", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.helperuri = ParseString("helperuri", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.website = ParseString("about", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.website = ParseString("website", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.support = ParseString("help", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.support = ParseString("support", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.register = ParseString("register", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.register = ParseString("account", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+				grid.passworduri = ParseString("password", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.searchurl = ParseString("search", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.currencySym = ParseString("currency", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.realCurrencySym = ParseString("real_currency", reply);
+				update = true;
+			}
+			if (reply.containsKey("loginuri"))
+			{
+//				grid.directoryFee = ParseString("directory_fee", reply);
+				update = true;
+			}
+			if (update)
+				return grid;
+			return null;
+		}
+		
 		private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply)
 		{
 			UUID ownerID;
@@ -645,6 +876,130 @@ public class LoginManager
 			}
 			return null;
 		}
+		// #region Parsing Helpers
+		private int ParseUInt(String key, Map<String, Object> reply)
+		{
+			if (reply.containsKey(key))
+			{
+				Object value = reply.get(key);
+				if (value instanceof Integer)
+				{
+					return (Integer) value;
+				}
+			}
+			return 0;
+		}
+
+		private UUID ParseUUID(String key, Map<String, Object> reply)
+		{
+			if (reply.containsKey(key))
+			{
+				return new UUID(reply.get(key).toString());
+			}
+			return UUID.Zero;
+		}
+
+		private String ParseString(String key, Map<String, Object> reply)
+		{
+			if (reply.containsKey(key))
+			{
+				return reply.get(key).toString();
+			}
+			return Helpers.EmptyString;
+		}
+
+		private Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException
+		{
+			if (reply.containsKey(key))
+			{
+				OSD osd = reply.get(key);
+				if (osd.getType().equals(OSDType.String))
+				{
+					osd = OSDParser.deserialize(osd.AsString(), OSDFormat.Notation);
+				}
+				return osd.AsVector3();
+			}
+			return Vector3.Zero;
+		}
+
+		private Vector3 ParseVector3(String key, Map<String, Object> reply) throws ParseException, IOException
+		{
+			if (reply.containsKey(key))
+			{
+				Object value = reply.get(key);
+
+				if (value instanceof Object[])
+				{
+					String[] list = (String[])value;
+					if (list.length == 3)
+					{
+						float x, y, z;
+						x = Helpers.TryParseFloat(list[0]);
+						y = Helpers.TryParseFloat(list[1]);
+						z = Helpers.TryParseFloat(list[2]);
+
+						return new Vector3(x, y, z);
+					}
+				}
+				else if (value instanceof String)
+				{
+					OSD osd = OSDParser.deserialize((String) value);
+					if (osd != null && osd.getType().equals(OSDType.Array))
+						return ((OSDArray) osd).AsVector3();
+				}
+			}
+			return Vector3.Zero;
+		}
+
+		private UUID ParseMappedUUID(String key, String key2, OSDMap reply)
+		{
+			OSD folderOSD = reply.get(key);
+			if (folderOSD != null && folderOSD.getType().equals(OSDType.Array))
+			{
+				OSDArray array = (OSDArray) folderOSD;
+				if (array.size() == 1 && array.get(0).getType().equals(OSDType.Map))
+				{
+					OSDMap map = (OSDMap) array.get(0);
+					OSD folder = map.get(key2);
+					if (folder != null)
+					{
+						return folder.AsUUID();
+					}
+				}
+			}
+			return UUID.Zero;
+		}
+
+		private UUID ParseMappedUUID(String key, String key2, Map<String, Object> reply)
+		{
+			if (reply.containsKey(key) && reply.get(key) instanceof Object[])
+			{
+				Object[] array = (Object[])reply.get(key);
+				if (array.length == 1 && array[0] instanceof Map)
+				{
+					@SuppressWarnings("unchecked")
+					Map<String, Object> map = (Map<String, Object>) array[0];
+					return ParseUUID(key2, map);
+				}
+			}
+			return UUID.Zero;
+		}
+
+		private String[] ParseArray(String key, Map<String, Object> reply)
+		{
+			Object o = reply.get(key);
+			if (o instanceof Object[])
+			{
+				Object[] array = (Object[]) o;
+				String[] strings = new String[array.length];
+				for (int i = 0; i < array.length; i++)
+				{
+					strings[i] = array[i].toString();
+				}
+			}
+			return null;
+		}
+		// #endregion Parsing Helpers
 	}
 
 	// #endregion Structs
@@ -1271,13 +1626,12 @@ public class LoginManager
 
 	private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception
 	{
-		boolean redirect = reply.Login.equals("indeterminate");
-		if (redirect)
+		if (reply.Login.equals("indeterminate"))
 		{
 			// Login redirected
 
 			// Make the next login URL jump
-			UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, reply.Reason, null);
+			UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, "redirecting", null);
 			loginParams.URI = reply.NextUrl;
 			loginParams.MethodName = reply.NextMethod;
 			loginParams.Options = reply.NextOptions;
@@ -1289,9 +1643,7 @@ public class LoginManager
 			{
 				Thread.sleep(seconds * 1000);
 			}
-			catch (InterruptedException ex)
-			{
-			}
+			catch (InterruptedException ex) { }
 
 			RequestLogin(loginParams, null);
 		}
@@ -1306,8 +1658,7 @@ public class LoginManager
 			if (reply.SimIP != null && reply.SimPort != 0)
 			{
 				// Connect to the sim given in the login reply
-				if (_Client.Network.Connect(reply.SimIP, reply.SimPort,
-						Helpers.UIntsToLong(reply.RegionX, reply.RegionY), true, reply.SeedCapability) != null)
+				if (_Client.Network.Connect(reply.SimIP, reply.SimPort, reply.Region, true, reply.SeedCapability) != null)
 				{
 					// Request the economy data right after login
 					_Client.Network.SendPacket(new EconomyDataRequestPacket());
@@ -1338,134 +1689,6 @@ public class LoginManager
 	}
 
 	// #endregion
-
-	// #region Parsing Helpers
-	private static int ParseUInt(String key, Map<String, Object> reply)
-	{
-		if (reply.containsKey(key))
-		{
-			Object value = reply.get(key);
-			if (value instanceof Integer)
-			{
-				return (Integer) value;
-			}
-		}
-		return 0;
-	}
-
-	private static UUID ParseUUID(String key, Map<String, Object> reply)
-	{
-		if (reply.containsKey(key))
-		{
-			return new UUID(reply.get(key).toString());
-		}
-		return UUID.Zero;
-	}
-
-	private static String ParseString(String key, Map<String, Object> reply)
-	{
-		if (reply.containsKey(key))
-		{
-			return reply.get(key).toString();
-		}
-		return Helpers.EmptyString;
-	}
-
-	private static Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException
-	{
-		if (reply.containsKey(key))
-		{
-			OSD osd = reply.get(key);
-			if (osd.getType().equals(OSDType.String))
-			{
-				osd = OSDParser.deserialize(osd.AsString());
-			}
-			if (osd != null && osd.getType().equals(OSDType.Array))
-			{
-				return osd.AsVector3();
-			}
-		}
-		return Vector3.Zero;
-	}
-
-	private static Vector3 ParseVector3(String key, Map<String, Object> reply) throws ParseException, IOException
-	{
-		if (reply.containsKey(key))
-		{
-			Object value = reply.get(key);
-
-			if (value instanceof Object[])
-			{
-				String[] list = (String[])value;
-				if (list.length == 3)
-				{
-					float x, y, z;
-					x = Helpers.TryParseFloat(list[0]);
-					y = Helpers.TryParseFloat(list[1]);
-					z = Helpers.TryParseFloat(list[2]);
-
-					return new Vector3(x, y, z);
-				}
-			}
-			else if (value instanceof String)
-			{
-				OSD osd = OSDParser.deserialize((String) value);
-				if (osd != null && osd.getType().equals(OSDType.Array))
-					return ((OSDArray) osd).AsVector3();
-			}
-		}
-		return Vector3.Zero;
-	}
-
-	private static UUID ParseMappedUUID(String key, String key2, OSDMap reply)
-	{
-		OSD folderOSD = reply.get(key);
-		if (folderOSD != null && folderOSD.getType().equals(OSDType.Array))
-		{
-			OSDArray array = (OSDArray) folderOSD;
-			if (array.size() == 1 && array.get(0).getType().equals(OSDType.Map))
-			{
-				OSDMap map = (OSDMap) array.get(0);
-				OSD folder = map.get(key2);
-				if (folder != null)
-				{
-					return folder.AsUUID();
-				}
-			}
-		}
-		return UUID.Zero;
-	}
-
-	private static UUID ParseMappedUUID(String key, String key2, Map<String, Object> reply)
-	{
-		if (reply.containsKey(key) && reply.get(key) instanceof Object[])
-		{
-			Object[] array = (Object[])reply.get(key);
-			if (array.length == 1 && array[0] instanceof Map)
-			{
-				@SuppressWarnings("unchecked")
-				Map<String, Object> map = (Map<String, Object>) array[0];
-				return ParseUUID(key2, map);
-			}
-		}
-		return UUID.Zero;
-	}
-
-	private static String[] ParseArray(String key, Map<String, Object> reply)
-	{
-		Object o = reply.get(key);
-		if (o instanceof Object[])
-		{
-			Object[] array = (Object[]) o;
-			String[] strings = new String[array.length];
-			for (int i = 0; i < array.length; i++)
-			{
-				strings[i] = array[i].toString();
-			}
-		}
-		return null;
-	}
-	// #endregion Parsing Helpers
 
 	// #region CallbackArgs
 

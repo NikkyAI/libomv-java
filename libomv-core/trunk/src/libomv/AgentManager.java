@@ -1874,8 +1874,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 	// Position avatar client will goto when login to 'home' or during teleport request to 'home' region.
 	private long homeRegion;
 	private Vector3 homePosition;
-	// LookAt point saved/restored with HomePosition
-	private Vector3 homeLookAt;
 	
 	private void setHomePosRegion(long region, Vector3 pos)
 	{
@@ -2263,11 +2261,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 				firstName = reply.FirstName;
 				lastName = reply.LastName;
 				startLocation = reply.StartLocation;
-				agentAccess = reply.AgentAccess;
+				agentAccess = reply.AgentAccessMax;
 				_Movement.Camera.LookDirection(reply.LookAt);
 				homeRegion = reply.HomeRegion;
 				homePosition = reply.HomePosition;
-				homeLookAt = reply.HomeLookAt;
 			}
 			return false;
 		}
@@ -4406,6 +4403,48 @@ public class AgentManager implements PacketCallback, CapsCallback
      */
     public void SetHome(int id, Vector3 pos, Vector3 lookAt) throws Exception
     {
+    	final class HomeLocationResponse implements FutureCallback<OSD>
+    	{
+    		@Override
+    		public void completed(OSD result)
+    		{
+    			if (result instanceof OSDMap)
+    			{
+    				OSDMap map = (OSDMap)result;
+    				if (!map.containsKey("success") || !map.get("success").AsBoolean())
+    					return;
+    				
+    				if (map.containsKey("HomeLocation"))
+    				{
+    					result = map.get("HomeLocation");
+    	    			if (result instanceof OSDMap)
+    	    			{
+    	    				map = (OSDMap)result;
+    	    				if (map.containsKey("LocationPos"))
+    	    				{
+    	    					result = map.get("LocationPos");
+    	    	    			if (result instanceof OSDMap)
+    	    	    			{
+    	    	    				map = (OSDMap)result;
+    	    	    				setHomePosRegion(_Client.getCurrentRegionHandle(), map.AsVector3());
+    	    	    			}
+    	    				}
+        				}
+       				}
+       			}
+    		}
+
+    		@Override
+    		public void failed(Exception ex)
+    		{
+    		}
+
+    		@Override
+    		public void cancelled()
+    		{
+    		}    		
+    	}
+    	
 		URI url = _Client.Network.getCapabilityURI("HomeLocation");
 		if (url != null)
 		{
@@ -4414,7 +4453,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			map.put("LocationId", OSD.FromInteger(id));
 			map.put("LocationPos", OSD.FromVector3(pos));
 			map.put("LocationLookAt", OSD.FromVector3(lookAt));
-			request.executeHttpPost(url, map, OSDFormat.Xml, null, _Client.Settings.CAPS_TIMEOUT);			
+			request.executeHttpPost(url, map, OSDFormat.Xml, new HomeLocationResponse(), _Client.Settings.CAPS_TIMEOUT);			
 		}
 		else
 		{
@@ -4428,12 +4467,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 	        s.StartLocationData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
 	        s.StartLocationData.LocationLookAt = lookAt;
 	        _Client.Network.SendPacket(s);
-		}
-		if (id == 1)
-		{
-			setHomePosRegion(_Client.getCurrentRegionHandle(), pos);
+
+	        if (id == 1)
+			{
+				setHomePosRegion(_Client.getCurrentRegionHandle(), pos);
+			}
 		}
     }
+    
     /**
 	 * Acknowledge agent movement complete
 	 * 
