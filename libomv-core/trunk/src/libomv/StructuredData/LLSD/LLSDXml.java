@@ -156,9 +156,6 @@ public final class LLSDXml extends OSDParser
 	 */
 	public void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
-		if (!prependHeader)
-			throw new IOException("Serialization to XML format without header is not supported");
-
 		try
 		{
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
@@ -180,9 +177,6 @@ public final class LLSDXml extends OSDParser
 	 */
 	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
-		if (!prependHeader)
-			throw new IOException("Serialization to XML format without header is not supported");
-
 		try
 		{
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
