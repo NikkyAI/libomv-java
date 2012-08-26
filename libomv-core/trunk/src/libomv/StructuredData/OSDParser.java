@@ -327,7 +327,7 @@ public abstract class OSDParser
 		return parser.unflatten(stream, encoding);
 	}
 
-	protected abstract void flatten(Writer writer, OSD osd, boolean header, String encoding) throws IOException;
+	protected abstract void flatten(Writer writer, OSD osd, boolean prependHeader, String encoding) throws IOException;
 
 	public static String serializeToString(OSD osd, OSDFormat format) throws IOException
 	{
