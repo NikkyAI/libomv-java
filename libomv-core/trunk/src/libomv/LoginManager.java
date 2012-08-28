@@ -943,7 +943,7 @@ public class LoginManager
 				}
 				else if (value instanceof String)
 				{
-					OSD osd = OSDParser.deserialize((String) value);
+					OSD osd = OSDParser.deserialize((String) value, OSDFormat.Notation);
 					if (osd != null && osd.getType().equals(OSDType.Array))
 						return ((OSDArray) osd).AsVector3();
 				}
