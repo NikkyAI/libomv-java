@@ -37,6 +37,7 @@ import java.util.TimeZone;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDBinary;
@@ -416,6 +417,15 @@ public class XmlLLSDTest extends TestCase
         Assert.assertEquals(false, tempBool.AsBoolean());
     }
 
+    byte[] binary = {116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 
+                     114, 111, 119, 110, 32, 102, 111, 120, 91, 20, 18,
+                     116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 
+                     114, 111, 119, 110, 32, 102, 111, 120, 91, 0, 18,
+                     116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 
+                     114, 111, 119, 110, 32, 102, 111, 120, 91, 3, 18,
+                     116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 
+                     114, 111, 119, 110, 32, 102, 111, 120, 91, 5, 18};
+            
     /// Test that binary elements are parsed correctly.
     public void testDeserializeBinary() throws IOException, ParseException
     {
@@ -454,6 +464,15 @@ public class XmlLLSDTest extends TestCase
         tempBinary = (OSDBinary)array.get(2);
         Assert.assertEquals(0, tempBinary.AsBinary().length);
     }
+
+    public void testSerializeBinary() throws IOException, ParseException
+    {
+       OSD llsdBinary = OSD.FromBinary(binary);
+       String sBinarySerialized = OSDParser.serializeToString(llsdBinary, OSDFormat.Xml);
+       OSD llsdBinaryDS = OSDParser.deserialize(sBinarySerialized);
+       Assert.assertEquals(OSDType.Binary, llsdBinaryDS.getType());
+       Assert.assertTrue(Arrays.equals(binary, llsdBinaryDS.AsBinary()));
+   }
 
     /// Test that undefened elements are parsed correctly.
     /// Currently this just checks that there is no error since undefined has no

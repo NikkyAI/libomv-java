@@ -230,8 +230,10 @@ public final class LLSDXml extends OSDParser
 				writer.startTag(null, URI_TAG).text(data.AsString()).endTag(null, URI_TAG);
 				break;
 			case Binary:
-				writer.startTag(null, BINARY_TAG).attribute(null, "encoding", "base64").text(data.AsString())
-						.endTag(null, BINARY_TAG);
+				writer.startTag(null, BINARY_TAG).
+				       attribute(null, "encoding", "base64").
+				       text(Base64.encodeBase64String(data.AsBinary())).
+					   endTag(null, BINARY_TAG);
 				break;
 			case Map:
 				OSDMap map = (OSDMap) data;
