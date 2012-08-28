@@ -263,8 +263,13 @@ public class Simulator extends Thread
 		SimSpareTime,
 		SimSleepTime,
 		SimIOPumpTime,
-		SimUnknown;    // 35
-
+		SimPctScriptsRun,    // 35
+		SimRegionIdle,         // dataserver only
+		SimRegionIdlePossible, // dataserver only
+	    SimAIStepMsec,
+		SimSkippedSilhouetteSteps,
+		SimPctSteppedCharacters;   //40
+		
 		public static SimStatType setValue(int value)
 		{
 			if (value >= 0 && value < values().length - 1)
@@ -382,11 +387,10 @@ public class Simulator extends Thread
 		public int SimSpareTime;
 		public int SimSleepTime;
 		public int SimIOPumpTime;
-		public int SimUnknown;
-		
-		public SimStats()
-		{
-		}
+		public int SimPctScriptsRun;
+		public int SimAIStepMsec;
+		public int SimSkippedSilhouetteSteps;
+		public int SimPctSteppedCharacters;
 	}
 
 	public final class IncomingPacketIDCollection

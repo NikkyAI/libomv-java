@@ -1455,11 +1455,20 @@ public class NetworkManager implements PacketCallback
 				case SimIOPumpTime:
 					simulator.Statistics.SimIOPumpTime = (int)s.StatValue;
 					break;
-				case SimUnknown:
-					simulator.Statistics.SimUnknown = (int)s.StatValue;
+				case SimPctScriptsRun:
+					simulator.Statistics.SimPctScriptsRun = (int)s.StatValue;
+					break;
+				case SimAIStepMsec:
+					simulator.Statistics.SimAIStepMsec = (int)s.StatValue;
+					break;
+				case SimSkippedSilhouetteSteps:
+					simulator.Statistics.SimSkippedSilhouetteSteps = (int)s.StatValue;
+					break;
+				case SimPctSteppedCharacters:
+					simulator.Statistics.SimPctSteppedCharacters = (int)s.StatValue;
 					break;
 				default:
-					Logger.Log("Unhandled Sim Stats ID: " + s.StatID, LogLevel.Debug, _Client);
+					Logger.Log("Unknown stat id: " + s.StatID, LogLevel.Debug, _Client);
 					break;
 			}
 		}
