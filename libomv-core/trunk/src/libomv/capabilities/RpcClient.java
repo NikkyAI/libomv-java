@@ -88,7 +88,6 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		super();
 	}
 
-
 	public Future<OSD> call(URI address, String method, OSDArray params, FutureCallback<OSD> callback, long timeout) throws XmlPullParserException
 	{
 		AbstractHttpEntity entity = new OSDEntity(method, params);
@@ -319,7 +318,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			}
 			else if (name.equals(TYPE_NIL))
 			{
-				return new OSD();
+				ret = new OSD();
 			}
 			
 			boolean notEmpty = !parser.isEmptyElementTag();
