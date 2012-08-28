@@ -56,6 +56,7 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
@@ -85,7 +86,7 @@ public abstract class AsyncHTTPClient<T>
 	private final DefaultHttpAsyncClient client;
 	private X509Certificate certificate;
 	private Timer timeout;
-	Future<T> resultFuture;
+	private Future<T> resultFuture;
 	private FutureCallback<T> resultCb;
 	private ProgressCallback progressCb;
 
@@ -212,20 +213,18 @@ public abstract class AsyncHTTPClient<T>
 	 * @param address The uri to post
 	 * @param data The string data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
+	 * @param encoding The encoding to use to stream the data
 	 * @return A Future that can be used to retrieve the data or cancel the request
+	 * @throws UnsupportedEncodingException 
 	 */
-	public Future<T> executeHttpPost(URI address, String data, String contentType) throws UnsupportedEncodingException
+	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding) throws UnsupportedEncodingException
 	{
-		// Create the request
-		HttpPost request = new HttpPost(address);
+		AbstractHttpEntity entity = new StringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 		{
-			request.addHeader("Content-Type", contentType);
+			entity.setContentType(contentType);
 		}
-
-		// set POST body
-		request.setEntity(new StringEntity(data));
-		return executeHttp(request, null, TIMEOUT_INFINITE);
+		return executeHttpPost(address, entity, encoding, null, TIMEOUT_INFINITE);
 	}
 
 	/**
@@ -234,24 +233,22 @@ public abstract class AsyncHTTPClient<T>
 	 * @param address The uri to post
 	 * @param data The string data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
+	 * @param encoding The encoding to use to stream the data
 	 * @param callback The result callback to be called on success, exception or failure
 	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
-	 * @return A Future that can be used to cancel the request
+	 * @return A Future that can be used to retrieve the data or cancel the request
+	 * @throws UnsupportedEncodingException 
 	 */
-	public Future<T> executeHttpPost(URI address, String data, String contentType,
+	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding,
 							FutureCallback<T> callback, long millisecondTimeout) throws UnsupportedEncodingException
 	{
-		// Create the request
-		HttpPost request = new HttpPost(address);
+		AbstractHttpEntity entity = new StringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 		{
-			request.addHeader("Content-Type", contentType);
+			entity.setContentType(contentType);
 		}
-
-		// set POST body
-		request.setEntity(new StringEntity(data));
-		return executeHttp(request, callback, millisecondTimeout);
+		return executeHttpPost(address, entity, encoding, callback, millisecondTimeout);
 	}
 
 	/**
@@ -260,45 +257,62 @@ public abstract class AsyncHTTPClient<T>
 	 * @param address The uri to post
 	 * @param data The binary data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
+	 * @param encoding The encoding to use in the header
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, byte[] data, String contentType)
+	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding)
 	{
-		// Create the request
-		HttpPost request = new HttpPost(address);
+		AbstractHttpEntity entity = new ByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 		{
-			request.addHeader("Content-Type", contentType);
+			entity.setContentType(contentType);
 		}
-
-		// set POST body
-		request.setEntity(new ByteArrayEntity(data));
-		return executeHttp(request, null, TIMEOUT_INFINITE);
+		return executeHttpPost(address, entity, encoding, null, TIMEOUT_INFINITE);
 	}
 
 	/**
 	 * Do a HTTP Post Request from the server from binary data
 	 * 
-	 * @param address The uri to post
+	 * @param address The uri to post the data to
 	 * @param data The binary data to add as entity content
 	 * @param contentType The content type to add as ContentType: header or null
+	 * @param encoding The encoding to use in the header
 	 * @param callback The result callback to be called on success, exception or failure
 	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
-	 * @return A Future that can be used to cancel the request
+	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, byte[] data, String contentType,
-							FutureCallback<T> callback, long millisecondTimeout)
+	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding,
+							         FutureCallback<T> callback, long millisecondTimeout)
 	{
-		// Create the request
-		HttpPost request = new HttpPost(address);
+		AbstractHttpEntity entity = new ByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 		{
-			request.addHeader("Content-Type", contentType);
+			entity.setContentType(contentType);
 		}
+		return executeHttpPost(address, entity, encoding, callback, millisecondTimeout);
+	}
 
+	/**
+	 * Do a HTTP Post Request from the server from binary data
+	 * 
+	 * @param address The uri to post the data to
+	 * @param entity The content entity to send
+	 * @param encoding The encoding to use to stream the data
+	 * @param callback The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @return A Future that can be used to retrieve the data or cancel the request
+	 */
+	public Future<T> executeHttpPost(URI address, AbstractHttpEntity entity, String encoding,
+			                         FutureCallback<T> callback, long millisecondTimeout)
+	{
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+		// Create the request
+		HttpPost request = new HttpPost(address);
 		// set POST body
-		request.setEntity(new ByteArrayEntity(data));
+		request.setEntity(entity);
 		return executeHttp(request, callback, millisecondTimeout);
 	}
 

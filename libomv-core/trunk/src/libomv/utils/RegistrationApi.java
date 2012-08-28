@@ -146,10 +146,9 @@ public class RegistrationApi
     private void getCapabilities() throws URISyntaxException, IOReactorException, UnsupportedEncodingException, InterruptedException, ExecutionException, TimeoutException
     {
         // build post data
-        byte[] postData = String.format("first_name=%s&last_name=%s&password=%s", _userInfo.FirstName, _userInfo.LastName, 
-                                        _userInfo.Password).getBytes(Helpers.ASCII_ENCODING);
+        String postData = String.format("first_name=%s&last_name=%s&password=%s", _userInfo.FirstName, _userInfo.LastName, _userInfo.Password);
 
-        Future<OSD> future = new CapsClient().executeHttpPost(getRegistrationApiCaps(), postData, "application/x-www-form-urlencoded");
+        Future<OSD> future = new CapsClient().executeHttpPost(getRegistrationApiCaps(), postData, "application/x-www-form-urlencoded", Helpers.UTF8_ENCODING);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {

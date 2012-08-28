@@ -26,7 +26,6 @@
  */
 package libomv.capabilities;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Random;
 import java.util.concurrent.Future;
@@ -41,7 +40,6 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSD.OSDType;
-import libomv.StructuredData.OSDParser;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.packets.Packet;
 import libomv.utils.Logger;
@@ -109,15 +107,8 @@ public class EventQueue extends CapsClient
 		osdRequest.put("ack", (ack != 0) ? OSD.FromInteger(ack) : new OSD());
 		osdRequest.put("done", OSD.FromBoolean(Done));
 
-		try
-		{
-			byte[] postData = OSDParser.serializeToBytes(osdRequest, OSD.OSDFormat.Xml);
-			// Start or resume the connection
-			Request = executeHttpPost(address, postData, "application/xml", new EventClientCallback(first), REQUEST_TIMEOUT);
-		}
-		catch (IOException e)
-		{
-		}
+		// Start or resume the connection
+		Request = executeHttpPost(address, osdRequest, OSD.OSDFormat.Xml, new EventClientCallback(first), REQUEST_TIMEOUT);
 
 		synchronized (random)
 		{

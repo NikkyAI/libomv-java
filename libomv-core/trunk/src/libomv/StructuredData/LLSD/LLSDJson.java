@@ -43,6 +43,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDBinary;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.PushbackReader;
@@ -86,7 +87,7 @@ public final class LLSDJson extends OSDParser
 		if (character == '<')
 		{
 			if (encoding == null)
-				encoding = Helpers.UTF8_ENCODING;
+				encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Json);
 			return isHeader(data, llsdJsonKey.getBytes(encoding), '>');
 		}
 		return false;
@@ -136,7 +137,7 @@ public final class LLSDJson extends OSDParser
 	protected OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
 		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Json);
 		PushbackReader push = new PushbackReader(new InputStreamReader(stream, encoding));
 		int marker = skipWhiteSpace(push);
 		if (marker < 0)
@@ -186,7 +187,7 @@ public final class LLSDJson extends OSDParser
 	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Json);
 		Writer writer = new OutputStreamWriter(stream, encoding);
 		if (prependHeader)
 		{
@@ -304,14 +305,11 @@ public final class LLSDJson extends OSDParser
 		}
 		OSD osd = OSD.FromString(string);
 		
-		if (string.length() > 1)
+		if (string.length() > 16)
 		{
-			if (string.length() > 16)
-			{
-				Date date = osd.AsDate();
-				if (!date.equals(Helpers.Epoch))
-					return OSD.FromDate(date);
-			}
+			Date date = osd.AsDate();
+			if (!date.equals(Helpers.Epoch))
+				return OSD.FromDate(date);
 		}
 		return osd;
 	}

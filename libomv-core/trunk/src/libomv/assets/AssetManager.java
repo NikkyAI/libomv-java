@@ -1120,7 +1120,7 @@ public class AssetManager implements PacketCallback
 								{
 									// POST the asset data
 									CapsClient upload = new CapsClient();
-									upload.executeHttpPost(uploadUrl, textureData, "application/octet-stream", 
+									upload.executeHttpPost(uploadUrl, textureData, "application/octet-stream", null,
 											new RequestUploadBakedTextureComplete(), _Client.Settings.CAPS_TIMEOUT);
 								}
 								catch (IOException ex)

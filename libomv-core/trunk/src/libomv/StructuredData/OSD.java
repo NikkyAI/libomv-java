@@ -70,6 +70,11 @@ public class OSD
 			}
 			return "application/llsd+json";
 		}
+		
+		public static String contentEncodingDefault(OSDFormat format)
+		{
+			return Helpers.UTF8_ENCODING;
+		}
 	}
 
 	/** The OSD class implementation */

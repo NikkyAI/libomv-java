@@ -49,6 +49,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
@@ -96,7 +97,7 @@ public final class LLSDXml extends OSDParser
 		if (character == '<')
 		{
 			if (encoding == null)
-				encoding = Helpers.UTF8_ENCODING;
+				encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Xml);
 			return isHeader(data, llsdXmlHeader.getBytes(encoding), '>') ||
 				   isHeader(data, llsdXmlHeader2.getBytes(encoding), '>');
 		}

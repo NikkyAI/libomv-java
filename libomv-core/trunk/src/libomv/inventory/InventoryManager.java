@@ -3472,7 +3472,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				try
 				{
 					CapsClient upload = new CapsClient();
-					upload.executeHttpPost(new URI(uploadURL), itemData, "application/octet-stream",
+					upload.executeHttpPost(new URI(uploadURL), itemData, "application/octet-stream", null,
 							new CreateItemFromAssetResponse(callback, itemData, timeout, request), timeout);
 				}
 				catch (Exception ex)
@@ -3626,7 +3626,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						try
 						{
 							CapsClient upload = new CapsClient();
-							upload.executeHttpPost(uploadURL, itemData, "application/octet-stream",
+							upload.executeHttpPost(uploadURL, itemData, "application/octet-stream", null,
 									new UploadInventoryAssetComplete(callback, itemData, assetID), _Client.Settings.CAPS_TIMEOUT);
 						}
 						catch (Exception ex)
@@ -3752,7 +3752,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				try
 				{
 					CapsClient upload = new CapsClient();
-					upload.executeHttpPost(new URI(uploadURL), itemData, "application/octet-stream",
+					upload.executeHttpPost(new URI(uploadURL), itemData, "application/octet-stream", null,
 							new UpdateScriptAgentInventoryResponse(callback, itemData, scriptID), _Client.Settings.CAPS_TIMEOUT);		
 				}
 				catch (Exception ex)

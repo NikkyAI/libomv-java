@@ -46,6 +46,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.PushbackReader;
@@ -115,7 +116,7 @@ public final class LLSDNotation extends OSDParser
 		if (character == '<')
 		{
 			if (encoding == null)
-				encoding = Helpers.UTF8_ENCODING;
+				encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Notation);
 			return isHeader(data, llsdNotationHeader.getBytes(encoding), '>');
 		}
 		return false;
@@ -133,7 +134,7 @@ public final class LLSDNotation extends OSDParser
 	public OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
 		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Notation);
 		return unflatten(new InputStreamReader(stream, encoding), encoding);
 	}
 	
@@ -178,7 +179,7 @@ public final class LLSDNotation extends OSDParser
 	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Notation);
 		Writer writer = new OutputStreamWriter(stream, encoding);
 		flatten(writer, data, prependHeader, encoding);
 		writer.flush();

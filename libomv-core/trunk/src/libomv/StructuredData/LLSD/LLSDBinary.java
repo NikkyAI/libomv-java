@@ -48,6 +48,7 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.io.output.WriterOutputStream;
 
 import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
@@ -92,7 +93,7 @@ public final class LLSDBinary extends OSDParser
 		if (character == '<')
 		{
 			if (encoding == null)
-				encoding = Helpers.UTF8_ENCODING;
+				encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Binary);
 			return isHeader(string, new String(llsdBinaryHeader, encoding), '>');
 		}
 		return false;
@@ -119,6 +120,8 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
+		if (encoding == null)
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Binary);
 		return unflatten(new ReaderInputStream(reader, encoding), encoding);
 	}
 
@@ -150,7 +153,7 @@ public final class LLSDBinary extends OSDParser
 			push.unread(marker);
 		}
 		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Binary);
 		return parseElement(push, encoding);
 	}
 
@@ -165,6 +168,8 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
+		if (encoding == null)
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Binary);
 		OutputStream stream = new WriterOutputStream(writer, encoding);
 		flatten(stream, data, prependHeader, encoding);
 		stream.flush();
@@ -181,13 +186,13 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
-		if (encoding == null)
-			encoding = Helpers.UTF8_ENCODING;
 		if (prependHeader)
 		{
 			stream.write(llsdBinaryHead);
 			stream.write('\n');
 		}
+		if (encoding == null)
+			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Binary);
 		serializeElement(stream, data, encoding);
 	}
 
