@@ -60,8 +60,6 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 	private static final String PARAMS = "params";
 	private static final String PARAM = "param";
 	private static final String FAULT = "fault";
-	private static final String FAULT_CODE = "faultCode";
-	private static final String FAULT_STRING = "faultString";
 
 	private static final String TAG_NAME = "name";
 	private static final String TAG_MEMBER = "member";
