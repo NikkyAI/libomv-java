@@ -26,6 +26,7 @@
  */
 package libomv.mapgenerator;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -33,14 +34,14 @@ public class MapPacketMap
 {
 	public Vector<MapPacket> mapPackets;
 
-	public IntHashMap<Integer, MapPacket> commandMapPacket;
+	public HashMap<Integer, MapPacket> commandMapPacket;
 
 	public Hashtable<String, MapPacket> nameMapPacket;
 
 	public MapPacketMap(int size)
 	{
 		mapPackets = new Vector<MapPacket>(size);
-		commandMapPacket = new IntHashMap<Integer, MapPacket>(size);
+		commandMapPacket = new HashMap<Integer, MapPacket>(size);
 		nameMapPacket = new Hashtable<String, MapPacket>(size);
 	}
 
