@@ -24,7 +24,7 @@ package libomv.utils;
 //package uk.co.larts.util;
 /**
  * <p>
- * A hash map that uses primitive ints for the key rather than objects.
+ * A hash map that uses primitive ints for the value rather than objects.
  * </p>
  * 
  * <p>
@@ -40,18 +40,34 @@ package libomv.utils;
  * @version $Revision: 1.1 $
  * @see java.util.HashMap
  */
-public class HashMapInt
+public class HashMapInt <K>
 {
+    /**
+     * The default initial capacity - MUST be a power of two.
+     */
+	private static final int DEFAULT_INITIAL_CAPACITY = 16;
+
+    /**
+     * The maximum capacity, used if a higher value is implicitly specified
+     * by either of the constructors with arguments.
+     * MUST be a power of two <= 1<<30.
+     */
+    private static final int MAXIMUM_CAPACITY = 1 << 30;
+
+    /**
+     * The load factor used when none specified in constructor.
+     */
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
 	/**
 	 * The hash table data.
 	 */
-	private transient Entry table[];
+	private transient Entry<K>[] table;
 
 	/**
 	 * The total number of entries in the hash table.
 	 */
-	private transient int count;
+	private transient int size;
 
 	/**
 	 * The table is rehashed when its size exceeds this threshold. (The value of
@@ -74,15 +90,15 @@ public class HashMapInt
 	 * table.
 	 * </p>
 	 */
-	private static class Entry
+	private static class Entry <K>
 	{
 		int hash;
 
-		Object key;
+		K key;
 
 		int value;
 
-		Entry next;
+		Entry<K> next;
 
 		/**
 		 * <p>
@@ -98,7 +114,7 @@ public class HashMapInt
 		 * @param next
 		 *            A reference to the next entry in the table
 		 */
-		protected Entry(int hash, Object key, int value, Entry next)
+		protected Entry(int hash, K key, int value, Entry<K> next)
 		{
 			this.hash = hash;
 			this.key = key;
@@ -115,7 +131,7 @@ public class HashMapInt
 	 */
 	public HashMapInt()
 	{
-		this(20, 0.75f);
+		this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR);
 	}
 
 	/**
@@ -131,7 +147,7 @@ public class HashMapInt
 	 */
 	public HashMapInt(int initialCapacity)
 	{
-		this(initialCapacity, 0.75f);
+		this(initialCapacity, DEFAULT_LOAD_FACTOR);
 	}
 
 	/**
@@ -148,6 +164,7 @@ public class HashMapInt
 	 *             if the initial capacity is less than zero, or if the load
 	 *             factor is nonpositive.
 	 */
+	@SuppressWarnings("unchecked")
 	public HashMapInt(int initialCapacity, float loadFactor)
 	{
 		super();
@@ -169,7 +186,31 @@ public class HashMapInt
 		threshold = (int) (initialCapacity * loadFactor);
 	}
 
-	/**
+    /**
+     * Applies a supplemental hash function to a given hashCode, which
+     * defends against poor quality hash functions.  This is critical
+     * because HashMap uses power-of-two length hash tables, that
+     * otherwise encounter collisions for hashCodes that do not differ
+     * in lower bits. Note: Null keys always map to hash 0, thus index 0.
+     */
+    static int hash(int h)
+    {
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+        h ^= (h >>> 20) ^ (h >>> 12);
+        return h ^ (h >>> 7) ^ (h >>> 4);
+    }
+
+    /**
+     * Returns index for hash code h.
+     */
+    static int indexFor(int h, int length)
+    {
+        return h & (length-1);
+    }
+
+    /**
 	 * <p>
 	 * Returns the number of keys in this hashtable.
 	 * </p>
@@ -178,7 +219,7 @@ public class HashMapInt
 	 */
 	public int size()
 	{
-		return count;
+		return size;
 	}
 
 	/**
@@ -191,45 +232,7 @@ public class HashMapInt
 	 */
 	public boolean isEmpty()
 	{
-		return count == 0;
-	}
-
-	/**
-	 * <p>
-	 * Tests if some key maps into the specified value in this hashtable. This
-	 * operation is more expensive than the <code>containsKey</code> method.
-	 * </p>
-	 * 
-	 * <p>
-	 * Note that this method is identical in functionality to containsValue,
-	 * (which is part of the Map interface in the collections framework).
-	 * </p>
-	 * 
-	 * @param value
-	 *            a value to search for.
-	 * @return <code>true</code> if and only if some key maps to the
-	 *         <code>value</code> argument in this hashtable as determined by
-	 *         the <tt>equals</tt> method; <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             if the value is <code>null</code>.
-	 * @see #containsKey(int)
-	 * @see #containsValue(Object)
-	 * @see java.util.Map
-	 */
-	public boolean contains(int value)
-	{
-		Entry tab[] = table;
-		for (int i = tab.length; i-- > 0;)
-		{
-			for (Entry e = tab[i]; e != null; e = e.next)
-			{
-				if (e.value == value)
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+		return size == 0;
 	}
 
 	/**
@@ -250,7 +253,17 @@ public class HashMapInt
 	 */
 	public boolean containsValue(int value)
 	{
-		return contains(value);
+		for (int i = table.length; i-- > 0;)
+		{
+			for (Entry<K> e = table[i]; e != null; e = e.next)
+			{
+				if (e.value == value)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -267,15 +280,12 @@ public class HashMapInt
 	 */
 	public boolean containsKey(Object key)
 	{
-		Entry tab[] = table;
-		int hash = key.hashCode();
-		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index]; e != null; e = e.next)
+		int hash = (key == null) ? 0 : hash(key.hashCode());
+		for (Entry<K> e = table[indexFor(hash, table.length)]; e != null; e = e.next)
 		{
-			if (e.hash == hash)
-			{
+            K k;
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k)))
 				return true;
-			}
 		}
 		return false;
 	}
@@ -294,15 +304,12 @@ public class HashMapInt
 	 */
 	public int get(Object key)
 	{
-		Entry tab[] = table;
-		int hash = key.hashCode();
-		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index]; e != null; e = e.next)
+		int hash = (key == null) ? 0 : hash(key.hashCode());
+		for (Entry<K> e = table[indexFor(hash, table.length)]; e != null; e = e.next)
 		{
-			if (e.hash == hash)
-			{
-				return e.value;
-			}
+            K k;
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k)))
+                return e.value;
 		}
 		return -1;
 	}
@@ -318,32 +325,38 @@ public class HashMapInt
 	 * hashtable exceeds this hashtable's capacity and load factor.
 	 * </p>
 	 */
-	protected void rehash()
+	@SuppressWarnings("unchecked")
+	protected void resize(int newCapacity)
 	{
-		int oldCapacity = table.length;
-		Entry oldMap[] = table;
+        Entry<K>[] oldTable = table;
+        int oldCapacity = oldTable.length;
+        if (oldCapacity == MAXIMUM_CAPACITY)
+        {
+            threshold = Integer.MAX_VALUE;
+            return;
+        }
+		table = new Entry[newCapacity];
 
-		int newCapacity = oldCapacity * 2 + 1;
-		Entry newMap[] = new Entry[newCapacity];
-
-		threshold = (int) (newCapacity * loadFactor);
-		table = newMap;
-
-		for (int i = oldCapacity; i-- > 0;)
+		for (int k = 0; k < oldCapacity; k++)
 		{
-			for (Entry old = oldMap[i]; old != null;)
+			Entry<K> e = oldTable[k];
+			if (e != null)
 			{
-				Entry e = old;
-				old = old.next;
-
-				int index = (e.hash & 0x7FFFFFFF) % newCapacity;
-				e.next = newMap[index];
-				newMap[index] = e;
+				oldTable[k] = null;
+				do
+				{
+					Entry<K> next = e.next;
+					int i = indexFor(e.hash, newCapacity);
+					e.next = table[i];
+					table[i] = e;
+					e = next;
+				} while (e != null);
 			}
 		}
+        threshold = (int)(newCapacity * loadFactor);
 	}
 
-	/**
+    /**
 	 * <p>
 	 * Maps the specified <code>key</code> to the specified <code>value</code>
 	 * in this hashtable. The key cannot be <code>null</code>.
@@ -364,36 +377,28 @@ public class HashMapInt
 	 *             if the key is <code>null</code>.
 	 * @see #get(int)
 	 */
-	public Object put(Object key, int value)
+	public int put(K key, int value)
 	{
 		// Makes sure the key is not already in the hashtable.
-		Entry tab[] = table;
-		int hash = key.hashCode();
-		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index]; e != null; e = e.next)
+		int hash = (key == null) ? 0 : hash(key.hashCode());
+		int index = indexFor(hash, table.length);
+		for (Entry<K> e = table[index]; e != null; e = e.next)
 		{
-			if (e.hash == hash)
+			K k;
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k)))
 			{
-				Object old = e.value;
+				int old = e.value;
 				e.value = value;
 				return old;
 			}
 		}
-
-		if (count >= threshold)
-		{
-			// Rehash the table if the threshold is exceeded
-			rehash();
-
-			tab = table;
-			index = (hash & 0x7FFFFFFF) % tab.length;
-		}
-
+		
 		// Creates the new entry.
-		Entry e = new Entry(hash, key, value, tab[index]);
-		tab[index] = e;
-		count++;
-		return null;
+        table[index] = new Entry<K>(hash, key, value, table[index]);
+        if (size++ >= threshold)
+            resize(2 * table.length);
+
+		return -1;
 	}
 
 	/**
@@ -412,22 +417,22 @@ public class HashMapInt
 	 */
 	public int remove(Object key)
 	{
-		Entry tab[] = table;
-		int hash = key.hashCode();
-		int index = (hash & 0x7FFFFFFF) % tab.length;
-		for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next)
+        int hash = (key == null) ? 0 : hash(key.hashCode());
+        int i = indexFor(hash, table.length);
+		for (Entry<K> e = table[i], prev = null; e != null; prev = e, e = e.next)
 		{
-			if (e.hash == hash)
-			{
+            Object k;
+            if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k))))
+            {
 				if (prev != null)
 				{
 					prev.next = e.next;
 				}
 				else
 				{
-					tab[index] = e.next;
+					table[i] = e.next;
 				}
-				count--;
+				size--;
 				int oldValue = e.value;
 				e.value = 0;
 				return oldValue;
@@ -443,12 +448,12 @@ public class HashMapInt
 	 */
 	public synchronized void clear()
 	{
-		Entry tab[] = table;
+		Entry<K> tab[] = table;
 		for (int index = tab.length; --index >= 0;)
 		{
 			tab[index] = null;
 		}
-		count = 0;
+		size = 0;
 	}
 
 }
