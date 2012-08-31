@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -44,9 +45,180 @@ import libomv.utils.Logger.LogLevel;
 
 public class ProtocolManager
 {
-	public Hashtable<Integer, Integer> TypeSizes;
+	public static class FieldType
+	{
+		public static final int U8 = 0;
 
-	public HashMapInt KeywordPositions;
+		public static final int U16 = 1;
+
+		public static final int U32 = 2;
+
+		public static final int U64 = 3;
+
+		public static final int S8 = 4;
+
+		public static final int S16 = 5;
+
+		public static final int S32 = 6;
+
+		public static final int S64 = 7;
+
+		public static final int F32 = 8;
+
+		public static final int F64 = 9;
+
+		public static final int UUID = 10;
+
+		public static final int BOOL = 11;
+
+		public static final int Vector3 = 12;
+
+		public static final int Vector3d = 13;
+
+		public static final int Vector4 = 14;
+
+		public static final int Quaternion = 15;
+
+		public static final int IPADDR = 16;
+
+		public static final int IPPORT = 17;
+
+		public static final int Variable = 18;
+
+		public static final int Fixed = 19;
+
+		public static final int Single = 20;
+
+		public static final int Multiple = 21;
+
+		public static final String[] TypeNames = { "U8", "U16", "U32", "U64", "S8", "S16", "S32", "S64", "F32", "F64", "LLUUID",
+				"BOOL", "LLVector3", "LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT", "Variable", "Fixed",
+				"Single", "Multiple" };
+		
+		public static final int[] TypeSizes = { 1 /* U8 */,
+			                                    2 /* U16 */,
+			                                    4 /* U32 */,
+			                                    8 /* U64 */,
+			                                    1 /* S8 */,
+			                                    2 /* S16 */, 
+			                                    4 /* S32 */,
+			                                    8 /* S64 */,
+			                                    4 /* F32 */, 
+			                                    8 /* F64 */,
+			                                    16 /* UUID */,
+												1 /* BOOL */,
+												12 /* Vector3 */,
+												24 /* Vector3d */,
+												16 /* Vector4 */,
+												16 /* Quaternion */,
+												4 /* IPADDR */,
+												2 /* IPPORT */,
+												-1 /* Variable */,
+												-2 /* Fixed */ };
+		
+		public static int getFieldType(String token)
+		{
+			int value = 0;
+			for (int i = 0; i < TypeNames.length; i++)
+			{
+				if (FieldType.TypeNames[i].equals(token))
+				{
+					value = i;
+					break;
+				}
+			}
+			return value;
+		}
+	}
+
+	public class MapField implements Comparable<Object>
+	{
+		public int KeywordPosition;
+
+		public String Name;
+
+		public int Type;
+
+		public int Count;
+
+		@Override
+		public int compareTo(Object obj)
+		{
+			MapField temp = (MapField) obj;
+			return Integer.signum(this.KeywordPosition - temp.KeywordPosition);
+		}
+	}
+
+	public class MapBlock implements Comparable<Object>
+	{
+		public int KeywordPosition;
+
+		public String Name;
+
+		public int Count;
+
+		public Vector<MapField> Fields;
+
+		@Override
+		public int compareTo(Object obj)
+		{
+			MapBlock temp = (MapBlock) obj;
+			return Integer.signum(this.KeywordPosition - temp.KeywordPosition);
+		}
+	}
+
+	public class MapPacket
+	{
+
+		public int ID;
+
+		public String Name;
+
+		public int Frequency;
+
+		public boolean Trusted;
+
+		public boolean Encoded;
+
+		public boolean Deprecated;
+
+		public ArrayList<MapBlock> Blocks;
+	}
+
+	public class MapPacketMap
+	{
+		public ArrayList<MapPacket> mapPackets;
+
+		public HashMap<Integer, MapPacket> commandMapPacket;
+
+		public Hashtable<String, MapPacket> nameMapPacket;
+
+		public MapPacketMap(int size)
+		{
+			mapPackets = new ArrayList<MapPacket>(size);
+			commandMapPacket = new HashMap<Integer, MapPacket>(size);
+			nameMapPacket = new Hashtable<String, MapPacket>(size);
+		}
+
+		public MapPacket getMapPacketByName(String name)
+		{
+			return nameMapPacket.get(name);
+		}
+
+		public MapPacket getMapPacketByCommand(int command)
+		{
+			return commandMapPacket.get(command);
+		}
+
+		public void addPacket(int id, MapPacket packet)
+		{
+			mapPackets.add(packet);
+			commandMapPacket.put(id, packet);
+			nameMapPacket.put(packet.Name, packet);
+		}
+	}
+
+	public HashMapInt<String> KeywordPositions;
 
 	public MapPacketMap LowMaps;
 
@@ -64,31 +236,8 @@ public class ProtocolManager
 		LowMaps = new MapPacketMap(256);
 		MediumMaps = new MapPacketMap(256);
 		HighMaps = new MapPacketMap(256);
-
-		// Build the type size hash table
-		TypeSizes = new Hashtable<Integer, Integer>();
-		TypeSizes.put(FieldType.U8, 1);
-		TypeSizes.put(FieldType.U16, 2);
-		TypeSizes.put(FieldType.U32, 4);
-		TypeSizes.put(FieldType.U64, 8);
-		TypeSizes.put(FieldType.S8, 1);
-		TypeSizes.put(FieldType.S16, 2);
-		TypeSizes.put(FieldType.S32, 4);
-		TypeSizes.put(FieldType.S64, 8);
-		TypeSizes.put(FieldType.F32, 4);
-		TypeSizes.put(FieldType.F64, 8);
-		TypeSizes.put(FieldType.UUID, 16);
-		TypeSizes.put(FieldType.BOOL, 1);
-		TypeSizes.put(FieldType.Vector3, 12);
-		TypeSizes.put(FieldType.Vector3d, 24);
-		TypeSizes.put(FieldType.Vector4, 16);
-		TypeSizes.put(FieldType.Quaternion, 16);
-		TypeSizes.put(FieldType.IPADDR, 4);
-		TypeSizes.put(FieldType.IPPORT, 2);
-		TypeSizes.put(FieldType.Variable, -1);
-		TypeSizes.put(FieldType.Fixed, -2);
-
-		KeywordPositions = new HashMapInt();
+		
+		KeywordPositions = new HashMapInt<String>();
 		LoadMapFile(mapFile);
 	}
 
@@ -172,7 +321,7 @@ public class ProtocolManager
 
 		for (i = 0; i < map.mapPackets.size(); ++i)
 		{
-			MapPacket map_packet = map.mapPackets.elementAt(i);
+			MapPacket map_packet = map.mapPackets.get(i);
 			if (map_packet != null)
 			{
 				System.out.format("%s %d %d %4x - %s - %s - %s\n", frequency, i, map_packet.ID, map_packet.Frequency, map_packet.Name,
@@ -401,7 +550,7 @@ public class ProtocolManager
 
 							field.Name = tokens[1];
 							field.KeywordPosition = KeywordPosition(field.Name);
-							field.Type = parseFieldType(tokens[2]);
+							field.Type = FieldType.getFieldType(tokens[2]);
 
 							if (tokens[3].equals("}"))
 							{
@@ -501,19 +650,5 @@ public class ProtocolManager
 
 		KeywordPositions.put(keyword, hash);
 		return hash;
-	}
-
-	public static int parseFieldType(String token)
-	{
-		int value = 0;
-		for (int i = 0; i < FieldType.TypeNames.length; i++)
-		{
-			if (FieldType.TypeNames[i].equals(token))
-			{
-				value = i;
-				break;
-			}
-		}
-		return value;
 	}
 }

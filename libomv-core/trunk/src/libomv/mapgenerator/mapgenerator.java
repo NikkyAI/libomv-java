@@ -33,6 +33,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import libomv.mapgenerator.ProtocolManager.FieldType;
+import libomv.mapgenerator.ProtocolManager.MapBlock;
+import libomv.mapgenerator.ProtocolManager.MapField;
+import libomv.mapgenerator.ProtocolManager.MapPacket;
 import libomv.types.PacketFrequency;
 import libomv.utils.Helpers;
 
@@ -1157,7 +1161,7 @@ public class mapgenerator
 			packettype_writer.println("package libomv.packets;\npublic enum PacketType\n{\n    Default,");
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					packettype_writer.println("    " + packet.Name + ",");
@@ -1165,7 +1169,7 @@ public class mapgenerator
 			}
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					packettype_writer.println("    " + packet.Name + ",");
@@ -1173,7 +1177,7 @@ public class mapgenerator
 			}
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					packettype_writer.println("    " + packet.Name + ",");
@@ -1210,7 +1214,7 @@ public class mapgenerator
 
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					writer.println("                        case (short)" + packet.ID + ": return PacketType."
@@ -1223,7 +1227,7 @@ public class mapgenerator
 
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					writer.println("                        case " + packet.ID + ": return PacketType."
@@ -1237,7 +1241,7 @@ public class mapgenerator
 
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					writer.println("                        case " + packet.ID + ": return PacketType."
@@ -1273,7 +1277,7 @@ public class mapgenerator
 					+ "                    {");
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					writer.println("                        case (short)" + packet.ID + ": return new " + packet.Name
@@ -1284,7 +1288,7 @@ public class mapgenerator
 					+ "                    switch (header.getID())\n                    {");
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					writer.println("                        case " + packet.ID + ": return new " + packet.Name
@@ -1295,7 +1299,7 @@ public class mapgenerator
 					+ "                    switch (header.getID())\n                    {");
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					writer.println("                        case " + packet.ID + ": return new " + packet.Name
@@ -1308,7 +1312,7 @@ public class mapgenerator
 			// Write the packet classes
 			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.LowMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					WritePacketClass(packets_dir, args[1], packet);
@@ -1317,7 +1321,7 @@ public class mapgenerator
 
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.MediumMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					WritePacketClass(packets_dir, args[1], packet);
@@ -1326,7 +1330,7 @@ public class mapgenerator
 
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
-				MapPacket packet = protocol.HighMaps.mapPackets.elementAt(k);
+				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
 				if (packet != null)
 				{
 					WritePacketClass(packets_dir, args[1], packet);
