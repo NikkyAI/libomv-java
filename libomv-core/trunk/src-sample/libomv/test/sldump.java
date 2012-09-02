@@ -27,13 +27,13 @@
 package libomv.test;
 
 import libomv.GridClient;
+import libomv.ProtocolManager;
 import libomv.LoginManager.LoginParams;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectType;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.Simulator;
-import libomv.mapgenerator.ProtocolManager;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
