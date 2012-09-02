@@ -368,7 +368,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// public List<KeyValuePair<string, int>> HistoryItems;
 		// Still needs to implement the GroupAccount Details Handler and define
 		// the data type
-		public HashMapInt HistoryItems;
+		public HashMapInt<String> HistoryItems;
 	}
 
 	// Struct representing a group notice
@@ -2103,7 +2103,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			account.IntervalDays = details.MoneyData.IntervalDays;
 			account.StartDate = Helpers.BytesToString(details.MoneyData.getStartDate());
 
-			account.HistoryItems = new HashMapInt();
+			account.HistoryItems = new HashMapInt<String>();
 
 			for (int i = 0; i < details.HistoryData.length; i++)
 			{
