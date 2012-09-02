@@ -33,10 +33,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import libomv.mapgenerator.ProtocolManager.FieldType;
-import libomv.mapgenerator.ProtocolManager.MapBlock;
-import libomv.mapgenerator.ProtocolManager.MapField;
-import libomv.mapgenerator.ProtocolManager.MapPacket;
+import libomv.ProtocolManager;
+import libomv.ProtocolManager.FieldType;
+import libomv.ProtocolManager.MapBlock;
+import libomv.ProtocolManager.MapField;
+import libomv.ProtocolManager.MapPacket;
 import libomv.types.PacketFrequency;
 import libomv.utils.Helpers;
 
