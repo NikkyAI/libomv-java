@@ -218,7 +218,8 @@ public class ProtocolManager
 		}
 	}
 
-	public HashMapInt<String> KeywordPositions;
+	private ArrayList<String> KeywordList;
+	private HashMapInt<String> KeywordPositions;
 
 	public MapPacketMap LowMaps;
 
@@ -619,36 +620,25 @@ public class ProtocolManager
 		}
 	}
 
-	private int KeywordPosition(String keyword) throws Exception
+	public String KeywordPosition(int position)
+	{
+		if (position >= 0 && position < KeywordList.size())
+		{
+			return KeywordList.get(position);
+		}
+		return null;
+	}
+
+	public int KeywordPosition(String keyword) throws Exception
 	{
 		if (KeywordPositions.containsKey(keyword))
 		{
 			return KeywordPositions.get(keyword);
 		}
 
-		int hash = 0;
-		for (int i = 1; i < keyword.length(); i++)
-		{
-			hash = (hash + (keyword.charAt(i))) * 2;
-		}
-		hash *= 2;
-		hash &= 0x1FFF;
-
-		int startHash = hash;
-
-		while (KeywordPositions.containsValue(hash))
-		{
-			hash++;
-			hash &= 0x1FFF;
-			if (hash == startHash)
-			{
-				// Give up looking, went through all values and they were
-				// all taken.
-				throw new Exception("All hash values are taken. Failed to add keyword: " + keyword);
-			}
-		}
-
-		KeywordPositions.put(keyword, hash);
-		return hash;
+		int position = KeywordList.size();
+		KeywordList.add(keyword);
+		KeywordPositions.put(keyword, position);
+		return position;
 	}
 }
