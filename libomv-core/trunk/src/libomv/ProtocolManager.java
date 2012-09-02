@@ -135,8 +135,6 @@ public class ProtocolManager
 	{
 		public int KeywordPosition;
 
-		public String Name;
-
 		public int Type;
 
 		public int Count;
@@ -145,15 +143,13 @@ public class ProtocolManager
 		public int compareTo(Object obj)
 		{
 			MapField temp = (MapField) obj;
-			return Integer.signum(this.KeywordPosition - temp.KeywordPosition);
+			return keywordPosition(this.KeywordPosition).compareTo(keywordPosition(temp.KeywordPosition));
 		}
 	}
 
 	public class MapBlock implements Comparable<Object>
 	{
 		public int KeywordPosition;
-
-		public String Name;
 
 		public int Count;
 
@@ -163,7 +159,7 @@ public class ProtocolManager
 		public int compareTo(Object obj)
 		{
 			MapBlock temp = (MapBlock) obj;
-			return Integer.signum(this.KeywordPosition - temp.KeywordPosition);
+			return keywordPosition(this.KeywordPosition).compareTo(keywordPosition(temp.KeywordPosition));
 		}
 	}
 
@@ -239,6 +235,7 @@ public class ProtocolManager
 		HighMaps = new MapPacketMap(256);
 		
 		KeywordPositions = new HashMapInt<String>();
+		KeywordList = new ArrayList<String>();
 		LoadMapFile(mapFile);
 	}
 
@@ -333,17 +330,17 @@ public class ProtocolManager
 					MapBlock block = map_packet.Blocks.get(j);
 					if (block.Count == -1)
 					{
-						System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, block.Name);
+						System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, keywordPosition(block.KeywordPosition));
 					}
 					else
 					{
-						System.out.format("\t%4d %s (%d)\n", block.KeywordPosition, block.Name, block.Count);
+						System.out.format("\t%4d %s (%d)\n", block.KeywordPosition, keywordPosition(block.KeywordPosition), block.Count);
 					}
 
 					for (int k = 0; k < block.Fields.size(); k++)
 					{
 						MapField field = block.Fields.elementAt(k);
-						System.out.format("\t\t%4d %s (%d / %d)", field.KeywordPosition, field.Name, field.Type,
+						System.out.format("\t\t%4d %s (%d / %d)", field.KeywordPosition, keywordPosition(block.KeywordPosition), field.Type,
 								field.Count);
 					}
 				}
@@ -549,8 +546,7 @@ public class ProtocolManager
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
 
-							field.Name = tokens[1];
-							field.KeywordPosition = KeywordPosition(field.Name);
+							field.KeywordPosition = keywordPosition(tokens[1]);
 							field.Type = FieldType.getFieldType(tokens[2]);
 
 							if (tokens[3].equals("}"))
@@ -581,8 +577,7 @@ public class ProtocolManager
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
 
-							currentBlock.Name = tokens[0];
-							currentBlock.KeywordPosition = KeywordPosition(currentBlock.Name);
+							currentBlock.KeywordPosition = keywordPosition(tokens[0]);
 							currentBlock.Fields = new Vector<MapField>();
 							currentPacket.Blocks.add(currentBlock);
 
@@ -620,7 +615,7 @@ public class ProtocolManager
 		}
 	}
 
-	public String KeywordPosition(int position)
+	public String keywordPosition(int position)
 	{
 		if (position >= 0 && position < KeywordList.size())
 		{
@@ -629,7 +624,7 @@ public class ProtocolManager
 		return null;
 	}
 
-	public int KeywordPosition(String keyword) throws Exception
+	public int keywordPosition(String keyword) throws Exception
 	{
 		if (KeywordPositions.containsKey(keyword))
 		{
