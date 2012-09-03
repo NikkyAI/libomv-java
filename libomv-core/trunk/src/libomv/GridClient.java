@@ -290,6 +290,8 @@ public class GridClient
 	public NetworkManager Network;
 	// Login Subsystem of Network handler
 	public LoginManager Login;
+	// Protocol Manager
+	public ProtocolManager Protocol;
 	// Caps Messages
 	public CapsMessage Messages;
 	// AgentThrottle
