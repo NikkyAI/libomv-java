@@ -133,7 +133,9 @@ public class ProtocolManager
 
 	public class MapField implements Comparable<Object>
 	{
-		public int KeywordPosition;
+		public int keywordIndex;
+
+		public short offset;
 
 		public int Type;
 
@@ -143,13 +145,15 @@ public class ProtocolManager
 		public int compareTo(Object obj)
 		{
 			MapField temp = (MapField) obj;
-			return keywordPosition(this.KeywordPosition).compareTo(keywordPosition(temp.KeywordPosition));
+			return keywordPosition(this.keywordIndex).compareTo(keywordPosition(temp.keywordIndex));
 		}
 	}
 
 	public class MapBlock implements Comparable<Object>
 	{
-		public int KeywordPosition;
+		public int keywordIndex;
+		
+		public short size;
 
 		public int Count;
 
@@ -159,7 +163,7 @@ public class ProtocolManager
 		public int compareTo(Object obj)
 		{
 			MapBlock temp = (MapBlock) obj;
-			return keywordPosition(this.KeywordPosition).compareTo(keywordPosition(temp.KeywordPosition));
+			return keywordPosition(this.keywordIndex).compareTo(keywordPosition(temp.keywordIndex));
 		}
 	}
 
@@ -330,17 +334,17 @@ public class ProtocolManager
 					MapBlock block = map_packet.Blocks.get(j);
 					if (block.Count == -1)
 					{
-						System.out.format("\t%4d %s (Variable)\n", block.KeywordPosition, keywordPosition(block.KeywordPosition));
+						System.out.format("\t%4d %s (Variable)\n", block.keywordIndex, keywordPosition(block.keywordIndex));
 					}
 					else
 					{
-						System.out.format("\t%4d %s (%d)\n", block.KeywordPosition, keywordPosition(block.KeywordPosition), block.Count);
+						System.out.format("\t%4d %s (%d)\n", block.keywordIndex, keywordPosition(block.keywordIndex), block.Count);
 					}
 
 					for (int k = 0; k < block.Fields.size(); k++)
 					{
 						MapField field = block.Fields.elementAt(k);
-						System.out.format("\t\t%4d %s (%d / %d)", field.KeywordPosition, keywordPosition(block.KeywordPosition), field.Type,
+						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex, keywordPosition(block.keywordIndex), field.Type,
 								field.Count);
 					}
 				}
@@ -546,7 +550,7 @@ public class ProtocolManager
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
 
-							field.KeywordPosition = keywordPosition(tokens[1]);
+							field.keywordIndex = keywordPosition(tokens[1]);
 							field.Type = FieldType.getFieldType(tokens[2]);
 
 							if (tokens[3].equals("}"))
@@ -577,7 +581,7 @@ public class ProtocolManager
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
 
-							currentBlock.KeywordPosition = keywordPosition(tokens[0]);
+							currentBlock.keywordIndex = keywordPosition(tokens[0]);
 							currentBlock.Fields = new Vector<MapField>();
 							currentPacket.Blocks.add(currentBlock);
 
@@ -615,6 +619,60 @@ public class ProtocolManager
 		}
 	}
 
+	public int getFieldOffset(MapPacket packet, int blockIndex, int fieldIndex, int blockNum)
+	{
+		int i, offset = 0;
+		for (i = 0; i < packet.Blocks.size(); i++)
+		{
+			MapBlock block = packet.Blocks.get(i);
+			if (block.keywordIndex != blockIndex)
+			{
+				if (block.size > 0)
+				{
+					/* easy, fixed size block */
+					if (block.Count < 0)
+					{
+						
+					}
+					else
+					{ 
+						offset += block.size * block.Count;
+					}
+				}
+				else
+				{
+					
+				}
+			}
+			else
+			{
+				break;
+			}
+
+		}
+		if (i < packet.Blocks.size())
+		{
+			
+		}
+		return offset;
+	}
+	
+	public int getFieldLength(MapField field)
+	{
+		switch (field.Type)
+		{
+			case FieldType.Fixed:
+				return field.Count;
+			case FieldType.Variable:
+				return 0;
+			case FieldType.Single:
+			case FieldType.Multiple:
+				return -1;
+			default:				
+				return FieldType.TypeSizes[field.Type];
+		}
+	}
+
 	public String keywordPosition(int position)
 	{
 		if (position >= 0 && position < KeywordList.size())
@@ -624,7 +682,7 @@ public class ProtocolManager
 		return null;
 	}
 
-	public int keywordPosition(String keyword) throws Exception
+	public int keywordPosition(String keyword)
 	{
 		if (KeywordPositions.containsKey(keyword))
 		{
