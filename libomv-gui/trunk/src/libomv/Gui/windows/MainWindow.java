@@ -26,12 +26,12 @@
 package libomv.Gui.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -42,12 +42,12 @@ import libomv.Gui.components.LoginPanel;
 import libomv.Gui.components.OnlinePanel;
 import libomv.Gui.dialogs.AboutDialog;
 
-public class MainWindow extends JFrame implements ActionListener
+public class MainWindow extends JFrame implements MainControl
 {
 	private static final long serialVersionUID = 1L;
 
-	private JMenuBar jMbMain;
 	private JPanel jPSouth;
+	private Component jPContent;
 	GridClient _Client;
 
 	/**
@@ -69,7 +69,6 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		setTitle("Libomv-Java Client");
 		setSize(1024, 800);
-		setJMenuBar(getJMbMain());
 		setPreferredSize(new Dimension(640, 480));
 		setMinimumSize(new Dimension(640, 480));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,91 +76,82 @@ public class MainWindow extends JFrame implements ActionListener
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		String command = e.getActionCommand();
-		if (command != null && command.equals("success"))
-		{
-			// Create the online panel and display it
-			initializeOnlinePanel();
-		}
-		else if (command != null && command.equals("logout"))
-		{
-			// Create the online panel and display it
-			initializeLoginPanel();
-		}
-	}
-	
-	public void initializeLoginPanel()
-	{
-		if (jPSouth != null)
-			remove(jPSouth);
-		jPSouth = new LoginPanel(_Client, this, this);
-		getContentPane().add(jPSouth, BorderLayout.SOUTH);
-		validate();		
-	}
-
-	public void initializeOnlinePanel()
-	{
-		if (jPSouth != null)
-			remove(jPSouth);
-		jPSouth = new OnlinePanel(_Client, this, this);
-		getContentPane().add(jPSouth, BorderLayout.SOUTH);
-		validate();		
-	}
-	
-	private JFrame getJMainFrame()
+	public JFrame getMainJFrame()
 	{
 		return this;
 	}
 	
-	/**
-	 * This method initializes mainJMenuBar
-	 * 
-	 * @return JMenuBar
-	 */
-	private JMenuBar getJMbMain()
+	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand)
 	{
-		if (jMbMain == null)
+		JMenuItem item = new JMenuItem(label);
+		if (actionCommand != null)
 		{
-			JMenuItem jMiSettings = new JMenuItem("Settings...");
-			jMiSettings.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e)
-				{
-					PreferenceWindow pref = new PreferenceWindow(getJMainFrame());
-					pref.setVisible(true);
-				}
-			});
-
-			JMenuItem jMiAbout = new JMenuItem("About Libomv Client...");
-			jMiAbout.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					AboutDialog about = new AboutDialog(getJMainFrame());
-					about.setVisible(true);
-				}
-			});
-
-			jMbMain = new JMenuBar();
-
-			JMenu pref = new JMenu("Preferences");
-			pref.add(jMiSettings);
-			jMbMain.add(pref);
-			
-			JMenu mnNewMenu = new JMenu("New menu");
-			jMbMain.add(mnNewMenu);
-
-			JMenu help = new JMenu("Help");
-			help.add(jMiAbout);
-			jMbMain.add(help);
-			
-			JPanel panel = new JPanel();
-			jMbMain.add(panel);
+			item.setActionCommand(actionCommand);
 		}
-		return jMbMain;
+		item.addActionListener(actionListener);
+		return item;
 	}
+	
+	public void setMenuBar(JMenuBar menuBar)
+	{
+		this.setJMenuBar(menuBar);
+	}
+
+	public void setContentArea(Component component)
+	{
+		jPContent = component;
+		getContentPane().add(component, BorderLayout.CENTER);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		String action = e.getActionCommand();
+		if (action.equals(MainControl.cmdAbout))
+		{
+			AboutDialog about = new AboutDialog(getMainJFrame());
+			about.setVisible(true);			
+		}
+		else if (action.equals(MainControl.cmdSettings))
+		{
+			PreferenceWindow pref = new PreferenceWindow(getMainJFrame());
+			pref.setVisible(true);			
+		}
+		else if (action.equals(MainControl.cmdLogout))
+		{
+			initializeLoginPanel();			
+		}
+		else if (action.equals(MainControl.cmdQuit))
+		{
+		      System.exit(0);			
+		}
+	}
+
+	public void initializeLoginPanel()
+	{
+		if (jPSouth == null || !(jPSouth instanceof LoginPanel))
+		{
+			if (jPSouth != null)
+				remove(jPSouth);
+			if (jPContent != null)
+				remove(jPContent);
+			jPSouth = new LoginPanel(_Client, this);
+			getContentPane().add(jPSouth, BorderLayout.SOUTH);
+			validate();		
+		}
+	}
+
+	public void initializeOnlinePanel()
+	{
+		if (jPSouth == null || !(jPSouth instanceof OnlinePanel))
+		{
+			if (jPSouth != null)
+				remove(jPSouth);
+			if (jPContent != null)
+				remove(jPContent);
+			jPSouth = new OnlinePanel(_Client, this);
+			getContentPane().add(jPSouth, BorderLayout.SOUTH);
+			validate();
+		}
+	}	
 }

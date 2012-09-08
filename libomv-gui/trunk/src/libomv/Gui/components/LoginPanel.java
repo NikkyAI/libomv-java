@@ -25,7 +25,6 @@
  */
 package libomv.Gui.components;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -42,8 +41,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -60,18 +61,19 @@ import libomv.GridClient.GridInfo;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.Gui.dialogs.GridEditor;
+import libomv.Gui.windows.MainControl;
 import libomv.utils.Callback;
 
-public class LoginPanel extends JPanel
+public class LoginPanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
 	private Browser browser;
 
 	private GridClient _Client;
-	private JFrame _Parent;
-	private ActionListener _Action;
+	private MainControl _Main;
 	
+	private JMenuBar jMbMain;
 	private JLabel jLblUserName;
 	private JTextField jTxtUserName;
 	private JLabel jLblPassword;
@@ -85,11 +87,10 @@ public class LoginPanel extends JPanel
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
 	
-	public LoginPanel(GridClient client, JFrame parent, ActionListener action)
+	public LoginPanel(GridClient client, MainControl main)
 	{
 		_Client = client;
-		_Parent = parent;
-		_Action = action;
+		_Main = main;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0, 0, 0 };
@@ -185,9 +186,56 @@ public class LoginPanel extends JPanel
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
 		
-		parent.getContentPane().add(getJBrowser().getComponent(), BorderLayout.CENTER);
+		main.setContentArea(getJBrowser().getComponent());
+		main.setMenuBar(getJMBar());
 
 		initializePanel(_Client.getDefaultGrid());	
+	}
+
+	/**
+	 * This method initializes mainJMenuBar
+	 * 
+	 * @return JMenuBar
+	 */
+	private JMenuBar getJMBar()
+	{
+		if (jMbMain == null)
+		{
+			jMbMain = new JMenuBar();
+
+			JMenu pref = new JMenu("File");
+			
+			JMenuItem jMiFileOpen = _Main.newMenuItem("Open...", this, "open");
+			pref.add(jMiFileOpen);
+			pref.addSeparator();
+
+			JMenuItem jMiSettings = _Main.newMenuItem("Settings...", this, MainControl.cmdSettings);
+			pref.add(jMiSettings);
+			jMbMain.add(pref);
+			
+			JMenu mnNewMenu = new JMenu("New menu");
+			jMbMain.add(mnNewMenu);
+
+			JMenu help = new JMenu("Help");
+			JMenuItem jMiAbout = _Main.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
+			help
+			.add(jMiAbout);
+			jMbMain.add(help);
+//			jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
+
+			JPanel panel = new JPanel();
+			jMbMain.add(panel);
+		}
+		return jMbMain;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		/* Handle local events */
+		
+		/* Pass to main window to be handled */
+		_Main.actionPerformed(e);
 	}
 
 	private JLabel getJLblUserName()
@@ -440,7 +488,7 @@ public class LoginPanel extends JPanel
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					GridEditor gridEdit = new GridEditor(_Client, _Parent, "Grid List", true);
+					GridEditor gridEdit = new GridEditor(_Client, _Main.getMainJFrame(), "Grid List", true);
 					gridEdit.setVisible(true);
 				}
 			});
@@ -489,7 +537,7 @@ public class LoginPanel extends JPanel
 			{
 				// Login was successful
 				System.out.println("JOMV: Message of the day: " + e.getMessage());
-				doReturn(true);
+				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdOnline));
 				return true;
 			}
 			else if (e.getStatus() == LoginStatus.Redirecting)
@@ -500,7 +548,7 @@ public class LoginPanel extends JPanel
 			else if (e.getStatus() == LoginStatus.Failed)
 			{
 				System.out.println("JOMV: Error logging in: " + e.getReason() + " : " + e.getMessage());
-				doReturn(false);
+				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogout));
 				return true;
 			}
 			return false;
@@ -533,16 +581,6 @@ public class LoginPanel extends JPanel
 			e.printStackTrace();
 		}
 		return false;
-	}
-	
-	private void doReturn(boolean success)
-	{
-		if (success)
-		{
-			_Parent.remove(getJBrowser().getComponent());
-			_Parent.remove(this);
-		}
-		_Action.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, success ? "success" : "failed"));
 	}
 	
 	/**

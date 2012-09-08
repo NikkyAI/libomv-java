@@ -63,6 +63,4 @@ public class PreferenceWindow extends JDialog
 		}
 		return jContentPane;
 	}
-	
-	
 }

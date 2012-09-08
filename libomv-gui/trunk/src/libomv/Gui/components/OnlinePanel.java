@@ -25,36 +25,93 @@
  */
 package libomv.Gui.components;
 
-import java.awt.BorderLayout;
+import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import libomv.GridClient;
+import libomv.Gui.windows.MainControl;
 
-public class OnlinePanel extends JPanel
+public class OnlinePanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
 	private GridClient _Client;
-	private JFrame _Parent;
-	private ActionListener _Action;
+	private MainControl _Main;
 	
+	private JMenuBar jMbMain;
 	private JPanel jSceneViewer;
 
-	public OnlinePanel(GridClient client, JFrame parent, ActionListener action)
+	public OnlinePanel(GridClient client, MainControl main)
 	{
 		_Client = client;
-		_Parent = parent;
-		_Action = action;
+		_Main = main;
 
-		parent.add(getSceneViewer(), BorderLayout.CENTER);
+		main.setContentArea(getSceneViewer());
+		main.setMenuBar(getJMBar());
 
 		initializePanel();	
 	}
 	
+	/**
+	 * This method initializes mainJMenuBar
+	 * 
+	 * @return JMenuBar
+	 */
+	private JMenuBar getJMBar()
+	{
+		if (jMbMain == null)
+		{
+			jMbMain = new JMenuBar();
+
+			JMenu pref = new JMenu("File");
+			
+			JMenuItem jMiFileOpen = _Main.newMenuItem("Open...", this, "open");
+			pref.add(jMiFileOpen);
+			pref.addSeparator();
+
+			JMenuItem jMiSettings = _Main.newMenuItem("Settings...", this, MainControl.cmdSettings);
+			pref.add(jMiSettings);
+			jMbMain.add(pref);
+			
+			JMenu mnNewMenu = new JMenu("New menu");
+			jMbMain.add(mnNewMenu);
+
+			JMenu help = new JMenu("Help");
+			JMenuItem jMiAbout = _Main.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
+			help
+			.add(jMiAbout);
+			jMbMain.add(help);
+			jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
+			
+			JLabel filler = new JLabel("");
+			jMbMain.add(filler);
+
+			JLabel amount = new JLabel("L$ 2000");
+            amount.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+			jMbMain.add(amount);
+
+			JPanel panel = new JPanel();
+			jMbMain.add(panel);
+		}
+		return jMbMain;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		/* Handle local events */
+		
+		/* Pass to main window to be handled */
+		_Main.actionPerformed(e);
+	}
+
 	private JPanel getSceneViewer()
 	{
 		if (jSceneViewer == null)
@@ -66,9 +123,8 @@ public class OnlinePanel extends JPanel
 
 	private void doReturn(boolean logout)
 	{
-		_Parent.remove(getSceneViewer());
-		_Parent.remove(this);
-		_Action.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, logout ? "logout" : "failed"));
+		ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, logout ? "logout" : "failed", 0);
+		_Main.actionPerformed(e);
 	}
 
 	private void initializePanel()
