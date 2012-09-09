@@ -64,11 +64,14 @@ public class Vector3d
 
 	public Vector3d(byte[] bytes, int offset)
 	{
-		X = Helpers.BytesToDoubleL(bytes, offset);
-		offset += 8;
-		Y = Helpers.BytesToDoubleL(bytes, offset);
-		offset += 8;
-		Z = Helpers.BytesToDoubleL(bytes, offset);
+		X = Y = Z = 0f;
+		fromBytes(bytes, offset, false);
+	}
+
+	public Vector3d(byte[] bytes, int offset, boolean le)
+	{
+		X = Y = Z = 0f;
+		fromBytes(bytes, offset, le);
 	}
 
 	public Vector3d(ByteBuffer byteArray)
@@ -167,6 +170,33 @@ public class Vector3d
 		X = val.X;
 		Y = val.Y;
 		Z = val.Z;
+	}
+
+	/**
+	 * Builds a vector from a byte array
+	 * 
+	 * @param byteArray
+	 *            Byte array containing a 12 byte vector
+	 * @param pos
+	 *            Beginning position in the byte array
+	 * @param le
+	 *            is the byte array in little endian format
+	 */
+	public void fromBytes(byte[] bytes, int pos, boolean le)
+	{
+		if (le)
+		{
+			/* Little endian architecture */
+			X = Helpers.BytesToDoubleL(bytes, pos + 0);
+			Y = Helpers.BytesToDoubleL(bytes, pos + 8);
+			Z = Helpers.BytesToDoubleL(bytes, pos + 16);
+		}
+		else
+		{
+			X = Helpers.BytesToDoubleB(bytes, pos + 0);
+			Y = Helpers.BytesToDoubleB(bytes, pos + 8);
+			Z = Helpers.BytesToDoubleB(bytes, pos + 16);
+		}
 	}
 
 	/**
