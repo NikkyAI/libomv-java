@@ -55,13 +55,13 @@ public class ProtocolManager
 
 		public static final int U64 = 3;
 
-		public static final int S8 = 4;
+		public static final int I8 = 4;
 
-		public static final int S16 = 5;
+		public static final int I16 = 5;
 
-		public static final int S32 = 6;
+		public static final int I32 = 6;
 
-		public static final int S64 = 7;
+		public static final int I64 = 7;
 
 		public static final int F32 = 8;
 
@@ -84,37 +84,34 @@ public class ProtocolManager
 		public static final int IPPORT = 17;
 
 		public static final int Variable = 18;
-
+		
 		public static final int Fixed = 19;
-
-		public static final int Single = 20;
-
-		public static final int Multiple = 21;
+		
+		public static final int NumTypes = 20;
 
 		public static final String[] TypeNames = { "U8", "U16", "U32", "U64", "S8", "S16", "S32", "S64", "F32", "F64", "LLUUID",
-				"BOOL", "LLVector3", "LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT", "Variable", "Fixed",
-				"Single", "Multiple" };
+				"BOOL", "LLVector3", "LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT", "Variable", "Fixed"};
 		
-		public static final int[] TypeSizes = { 1 /* U8 */,
-			                                    2 /* U16 */,
-			                                    4 /* U32 */,
-			                                    8 /* U64 */,
-			                                    1 /* S8 */,
-			                                    2 /* S16 */, 
-			                                    4 /* S32 */,
-			                                    8 /* S64 */,
-			                                    4 /* F32 */, 
-			                                    8 /* F64 */,
-			                                    16 /* UUID */,
-												1 /* BOOL */,
-												12 /* Vector3 */,
-												24 /* Vector3d */,
-												16 /* Vector4 */,
-												16 /* Quaternion */,
-												4 /* IPADDR */,
-												2 /* IPPORT */,
-												-1 /* Variable */,
-												-2 /* Fixed */ };
+		public static final short[] TypeSizes = { 1 /* U8 */,
+			                                      2 /* U16 */,
+			                                      4 /* U32 */,
+			                                      8 /* U64 */,
+			                                      1 /* I8 */,
+			                                      2 /* I16 */, 
+			                                      4 /* I32 */,
+			                                      8 /* I64 */,
+			                                      4 /* F32 */, 
+			                                      8 /* F64 */,
+			                                      16 /* UUID */,
+								  				  1 /* BOOL */,
+									  			  12 /* Vector3 */,
+												  24 /* Vector3d */,
+												  16 /* Vector4 */,
+												  16 /* Quaternion */,
+												  4 /* IPADDR */,
+												  2 /* IPPORT */,
+												  0 /* Variable */,
+												  0 /* Fixed */};
 		
 		public static int getFieldType(String token)
 		{
@@ -137,9 +134,9 @@ public class ProtocolManager
 
 		public short offset;
 
-		public int Type;
+		public int type;
 
-		public int Count;
+		public short count;
 
 		@Override
 		public int compareTo(Object obj)
@@ -155,7 +152,7 @@ public class ProtocolManager
 		
 		public short size;
 
-		public int Count;
+		public short count;
 
 		public Vector<MapField> Fields;
 
@@ -332,20 +329,20 @@ public class ProtocolManager
 				for (int j = 0; j < map_packet.Blocks.size(); j++)
 				{
 					MapBlock block = map_packet.Blocks.get(j);
-					if (block.Count == -1)
+					if (block.count == -1)
 					{
 						System.out.format("\t%4d %s (Variable)\n", block.keywordIndex, keywordPosition(block.keywordIndex));
 					}
 					else
 					{
-						System.out.format("\t%4d %s (%d)\n", block.keywordIndex, keywordPosition(block.keywordIndex), block.Count);
+						System.out.format("\t%4d %s (%d)\n", block.keywordIndex, keywordPosition(block.keywordIndex), block.count);
 					}
 
 					for (int k = 0; k < block.Fields.size(); k++)
 					{
 						MapField field = block.Fields.elementAt(k);
-						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex, keywordPosition(block.keywordIndex), field.Type,
-								field.Count);
+						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex, keywordPosition(block.keywordIndex), field.type,
+								field.count);
 					}
 				}
 			}
@@ -419,6 +416,7 @@ public class ProtocolManager
 			boolean inBlock = false;
 			MapPacket currentPacket = null;
 			MapBlock currentBlock = null;
+			short fieldOffset = 0;
 
 			while (r.ready())
 			{
@@ -445,6 +443,7 @@ public class ProtocolManager
 						if (trimmedline.equals("{"))
 						{
 							inBlock = true;
+							fieldOffset = 0;
 						}
 						else if (trimmedline.equals("}"))
 						{
@@ -551,15 +550,27 @@ public class ProtocolManager
 							String[] tokens = trimmedline.split("\\s+");
 
 							field.keywordIndex = keywordPosition(tokens[1]);
-							field.Type = FieldType.getFieldType(tokens[2]);
+							field.type = FieldType.getFieldType(tokens[2]);
+							field.offset = fieldOffset;
 
 							if (tokens[3].equals("}"))
 							{
-								field.Count = 1;
+								field.count = 1;
+								if (fieldOffset >= 0)
+								{
+									fieldOffset = getFieldLength(field.type);
+								}
 							}
 							else
 							{
-								field.Count = Integer.parseInt(tokens[3]);
+								field.count = Short.parseShort(tokens[3]);
+								if (fieldOffset >= 0)
+								{
+								    if (field.type == FieldType.Variable)
+								    	fieldOffset = -1;
+								    else if (field.type == FieldType.Fixed)
+								    	fieldOffset = field.count;
+								}
 							}
 
 							// Save this field to the current block
@@ -569,6 +580,8 @@ public class ProtocolManager
 						{
 							if (Sort)
 								Collections.sort(currentBlock.Fields);
+							currentBlock.size = fieldOffset;
+							fieldOffset = 0;
 							inBlock = false;
 						}
 						else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false)
@@ -587,15 +600,15 @@ public class ProtocolManager
 
 							if (tokens[1].equals("Single"))
 							{
-								currentBlock.Count = 1;
+								currentBlock.count = 1;
 							}
 							else if (tokens[1].equals("Multiple"))
 							{
-								currentBlock.Count = Integer.parseInt(tokens[2]);
+								currentBlock.count = Short.parseShort(tokens[2]);
 							}
 							else if (tokens[1].equals("Variable"))
 							{
-								currentBlock.Count = -1;
+								currentBlock.count = -1;
 							}
 							else
 							{
@@ -630,13 +643,13 @@ public class ProtocolManager
 				if (block.size > 0)
 				{
 					/* easy, fixed size block */
-					if (block.Count < 0)
+					if (block.count < 0)
 					{
 						
 					}
 					else
 					{ 
-						offset += block.size * block.Count;
+						offset += block.size * block.count;
 					}
 				}
 				else
@@ -657,20 +670,9 @@ public class ProtocolManager
 		return offset;
 	}
 	
-	public int getFieldLength(MapField field)
+	public short getFieldLength(int type)
 	{
-		switch (field.Type)
-		{
-			case FieldType.Fixed:
-				return field.Count;
-			case FieldType.Variable:
-				return 0;
-			case FieldType.Single:
-			case FieldType.Multiple:
-				return -1;
-			default:				
-				return FieldType.TypeSizes[field.Type];
-		}
+		return FieldType.TypeSizes[type];
 	}
 
 	public String keywordPosition(int position)

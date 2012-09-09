@@ -363,8 +363,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 		public String StartDate;
 
-		// <summary>A list of description/amount pairs making up the account
-		// history</summary>
+		// A list of description/amount pairs making up the account history
+		//
 		// public List<KeyValuePair<string, int>> HistoryItems;
 		// Still needs to implement the GroupAccount Details Handler and define
 		// the data type
