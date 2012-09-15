@@ -4,7 +4,6 @@ import java.util.Date;
 
 import libomv.GridClient;
 import libomv.ProtocolManager.FieldType;
-import libomv.ProtocolManager.MapBlock;
 import libomv.ProtocolManager.MapField;
 import libomv.ProtocolManager.MapPacket;
 import libomv.types.Quaternion;
@@ -28,214 +27,213 @@ public class MessagePacket extends AbstractMessage
 	}
 	
 	@Override
-	public int getNumberOfBlocks(String blockName)
+	public int getNumberOfBlocks(String blockName) throws Exception
 	{
 		return getNumberOfBlocks(client.Protocol.keywordPosition(blockName));
 	}
 
 	@Override
-	public byte getMessageI8(String blockName, String fieldName, int blockNumber) throws Exception
+	public byte getMessageI8(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageI8(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public short getMessageU8(String blockName, String fieldName, int blockNumber) throws Exception
+	public short getMessageU8(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageU8(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public short getMessageI16(String blockName, String fieldName, int blockNumber) throws Exception
+	public short getMessageI16(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageI16(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public int getMessageU16(String blockName, String fieldName, int blockNumber) throws Exception
+	public int getMessageU16(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageU16(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 	
 	@Override
-	public int getMessageI32(String blockName, String fieldName, int blockNumber) throws Exception
+	public int getMessageI32(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageI32(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public long getMessageU32(String blockName, String fieldName, int blockNumber) throws Exception
+	public long getMessageU32(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageU32(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public long getMessageI64(String blockName, String fieldName, int blockNumber) throws Exception
+	public long getMessageI64(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageI64(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public long getMessageU64(String blockName, String fieldName, int blockNumber) throws Exception
+	public long getMessageU64(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageU64(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public float getMessageF32(String blockName, String fieldName, int blockNumber) throws Exception
+	public float getMessageF32(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageF32(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public double getMessageF64(String blockName, String fieldName, int blockNumber) throws Exception
+	public double getMessageF64(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageF64(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public String getMessageString(String blockName, String fieldName, int blockNumber) throws Exception
+	public String getMessageString(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageString(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public UUID getMessageUUID(String blockName, String fieldName, int blockNumber) throws Exception
+	public UUID getMessageUUID(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageUUID(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public Date getMessageDate(String blockName, String fieldName, int blockNumber) throws Exception
+	public Date getMessageDate(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageDate(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public Vector3 getMessageVector3(String blockName, String fieldName, int blockNumber) throws Exception
+	public Vector3 getMessageVector3(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageVector3(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public Vector3d getMessageVector3d(String blockName, String fieldName, int blockNumber) throws Exception
+	public Vector3d getMessageVector3d(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageVector3d(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public Vector4 getMessageVector4(String blockName, String fieldName, int blockNumber) throws Exception
+	public Vector4 getMessageVector4(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageVector4(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public Quaternion getMessageQuaternion(String blockName, String fieldName, int blockNumber) throws Exception
+	public Quaternion getMessageQuaternion(String blockName, String fieldName, short blockNumber) throws Exception
 	{
 		return getMessageQuaternion(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(blockName), blockNumber);
 	}
 
 	@Override
-	public int getNumberOfBlocks(int blockName)
+	public int getNumberOfBlocks(int blockName) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return client.Protocol.getBlockNum(packet, message, blockName);
 	}
 
 	@Override
-	public byte getMessageI8(int blockName, int fieldName, int blockNumber) throws Exception
+	public byte getMessageI8(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.I8)
 			throw new Exception("Expected I8, got " + field.type);
 		return message[field.offset];
 	}
 
 	@Override
-	public short getMessageU8(int blockName, int fieldName, int blockNumber) throws Exception
+	public short getMessageU8(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.U8)
 			throw new Exception("Expected U8, got " + field.type);
 		return (short)(message[field.offset] & 0xFF);
 	}
 
 	@Override
-	public short getMessageI16(int blockName, int fieldName, int blockNumber) throws Exception
+	public short getMessageI16(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.I16)
 			throw new Exception("Expected I16, got " + field.type);
 		return Helpers.BytesToInt16L(message, field.offset);
 	}
 
 	@Override
-	public int getMessageU16(int blockName, int fieldName, int blockNumber) throws Exception
+	public int getMessageU16(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.U16)
 			throw new Exception("Expected U16, got " + field.type);
 		return Helpers.BytesToUInt16L(message, field.offset);
 	}
 
 	@Override
-	public int getMessageI32(int blockName, int fieldName, int blockNumber) throws Exception
+	public int getMessageI32(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.I32)
 			throw new Exception("Expected I32, got " + field.type);
 		return Helpers.BytesToInt32L(message, field.offset);
 	}
 
 	@Override
-	public long getMessageU32(int blockName, int fieldName, int blockNumber) throws Exception
+	public long getMessageU32(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.U32)
 			throw new Exception("Expected U32, got " + field.type);
 		return Helpers.BytesToUInt32L(message, field.offset);
 	}
 
 	@Override
-	public long getMessageI64(int blockName, int fieldName, int blockNumber) throws Exception
+	public long getMessageI64(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.I64)
 			throw new Exception("Expected I64, got " + field.type);
 		return Helpers.BytesToInt64L(message, field.offset);
 	}
 
 	@Override
-	public long getMessageU64(int blockName, int fieldName, int blockNumber) throws Exception
+	public long getMessageU64(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.U64)
 			throw new Exception("Expected U64, got " + field.type);
 		return Helpers.BytesToUInt64L(message, field.offset);
 	}
 
 	@Override
-	public float getMessageF32(int blockName, int fieldName, int blockNumber) throws Exception
+	public float getMessageF32(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.F32)
 			throw new Exception("Expected F32, got " + field.type);
 		return Helpers.BytesToFloatL(message, field.offset);
 	}
 
 	@Override
-	public double getMessageF64(int blockName, int fieldName, int blockNumber) throws Exception
+	public double getMessageF64(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);		
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.F64)
 			throw new Exception("Expected F64, got " + field.type);
 		return Helpers.BytesToDoubleL(message, field.offset);
 	}
 
 	@Override
-	public String getMessageString(int blockName, int fieldName, int blockNumber) throws Exception
+	public String getMessageString(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.Variable)
 			throw new Exception("Expected Variable type (String), got " + field.type);
 		int length = 0;
@@ -248,18 +246,18 @@ public class MessagePacket extends AbstractMessage
 
 	
 	@Override
-	public UUID getMessageUUID(int blockName, int fieldName, int blockNumber) throws Exception
+	public UUID getMessageUUID(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.UUID)
 			throw new Exception("Expected UUID, got " + field.type);
 		return new UUID(message, field.offset);
 	}
 
 	@Override
-	public Date getMessageDate(int blockName, int fieldName, int blockNumber) throws Exception
+	public Date getMessageDate(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.U32)
 			throw new Exception("Expected U32, got " + field.type);
 		long date = Helpers.BytesToUInt32L(message, field.offset);
@@ -267,59 +265,39 @@ public class MessagePacket extends AbstractMessage
 	}
 
 	@Override
-	public Vector3 getMessageVector3(int blockName, int fieldName, int blockNumber) throws Exception
+	public Vector3 getMessageVector3(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.Vector3)
 			throw new Exception("Expected Vector3, got " + field.type);
 		return new Vector3(message, field.offset, true);
 	}
 
 	@Override
-	public Vector3d getMessageVector3d(int blockName, int fieldName, int blockNumber) throws Exception
+	public Vector3d getMessageVector3d(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.Vector3d)
 			throw new Exception("Expected Vector3d, got " + field.type);
 		return new Vector3d(message, field.offset, true);
 	}
 
 	@Override
-	public Vector4 getMessageVector4(int blockName, int fieldName, int blockNumber) throws Exception
+	public Vector4 getMessageVector4(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.Vector4)
 			throw new Exception("Expected Vector4, got " + field.type);
 		return new Vector4(message, field.offset, true);
 	}
 
 	@Override
-	public Quaternion getMessageQuaternion(int blockName, int fieldName, int blockNumber) throws Exception
+	public Quaternion getMessageQuaternion(int blockName, int fieldName, short blockNumber) throws Exception
 	{
-		MapField field = getFieldOffset(blockName, fieldName, blockNumber);	
+		MapField field = client.Protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);	
 		if (field.type != FieldType.Quaternion)
 			throw new Exception("Expected Quaternion, got " + field.type);
 		return new Quaternion(message, field.offset, false, true);
 	}
 	
-	private MapBlock getBlockOffset(int blockName, int blockNum)
-	{
-		short offset;
-		for (MapBlock block : packet.Blocks)
-		{
-			if (block.keywordIndex != blockName && block.size == 0)
-			{
-				
-			}
-		}
-		return null;
-	}
-	
-	private MapField getFieldOffset(int blockName, int fieldName, int blockNum)
-	{
-		MapBlock block = getBlockOffset(blockName, blockNum);
-		
-		
-		return null;
-	}
-}
+ }

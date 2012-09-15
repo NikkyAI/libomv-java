@@ -36,10 +36,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import libomv.types.PacketFrequency;
 import libomv.utils.HashMapInt;
+import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -128,7 +128,7 @@ public class ProtocolManager
 		}
 	}
 
-	public class MapField implements Comparable<Object>
+	public class MapField implements Comparable<Object>, Cloneable
 	{
 		public int keywordIndex;
 
@@ -139,6 +139,19 @@ public class ProtocolManager
 		public short count;
 
 		@Override
+		public Object clone()
+		{
+			try
+			{
+				return super.clone();
+			}
+			catch (CloneNotSupportedException e)
+			{
+				return null;
+			}
+		}
+
+		@Override
 		public int compareTo(Object obj)
 		{
 			MapField temp = (MapField) obj;
@@ -146,7 +159,7 @@ public class ProtocolManager
 		}
 	}
 
-	public class MapBlock implements Comparable<Object>
+	public class MapBlock implements Comparable<Object>, Cloneable
 	{
 		public int keywordIndex;
 		
@@ -154,7 +167,20 @@ public class ProtocolManager
 
 		public short count;
 
-		public Vector<MapField> Fields;
+		public ArrayList<MapField> Fields;
+		
+		@Override
+		public Object clone()
+		{
+			try
+			{
+				return super.clone();
+			}
+			catch (CloneNotSupportedException e)
+			{
+				return null;
+			}
+		}
 
 		@Override
 		public int compareTo(Object obj)
@@ -340,7 +366,7 @@ public class ProtocolManager
 
 					for (int k = 0; k < block.Fields.size(); k++)
 					{
-						MapField field = block.Fields.elementAt(k);
+						MapField field = block.Fields.get(k);
 						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex, keywordPosition(block.keywordIndex), field.type,
 								field.count);
 					}
@@ -558,7 +584,7 @@ public class ProtocolManager
 								field.count = 1;
 								if (fieldOffset >= 0)
 								{
-									fieldOffset = getFieldLength(field.type);
+									fieldOffset = getFieldSize(field, null, (short)0);
 								}
 							}
 							else
@@ -569,19 +595,18 @@ public class ProtocolManager
 								    if (field.type == FieldType.Variable)
 								    	fieldOffset = -1;
 								    else if (field.type == FieldType.Fixed)
-								    	fieldOffset = field.count;
+								    	fieldOffset += field.count;
 								}
 							}
 
 							// Save this field to the current block
-							currentBlock.Fields.addElement(field);
+							currentBlock.Fields.add(field);
 						}
 						else if (trimmedline.equals("}"))
 						{
 							if (Sort)
 								Collections.sort(currentBlock.Fields);
 							currentBlock.size = fieldOffset;
-							fieldOffset = 0;
 							inBlock = false;
 						}
 						else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false)
@@ -595,7 +620,7 @@ public class ProtocolManager
 							String[] tokens = trimmedline.split("\\s+");
 
 							currentBlock.keywordIndex = keywordPosition(tokens[0]);
-							currentBlock.Fields = new Vector<MapField>();
+							currentBlock.Fields = new ArrayList<MapField>();
 							currentPacket.Blocks.add(currentBlock);
 
 							if (tokens[1].equals("Single"))
@@ -614,7 +639,6 @@ public class ProtocolManager
 							{
 								Logger.Log("Unknown block frequency", LogLevel.Error);
 							}
-
 							// #endregion
 						}
 					}
@@ -632,47 +656,119 @@ public class ProtocolManager
 		}
 	}
 
-	public int getFieldOffset(MapPacket packet, int blockIndex, int fieldIndex, int blockNum)
+	private short getBlockSize(ArrayList<MapField> fields, byte[] message, short offset) throws Exception
 	{
-		int i, offset = 0;
-		for (i = 0; i < packet.Blocks.size(); i++)
+		short start = offset;
+		for (MapField field : fields)
 		{
-			MapBlock block = packet.Blocks.get(i);
-			if (block.keywordIndex != blockIndex)
+			offset += getFieldSize(field, message, offset);
+		}
+		return (short)(offset - start);
+	}
+
+	public short getBlockNum(MapPacket packet, byte[] message, int blockIndex) throws Exception
+	{
+		short blocks, offset = 0;
+		for (MapBlock block : packet.Blocks)
+		{
+			if (block.count >= 0)
 			{
-				if (block.size > 0)
-				{
-					/* easy, fixed size block */
-					if (block.count < 0)
-					{
-						
-					}
-					else
-					{ 
-						offset += block.size * block.count;
-					}
-				}
-				else
-				{
-					
-				}
+				blocks = block.count;
 			}
 			else
 			{
-				break;
+				blocks = message[offset++];
+			}
+			
+			if (block.keywordIndex == blockIndex)
+			{
+				return blocks;
 			}
 
+			if (block.size >= 0)
+			{
+				offset += block.size * blocks;
+			}
+			else
+			{
+				for (int j = 0; j < blocks; j++)
+				{
+					offset += getBlockSize(block.Fields, message, offset);
+				}
+			}
 		}
-		if (i < packet.Blocks.size())
+		throw new Exception("Block index not found!");
+	}
+
+	public MapField getFieldOffset(MapPacket packet, byte[] message, int blockIndex, int fieldIndex, short blockNumber) throws Exception
+	{
+		short blocks, offset = 0;
+		for (MapBlock block : packet.Blocks)
 		{
+			if (block.count >= 0)
+			{
+				blocks = block.count;
+			}
+			else
+			{
+				blocks = message[offset++];
+			}
 			
+			if (block.keywordIndex == blockIndex && blockNumber < blocks)
+			{
+				blocks = blockNumber;
+			}
+			
+			if (blocks > 0)
+			{
+				if (block.size >= 0)
+				{
+					offset += block.size * blocks;
+				}
+				else
+				{
+					for (int j = 0; j < blocks; j++)
+					{
+						offset += getBlockSize(block.Fields, message, offset);
+					}
+				}
+			}
+
+			if (block.keywordIndex == blockIndex)
+			{
+				MapField result = null;
+				for (MapField field : block.Fields)
+				{
+					if (field.keywordIndex == fieldIndex)
+					{
+						result = (MapField)field.clone();
+						result.offset = offset;
+						break;
+					}
+					offset += getFieldSize(field, message, offset);					
+				}
+				return result;
+			}
 		}
-		return offset;
+		throw new Exception("Block and or Field index not found!");
 	}
 	
-	public short getFieldLength(int type)
+	public short getFieldSize(MapField field, byte[] message, short offset) throws Exception
 	{
-		return FieldType.TypeSizes[type];
+		if (field.type == FieldType.Fixed)
+		{
+			return field.count;
+		}
+		else if (field.type == FieldType.Variable)
+		{
+			if (field.count == 1)
+				return (short)(message[offset] + 1);
+			else if (field.count == 2)
+				return (short)(Helpers.BytesToInt16L(message, offset) + 2);
+			else
+				throw new Exception("Invalid count for variable sized field!");
+		}
+		return FieldType.TypeSizes[field.type];
 	}
 
 	public String keywordPosition(int position)

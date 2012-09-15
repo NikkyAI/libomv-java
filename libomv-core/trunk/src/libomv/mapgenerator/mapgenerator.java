@@ -291,7 +291,7 @@ public class mapgenerator
 
 	static int GetFieldLength(PrintWriter writer, ProtocolManager protocol, MapField field)
 	{
-		int len = protocol.getFieldLength(field.type);
+		short len = FieldType.TypeSizes[field.type];
 		if (len < 0)
 			writer.println("!!! ERROR: Unhandled FieldType " + field.type + " !!!");
 		return len;
@@ -385,7 +385,7 @@ public class mapgenerator
 
 		for (int k = 0; k < block.Fields.size(); k++)
 		{
-			MapField field = block.Fields.elementAt(k);
+			MapField field = block.Fields.get(k);
 			WriteFieldMember(writer, protocol.keywordPosition(field.keywordIndex), field);
 
 			if (field.type == FieldType.Variable)
@@ -494,7 +494,7 @@ public class mapgenerator
 			MapBlock block = packet.Blocks.get(i);
 			for (int k = 0; k < block.Fields.size(); k++)
 			{
-				MapField field = block.Fields.elementAt(k);
+				MapField field = block.Fields.get(k);
 
 				if (field.type == FieldType.Variable || field.type == FieldType.Fixed)
 				{
@@ -517,7 +517,7 @@ public class mapgenerator
 
 			for (int k = 0; k < block.Fields.size(); k++)
 			{
-				MapField field = block.Fields.elementAt(k);
+				MapField field = block.Fields.get(k);
 				if (!variableField[field.type])
 				{
 					switch (field.type)
@@ -557,7 +557,7 @@ public class mapgenerator
 		for (int k = 0; k < packet.Blocks.size(); k++)
 		{
 			MapBlock block = packet.Blocks.get(k);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				WriteBlockClass(writer, protocol, block);
 			}
@@ -582,7 +582,7 @@ public class mapgenerator
 
 			// TODO: More thorough name blacklisting
 
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -597,7 +597,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				writer.println("    public " + FieldTypeString(field.type) + ((block.count != 1) ? "[] " : " ") + fieldName + ";");
 			}
@@ -622,7 +622,7 @@ public class mapgenerator
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -651,7 +651,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
@@ -682,7 +682,7 @@ public class mapgenerator
 		{
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -726,7 +726,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
@@ -786,7 +786,7 @@ public class mapgenerator
 		{
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -830,7 +830,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
@@ -891,7 +891,7 @@ public class mapgenerator
 		{
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -910,7 +910,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				if (block.count == 1)
 				{
 					writer.println("        length += " + GetFieldLength(writer, protocol, field) + ";");
@@ -922,7 +922,7 @@ public class mapgenerator
 		{
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -947,7 +947,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == -1)
 				{
@@ -974,7 +974,7 @@ public class mapgenerator
 		{
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -1005,7 +1005,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
@@ -1054,7 +1054,7 @@ public class mapgenerator
 		{
 			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || block.Fields.firstElement().type == FieldType.Variable)
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
 				{
@@ -1084,7 +1084,7 @@ public class mapgenerator
 			}
 			else
 			{
-				MapField field = block.Fields.firstElement();
+				MapField field = block.Fields.get(0);
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
