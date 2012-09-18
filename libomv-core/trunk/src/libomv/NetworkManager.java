@@ -1012,9 +1012,10 @@ public class NetworkManager implements PacketCallback
 		Logger.Log("Logging out", LogLevel.Info, _Client);
 
 		_Connected = false;
+		_Client.setCurrentGrid(null);
 		_DisconnectTimer.cancel();
 		_PacketHandlerThread.shutdown();
-
+		
 		// Send a logout request to the current sim
 		LogoutRequestPacket logout = new LogoutRequestPacket();
 		logout.AgentData.AgentID = _Client.Self.getAgentID();

@@ -316,6 +316,7 @@ public class GridClient
 	private static int listversion = 0;
 
 	private String defaultGrid = null;
+	private transient String currentGrid = null;
 
 	private static final String NUMGRIDS = "numgrids";
 	private static final String GRIDINFO = "gridinfo";
@@ -441,8 +442,15 @@ public class GridClient
 		return gridlist.keySet();
 	}
 
+	public void setCurrentGrid(String grid)
+	{
+		currentGrid = grid;
+	}
+	
 	public GridInfo getGrid(String grid)
 	{
+		if (grid == null)
+			grid = currentGrid;
 		return gridlist.get(grid);
 	}
 
