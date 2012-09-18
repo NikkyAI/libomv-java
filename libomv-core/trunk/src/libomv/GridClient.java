@@ -124,6 +124,11 @@ public class GridClient
 		 */
 		public void merge(GridInfo info)
 		{
+			merge(info, false);
+		}
+		
+		public void merge(GridInfo info, boolean force)
+		{
 			saveSettings |= info.saveSettings;
 			savePassword = saveSettings && (info.savePassword || savePassword);
 			if (username == null)
@@ -133,7 +138,7 @@ public class GridClient
 			if (startLocation == null)
 				startLocation = info.startLocation;
 
-			if (version < info.version)
+			if (force || version < info.version)
 			{
 				if (gridnick == null || version >= 0)
 					gridnick = info.gridnick;
@@ -447,6 +452,18 @@ public class GridClient
 		currentGrid = grid;
 	}
 	
+	public boolean setCurrentGrid(GridInfo grid)
+	{
+		GridInfo temp = gridlist.get(grid.gridnick);
+		if (temp != null)
+		{
+			temp.merge(grid, true);
+			currentGrid = grid.gridnick;
+			return true;
+		}
+		return false;
+	}
+
 	public GridInfo getGrid(String grid)
 	{
 		if (grid == null)
