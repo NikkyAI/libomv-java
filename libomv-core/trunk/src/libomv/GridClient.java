@@ -452,14 +452,31 @@ public class GridClient
 		currentGrid = grid;
 	}
 	
+	/**
+	 * Set the current grid
+	 * 
+	 * The function uses the info in the passed in grid to both set the currently active grid based on the gridnick,
+	 * as well as the merging the information in the GridInfo to the already stored Gridinfo.
+	 * 
+	 * @param grid The grid info to use to set the current grid. If the GridInfo is null, the currentGrid
+	 *             is set to the current default grid
+	 * 
+	 */
 	public boolean setCurrentGrid(GridInfo grid)
 	{
-		GridInfo temp = gridlist.get(grid.gridnick);
-		if (temp != null)
+		if (grid != null)
 		{
-			temp.merge(grid, true);
-			currentGrid = grid.gridnick;
-			return true;
+			GridInfo temp = gridlist.get(grid.gridnick);
+			if (temp != null)
+			{
+				temp.merge(grid, true);
+				currentGrid = grid.gridnick;
+				return true;
+			}
+		}
+		else
+		{
+			currentGrid = defaultGrid;
 		}
 		return false;
 	}

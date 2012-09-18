@@ -1012,7 +1012,7 @@ public class NetworkManager implements PacketCallback
 		Logger.Log("Logging out", LogLevel.Info, _Client);
 
 		_Connected = false;
-		_Client.setCurrentGrid(null);
+		_Client.setCurrentGrid((String)null);
 		_DisconnectTimer.cancel();
 		_PacketHandlerThread.shutdown();
 		
