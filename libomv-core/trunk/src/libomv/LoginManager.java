@@ -637,79 +637,79 @@ public class LoginManager
 				grid.loginuri = reply.get("loginuri").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("welcome"))
 			{
 				grid.loginpage = reply.get("welcome").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("loginpage"))
 			{
 				grid.loginpage = reply.get("loginpage").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("economy"))
 			{
 				grid.helperuri = reply.get("economy").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("helperuri"))
 			{
 				grid.helperuri = reply.get("helperuri").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("about"))
 			{
 				grid.website = reply.get("about").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("website"))
 			{
 				grid.website = reply.get("website").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("help"))
 			{
 				grid.support = reply.get("help").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("support"))
 			{
 				grid.support = reply.get("support").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("register"))
 			{
 				grid.register = reply.get("register").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("account"))
 			{
 				grid.register = reply.get("account").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("password"))
 			{
 				grid.passworduri = reply.get("password").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("search"))
 			{
-//				grid.searchurl = reply.get("search").AsString();
+				grid.searchurl = reply.get("search").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("currency"))
 			{
-//				grid.currencySym = reply.get("currency").AsString();
+				grid.currencySym = reply.get("currency").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("real_currency"))
 			{
-//				grid.realCurrencySym = reply.get("real_currency").AsString();
+				grid.realCurrencySym = reply.get("real_currency").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("directory_fee"))
 			{
-//				grid.directoryFee = reply.get("directory_fee").AsString();
+				grid.directoryFee = reply.get("directory_fee").AsString();
 				update = true;
 			}
 			if (update)
