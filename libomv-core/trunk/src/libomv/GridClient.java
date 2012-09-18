@@ -77,6 +77,10 @@ public class GridClient
 		public String support; // help, support
 		public String register; // register, account
 		public String passworduri; // password
+		public String searchurl; // search
+		public String currencySym;
+		public String realCurrencySym;
+		public String directoryFee;
 		public int version;
 
 		public transient boolean saveSettings;
@@ -149,6 +153,14 @@ public class GridClient
 					support = info.support;
 				if (register == null || version >= 0)
 					register = info.register;
+				if (searchurl == null || version >= 0)
+					searchurl = info.searchurl;
+				if (currencySym == null || version >= 0)
+					currencySym = info.currencySym;
+				if (realCurrencySym == null || version >= 0)
+					realCurrencySym = info.realCurrencySym;
+				if (directoryFee == null || version >= 0)
+					directoryFee = info.directoryFee;
 				version = info.version;
 			}
 			if (!equals(info))
@@ -158,8 +170,9 @@ public class GridClient
 		public String dump()
 		{
 			return String.format("Nick: %s, Name: %s, Platform: %s, Ver: %d\n" +
-					             "loginuri: %s, loginpage: %s, website: %s, support: %s\n",
-					             gridnick, gridname, platform, version, loginuri, loginpage, website, support);	
+								 "loginuri: %s, loginpage: %s, website: %s, support: %s\n" +
+					             "search: %s, currency: %s, real_currency: %s, directory_fee: %s",
+					             gridnick, gridname, platform, version, loginuri, loginpage, website, support, searchurl, currencySym, realCurrencySym, directoryFee);	
 		}
 		
 		@Override
@@ -167,7 +180,7 @@ public class GridClient
 		{
 			int hash = 0;
 			String string = null;
-			for (int i = 0; i < 9; i++)
+			for (int i = 0; i < 13; i++)
 			{
 				switch (i)
 				{
@@ -198,6 +211,18 @@ public class GridClient
 					case 8:
 						string = platform;
 						break;
+					case 9:
+						string = searchurl;
+						break;
+					case 10:
+						string = currencySym;
+						break;
+					case 11:
+						string = realCurrencySym;
+						break;
+					case 12:
+						string = directoryFee;
+						break;
 				}
 				if (string != null)
 					hash ^= string.hashCode();
@@ -214,7 +239,7 @@ public class GridClient
 		public boolean equals(GridInfo info)
 		{
 			String string1 = null, string2 = null;
-			for (int i = 0; i < 9; i++)
+			for (int i = 0; i < 13; i++)
 			{
 				switch (i)
 				{
@@ -253,6 +278,22 @@ public class GridClient
 					case 8:
 						string1 = platform;
 						string2 = info.platform;
+						break;
+					case 9:
+						string1 = searchurl;
+						string2 = info.searchurl;
+						break;
+					case 10:
+						string1 = currencySym;
+						string2 = info.currencySym;
+						break;
+					case 11:
+						string1 = realCurrencySym;
+						string2 = info.realCurrencySym;
+						break;
+					case 12:
+						string1 = directoryFee;
+						string2 = info.directoryFee;
 						break;
 				}
 				if (string1 == null || !string1.equals(string2))
@@ -584,6 +625,22 @@ public class GridClient
 				else if (name.equals("password"))
 				{
 					info.passworduri = parser.nextText().trim();
+				}
+				else if (name.equals("searchurl"))
+				{
+					info.searchurl = parser.nextText().trim();
+				}
+				else if (name.equals("currency"))
+				{
+					info.currencySym = parser.nextText().trim();
+				}
+				else if (name.equals("real_currency"))
+				{
+					info.realCurrencySym = parser.nextText().trim();
+				}
+				else if (name.equals("directoryFee"))
+				{
+					info.directoryFee = parser.nextText().trim();
 				}
 				else if (name.equals("username"))
 				{
