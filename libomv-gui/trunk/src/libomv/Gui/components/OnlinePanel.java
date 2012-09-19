@@ -25,27 +25,39 @@
  */
 package libomv.Gui.components;
 
-import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import libomv.AgentManager.BalanceCallbackArgs;
 import libomv.GridClient;
 import libomv.Gui.windows.MainControl;
+import libomv.utils.Callback;
 
 public class OnlinePanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
+	private static final String cmdFriends = "friends";
+	private static final String cmdGroups = "groups";
+	private static final String cmdInventory = "inventory";
+	private static final String cmdSearch = "search";
+	private static final String cmdMaps = "maps";
+	private static final String cmdObjects = "objects";
+	private static final String cmdMedia = "media";
+	private static final String cmdVoice = "voice";
+	
 	private GridClient _Client;
 	private MainControl _Main;
 	
 	private JMenuBar jMbMain;
+	private JLabel jMiAmount;
 	private JPanel jSceneViewer;
 
 	public OnlinePanel(GridClient client, MainControl main)
@@ -70,37 +82,80 @@ public class OnlinePanel extends JPanel implements ActionListener
 		{
 			jMbMain = new JMenuBar();
 
-			JMenu pref = new JMenu("File");
+			JMenu file = new JMenu("File");
 			
 			JMenuItem jMiFileOpen = _Main.newMenuItem("Open...", this, "open");
-			pref.add(jMiFileOpen);
-			pref.addSeparator();
+			file.add(jMiFileOpen);
+			file.addSeparator();
 
 			JMenuItem jMiSettings = _Main.newMenuItem("Settings...", this, MainControl.cmdSettings);
-			pref.add(jMiSettings);
-			jMbMain.add(pref);
+			file.add(jMiSettings);
+			file.addSeparator();
 			
-			JMenu mnNewMenu = new JMenu("New menu");
-			jMbMain.add(mnNewMenu);
+			JMenuItem jMiFileQuit = _Main.newMenuItem("Quit", this, MainControl.cmdQuit);
+			file.add(jMiFileQuit);
+
+			jMbMain.add(file);
+
+			JMenu world = new JMenu("World");
+			JMenuItem jMiFriends = _Main.newMenuItem("Friends", this, cmdFriends);
+			world.add(jMiFriends);
+
+			JMenuItem jMiGroups = _Main.newMenuItem("Groups", this, cmdGroups);
+			world.add(jMiGroups);
+			
+			JMenuItem jMiInventory = _Main.newMenuItem("Inventory", this, cmdInventory);
+			world.add(jMiInventory);
+			
+			JMenuItem jMiSearch = _Main.newMenuItem("Search", this, cmdSearch);
+			world.add(jMiSearch);
+			
+			JMenuItem jMiMap = _Main.newMenuItem("Map", this, cmdMaps);
+			world.add(jMiMap);
+			
+			JMenuItem jMiObjects = _Main.newMenuItem("Objects", this, cmdObjects);
+			world.add(jMiObjects);
+
+			JMenuItem jMiMedia = _Main.newMenuItem("Media", this, cmdMedia);
+			world.add(jMiMedia);
+
+			JMenuItem jMiVoice = _Main.newMenuItem("Voice", this, cmdVoice);
+			world.add(jMiVoice);
+
+			jMbMain.add(world);
 
 			JMenu help = new JMenu("Help");
+			JMenuItem jMiBugReports = _Main.newMenuItem("Bugs/Feature Request...", this, MainControl.cmdBugs);
+			help.add(jMiBugReports);
+
+			JMenuItem jMiUpdates = _Main.newMenuItem("Check for Updates...", this, MainControl.cmdUpdates);
+			help.add(jMiUpdates);
+
+			JMenuItem jMiDebugConsole = _Main.newMenuItem("Debug Console...", this, MainControl.cmdDebugCon);
+			help.add(jMiDebugConsole);
+
+			help.addSeparator();
+
 			JMenuItem jMiAbout = _Main.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
-			help
-			.add(jMiAbout);
+			help.add(jMiAbout);
 			jMbMain.add(help);
-			jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
+			// jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
 			
-			JLabel filler = new JLabel("");
-			jMbMain.add(filler);
+			jMbMain.add(Box.createGlue());
 
-			JLabel amount = new JLabel("L$ 2000");
-            amount.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-			jMbMain.add(amount);
-
-			JPanel panel = new JPanel();
-			jMbMain.add(panel);
+			jMbMain.add(getJAmount());
 		}
 		return jMbMain;
+	}
+	
+	private JLabel getJAmount()
+	{
+		if (jMiAmount == null)
+		{
+			_Client.Self.getBalance();
+			jMiAmount = new JLabel(String.format("%s %s", _Client.getGrid(null).currencySym, _Client.Self.getBalance()));
+		}
+		return jMiAmount;
 	}
 
 	@Override
@@ -121,14 +176,19 @@ public class OnlinePanel extends JPanel implements ActionListener
 		return jSceneViewer;
 	}
 
-	private void doReturn(boolean logout)
-	{
-		ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, logout ? "logout" : "failed", 0);
-		_Main.actionPerformed(e);
-	}
-
 	private void initializePanel()
 	{
-
+		_Client.Self.OnBalanceUpdated.add(new BalanceUpdate());
+	}
+	
+	private class BalanceUpdate implements Callback<BalanceCallbackArgs>
+	{
+		@Override
+		public boolean callback(BalanceCallbackArgs params)
+		{
+			getJAmount().setText(String.format("%s %s", _Client.getGrid(null).currencySym, params.getBalance()));
+			return false;
+		}
+		
 	}
 }

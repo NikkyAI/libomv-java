@@ -48,6 +48,7 @@ public class MainWindow extends JFrame implements MainControl
 
 	private JPanel jPSouth;
 	private Component jPContent;
+	private JMenuBar jMenuBar;
 	GridClient _Client;
 
 	/**
@@ -94,6 +95,7 @@ public class MainWindow extends JFrame implements MainControl
 	
 	public void setMenuBar(JMenuBar menuBar)
 	{
+		jMenuBar = menuBar;
 		this.setJMenuBar(menuBar);
 	}
 
@@ -117,13 +119,25 @@ public class MainWindow extends JFrame implements MainControl
 			PreferenceWindow pref = new PreferenceWindow(getMainJFrame());
 			pref.setVisible(true);			
 		}
+		else if (action.equals(MainControl.cmdOnline))
+		{
+			initializeOnlinePanel();			
+		}
 		else if (action.equals(MainControl.cmdLogout))
 		{
 			initializeLoginPanel();			
 		}
 		else if (action.equals(MainControl.cmdQuit))
 		{
-		      System.exit(0);			
+		    try
+		    {
+				_Client.Network.Logout();
+			}
+		    catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+			System.exit(0);			
 		}
 	}
 
@@ -131,6 +145,8 @@ public class MainWindow extends JFrame implements MainControl
 	{
 		if (jPSouth == null || !(jPSouth instanceof LoginPanel))
 		{
+			if (jMenuBar != null)
+				remove(jMenuBar);
 			if (jPSouth != null)
 				remove(jPSouth);
 			if (jPContent != null)

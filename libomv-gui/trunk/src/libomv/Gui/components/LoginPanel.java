@@ -203,23 +203,34 @@ public class LoginPanel extends JPanel implements ActionListener
 		{
 			jMbMain = new JMenuBar();
 
-			JMenu pref = new JMenu("File");
+			JMenu file = new JMenu("File");
 			
-			JMenuItem jMiFileOpen = _Main.newMenuItem("Open...", this, "open");
-			pref.add(jMiFileOpen);
-			pref.addSeparator();
-
 			JMenuItem jMiSettings = _Main.newMenuItem("Settings...", this, MainControl.cmdSettings);
-			pref.add(jMiSettings);
-			jMbMain.add(pref);
+			file.add(jMiSettings);
 			
-			JMenu mnNewMenu = new JMenu("New menu");
-			jMbMain.add(mnNewMenu);
+			file.addSeparator();
 
+			JMenuItem jMiQuit = _Main.newMenuItem("Quit...", this, MainControl.cmdQuit);
+			file.add(jMiQuit);
+
+			jMbMain.add(file);
+			
 			JMenu help = new JMenu("Help");
+
+			JMenuItem jMiBugReports = _Main.newMenuItem("Bugs/Feature Request...", this, MainControl.cmdBugs);
+			help.add(jMiBugReports);
+
+			JMenuItem jMiUpdates = _Main.newMenuItem("Check for Updates...", this, MainControl.cmdUpdates);
+			help.add(jMiUpdates);
+
+			JMenuItem jMiDebugConsole = _Main.newMenuItem("Debug Console...", this, MainControl.cmdDebugCon);
+			help.add(jMiDebugConsole);
+
+			help.addSeparator();
+			
 			JMenuItem jMiAbout = _Main.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
-			help
-			.add(jMiAbout);
+			help.add(jMiAbout);
+
 			jMbMain.add(help);
 //			jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
 
