@@ -731,79 +731,79 @@ public class LoginManager
 				grid.loginuri = ParseString("loginuri", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("welcome"))
 			{
 				grid.loginpage = ParseString("welcome", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("loginpage"))
 			{
 				grid.loginpage = ParseString("loginpage", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("economy"))
 			{
 				grid.helperuri = ParseString("economy", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("helperuri"))
 			{
 				grid.helperuri = ParseString("helperuri", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("about"))
 			{
 				grid.website = ParseString("about", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("website"))
 			{
 				grid.website = ParseString("website", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("help"))
 			{
 				grid.support = ParseString("help", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("support"))
 			{
 				grid.support = ParseString("support", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("register"))
 			{
 				grid.register = ParseString("register", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("account"))
 			{
 				grid.register = ParseString("account", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("password"))
 			{
 				grid.passworduri = ParseString("password", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("search"))
 			{
-//				grid.searchurl = ParseString("search", reply);
+				grid.searchurl = ParseString("search", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("currency"))
 			{
-//				grid.currencySym = ParseString("currency", reply);
+				grid.currencySym = ParseString("currency", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("real_currency"))
 			{
-//				grid.realCurrencySym = ParseString("real_currency", reply);
+				grid.realCurrencySym = ParseString("real_currency", reply);
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
+			if (reply.containsKey("directory_fee"))
 			{
-//				grid.directoryFee = ParseString("directory_fee", reply);
+				grid.directoryFee = ParseString("directory_fee", reply);
 				update = true;
 			}
 			if (update)
