@@ -1384,6 +1384,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public class BalanceCallbackArgs
 	{
 		private final int balance;
+		private final int delta;
+		private final boolean firstBalance;
 
 		/* Get the balance value */
 		public final int getBalance()
@@ -1391,15 +1393,27 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return balance;
 		}
 
+		/* Get the balance value */
+		public final int getDelta()
+		{
+			return delta;
+		}
+		/* Get the balance value */
+		public final boolean getFirst()
+		{
+			return firstBalance;
+		}
 		/**
 		 * Construct a new instance of the BalanceCallbackArgs object
 		 * 
 		 * @param balance
 		 *            the InstantMessage object
 		 */
-		public BalanceCallbackArgs(int balance)
+		public BalanceCallbackArgs(int balance, int delta, boolean firstBalance)
 		{
 			this.balance = balance;
+			this.delta = delta;
+			this.firstBalance = firstBalance;
 		}
 	}
 
@@ -1894,6 +1908,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	private float health;
 	private int balance;
+	private boolean firstBalance;
 	private UUID activeGroup;
 	private long activeGroupPowers;
 
@@ -2266,6 +2281,17 @@ public class AgentManager implements PacketCallback, CapsCallback
 				homeRegion = reply.HomeRegion;
 				homePosition = reply.HomePosition;
 			}
+			else if (e.getStatus() == LoginStatus.Success)
+			{
+				try
+				{
+					RequestBalance();
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("", Logger.LogLevel.Error, _Client, ex);
+				}
+			}
 			return false;
 		}
 	}
@@ -2297,6 +2323,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_ThreadPool = Executors.newCachedThreadPool();
 		
 		homePosition = null;
+		firstBalance = true;
 
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
 		// Login
@@ -5194,8 +5221,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		if (packet.getType() == PacketType.MoneyBalanceReply)
 		{
 			MoneyBalanceReplyPacket reply = (MoneyBalanceReplyPacket) packet;
-			this.balance = reply.MoneyData.MoneyBalance;
-			OnBalanceUpdated.dispatch(new BalanceCallbackArgs(balance));
+			int delta = balance - reply.MoneyData.MoneyBalance;
+			balance = reply.MoneyData.MoneyBalance;
+			OnBalanceUpdated.dispatch(new BalanceCallbackArgs(balance, delta, firstBalance));
+			firstBalance = false;
 
 			if (OnMoneyBalanceReply.count() > 0 && reply.TransactionInfo != null
 					&& reply.TransactionInfo.TransactionType != 0)
