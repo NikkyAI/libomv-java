@@ -1200,7 +1200,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		private ChatType type;
 		private ChatSourceType sourcetype;
 		private String message, fromName;
-		private UUID id;
+		private UUID objectId;
+		private UUID ownerId;
+		private Vector3 position;
+		
 
 		public String getMessage()
 		{
@@ -1227,19 +1230,33 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return sourcetype;
 		}
 
-		public UUID getID()
+		public UUID getObjectID()
 		{
-			return id;
+			return objectId;
 		}
 
-		public ChatCallbackArgs(ChatAudibleLevel audible, ChatType type, ChatSourceType sourcetype, String fromName, String message, UUID id)
+		public UUID getOwnerID()
+		{
+			return ownerId;
+		}
+		
+		public Vector3 getPosition()
+		{
+			return position;
+		}
+	
+		
+		public ChatCallbackArgs(ChatAudibleLevel audible, ChatType type, ChatSourceType sourcetype, String fromName, String message,
+				                UUID objectId, UUID ownerId, Vector3 position)
 		{
 			this.message = message;
 			this.fromName = fromName;
 			this.audible = audible;
 			this.type = type;
 			this.sourcetype = sourcetype;
-			this.id = id;
+			this.objectId = objectId;
+			this.ownerId = ownerId;
+			this.position = position;
 		}
 	}
 
@@ -5009,7 +5026,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType
 					.setValue(chat.ChatData.ChatType), ChatSourceType.setValue(chat.ChatData.SourceType), message,
-					from, chat.ChatData.SourceID));
+					from, chat.ChatData.SourceID, chat.ChatData.OwnerID, chat.ChatData.Position));
 		}
 		catch (Exception ex)
 		{
