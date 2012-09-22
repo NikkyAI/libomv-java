@@ -424,9 +424,9 @@ public class AssetManager implements PacketCallback
 	 * @param asset
 	 *            Downloaded asset, null on fail
 	 */
-	public abstract class AssetReceivedCallback
+	public interface AssetReceivedCallback
 	{
-		abstract public void callback(AssetDownload transfer, AssetItem asset);
+		public void callback(AssetDownload transfer, AssetItem asset);
 	}
 
 	/**

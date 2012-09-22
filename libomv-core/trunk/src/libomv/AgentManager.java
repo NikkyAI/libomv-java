@@ -3738,13 +3738,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 				{
 					final TimeoutEvent<AssetGesture> gotAsset = new TimeoutEvent<AssetGesture>();
 
-					class AssetDownloadCallback extends AssetReceivedCallback
+					class AssetDownloadCallback implements AssetReceivedCallback
 					{
-						public AssetDownloadCallback()
-						{
-							_Client.Assets.super();
-						}
-
 						@Override
 						public void callback(AssetDownload transfer, AssetItem asset)
 						{

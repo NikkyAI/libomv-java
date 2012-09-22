@@ -48,6 +48,7 @@ import libomv.VisualParams.VisualColorParam;
 import libomv.VisualParams.VisualParam;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.AssetDownload;
+import libomv.assets.AssetManager.AssetReceivedCallback;
 import libomv.assets.AssetItem;
 import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable;
@@ -1344,6 +1345,49 @@ public class AppearanceManager implements PacketCallback
         }
     }
 
+    private class WearablesReceived implements AssetReceivedCallback
+	{
+    	private final WearableData wearable;
+    	private final CountDownLatch latch;
+    	
+    	public WearablesReceived(CountDownLatch latch, WearableData wearable)
+    	{
+    		this.latch = latch;
+    		this.wearable = wearable;
+    	}
+    	
+		public void callback(AssetDownload transfer, AssetItem asset)
+		{
+	        if (transfer.Success && asset instanceof AssetWearable)
+	        {
+	            // Update this wearable with the freshly downloaded asset 
+	            wearable.Asset = (AssetWearable)asset;
+
+	            if (wearable.Asset.Decode())
+	            {
+	                DecodeWearableParams(wearable);
+	                Logger.DebugLog("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
+	                    " visual params and " + wearable.Asset.Textures.size() + " textures", _Client);
+
+	            }
+	            else
+	            {
+	                wearable.Asset = null;
+	                try
+					{
+						Logger.Log("Failed to decode asset:\n" + Helpers.BytesToString(asset.AssetData), LogLevel.Error, _Client);
+					}
+					catch (UnsupportedEncodingException e) { }
+	            }
+	        }
+	        else
+	        {
+	            Logger.Log("Wearable " + wearable.AssetID + "(" + wearable.WearableType + ") failed to download, " +
+	                transfer.Status, LogLevel.Warning, _Client);
+	        }
+	        latch.countDown();
+		}
+	}
     /** 
      * Blocking method to download and parse currently worn wearable assets
      * 
@@ -1406,41 +1450,7 @@ public class AppearanceManager implements PacketCallback
             			// Fetch this wearable asset
             			try
 						{
-							_Client.Assets.RequestAsset(wearable.AssetID, wearable.AssetType, true, _Client.Assets.new AssetReceivedCallback()
-							{
-								@Override
-								public void callback(AssetDownload transfer, AssetItem asset)
-								{
-							        if (transfer.Success && asset instanceof AssetWearable)
-							        {
-							            // Update this wearable with the freshly downloaded asset 
-							            wearable.Asset = (AssetWearable)asset;
-
-							            if (wearable.Asset.Decode())
-							            {
-							                DecodeWearableParams(wearable);
-							                Logger.DebugLog("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
-							                    " visual params and " + wearable.Asset.Textures.size() + " textures", _Client);
-
-							            }
-							            else
-							            {
-							                wearable.Asset = null;
-							                try
-											{
-												Logger.Log("Failed to decode asset:\n" + Helpers.BytesToString(asset.AssetData), LogLevel.Error, _Client);
-											}
-											catch (UnsupportedEncodingException e) { }
-							            }
-							        }
-							        else
-							        {
-							            Logger.Log("Wearable " + wearable.AssetID + "(" + wearable.WearableType + ") failed to download, " +
-							                transfer.Status, LogLevel.Warning, _Client);
-							        }
-							        latch.countDown();
-								}
-							});
+							_Client.Assets.RequestAsset(wearable.AssetID, wearable.AssetType, true, new WearablesReceived(latch, wearable));
 						}
 						catch (Exception ex) { }
             		}
