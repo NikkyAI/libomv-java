@@ -214,7 +214,7 @@ public class FriendsManager implements PacketCallback
 		/* True if I can modify my friend's objects */
 		public final boolean getCanModifyTheirObjects()
 		{
-			return (theirRights & FriendRights.CanSeeOnline) != 0;
+			return (theirRights & FriendRights.CanModifyObjects) != 0;
 		}
 
 		/**
