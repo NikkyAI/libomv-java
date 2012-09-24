@@ -480,12 +480,50 @@ public class FriendsManager implements PacketCallback
 	 * permissions you have and have given to the friend
 	 */
 	private HashMap<UUID, FriendInfo> _FriendList = new HashMap<UUID, FriendInfo>();
+	private ArrayList<UUID> _FriendIndices = new ArrayList<UUID>();
 
 	public HashMap<UUID, FriendInfo> getFriendList()
 	{
 		return _FriendList;
 	}
+
+	private void addFriend(FriendInfo info)
+	{
+		synchronized (_FriendList)
+		{
+			if (!_FriendList.containsKey(info.getID()))
+			{
+				_FriendList.put(info.getID(), info);
+				_FriendIndices.add(info.getID());
+			}
+		}
+	}
 	
+	private FriendInfo removeFriend(UUID uuid)
+	{
+		synchronized (_FriendList)
+		{
+			_FriendIndices.remove(uuid);
+			return _FriendList.remove(uuid);
+		}
+	}
+	
+	public int getFriendIndex(UUID uuid)
+	{
+		synchronized (_FriendList)
+		{
+			return _FriendIndices.indexOf(uuid);
+		}
+	}
+	
+	public FriendInfo getFriend(int index)
+	{
+		synchronized (_FriendList)
+		{
+			return _FriendList.get(_FriendIndices.get(index));
+		}
+	}
+
 	/**
 	 * A Dictionary of key/value pairs containing current pending friendship
 	 * offers.
@@ -557,7 +595,7 @@ public class FriendsManager implements PacketCallback
 	{
 		if (_Client.Inventory == null)
 			throw new InventoryException(
-					"Inventory not instantiated. Need to lookup CallingCard folder in oreder to accept a friendship request.");
+					"Inventory not instantiated. Need to lookup CallingCard folder in order to accept a friendship request.");
 
 		UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard).itemID;
 
@@ -572,14 +610,12 @@ public class FriendsManager implements PacketCallback
 
 		FriendInfo friend = new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 
-		synchronized (_FriendList)
+		addFriend(friend);
+
+		synchronized (_FriendRequests)
 		{
-			if (!_FriendList.containsKey(fromAgentID))
-			{
-				_FriendList.put(friend.getID(), friend);
-			}
+			_FriendRequests.remove(fromAgentID);
 		}
-		_FriendRequests.remove(fromAgentID);
 
 		_Client.Avatars.RequestAvatarName(fromAgentID, null);
 	}
@@ -645,12 +681,7 @@ public class FriendsManager implements PacketCallback
 	 */
 	public final void TerminateFriendship(UUID agentID) throws Exception
 	{
-		FriendInfo friend;
-		
-		synchronized (_FriendList)
-		{
-			friend = _FriendList.remove(agentID);
-		}
+		FriendInfo friend = removeFriend(agentID);
 		
 		if (friend != null)
 		{
@@ -674,12 +705,7 @@ public class FriendsManager implements PacketCallback
 	private void TerminateFriendshipHandler(Packet packet, Simulator simulator)
 	{
 		TerminateFriendshipPacket itsOver = (TerminateFriendshipPacket) packet;
-		FriendInfo friend;
-		
-		synchronized (_FriendList)
-		{
-			friend = _FriendList.remove(itsOver.OtherID);
-		}
+		FriendInfo friend = removeFriend(itsOver.OtherID);
 
 		OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.OtherID,
 				friend != null ? friend.getName() : null));
@@ -801,7 +827,7 @@ public class FriendsManager implements PacketCallback
 						// Mark this friend for a name request
 						requestids.add(agentID);
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-						_FriendList.put(agentID, friend);
+						addFriend(friend);
 					}
 					else
 					{
@@ -826,7 +852,7 @@ public class FriendsManager implements PacketCallback
 						requestids.add(agentID);
 
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-						_FriendList.put(agentID, friend);
+						addFriend(friend);
 					}
 					else
 					{
@@ -935,7 +961,7 @@ public class FriendsManager implements PacketCallback
 				if (!_FriendList.containsKey(block.ID))
 				{
 					friend = new FriendInfo(block.ID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-					_FriendList.put(block.ID, friend);
+					addFriend(friend);
 				}
 				else
 				{
@@ -968,10 +994,7 @@ public class FriendsManager implements PacketCallback
 				case FriendshipAccepted:
 					FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 					friend.setName(name);
-					synchronized (_FriendList)
-					{
-						_FriendList.put(friendID, friend);
-					}
+					addFriend(friend);
 					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
 					try
 					{
@@ -1009,8 +1032,7 @@ public class FriendsManager implements PacketCallback
 							UUID bubid = UUID.Parse(buddy.buddy_id);
 							if (!_FriendList.containsKey(bubid))
 							{
-								_FriendList.put(bubid, new FriendInfo(bubid, buddy.buddy_rights_given,
-										buddy.buddy_rights_has));
+								addFriend(new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));
 							}
 						}
 					}
