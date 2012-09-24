@@ -28,63 +28,84 @@
  */
 package libomv.Gui.components.list;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Insets;
 
-import java.util.Comparator;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 import libomv.FriendsManager.FriendInfo;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendRightsCallbackArgs;
+import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
 import libomv.FriendsManager.FriendshipResponseCallbackArgs;
 import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.GridClient;
-import libomv.Gui.components.list.SortedListModel.SortOrder;
+import libomv.Gui.Resources;
+import libomv.inventory.InventoryException;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
+import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
-import java.awt.BorderLayout;
-import javax.swing.JButton;
-import java.awt.GridLayout;
-import javax.swing.border.EmptyBorder;
 
 // List to display the friends
-public class FriendList extends JPanel
+public class FriendList extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 
-	private static ImageIcon offline = null;
-	private static ImageIcon online = null;
+	private static final String cmdPayTo = "payTo";
+	private static final String cmdStartIM = "startIM";
+	private static final String cmdProfile = "profile";
+	private static final String cmdTeleportTo = "teleportTo";
+	private static final String cmdTeleportAsk = "teleportAsk";
+	private static final String cmdAutopilotTo = "autopilotTo";
+	private static final String cmdFriendRemove = "friendRemove";
+	
+	private static ImageIcon empty;
+	private static ImageIcon offline;
+	private static ImageIcon online;
+	private static ImageIcon canSee;
+	private static ImageIcon canMap;
+	private static ImageIcon canEditMine;
+	private static ImageIcon canEditTheirs;
 
 	private GridClient _Client;
+	private List<FriendInfo> indexList;
 
 	private JScrollPane jScrollPane;
-	private JList jLFriendsList;
+	private JTable jLFriendsList;
 	private JPanel jButtonPanel;
 	private JButton jBtnSendMessage;
 	private JButton jBtnProfile;
@@ -106,15 +127,45 @@ public class FriendList extends JPanel
 		_Client.Friends.OnFriendRights.add(new FriendRightsChanged());
 		_Client.Friends.OnFriendNotification.add(new FriendNotification());
 		_Client.Friends.OnFriendshipResponse.add(new FriendshipResponse());
+		_Client.Friends.OnFriendshipOffered.add(new FriendshipOffered());
 		_Client.Friends.OnFriendshipTerminated.add(new FriendshipTerminated());
 
-		// Choose a sensible minimum size.
-		setPreferredSize(new Dimension(640, 480));
-		setLayout(new BorderLayout(0, 0));
-
-		add(getJScrollPane(), BorderLayout.WEST);
-		add(getButtonPanel(), BorderLayout.EAST);
+		empty = null;
+		offline = Resources.loadIcon(Resources.ICON_OFFLINE);
+		online = Resources.loadIcon(Resources.ICON_ONLINE);
+		canSee = Resources.loadIcon(Resources.ICON_VISIBLE_ONLINE);
+		canMap = Resources.loadIcon(Resources.ICON_VISIBLE_MAP);
+		canEditMine = Resources.loadIcon(Resources.ICON_EDIT_MINE);
+		canEditTheirs = Resources.loadIcon(Resources.ICON_EDIT_THEIRS);
 		
+		// Choose a sensible minimum size.
+		setPreferredSize(new Dimension(290, 400));
+
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[]{200, 90, 0};
+        gridBagLayout.rowHeights = new int[]{400, 0};
+        gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};    
+        setLayout(gridBagLayout);
+		
+		GridBagConstraints gbConstraint = new GridBagConstraints();
+		gbConstraint.fill = GridBagConstraints.BOTH;
+        gbConstraint.insets = new Insets(0, 0, 0, 5);
+		gbConstraint.gridx = 0;
+		gbConstraint.gridy = 0;
+		add(getJScrollPane(), gbConstraint);
+		
+		gbConstraint = new GridBagConstraints();
+		gbConstraint.fill = GridBagConstraints.VERTICAL;
+		gbConstraint.gridx = 1;
+		gbConstraint.gridy = 0;
+		add(getButtonPanel(), gbConstraint);
+	}
+	
+	private void installAction(AbstractButton element, String command)
+	{
+		element.setActionCommand(command);
+		element.addActionListener(this);
 	}
 	
 	private JPanel getButtonPanel()
@@ -122,41 +173,41 @@ public class FriendList extends JPanel
 		if (jButtonPanel == null)
 		{
 			jButtonPanel = new JPanel();
-			jButtonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+			jButtonPanel.setBorder(new EmptyBorder(12, 12, 5, 12));
+			jButtonPanel.setLayout(new GridLayout(12, 1, 0, 10));
 		
 			jBtnSendMessage = new JButton("Send message");
-			jBtnSendMessage.addActionListener(new SendIMActionListener());
-			jButtonPanel.setLayout(new GridLayout(15, 1, 0, 10));
+			installAction(jBtnSendMessage, cmdStartIM);
 			jButtonPanel.add(jBtnSendMessage);
 			
 			jBtnProfile = new JButton("Profile ..");
-			jBtnProfile.addActionListener(new ProfileActionListener());
+			installAction(jBtnProfile, cmdProfile);
 			jButtonPanel.add(jBtnProfile);
 
 			JLabel lblSpacer1 = new JLabel("");
 			jButtonPanel.add(lblSpacer1);
 
 			jBtnMoney = new JButton("Pay ..");
-			jBtnMoney.addActionListener(new MoneyActionListener());
+			installAction(jBtnMoney, cmdPayTo);
 			jButtonPanel.add(jBtnMoney);
 
 			jBtnTpOffer = new JButton("Offer Teleport ..");
-			jBtnTpOffer.addActionListener(new OfferTeleportActionListener());
+			installAction(jBtnTpOffer, cmdTeleportAsk);
 			jButtonPanel.add(jBtnTpOffer);
 
 			jBtnRemove = new JButton("Remove ..");
-			jBtnRemove.addActionListener(new RemoveFriendActionListener());
+			installAction(jBtnRemove, cmdFriendRemove);
 			jButtonPanel.add(jBtnRemove);		
 
 			JLabel lblSpacer2 = new JLabel("");
 			jButtonPanel.add(lblSpacer2);
 
 			jBtnTeleportTo = new JButton("Teleport to ..");
-			jBtnTeleportTo.addActionListener(new TeleportActionListener());
+			installAction(jBtnTeleportTo, cmdTeleportTo);
 			jButtonPanel.add(jBtnTeleportTo);
 
 			jBtnAutopilotTo = new JButton("Autopilot to ..");
-			jBtnAutopilotTo.addActionListener(new AutopilotActionListener());
+			installAction(jBtnAutopilotTo, cmdAutopilotTo);
 			jButtonPanel.add(jBtnAutopilotTo);
 		}
 		return jButtonPanel;
@@ -169,27 +220,251 @@ public class FriendList extends JPanel
 			jScrollPane = new JScrollPane(getJFriendsList(),
 					                      ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 					                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+	        jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+			getJFriendsList().setFillsViewportHeight(true);
 		}
 		return jScrollPane;
 	}
 
-	
-	private final JList getJFriendsList()
+    private class FriendsTableData extends AbstractTableModel
+    {
+		private static final long serialVersionUID = 1L;
+
+		private String[] columnNames = {"Online",
+                                        "Name",
+                                        "Can see me",
+                                        "Can map me",
+                                        "Can edit mine",
+                                        "Can see them",
+                                        "Can map them",
+                                        "Can edit theirs"};
+		
+        public int getColumnCount()
+        {
+            return 8;
+        }
+ 
+        public int getRowCount()
+        {
+            return _Client.Friends.getFriendList().size();
+        }
+ 
+        public String getColumnName(int col)
+        {
+            return columnNames[col];
+        }
+ 
+        public Object getValueAt(int row, int col)
+        {
+            FriendInfo info = _Client.Friends.getFriend(row);
+            if (info != null)
+            {
+            	switch (col)
+            	{
+            		case 0:
+            			return info.getIsOnline() ? online : empty;
+                	case 1:
+                		return info.getName();
+                	case 2:
+                		return info.getCanSeeMeOnline();
+                	case 3:
+                		return info.getCanSeeMeOnMap();
+                	case 4:
+                		return info.getCanModifyMyObjects();
+                	case 5:
+                		return info.getCanSeeThemOnline();
+                	case 6:
+                		return info.getCanSeeThemOnMap();
+                	case 7:
+                		return info.getCanModifyTheirObjects();
+            	}
+            }
+            return null;
+        }
+        
+        /* JTable uses this method to determine the default renderer/editor for each cell. */
+        public Class<?> getColumnClass(int c)
+        {
+            switch (c)
+            {
+            	case 0:
+            		return ImageIcon.class;
+            	case 1:
+            		return String.class;
+            	default:
+            		return Boolean.class;
+            }
+        }
+        
+        /*
+         * Don't need to implement this method unless your table's editable.
+         */
+        public boolean isCellEditable(int row, int col)
+        {
+            //Note that the data/cell address is constant,
+            //no matter where the cell appears onscreen.
+            return (col >= 2 && col <= 4);
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * data can change.
+         */
+        public void setValueAt(Object value, int row, int col)
+        {
+            FriendInfo info = _Client.Friends.getFriend(row);
+            if (info != null)
+            {
+            	switch (col)
+            	{
+                	case 2:
+                		info.setCanSeeMeOnline((Boolean)value);
+                	case 3:
+                		info.setCanSeeMeOnMap((Boolean)value);
+                	case 4:
+                		info.setCanModifyMyObjects((Boolean)value);
+            	}
+            }
+            fireTableCellUpdated(row, col);
+        }
+    }
+
+    // This customized renderer can render objects of the type Text and Icon
+    private class HeaderCellRenderer extends DefaultTableCellRenderer
+    {
+    	private static final long serialVersionUID = 1L;
+    
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column)
+        {
+            // Inherit the colors and font from the header component
+            if (table != null)
+            {
+                JTableHeader header = table.getTableHeader();
+                if (header != null)
+                {
+                    setForeground(header.getForeground());
+                    setBackground(header.getBackground());
+                    setFont(header.getFont());
+                }
+            }
+
+            if (value instanceof ImageIcon)
+            {
+                setIcon((ImageIcon)value);
+                setText(Helpers.EmptyString);
+            }
+            else
+            {
+                setText((value == null) ? "" : value.toString());
+                setIcon(null);
+            }
+            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            setHorizontalAlignment(JLabel.CENTER);
+            return this;
+        }
+    };
+
+    private final JTable getJFriendsList()
 	{
 		if (jLFriendsList == null)
 		{
-			jLFriendsList = new JList(new SortedListModel(new DefaultListModel(), SortOrder.ASCENDING, FriendComparator));
+			jLFriendsList = new JTable(new FriendsTableData())
+			{
+				private static final long serialVersionUID = 1L;
+
+				//Implement table header tool tips.
+			    protected JTableHeader createDefaultTableHeader()
+			    {
+			        return new JTableHeader(columnModel)
+			        {
+						private static final long serialVersionUID = 1L;
+
+					    protected TableCellRenderer createDefaultRenderer()
+					    {
+					    	return new HeaderCellRenderer();
+					    }
+					    
+			            public String getToolTipText(MouseEvent e)
+			            {
+			                java.awt.Point p = e.getPoint();
+			                int index = columnModel.getColumnIndexAtX(p.x);
+			                int realIndex = columnModel.getColumn(index).getModelIndex();
+			                return jLFriendsList.getColumnName(realIndex);
+			            }
+			        };
+			    }			
+			};
+			
+			jLFriendsList.setPreferredScrollableViewportSize(new Dimension(200, 400));
+			jLFriendsList.setFillsViewportHeight(true);
+			jLFriendsList.setShowVerticalLines(true);
+
+			// only allow single selections.
+			jLFriendsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			
+	        int headerWidth = 0;
+	        int cellWidth = 0;
+	        Component comp = null;
+	        TableColumn column = null;
+	        TableModel model = jLFriendsList.getModel();
+	        TableCellRenderer headerRenderer = jLFriendsList.getTableHeader().getDefaultRenderer();
+	        for (int i = 0; i < 8; i++)
+	        {
+	            column = jLFriendsList.getColumnModel().getColumn(i);
+	 
+	            switch (i)
+	            {
+	            	case 0:
+	            		column.setHeaderValue(offline);
+	            		break;
+	            	case 2:
+	            		column.setHeaderValue(canSee);
+	            		break;
+	            	case 3:
+	            		column.setHeaderValue(canMap);
+	            		break;
+	            	case 4:
+	            		column.setHeaderValue(canEditMine);
+	            		break;
+	            	case 5:
+	            		column.setHeaderValue(canSee);
+	            		break;
+	            	case 6:
+	            		column.setHeaderValue(canMap);
+	            		break;
+	            	case 7:
+	            		column.setHeaderValue(canEditTheirs);
+	            		break;
+	            }
+	            if (i != 1)
+	            {
+	            	comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
+	            	headerWidth = comp.getPreferredSize().width;
+	 
+	            	comp = jLFriendsList.getDefaultRenderer(model.getColumnClass(i)).
+	            			             getTableCellRendererComponent(jLFriendsList, model.getValueAt(0, i), false, false, 0, i);
+	            	cellWidth = comp.getPreferredSize().width;
+	            	column.setMaxWidth(Math.max(headerWidth, cellWidth));
+	            }
+	            else
+	            {
+	            	comp = jLFriendsList.getDefaultRenderer(model.getColumnClass(i)).
+	            			             getTableCellRendererComponent(jLFriendsList, "A very long name that should fill out", false, false, 0, i);
+	            	cellWidth = comp.getPreferredSize().width;
+	            	column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+	            }
+	            	
+	        }
+			
 			// install a mouse handler
 			jLFriendsList.addMouseListener(new MouseAdapter()
 			{
 				@Override
 				public void mouseClicked(MouseEvent e)
 				{
-					// Select the item first.
-					jLFriendsList.setSelectedIndex(jLFriendsList.locationToIndex(e.getPoint()));
-
 					// If an index is selected...
-					if (jLFriendsList.getSelectedIndex() >= 0)
+					if (jLFriendsList.getSelectedRow() >= 0)
 					{
 						// If the left mouse button was pressed
 						if (SwingUtilities.isLeftMouseButton(e))
@@ -198,7 +473,7 @@ public class FriendList extends JPanel
 							if (e.getClickCount() >= 2)
 							{
 								// Get the associated agent.
-								FriendInfo friend = (FriendInfo) jLFriendsList.getSelectedValue();
+								FriendInfo friend = getSelectedFriendRow();
 								// Only allow creation of a chat window if the avatar name is resolved.
 								if (friend.getName() != null && !friend.getName().isEmpty())
 								{
@@ -209,301 +484,140 @@ public class FriendList extends JPanel
 						// If the right mouse button was pressed...
 						else if (SwingUtilities.isRightMouseButton(e))
 						{
-							FriendPopupMenu fpm = new FriendPopupMenu(_Client, (FriendInfo) (jLFriendsList.getSelectedValue()));
+							FriendPopupMenu fpm = new FriendPopupMenu(_Client, getSelectedFriendRow());
 							fpm.show(jLFriendsList, e.getX(), e.getY());
 						}
 					}
 				}
-			});
-			
-			// Initialize the list with the values from the friends manager
-			DefaultListModel model = (DefaultListModel) ((SortedListModel) jLFriendsList.getModel()).getUnsortedModel();
-			model.copyInto(_Client.Friends.getFriendList().values().toArray());
-			// create Renderer and display
-			jLFriendsList.setCellRenderer(new FriendListRow());
-			// only allow single selections.
-			jLFriendsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			});			
 		}
 		return jLFriendsList;
 	}
 
-	private final static Comparator<Object> FriendComparator = new Comparator<Object>()
-	{
-		@Override
-		public int compare(Object arg1, Object arg2)
-		{
-			if (arg1 instanceof FriendInfo && arg1 instanceof FriendInfo)
-			{
-				FriendInfo info1 = (FriendInfo) arg1;
-				FriendInfo info2 = (FriendInfo) arg2;
-				if (info1.getIsOnline() == (info2.getIsOnline()))
-				{
-					return info1.getName().compareToIgnoreCase(info2.getName());
-				}
-				if (info1.getIsOnline())
-					return 1;
-				return -1;
-			}
-			return arg1.equals(arg2) ? 0 : 1;
-		}
-	};
-
+	/**
+	 * Triggered when the other avatar has changed our rights
+	 */
 	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs>
 	{
 		@Override
 		public boolean callback(FriendRightsCallbackArgs e)
 		{
-			changeFriend(e.getFriendInfo());
+			changeFriend(e.getFriendInfo().getID());
 			return false;
 		}
 	}
 
+	/**
+	 * Triggered when online status changes are reported
+	 */
 	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
 		public boolean callback(FriendNotificationCallbackArgs e)
 		{
-			FriendInfo info = _Client.Friends.getFriendList().get(e.getAgentID());
-			if (info != null)
+			for (UUID uuid : e.getAgentID())
 			{
-				addFriend(info);
+				changeFriend(uuid);
 			}
 			return false;
 		}
 	}
 
+	/**
+	 * Triggered when a user has accepted or declined our friendship offer
+	 */
 	private class FriendshipResponse implements Callback<FriendshipResponseCallbackArgs>
 	{
 		@Override
 		public boolean callback(FriendshipResponseCallbackArgs e)
 		{
-			FriendInfo info =  _Client.Friends.getFriendList().get(e.getAgentID());
-			if (info != null)
+			UUID uuid = e.getAgentID();
+			String name = e.getName();
+			
+			/* Show dialog informing about the decision of the other */
+			
+			if (e.getAccepted())
 			{
-				if (e.getAccepted())
-				{
-					addFriend(info);
-				}
-				else
-				{
-					removeFriend(info);
-				}
+				invalidateData();
 			}
 			return false;
 		}
 	}
 
+	/**
+	 * Triggered when a user has sent us a friendship offer
+	 */
+	private class FriendshipOffered implements Callback<FriendshipOfferedCallbackArgs>
+	{
+		@Override
+		public boolean callback(FriendshipOfferedCallbackArgs e)
+		{
+			UUID uuid = e.getFriendID();
+			String name = e.getName();
+			try
+			{
+				/* Prompt user for acceptance of friendship offer */
+				boolean accepted = true;
+		
+				/* if accepted, send acceptance message */
+				if (accepted)
+				{
+					_Client.Friends.AcceptFriendship(uuid, e.getSessionID());
+					invalidateData();
+				}
+				else
+				{
+					_Client.Friends.DeclineFriendship(uuid, e.getSessionID());
+				}
+			}
+			catch (InventoryException ex)
+			{
+				Logger.Log("Inventory Exception", LogLevel.Error, _Client, ex);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Exception sending response", LogLevel.Error, _Client, ex);
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Triggered when a user has removed us from their friends list
+	 */
 	private class FriendshipTerminated implements Callback<FriendshipTerminatedCallbackArgs>
 	{
 		@Override
 		public boolean callback(FriendshipTerminatedCallbackArgs e)
 		{
-			FriendInfo info = findFriend(e.getOtherID());
-			if (info != null)
-			{
-				removeFriend(info);
-			}
+			invalidateData();
 			return false;
 		}
 	}
-	
-	/**
-	 * Find the entry based on the friends UUID
-	 * 
-	 * @param id The UUID of the friend
-	 * @return returns the FriendInfo if found, null otherwise
-	 */
-	public FriendInfo findFriend(UUID id)
+		
+	private FriendInfo getSelectedFriendRow()
 	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
-		for (Enumeration<?> e = model.elements(); e.hasMoreElements();)
-		{
-			FriendInfo info = (FriendInfo) e.nextElement();
-			if (info.getID().equals(id))
-			{
-				return info;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Add a friend to the list
-	 * 
-	 * @param info The friend info to add to the list
-	 * @return true if te friend was added, false if it was replaced
-	 */
-	public boolean addFriend(FriendInfo info)
-	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
-		int idx = model.indexOf(info);
-		if (idx < 0)
-			model.add(model.size(), info);
-		else
-			model.set(idx, info);
-		return idx < 0;
+		return _Client.Friends.getFriend(jLFriendsList.convertRowIndexToModel(jLFriendsList.getSelectedRow()));
 	}
 
-	/**
-	 * Remove a friend from the list
-	 * 
-	 * @param info The friend info to remove from the list
-	 * @return true if the friend info was successful removed, false if the friend could not be found, 
-	 */
-	public boolean removeFriend(FriendInfo info)
-	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
-		int idx = model.indexOf(info);
-		if (idx < 0)
-			return false;
-		model.remove(idx);
-		return true;
-	}
 	
 	/**
 	 * Change friend info in the list
 	 * 
-	 * @param info The friend info to change
-	 * @return true if the friend info was successfull changed, false otherwise
+	 * @param uuid The friend to change
 	 */
-	public boolean changeFriend(FriendInfo info)
+	private void changeFriend(UUID uuid)
 	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJFriendsList().getModel()).getUnsortedModel();
-		int idx = model.indexOf(info);
-		if (idx >= 0)
-			model.set(idx, info);
-		return idx >= 0;
+		ListSelectionEvent event = new ListSelectionEvent(this, _Client.Friends.getFriendIndex(uuid), _Client.Friends.getFriendIndex(uuid), false);
+		getJFriendsList().valueChanged(event);
 	}
 
-	private class FriendListRow extends JPanel implements ListCellRenderer
+	private void invalidateData()
 	{
-		private static final long serialVersionUID = 1L;
-
-		JLabel jlblName, jlblTyping, jlblVoice;
-		JCheckBox jckCanSeeMe, jckCanMapMe, jckCanEditMe, jckCanSeeThem, jckCanMapThem, jckCanEditThem;
-
-		public FriendListRow()
-		{
-			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[] { 180, 16, 16, 0, 0, 0, 0, 0, 0, 0 };
-			gridBagLayout.rowHeights = new int[] { 0, 0 };
-			gridBagLayout.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-			gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-			setLayout(gridBagLayout);
-
-			jlblName = new JLabel(offline);
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.gridy = 0;
-			add(jlblName, gridBagConstraints);
-
-			jlblTyping = new JLabel();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 1;
-			gridBagConstraints.gridy = 0;
-			add(jlblTyping, gridBagConstraints);
-
-			jlblVoice = new JLabel("");
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 2;
-			gridBagConstraints.gridy = 0;
-			add(jlblVoice, gridBagConstraints);
-
-			jckCanSeeMe = new JCheckBox();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 3;
-			gridBagConstraints.gridy = 0;
-			add(jckCanSeeMe, gridBagConstraints);
-
-			jckCanMapMe = new JCheckBox();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 4;
-			gridBagConstraints.gridy = 0;
-			add(jckCanMapMe, gridBagConstraints);
-
-			jckCanEditMe = new JCheckBox();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 5;
-			gridBagConstraints.gridy = 0;
-			add(jckCanEditMe, gridBagConstraints);
-
-			jckCanSeeThem = new JCheckBox();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 6;
-			gridBagConstraints.gridy = 0;
-			add(jckCanSeeThem, gridBagConstraints);
-
-			jckCanMapThem = new JCheckBox();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(0, 0, 0, 5);
-			gridBagConstraints.gridx = 7;
-			gridBagConstraints.gridy = 0;
-			add(jckCanMapThem, gridBagConstraints);
-
-			jckCanEditThem = new JCheckBox();
-			gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 8;
-			gridBagConstraints.gridy = 0;
-			add(jckCanEditThem, gridBagConstraints);
-		}
-
-		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-				boolean cellHasFocus)
-		{
-			FriendInfo info = (FriendInfo) value;
-
-			String name = info.getName();
-			if (name == null || name.isEmpty())
-				name = "loading...";
-			jlblName.setText(name);
-			jlblName.setIcon(info.getIsOnline() ? online : offline);
-			jckCanSeeMe.setSelected(info.getCanSeeMeOnline());
-			jckCanMapMe.setSelected(info.getCanSeeMeOnMap());
-			jckCanEditMe.setSelected(info.getCanModifyMyObjects());
-			jckCanSeeThem.setSelected(info.getCanSeeThemOnline());
-			jckCanMapThem.setSelected(info.getCanSeeThemOnMap());
-			jckCanEditThem.setSelected(info.getCanModifyTheirObjects());
-
-			Color background, foreground;
-			if (isSelected)
-			{
-				background = list.getSelectionBackground();
-				foreground = list.getSelectionForeground();
-			}
-			else
-			{
-				background = list.getBackground();
-				foreground = list.getForeground();
-			}
-
-			jlblName.setBackground(background);
-			jlblName.setForeground(foreground);
-			jckCanSeeMe.setBackground(background);
-			jckCanSeeMe.setForeground(foreground);
-			jckCanMapMe.setBackground(background);
-			jckCanMapMe.setForeground(foreground);
-			jckCanEditMe.setBackground(background);
-			jckCanEditMe.setForeground(foreground);
-			jckCanSeeThem.setBackground(background);
-			jckCanSeeThem.setForeground(foreground);
-			jckCanMapThem.setBackground(background);
-			jckCanMapThem.setForeground(foreground);
-
-			setEnabled(list.isEnabled());
-			setFont(list.getFont());
-			return this;
-		}
+		ListSelectionEvent event = new ListSelectionEvent(this, 0, _Client.Friends.getFriendList().size() - 1, false);
+		getJFriendsList().valueChanged(event);
 	}
-
+	
 	private class FriendPopupMenu extends JPopupMenu
 	{
 		private static final long serialVersionUID = 1L;
@@ -577,7 +691,7 @@ public class FriendList extends JPanel
 			{
 				jmiSendMessage = new JMenuItem("Send message");
 				// Add an ActionListener
-				jmiSendMessage.addActionListener(new SendIMActionListener());
+				installAction(jmiSendMessage, cmdStartIM);
 			}
 			if (_Info.getName() == null || _Info.getName().isEmpty())
 				jmiSendMessage.setEnabled(false);
@@ -595,7 +709,7 @@ public class FriendList extends JPanel
 			{
 				jmiProfile = new JMenuItem("Profile ..");
 				// add an ActionListener
-				jmiProfile.addActionListener(new ProfileActionListener());
+				installAction(jmiProfile, cmdProfile);
 			}
 			return jmiProfile;
 		}
@@ -611,7 +725,7 @@ public class FriendList extends JPanel
 			{
 				jmiMoneyTransfer = new JMenuItem("Pay ..");
 				// add an ActionListener
-				jmiMoneyTransfer.addActionListener(new MoneyActionListener());
+				installAction(jmiMoneyTransfer, cmdPayTo);
 			}
 			return jmiMoneyTransfer;
 		}
@@ -627,7 +741,7 @@ public class FriendList extends JPanel
 			{
 				jmiOfferTeleport = new JMenuItem("Offer Teleport ..");
 				// Add an action listener.
-				jmiOfferTeleport.addActionListener(new OfferTeleportActionListener());
+				installAction(jmiOfferTeleport, cmdTeleportAsk);
 			}
 			return jmiOfferTeleport;
 		}
@@ -643,7 +757,7 @@ public class FriendList extends JPanel
 			{
 				jmiRemoveAsFriend = new JMenuItem("Remove ..");
 				// Add an action listener
-				jmiRemoveAsFriend.addActionListener(new RemoveFriendActionListener());
+				installAction(jmiRemoveAsFriend, cmdFriendRemove);
 			}
 			return jmiRemoveAsFriend;
 		}
@@ -659,7 +773,7 @@ public class FriendList extends JPanel
 			{
 				jmiTeleportTo = new JMenuItem("Teleport to");
 				// Add an ActionListener
-				jmiTeleportTo.addActionListener(new TeleportActionListener());
+				installAction(jmiTeleportTo, cmdTeleportTo);
 			}
 			return jmiTeleportTo;
 		}
@@ -676,123 +790,41 @@ public class FriendList extends JPanel
 			{
 				jmiAutopilotTo = new JMenuItem("Autopilot to");
 				// Add an ActionListener.
-				jmiAutopilotTo.addActionListener(new AutopilotActionListener());
+				installAction(jmiAutopilotTo, cmdAutopilotTo);
 			}
 			return jmiAutopilotTo;
 		}
 	}
 	
-	private class SendIMActionListener implements ActionListener
+	@Override
+	public void actionPerformed(ActionEvent e)
 	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
+		FriendInfo info = getSelectedFriendRow();
+		if (e.getActionCommand().equals(cmdPayTo))
 		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
+			// TODO: open a money transfer dialog			
+		}
+		else if (e.getActionCommand().equals(cmdProfile))
+		{
+			// TODO: open avatar profile dialog			
+		}
+		else if (e.getActionCommand().equals(cmdStartIM))
+		{
 			// TODO: Open a private chat with the friend
 		}
-	}
-
-
-	private class ProfileActionListener implements ActionListener
-	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
+		else if (e.getActionCommand().equals(cmdFriendRemove))
 		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
-			// TODO: open avatar profile dialog
-		}
-	}
-
-	private class MoneyActionListener implements ActionListener
-	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
-			// TODO: open a money transfer dialog
-		}
-	}
-
-	private class OfferTeleportActionListener implements ActionListener
-	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
-			// Offer teleportation.
-			try
-			{
-				_Client.Self.SendTeleportLure(info.getID());
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("SendTeleportLure failed", LogLevel.Error, _Client, ex);
-			}
-		}
-	}
-
-	private class RemoveFriendActionListener implements ActionListener
-	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
-			// Terminate the friendship
 			try
 			{
 				_Client.Friends.TerminateFriendship(info.getID());
-				removeFriend(info);
 			}
 			catch (Exception ex)
 			{
 				Logger.Log("TerminateFriendship failed", LogLevel.Error, _Client, ex);
 			}
 		}
-	}
-
-	private class TeleportActionListener implements ActionListener
-	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
+		else if (e.getActionCommand().equals(cmdTeleportTo))
 		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
-			// Teleport
 			try
 			{
 				Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
@@ -803,21 +835,19 @@ public class FriendList extends JPanel
 				Logger.Log("Teleporting to " + info.getName() + " failed", LogLevel.Error, _Client, ex);
 			}
 		}
-	}
-	
-	private class AutopilotActionListener implements ActionListener
-	{
-		/**
-		 * Called when an action is performed.
-		 * 
-		 * @param e
-		 *            The ActionEvent.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e)
+		else if (e.getActionCommand().equals(cmdTeleportAsk))
 		{
-			FriendInfo info = (FriendInfo) getJFriendsList().getSelectedValue();
-			// Autopilot
+			try
+			{
+				_Client.Self.SendTeleportLure(info.getID());
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("SendTeleportLure failed", LogLevel.Error, _Client, ex);
+			}
+		}
+		else if (e.getActionCommand().equals(cmdAutopilotTo))
+		{
 			try
 			{
 				Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
