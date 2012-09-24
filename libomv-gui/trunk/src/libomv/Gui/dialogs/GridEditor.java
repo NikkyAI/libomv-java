@@ -90,6 +90,8 @@ public class GridEditor extends JDialog
 	private JTextField jTxtSupportUrl;
 	private JTextField jTxtRegisterUrl;
 	private JTextField jTxtPasswordUrl;
+	private JTextField jTxtSearchUrl;
+	private JTextField jTxtCurrencySym;
 	private JPanel jPaneGridBtnPanel;
 	private JButton jBtnClearGridInfo;
 	private JPanel jBtnPanel;
@@ -97,6 +99,7 @@ public class GridEditor extends JDialog
 	private JButton jBtnAdd;
 	private JButton jBtnRemove;
 	private JButton jBtnSetDefault;
+	private GridBagConstraints gbConstraints_1;
 
 	public GridEditor(GridClient client, JFrame parent, String title, boolean modal)
 	{
@@ -122,11 +125,10 @@ public class GridEditor extends JDialog
 		getContentPane().add(getButtonPanel(), BorderLayout.SOUTH);
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 1, 2, 3, 0, 1, 0 };
-		gridBagLayout.rowHeights = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-				Double.MIN_VALUE };
+		gridBagLayout.columnWidths = new int[] { 1, 2, 3, 1, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		jEditPanel.setLayout(gridBagLayout);
 
 		JLabel jLblName = new JLabel("Name");
@@ -270,6 +272,36 @@ public class GridEditor extends JDialog
 		gbConstraints.gridx = 2;
 		gbConstraints.gridy = 10;
 		jEditPanel.add(getJTxtPasswordUrl(), gbConstraints);
+
+		JLabel jLblSearchUri = new JLabel("Search URI");
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 11;
+		jEditPanel.add(jLblSearchUri, gbConstraints);
+
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 11;
+		jEditPanel.add(getJTxtSearchUrl(), gbConstraints);
+
+		JLabel jLblCurrencySymbol = new JLabel("Currency");
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.insets = new Insets(5, 5, 5, 5);
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = 12;
+		jEditPanel.add(jLblCurrencySymbol, gbConstraints);
+
+		gbConstraints_1 = new GridBagConstraints();
+		gbConstraints_1.anchor = GridBagConstraints.WEST;
+		gbConstraints_1.insets = new Insets(5, 0, 5, 5);
+		gbConstraints_1.gridx = 2;
+		gbConstraints_1.gridy = 12;
+		jEditPanel.add(getJTxtCurrencySym(), gbConstraints_1);
 
 		getRootPane().setDefaultButton(getJBtnOk());
 		updateGridProperties(_Client.getDefaultGrid(), false);
@@ -830,6 +862,26 @@ public class GridEditor extends JDialog
 		return jTxtPasswordUrl;
 	}
 
+	private JTextField getJTxtSearchUrl()
+	{
+		if (jTxtSearchUrl == null)
+		{
+			jTxtSearchUrl = new JTextField();
+			jTxtSearchUrl.setColumns(10);
+		}
+		return jTxtSearchUrl;
+	}
+
+	private JTextField getJTxtCurrencySym()
+	{
+		if (jTxtCurrencySym == null)
+		{
+			jTxtCurrencySym = new JTextField();
+			jTxtCurrencySym.setColumns(10);
+		}
+		return jTxtCurrencySym;
+	}
+
 	private DefaultListModel getJLsModel()
 	{
 		if (jLsModel == null)
@@ -917,6 +969,8 @@ public class GridEditor extends JDialog
 			grid.support = getJTxtSupportUrl().getText();
 			grid.register = getJTxtRegisterUrl().getText();
 			grid.passworduri = getJTxtPasswordUrl().getText();
+			grid.searchurl = getJTxtSearchUrl().getText();
+			grid.currencySym = getJTxtCurrencySym().getText();
 		}
 		else
 		{
@@ -932,6 +986,8 @@ public class GridEditor extends JDialog
 			getJTxtSupportUrl().setText(grid == null ? Helpers.EmptyString : grid.support);
 			getJTxtRegisterUrl().setText(grid == null ? Helpers.EmptyString : grid.register);
 			getJTxtPasswordUrl().setText(grid == null ? Helpers.EmptyString : grid.passworduri);
+			getJTxtSearchUrl().setText(grid == null ? Helpers.EmptyString : grid.searchurl);
+			getJTxtCurrencySym().setText(grid == null ? Helpers.EmptyString : grid.currencySym);
 		}
 		return grid;
 	}

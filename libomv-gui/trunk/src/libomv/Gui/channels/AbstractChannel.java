@@ -84,7 +84,7 @@ public abstract class AbstractChannel extends JPanel
 			}
 		});
 
-		getRootPane().setDefaultButton(btnSay);
+//		getRootPane().setDefaultButton(btnSay);
 		panelSouth.add(btnSay);
 		add(panelSouth, BorderLayout.SOUTH);
 	}

@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 
 import libomv.AgentManager.BalanceCallbackArgs;
 import libomv.GridClient;
+import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
 import libomv.utils.Callback;
 
@@ -47,17 +48,18 @@ public class OnlinePanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	private static final String cmdFriends = "friends";
-	private static final String cmdGroups = "groups";
-	private static final String cmdInventory = "inventory";
-	private static final String cmdSearch = "search";
-	private static final String cmdMaps = "maps";
-	private static final String cmdObjects = "objects";
-	private static final String cmdMedia = "media";
-	private static final String cmdVoice = "voice";
+	public static final String cmdFriends = "friends";
+	public static final String cmdGroups = "groups";
+	public static final String cmdInventory = "inventory";
+	public static final String cmdSearch = "search";
+	public static final String cmdMaps = "maps";
+	public static final String cmdObjects = "objects";
+	public static final String cmdMedia = "media";
+	public static final String cmdVoice = "voice";
 	
 	private GridClient _Client;
 	private MainControl _Main;
+	private CommWindow _Comm;
 	
 	private JMenuBar jMbMain;
 	private JLabel jMiAmount;
@@ -165,7 +167,20 @@ public class OnlinePanel extends JPanel implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		/* Handle local events */
-		
+		if (e.getActionCommand().equals(cmdFriends) ||
+			e.getActionCommand().equals(cmdGroups))
+		{
+			if (_Comm == null)
+			{
+				_Comm = new CommWindow(_Client);
+			}
+			_Comm.setFocus(e.getActionCommand());
+		    _Comm.setVisible(true);
+		}
+		else if (e.getActionCommand().equals(cmdInventory))
+		{
+			
+		}
 		/* Pass to main window to be handled */
 		_Main.actionPerformed(e);
 	}

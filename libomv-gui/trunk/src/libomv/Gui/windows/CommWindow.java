@@ -28,8 +28,9 @@
  */
 package libomv.Gui.windows;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -38,6 +39,7 @@ import javax.swing.border.LineBorder;
 import libomv.GridClient;
 import libomv.Gui.channels.AbstractChannel;
 import libomv.Gui.channels.LocalChannel;
+import libomv.Gui.components.OnlinePanel;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 
@@ -57,8 +59,36 @@ public class CommWindow extends JFrame
 		_Client = client;
 		
 		setTitle("Communication");
-		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
-		getContentPane().add(getJTpComm());				
+		
+		// Choose a sensible minimum size.
+		setPreferredSize(new Dimension(280, 400));
+		getContentPane().setLayout(new BorderLayout(0, 0));
+
+		getContentPane().add(getJTpComm());
+
+		//Display the window.
+        pack();
+        setVisible(true);
+	}
+	
+	public void setFocus(String focus)
+	{
+		if (focus.equals("chat"))
+		{
+			getJTpComm().setSelectedIndex(1);
+		}
+		else
+		{
+			getJTpComm().setSelectedIndex(0);
+			if (focus.equals(OnlinePanel.cmdFriends))
+			{
+				getJTpContacts().setSelectedIndex(0);
+			}
+			else if (focus.equals(OnlinePanel.cmdGroups))
+			{
+				getJTpContacts().setSelectedIndex(1);
+			}
+		}
 	}
 	
 	private JTabbedPane getJTpComm()
