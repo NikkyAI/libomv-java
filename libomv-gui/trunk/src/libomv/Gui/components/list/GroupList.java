@@ -48,11 +48,15 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import libomv.GridClient;
 import libomv.FriendsManager.FriendInfo;
 import libomv.GroupManager.Group;
+import libomv.GroupManager.GroupInvitationCallbackArgs;
+import libomv.GroupManager.GroupOperationCallbackArgs;
 import libomv.Gui.components.list.SortedListModel.SortOrder;
+import libomv.Gui.dialogs.PopupQuestionDialog;
+import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
+import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -60,18 +64,22 @@ public class GroupList extends JScrollPane
 {
 	private static final long serialVersionUID = 1L;
 
-	private GridClient _Client;
+	private MainControl _Main;
 	
 	private JList jLGroupsList;
-
+	
 	/**
 	 * Constructs a list to display
 	 */
-	public GroupList(GridClient client)
+	public GroupList(MainControl main)
 	{
 		super();
-		this._Client = client;
+		_Main = main;
 
+		_Main.getGridClient().Groups.OnGroupInvitation.add(new GroupInvitation());
+		_Main.getGridClient().Groups.OnGroupJoinedReply.add(new GroupJoined());
+		_Main.getGridClient().Groups.OnGroupLeaveReply.add(new GroupLeave());
+		
 		// Choose a sensible minimum size.
 		setPreferredSize(new Dimension(200, 0));
 		// Add the friends list to the viewport.
@@ -110,7 +118,7 @@ public class GroupList extends JScrollPane
 						// If the right mouse button was pressed...
 						else if (SwingUtilities.isRightMouseButton(e))
 						{
-							GroupPopupMenu gpm = new GroupPopupMenu(_Client, (Group) (jLGroupsList.getSelectedValue()));
+							GroupPopupMenu gpm = new GroupPopupMenu((Group) (jLGroupsList.getSelectedValue()));
 							gpm.show(jLGroupsList, e.getX(), e.getY());
 						}
 					}
@@ -119,7 +127,7 @@ public class GroupList extends JScrollPane
 			
 			// Initialize the list with the values from the friends manager
 			DefaultListModel model = (DefaultListModel) ((SortedListModel) jLGroupsList.getModel()).getUnsortedModel();
-			model.copyInto(_Client.Groups.GroupName2KeyCache.values().toArray());
+			model.copyInto(_Main.getGridClient().Groups.GroupName2KeyCache.values().toArray());
 			// create Renderer and display
 			jLGroupsList.setCellRenderer(new GroupListRow());
 			// only allow single selections.
@@ -224,7 +232,7 @@ public class GroupList extends JScrollPane
 			int style = font.getStyle();
 			Group group = (Group) value;
 
-			if (_Client.Self.getActiveGroup().equals(group.getID()))
+			if (_Main.getGridClient().Self.getActiveGroup().equals(group.getID()))
 			{
 				style |= Font.BOLD;
 			}
@@ -242,8 +250,6 @@ public class GroupList extends JScrollPane
 		private static final long serialVersionUID = 1L;
 		// The friend associated with the menu
 		private Group _Info;
-		// The client to use to communicate with the grid
-		private GridClient _Client;
 
 		// The menu item used to send the group a message
 		private JMenuItem jmiSendMessage;
@@ -268,16 +274,15 @@ public class GroupList extends JScrollPane
 		 * @param info
 		 *            The friend to generate the menu for.
 		 */
-		public GroupPopupMenu(GridClient client, Group info)
+		public GroupPopupMenu(Group info)
 		{
 			super();
 			this._Info = info;
-			this._Client = client;
 
 			// Send message
 			add(getJmiSendMessage());
 			// Activate this group
-			add(getJmiActivate(_Client.Self.getActiveGroup().equals(_Info.getID())));
+			add(getJmiActivate(_Main.getGridClient().Self.getActiveGroup().equals(_Info.getID())));
 			// Add the group invitation menu
 			add(getJmiInvite());
 			// Add the group info menu item
@@ -344,11 +349,11 @@ public class GroupList extends JScrollPane
 					{
 						try
 						{
-							_Client.Groups.ActivateGroup(_Info.getID());
+							_Main.getGridClient().Groups.ActivateGroup(_Info.getID());
 						}
 						catch (Exception ex)
 						{
-							Logger.Log("ActivateGroup failed", LogLevel.Error, _Client, ex);
+							Logger.Log("ActivateGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
 						}
 					}
 				});
@@ -497,16 +502,64 @@ public class GroupList extends JScrollPane
 						// Terminate the membership
 						try
 						{
-							_Client.Groups.LeaveGroup(_Info.getID());
+							_Main.getGridClient().Groups.LeaveGroup(_Info.getID());
 						}
 						catch (Exception ex)
 						{
-							Logger.Log("LeaveGroup failed", LogLevel.Error, _Client, ex);
+							Logger.Log("LeaveGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
 						}
 					}
 				});
 			}
 			return jmiLeaveGroup;
+		}
+	}
+	
+	private class GroupInvitation implements Callback<GroupInvitationCallbackArgs>
+	{
+		@Override
+		public boolean callback(GroupInvitationCallbackArgs args)
+		{
+			final UUID groupID = args.getGroupID();
+			final UUID session = args.getSessionID();
+
+			new PopupQuestionDialog(_Main.getMainJFrame(), "Group Invitation", args.getFromName() + " has invited you to join a group with following message<br>'" + args.getMessage()
+					                + "'.<br>Do you accept this offer?", "Accept", "Decline", new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					try
+{
+						_Main.getGridClient().Self.GroupInviteRespond(groupID, session, true);
+					}
+					catch (Exception ex)
+					{
+						Logger.Log("Exception when trying to accept group invitation", LogLevel.Error, _Main.getGridClient(), ex);
+					}
+					
+				}
+			});
+			return false;
+		}
+		
+	}
+
+	private class GroupJoined implements Callback<GroupOperationCallbackArgs>
+	{
+		@Override
+		public boolean callback(GroupOperationCallbackArgs args)
+		{
+			return false;
+		}
+	}
+	
+	private class GroupLeave implements Callback<GroupOperationCallbackArgs>
+	{
+		@Override
+		public boolean callback(GroupOperationCallbackArgs args)
+		{
+			return false;
 		}
 	}
 }

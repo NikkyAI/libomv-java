@@ -43,15 +43,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 // Abstract base class for a dialog showing a message and two buttons to chose from
-public abstract class PopupQuestionDialog extends PopupDialog
+public class PopupQuestionDialog extends PopupDialog
 {
 	private static final long serialVersionUID = 1L;
-
-	public PopupQuestionDialog(JFrame parent, String title, String message, String buttonAcceptText,
-			String buttonDeclineText)
+	
+	public PopupQuestionDialog(JFrame owner, String title, String message, String buttonAcceptText, String buttonDeclineText, ActionListener listener)
 	{
 		// Super constructor
-		super(parent, title, true);
+		super(owner, title, true, listener);
 
 		// Create a label for the message
 		JLabel jlMessage = new JLabel(message);
@@ -90,13 +89,15 @@ public abstract class PopupQuestionDialog extends PopupDialog
 		// Create the accept
 		JButton jbAccept = new JButton(buttonAcceptText);
 		// Add the action listener
-		jbAccept.addActionListener(getAcceptButtonActionListener());
+		jbAccept.setActionCommand(cmdAccept);
+		jbAccept.addActionListener(_Listener);
 		// Add the button to the south panel
 		jpSouth.add(jbAccept);
 		// Create the decline
 		JButton jbDecline = new JButton(buttonDeclineText);
 		// Add the action listener
-		jbDecline.addActionListener(getDeclineButtonActionListener());
+		jbDecline.setActionCommand(cmdDecline);
+		jbDecline.addActionListener(_Listener);
 		// Add the button to the south panel
 		jpSouth.add(jbDecline);
 		// Add the button to the south
@@ -109,22 +110,4 @@ public abstract class PopupQuestionDialog extends PopupDialog
 		// Open in the center of the screen
 		setLocationRelativeTo(null);
 	}
-
-	/**
-	 * Get the {@link ActionListener} to be called when the accept button is
-	 * actioned
-	 * 
-	 * @return The {@link ActionListener} to be called when the accept button is
-	 *         actioned
-	 */
-	protected abstract ActionListener getAcceptButtonActionListener();
-
-	/**
-	 * Get the {@link ActionListener} to be called when the decline button is
-	 * actioned
-	 * 
-	 * @return The {@link ActionListener} to be called when the decline button
-	 *         is actioned
-	 */
-	protected abstract ActionListener getDeclineButtonActionListener();
 }

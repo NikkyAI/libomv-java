@@ -35,6 +35,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import libomv.GridClient;
+import libomv.Gui.components.list.FriendList;
+import libomv.Gui.components.list.GroupList;
+
 public interface MainControl extends ActionListener
 {
 	public static final String cmdOnline = "online";
@@ -49,5 +53,8 @@ public interface MainControl extends ActionListener
 	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand);
 	public void setMenuBar(JMenuBar menuBar);
 	public JFrame getMainJFrame();
+	public GridClient getGridClient();
+	public FriendList getFriendList();
+	public GroupList getGroupList();
 	public void setContentArea(Component pane);
 }

@@ -39,9 +39,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -56,7 +53,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
@@ -70,8 +66,12 @@ import libomv.FriendsManager.FriendRightsCallbackArgs;
 import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
 import libomv.FriendsManager.FriendshipResponseCallbackArgs;
 import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
-import libomv.GridClient;
 import libomv.Gui.Resources;
+import libomv.Gui.dialogs.PopupDialog;
+import libomv.Gui.dialogs.PopupInfoDialog;
+import libomv.Gui.dialogs.PopupInfoDialog.Severity;
+import libomv.Gui.dialogs.PopupQuestionDialog;
+import libomv.Gui.windows.MainControl;
 import libomv.inventory.InventoryException;
 import libomv.types.UUID;
 import libomv.types.Vector3;
@@ -101,8 +101,7 @@ public class FriendList extends JPanel implements ActionListener
 	private static ImageIcon canEditMine;
 	private static ImageIcon canEditTheirs;
 
-	private GridClient _Client;
-	private List<FriendInfo> indexList;
+	private MainControl _Main;
 
 	private JScrollPane jScrollPane;
 	private JTable jLFriendsList;
@@ -118,17 +117,17 @@ public class FriendList extends JPanel implements ActionListener
 	/**
 	 * Constructs a list to display
 	 */
-	public FriendList(GridClient client)
+	public FriendList(MainControl main)
 	{
 		super();
-		this._Client = client;
+		this._Main = main;
 
 		// install friend change event handlers
-		_Client.Friends.OnFriendRights.add(new FriendRightsChanged());
-		_Client.Friends.OnFriendNotification.add(new FriendNotification());
-		_Client.Friends.OnFriendshipResponse.add(new FriendshipResponse());
-		_Client.Friends.OnFriendshipOffered.add(new FriendshipOffered());
-		_Client.Friends.OnFriendshipTerminated.add(new FriendshipTerminated());
+		_Main.getGridClient().Friends.OnFriendRights.add(new FriendRightsChanged());
+		_Main.getGridClient().Friends.OnFriendNotification.add(new FriendNotification());
+		_Main.getGridClient().Friends.OnFriendshipResponse.add(new FriendshipResponse());
+		_Main.getGridClient().Friends.OnFriendshipOffered.add(new FriendshipOffered());
+		_Main.getGridClient().Friends.OnFriendshipTerminated.add(new FriendshipTerminated());
 
 		empty = null;
 		offline = Resources.loadIcon(Resources.ICON_OFFLINE);
@@ -246,7 +245,7 @@ public class FriendList extends JPanel implements ActionListener
  
         public int getRowCount()
         {
-            return _Client.Friends.getFriendList().size();
+            return _Main.getGridClient().Friends.getFriendList().size();
         }
  
         public String getColumnName(int col)
@@ -256,7 +255,7 @@ public class FriendList extends JPanel implements ActionListener
  
         public Object getValueAt(int row, int col)
         {
-            FriendInfo info = _Client.Friends.getFriend(row);
+            FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
             if (info != null)
             {
             	switch (col)
@@ -312,7 +311,7 @@ public class FriendList extends JPanel implements ActionListener
          */
         public void setValueAt(Object value, int row, int col)
         {
-            FriendInfo info = _Client.Friends.getFriend(row);
+            FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
             if (info != null)
             {
             	switch (col)
@@ -484,7 +483,7 @@ public class FriendList extends JPanel implements ActionListener
 						// If the right mouse button was pressed...
 						else if (SwingUtilities.isRightMouseButton(e))
 						{
-							FriendPopupMenu fpm = new FriendPopupMenu(_Client, getSelectedFriendRow());
+							FriendPopupMenu fpm = new FriendPopupMenu(getSelectedFriendRow());
 							fpm.show(jLFriendsList, e.getX(), e.getY());
 						}
 					}
@@ -502,7 +501,8 @@ public class FriendList extends JPanel implements ActionListener
 		@Override
 		public boolean callback(FriendRightsCallbackArgs e)
 		{
-			changeFriend(e.getFriendInfo().getID());
+			int index = _Main.getGridClient().Friends.getFriendIndex(e.getFriendInfo().getID());
+			((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsUpdated(index, index);
 			return false;
 		}
 	}
@@ -517,7 +517,8 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			for (UUID uuid : e.getAgentID())
 			{
-				changeFriend(uuid);
+				int index = _Main.getGridClient().Friends.getFriendIndex(uuid);
+				((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsUpdated(index, index);
 			}
 			return false;
 		}
@@ -531,14 +532,17 @@ public class FriendList extends JPanel implements ActionListener
 		@Override
 		public boolean callback(FriendshipResponseCallbackArgs e)
 		{
-			UUID uuid = e.getAgentID();
-			String name = e.getName();
+			String verb = e.getAccepted() ? "accepted" : "declined";
+			String title = "Friendship " + verb;
+			String message = e.getName() + " has " + verb + " your friendship offer.";
 			
 			/* Show dialog informing about the decision of the other */
+			new PopupInfoDialog(_Main.getMainJFrame(), title, message, Severity.INFORMATIONAL);		
 			
 			if (e.getAccepted())
 			{
-				invalidateData();
+				int index = _Main.getGridClient().Friends.getFriendIndex(e.getAgentID());
+				((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsInserted(index, index);
 			}
 			return false;
 		}
@@ -552,32 +556,41 @@ public class FriendList extends JPanel implements ActionListener
 		@Override
 		public boolean callback(FriendshipOfferedCallbackArgs e)
 		{
-			UUID uuid = e.getFriendID();
-			String name = e.getName();
-			try
+			final UUID uuid = e.getFriendID();
+			final UUID session = e.getSessionID();
+
+			/* Prompt user for acceptance of friendship offer */
+			new PopupQuestionDialog(_Main.getMainJFrame(), "Friendship Request", e.getName() + " wants to be your friend. Do you accept this request?",
+					                "Accept", "Decline", new ActionListener()
 			{
-				/* Prompt user for acceptance of friendship offer */
-				boolean accepted = true;
-		
-				/* if accepted, send acceptance message */
-				if (accepted)
+				@Override
+				public void actionPerformed(ActionEvent ae)
 				{
-					_Client.Friends.AcceptFriendship(uuid, e.getSessionID());
-					invalidateData();
+					try
+					{
+						/* if accepted, send acceptance message */
+						if (ae.getActionCommand().equals(PopupDialog.cmdAccept))
+						{
+							_Main.getGridClient().Friends.AcceptFriendship(uuid, session);
+							int index = _Main.getGridClient().Friends.getFriendIndex(uuid);
+							((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsInserted(index, index);
+						}
+						else if (ae.getActionCommand().equals(PopupDialog.cmdDecline))
+						{
+							_Main.getGridClient().Friends.DeclineFriendship(uuid, session);
+						}
+					}
+					catch (InventoryException ex)
+					{
+						Logger.Log("Inventory Exception", LogLevel.Error, _Main.getGridClient(), ex);
+					}
+					catch (Exception ex)
+					{
+						Logger.Log("Exception sending response", LogLevel.Error, _Main.getGridClient(), ex);
+					}
+					
 				}
-				else
-				{
-					_Client.Friends.DeclineFriendship(uuid, e.getSessionID());
-				}
-			}
-			catch (InventoryException ex)
-			{
-				Logger.Log("Inventory Exception", LogLevel.Error, _Client, ex);
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Exception sending response", LogLevel.Error, _Client, ex);
-			}
+			});		
 			return false;
 		}
 	}
@@ -590,41 +603,22 @@ public class FriendList extends JPanel implements ActionListener
 		@Override
 		public boolean callback(FriendshipTerminatedCallbackArgs e)
 		{
-			invalidateData();
+			int index = _Main.getGridClient().Friends.getFriendIndex(e.getOtherID());
+			((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsDeleted(index, index);
 			return false;
 		}
 	}
 		
 	private FriendInfo getSelectedFriendRow()
 	{
-		return _Client.Friends.getFriend(jLFriendsList.convertRowIndexToModel(jLFriendsList.getSelectedRow()));
+		return _Main.getGridClient().Friends.getFriend(jLFriendsList.convertRowIndexToModel(jLFriendsList.getSelectedRow()));
 	}
 
-	
-	/**
-	 * Change friend info in the list
-	 * 
-	 * @param uuid The friend to change
-	 */
-	private void changeFriend(UUID uuid)
-	{
-		ListSelectionEvent event = new ListSelectionEvent(this, _Client.Friends.getFriendIndex(uuid), _Client.Friends.getFriendIndex(uuid), false);
-		getJFriendsList().valueChanged(event);
-	}
-
-	private void invalidateData()
-	{
-		ListSelectionEvent event = new ListSelectionEvent(this, 0, _Client.Friends.getFriendList().size() - 1, false);
-		getJFriendsList().valueChanged(event);
-	}
-	
 	private class FriendPopupMenu extends JPopupMenu
 	{
 		private static final long serialVersionUID = 1L;
 		// The friend associated with the menu
 		private FriendInfo _Info;
-		// The client to use to communicate with the grid
-		private GridClient _Client;
 
 		// The menu item used to send the agent a message
 		private JMenuItem jmiSendMessage;
@@ -649,11 +643,10 @@ public class FriendList extends JPanel implements ActionListener
 		 * @param info
 		 *            The friend to generate the menu for.
 		 */
-		public FriendPopupMenu(GridClient client, FriendInfo info)
+		public FriendPopupMenu(FriendInfo info)
 		{
 			super();
 			this._Info = info;
-			this._Client = client;
 
 			// Send message
 			add(getJmiSendMessage());
@@ -665,7 +658,7 @@ public class FriendList extends JPanel implements ActionListener
 			{
 				// Offer teleport.
 				add(getJmiOfferTeleport());
-				if (_Client.Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID()))
+				if (_Main.getGridClient().Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID()))
 				{
 					add(new JPopupMenu.Separator());
 					// Allow teleporting to the agent
@@ -799,7 +792,7 @@ public class FriendList extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		FriendInfo info = getSelectedFriendRow();
+		final FriendInfo info = getSelectedFriendRow();
 		if (e.getActionCommand().equals(cmdPayTo))
 		{
 			// TODO: open a money transfer dialog			
@@ -814,48 +807,59 @@ public class FriendList extends JPanel implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdFriendRemove))
 		{
-			try
+			new PopupQuestionDialog(_Main.getMainJFrame(), "Friend removal", "Do you really want to remove " + info.getName() + " as friend?", "Yes", "No", new ActionListener()
 			{
-				_Client.Friends.TerminateFriendship(info.getID());
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("TerminateFriendship failed", LogLevel.Error, _Client, ex);
-			}
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					if (e.getActionCommand().equals(PopupQuestionDialog.cmdAccept))
+					{
+						try
+						{
+							_Main.getGridClient().Friends.TerminateFriendship(info.getID());
+						}
+						catch (Exception ex)
+						{
+							Logger.Log("TerminateFriendship failed", LogLevel.Error, _Main.getGridClient(), ex);
+						}	
+					}
+				}
+				
+			});
 		}
 		else if (e.getActionCommand().equals(cmdTeleportTo))
 		{
 			try
 			{
-				Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
-				_Client.Self.Teleport(_Client.Network.getCurrentSim().Name, pos);
+				Vector3 pos = _Main.getGridClient().Network.getCurrentSim().getAvatarPositions().get(info.getID());
+				_Main.getGridClient().Self.Teleport(_Main.getGridClient().Network.getCurrentSim().Name, pos);
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Teleporting to " + info.getName() + " failed", LogLevel.Error, _Client, ex);
+				Logger.Log("Teleporting to " + info.getName() + " failed", LogLevel.Error, _Main.getGridClient(), ex);
 			}
 		}
 		else if (e.getActionCommand().equals(cmdTeleportAsk))
 		{
 			try
 			{
-				_Client.Self.SendTeleportLure(info.getID());
+				_Main.getGridClient().Self.SendTeleportLure(info.getID());
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("SendTeleportLure failed", LogLevel.Error, _Client, ex);
+				Logger.Log("SendTeleportLure failed", LogLevel.Error, _Main.getGridClient(), ex);
 			}
 		}
 		else if (e.getActionCommand().equals(cmdAutopilotTo))
 		{
 			try
 			{
-				Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
-				_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
+				Vector3 pos = _Main.getGridClient().Network.getCurrentSim().getAvatarPositions().get(info.getID());
+				_Main.getGridClient().Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Autopiloting to " + info.getName() + " failed", LogLevel.Error, _Client, ex);
+				Logger.Log("Autopiloting to " + info.getName() + " failed", LogLevel.Error, _Main.getGridClient(), ex);
 			}
 		}
 	}

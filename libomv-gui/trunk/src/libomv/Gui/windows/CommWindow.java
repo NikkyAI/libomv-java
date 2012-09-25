@@ -36,12 +36,9 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 
-import libomv.GridClient;
 import libomv.Gui.channels.AbstractChannel;
 import libomv.Gui.channels.LocalChannel;
 import libomv.Gui.components.OnlinePanel;
-import libomv.Gui.components.list.FriendList;
-import libomv.Gui.components.list.GroupList;
 
 public class CommWindow extends JFrame
 {
@@ -50,13 +47,13 @@ public class CommWindow extends JFrame
 	private JTabbedPane jTpComm;
 	private JTabbedPane jTpContacts;
 	
-	private GridClient _Client;
+	private MainControl _Main;
 	
-	public CommWindow(GridClient client)
+	public CommWindow(MainControl main)
 	{
 		super();
 		
-		_Client = client;
+		_Main = main;
 		
 		setTitle("Communication");
 		
@@ -100,7 +97,7 @@ public class CommWindow extends JFrame
 			jTpComm.setBorder(new LineBorder(new Color(0, 0, 0)));
 
 			jTpComm.add("Contacts", getJTpContacts());
-			jTpComm.add("Local Chat", new LocalChannel(_Client));
+			jTpComm.add("Local Chat", new LocalChannel(_Main.getGridClient()));
 		}
 		return jTpComm;
 	}
@@ -113,8 +110,8 @@ public class CommWindow extends JFrame
 			jTpContacts.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 			jTpContacts.setBorder(new LineBorder(new Color(0, 0, 0)));
 
-			jTpContacts.add("Friends", new FriendList(_Client));
-			jTpContacts.add("Groups", new GroupList(_Client));
+			jTpContacts.add("Friends", _Main.getFriendList());
+			jTpContacts.add("Groups", _Main.getGroupList());
 		}
 		return jTpContacts;
 	}

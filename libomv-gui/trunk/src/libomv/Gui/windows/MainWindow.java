@@ -43,6 +43,8 @@ import javax.swing.UIManager;
 import libomv.GridClient;
 import libomv.Gui.components.LoginPanel;
 import libomv.Gui.components.OnlinePanel;
+import libomv.Gui.components.list.FriendList;
+import libomv.Gui.components.list.GroupList;
 import libomv.Gui.dialogs.AboutDialog;
 
 public class MainWindow extends JFrame implements MainControl
@@ -52,7 +54,7 @@ public class MainWindow extends JFrame implements MainControl
 	private JPanel jPSouth;
 	private Component jPContent;
 	private JMenuBar jMenuBar;
-	GridClient _Client;
+	private GridClient _Client;
 
 	/**
 	 * This is the default constructor
@@ -85,6 +87,30 @@ public class MainWindow extends JFrame implements MainControl
 		return this;
 	}
 	
+	@Override
+	public GridClient getGridClient()
+	{
+		return _Client;
+	}
+	
+	public FriendList getFriendList()
+	{
+		if (jPSouth != null && jPSouth instanceof OnlinePanel)
+		{
+			return ((OnlinePanel)jPSouth).getFriendList();
+		}
+		return null;
+	}
+	
+	public GroupList getGroupList()
+	{
+		if (jPSouth != null && jPSouth instanceof OnlinePanel)
+		{
+			return ((OnlinePanel)jPSouth).getGroupList();
+		}
+		return null;
+	}
+
 	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand)
 	{
 		JMenuItem item = new JMenuItem(label);
@@ -119,7 +145,7 @@ public class MainWindow extends JFrame implements MainControl
 		}
 		else if (action.equals(MainControl.cmdSettings))
 		{
-			PreferenceWindow pref = new PreferenceWindow(getMainJFrame());
+			PreferenceWindow pref = new PreferenceWindow(this);
 			pref.setVisible(true);			
 		}
 		else if (action.equals(MainControl.cmdOnline))
@@ -154,7 +180,7 @@ public class MainWindow extends JFrame implements MainControl
 				remove(jPSouth);
 			if (jPContent != null)
 				remove(jPContent);
-			jPSouth = new LoginPanel(_Client, this);
+			jPSouth = new LoginPanel(this);
 			getContentPane().add(jPSouth, BorderLayout.SOUTH);
 			validate();		
 		}
@@ -168,7 +194,7 @@ public class MainWindow extends JFrame implements MainControl
 				remove(jPSouth);
 			if (jPContent != null)
 				remove(jPContent);
-			jPSouth = new OnlinePanel(_Client, this);
+			jPSouth = new OnlinePanel(this);
 			getContentPane().add(jPSouth, BorderLayout.SOUTH);
 			validate();
 		}

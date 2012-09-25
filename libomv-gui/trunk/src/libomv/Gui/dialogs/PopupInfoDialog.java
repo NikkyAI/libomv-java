@@ -59,7 +59,7 @@ public class PopupInfoDialog extends PopupDialog
 	public PopupInfoDialog(JFrame parent, String title, String message, Severity severity)
 	{
 		// Super constructor
-		super(parent, title, true);
+		super(parent, title, true, null);
 
 		// The icon to display with the popup
 		String name;
@@ -126,6 +126,8 @@ public class PopupInfoDialog extends PopupDialog
 		JPanel jpSouth = new JPanel();
 		// Create the button
 		JButton jbOkay = new JButton("OK");
+		jbOkay.setActionCommand(cmdAccept);
+		jbOkay.addActionListener(_Listener);
 		// Add the button to the south panel
 		jpSouth.add(jbOkay);
 		// Add the button to the south

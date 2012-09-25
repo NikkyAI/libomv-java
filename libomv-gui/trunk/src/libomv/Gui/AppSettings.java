@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2011-2012, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,42 +26,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.Gui.windows;
+package libomv.Gui;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-
-public class PreferenceWindow extends JDialog
+public class AppSettings
 {
-	private static final long serialVersionUID = 1L;
-
-	private JPanel jContentPane = null;
-
-	/**
-	 * 
-	 */
-	public PreferenceWindow(MainControl main)
-	{
-		super(main.getMainJFrame());
-		setTitle("Preferences");
-		setSize(300, 200);
-		setContentPane(getJContentPane());
-	}
-
-	/**
-	 * This method initializes jContentPane
-	 * 
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJContentPane()
-	{
-		if (jContentPane == null)
-		{
-			jContentPane = new JPanel();
-			jContentPane.setLayout(new BorderLayout());
-		}
-		return jContentPane;
-	}
+	public static boolean DisableSound = false;
 }

@@ -29,6 +29,8 @@
 package libomv.Gui.dialogs;
 
 import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.BreakIterator;
 
 import javax.swing.JDialog;
@@ -43,12 +45,40 @@ public abstract class PopupDialog extends JDialog
 
 	// The width of the window
 	protected static final int width = 375;
+	protected ActionListener _Listener;
 
-	public PopupDialog(JFrame parent, String title, boolean modal)
+	public static final String cmdAccept = "accept";
+	public static final String cmdDecline = "decline";
+	
+	private class PopupActionListener implements ActionListener
+	{
+		private ActionListener listener;
+		
+		public PopupActionListener(ActionListener listener)
+		{
+			this.listener = listener;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{			
+			if (listener != null)
+				listener.actionPerformed(e);
+
+			// Destroy the form
+			setVisible(false);
+			dispose();
+		}
+		
+	}
+
+	public PopupDialog(JFrame parent, String title, boolean modal, ActionListener listener)
 	{
 		// Super constructor
 		super(parent, title, modal);
 
+		_Listener = new PopupActionListener(listener);
+		
 		// Set the title again
 		super.setTitle(title);
 

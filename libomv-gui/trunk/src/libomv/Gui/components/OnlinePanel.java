@@ -39,9 +39,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import libomv.AgentManager.BalanceCallbackArgs;
-import libomv.GridClient;
+import libomv.AgentManager.TeleportLureCallbackArgs;
+import libomv.Gui.components.list.FriendList;
+import libomv.Gui.components.list.GroupList;
+import libomv.Gui.dialogs.PopupQuestionDialog;
 import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
+import libomv.types.UUID;
 import libomv.utils.Callback;
 
 public class OnlinePanel extends JPanel implements ActionListener
@@ -57,18 +61,21 @@ public class OnlinePanel extends JPanel implements ActionListener
 	public static final String cmdMedia = "media";
 	public static final String cmdVoice = "voice";
 	
-	private GridClient _Client;
 	private MainControl _Main;
 	private CommWindow _Comm;
+
+	private FriendList _FriendList;
+	private GroupList _GroupList;
 	
 	private JMenuBar jMbMain;
 	private JLabel jMiAmount;
 	private JPanel jSceneViewer;
 
-	public OnlinePanel(GridClient client, MainControl main)
+	public OnlinePanel(MainControl main)
 	{
-		_Client = client;
 		_Main = main;
+		
+		_Main.getGridClient().Self.OnTeleportLure.add(new TeleportLure());
 
 		main.setContentArea(getSceneViewer());
 		main.setMenuBar(getJMBar());
@@ -76,6 +83,20 @@ public class OnlinePanel extends JPanel implements ActionListener
 		initializePanel();	
 	}
 	
+	public FriendList getFriendList()
+	{
+		if (_FriendList == null)
+			_FriendList = new FriendList(_Main);
+		return _FriendList;
+	}
+	
+	public GroupList getGroupList()
+	{
+		if (_GroupList == null)
+			_GroupList = new GroupList(_Main);
+		return _GroupList;
+	}
+
 	/**
 	 * This method initializes mainJMenuBar
 	 * 
@@ -157,8 +178,8 @@ public class OnlinePanel extends JPanel implements ActionListener
 	{
 		if (jMiAmount == null)
 		{
-			_Client.Self.getBalance();
-			jMiAmount = new JLabel(String.format("%s %s", _Client.getGrid(null).currencySym, _Client.Self.getBalance()));
+			_Main.getGridClient().Self.getBalance();
+			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym, _Main.getGridClient().Self.getBalance()));
 		}
 		return jMiAmount;
 	}
@@ -172,7 +193,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 		{
 			if (_Comm == null)
 			{
-				_Comm = new CommWindow(_Client);
+				_Comm = new CommWindow(_Main);
 			}
 			_Comm.setFocus(e.getActionCommand());
 		    _Comm.setVisible(true);
@@ -196,7 +217,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 
 	private void initializePanel()
 	{
-		_Client.Self.OnBalanceUpdated.add(new BalanceUpdate());
+		_Main.getGridClient().Self.OnBalanceUpdated.add(new BalanceUpdate());
 	}
 	
 	private class BalanceUpdate implements Callback<BalanceCallbackArgs>
@@ -204,20 +225,48 @@ public class OnlinePanel extends JPanel implements ActionListener
 		@Override
 		public boolean callback(BalanceCallbackArgs params)
 		{
-			getJAmount().setText(String.format("%s %s", _Client.getGrid(null).currencySym, params.getBalance()));
+			getJAmount().setText(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym, params.getBalance()));
 			if (!params.getFirst() && params.getDelta() > 50)
 			{
 				if (params.getDelta() < 0)
 				{
-					
+					/* Create money gone sound */
 				}
 				else
 				{
-					
+					/* Create cash register sound */
 				}
 			}
 			return false;
 		}
 		
+	}
+	
+	private class TeleportLure implements Callback<TeleportLureCallbackArgs>
+	{
+		@Override
+		public boolean callback(TeleportLureCallbackArgs args)
+		{
+			final UUID agentID = args.getFromID();
+			final UUID lureID = args.getLureID();
+			new PopupQuestionDialog(_Main.getMainJFrame(), "Teleportation Offer", args.getFromName() + " has offered you a teleport with the following message: '"
+					+ args.getMessage() + "'. Do you wish to accept?", "Accept", "Decline", new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					try
+					{
+						// Accept or decline the request
+						_Main.getGridClient().Self.TeleportLureRespond(agentID, lureID, e.getActionCommand().equals(PopupQuestionDialog.cmdAccept));
+					}
+					catch (Exception ex)
+					{
+					}
+					
+				}
+			});
+			return false;
+		}
 	}
 }

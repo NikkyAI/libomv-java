@@ -73,7 +73,6 @@ public class LoginPanel extends JPanel implements ActionListener
 	
 	private Browser browser;
 
-	private GridClient _Client;
 	private MainControl _Main;
 	
 	private JMenuBar jMbMain;
@@ -90,9 +89,8 @@ public class LoginPanel extends JPanel implements ActionListener
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
 	
-	public LoginPanel(GridClient client, MainControl main)
+	public LoginPanel(MainControl main)
 	{
-		_Client = client;
 		_Main = main;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -192,7 +190,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		main.setContentArea(getJBrowser().getComponent());
 		main.setMenuBar(getJMBar());
 
-		initializePanel(_Client.getDefaultGrid());	
+		initializePanel(_Main.getGridClient().getDefaultGrid());	
 	}
 
 	/**
@@ -446,8 +444,8 @@ public class LoginPanel extends JPanel implements ActionListener
 	{
 		if (jcbGridSelector == null)
 		{
-			jcbGridSelector = new JComboBox(_Client.getGridInfos());
-			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid());
+			jcbGridSelector = new JComboBox(_Main.getGridClient().getGridInfos());
+			jcbGridSelector.setSelectedItem(_Main.getGridClient().getDefaultGrid());
 			jcbGridSelector.addActionListener(new ActionListener()
 			{
 				@Override
@@ -469,7 +467,7 @@ public class LoginPanel extends JPanel implements ActionListener
 			jcbLocation.addItem("Last");
 			jcbLocation.addItem("Home");
 			
-			String start = _Client.getDefaultGrid().startLocation;
+			String start = _Main.getGridClient().getDefaultGrid().startLocation;
 			if (start == null || start.isEmpty() || start.equalsIgnoreCase("last"))
 			{
 				jcbLocation.setSelectedIndex(0);
@@ -502,7 +500,7 @@ public class LoginPanel extends JPanel implements ActionListener
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					GridEditor gridEdit = new GridEditor(_Client, _Main.getMainJFrame(), "Grid List", true);
+					GridEditor gridEdit = new GridEditor(_Main.getGridClient(), _Main.getMainJFrame(), "Grid List", true);
 					gridEdit.setVisible(true);
 				}
 			});
@@ -571,8 +569,9 @@ public class LoginPanel extends JPanel implements ActionListener
 
 	private boolean doLogin()
 	{
+		GridClient client = _Main.getGridClient();
 		GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
-		_Client.setDefaultGrid(grid);
+		client.setDefaultGrid(grid);
 
 		grid.saveSettings = getChckbxSaveDetails().isSelected();
 		grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
@@ -585,10 +584,10 @@ public class LoginPanel extends JPanel implements ActionListener
 		if (string != null)
 			grid.setPassword(string);
 		
-		_Client.Login.OnLoginProgress.add(new LoginProgressHandler(), false);
+		client.Login.OnLoginProgress.add(new LoginProgressHandler(), false);
 		try
 		{
-			return _Client.Login.Login(_Client.Login.new LoginParams(_Client));
+			return client.Login.Login(client.Login.new LoginParams(client));
 		}
 		catch (Exception e)
 		{
