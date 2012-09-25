@@ -687,29 +687,16 @@ public class GroupManager implements PacketCallback, CapsCallback
 			{
 				byte[] bucket = e.getIM().BinaryBucket;
 				int fee = -1;
+				UUID roleID = null;
 				if (bucket.length == 20)
 				{
 					fee = Helpers.BytesToInt32B(bucket);
+					roleID = new UUID(bucket, 4);
 				}
 				
-				GroupInvitationCallbackArgs args = new GroupInvitationCallbackArgs(e.getSimulator(),
-						e.getIM().FromAgentID, e.getIM().FromAgentName, e.getIM().Message, fee);
+				GroupInvitationCallbackArgs args = new GroupInvitationCallbackArgs(e.getSimulator(), e.getIM().IMSessionID,
+						                                                           e.getIM().FromAgentID, roleID, e.getIM().FromAgentName, e.getIM().Message, fee);
 				OnGroupInvitation.dispatch(args);
-
-				try
-				{
-					if (args.getAccept())
-					{
-						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
-								InstantMessageDialog.GroupInvitationAccept, InstantMessageOnline.Online);
-					}
-					else
-					{
-						Client.Self.InstantMessage(Client.Self.getName(), e.getIM().FromAgentID, "message", e.getIM().IMSessionID,
-								InstantMessageDialog.GroupInvitationDecline, InstantMessageOnline.Online);
-					}
-				}
-				catch (Exception ex) { }
 			}
 			return false;
 		}
@@ -761,9 +748,9 @@ public class GroupManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case AgentGroupDataUpdate:
-				HandleAgentGroupDataUpdateMessage(message, simulator);
+				HandleAgentGroupDataUpdate(message, simulator);
 			case AgentDropGroup:
-				HandleAgentDropGroupMessage(message, simulator);
+				HandleAgentDropGroup(message, simulator);
 		}
 	}
 
@@ -1525,7 +1512,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// #endregion
 
 	// #region Packet Handlers
-	private final void HandleAgentGroupDataUpdateMessage(IMessage message, Simulator simulator)
+	private final void HandleAgentGroupDataUpdate(IMessage message, Simulator simulator)
 	{
 		if (OnCurrentGroups.count() > 0)
 		{
@@ -1589,7 +1576,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleAgentDropGroupMessage(IMessage message, Simulator simulator)
+	private final void HandleAgentDropGroup(IMessage message, Simulator simulator)
 	{
 		if (OnGroupDropped.count() > 0)
 		{
@@ -2572,17 +2559,30 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 */
 	public class GroupInvitationCallbackArgs implements CallbackArgs
 	{
+		private final UUID m_SessionID;
 		private final UUID m_GroupID;
+		private final UUID m_RoleID;
 		private final String m_FromName;
 		private final Simulator m_Simulator;
 		private final int m_Fee;
 		private String m_Message;
-		private boolean m_Accept;
+
+		// The ID of the Avatar sending the group invitation
+		public final UUID getSessionID()
+		{
+			return m_SessionID;
+		}
 
 		// The ID of the Avatar sending the group invitation
 		public final UUID getGroupID()
 		{
 			return m_GroupID;
+		}
+
+		// The ID of the group role sending the group invitation
+		public final UUID getRoleID()
+		{
+			return m_RoleID;
 		}
 
 		// The name of the Avatar sending the group invitation
@@ -2604,32 +2604,18 @@ public class GroupManager implements PacketCallback, CapsCallback
 			return m_Message;
 		}
 
-		public final void setMessage(String message)
-		{
-			m_Message = message;
-		}
-
 		// The Simulator
 		public final Simulator getSimulator()
 		{
 			return m_Simulator;
 		}
 
-		// Set to true to accept invitation, false to decline
-		public final boolean getAccept()
-		{
-			return m_Accept;
-		}
-
-		public final void setAccept(boolean value)
-		{
-			m_Accept = value;
-		}
-
-		public GroupInvitationCallbackArgs(Simulator simulator, UUID groupID, String fromName, String message, int fee)
+		public GroupInvitationCallbackArgs(Simulator simulator, UUID sessionID, UUID groupID, UUID roleID, String fromName, String message, int fee)
 		{
 			this.m_Simulator = simulator;
+			this.m_SessionID = sessionID;
 			this.m_GroupID = groupID;
+			this.m_RoleID = roleID;
 			this.m_FromName = fromName;
 			this.m_Message = message;
 			this.m_Fee = fee;
