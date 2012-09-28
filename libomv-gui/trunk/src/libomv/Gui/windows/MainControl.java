@@ -31,6 +31,9 @@ package libomv.Gui.windows;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -50,6 +53,8 @@ public interface MainControl extends ActionListener
 	public static final String cmdDebugCon = "debugCon";
 	public static final String cmdSettings = "settings";
 	
+	public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand);
+	public void setAction(JComboBox comp, ActionListener actionListener, String actionCommand);
 	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand);
 	public void setMenuBar(JMenuBar menuBar);
 	public JFrame getMainJFrame();

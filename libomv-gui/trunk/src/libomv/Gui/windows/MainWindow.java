@@ -34,6 +34,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -111,17 +114,31 @@ public class MainWindow extends JFrame implements MainControl
 		return null;
 	}
 
+	public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand)
+	{
+		if (actionCommand != null)
+		{
+			comp.setActionCommand(actionCommand);
+		}
+		comp.addActionListener(actionListener);
+	}
+
+	public void setAction(JComboBox comp, ActionListener actionListener, String actionCommand)
+	{
+		if (actionCommand != null)
+		{
+			comp.setActionCommand(actionCommand);
+		}
+		comp.addActionListener(actionListener);
+	}
+
 	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand)
 	{
 		JMenuItem item = new JMenuItem(label);
-		if (actionCommand != null)
-		{
-			item.setActionCommand(actionCommand);
-		}
-		item.addActionListener(actionListener);
+		setAction(item, actionListener, actionCommand);
 		return item;
 	}
-	
+
 	public void setMenuBar(JMenuBar menuBar)
 	{
 		jMenuBar = menuBar;

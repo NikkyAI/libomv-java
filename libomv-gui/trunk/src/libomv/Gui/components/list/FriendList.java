@@ -44,6 +44,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -61,18 +62,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import libomv.FriendsManager.FriendInfo;
+import libomv.FriendsManager.FriendListChangedCallbackArgs;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendRightsCallbackArgs;
-import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
-import libomv.FriendsManager.FriendshipResponseCallbackArgs;
-import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.Gui.Resources;
-import libomv.Gui.dialogs.PopupDialog;
-import libomv.Gui.dialogs.PopupInfoDialog;
-import libomv.Gui.dialogs.PopupInfoDialog.Severity;
-import libomv.Gui.dialogs.PopupQuestionDialog;
 import libomv.Gui.windows.MainControl;
-import libomv.inventory.InventoryException;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
@@ -114,6 +108,10 @@ public class FriendList extends JPanel implements ActionListener
 	private JButton jBtnTeleportTo;
 	private JButton jBtnAutopilotTo;
 
+	private Callback<FriendRightsCallbackArgs> friendRightsCallback = new FriendRightsChanged();
+	private Callback<FriendNotificationCallbackArgs> friendNotificationCallback = new FriendNotification();
+	private Callback<FriendListChangedCallbackArgs> friendListChangedCallback = new FriendListChanged();
+	
 	/**
 	 * Constructs a list to display
 	 */
@@ -122,12 +120,12 @@ public class FriendList extends JPanel implements ActionListener
 		super();
 		this._Main = main;
 
-		// install friend change event handlers
-		_Main.getGridClient().Friends.OnFriendRights.add(new FriendRightsChanged());
-		_Main.getGridClient().Friends.OnFriendNotification.add(new FriendNotification());
-		_Main.getGridClient().Friends.OnFriendshipResponse.add(new FriendshipResponse());
-		_Main.getGridClient().Friends.OnFriendshipOffered.add(new FriendshipOffered());
-		_Main.getGridClient().Friends.OnFriendshipTerminated.add(new FriendshipTerminated());
+		// The rights in respect to a friend have changed
+		_Main.getGridClient().Friends.OnFriendRights.add(friendRightsCallback);
+		// The online status of a friend has changed
+		_Main.getGridClient().Friends.OnFriendNotification.add(friendNotificationCallback);
+		// Someone has termintaed friendship with us
+		_Main.getGridClient().Friends.OnFriendListChanged.add(friendListChangedCallback);
 
 		empty = null;
 		offline = Resources.loadIcon(Resources.ICON_OFFLINE);
@@ -160,6 +158,15 @@ public class FriendList extends JPanel implements ActionListener
 		gbConstraint.gridy = 0;
 		add(getButtonPanel(), gbConstraint);
 	}
+	
+	protected void finalize() throws Throwable
+	{
+		_Main.getGridClient().Friends.OnFriendRights.remove(friendRightsCallback);
+		_Main.getGridClient().Friends.OnFriendNotification.remove(friendNotificationCallback);
+		_Main.getGridClient().Friends.OnFriendListChanged.remove(friendListChangedCallback);
+
+		super.finalize();
+	} 
 	
 	private void installAction(AbstractButton element, String command)
 	{
@@ -305,26 +312,59 @@ public class FriendList extends JPanel implements ActionListener
             return (col >= 2 && col <= 4);
         }
 
+        private void updateRights(FriendInfo info, int row, int col)
+        {
+			try
+			{
+				_Main.getGridClient().Friends.GrantRights(info.getID(), info.getCanMe());
+                fireTableCellUpdated(row, col);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Exception sending friend rights update", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+        }
+        
         /*
          * Don't need to implement this method unless your table's
          * data can change.
          */
-        public void setValueAt(Object value, int row, int col)
+        public void setValueAt(Object value, final int row, final int col)
         {
-            FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
+            final FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
             if (info != null)
             {
+            	final boolean set = (Boolean)value;
             	switch (col)
             	{
                 	case 2:
-                		info.setCanSeeMeOnline((Boolean)value);
+                		info.setCanSeeMeOnline(set);
+            			updateRights(info, row, col);
+                		break;
                 	case 3:
-                		info.setCanSeeMeOnMap((Boolean)value);
+                		info.setCanSeeMeOnMap(set);
+            			updateRights(info, row, col);
+                		break;
                 	case 4:
-                		info.setCanModifyMyObjects((Boolean)value);
-            	}
+                		if (set)
+                		{
+                			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), "Do you really want to enable object modifications for " + 
+                		                                               info.getName() + "? This allows the person to modify, delete and take ownership " +
+                					                                   "of any inworld objects you own!", "Warning", JOptionPane.YES_NO_OPTION);		
+                		    if (result == JOptionPane.OK_OPTION)
+                		    {
+			               		info.setCanModifyMyObjects(set);
+	                			updateRights(info, row, col);
+                		    }
+                		}
+                		else
+                		{
+		               		info.setCanModifyMyObjects(set);
+                			updateRights(info, row, col);
+                		}
+                		break;
+             	}
             }
-            fireTableCellUpdated(row, col);
         }
     }
 
@@ -524,91 +564,35 @@ public class FriendList extends JPanel implements ActionListener
 		}
 	}
 
-	/**
-	 * Triggered when a user has accepted or declined our friendship offer
-	 */
-	private class FriendshipResponse implements Callback<FriendshipResponseCallbackArgs>
+	private class FriendListChanged implements Callback<FriendListChangedCallbackArgs>
 	{
 		@Override
-		public boolean callback(FriendshipResponseCallbackArgs e)
+		public boolean callback(FriendListChangedCallbackArgs e)
 		{
-			String verb = e.getAccepted() ? "accepted" : "declined";
-			String title = "Friendship " + verb;
-			String message = e.getName() + " has " + verb + " your friendship offer.";
-			
-			/* Show dialog informing about the decision of the other */
-			new PopupInfoDialog(_Main.getMainJFrame(), title, message, Severity.INFORMATIONAL);		
-			
-			if (e.getAccepted())
+			FriendInfo info = e.getFriendInfo();
+			if (info != null)
 			{
-				int index = _Main.getGridClient().Friends.getFriendIndex(e.getAgentID());
-				((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsInserted(index, index);
+				int index = _Main.getGridClient().Friends.getFriendIndex(info.getID());
+				if (e.getIsAdded())
+				{
+					((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsInserted(index, index);
+				}
+				else
+				{
+					((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsDeleted(index, index);					
+				}
+			}
+			else
+			{
+				/* more than one element was added or removed rebuild entire list */
+				((AbstractTableModel)getJFriendsList().getModel()).fireTableDataChanged();					
 			}
 			return false;
 		}
 	}
 
-	/**
-	 * Triggered when a user has sent us a friendship offer
-	 */
-	private class FriendshipOffered implements Callback<FriendshipOfferedCallbackArgs>
-	{
-		@Override
-		public boolean callback(FriendshipOfferedCallbackArgs e)
-		{
-			final UUID uuid = e.getFriendID();
-			final UUID session = e.getSessionID();
-
-			/* Prompt user for acceptance of friendship offer */
-			new PopupQuestionDialog(_Main.getMainJFrame(), "Friendship Request", e.getName() + " wants to be your friend. Do you accept this request?",
-					                "Accept", "Decline", new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent ae)
-				{
-					try
-					{
-						/* if accepted, send acceptance message */
-						if (ae.getActionCommand().equals(PopupDialog.cmdAccept))
-						{
-							_Main.getGridClient().Friends.AcceptFriendship(uuid, session);
-							int index = _Main.getGridClient().Friends.getFriendIndex(uuid);
-							((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsInserted(index, index);
-						}
-						else if (ae.getActionCommand().equals(PopupDialog.cmdDecline))
-						{
-							_Main.getGridClient().Friends.DeclineFriendship(uuid, session);
-						}
-					}
-					catch (InventoryException ex)
-					{
-						Logger.Log("Inventory Exception", LogLevel.Error, _Main.getGridClient(), ex);
-					}
-					catch (Exception ex)
-					{
-						Logger.Log("Exception sending response", LogLevel.Error, _Main.getGridClient(), ex);
-					}
-					
-				}
-			});		
-			return false;
-		}
-	}
-
-	/**
-	 * Triggered when a user has removed us from their friends list
-	 */
-	private class FriendshipTerminated implements Callback<FriendshipTerminatedCallbackArgs>
-	{
-		@Override
-		public boolean callback(FriendshipTerminatedCallbackArgs e)
-		{
-			int index = _Main.getGridClient().Friends.getFriendIndex(e.getOtherID());
-			((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsDeleted(index, index);
-			return false;
-		}
-	}
-		
+	
+	
 	private FriendInfo getSelectedFriendRow()
 	{
 		return _Main.getGridClient().Friends.getFriend(jLFriendsList.convertRowIndexToModel(jLFriendsList.getSelectedRow()));
@@ -807,25 +791,19 @@ public class FriendList extends JPanel implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdFriendRemove))
 		{
-			new PopupQuestionDialog(_Main.getMainJFrame(), "Friend removal", "Do you really want to remove " + info.getName() + " as friend?", "Yes", "No", new ActionListener()
+			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), "Do you really want to remove " + info.getName() + 
+					                                   " as friend?", "Friend removal", JOptionPane.YES_NO_OPTION);		
+			if (result == JOptionPane.OK_OPTION)
 			{
-				@Override
-				public void actionPerformed(ActionEvent e)
+				try
 				{
-					if (e.getActionCommand().equals(PopupQuestionDialog.cmdAccept))
-					{
-						try
-						{
-							_Main.getGridClient().Friends.TerminateFriendship(info.getID());
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("TerminateFriendship failed", LogLevel.Error, _Main.getGridClient(), ex);
-						}	
-					}
+					_Main.getGridClient().Friends.TerminateFriendship(info.getID());
 				}
-				
-			});
+				catch (Exception ex)
+				{
+					Logger.Log("TerminateFriendship failed", LogLevel.Error, _Main.getGridClient(), ex);
+				}	
+			}
 		}
 		else if (e.getActionCommand().equals(cmdTeleportTo))
 		{

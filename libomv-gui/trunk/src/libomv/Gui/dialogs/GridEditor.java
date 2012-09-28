@@ -52,6 +52,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Set;
 
 import javax.swing.JTextField;
@@ -62,6 +63,9 @@ import javax.swing.event.ListSelectionListener;
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
+
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
 import javax.swing.border.MatteBorder;
@@ -450,6 +454,14 @@ public class GridEditor extends JDialog
 					for (int i = 0; i < size; i++)
 					{
 						_Client.addGrid((GridInfo) getJLsGridNames().getModel().getElementAt(i));
+					}
+					try
+					{
+						_Client.saveList();
+					}
+					catch (Exception ex)
+					{
+						Logger.Log("Saving GridInfo list failed", LogLevel.Error, _Client, ex);
 					}
 					dispose();
 				}

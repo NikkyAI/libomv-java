@@ -71,6 +71,11 @@ public class LoginPanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
+	private static final String cmdLogin = "login";
+	private static final String cmdGrids = "grids";
+	private static final String cmdGrid = "grid";
+	private static final String cmdSaveDetails = "saveDetails";
+
 	private Browser browser;
 
 	private MainControl _Main;
@@ -245,9 +250,33 @@ public class LoginPanel extends JPanel implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		/* Handle local events */
-		
-		/* Pass to main window to be handled */
-		_Main.actionPerformed(e);
+		if (e.getActionCommand().equals(cmdLogin))
+		{
+			doLogin();
+		}
+		else if (e.getActionCommand().equals(cmdGrid))
+		{
+			initializePanel((GridInfo)((JComboBox)e.getSource()).getSelectedItem());
+		}
+		else if (e.getActionCommand().equals(cmdGrids))
+		{
+			GridEditor gridEdit = new GridEditor(_Main.getGridClient(), _Main.getMainJFrame(), "Grid List", true);
+			gridEdit.setVisible(true);
+		}
+		else if (e.getActionCommand().equals(cmdSaveDetails))
+		{
+			JCheckBox cb = (JCheckBox)e.getSource();
+			getChckbxSavePassword().setEnabled(cb.isSelected());
+			if (!cb.isSelected())
+			{
+				getChckbxSavePassword().setSelected(false);
+			}
+		}	
+		else
+		{
+			/* Pass to main window to be handled */
+			_Main.actionPerformed(e);
+		}
 	}
 
 	private JLabel getJLblUserName()
@@ -428,14 +457,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		{
 			jBtnLogin = new JButton();
 			jBtnLogin.setText("Login");
-			jBtnLogin.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
-					doLogin();
-				}
-			});
+			_Main.setAction(jBtnLogin, this, cmdLogin);
 		}
 		return jBtnLogin;
 	}
@@ -446,14 +468,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		{
 			jcbGridSelector = new JComboBox(_Main.getGridClient().getGridInfos());
 			jcbGridSelector.setSelectedItem(_Main.getGridClient().getDefaultGrid());
-			jcbGridSelector.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent evt)
-				{
-					initializePanel((GridInfo)((JComboBox)evt.getSource()).getSelectedItem());
-				}
-			});
+			_Main.setAction(jcbGridSelector, this, cmdGrid);
 		}
 		return jcbGridSelector;
 	}
@@ -495,15 +510,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		if (jBtnGrids == null)
 		{
 			jBtnGrids = new JButton("Grids");
-			jBtnGrids.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
-					GridEditor gridEdit = new GridEditor(_Main.getGridClient(), _Main.getMainJFrame(), "Grid List", true);
-					gridEdit.setVisible(true);
-				}
-			});
+			_Main.setAction(jBtnGrids, this, cmdGrids);
 		}
 		return jBtnGrids;
 	}
@@ -513,20 +520,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		if (jChkSaveDetails == null)
 		{
 			jChkSaveDetails = new JCheckBox("Save Details");
-			
-			jChkSaveDetails.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent evt)
-				{
-					JCheckBox cb = (JCheckBox)evt.getSource();
-					getChckbxSavePassword().setEnabled(cb.isSelected());
-					if (!cb.isSelected())
-					{
-						getChckbxSavePassword().setSelected(false);
-					}
-				}	
-			});
+			_Main.setAction(jChkSaveDetails, this, cmdSaveDetails);
 		}
 		return jChkSaveDetails;
 	}

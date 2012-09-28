@@ -36,17 +36,24 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import libomv.AgentManager.BalanceCallbackArgs;
 import libomv.AgentManager.TeleportLureCallbackArgs;
+import libomv.FriendsManager.FriendNotificationCallbackArgs;
+import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
+import libomv.FriendsManager.FriendshipResponseCallbackArgs;
+import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
-import libomv.Gui.dialogs.PopupQuestionDialog;
 import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
+import libomv.inventory.InventoryException;
 import libomv.types.UUID;
 import libomv.utils.Callback;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 public class OnlinePanel extends JPanel implements ActionListener
 {
@@ -71,11 +78,26 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private JLabel jMiAmount;
 	private JPanel jSceneViewer;
 
+	private Callback<TeleportLureCallbackArgs> teleportLureCallback = new TeleportLure();
+	private Callback<FriendNotificationCallbackArgs> friendNotificationCallback = new FriendNotification();
+	private Callback<FriendshipResponseCallbackArgs> friendshipResponseCallback = new FriendshipResponse();
+	private Callback<FriendshipOfferedCallbackArgs> friendshipOfferedCallback = new FriendshipOffered();
+	private Callback<FriendshipTerminatedCallbackArgs> friendshipTerminatedCallback = new FriendshipTerminated();
+
 	public OnlinePanel(MainControl main)
 	{
 		_Main = main;
 		
-		_Main.getGridClient().Self.OnTeleportLure.add(new TeleportLure());
+		// Triggered when someone offers us a teleport
+		_Main.getGridClient().Self.OnTeleportLure.add(teleportLureCallback);
+		// Triggered when the online status of a friend has changed
+		_Main.getGridClient().Friends.OnFriendNotification.add(friendNotificationCallback);
+		// Triggered when someone has accepted or rejected our friendship request
+		_Main.getGridClient().Friends.OnFriendshipResponse.add(friendshipResponseCallback);
+		// Triggered when someone has offered us friendship
+		_Main.getGridClient().Friends.OnFriendshipOffered.add(friendshipOfferedCallback);
+		// Triggered when someone has terminated friendship with us
+		_Main.getGridClient().Friends.OnFriendshipTerminated.add(friendshipTerminatedCallback);
 
 		main.setContentArea(getSceneViewer());
 		main.setMenuBar(getJMBar());
@@ -83,6 +105,17 @@ public class OnlinePanel extends JPanel implements ActionListener
 		initializePanel();	
 	}
 	
+	protected void finalize() throws Throwable
+	{
+		_Main.getGridClient().Self.OnTeleportLure.remove(teleportLureCallback);
+		_Main.getGridClient().Friends.OnFriendNotification.remove(friendNotificationCallback);
+		_Main.getGridClient().Friends.OnFriendshipResponse.remove(friendshipResponseCallback);
+		_Main.getGridClient().Friends.OnFriendshipOffered.remove(friendshipOfferedCallback);
+		_Main.getGridClient().Friends.OnFriendshipTerminated.remove(friendshipTerminatedCallback);
+
+		super.finalize();
+	} 
+
 	public FriendList getFriendList()
 	{
 		if (_FriendList == null)
@@ -225,7 +258,8 @@ public class OnlinePanel extends JPanel implements ActionListener
 		@Override
 		public boolean callback(BalanceCallbackArgs params)
 		{
-			getJAmount().setText(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym, params.getBalance()));
+			String symbol = _Main.getGridClient().getGrid(null).currencySym;
+			getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol, params.getBalance()));
 			if (!params.getFirst() && params.getDelta() > 50)
 			{
 				if (params.getDelta() < 0)
@@ -249,23 +283,104 @@ public class OnlinePanel extends JPanel implements ActionListener
 		{
 			final UUID agentID = args.getFromID();
 			final UUID lureID = args.getLureID();
-			new PopupQuestionDialog(_Main.getMainJFrame(), "Teleportation Offer", args.getFromName() + " has offered you a teleport with the following message: '"
-					+ args.getMessage() + "'. Do you wish to accept?", "Accept", "Decline", new ActionListener()
+			
+			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
+					                                   " has offered you a teleport with the following message: '" +
+					                                   args.getMessage() + "'. Do you wish to accept?",
+					                                   "Teleportation Offer", JOptionPane.YES_NO_OPTION);		
+			try
 			{
-				@Override
-				public void actionPerformed(ActionEvent e)
+				// Accept or decline the request
+				_Main.getGridClient().Self.TeleportLureRespond(agentID, lureID, result == JOptionPane.OK_OPTION);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Teleportation failed", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Triggered when online status changes are reported
+	 */
+	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
+	{
+		@Override
+		public boolean callback(FriendNotificationCallbackArgs e)
+		{
+			for (UUID uuid : e.getAgentID())
+			{
+
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Triggered when a user has accepted or declined our friendship offer
+	 */
+	private class FriendshipResponse implements Callback<FriendshipResponseCallbackArgs>
+	{
+		@Override
+		public boolean callback(FriendshipResponseCallbackArgs e)
+		{
+			String verb = e.getAccepted() ? "accepted" : "declined";
+			String title = "Friendship " + verb;
+			String message = e.getName() + " has " + verb + " your friendship offer.";
+
+			/* Show dialog informing about the decision of the other */
+			JOptionPane.showMessageDialog(_Main.getMainJFrame(), message, title, JOptionPane.PLAIN_MESSAGE);		
+			return false;
+		}
+	}
+
+	/**
+	 * Triggered when a user has sent us a friendship offer
+	 */
+	private class FriendshipOffered implements Callback<FriendshipOfferedCallbackArgs>
+	{
+		@Override
+		public boolean callback(FriendshipOfferedCallbackArgs e)
+		{
+			final UUID uuid = e.getFriendID();
+			final UUID session = e.getSessionID();
+
+			/* Prompt user for acceptance of friendship offer */
+			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), e.getName() + " wants to be your friend. Do you accept this request?", 
+					                                   "Friendship Request", JOptionPane.YES_NO_OPTION);
+			try
+			{
+				if (result == JOptionPane.OK_OPTION)
 				{
-					try
-					{
-						// Accept or decline the request
-						_Main.getGridClient().Self.TeleportLureRespond(agentID, lureID, e.getActionCommand().equals(PopupQuestionDialog.cmdAccept));
-					}
-					catch (Exception ex)
-					{
-					}
-					
+					_Main.getGridClient().Friends.AcceptFriendship(uuid, session);
 				}
-			});
+				else
+				{
+					_Main.getGridClient().Friends.DeclineFriendship(uuid, session);
+				}
+			}
+			catch (InventoryException ex)
+			{
+				Logger.Log("Inventory Exception", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Exception sending response", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Triggered when a user has removed us from their friends list
+	 */
+	private class FriendshipTerminated implements Callback<FriendshipTerminatedCallbackArgs>
+	{
+		@Override
+		public boolean callback(FriendshipTerminatedCallbackArgs e)
+		{
+
 			return false;
 		}
 	}
