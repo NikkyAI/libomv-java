@@ -150,6 +150,11 @@ public class FriendsManager implements PacketCallback
 			isOnline = value;
 		}
 
+		public final byte getCanMe()
+		{
+			return myRights;
+		}
+		
 		/* True if the friend can see if I am online */
 		public final boolean getCanSeeMeOnline()
 		{
@@ -300,6 +305,36 @@ public class FriendsManager implements PacketCallback
 
 	public final CallbackHandler<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandler<FriendNotificationCallbackArgs>();
 
+	public class FriendListChangedCallbackArgs implements CallbackArgs
+	{
+		private final FriendInfo info;
+		private final boolean added;
+		
+		public FriendInfo getFriendInfo()
+		{
+			return info;
+		}
+
+		public boolean getIsAdded()
+		{
+			return added;
+		}
+
+		public FriendListChangedCallbackArgs(FriendInfo info, boolean added)
+		{
+			this.info = info;
+			this.added = added;
+		}
+	}
+
+	public abstract class FriendListChangedCallback implements Callback<FriendListChangedCallbackArgs>
+	{
+		@Override
+		public abstract boolean callback(FriendListChangedCallbackArgs params);
+	}
+
+	public final CallbackHandler<FriendListChangedCallbackArgs> OnFriendListChanged = new CallbackHandler<FriendListChangedCallbackArgs>();
+	
 	// Triggered when a friends rights changed
 	public class FriendRightsCallbackArgs implements CallbackArgs
 	{
@@ -362,7 +397,7 @@ public class FriendsManager implements PacketCallback
 
 	public CallbackHandler<FriendFoundReplyCallbackArgs> OnFriendFoundReply = new CallbackHandler<FriendFoundReplyCallbackArgs>();
 
-	/* Triggered when friend rights packet is received */
+	/* Triggered when someone offers us friendship */
 	public class FriendshipOfferedCallbackArgs implements CallbackArgs
 	{
 		private final UUID friendID;
@@ -400,7 +435,7 @@ public class FriendsManager implements PacketCallback
 
 	public CallbackHandler<FriendshipOfferedCallbackArgs> OnFriendshipOffered = new CallbackHandler<FriendshipOfferedCallbackArgs>();
 
-	/* Triggered when friend rights packet is received */
+	/* Triggered when someone accepts or rejects a friendship request */
 	public class FriendshipResponseCallbackArgs implements CallbackArgs
 	{
 		private final UUID agentID;
@@ -438,7 +473,7 @@ public class FriendsManager implements PacketCallback
 
 	public CallbackHandler<FriendshipResponseCallbackArgs> OnFriendshipResponse = new CallbackHandler<FriendshipResponseCallbackArgs>();
 
-	/* Triggered when friend rights packet is received */
+	/* Triggered when someone terminated friendship with us */
 	public class FriendshipTerminatedCallbackArgs implements CallbackArgs
 	{
 		private final UUID otherID;
@@ -495,6 +530,8 @@ public class FriendsManager implements PacketCallback
 			{
 				_FriendList.put(info.getID(), info);
 				_FriendIndices.add(info.getID());
+
+				OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(info, true));
 			}
 		}
 	}
@@ -503,9 +540,15 @@ public class FriendsManager implements PacketCallback
 	{
 		synchronized (_FriendList)
 		{
-			_FriendIndices.remove(uuid);
-			return _FriendList.remove(uuid);
+			if (_FriendList.containsKey(uuid))
+			{
+				FriendInfo info = _FriendList.get(uuid);
+				OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(info, false));
+			    _FriendIndices.remove(uuid);
+			    return _FriendList.remove(uuid);
+			}
 		}
+		return null;
 	}
 	
 	public int getFriendIndex(UUID uuid)
@@ -564,19 +607,19 @@ public class FriendsManager implements PacketCallback
 		{
 			case OnlineNotification:
 			case OfflineNotification:
-				FriendNotificationHandler(packet, simulator);
+				HandleFriendNotification(packet, simulator);
 				break;
 			case ChangeUserRights:
-				ChangeUserRightsHandler(packet, simulator);
+				HandleChangeUserRights(packet, simulator);
 				break;
 			case TerminateFriendship:
-				TerminateFriendshipHandler(packet, simulator);
+				HandleTerminateFriendship(packet, simulator);
 				break;
 			case FindAgent:
-				OnFindAgentReplyHandler(packet, simulator);
+				HandleFindAgentReply(packet, simulator);
 				break;
 			case UUIDNameReply:
-				UUIDNameReplyHandler(packet, simulator);
+				HandleUUIDNameReply(packet, simulator);
 				break;
 		}
 	}
@@ -608,9 +651,7 @@ public class FriendsManager implements PacketCallback
 
 		_Client.Network.SendPacket(request);
 
-		FriendInfo friend = new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-
-		addFriend(friend);
+		addFriend(new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline));
 
 		synchronized (_FriendRequests)
 		{
@@ -681,8 +722,7 @@ public class FriendsManager implements PacketCallback
 	 */
 	public final void TerminateFriendship(UUID agentID) throws Exception
 	{
-		FriendInfo friend = removeFriend(agentID);
-		
+		FriendInfo friend = removeFriend(agentID);	
 		if (friend != null)
 		{
 			TerminateFriendshipPacket request = new TerminateFriendshipPacket();
@@ -702,7 +742,7 @@ public class FriendsManager implements PacketCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private void TerminateFriendshipHandler(Packet packet, Simulator simulator)
+	private void HandleTerminateFriendship(Packet packet, Simulator simulator)
 	{
 		TerminateFriendshipPacket itsOver = (TerminateFriendshipPacket) packet;
 		FriendInfo friend = removeFriend(itsOver.OtherID);
@@ -807,7 +847,7 @@ public class FriendsManager implements PacketCallback
 	 * @param simulator
 	 *            The simulator for which the even the packet data is
 	 */
-	private void FriendNotificationHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleFriendNotification(Packet packet, Simulator simulator) throws Exception
 	{
 		ArrayList<UUID> requestids = new ArrayList<UUID>();
 		FriendInfo friend = null;
@@ -882,7 +922,7 @@ public class FriendsManager implements PacketCallback
 	 * @param simulator
 	 *            The simulator for which the even the packet data is
 	 */
-	private void ChangeUserRightsHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleChangeUserRights(Packet packet, Simulator simulator) throws Exception
 	{
 		if (packet.getType() == PacketType.ChangeUserRights)
 		{
@@ -923,7 +963,7 @@ public class FriendsManager implements PacketCallback
 	 * @param simulator
 	 *            The simulator for which the packet data is
 	 */
-	private void OnFindAgentReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleFindAgentReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnFriendFoundReply.count() > 0)
 		{
@@ -948,27 +988,19 @@ public class FriendsManager implements PacketCallback
 	 * @param simulator
 	 *            Unused
 	 */
-	private void UUIDNameReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleUUIDNameReply(Packet packet, Simulator simulator) throws Exception
 	{
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
-		synchronized (_FriendList)
+		for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock)
 		{
-			for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock)
+			synchronized (_FriendList)
 			{
-				FriendInfo friend;
-
-				if (!_FriendList.containsKey(block.ID))
+				if (_FriendList.containsKey(block.ID))
 				{
-					friend = new FriendInfo(block.ID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-					addFriend(friend);
+					_FriendList.get(block.ID).setName(Helpers.BytesToString(block.getFirstName()) + " " +
+					                                  Helpers.BytesToString(block.getLastName()));
 				}
-				else
-				{
-					friend = _FriendList.get(block.ID);
-				}
-				friend.setName(Helpers.BytesToString(block.getFirstName()) + " "
-						+ Helpers.BytesToString(block.getLastName()));
 			}
 		}
 	}
@@ -1050,6 +1082,7 @@ public class FriendsManager implements PacketCallback
 								request.add(kvp.getID());
 							}
 						}
+						OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(null, true));
 					}
 				}
 				
