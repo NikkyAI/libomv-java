@@ -447,16 +447,11 @@ public class GridClient
 		return gridlist.keySet();
 	}
 
-	public void setCurrentGrid(String grid)
-	{
-		currentGrid = grid;
-	}
-	
 	/**
 	 * Set the current grid
 	 * 
 	 * The function uses the info in the passed in grid to both set the currently active grid based on the gridnick,
-	 * as well as the merging the information in the GridInfo to the already stored Gridinfo.
+	 * as well as merging the information in the GridInfo to the already stored Gridinfo.
 	 * 
 	 * @param grid The grid info to use to set the current grid. If the GridInfo is null, the currentGrid
 	 *             is set to the current default grid
@@ -481,6 +476,18 @@ public class GridClient
 		return false;
 	}
 
+	public void setCurrentGrid(String grid)
+	{
+		if (grid != null)
+		{
+			currentGrid = grid;
+		}
+		else
+		{
+			currentGrid = defaultGrid;
+		}
+	}
+	
 	public GridInfo getGrid(String grid)
 	{
 		if (grid == null)
@@ -760,7 +767,7 @@ public class GridClient
 		return modified;
 	}
 
-	private void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
+	public void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
 	{
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 		prefs.put(DEFAULT_GRIDS_VERSION, Integer.toString(listversion));
