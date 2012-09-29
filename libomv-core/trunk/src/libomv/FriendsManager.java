@@ -150,76 +150,71 @@ public class FriendsManager implements PacketCallback
 			isOnline = value;
 		}
 
-		public final byte getCanMe()
-		{
-			return myRights;
-		}
-		
 		/* True if the friend can see if I am online */
 		public final boolean getCanSeeMeOnline()
 		{
-			return (myRights & FriendRights.CanSeeOnline) != 0;
+			return (theirRights & FriendRights.CanSeeOnline) != 0;
 		}
 
 		public final void setCanSeeMeOnline(boolean value)
 		{
 			if (value)
 			{
-				myRights |= FriendRights.CanSeeOnline;
+				theirRights |= FriendRights.CanSeeOnline;
 			}
 			else
 			{
 				// if they can't see me online, then they also can't see me on
 				// the map
-				myRights &= ~(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
+				theirRights &= ~(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
 			}
 		}
 
 		/* True if the friend can see me on the map */
 		public final boolean getCanSeeMeOnMap()
 		{
-			return (myRights & FriendRights.CanSeeOnMap) != 0;
+			return (theirRights & FriendRights.CanSeeOnMap) != 0;
 		}
 
 		public final void setCanSeeMeOnMap(boolean value)
 		{
 			if (value)
-				myRights |= FriendRights.CanSeeOnMap;
+				theirRights |= FriendRights.CanSeeOnMap;
 			else
-				myRights &= ~FriendRights.CanSeeOnMap;
+				theirRights &= ~FriendRights.CanSeeOnMap;
 
 		}
 
 		/* True if the friend can modify my objects */
 		public final boolean getCanModifyMyObjects()
 		{
-			return (myRights & FriendRights.CanModifyObjects) != 0;
+			return (theirRights & FriendRights.CanModifyObjects) != 0;
 		}
 
 		public final void setCanModifyMyObjects(boolean value)
 		{
 			if (value)
-				myRights |= FriendRights.CanModifyObjects;
+				theirRights |= FriendRights.CanModifyObjects;
 			else
-				myRights &= ~FriendRights.CanModifyObjects;
+				theirRights &= ~FriendRights.CanModifyObjects;
 		}
 
 		/* True if I can see if my friend is online */
 		public final boolean getCanSeeThemOnline()
 		{
-			return (theirRights & FriendRights.CanSeeOnline) != 0;
+			return (myRights & FriendRights.CanSeeOnline) != 0;
 		}
 
 		/* True if I can see if my friend is on the map */
 		public final boolean getCanSeeThemOnMap()
 		{
-			return (theirRights & FriendRights.CanSeeOnMap) != 0;
+			return (myRights & FriendRights.CanSeeOnMap) != 0;
 		}
 
 		/* True if I can modify my friend's objects */
 		public final boolean getCanModifyTheirObjects()
 		{
-			return (theirRights & FriendRights.CanModifyObjects) != 0;
+			return (myRights & FriendRights.CanModifyObjects) != 0;
 		}
 
 		/**
@@ -754,14 +749,29 @@ public class FriendsManager implements PacketCallback
 	/**
 	 * Change the rights of a friend avatar.
 	 * 
+	 * @param info
+	 *            the {@link FriendInfo} of the friend
+	 * @throws Exception
+	 * 
+	 * This method will implicitly set the rights to those contained in
+	 * the info parameter.
+	 */
+	public final void GrantRights(FriendInfo info) throws Exception
+	{
+		GrantRights(info.ID, info.theirRights);
+	}
+		
+	/**
+	 * Change the rights of a friend avatar.
+	 * 
 	 * @param friendID
 	 *            the {@link UUID} of the friend
 	 * @param rights
 	 *            the new rights to give the friend
 	 * @throws Exception
 	 * 
-	 *             This method will implicitly set the rights to those passed in
-	 *             the rights parameter.
+	 * This method will implicitly set the rights to those passed in
+	 * the rights parameter.
 	 */
 	public final void GrantRights(UUID friendID, byte rights) throws Exception
 	{
