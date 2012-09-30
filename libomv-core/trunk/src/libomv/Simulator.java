@@ -964,7 +964,6 @@ public class Simulator extends Thread
 				_Caps = new CapsManager(this, seedcaps);
 			}
 		}
-
 	}
 
 	public void Disconnect(boolean sendCloseCircuit) throws Exception
@@ -1011,8 +1010,7 @@ public class Simulator extends Thread
 				catch (IOException e)
 				{
 					// There's a high probability of this failing if the network
-					// is
-					// disconnected, so don't even bother logging the error
+					// is disconnected, so don't even bother logging the error
 				}
 			}
 
@@ -1200,8 +1198,7 @@ public class Simulator extends Thread
 					}
 					catch (IOException ex)
 					{
-						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info,
-								_Client, ex);
+						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, _Client, ex);
 
 						_Connected = false;
 						_Client.Network.DisconnectSim(this, true);

@@ -1136,8 +1136,7 @@ public class NetworkManager implements PacketCallback
 		@Override
 		public void run()
 		{
-			// If the current simulator is disconnected, shutdown + callback +
-			// return
+			// If the current simulator is disconnected, shutdown + callback + return
 			if (!_Connected || _CurrentSim == null)
 			{
 				if (_DisconnectTimer != null)
@@ -1149,8 +1148,7 @@ public class NetworkManager implements PacketCallback
 			}
 			else if (_CurrentSim.getDisconnectCandidate())
 			{
-				// The currently occupied simulator hasn't sent us any traffic
-				// in a while, shutdown
+				// The currently occupied simulator hasn't sent us any traffic in a while, shutdown
 				Logger.Log("Network timeout for the current simulator (" + _CurrentSim.Name + "), logging out",
 						LogLevel.Warning);
 
@@ -1170,8 +1168,7 @@ public class NetworkManager implements PacketCallback
 				{
 				}
 
-				// We're completely logged out and shut down, leave this
-				// function
+				// We're completely logged out and shut down, leave this function
 				return;
 			}
 
@@ -1202,8 +1199,7 @@ public class NetworkManager implements PacketCallback
 			{
 				for (Simulator simulator : disconnectedSims)
 				{
-					// This sim hasn't received any network traffic since the
-					// timer last elapsed, consider it disconnected
+					// This sim hasn't received any network traffic since the timer last elapsed, consider it disconnected
 					Logger.Log("Network timeout for simulator " + simulator.Name + ", disconnecting", LogLevel.Warning);
 
 					try
