@@ -55,6 +55,7 @@ import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
+import libomv.utils.HashList;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -509,10 +510,9 @@ public class FriendsManager implements PacketCallback
 	 * {@link FriendInfo} object that contains detailed information including
 	 * permissions you have and have given to the friend
 	 */
-	private HashMap<UUID, FriendInfo> _FriendList = new HashMap<UUID, FriendInfo>();
-	private ArrayList<UUID> _FriendIndices = new ArrayList<UUID>();
+	private HashList<UUID, FriendInfo> _FriendList = new HashList<UUID, FriendInfo>();
 
-	public HashMap<UUID, FriendInfo> getFriendList()
+	public HashList<UUID, FriendInfo> getFriendList()
 	{
 		return _FriendList;
 	}
@@ -524,7 +524,6 @@ public class FriendsManager implements PacketCallback
 			if (!_FriendList.containsKey(info.getID()))
 			{
 				_FriendList.put(info.getID(), info);
-				_FriendIndices.add(info.getID());
 
 				OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(info, true));
 			}
@@ -539,7 +538,6 @@ public class FriendsManager implements PacketCallback
 			{
 				FriendInfo info = _FriendList.get(uuid);
 				OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(info, false));
-			    _FriendIndices.remove(uuid);
 			    return _FriendList.remove(uuid);
 			}
 		}
@@ -550,7 +548,7 @@ public class FriendsManager implements PacketCallback
 	{
 		synchronized (_FriendList)
 		{
-			return _FriendIndices.indexOf(uuid);
+			return _FriendList.getKeyPosition(uuid);
 		}
 	}
 	
@@ -558,7 +556,7 @@ public class FriendsManager implements PacketCallback
 	{
 		synchronized (_FriendList)
 		{
-			return _FriendList.get(_FriendIndices.get(index));
+			return _FriendList.get(index);
 		}
 	}
 
