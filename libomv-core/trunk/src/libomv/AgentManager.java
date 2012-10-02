@@ -2741,8 +2741,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			}
 			else
 			{
-				Logger.Log("No Active group chat session appears to exist, use RequestJoinGroupChat() to join one",
-						LogLevel.Error, _Client);
+				throw new Exception("No Active group chat session appears to exist, use RequestJoinGroupChat() to join one");
 			}
 		}
 	}
