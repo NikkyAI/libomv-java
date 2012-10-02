@@ -31,14 +31,23 @@ package libomv.Gui.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 
+import libomv.AgentManager.ChatAudibleLevel;
+import libomv.AgentManager.ChatSourceType;
+import libomv.AgentManager.ChatType;
+import libomv.AgentManager.InstantMessage;
+import libomv.AgentManager.InstantMessageOnline;
 import libomv.Gui.channels.AbstractChannel;
+import libomv.Gui.channels.GroupChannel;
+import libomv.Gui.channels.IMChannel;
 import libomv.Gui.channels.LocalChannel;
 import libomv.Gui.components.OnlinePanel;
+import libomv.types.UUID;
 
 public class CommWindow extends JFrame
 {
@@ -48,6 +57,9 @@ public class CommWindow extends JFrame
 	private JTabbedPane jTpContacts;
 	
 	private MainControl _Main;
+	private LocalChannel localChat;
+	private HashMap<UUID, IMChannel> imChannels;
+	private HashMap<UUID, GroupChannel> groupChannels;
 	
 	public CommWindow(MainControl main)
 	{
@@ -88,6 +100,52 @@ public class CommWindow extends JFrame
 		}
 	}
 	
+	public void printAlertMessage(String alertMessage)
+	{
+        if (alertMessage.toLowerCase().contains("autopilot canceled"))
+        	return; //workaround the stupid autopilot alerts
+
+        getLocalChannel().receiveMessage(null, null, "Alert message", alertMessage, true);
+	}
+	
+	public void printMessage(ChatSourceType source, String from, String message, ChatAudibleLevel level, ChatType type)
+	{
+        getLocalChannel().receiveMessage(null, null, from, message, false);		
+	}
+	
+	public void printInstantMessage(InstantMessage message)
+	{
+		AbstractChannel channel;
+		if (message.GroupIM)
+		{
+			channel = groupChannels.get(message.FromAgentID);
+			if (channel == null)
+			{
+				channel = new GroupChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+				getJTpComm().add(message.FromAgentName, channel);
+			}
+		}
+		else
+		{
+			channel = imChannels.get(message.FromAgentID);
+			if (channel == null)
+			{
+				channel = new IMChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+				getJTpComm().add(message.FromAgentName, channel);
+			}
+		}
+		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, message.Offline == InstantMessageOnline.Offline);
+	}
+	
+	private LocalChannel getLocalChannel()
+	{
+		if (localChat == null)
+		{
+			localChat = new LocalChannel(_Main);
+		}
+		return localChat;
+	}
+	
 	private JTabbedPane getJTpComm()
 	{
 		if (jTpComm == null)
@@ -97,7 +155,7 @@ public class CommWindow extends JFrame
 			jTpComm.setBorder(new LineBorder(new Color(0, 0, 0)));
 
 			jTpComm.add("Contacts", getJTpContacts());
-			jTpComm.add("Local Chat", new LocalChannel(_Main.getGridClient()));
+			jTpComm.add("Local Chat", getLocalChannel());
 		}
 		return jTpComm;
 	}

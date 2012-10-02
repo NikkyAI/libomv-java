@@ -39,12 +39,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import libomv.AgentManager.AlertMessageCallbackArgs;
 import libomv.AgentManager.BalanceCallbackArgs;
+import libomv.AgentManager.ChatCallbackArgs;
+import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.TeleportLureCallbackArgs;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
 import libomv.FriendsManager.FriendshipResponseCallbackArgs;
 import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
+import libomv.GroupManager.GroupInvitationCallbackArgs;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 import libomv.Gui.windows.CommWindow;
@@ -79,10 +83,14 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private JPanel jSceneViewer;
 
 	private Callback<TeleportLureCallbackArgs> teleportLureCallback = new TeleportLure();
+	private Callback<ChatCallbackArgs> chatCallback = new ChatMessage();
+	private Callback<AlertMessageCallbackArgs> alertCallback = new AlertMessage();
+	private Callback<InstantMessageCallbackArgs> instantCallback = new InstantMessage();
 	private Callback<FriendNotificationCallbackArgs> friendNotificationCallback = new FriendNotification();
 	private Callback<FriendshipResponseCallbackArgs> friendshipResponseCallback = new FriendshipResponse();
 	private Callback<FriendshipOfferedCallbackArgs> friendshipOfferedCallback = new FriendshipOffered();
 	private Callback<FriendshipTerminatedCallbackArgs> friendshipTerminatedCallback = new FriendshipTerminated();
+	private Callback<GroupInvitationCallbackArgs> groupInvitationCallback = new GroupInvitation();
 
 	public OnlinePanel(MainControl main)
 	{
@@ -90,6 +98,12 @@ public class OnlinePanel extends JPanel implements ActionListener
 		
 		// Triggered when someone offers us a teleport
 		_Main.getGridClient().Self.OnTeleportLure.add(teleportLureCallback);
+		// Triggered when a local chat message is received
+		_Main.getGridClient().Self.OnChat.add(chatCallback);
+		// Triggered when an alert message is received
+		_Main.getGridClient().Self.OnAlertMessage.add(alertCallback);
+		// Triggered when an IM is received
+		_Main.getGridClient().Self.OnInstantMessage.add(instantCallback);
 		// Triggered when the online status of a friend has changed
 		_Main.getGridClient().Friends.OnFriendNotification.add(friendNotificationCallback);
 		// Triggered when someone has accepted or rejected our friendship request
@@ -98,6 +112,8 @@ public class OnlinePanel extends JPanel implements ActionListener
 		_Main.getGridClient().Friends.OnFriendshipOffered.add(friendshipOfferedCallback);
 		// Triggered when someone has terminated friendship with us
 		_Main.getGridClient().Friends.OnFriendshipTerminated.add(friendshipTerminatedCallback);
+		// Triggered when someone has invited us to a group
+		_Main.getGridClient().Groups.OnGroupInvitation.add(groupInvitationCallback);
 
 		main.setContentArea(getSceneViewer());
 		main.setMenuBar(getJMBar());
@@ -108,13 +124,24 @@ public class OnlinePanel extends JPanel implements ActionListener
 	protected void finalize() throws Throwable
 	{
 		_Main.getGridClient().Self.OnTeleportLure.remove(teleportLureCallback);
+		_Main.getGridClient().Self.OnChat.remove(chatCallback);
+		_Main.getGridClient().Self.OnAlertMessage.remove(alertCallback);
+		_Main.getGridClient().Self.OnInstantMessage.remove(instantCallback);
 		_Main.getGridClient().Friends.OnFriendNotification.remove(friendNotificationCallback);
 		_Main.getGridClient().Friends.OnFriendshipResponse.remove(friendshipResponseCallback);
 		_Main.getGridClient().Friends.OnFriendshipOffered.remove(friendshipOfferedCallback);
 		_Main.getGridClient().Friends.OnFriendshipTerminated.remove(friendshipTerminatedCallback);
+		_Main.getGridClient().Groups.OnGroupInvitation.remove(groupInvitationCallback);
 
 		super.finalize();
 	} 
+
+	public CommWindow getCommWindow()
+	{
+		if (_Comm == null)
+			_Comm = new CommWindow(_Main);
+		return _Comm;
+	}
 
 	public FriendList getFriendList()
 	{
@@ -224,12 +251,8 @@ public class OnlinePanel extends JPanel implements ActionListener
 		if (e.getActionCommand().equals(cmdFriends) ||
 			e.getActionCommand().equals(cmdGroups))
 		{
-			if (_Comm == null)
-			{
-				_Comm = new CommWindow(_Main);
-			}
-			_Comm.setFocus(e.getActionCommand());
-		    _Comm.setVisible(true);
+			getCommWindow().setFocus(e.getActionCommand());
+			getCommWindow().setVisible(true);
 		}
 		else if (e.getActionCommand().equals(cmdInventory))
 		{
@@ -299,6 +322,36 @@ public class OnlinePanel extends JPanel implements ActionListener
 			}
 			return false;
 		}
+	}
+
+	private class ChatMessage implements Callback<ChatCallbackArgs>
+	{
+		@Override
+		public boolean callback(ChatCallbackArgs params)
+		{
+			getCommWindow().printMessage(params.getSourceType(), params.getFromName(), params.getMessage(), params.getAudible(), params.getType());
+			return false;
+		}
+	}
+	
+	private class AlertMessage implements Callback<AlertMessageCallbackArgs>
+	{
+		@Override
+		public boolean callback(AlertMessageCallbackArgs params)
+		{
+			getCommWindow().printAlertMessage(params.getAlert());
+			return false;
+		}		
+	}
+	
+	private class InstantMessage implements Callback<InstantMessageCallbackArgs>
+	{
+		@Override
+		public boolean callback(InstantMessageCallbackArgs params)
+		{
+			getCommWindow().printInstantMessage(params.getIM());
+			return false;
+		}		
 	}
 
 	/**
@@ -380,7 +433,37 @@ public class OnlinePanel extends JPanel implements ActionListener
 		@Override
 		public boolean callback(FriendshipTerminatedCallbackArgs e)
 		{
+			/* Inform user about the friendship termination */
+			JOptionPane.showMessageDialog(_Main.getMainJFrame(), e.getName() + " terminated the friendship.", 
+					                                   "Friendship Termination", JOptionPane.PLAIN_MESSAGE);
 
+			return false;
+		}
+	}
+	
+	/**
+	 * Triggered when a someone invites us to a group
+	 */
+	private class GroupInvitation implements Callback<GroupInvitationCallbackArgs>
+	{
+		@Override
+		public boolean callback(GroupInvitationCallbackArgs args)
+		{
+			final UUID groupID = args.getGroupID();
+			final UUID session = args.getSessionID();
+
+			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
+													   " has invited you to join a group with following message '" +
+					                                   args.getMessage() + "'. Do you accept this offer?",
+                                                       "Group Invitation", JOptionPane.YES_NO_OPTION);		
+			try
+			{
+				_Main.getGridClient().Self.GroupInviteRespond(groupID, session, result == JOptionPane.OK_OPTION);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Exception when trying to respond to group invitation", LogLevel.Error, _Main.getGridClient(), ex);
+			}
 			return false;
 		}
 	}

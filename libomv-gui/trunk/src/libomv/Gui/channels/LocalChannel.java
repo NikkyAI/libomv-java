@@ -31,6 +31,7 @@ package libomv.Gui.channels;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Date;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,7 +42,8 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
 
-import libomv.GridClient;
+import libomv.AgentManager.ChatType;
+import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 
 public class LocalChannel extends AbstractChannel
@@ -49,13 +51,14 @@ public class LocalChannel extends AbstractChannel
 	private static final long serialVersionUID = 1L;
 
 	private JScrollPane jScrpAttendents; 
+	private int chatChannel = 0;
 
 	/**
 	 * This is the default constructor
 	 */
-	public LocalChannel(GridClient client)
+	public LocalChannel(MainControl main)
 	{
-		super(client, "Local Chat", UUID.Zero);
+		super(main, "Local Chat", UUID.Zero, UUID.Zero);
 		
 		JPanel panelNorth = new JPanel();
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
@@ -81,12 +84,118 @@ public class LocalChannel extends AbstractChannel
 		add(panelNorth, BorderLayout.NORTH);
 
 		JScrollPane scrollPaneText = new JScrollPane();
-		scrollPaneText.setViewportView(getTxPane());
+		scrollPaneText.setViewportView(getTextPane());
 		add(scrollPaneText, BorderLayout.CENTER);
 
 		add(getJScrpAttendents(), BorderLayout.EAST);
 	}
 
+	/**
+	 * Receive a message.
+	 * 
+	 * @param message The message received.
+	 */
+	@Override
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, boolean system)
+	{
+		if(message == null || message.isEmpty())
+			return;
+		
+		// Determine if this is a friend...
+		boolean friend = false;
+		if (fromId == null)
+			friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
+		
+		// If this is an action message.
+		if(message.startsWith("/me "))
+		{
+			// Remove the "/me ".
+			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), STYLE_ACTION));
+		}
+		else
+		{
+			// This is a normal message.
+			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, STYLE_REGULAR));
+		}
+	}
+
+	protected void transmitMessage(String message, ChatType chatType) throws Exception
+	{
+        if (message == null || message.trim().isEmpty())
+        	return;
+
+        int channel = 0;
+		String self = _Main.getGridClient().Self.getName();
+		addHistory(message);	
+
+		// Do we have a command?
+		if(message.charAt(0) == '/')
+		{
+			String firstWord = "";
+			try
+			{
+				firstWord = message.split("\\s")[0].toLowerCase();
+			}
+			catch(Exception ex) { }
+
+			String localMessage = message.substring(firstWord.length()).trim();
+
+			// Deal with actions.
+			if(firstWord.equals("/me"))
+			{
+				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
+				// Send the message as is
+			}
+			// Shout
+			else if((firstWord.equals("/shout")) || (firstWord.equals("/s")))
+			{
+				chatType = ChatType.Shout;
+				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "shouts: " + localMessage, STYLE_ACTION));
+				// Remove the shout command from the message
+				message = message.substring(firstWord.length()).trim();
+			}
+			// Whisper
+			else if((firstWord.equals("/whisper")) || (firstWord.equals("/w")))
+			{
+				chatType = ChatType.Whisper;
+				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "whispers: " + localMessage, STYLE_ACTION));
+				// Remove the whisper command from the message
+				message = message.substring(firstWord.length()).trim();
+			} 
+			else if(firstWord.length() > 1)
+			{
+				// Is there a channel request?
+				if (firstWord.equals("//"))
+				{
+					// Use previous channel
+					channel = chatChannel;
+				}
+				else
+				{
+					try
+					{
+						channel = Integer.parseInt(firstWord.substring(1));
+						chatChannel = channel;
+					}
+					catch(Exception ex) { }
+				}
+				if (channel != 0)
+				{
+					localMessage = "(" + channel + ") " + localMessage;
+					// Remove the channel command from the message
+					message = message.substring(firstWord.length()).trim();
+				}
+				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, localMessage, STYLE_REGULAR));
+			}
+		}
+		else
+		{
+			addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
+		}
+		// Send the message.
+		_Main.getGridClient().Self.Chat(message, channel, chatType);
+	}
+	
 	private JScrollPane getJScrpAttendents()
 	{
 		if (jScrpAttendents == null)

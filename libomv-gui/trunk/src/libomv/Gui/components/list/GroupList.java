@@ -43,7 +43,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -51,7 +50,6 @@ import javax.swing.SwingUtilities;
 
 import libomv.FriendsManager.FriendInfo;
 import libomv.GroupManager.Group;
-import libomv.GroupManager.GroupInvitationCallbackArgs;
 import libomv.GroupManager.GroupOperationCallbackArgs;
 import libomv.Gui.components.list.SortedListModel.SortOrder;
 import libomv.Gui.windows.MainControl;
@@ -76,7 +74,6 @@ public class GroupList extends JScrollPane
 		super();
 		_Main = main;
 
-		_Main.getGridClient().Groups.OnGroupInvitation.add(new GroupInvitation());
 		_Main.getGridClient().Groups.OnGroupJoinedReply.add(new GroupJoined());
 		_Main.getGridClient().Groups.OnGroupLeaveReply.add(new GroupLeave());
 
@@ -133,7 +130,7 @@ public class GroupList extends JScrollPane
 			
 			// Initialize the list with the values from the friends manager
 			DefaultListModel model = (DefaultListModel) ((SortedListModel) jLGroupsList.getModel()).getUnsortedModel();
-			model.copyInto(_Main.getGridClient().Groups.GroupName2KeyCache.values().toArray());
+			model.copyInto(_Main.getGridClient().Groups.GroupList.values().toArray());
 			// create Renderer and display
 			jLGroupsList.setCellRenderer(new GroupListRow());
 			// only allow single selections.
@@ -521,31 +518,6 @@ public class GroupList extends JScrollPane
 		}
 	}
 	
-	private class GroupInvitation implements Callback<GroupInvitationCallbackArgs>
-	{
-		@Override
-		public boolean callback(GroupInvitationCallbackArgs args)
-		{
-			final UUID groupID = args.getGroupID();
-			final UUID session = args.getSessionID();
-
-			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
-													   " has invited you to join a group with following message '" +
-					                                   args.getMessage() + "'. Do you accept this offer?",
-                                                       "Group Invitation", JOptionPane.YES_NO_OPTION);		
-			try
-			{
-				_Main.getGridClient().Self.GroupInviteRespond(groupID, session, result == JOptionPane.OK_OPTION);
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Exception when trying to accept group invitation", LogLevel.Error, _Main.getGridClient(), ex);
-			}
-			return false;
-		}
-		
-	}
-
 	private class GroupJoined implements Callback<GroupOperationCallbackArgs>
 	{
 		@Override

@@ -316,7 +316,7 @@ public class FriendList extends JPanel implements ActionListener
         {
 			try
 			{
-				_Main.getGridClient().Friends.GrantRights(info.getID(), info.getCanMe());
+				_Main.getGridClient().Friends.GrantRights(info);
                 fireTableCellUpdated(row, col);
 			}
 			catch (Exception ex)

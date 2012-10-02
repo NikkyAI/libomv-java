@@ -28,15 +28,78 @@
  */
 package libomv.Gui.channels;
 
-import libomv.GridClient;
+import java.util.Date;
+
+import libomv.AgentManager.ChatType;
+import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 
 public class IMChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
 	
-	public IMChannel(GridClient client, String name, UUID id)
+	public IMChannel(MainControl main, String name, UUID id, UUID session)
 	{
-		super(client, name, id);
+		super(main, name, id, session);
+	}
+		
+	/**
+	 * Receive a message.
+	 * 
+	 * @param message The message received.
+	 */
+	@Override
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, boolean offline)
+	{
+		if(message == null || message.isEmpty())
+			return;
+		
+		// Determine if this is a friend...
+		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
+		
+		// If this is an action message.
+		if(message.startsWith("/me "))
+		{
+			// Remove the "/me ".
+			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, "* " + message.substring(4), offline ? STYLE_OFFLINE : STYLE_ACTION));
+		}
+		else
+		{
+			// This is a normal message.
+			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, offline ? STYLE_OFFLINE : STYLE_REGULAR));
+		}
+	}
+
+	@Override
+	public void transmitMessage(String message, ChatType type) throws Exception
+	{
+        if (message == null || message.trim().isEmpty())
+        	return;
+
+		String self = _Main.getGridClient().Self.getName();
+		if(getID() != null)
+		{
+			addHistory(message);	
+
+			// Deal with actions.
+			if(message.toLowerCase().startsWith("/me "))
+			{
+				// Remove the "/me "
+				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, message.substring(4).trim(), STYLE_ACTION));
+			}
+			else
+			{
+				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message.substring(4), STYLE_REGULAR));
+			}
+				
+			// Send the message.
+			_Main.getGridClient().Self.InstantMessage(getID(), message, getSession());
+			// Indicate that we're no longer typing.
+			_Main.getGridClient().Self.SendTypingState(getID(), getSession(), false);
+		}
+		else
+		{
+			addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "Invlid UUID for this chat channel", STYLE_ERROR));			
+		}
 	}
 }

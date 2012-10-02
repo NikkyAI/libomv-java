@@ -31,6 +31,8 @@ package libomv.Gui.channels;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,7 +43,8 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
 
-import libomv.GridClient;
+import libomv.AgentManager.ChatType;
+import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 
 public class GroupChannel extends AbstractChannel
@@ -53,9 +56,9 @@ public class GroupChannel extends AbstractChannel
 	/**
 	 * This is the default constructor
 	 */
-	public GroupChannel(GridClient client, String name, UUID id)
+	public GroupChannel(MainControl main, String name, UUID id, UUID session)
 	{
-		super(client, name, id);
+		super(main, name, id, session);
 		
 		JPanel panelNorth = new JPanel();
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
@@ -81,6 +84,69 @@ public class GroupChannel extends AbstractChannel
 		add(panelNorth, BorderLayout.NORTH);
 
 		add(getJScrpAttendents(), BorderLayout.EAST);
+	}
+
+	/**
+	 * Receive a message.
+	 * 
+	 * @param message The message received.
+	 */
+	@Override
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, boolean offline)
+	{
+		if(message == null || message.isEmpty())
+			return;
+		
+		// Determine if this is a friend...
+		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
+		
+		// If this is an action message.
+		if(message.startsWith("/me "))
+		{
+			// Remove the "/me ".
+			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), STYLE_ACTION));
+		}
+		else
+		{
+			// This is a normal message.
+			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, STYLE_REGULAR));
+		}
+	}
+
+	@Override
+	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception
+	{
+        if (message == null || message.trim().isEmpty())
+        	return;
+
+		String self = _Main.getGridClient().Self.getName();
+		addHistory(message);	
+
+		// Do we have an action command?
+		if(message.charAt(0) == '/')
+		{
+			String firstWord = "";
+			try
+			{
+				firstWord = message.split("\\s")[0].toLowerCase();
+			}
+			catch(Exception ex) { }
+			String localMessage = message.substring(firstWord.length()).trim();
+
+			// Deal with actions.
+			if(firstWord.equals("/me"))
+			{
+				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
+			}
+		}
+		else
+		{
+			// Normal
+			addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
+		}
+		
+		// Send the message.
+		_Main.getGridClient().Self.InstantMessageGroup(getID(), message);
 	}
 
 	private JScrollPane getJScrpAttendents()
