@@ -739,11 +739,17 @@ public class NetworkManager implements PacketCallback
 
 		synchronized (capCallbacks)
 		{
-			if (!capCallbacks.containsKey(capability))
+			ArrayList<CapsCallback> callbacks = capCallbacks.get(capability);
+			if (callbacks == null)
 			{
-				capCallbacks.put(capability, new ArrayList<CapsCallback>());
+				callbacks = new ArrayList<CapsCallback>();
+				capCallbacks.put(capability, callbacks);
 			}
-			capCallbacks.get(capability).add(callback);
+			else
+			{
+				callbacks.remove(callback);
+			}
+			callbacks.add(callback);
 		}
 	}
 
@@ -784,11 +790,17 @@ public class NetworkManager implements PacketCallback
 
 		synchronized (simCallbacks)
 		{
-			if (!simCallbacks.containsKey(type))
+			ArrayList<PacketCallback> callbacks = simCallbacks.get(type);
+			if (callbacks == null)
 			{
-				simCallbacks.put(type, new ArrayList<PacketCallback>());
+				callbacks = new ArrayList<PacketCallback>();
+				simCallbacks.put(type, callbacks);
 			}
-			simCallbacks.get(type).add(callback);
+			else
+			{
+				callbacks.remove(callback);
+			}
+			callbacks.add(callback);
 		}
 	}
 
