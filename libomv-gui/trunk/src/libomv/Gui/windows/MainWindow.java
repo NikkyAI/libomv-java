@@ -36,7 +36,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -96,6 +95,15 @@ public class MainWindow extends JFrame implements MainControl
 		return _Client;
 	}
 	
+	public CommWindow getCommWindow()
+	{
+		if (jPSouth != null && jPSouth instanceof OnlinePanel)
+		{
+			return ((OnlinePanel)jPSouth).getCommWindow();
+		}
+		return null;
+	}
+
 	public FriendList getFriendList()
 	{
 		if (jPSouth != null && jPSouth instanceof OnlinePanel)

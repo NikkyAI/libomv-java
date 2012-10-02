@@ -58,6 +58,7 @@ public interface MainControl extends ActionListener
 	public void setMenuBar(JMenuBar menuBar);
 	public JFrame getMainJFrame();
 	public GridClient getGridClient();
+	public CommWindow getCommWindow();
 	public FriendList getFriendList();
 	public GroupList getGroupList();
 	public void setContentArea(Component pane);

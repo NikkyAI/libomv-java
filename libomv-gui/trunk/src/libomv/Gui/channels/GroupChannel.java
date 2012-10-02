@@ -92,7 +92,7 @@ public class GroupChannel extends AbstractChannel
 	 * @param message The message received.
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, boolean offline)
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 	{
 		if(message == null || message.isEmpty())
 			return;
@@ -146,7 +146,7 @@ public class GroupChannel extends AbstractChannel
 		}
 		
 		// Send the message.
-		_Main.getGridClient().Self.InstantMessageGroup(getID(), message);
+		_Main.getGridClient().Self.InstantMessageGroup(getUUID(), message);
 	}
 
 	private JScrollPane getJScrpAttendents()
@@ -161,5 +161,10 @@ public class GroupChannel extends AbstractChannel
 			jScrpAttendents.setViewportView(listAttendents);
 		}
 		return jScrpAttendents;
+	}
+
+	@Override
+	protected void triggerTyping() throws Exception
+	{
 	}
 }

@@ -37,15 +37,15 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 
-import libomv.AgentManager.ChatAudibleLevel;
 import libomv.AgentManager.ChatSourceType;
 import libomv.AgentManager.ChatType;
 import libomv.AgentManager.InstantMessage;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.Gui.channels.AbstractChannel;
 import libomv.Gui.channels.GroupChannel;
-import libomv.Gui.channels.IMChannel;
+import libomv.Gui.channels.PrivateChannel;
 import libomv.Gui.channels.LocalChannel;
+import libomv.Gui.components.ButtonTabPane;
 import libomv.Gui.components.OnlinePanel;
 import libomv.types.UUID;
 
@@ -58,8 +58,7 @@ public class CommWindow extends JFrame
 	
 	private MainControl _Main;
 	private LocalChannel localChat;
-	private HashMap<UUID, IMChannel> imChannels;
-	private HashMap<UUID, GroupChannel> groupChannels;
+	private HashMap<UUID, AbstractChannel> channels;
 	
 	public CommWindow(MainControl main)
 	{
@@ -69,10 +68,11 @@ public class CommWindow extends JFrame
 		
 		setTitle("Communication");
 		
+		channels = new HashMap<UUID, AbstractChannel>();
+		
 		// Choose a sensible minimum size.
-		setPreferredSize(new Dimension(280, 400));
+		setPreferredSize(new Dimension(360, 440));
 		getContentPane().setLayout(new BorderLayout(0, 0));
-
 		getContentPane().add(getJTpComm());
 
 		//Display the window.
@@ -80,11 +80,14 @@ public class CommWindow extends JFrame
         setVisible(true);
 	}
 	
-	public void setFocus(String focus)
+	public void setFocus(String focus, UUID uuid)
 	{
 		if (focus.equals("chat"))
 		{
-			getJTpComm().setSelectedIndex(1);
+			int index = 1;
+			if (uuid != null && !uuid.equals(UUID.Zero))
+				index = getJTpComm().indexOfComponent(channels.get(uuid));
+			getJTpComm().setSelectedIndex(index);
 		}
 		else
 		{
@@ -105,20 +108,70 @@ public class CommWindow extends JFrame
         if (alertMessage.toLowerCase().contains("autopilot canceled"))
         	return; //workaround the stupid autopilot alerts
 
-        getLocalChannel().receiveMessage(null, null, "Alert message", alertMessage, true);
+        AbstractChannel channel = getLocalChannel();
+        channel.receiveMessage(null, null, "Alert message", alertMessage, AbstractChannel.STYLE_SYSTEM);
+		highlightChannel(channel);
 	}
 	
-	public void printMessage(ChatSourceType source, String from, String message, ChatAudibleLevel level, ChatType type)
+	public void printChatMessage(ChatSourceType sourceType, UUID sourceID, String fromName, String message, ChatType type)
 	{
-        getLocalChannel().receiveMessage(null, null, from, message, false);		
+        
+        StringBuilder localMessage = new StringBuilder();
+        boolean isEmote = message.toLowerCase().startsWith("/me ");
+
+        if (!isEmote)
+        {
+        	switch (type)
+        	{
+				case Shout:
+					localMessage.append(" shouts");
+					break;
+				case Whisper:
+					localMessage.append(" whispers");
+					break;
+        	}
+        	localMessage.append(": ");
+            if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && _Main.getGridClient().RLV.restrictionActive("recvchat", sourceID.toString()))
+            	localMessage.append("...");
+            else
+            	localMessage.append(message);
+		}
+        else
+        {
+            if (sourceType == ChatSourceType.Agent && _Main.getGridClient().RLV.restrictionActive("recvemote", sourceID.toString()))
+            	localMessage.append(" ...");
+            else
+            	localMessage.append(message.substring(3));       	
+        }
+
+        String style = null;
+        switch (sourceType)
+        {
+            case Agent:
+                style = (fromName.endsWith("Linden") ? AbstractChannel.STYLE_SYSTEM : AbstractChannel.STYLE_REGULAR);
+                break;
+
+            case Object:
+                if (type == ChatType.OwnerSay)
+                {
+                    style = AbstractChannel.STYLE_OBJECT;
+                }
+                else
+                {
+                    style = AbstractChannel.STYLE_OBJECT;
+                }
+                break;
+        }
+        AbstractChannel channel = getLocalChannel();
+        channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
+		highlightChannel(channel);
 	}
 	
 	public void printInstantMessage(InstantMessage message)
 	{
-		AbstractChannel channel;
+		AbstractChannel channel = channels.get(message.FromAgentID);
 		if (message.GroupIM)
 		{
-			channel = groupChannels.get(message.FromAgentID);
 			if (channel == null)
 			{
 				channel = new GroupChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
@@ -127,14 +180,17 @@ public class CommWindow extends JFrame
 		}
 		else
 		{
-			channel = imChannels.get(message.FromAgentID);
 			if (channel == null)
 			{
-				channel = new IMChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+				channel = new PrivateChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
 				getJTpComm().add(message.FromAgentName, channel);
 			}
 		}
-		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, message.Offline == InstantMessageOnline.Offline);
+		String style = null;
+		if (message.Offline == InstantMessageOnline.Offline)
+			style = AbstractChannel.STYLE_OFFLINE; 
+		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, style);
+		highlightChannel(channel);
 	}
 	
 	private LocalChannel getLocalChannel()
@@ -160,7 +216,7 @@ public class CommWindow extends JFrame
 		return jTpComm;
 	}
 	
-	private JTabbedPane getJTpContacts()
+    private JTabbedPane getJTpContacts()
 	{
 		if (jTpContacts == null)
 		{
@@ -177,10 +233,17 @@ public class CommWindow extends JFrame
 	public void addChannel(AbstractChannel channel)
 	{
 		getJTpComm().add(channel.getName(), channel);
+		getJTpComm().setTabComponentAt(getJTpComm().indexOfComponent(channel), new ButtonTabPane(getJTpComm()));
+		getJTpComm().setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 	
 	public void removeChannel(AbstractChannel channel)
 	{
 		getJTpComm().remove(channel);
+	}
+	
+	public void highlightChannel(AbstractChannel channel)
+	{
+		getJTpComm().setBackgroundAt(getJTpComm().indexOfComponent(channel), Color.yellow);
 	}
 }

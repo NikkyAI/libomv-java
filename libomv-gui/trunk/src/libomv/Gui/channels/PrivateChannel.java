@@ -34,11 +34,14 @@ import libomv.AgentManager.ChatType;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 
-public class IMChannel extends AbstractChannel
+public class PrivateChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
 	
-	public IMChannel(MainControl main, String name, UUID id, UUID session)
+	private long typingStartedTime;
+	private boolean isTyping = false;
+	
+	public PrivateChannel(MainControl main, String name, UUID id, UUID session)
 	{
 		super(main, name, id, session);
 	}
@@ -49,7 +52,7 @@ public class IMChannel extends AbstractChannel
 	 * @param message The message received.
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, boolean offline)
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 	{
 		if(message == null || message.isEmpty())
 			return;
@@ -61,12 +64,12 @@ public class IMChannel extends AbstractChannel
 		if(message.startsWith("/me "))
 		{
 			// Remove the "/me ".
-			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, "* " + message.substring(4), offline ? STYLE_OFFLINE : STYLE_ACTION));
+			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, "* " + message.substring(4), style != null ? style : STYLE_ACTION));
 		}
 		else
 		{
 			// This is a normal message.
-			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, offline ? STYLE_OFFLINE : STYLE_REGULAR));
+			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style != null ? style : STYLE_REGULAR));
 		}
 	}
 
@@ -77,7 +80,7 @@ public class IMChannel extends AbstractChannel
         	return;
 
 		String self = _Main.getGridClient().Self.getName();
-		if(getID() != null)
+		if(getUUID() != null)
 		{
 			addHistory(message);	
 
@@ -93,13 +96,65 @@ public class IMChannel extends AbstractChannel
 			}
 				
 			// Send the message.
-			_Main.getGridClient().Self.InstantMessage(getID(), message, getSession());
+			_Main.getGridClient().Self.InstantMessage(getUUID(), message, getSession());
 			// Indicate that we're no longer typing.
-			_Main.getGridClient().Self.SendTypingState(getID(), getSession(), false);
+			_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), false);
 		}
 		else
 		{
 			addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "Invlid UUID for this chat channel", STYLE_ERROR));			
 		}
 	}
+
+	/**
+	 * Call to trigger that typing has begun.
+	 * @throws Exception 
+	 */
+	protected void triggerTyping() throws Exception
+	{
+		// Update the time at which typing started
+		typingStartedTime = System.currentTimeMillis();
+
+		// If this is the beginning of typing.
+		if(!isTyping)
+		{
+			// Set the flag
+			isTyping = true;
+			// Inform the server of the typing status
+			_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), true);
+
+			// Start a thread that checks if we paused typing
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					// While the channel is flagged as typing...
+					while(isTyping)
+					{
+						// Check for timeout.
+						if (System.currentTimeMillis() > typingStartedTime + 3000)
+						{
+							// Send the "stopped typing" message.
+							try
+							{
+								_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), false);
+							} 
+							catch (Exception e) { }
+							// Clear the flag
+							isTyping = false;
+							break;
+						}
+
+						// give up time
+						try
+						{
+							Thread.sleep(200);
+						}
+						catch (InterruptedException e) { }
+					}
+				}
+			}).start();
+		}
+	}	
 }

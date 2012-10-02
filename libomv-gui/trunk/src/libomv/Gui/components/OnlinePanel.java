@@ -28,6 +28,7 @@
  */
 package libomv.Gui.components;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -42,7 +43,10 @@ import javax.swing.JPanel;
 import libomv.AgentManager.AlertMessageCallbackArgs;
 import libomv.AgentManager.BalanceCallbackArgs;
 import libomv.AgentManager.ChatCallbackArgs;
+import libomv.AgentManager.ChatSourceType;
 import libomv.AgentManager.InstantMessageCallbackArgs;
+import libomv.AgentManager.MuteEntry;
+import libomv.AgentManager.MuteType;
 import libomv.AgentManager.TeleportLureCallbackArgs;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
@@ -82,6 +86,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private JLabel jMiAmount;
 	private JPanel jSceneViewer;
 
+	private Callback<BalanceCallbackArgs> balanceUpdateCallback = new BalanceUpdate();
 	private Callback<TeleportLureCallbackArgs> teleportLureCallback = new TeleportLure();
 	private Callback<ChatCallbackArgs> chatCallback = new ChatMessage();
 	private Callback<AlertMessageCallbackArgs> alertCallback = new AlertMessage();
@@ -96,6 +101,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 	{
 		_Main = main;
 		
+		_Main.getGridClient().Self.OnBalanceUpdated.add(balanceUpdateCallback);
 		// Triggered when someone offers us a teleport
 		_Main.getGridClient().Self.OnTeleportLure.add(teleportLureCallback);
 		// Triggered when a local chat message is received
@@ -123,6 +129,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 	
 	protected void finalize() throws Throwable
 	{
+		_Main.getGridClient().Self.OnBalanceUpdated.remove(balanceUpdateCallback);
 		_Main.getGridClient().Self.OnTeleportLure.remove(teleportLureCallback);
 		_Main.getGridClient().Self.OnChat.remove(chatCallback);
 		_Main.getGridClient().Self.OnAlertMessage.remove(alertCallback);
@@ -251,7 +258,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 		if (e.getActionCommand().equals(cmdFriends) ||
 			e.getActionCommand().equals(cmdGroups))
 		{
-			getCommWindow().setFocus(e.getActionCommand());
+			getCommWindow().setFocus(e.getActionCommand(), null);
 			getCommWindow().setVisible(true);
 		}
 		else if (e.getActionCommand().equals(cmdInventory))
@@ -273,7 +280,6 @@ public class OnlinePanel extends JPanel implements ActionListener
 
 	private void initializePanel()
 	{
-		_Main.getGridClient().Self.OnBalanceUpdated.add(new BalanceUpdate());
 	}
 	
 	private class BalanceUpdate implements Callback<BalanceCallbackArgs>
@@ -302,19 +308,27 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private class TeleportLure implements Callback<TeleportLureCallbackArgs>
 	{
 		@Override
-		public boolean callback(TeleportLureCallbackArgs args)
+		public boolean callback(final TeleportLureCallbackArgs args)
 		{
 			final UUID agentID = args.getFromID();
 			final UUID lureID = args.getLureID();
 			
-			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
-					                                   " has offered you a teleport with the following message: '" +
-					                                   args.getMessage() + "'. Do you wish to accept?",
-					                                   "Teleportation Offer", JOptionPane.YES_NO_OPTION);		
 			try
 			{
+				EventQueue.invokeAndWait(new Runnable()
+				{
+					public void run()
+					{
+						int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
+						                                   " has offered you a teleport with the following message: '" +
+						                                   args.getMessage() + "'. Do you wish to accept?",
+						                                   "Teleportation Offer", JOptionPane.YES_NO_OPTION);
+						args.setAccepted(result == JOptionPane.OK_OPTION);
+					}
+				});
+
 				// Accept or decline the request
-				_Main.getGridClient().Self.TeleportLureRespond(agentID, lureID, result == JOptionPane.OK_OPTION);
+				_Main.getGridClient().Self.TeleportLureRespond(agentID, lureID, args.getAccepted());
 			}
 			catch (Exception ex)
 			{
@@ -327,19 +341,87 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private class ChatMessage implements Callback<ChatCallbackArgs>
 	{
 		@Override
-		public boolean callback(ChatCallbackArgs params)
+		public boolean callback(final ChatCallbackArgs params)
 		{
-			getCommWindow().printMessage(params.getSourceType(), params.getFromName(), params.getMessage(), params.getAudible(), params.getType());
-			return false;
+			if (params.getMessage() == null || params.getMessage().isEmpty())
+				return false;
+			
+	        // Check if the sender agent is muted
+	        if (params.getSourceType() == ChatSourceType.Agent)
+	        {
+	            for (MuteEntry me : _Main.getGridClient().Self.MuteList.values())
+	            {
+	                if (me.Type == MuteType.Resident && me.ID.equals(params.getSourceID()));
+	                	return false;
+	            }
+	        }
+
+	        // Check if sender object is muted
+	        if (params.getSourceType() == ChatSourceType.Object)
+	        {
+	           for (MuteEntry me : _Main.getGridClient().Self.MuteList.values())
+	            {
+	                if ((me.Type == MuteType.Resident && me.ID.equals(params.getOwnerID())) || // Owner muted
+	                    (me.Type == MuteType.Object && me.ID.equals(params.getSourceID())) || // Object muted by ID
+	                    (me.Type == MuteType.ByName && me.Name.equals(params.getFromName()))) // Object muted by name
+	                		return false;
+	            }
+	        }
+	        
+	        if (_Main.getGridClient().RLV.isEnabled() && params.getMessage().startsWith("@"))
+	        {
+	        	_Main.getGridClient().RLV.tryProcessCommand(params);
+	        	return false;
+	        }
+	        
+	        String fromName = null;
+	        if (params.getSourceType() == ChatSourceType.Agent)
+	        {
+	        	fromName = _Main.getGridClient().Avatars.LocalAvatarNameLookup(params.getSourceID());
+	        }
+        	if (fromName == null || fromName.isEmpty())
+        		fromName = params.getFromName();
+        	
+	        final String name = fromName;
+			try
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+				        getCommWindow().printChatMessage(params.getSourceType(), params.getSourceID(), name, params.getMessage(), params.getType());
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+	        return false;
 		}
 	}
 	
 	private class AlertMessage implements Callback<AlertMessageCallbackArgs>
 	{
 		@Override
-		public boolean callback(AlertMessageCallbackArgs params)
+		public boolean callback(final AlertMessageCallbackArgs params)
 		{
-			getCommWindow().printAlertMessage(params.getAlert());
+			try
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						getCommWindow().printAlertMessage(params.getAlert());
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
+			}
 			return false;
 		}		
 	}
@@ -347,9 +429,23 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private class InstantMessage implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
-		public boolean callback(InstantMessageCallbackArgs params)
+		public boolean callback(final InstantMessageCallbackArgs params)
 		{
-			getCommWindow().printInstantMessage(params.getIM());
+			try
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						getCommWindow().printInstantMessage(params.getIM());
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
+			}
 			return false;
 		}		
 	}

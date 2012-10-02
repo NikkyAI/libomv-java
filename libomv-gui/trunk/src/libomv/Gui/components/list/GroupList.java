@@ -84,7 +84,7 @@ public class GroupList extends JScrollPane
 //      _Main.getGridClient().Groups.RequestCurrentGroups();
 		
 		// Choose a sensible minimum size.
-		setPreferredSize(new Dimension(200, 0));
+		setPreferredSize(new Dimension(200, 320));
 		// Add the friends list to the viewport.
 		setViewportView(getJGroupsList());
 	}
@@ -115,7 +115,6 @@ public class GroupList extends JScrollPane
 								// Get the associated agent.
 								Group group = (Group) jLGroupsList.getSelectedValue();
 								// TODO: Create a group chat
-								
 							}
 						}
 						// If the right mouse button was pressed...

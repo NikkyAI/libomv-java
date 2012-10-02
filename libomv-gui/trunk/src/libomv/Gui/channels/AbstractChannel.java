@@ -61,34 +61,34 @@ import libomv.types.UUID;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-public abstract class AbstractChannel extends JPanel
+public abstract class AbstractChannel extends JPanel implements IChannel
 {
 	private static final long serialVersionUID = 1L;
 
 	/** Identifier for the "regular" style of text. */
-	protected static final String STYLE_REGULAR = "regular";
+	public static final String STYLE_REGULAR = "regular";
 	/** Identifier for the "action" style of text. */
-	protected static final String STYLE_ACTION = "action";
+	public static final String STYLE_ACTION = "action";
 	/** Identifier for the "error" style of text. */
-	protected static final String STYLE_ERROR = "error";
+	public static final String STYLE_ERROR = "error";
 	/** Identifier for the "system" style of text. */
-	protected static final String STYLE_SYSTEM = "system";
+	public static final String STYLE_SYSTEM = "system";
 	/** Identifier for the "remote chat" style of text (message from a third party). */
-	protected static final String STYLE_CHATREMOTE = "remote";
+	public static final String STYLE_CHATREMOTE = "remote";
 	/** Identifier for the "remote chat from a friend" style of text (message from a third party). */
-	protected static final String STYLE_CHATREMOTEFRIEND = "remoteFriend";
+	public static final String STYLE_CHATREMOTEFRIEND = "remoteFriend";
 	/** Identifier for the "local chat" style of text (message from the user). */
-	protected static final String STYLE_CHATLOCAL = "local";
+	public static final String STYLE_CHATLOCAL = "local";
 	/** Identifier for the "informational" style of text. */
-	protected static final String STYLE_INFORMATIONAL = "informational";
+	public static final String STYLE_INFORMATIONAL = "informational";
 	/** Identifier for the "offline" style of text. */
-	protected static final String STYLE_OFFLINE = "offline";
+	public static final String STYLE_OFFLINE = "offline";
 	/** Identifier for the "object" style of text. */
-	protected static final String STYLE_OBJECT = "object";
+	public static final String STYLE_OBJECT = "object";
 	/** Identifier for the "faint" style of text. */
-	protected static final String STYLE_FAINT = "faint";
+	public static final String STYLE_FAINT = "faint";
 	/** Identifier for the "faint" style of text. */
-	protected static final String STYLE_ACTION_FAINT = "faintAction";
+	public static final String STYLE_ACTION_FAINT = "faintAction";
 
 	/** Identifier for a URL. */
 	private static final Integer IDENTIFIER_URL = new Integer(0);
@@ -158,33 +158,34 @@ public abstract class AbstractChannel extends JPanel
 			this.messageStyle = messageStyle;
 		}
 	}
-	
-	private UUID _Id;
+
+	private UUID _UUID;
 	private UUID _Session;
 	protected MainControl _Main;
 
 	private JTextPane jTextPane;
 	private JTextField jTextChat;
-	
+
 	private int chatPointer;
 	private List<String> chatHistory;
 	private List<ChatItem> chatBuffer;
-	
+
 	private boolean printTimestamp = true; 
 	protected static DateFormat df = DateFormat.getTimeInstance();
 
 	public AbstractChannel(MainControl main, String name, UUID id, UUID session)
 	{
 		super();
-		_Id = id;
+		_UUID = id;
 		_Session = session;
 		_Main = main;
 		setName(name);
 		setLayout(new BorderLayout(0, 0));
 
+		chatBuffer = new ArrayList<ChatItem>(); 
 		chatHistory = new ArrayList<String>();
 		chatPointer = 0;
-		
+
 		JScrollPane scrollPaneText = new JScrollPane();
 		scrollPaneText.setViewportView(getTextPane());
 		scrollPaneText.getVerticalScrollBar().setValue(scrollPaneText.getVerticalScrollBar().getMaximum()); 
@@ -201,15 +202,15 @@ public abstract class AbstractChannel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-	            try
-	            {
+				try
+				{
 					transmitMessage(getJTxChat().getText(), ChatType.Normal);
 				}
-	            catch (Exception ex)
-	            {
+				catch (Exception ex)
+				{
 					Logger.Log("Failed to send local chat text", LogLevel.Error, _Main.getGridClient(), ex);
 				}
-	            getJTxChat().grabFocus();
+				getJTxChat().grabFocus();
 			}
 		});
 
@@ -217,30 +218,55 @@ public abstract class AbstractChannel extends JPanel
 		panelSouth.add(btnSay);
 		add(panelSouth, BorderLayout.SOUTH);
 	}
-	
-	abstract public void receiveMessage(Date timestamp, UUID fromId, String from, String message, boolean offline);
+
+	public UUID getUUID()
+	{
+		return _UUID;
+	}
+
+	public String getName()
+	{
+		return super.getName();
+	}
+
+	protected UUID getSession()
+	{
+		return _Session;
+	}
+
+	@Override
+	public JPanel getPanel()
+	{
+		return this;
+	}
+
+	protected GridClient getClient()
+	{
+		return _Main.getGridClient();
+	}
 
 	abstract protected void transmitMessage(String message, ChatType chatType) throws Exception;
+	abstract protected void triggerTyping() throws Exception;
 	
 	protected void addMessage(ChatItem chatItem)
 	{
-        if (chatItem == null || chatItem.message == null || chatItem.message.trim().isEmpty())
-        	return;
-        
-        chatBuffer.add(chatItem);
-        
-        printMessage(chatItem);
-        
-        getJTxChat().setText(null);
-        getJTxChat().grabFocus();
+		if (chatItem == null || chatItem.message == null || chatItem.message.trim().isEmpty())
+			return;
+
+		chatBuffer.add(chatItem);
+
+		printMessage(chatItem);
+
+		getJTxChat().setText(null);
+		getJTxChat().grabFocus();
 	}
-	
+
 	protected void addHistory(String message)
 	{
-       	chatHistory.add(message);
-       	chatPointer = chatHistory.size();
+		chatHistory.add(message);
+		chatPointer = chatHistory.size();
 	}
-	
+
 	protected void printMessage(ChatItem chatItem)
 	{
 		// Get the StyledDocument.
@@ -255,7 +281,7 @@ public abstract class AbstractChannel extends JPanel
 			}
 			catch (BadLocationException e) { }
 		}
-		
+
 		// Second, we insert the name.
 		String name = chatItem.action ? "* " + chatItem.from + " " : "<" + chatItem.from + "> ";
 		try
@@ -263,7 +289,7 @@ public abstract class AbstractChannel extends JPanel
 			styledDocument.insertString(styledDocument.getLength(), name, styledDocument.getStyle(chatItem.fromStyle));
 		}
 		catch (BadLocationException e) { }
-		
+
 		// Setup an URL matcher from an URL regex.
 		Pattern URL = Pattern.compile(URLRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 		Matcher matcher = URL.matcher(chatItem.message);
@@ -288,52 +314,43 @@ public abstract class AbstractChannel extends JPanel
 			StyleConstants.setUnderline(urlStyle, true);
 			// Update the substring of the URL within the document with the link style.
 			styledDocument.setCharacterAttributes(styledDocument.getLength() - chatItem.message.length() + matcher.start(), matcher.end() - matcher.start(), urlStyle, true );
-		}			
+		}
 	}
-	
+
 	protected void chatHistoryPrev()
 	{
-        if (chatPointer == 0)
-        	return;
-        chatPointer--;
-        if (chatHistory.size() > chatPointer)
-        {
-        	String text = chatHistory.get(chatPointer);
-        	getJTxChat().setText(text);
-        	getJTxChat().setSelectionStart(text.length());
-        	getJTxChat().setSelectionEnd(text.length());
-        }
+		if (chatPointer == 0)
+			return;
+		chatPointer--;
+		if (chatHistory.size() > chatPointer)
+		{
+			String text = chatHistory.get(chatPointer);
+			getJTxChat().setText(text);
+			getJTxChat().setSelectionStart(text.length());
+			getJTxChat().setSelectionEnd(text.length());
+		}
 	}
-	
+
 	protected void chatHistoryNext()
 	{
-        if (chatPointer == chatHistory.size())
-        	return;
-        chatPointer++;
-        if (chatPointer == chatHistory.size())
-        {
-        	getJTxChat().setText(null);
-            return;
-        }
-       	String text = chatHistory.get(chatPointer);
-       	getJTxChat().setText(text);
-       	getJTxChat().setSelectionStart(text.length());
-       	getJTxChat().setSelectionEnd(text.length());
-	}
-	
-	protected UUID getID()
-	{
-		return _Id;
+		if (chatPointer == chatHistory.size())
+			return;
+		chatPointer++;
+		if (chatPointer == chatHistory.size())
+		{
+			getJTxChat().setText(null);
+			return;
+		}
+		String text = chatHistory.get(chatPointer);
+		getJTxChat().setText(text);
+		getJTxChat().setSelectionStart(text.length());
+		getJTxChat().setSelectionEnd(text.length());
 	}
 
-	protected UUID getSession()
+	/** Clear the text pane. */
+	public void clearText()
 	{
-		return _Session;
-	}
-
-	protected GridClient getClient()
-	{
-		return _Main.getGridClient();
+		getTextPane().setText(null);
 	}
 
 	protected JTextPane getTextPane()
@@ -348,7 +365,7 @@ public abstract class AbstractChannel extends JPanel
 
 			// Get the StyledDocument.
 			StyledDocument styledDocument = jTextPane.getStyledDocument();
-			
+
 			// Set up the regular style (using the default style context).
 			Style regular = styledDocument.addStyle(STYLE_REGULAR, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
 			StyleConstants.setFontFamily(regular, "SansSerif");
@@ -364,14 +381,14 @@ public abstract class AbstractChannel extends JPanel
 
 			// Set up the system style.
 			Style system = styledDocument.addStyle(STYLE_SYSTEM, regular);
-			StyleConstants.setForeground(system, new Color(170, 0, 170));
+			StyleConstants.setForeground(system, new Color(170, 0, 170)); // lighterMagenta
 			StyleConstants.setBold(system, true);
 
 			// Set up the remote chat style.
 			Style chatRemote = styledDocument.addStyle(STYLE_CHATREMOTE, regular);
-			StyleConstants.setForeground(chatRemote, new Color(230, 150, 0));
+			StyleConstants.setForeground(chatRemote, new Color(230, 150, 0)); // darkOrange
 			StyleConstants.setBold(chatRemote, true);
-			
+
 			// Set up the remote chat friend style.
 			Style chatRemoteFriend = styledDocument.addStyle(STYLE_CHATREMOTEFRIEND, regular);
 			StyleConstants.setForeground(chatRemoteFriend, Color.green);
@@ -393,16 +410,16 @@ public abstract class AbstractChannel extends JPanel
 
 			// Set up the object style.
 			Style object = styledDocument.addStyle(STYLE_OBJECT, regular);
-			StyleConstants.setForeground(object, new Color(0, 127, 0));
+			StyleConstants.setForeground(object, new Color(0, 127, 0));  // lightGreen
 			StyleConstants.setBold(object, true);
 
 			// Set up the faint style.
 			Style faint = styledDocument.addStyle(STYLE_FAINT, regular);
-			StyleConstants.setForeground(faint, new Color(50, 50, 50));
+			StyleConstants.setForeground(faint, Color.lightGray);
 
 			// Set up the faint action style.
 			Style faintAction = styledDocument.addStyle(STYLE_ACTION_FAINT, regular);
-			StyleConstants.setForeground(faintAction, new Color(50, 50, 50));
+			StyleConstants.setForeground(faintAction, Color.lightGray);
 		}
 		return jTextPane;
 	}
@@ -421,36 +438,46 @@ public abstract class AbstractChannel extends JPanel
 				{
 					if (e.isControlDown())
 					{
-			            if (e.getKeyCode() == KeyEvent.VK_UP)
-			            {
-			                e.consume();
-			                chatHistoryPrev();
-			                return;
-			            }
-			            else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-			            {
-			                e.consume();
-			                chatHistoryNext();
-			                return;
-			            }
+						if (e.getKeyCode() == KeyEvent.VK_UP)
+						{
+							e.consume();
+							chatHistoryPrev();
+					return;
+						}
+						else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+						{
+							e.consume();
+							chatHistoryNext();
+							return;
+						}
 					}
-					
-			        if (e.getKeyCode() == KeyEvent.VK_ENTER)
-			        	return;
-			            
-	                e.consume();
 
-	                try
-	                {
-				        if (e.isShiftDown())
-				            transmitMessage(getJTxChat().getText(), ChatType.Whisper);
-				        else if (e.isControlDown())
-				            transmitMessage(getJTxChat().getText(), ChatType.Shout);
-				        else
-				            transmitMessage(getJTxChat().getText(), ChatType.Normal);
-	                }
-		            catch (Exception ex)
-		            {
+					if (e.getKeyCode() != KeyEvent.VK_ENTER)
+					{
+						try
+						{
+							triggerTyping();
+						}
+						catch (Exception ex)
+						{
+							Logger.Log("Failed to send typing indication", LogLevel.Error, _Main.getGridClient(), ex);
+						}
+
+						return;
+					}
+					e.consume();
+
+					try
+			{
+						if (e.isShiftDown())
+							transmitMessage(getJTxChat().getText(), ChatType.Whisper);
+						else if (e.isControlDown())
+							transmitMessage(getJTxChat().getText(), ChatType.Shout);
+						else
+							transmitMessage(getJTxChat().getText(), ChatType.Normal);
+					}
+					catch (Exception ex)
+					{
 						Logger.Log("Failed to send local chat text", LogLevel.Error, _Main.getGridClient(), ex);
 					}
 				}
@@ -464,7 +491,6 @@ public abstract class AbstractChannel extends JPanel
 				public void keyReleased(KeyEvent e)
 				{
 				}
-				
 			});
 		}
 		return jTextChat;

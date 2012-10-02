@@ -96,7 +96,7 @@ public class LocalChannel extends AbstractChannel
 	 * @param message The message received.
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, boolean system)
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 	{
 		if(message == null || message.isEmpty())
 			return;
@@ -110,12 +110,12 @@ public class LocalChannel extends AbstractChannel
 		if(message.startsWith("/me "))
 		{
 			// Remove the "/me ".
-			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), STYLE_ACTION));
+			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), style != null ? style : STYLE_ACTION));
 		}
 		else
 		{
 			// This is a normal message.
-			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, STYLE_REGULAR));
+			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style != null ? style : STYLE_REGULAR));
 		}
 	}
 
@@ -208,5 +208,10 @@ public class LocalChannel extends AbstractChannel
 			jScrpAttendents.setViewportView(listAttendents);
 		}
 		return jScrpAttendents;
+	}
+
+	@Override
+	protected void triggerTyping() throws Exception
+	{
 	}
 }
