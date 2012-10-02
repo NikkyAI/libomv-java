@@ -97,6 +97,7 @@ import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
+import libomv.utils.HashList;
 import libomv.utils.HashMapInt;
 import libomv.utils.Helpers;
 
@@ -641,8 +642,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 	private HashMap<UUID, ArrayList<Entry<UUID, UUID>>> TempGroupRolesMembers;
 	// Dictionary keeping GroupRole information while request is in progress
 	private HashMap<UUID, HashMap<UUID, GroupRole>> TempGroupRoles;
-	// Caches group name lookups
-	public HashMap<UUID, String> GroupName2KeyCache;
+	// Caches groups this avatar is member of
+	public HashList<UUID, Group> GroupList;
+	// Caches group names of all groups known to us
+	public HashMap<UUID, String> GroupNames;
 
 	public CallbackHandler<CurrentGroupsCallbackArgs> OnCurrentGroups = new CallbackHandler<CurrentGroupsCallbackArgs>();
 
@@ -712,7 +715,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 		GroupRolesRequests = new ArrayList<UUID>();
 		TempGroupRolesMembers = new HashMap<UUID, ArrayList<Entry<UUID, UUID>>>();
 		GroupRolesMembersRequests = new ArrayList<UUID>();
-		GroupName2KeyCache = new HashMap<UUID, String>();
+		GroupList = new HashList<UUID, Group>();
+		GroupNames = new HashMap<UUID, String>();
 
 		Client.Self.OnInstantMessage.add(new InstantMessageCallback());
 
@@ -845,23 +849,22 @@ public class GroupManager implements PacketCallback, CapsCallback
 	{
 		// if we already have this in the cache, return from cache instead of
 		// making a request
-		if (GroupName2KeyCache.containsKey(groupID))
+		synchronized (GroupNames)
 		{
-			HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
-			synchronized (GroupName2KeyCache)
+			if (GroupNames.containsKey(groupID))
 			{
-				groupNames.put(groupID, GroupName2KeyCache.get(groupID));
+				HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
+				groupNames.put(groupID, GroupNames.get(groupID));
+
+				OnGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNames));
+				return;
 			}
-			OnGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNames));
 		}
 
-		else
-		{
-			UUIDGroupNameRequestPacket req = new UUIDGroupNameRequestPacket();
-			req.ID = new UUID[1];
-			req.ID[0] = groupID;
-			Client.Network.SendPacket(req);
-		}
+		UUIDGroupNameRequestPacket req = new UUIDGroupNameRequestPacket();
+		req.ID = new UUID[1];
+		req.ID[0] = groupID;
+		Client.Network.SendPacket(req);
 	}
 
 	/**
@@ -874,30 +877,36 @@ public class GroupManager implements PacketCallback, CapsCallback
 	public final void RequestGroupNames(ArrayList<UUID> groupIDs) throws Exception
 	{
 		HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
-		synchronized (GroupName2KeyCache)
+		ArrayList<UUID> tempIDs = new ArrayList<UUID>();
+		synchronized (GroupNames)
 		{
 			for (UUID groupID : groupIDs)
 			{
-				if (GroupName2KeyCache.containsKey(groupID))
+				if (GroupNames.containsKey(groupID))
 				{
-					groupNames.put(groupID, GroupName2KeyCache.get(groupID));
+					groupNames.put(groupID, GroupNames.get(groupID));
+				}
+				else
+				{
+					tempIDs.add(groupID);
 				}
 			}
 		}
 
-		if (groupIDs.size() > 0)
+		if (tempIDs.size() > 0)
 		{
 			UUIDGroupNameRequestPacket req = new UUIDGroupNameRequestPacket();
-			req.ID = new UUID[groupIDs.size()];
-			for (int i = 0; i < groupIDs.size(); i++)
+			req.ID = new UUID[tempIDs.size()];
+			for (int i = 0; i < tempIDs.size(); i++)
 			{
-				req.ID[i] = groupIDs.get(i);
+				req.ID[i] = tempIDs.get(i);
 			}
 			Client.Network.SendPacket(req);
 		}
 
 		// fire handler from cache
-		OnGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNames));
+		if (groupNames.size() > 0)
+			OnGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNames));
 	}
 
 	/**
@@ -1514,58 +1523,66 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// #region Packet Handlers
 	private final void HandleAgentGroupDataUpdate(IMessage message, Simulator simulator)
 	{
-		if (OnCurrentGroups.count() > 0)
+		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
+		AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
+
+		for (int i = 0; i < msg.GroupDataBlock.length; i++)
 		{
-			AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
+			Group group = new Group(msg.GroupDataBlock[i].GroupID);
+			group.InsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
+			group.Name = msg.GroupDataBlock[i].GroupName;
+			group.Contribution = msg.GroupDataBlock[i].Contribution;
+			group.AcceptNotices = msg.GroupDataBlock[i].AcceptNotices;
+			group.Powers = msg.GroupDataBlock[i].GroupPowers;
+			group.ListInProfile = msg.NewGroupDataBlock[i].ListInProfile;
 
-			HashMap<UUID, Group> currentGroups = new HashMap<UUID, Group>();
-			for (int i = 0; i < msg.GroupDataBlock.length; i++)
-			{
-				Group group = new Group(msg.GroupDataBlock[i].GroupID);
-				group.InsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
-				group.Name = msg.GroupDataBlock[i].GroupName;
-				group.Contribution = msg.GroupDataBlock[i].Contribution;
-				group.AcceptNotices = msg.GroupDataBlock[i].AcceptNotices;
-				group.Powers = msg.GroupDataBlock[i].GroupPowers;
-				group.ListInProfile = msg.NewGroupDataBlock[i].ListInProfile;
-
+			if (currentGroups != null)
 				currentGroups.put(group.ID, group);
 
-				synchronized (GroupName2KeyCache)
-				{
-					if (!GroupName2KeyCache.containsKey(group.ID))
-					{
-						GroupName2KeyCache.put(group.ID, group.Name);
-					}
-				}
+			synchronized (GroupList)
+			{
+				GroupList.put(group.ID, group);
 			}
-			OnCurrentGroups.dispatch(new CurrentGroupsCallbackArgs(currentGroups));
+			synchronized (GroupNames)
+			{
+				GroupNames.put(group.ID, group.Name);				
+			}
 		}
+
+		if (currentGroups != null)
+			OnCurrentGroups.dispatch(new CurrentGroupsCallbackArgs(currentGroups));
 	}
 
 	private final void HandleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnCurrentGroups.count() > 0)
+		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
+		AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
+
+		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData)
 		{
-			AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
+			Group group = new Group(block.GroupID);
 
-			HashMap<UUID, Group> currentGroups = new HashMap<UUID, Group>();
+			group.InsigniaID = block.GroupInsigniaID;
+			group.Name = Helpers.BytesToString(block.getGroupName());
+			group.Powers = block.GroupPowers;
+			group.Contribution = block.Contribution;
+			group.AcceptNotices = block.AcceptNotices;
 
-			for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData)
-			{
-				Group group = new Group(block.GroupID);
-
-				group.InsigniaID = block.GroupInsigniaID;
-				group.Name = Helpers.BytesToString(block.getGroupName());
-				group.Powers = block.GroupPowers;
-				group.Contribution = block.Contribution;
-				group.AcceptNotices = block.AcceptNotices;
-
+			if (currentGroups != null)
 				currentGroups.put(block.GroupID, group);
-			}
 
-			OnCurrentGroups.dispatch(new CurrentGroupsCallbackArgs(currentGroups));
+			synchronized (GroupList)
+			{
+				GroupList.put(group.ID, group);
+			}
+			synchronized (GroupNames)
+			{
+				GroupNames.put(group.ID, group.Name);				
+			}
 		}
+
+		if (currentGroups != null)
+			OnCurrentGroups.dispatch(new CurrentGroupsCallbackArgs(currentGroups));
 	}
 
 	/**
@@ -1925,19 +1942,21 @@ public class GroupManager implements PacketCallback, CapsCallback
 		@SuppressWarnings("unused")
 		GroupVoteHistoryItemReplyPacket history = (GroupVoteHistoryItemReplyPacket) packet;
 
-		// TODO: This was broken in the official viewer when I was last trying
-		// to work on it
-		/*
-		 * GroupProposalItem proposal = new GroupProposalItem();
-		 * proposal.Majority = history.HistoryItemData.Majority; proposal.Quorum
-		 * = history.HistoryItemData.Quorum; proposal.Duration =
-		 * history.TransactionData.TotalNumItems; proposal.ProposalText = ;
-		 * proposal.TerseDateID = proposal.VoteID =
-		 * history.HistoryItemData.VoteID; proposal.VoteInitiator =
-		 * history.HistoryItemData.VoteInitiator; for (int i = 0; i <
-		 * history.VoteItem.length; i++) { history.VoteItem[i].CandidateID;
-		 * history.VoteItem[i].NumVotes; }
-		 */
+		// TODO: This was broken in the official viewer when I was last trying to work on it
+	    /*
+	    GroupProposalItem proposal = new GroupProposalItem();
+	    proposal.Majority = history.HistoryItemData.Majority;
+		proposal.Quorum = history.HistoryItemData.Quorum;
+		proposal.Duration = history.TransactionData.TotalNumItems;
+		proposal.ProposalText = ;
+		proposal.TerseDateID = proposal.VoteID = history.HistoryItemData.VoteID;
+		proposal.VoteInitiator = history.HistoryItemData.VoteInitiator;
+		for (int i = 0; i < history.VoteItem.length; i++)
+		{
+			history.VoteItem[i].CandidateID = history.VoteItem.;
+			history.VoteItem[i].NumVotes = ;
+		}
+		*/
 	}
 
 	/**
@@ -2045,15 +2064,23 @@ public class GroupManager implements PacketCallback, CapsCallback
 		UUIDGroupNameReplyPacket reply = (UUIDGroupNameReplyPacket) packet;
 		UUIDGroupNameReplyPacket.UUIDNameBlockBlock[] blocks = reply.UUIDNameBlock;
 
-		java.util.HashMap<UUID, String> groupNames = new java.util.HashMap<UUID, String>();
+		HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
 
 		for (UUIDGroupNameReplyPacket.UUIDNameBlockBlock block : blocks)
 		{
 			String name = Helpers.BytesToString(block.getGroupName());
 			groupNames.put(block.ID, name);
-			if (!GroupName2KeyCache.containsKey(block.ID))
+			synchronized (GroupNames)
 			{
-				GroupName2KeyCache.put(block.ID, name);
+				GroupNames.put(block.ID, name);
+			}	
+			synchronized (GroupList)
+			{
+				Group group = GroupList.get(block.ID);
+				if (group != null)
+				{
+					group.Name = name;
+				}
 			}
 		}
 		OnGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNames));
