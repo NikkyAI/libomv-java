@@ -25,7 +25,9 @@
  */
 package libomv;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.text.ParseException;
 
 import libomv.packets.EconomyDataPacket;
 import libomv.packets.Packet;
@@ -33,6 +35,7 @@ import libomv.packets.PacketType;
 import libomv.types.Color4;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
+import libomv.utils.Settings;
 
 /*
  * Class for controlling various system settings.
@@ -42,9 +45,9 @@ import libomv.types.UUID;
  * runtime won't do any good. Non-readonly values may affect things that
  * happen at login or dynamically
  */
-public class Settings implements PacketCallback
+public class LibSettings extends Settings implements PacketCallback
 {
-    /* Main grid login server */
+	/* Main grid login server */
     public static String AGNI_LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
 
     /* Beta grid login server */
@@ -85,6 +88,9 @@ public class Settings implements PacketCallback
 	/* Initialize Terrain Manager */
 	public boolean ENABLE_TERRAIN_MANAGER = false;
 
+	/* Initialize Restrained Love Manager */
+	public boolean ENABLE_RLV_MANAGER = true;
+	
 	// #region Login/Networking Settings
 
 	/* IP Address the client will bind to */
@@ -401,7 +407,12 @@ public class Settings implements PacketCallback
 	 * @param client
 	 *            Reference to a GridClient object
 	 */
-	public Settings Startup(GridClient client)
+    public LibSettings() throws IOException, ParseException
+    {
+		super("_libomv/libomv.dat");
+	}
+
+    public LibSettings startup(GridClient client)
 	{
 		client.Network.RegisterCallback(PacketType.EconomyData, this);
 		return this;

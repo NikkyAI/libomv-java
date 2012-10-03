@@ -398,10 +398,10 @@ public class NetworkManager implements PacketCallback
 
 	/** Incoming packets that are awaiting handling */
 	private BlockingQueue<IncomingPacket> _PacketInbox = new LinkedBlockingQueue<IncomingPacket>(
-			Settings.PACKET_INBOX_SIZE);
+			LibSettings.PACKET_INBOX_SIZE);
 	/** Outgoing packets that are awaiting handling */
 	private BlockingQueue<OutgoingPacket> _PacketOutbox = new LinkedBlockingQueue<OutgoingPacket>(
-			Settings.PACKET_INBOX_SIZE);
+			LibSettings.PACKET_INBOX_SIZE);
 
 	/** Number of packets in the incoming queue */
 	public final int getInboxCount()

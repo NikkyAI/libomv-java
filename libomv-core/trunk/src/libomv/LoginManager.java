@@ -169,8 +169,8 @@ public class LoginManager
 			this.ID0 = Helpers.getMAC();
 			this.AgreeToTos = true;
 			this.ReadCritical = true;
-			this.Channel = Settings.LIBRARY_NAME;
-			this.Version = Settings.LIBRARY_VERSION;
+			this.Channel = LibSettings.LIBRARY_NAME;
+			this.Version = LibSettings.LIBRARY_VERSION;
 		}
 
 
@@ -1338,7 +1338,7 @@ public class LoginManager
         if (loginParams.Channel == null || loginParams.Channel.isEmpty())
         {
 	 	    Logger.Log("Viewer channel not set. This is a TOS violation on some grids.", LogLevel.Warning);
-   	 	    loginParams.Channel = Settings.LIBRARY_NAME;
+   	 	    loginParams.Channel = LibSettings.LIBRARY_NAME;
         }
 
         if (loginParams.Author == null)

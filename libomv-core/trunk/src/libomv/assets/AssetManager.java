@@ -42,7 +42,7 @@ import org.apache.http.nio.concurrent.FutureCallback;
 
 import libomv.DownloadManager;
 import libomv.GridClient;
-import libomv.Settings;
+import libomv.LibSettings;
 import libomv.Simulator;
 import libomv.DownloadManager.DownloadRequest;
 import libomv.StructuredData.OSD;
@@ -1039,7 +1039,7 @@ public class AssetManager implements PacketCallback
 		request.AssetBlock.Type = type.getValue();
 
 		boolean isMultiPacketUpload;
-		if (data.length + 100 < Settings.MAX_PACKET_SIZE)
+		if (data.length + 100 < LibSettings.MAX_PACKET_SIZE)
 		{
 			isMultiPacketUpload = false;
 			Logger.Log(String.format("Beginning asset upload [Single Packet], ID: %s, AssetID: %s, Size: %d",

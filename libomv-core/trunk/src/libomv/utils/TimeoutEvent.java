@@ -30,10 +30,23 @@ public class TimeoutEvent<T>
 	private boolean fired = false;
 	private T object = null;
 
+	/**
+	 * Reset the state of the timeout event to untriggered and the object to undefined
+	 */
 	public synchronized void reset()
 	{
 		this.fired = false;
 		this.object = null;
+		this.notifyAll();
+	}
+
+	/**
+	 * Reset the state of the timeout event to untriggered and the object to the object parameter
+	 */
+	public synchronized void reset(T object)
+	{
+		this.fired = false;
+		this.object = object;
 		this.notifyAll();
 	}
 
@@ -43,19 +56,24 @@ public class TimeoutEvent<T>
 		this.fired = (object != null);
 		this.notifyAll();
 	}
+	
+	public synchronized T get()
+	{
+		return this.object;
+	}
 
 	/**
-	 * Wait on the timeout to be triggerd or until the timeout occurres
+	 * Wait on the timeout to be triggered or until the timeout occurred
 	 * 
 	 * @param timeout
 	 *            The amount of milliseconds to wait. -1 will wait indefinitely
-	 * @return
+	 * @return 
 	 * @throws InterruptedException
 	 */
 	public synchronized T waitOne(long timeout) throws InterruptedException
 	{
 		if (!fired)
-			if (timeout < 0)
+			if (timeout >= 0)
 				wait(timeout);
 			else
 				wait();

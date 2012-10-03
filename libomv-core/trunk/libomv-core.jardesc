@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="libomv-java/output/libomv-java-0.6.3.jar"/>
+    <jar path="libomv-java/output/libomv-java-0.6.4.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/libomv-java/libomv-core.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>

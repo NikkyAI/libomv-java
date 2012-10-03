@@ -39,7 +39,7 @@ import libomv.GridClient;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
-import libomv.Settings;
+import libomv.LibSettings;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.ImageDownload;
 import libomv.types.UUID;
@@ -266,7 +266,7 @@ public class AssetCache
      */
     private String StaticFileName(UUID assetID)
     {
-        return Settings.RESOURCE_DIR + File.separatorChar + "static_assets" + File.separatorChar + assetID.toString();
+        return LibSettings.RESOURCE_DIR + File.separatorChar + "static_assets" + File.separatorChar + assetID.toString();
     }
 
     /**

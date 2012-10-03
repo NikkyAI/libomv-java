@@ -1011,7 +1011,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if (Client.Settings.USE_INTERPOLATION_TIMER)
 			{
 				InterpolationTimer = new Timer();
-				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), Settings.INTERPOLATION_INTERVAL);
+				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), LibSettings.INTERPOLATION_INTERVAL);
 			}
 			return false;
 		}
@@ -1131,7 +1131,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 			// Start the timer again. Use a minimum of a 50ms pause in between
 			// calculations
-			int delay = Math.max(50, (int) (Settings.INTERPOLATION_INTERVAL - elapsed));
+			int delay = Math.max(50, (int) (LibSettings.INTERPOLATION_INTERVAL - elapsed));
 			if (InterpolationTimer != null)
 			{
 				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), delay);

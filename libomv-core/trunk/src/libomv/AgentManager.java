@@ -1200,7 +1200,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		private ChatType type;
 		private ChatSourceType sourcetype;
 		private String message, fromName;
-		private UUID objectId;
+		private UUID sourceId;
 		private UUID ownerId;
 		private Vector3 position;
 		
@@ -1230,9 +1230,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return sourcetype;
 		}
 
-		public UUID getObjectID()
+		public UUID getSourceID()
 		{
-			return objectId;
+			return sourceId;
 		}
 
 		public UUID getOwnerID()
@@ -1247,14 +1247,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 	
 		
 		public ChatCallbackArgs(ChatAudibleLevel audible, ChatType type, ChatSourceType sourcetype, String fromName, String message,
-				                UUID objectId, UUID ownerId, Vector3 position)
+				                UUID sourceId, UUID ownerId, Vector3 position)
 		{
 			this.message = message;
 			this.fromName = fromName;
 			this.audible = audible;
 			this.type = type;
 			this.sourcetype = sourcetype;
-			this.objectId = objectId;
+			this.sourceId = sourceId;
 			this.ownerId = ownerId;
 			this.position = position;
 		}
@@ -6565,7 +6565,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			Client = client;
 			Camera = new AgentCamera();
 			_Client.Network.OnDisconnected.add(new Network_OnDisconnected());
-			updateInterval = Settings.DEFAULT_AGENT_UPDATE_INTERVAL;
+			updateInterval = LibSettings.DEFAULT_AGENT_UPDATE_INTERVAL;
 		}
 
 		private void CleanupTimer()

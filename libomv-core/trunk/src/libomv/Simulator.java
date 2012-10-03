@@ -816,7 +816,7 @@ public class Simulator extends Thread
 		_NeedAck = new TreeMap<Integer, NetworkManager.OutgoingPacket>();
 
 		// Initialize the lists of sequence numbers we've received so far
-		_PacketArchive = new IncomingPacketIDCollection(Settings.PACKET_ARCHIVE_SIZE);
+		_PacketArchive = new IncomingPacketIDCollection(LibSettings.PACKET_ARCHIVE_SIZE);
 		_PendingAcks = new TreeSet<Integer>();
 
 		if (client.Settings.STORE_LAND_PATCHES)
@@ -856,7 +856,7 @@ public class Simulator extends Thread
 		{
 			_AckTimer = new Timer();
 		}
-		_AckTimer.schedule(new AckTimer_Elapsed(), Settings.NETWORK_TICK_INTERVAL);
+		_AckTimer.schedule(new AckTimer_Elapsed(), LibSettings.NETWORK_TICK_INTERVAL);
 
 		// Timer for recording simulator connection statistics
 		if (_StatsTimer == null)
@@ -869,7 +869,7 @@ public class Simulator extends Thread
 		if (_PingTimer == null && _Client.Settings.SEND_PINGS)
 		{
 			_PingTimer = new Timer();
-			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), Settings.PING_INTERVAL, Settings.PING_INTERVAL);
+			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), LibSettings.PING_INTERVAL, LibSettings.PING_INTERVAL);
 		}
 
 		Logger.Log("Connecting to " + ipEndPoint.toString(), LogLevel.Info, _Client);
@@ -1566,7 +1566,7 @@ public class Simulator extends Thread
 			SendPendingAcks();
 			ResendUnacked();
 
-			_AckTimer.schedule(new AckTimer_Elapsed(), Settings.NETWORK_TICK_INTERVAL);
+			_AckTimer.schedule(new AckTimer_Elapsed(), LibSettings.NETWORK_TICK_INTERVAL);
 		}
 	}
 

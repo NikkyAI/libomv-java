@@ -343,11 +343,8 @@ public class GridClient
 	public CapsMessage Messages;
 	// AgentThrottle
 	public AgentThrottle Throttle;
-	/*
-	 * Settings class including constant values and changeable parameters for
-	 * everything
-	 */
-	public Settings Settings;
+	// Settings class including constant values and changeable parameters for everything
+	public LibSettings Settings;
 	// 'Client's Avatar' Subsystem
 	public AgentManager Self;
 	// Other Avatars Subsystem
@@ -378,15 +375,18 @@ public class GridClient
 	// Packet Statistics
 	public Statistics Stats;
 
+	// Restrained Love Manager
+	public RLVManager RLV;
+
 	//
 	// Constructor.
 	//
 	public GridClient() throws Exception
 	{
-		this(new Settings());
+		this(new LibSettings());
 	}
 
-	public GridClient(Settings settings) throws Exception
+	public GridClient(LibSettings settings) throws Exception
 	{
 		initializeGridList();
 
@@ -395,7 +395,7 @@ public class GridClient
 		Messages = new CapsMessage();
 		/* This needs to come after the creation of the Network
 		 * manager as it registers a packetCallback */
-		Settings = settings.Startup(this);
+		Settings = settings.startup(this);
 		Self = new AgentManager(this);
 		Friends = new FriendsManager(this);
 		Groups = new GroupManager(this);
@@ -427,6 +427,9 @@ public class GridClient
 
 		if (Settings.ENABLE_TERRAIN_MANAGER)
 			Terrain = new TerrainManager(this);
+
+		if (Settings.ENABLE_RLV_MANAGER)
+			RLV = new RLVManager(this);
 
 		Stats = new Statistics();
 	}
@@ -770,9 +773,9 @@ public class GridClient
 	public void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
 	{
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-		prefs.put(DEFAULT_GRIDS_VERSION, Integer.toString(listversion));
+		prefs.putInt(DEFAULT_GRIDS_VERSION, listversion);
+		prefs.putInt(NUMGRIDS, gridlist.size());
 		prefs.put(DEFAULT_GRID, defaultGrid);
-		prefs.put(NUMGRIDS, Integer.toString(gridlist.size()));
 		int i = 0;
 		for (GridInfo info : gridlist.values())
 		{
@@ -817,14 +820,10 @@ public class GridClient
 		{
 			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 			defaultGrid = prefs.get(DEFAULT_GRID, Helpers.EmptyString);
-			String num = prefs.get(NUMGRIDS, Helpers.EmptyString);
-			if (num != null && !num.isEmpty())
+			int length = prefs.getInt(NUMGRIDS, 0);
+			for (int i = 1; i <= length; i++)
 			{
-				int length = Integer.valueOf(num);
-				for (int i = 1; i <= length; i++)
-				{
-					osd.add(OSDParser.deserialize(prefs.get(GRIDINFO + Integer.toString(i), Helpers.EmptyString)));				
-				}
+				osd.add(OSDParser.deserialize(prefs.get(GRIDINFO + Integer.toString(i), Helpers.EmptyString)));				
 			}
 		}
 		catch (ParseException ex) {}

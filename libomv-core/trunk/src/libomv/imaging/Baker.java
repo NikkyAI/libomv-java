@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 
 import libomv.AppearanceManager;
 import libomv.AppearanceManager.BakeType;
-import libomv.Settings;
+import libomv.LibSettings;
 import libomv.VisualParams.VisualAlphaParam;
 import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
@@ -311,7 +311,7 @@ public class Baker
     {
         try
         {
-            return new TGAImage(new File(Settings.RESOURCE_DIR + "/" + fileName));
+            return new TGAImage(new File(LibSettings.RESOURCE_DIR + "/" + fileName));
         }
         catch (IOException ex)
         {

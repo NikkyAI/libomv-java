@@ -48,7 +48,7 @@ import libomv.GroupManager.GroupMember;
 import libomv.GroupManager.GroupMembersReplyCallbackArgs;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
-import libomv.Settings;
+import libomv.LibSettings;
 import libomv.Simulator;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryManager.InventoryObjectOfferedCallbackArgs;
@@ -90,7 +90,7 @@ public class TestClient extends GridClient implements PacketCallback
 	// / <summary>
 	// /
 	// / </summary>
-	public TestClient(ClientManager manager, Settings settings) throws Exception
+	public TestClient(ClientManager manager, LibSettings settings) throws Exception
 	{
 		super(settings);
 		_ClientManager = manager;

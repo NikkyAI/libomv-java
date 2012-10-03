@@ -33,7 +33,7 @@ import java.util.List;
 import org.apache.commons.io.LineIterator;
 
 import libomv.LoginManager;
-import libomv.Settings;
+import libomv.LibSettings;
 import libomv.examples.TestClient.ClientManager.LoginDetails;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -76,7 +76,7 @@ public class Program
         if (arguments.get("loginuri") != null)
             LoginURI = arguments.get("loginuri");
         if (LoginURI == null || LoginURI.isEmpty())
-            LoginURI = Settings.AGNI_LOGIN_SERVER;
+            LoginURI = LibSettings.AGNI_LOGIN_SERVER;
         Logger.Log("Using login URI " + LoginURI, LogLevel.Info);
 
         if (arguments.get("gettextures") != null)

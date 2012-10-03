@@ -42,7 +42,7 @@ import libomv.GridClient;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
-import libomv.Settings;
+import libomv.LibSettings;
 import libomv.Simulator;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.ImageCodec;
@@ -299,8 +299,8 @@ public class TexturePipeline implements PacketCallback
 		if (RefreshDownloadsTimer == null)
 		{
 			RefreshDownloadsTimer = new Timer();
-			RefreshDownloadsTimer.schedule(new RefreshDownloadsTimer_Elapsed(), Settings.PIPELINE_REFRESH_INTERVAL,
-					Settings.PIPELINE_REFRESH_INTERVAL);
+			RefreshDownloadsTimer.schedule(new RefreshDownloadsTimer_Elapsed(), LibSettings.PIPELINE_REFRESH_INTERVAL,
+					LibSettings.PIPELINE_REFRESH_INTERVAL);
 		}
 	}
 
