@@ -33,17 +33,19 @@ import java.util.Date;
 import libomv.AgentManager.ChatType;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
+import libomv.utils.TimeoutEvent;
 
 public class PrivateChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
 	
-	private long typingStartedTime;
-	private boolean isTyping = false;
+	private long typingEndTime;
+	private TimeoutEvent<Boolean> isTyping = new TimeoutEvent<Boolean>();
 	
 	public PrivateChannel(MainControl main, String name, UUID id, UUID session)
 	{
 		super(main, name, id, session);
+		isTyping.reset(false);
 	}
 		
 	/**
@@ -55,8 +57,10 @@ public class PrivateChannel extends AbstractChannel
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 	{
 		if(message == null || message.isEmpty())
+		{
 			return;
-		
+		}
+
 		// Determine if this is a friend...
 		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
 		
@@ -92,13 +96,13 @@ public class PrivateChannel extends AbstractChannel
 			}
 			else
 			{
-				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message.substring(4), STYLE_REGULAR));
+				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
 			}
 				
 			// Send the message.
 			_Main.getGridClient().Self.InstantMessage(getUUID(), message, getSession());
 			// Indicate that we're no longer typing.
-			_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), false);
+			isTyping.set(false);
 		}
 		else
 		{
@@ -113,13 +117,13 @@ public class PrivateChannel extends AbstractChannel
 	protected void triggerTyping() throws Exception
 	{
 		// Update the time at which typing started
-		typingStartedTime = System.currentTimeMillis();
+		typingEndTime = System.currentTimeMillis() + 2000;
 
 		// If this is the beginning of typing.
-		if(!isTyping)
+		if(!isTyping.get())
 		{
 			// Set the flag
-			isTyping = true;
+			isTyping.reset(true);
 			// Inform the server of the typing status
 			_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), true);
 
@@ -129,30 +133,25 @@ public class PrivateChannel extends AbstractChannel
 				@Override
 				public void run()
 				{
-					// While the channel is flagged as typing...
-					while(isTyping)
+					try
 					{
-						// Check for timeout.
-						if (System.currentTimeMillis() > typingStartedTime + 3000)
+						// While the channel is flagged as typing...
+						do
 						{
-							// Send the "stopped typing" message.
-							try
+							// Check for timeout.
+							if (System.currentTimeMillis() > typingEndTime)
 							{
-								_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), false);
-							} 
-							catch (Exception e) { }
-							// Clear the flag
-							isTyping = false;
-							break;
+								// Clear the flag
+								isTyping.set(false);
+							}
+							// give up time
 						}
+						while (isTyping.waitOne(200));
 
-						// give up time
-						try
-						{
-							Thread.sleep(200);
-						}
-						catch (InterruptedException e) { }
+						// Send the "stopped typing" message.
+						_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), false);
 					}
+					catch (Exception e) { }
 				}
 			}).start();
 		}

@@ -71,12 +71,14 @@ public class LocalChannel extends AbstractChannel
 		jtbExpandAttendents.setHorizontalAlignment(SwingConstants.RIGHT);
 		jtbExpandAttendents.setSelected(false);
 		getJScrpAttendents().setVisible(false);
+		add(getJScrpAttendents(), BorderLayout.EAST);
 		jtbExpandAttendents.addItemListener(new ItemListener()
 		{
 			@Override
 			public void itemStateChanged(ItemEvent e)
 			{
 				getJScrpAttendents().setVisible(e.getStateChange() == ItemEvent.SELECTED);
+				validate();
 			}
 		});
 	
@@ -86,8 +88,6 @@ public class LocalChannel extends AbstractChannel
 		JScrollPane scrollPaneText = new JScrollPane();
 		scrollPaneText.setViewportView(getTextPane());
 		add(scrollPaneText, BorderLayout.CENTER);
-
-		add(getJScrpAttendents(), BorderLayout.EAST);
 	}
 
 	/**

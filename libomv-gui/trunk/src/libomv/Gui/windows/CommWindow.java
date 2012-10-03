@@ -30,12 +30,18 @@ package libomv.Gui.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import libomv.AgentManager.ChatSourceType;
 import libomv.AgentManager.ChatType;
@@ -117,7 +123,7 @@ public class CommWindow extends JFrame
 
         AbstractChannel channel = getLocalChannel();
         channel.receiveMessage(null, null, "Alert message", alertMessage, style != null ? style : AbstractChannel.STYLE_SYSTEM);
-		highlightChannel(channel);
+		highlightChannel(channel, true);
 	}
 	
 	public void printChatMessage(ChatSourceType sourceType, UUID sourceID, String fromName, String message, ChatType type)
@@ -171,12 +177,18 @@ public class CommWindow extends JFrame
         }
         AbstractChannel channel = getLocalChannel();
         channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
-		highlightChannel(channel);
+		highlightChannel(channel, true);
 	}
 	
 	public void printInstantMessage(InstantMessage message)
 	{
 		AbstractChannel channel = channels.get(message.FromAgentID);
+		if (channel == null && (message.Message == null || message.Message.isEmpty()))
+		{
+			// if the channel doesn't exist yet and we don't have a real message to report, return now
+			return;
+		}
+		
 		if (message.GroupIM)
 		{
 			if (channel == null)
@@ -197,7 +209,7 @@ public class CommWindow extends JFrame
 		if (message.Offline == InstantMessageOnline.Offline)
 			style = AbstractChannel.STYLE_OFFLINE; 
 		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, style);
-		highlightChannel(channel);
+		highlightChannel(channel, true);
 	}
 	
 	private LocalChannel getLocalChannel()
@@ -219,6 +231,38 @@ public class CommWindow extends JFrame
 
 			jTpComm.add("Contacts", getJTpContacts());
 			jTpComm.add("Local Chat", getLocalChannel());
+			// Install container listener so we can detect tab panes removed through the tab close button
+			jTpComm.addContainerListener(new ContainerListener()
+			{
+				@Override
+				public void componentAdded(ContainerEvent e)
+				{
+					// Nothing to do now
+				}
+
+				@Override
+				public void componentRemoved(ContainerEvent e)
+				{
+					Component comp = e.getComponent();
+					if (comp instanceof AbstractChannel)
+					{
+						channels.remove(((AbstractChannel)comp).getUUID());
+					}
+				}
+				
+			});
+			jTpComm.addChangeListener(new ChangeListener()
+			{
+				@Override
+				public void stateChanged(ChangeEvent e)
+				{
+					Component comp = getJTpComm().getSelectedComponent();
+					if (comp instanceof AbstractChannel)
+					{
+						highlightChannel((AbstractChannel)comp, false);
+					}
+				}
+			});
 		}
 		return jTpComm;
 	}
@@ -251,12 +295,11 @@ public class CommWindow extends JFrame
 	
 	public void removeChannel(AbstractChannel channel)
 	{
-		channels.remove(channel.getUUID());
 		getJTpComm().remove(channel);
 	}
 	
-	public void highlightChannel(AbstractChannel channel)
+	public void highlightChannel(AbstractChannel channel, boolean highlight)
 	{
-		getJTpComm().setBackgroundAt(getJTpComm().indexOfComponent(channel), Color.orange);
+		getJTpComm().getTabComponentAt(getJTpComm().indexOfComponent(channel)).setBackground(highlight ? Color.orange : UIManager.getColor("TabbedPane.background"));
 	}
 }

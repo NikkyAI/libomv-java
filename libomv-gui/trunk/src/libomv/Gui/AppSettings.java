@@ -28,7 +28,18 @@
  */
 package libomv.Gui;
 
-public class AppSettings
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+
+import libomv.utils.Settings;
+
+public class AppSettings extends Settings
 {
-	public static boolean DisableSound = false;
+	public static String disableSound = "disabledSound";
+
+	public AppSettings() throws IOException, ParseException
+	{
+		super("_libomv/libom_app.dat");
+	}
 }
