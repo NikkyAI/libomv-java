@@ -52,6 +52,8 @@ import libomv.types.UUID;
 public class CommWindow extends JFrame
 {
 	private static final long serialVersionUID = 1L;
+	
+	public static final String cmdChat = "chat";
 
 	private JTabbedPane jTpComm;
 	private JTabbedPane jTpContacts;
@@ -80,9 +82,14 @@ public class CommWindow extends JFrame
         setVisible(true);
 	}
 	
+	public boolean existsChannel(UUID uuid)
+	{
+		return channels.containsKey(uuid);
+	}
+	
 	public void setFocus(String focus, UUID uuid)
 	{
-		if (focus.equals("chat"))
+		if (focus.equals(cmdChat))
 		{
 			int index = 1;
 			if (uuid != null && !uuid.equals(UUID.Zero))
@@ -103,13 +110,13 @@ public class CommWindow extends JFrame
 		}
 	}
 	
-	public void printAlertMessage(String alertMessage)
+	public void printAlertMessage(String alertMessage, String style)
 	{
         if (alertMessage.toLowerCase().contains("autopilot canceled"))
         	return; //workaround the stupid autopilot alerts
 
         AbstractChannel channel = getLocalChannel();
-        channel.receiveMessage(null, null, "Alert message", alertMessage, AbstractChannel.STYLE_SYSTEM);
+        channel.receiveMessage(null, null, "Alert message", alertMessage, style != null ? style : AbstractChannel.STYLE_SYSTEM);
 		highlightChannel(channel);
 	}
 	
@@ -230,20 +237,26 @@ public class CommWindow extends JFrame
 		return jTpContacts;
 	}
 
-	public void addChannel(AbstractChannel channel)
+	public boolean addChannel(AbstractChannel channel)
 	{
-		getJTpComm().add(channel.getName(), channel);
-		getJTpComm().setTabComponentAt(getJTpComm().indexOfComponent(channel), new ButtonTabPane(getJTpComm()));
-		getJTpComm().setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		if (channels.put(channel.getUUID(), channel) == null)
+		{
+			getJTpComm().add(channel.getName(), channel);
+			getJTpComm().setTabComponentAt(getJTpComm().indexOfComponent(channel), new ButtonTabPane(getJTpComm()));
+			getJTpComm().setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+			return true;
+		}
+		return false;
 	}
 	
 	public void removeChannel(AbstractChannel channel)
 	{
+		channels.remove(channel.getUUID());
 		getJTpComm().remove(channel);
 	}
 	
 	public void highlightChannel(AbstractChannel channel)
 	{
-		getJTpComm().setBackgroundAt(getJTpComm().indexOfComponent(channel), Color.yellow);
+		getJTpComm().setBackgroundAt(getJTpComm().indexOfComponent(channel), Color.orange);
 	}
 }

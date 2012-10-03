@@ -31,6 +31,7 @@ package libomv.Gui.components;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -48,11 +49,14 @@ import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.MuteEntry;
 import libomv.AgentManager.MuteType;
 import libomv.AgentManager.TeleportLureCallbackArgs;
+import libomv.FriendsManager.FriendInfo;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendshipOfferedCallbackArgs;
 import libomv.FriendsManager.FriendshipResponseCallbackArgs;
 import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
+import libomv.GridClient;
 import libomv.GroupManager.GroupInvitationCallbackArgs;
+import libomv.Gui.channels.AbstractChannel;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 import libomv.Gui.windows.CommWindow;
@@ -123,8 +127,6 @@ public class OnlinePanel extends JPanel implements ActionListener
 
 		main.setContentArea(getSceneViewer());
 		main.setMenuBar(getJMBar());
-
-		initializePanel();	
 	}
 	
 	protected void finalize() throws Throwable
@@ -278,10 +280,6 @@ public class OnlinePanel extends JPanel implements ActionListener
 		return jSceneViewer;
 	}
 
-	private void initializePanel()
-	{
-	}
-	
 	private class BalanceUpdate implements Callback<BalanceCallbackArgs>
 	{
 		@Override
@@ -414,7 +412,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 					@Override
 					public void run()
 					{
-						getCommWindow().printAlertMessage(params.getAlert());
+						getCommWindow().printAlertMessage(params.getAlert(), null);
 					}
 				});
 			}
@@ -456,11 +454,27 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
-		public boolean callback(FriendNotificationCallbackArgs e)
+		public boolean callback(final FriendNotificationCallbackArgs e)
 		{
-			for (UUID uuid : e.getAgentID())
+			try
 			{
-
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						String message = e.getOnline() ? " is online" : " is offline";
+						for (UUID uuid : e.getAgentID())
+						{
+				        	FriendInfo info = _Main.getGridClient().Friends.getFriendList().get(uuid);
+							getCommWindow().printAlertMessage(info.getName() + message, AbstractChannel.STYLE_INFORMATIONAL);
+						}
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
 			}
 			return false;
 		}
@@ -475,11 +489,25 @@ public class OnlinePanel extends JPanel implements ActionListener
 		public boolean callback(FriendshipResponseCallbackArgs e)
 		{
 			String verb = e.getAccepted() ? "accepted" : "declined";
-			String title = "Friendship " + verb;
-			String message = e.getName() + " has " + verb + " your friendship offer.";
+			final String title = "Friendship " + verb;
+			final String message = e.getName() + " has " + verb + " your friendship offer.";
 
-			/* Show dialog informing about the decision of the other */
-			JOptionPane.showMessageDialog(_Main.getMainJFrame(), message, title, JOptionPane.PLAIN_MESSAGE);		
+			try
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						/* Show dialog informing about the decision of the other */
+						JOptionPane.showMessageDialog(_Main.getMainJFrame(), message, title, JOptionPane.PLAIN_MESSAGE);		
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
+			}
 			return false;
 		}
 	}
@@ -492,30 +520,46 @@ public class OnlinePanel extends JPanel implements ActionListener
 		@Override
 		public boolean callback(FriendshipOfferedCallbackArgs e)
 		{
-			final UUID uuid = e.getFriendID();
-			final UUID session = e.getSessionID();
+			final String message = e.getName() + " wants to be your friend. Do you accept this request?";
+			final AtomicBoolean accept = new AtomicBoolean(false);
+			GridClient client = _Main.getGridClient();
 
-			/* Prompt user for acceptance of friendship offer */
-			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), e.getName() + " wants to be your friend. Do you accept this request?", 
-					                                   "Friendship Request", JOptionPane.YES_NO_OPTION);
 			try
 			{
-				if (result == JOptionPane.OK_OPTION)
+				EventQueue.invokeAndWait(new Runnable()
 				{
-					_Main.getGridClient().Friends.AcceptFriendship(uuid, session);
+					@Override
+					public void run()
+					{
+						/* Prompt user for acceptance of friendship offer */
+						int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), message, "Friendship Request", JOptionPane.YES_NO_OPTION);
+						accept.set(result == JOptionPane.OK_OPTION);
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Error invoking option dialog", LogLevel.Error, client, ex);
+			}
+
+			try
+			{
+				if (accept.get())
+				{
+					client.Friends.AcceptFriendship(e.getFriendID(), e.getSessionID());
 				}
 				else
 				{
-					_Main.getGridClient().Friends.DeclineFriendship(uuid, session);
+					client.Friends.DeclineFriendship(e.getFriendID(), e.getSessionID());
 				}
 			}
 			catch (InventoryException ex)
 			{
-				Logger.Log("Inventory Exception", LogLevel.Error, _Main.getGridClient(), ex);
+				Logger.Log("Inventory Exception", LogLevel.Error, client, ex);
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Exception sending response", LogLevel.Error, _Main.getGridClient(), ex);
+				Logger.Log("Exception sending response", LogLevel.Error, client, ex);
 			}
 			return false;
 		}
