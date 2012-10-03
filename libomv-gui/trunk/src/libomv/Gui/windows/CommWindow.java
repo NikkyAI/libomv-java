@@ -182,7 +182,7 @@ public class CommWindow extends JFrame
 			if (channel == null)
 			{
 				channel = new GroupChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
-				getJTpComm().add(message.FromAgentName, channel);
+				addChannel(channel);
 			}
 		}
 		else
@@ -190,7 +190,7 @@ public class CommWindow extends JFrame
 			if (channel == null)
 			{
 				channel = new PrivateChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
-				getJTpComm().add(message.FromAgentName, channel);
+				addChannel(channel);
 			}
 		}
 		String style = null;
