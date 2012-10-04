@@ -174,8 +174,7 @@ public class ManagedImage
      * @param width widt new width 
      * @param height new height
      */
-    @SuppressWarnings("null")
-	public void ResizeNearestNeighbor(int width, int height)
+    public void ResizeNearestNeighbor(int width, int height)
     {
         if (width == Width && height == Height)
             return;
