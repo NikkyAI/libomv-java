@@ -32,6 +32,8 @@ package libomv.Gui.components;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicPanelUI;
+
 import java.awt.*;
 import java.awt.event.*;
  
@@ -56,6 +58,9 @@ public class ButtonTabPane extends JPanel
         this.pane = pane;
         setOpaque(false);
          
+        //Make the tab pane look the same for all Laf's
+//        setUI(new BasicPanelUI());
+
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel()
         {
@@ -90,7 +95,7 @@ public class ButtonTabPane extends JPanel
             setPreferredSize(new Dimension(size, size));
             setToolTipText("close this tab");
             //Make the button looks the same for all Laf's
-            setUI(new BasicButtonUI());
+//            setUI(new BasicButtonUI());
             //Make it transparent
             setContentAreaFilled(false);
             //No need to be focusable

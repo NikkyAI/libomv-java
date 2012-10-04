@@ -67,16 +67,19 @@ public class MainWindow extends JFrame implements MainControl
 	public MainWindow(GridClient client)
 	{
 		super();
+/*
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			System.out.println("Error setting native LAF: " + e);
+			System.out.println("Error setting native LAF: " + ex);
 		}
+ */
 		
 		_Client = client;
+		_Settings = new AppSettings(client);
 		
 		setTitle("Libomv-Java Client");
 		setSize(1024, 800);

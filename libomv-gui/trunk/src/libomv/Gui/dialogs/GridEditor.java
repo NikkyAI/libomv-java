@@ -446,17 +446,17 @@ public class GridEditor extends JDialog
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					_Client.clearGrids();
+					_Client.clearGrids(false);
 					// Get number of items in the list
 					int size = getJLsGridNames().getModel().getSize();
 					// Get all item objects
 					for (int i = 0; i < size; i++)
 					{
-						_Client.addGrid((GridInfo) getJLsGridNames().getModel().getElementAt(i));
+						_Client.addGrid((GridInfo)getJLsGridNames().getModel().getElementAt(i), false);
 					}
 					try
 					{
-						_Client.saveList();
+						_Client.saveList(true);
 					}
 					catch (Exception ex)
 					{

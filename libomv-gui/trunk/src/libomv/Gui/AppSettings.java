@@ -28,18 +28,31 @@
  */
 package libomv.Gui;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-
+import libomv.GridClient;
+import libomv.utils.Logger;
 import libomv.utils.Settings;
+import libomv.utils.Logger.LogLevel;
 
 public class AppSettings extends Settings
 {
 	public static String disableSound = "disabledSound";
 
-	public AppSettings() throws IOException, ParseException
+	DefaultSetting[] defaults = {
+			new DefaultSetting(disableSound, true),
+	};
+	
+	public AppSettings(GridClient client)
 	{
-		super("_libomv/libom_app.dat");
+		super("_libomv/settings.app");
+		setDefaults(defaults);
+		
+		try
+		{
+			load();
+		}
+		catch (Exception ex)
+		{
+			Logger.Log("Failed to load settings", LogLevel.Error, ex);
+		}
 	}
 }

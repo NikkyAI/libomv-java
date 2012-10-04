@@ -74,6 +74,7 @@ public class LoginPanel extends JPanel implements ActionListener
 	private static final String cmdLogin = "login";
 	private static final String cmdGrids = "grids";
 	private static final String cmdGrid = "grid";
+	private static final String cmdRefresh = "refresh";
 	private static final String cmdSaveDetails = "saveDetails";
 
 	private Browser browser;
@@ -256,12 +257,16 @@ public class LoginPanel extends JPanel implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdGrid))
 		{
-			initializePanel((GridInfo)((JComboBox)e.getSource()).getSelectedItem());
+			initializePanel((GridInfo)getJcbGridSelector().getSelectedItem());
 		}
 		else if (e.getActionCommand().equals(cmdGrids))
 		{
 			GridEditor gridEdit = new GridEditor(_Main.getGridClient(), _Main.getMainJFrame(), "Grid List", true);
 			gridEdit.setVisible(true);
+		}
+		else if (e.getActionCommand().equals(cmdRefresh))
+		{
+			refreshGridList();
 		}
 		else if (e.getActionCommand().equals(cmdSaveDetails))
 		{
@@ -588,6 +593,28 @@ public class LoginPanel extends JPanel implements ActionListener
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	private void refreshGridList()
+	{
+		GridInfo[] grids = _Main.getGridClient().getGridInfos();
+		GridInfo gridInfo = (GridInfo)getJcbGridSelector().getSelectedItem();
+		if (gridInfo != null)
+		{
+			gridInfo = _Main.getGridClient().getGrid(gridInfo.gridnick);
+		}
+		if (gridInfo == null)
+		{
+			gridInfo = grids[Math.min(getJcbGridSelector().getSelectedIndex(), grids.length - 1)];
+		}
+
+		getJcbGridSelector().removeAllItems();
+		for (GridInfo entry : grids)
+		{
+			getJcbGridSelector().addItem(entry);
+		}
+		getJcbGridSelector().setSelectedItem(gridInfo);
+		initializePanel(gridInfo);
 	}
 	
 	/**

@@ -38,7 +38,6 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -309,6 +308,10 @@ public class CommWindow extends JFrame
 	
 	public void highlightChannel(AbstractChannel channel, boolean highlight)
 	{
-		getJTpComm().getTabComponentAt(getJTpComm().indexOfComponent(channel)).setBackground(highlight ? Color.orange : UIManager.getColor("TabbedPane.background"));
+		int index = getJTpComm().indexOfComponent(channel);
+		if (index >= 0)
+		{
+			getJTpComm().setBackgroundAt(index, highlight ? Color.red : null);
+		}
 	}
 }

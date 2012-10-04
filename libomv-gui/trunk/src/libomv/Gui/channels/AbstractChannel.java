@@ -452,7 +452,7 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 						}
 					}
 
-					if (e.getKeyCode() != KeyEvent.VK_ENTER)
+					if (e.getKeyChar() != '\n')
 					{
 						try
 						{
@@ -468,7 +468,7 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 					e.consume();
 
 					try
-			{
+					{
 						if (e.isShiftDown())
 							transmitMessage(getJTxChat().getText(), ChatType.Whisper);
 						else if (e.isControlDown())
