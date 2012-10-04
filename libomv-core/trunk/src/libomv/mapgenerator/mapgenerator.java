@@ -275,13 +275,12 @@ public class mapgenerator
 			case FieldType.Variable:
 				if (field.count == 1)
 				{
-					writer.println("bytes.put((byte)_" + fieldName.toLowerCase() + ".length);");
+					writer.println("copyByteArray1(bytes, _" + fieldName.toLowerCase() + ");");
 				}
 				else
 				{
-					writer.println("bytes.putShort((short)_" + fieldName.toLowerCase() + ".length);");
+					writer.println("copyByteArray2(bytes, _" + fieldName.toLowerCase() + ");");
 				}
-				writer.println(lead + "bytes.put(_" + fieldName.toLowerCase() + ");");
 				break;
 			default:
 				writer.println("!!! ERROR: Unhandled FieldType: " + field.type + " !!!");
@@ -418,8 +417,8 @@ public class mapgenerator
 				if (field.type == FieldType.Variable)
 				{
 					String fieldName = protocol.keywordPosition(field.keywordIndex);
-					writer.println("            if (get" + fieldName + "() != null) { length += " + field.count
-							+ " + get" + fieldName + "().length; }");
+					writer.println("            if (_" + fieldName.toLowerCase() + " != null) { length += " + (field.count + 1)
+							+ " + _" + fieldName.toLowerCase() + ".length; }");
 				}
 			}
 			writer.println("            return length;");
@@ -1184,7 +1183,15 @@ public class mapgenerator
 					+ "    // return A byte array containing the serialized packet payload, ready to be sent across the wire\n"
 					+ "    public abstract ByteBuffer ToBytes() throws Exception;\n\n"
 					+ "    public ByteBuffer[] ToBytesMultiple()\n    {\n"
-					+ "         throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n    }\n"
+					+ "         throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n    }\n\n"
+					+ "    protected void copyByteArray1(ByteBuffer bytes, byte[] data)\n    {\n"
+					+ "         bytes.put((byte)(data.length + 1));\n"
+					+ "         bytes.put(data);\n"
+					+ "         bytes.put((byte)0);\n    }\n\n"
+					+ "    protected void copyByteArray2(ByteBuffer bytes, byte[] data)\n    {\n"
+					+ "         bytes.putShort((short)(data.length + 1));\n"
+					+ "         bytes.put(data);\n"
+					+ "         bytes.put((byte)0);\n    }\n\n"
 					+ "    //Get the PacketType for a given packet id and packet frequency\n"
 					+ "    //<param name=\"id\">The packet ID from the header</param>\n"
 					+ "    //<param name=\"frequency\">Frequency of this packet</param>\n"
