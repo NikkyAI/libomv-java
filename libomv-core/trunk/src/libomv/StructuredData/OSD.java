@@ -328,6 +328,10 @@ public class OSD
 		{
 			return new OSD();
 		}
+		else if (value instanceof OSD)
+		{
+			return (OSD)value;
+		}
 		else if (value instanceof Boolean)
 		{
 			return new OSDBoolean((Boolean) value);
@@ -338,67 +342,67 @@ public class OSD
 		}
 		else if (value instanceof Short)
 		{
-			return new OSDInteger(((Short) value).intValue());
+			return new OSDInteger(((Short)value).intValue());
 		}
 		else if (value instanceof Byte)
 		{
-			return new OSDInteger(((Byte) value).intValue());
+			return new OSDInteger(((Byte)value).intValue());
 		}
 		else if (value instanceof Double)
 		{
-			return new OSDReal(((Double) value).doubleValue());
+			return new OSDReal(((Double)value).doubleValue());
 		}
 		else if (value instanceof Float)
 		{
-			return new OSDReal(((Float) value).doubleValue());
+			return new OSDReal(((Float)value).doubleValue());
 		}
 		else if (value instanceof String)
 		{
-			return new OSDString((String) value);
+			return new OSDString((String)value);
 		}
 		else if (value instanceof UUID)
 		{
-			return new OSDUUID((UUID) value);
+			return new OSDUUID((UUID)value);
 		}
 		else if (value instanceof Date)
 		{
-			return new OSDDate((Date) value);
+			return new OSDDate((Date)value);
 		}
 		else if (value instanceof URI)
 		{
-			return new OSDUri((URI) value);
+			return new OSDUri((URI)value);
 		}
 		else if (value instanceof byte[])
 		{
-			return new OSDBinary((byte[]) value);
+			return new OSDBinary((byte[])value);
 		}
 		else if (value instanceof Long)
 		{
-			return new OSDBinary((Long) value);
+			return new OSDBinary((Long)value);
 		}
 		else if (value instanceof Vector2)
 		{
-			return FromVector2((Vector2) value);
+			return FromVector2((Vector2)value);
 		}
 		else if (value instanceof Vector3)
 		{
-			return FromVector3((Vector3) value);
+			return FromVector3((Vector3)value);
 		}
 		else if (value instanceof Vector3d)
 		{
-			return FromVector3d((Vector3d) value);
+			return FromVector3d((Vector3d)value);
 		}
 		else if (value instanceof Vector4)
 		{
-			return FromVector4((Vector4) value);
+			return FromVector4((Vector4)value);
 		}
 		else if (value instanceof Quaternion)
 		{
-			return FromQuaternion((Quaternion) value);
+			return FromQuaternion((Quaternion)value);
 		}
 		else if (value instanceof Color4)
 		{
-			return FromColor4((Color4) value);
+			return FromColor4((Color4)value);
 		}
 		else
 		{
