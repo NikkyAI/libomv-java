@@ -1,7 +1,7 @@
 <llsd>
   <array>
     <map>
-      <key>default_grids_version</key><string>38</string>
+      <key>default_grids_version</key><string>39</string>
     </map>
 
     <!-- Second Life -->
@@ -10,13 +10,13 @@
       <key>gridname</key><string>Second Life</string>
       <key>platform</key><string>SecondLife</string>
       <key>loginuri</key><string>https://login.agni.lindenlab.com/cgi-bin/login.cgi</string>
-      <key>loginpage</key><string>http://imprudenceviewer.org/app/splash/</string>
+      <key>loginpage</key><string>http://secondlife.com/app/login//</string>
       <key>helperuri</key><string>https://secondlife.com/helpers/</string>
       <key>website</key><string>http://secondlife.com/</string>
       <key>support</key><string>http://secondlife.com/support/</string>
       <key>register</key><string>http://secondlife.com/registration/</string>
       <key>password</key><string>http://secondlife.com/account/request.php</string>
-      <key>version</key><string>2</string>
+      <key>version</key><string>3</string>
     </map>
 
     <!-- Second Life Beta -->
@@ -25,13 +25,13 @@
       <key>gridname</key><string>Second Life Beta Grid</string>
       <key>platform</key><string>SecondLife</string>
       <key>loginuri</key><string>https://login.aditi.lindenlab.com/cgi-bin/login.cgi</string>
-      <key>loginpage</key><string>http://imprudenceviewer.org/app/splash/</string>
+      <key>loginpage</key><string>http://secondlife.com/app/login/</string>
       <key>helperuri</key><string>http://aditi-secondlife.webdev.lindenlab.com/helpers/</string>
       <key>website</key><string>http://secondlife.com/</string>
       <key>support</key><string>http://secondlife.com/support/</string>
       <key>register</key><string>http://secondlife.com/registration/</string>
       <key>password</key><string>http://secondlife.com/account/request.php</string>
-      <key>version</key><string>3</string>
+      <key>version</key><string>4</string>
     </map>
 
     <!-- Local Host -->
