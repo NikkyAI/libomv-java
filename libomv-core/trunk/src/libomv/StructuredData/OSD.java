@@ -28,7 +28,6 @@ package libomv.StructuredData;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -328,131 +327,137 @@ public class OSD
 		{
 			return new OSD();
 		}
-		else if (value instanceof OSD)
+		if (value instanceof OSD)
 		{
 			return (OSD)value;
 		}
-		else if (value instanceof Boolean)
+		if (value instanceof Boolean)
 		{
 			return new OSDBoolean((Boolean) value);
 		}
-		else if (value instanceof Integer)
+		if (value instanceof Integer)
 		{
 			return new OSDInteger((Integer) value);
 		}
-		else if (value instanceof Short)
+		if (value instanceof Short)
 		{
 			return new OSDInteger(((Short)value).intValue());
 		}
-		else if (value instanceof Byte)
+		if (value instanceof Byte)
 		{
 			return new OSDInteger(((Byte)value).intValue());
 		}
-		else if (value instanceof Double)
+		if (value instanceof Double)
 		{
 			return new OSDReal(((Double)value).doubleValue());
 		}
-		else if (value instanceof Float)
+		if (value instanceof Float)
 		{
 			return new OSDReal(((Float)value).doubleValue());
 		}
-		else if (value instanceof String)
+		if (value instanceof String)
 		{
 			return new OSDString((String)value);
 		}
-		else if (value instanceof UUID)
+		if (value instanceof UUID)
 		{
 			return new OSDUUID((UUID)value);
 		}
-		else if (value instanceof Date)
+		if (value instanceof Date)
 		{
 			return new OSDDate((Date)value);
 		}
-		else if (value instanceof URI)
+		if (value instanceof URI)
 		{
 			return new OSDUri((URI)value);
 		}
-		else if (value instanceof byte[])
+		if (value instanceof byte[])
 		{
 			return new OSDBinary((byte[])value);
 		}
-		else if (value instanceof Long)
+		if (value instanceof Long)
 		{
 			return new OSDBinary((Long)value);
 		}
-		else if (value instanceof Vector2)
+		if (value instanceof Vector2)
 		{
 			return FromVector2((Vector2)value);
 		}
-		else if (value instanceof Vector3)
+		if (value instanceof Vector3)
 		{
 			return FromVector3((Vector3)value);
 		}
-		else if (value instanceof Vector3d)
+		if (value instanceof Vector3d)
 		{
 			return FromVector3d((Vector3d)value);
 		}
-		else if (value instanceof Vector4)
+		if (value instanceof Vector4)
 		{
 			return FromVector4((Vector4)value);
 		}
-		else if (value instanceof Quaternion)
+		if (value instanceof Quaternion)
 		{
 			return FromQuaternion((Quaternion)value);
 		}
-		else if (value instanceof Color4)
+		if (value instanceof Color4)
 		{
 			return FromColor4((Color4)value);
 		}
-		else
-		{
-			return new OSD();
-		}
+		// We don't know this type
+		return new OSD();
 	}
 
-	public static Object ToObject(Type type, OSD value)
+	public static Object ToObject(Class<?> type, OSD value)
 	{
-		if (type == Long.class || type == long.class)
+		if (type == null || value == null)
+		{
+			return null;
+		}
+		if (type.isAssignableFrom(Long.class) || type == long.class)
 		{
 			return value.AsLong();
 		}
-		else if (type == Integer.class || type == int.class)
+		if (type.isAssignableFrom(Integer.class) || type == int.class)
 		{
 			return value.AsInteger();
 		}
-		else if (type == Short.class || type == short.class)
+		if (type.isAssignableFrom(Short.class) || type == short.class)
 		{
 			return (short) value.AsInteger();
 		}
-		else if (type == Byte.class || type == byte.class)
+		if (type.isAssignableFrom(Byte.class) || type == byte.class)
 		{
 			return (byte) value.AsInteger();
 		}
-		else if (type == String.class)
-		{
-			return value.AsString();
-		}
-		else if (type == Boolean.class || type == boolean.class)
+		if (type.isAssignableFrom(Boolean.class) || type == boolean.class)
 		{
 			return value.AsBoolean();
 		}
-		else if (type == Float.class || type == float.class)
-		{
-			return (float) value.AsReal();
-		}
-		else if (type == Double.class || type == double.class)
+		if (type.isAssignableFrom(Double.class) || type == double.class)
 		{
 			return value.AsReal();
 		}
-		else if (type == UUID.class)
+		if (type.isAssignableFrom(Float.class) || type == float.class)
 		{
-			return value.AsUUID();
+			return (float) value.AsReal();
 		}
-		else if (type == URI.class)
+		if (type.isAssignableFrom(String.class))
+		{
+			return value.AsString();
+		}
+		if (type.isAssignableFrom(Date.class))
+		{
+			return value.AsDate();
+		}
+		if (type.isAssignableFrom(URI.class))
 		{
 			return value.AsUri();
 		}
-		else if (type == Vector3.class)
+		if (type.isAssignableFrom(UUID.class))
+		{
+			return value.AsUUID();
+		}
+		if (type.isAssignableFrom(Vector3.class))
 		{
 			if (value.getType() == OSDType.Array)
 			{
@@ -460,7 +465,7 @@ public class OSD
 			}
 			return Vector3.Zero;
 		}
-		else if (type == Vector4.class)
+		if (type.isAssignableFrom(Vector4.class))
 		{
 			if (value.getType() == OSDType.Array)
 			{
@@ -468,7 +473,7 @@ public class OSD
 			}
 			return Vector4.Zero;
 		}
-		else if (type == Quaternion.class)
+		if (type.isAssignableFrom(Quaternion.class))
 		{
 			if (value.getType() == OSDType.Array)
 			{
@@ -476,14 +481,16 @@ public class OSD
 			}
 			return Quaternion.Identity;
 		}
-		else
+		if (type.isAssignableFrom(OSD.class))
 		{
-			return null;
+			return value;
 		}
+		// We don't know this type
+		return null;
 	}
 
 	/**
-	 * Uses reflection to create an SDMap from all of the SD serializable types
+	 * Uses reflection to create an OSDMap from all of the OSD serializable types
 	 * in an object
 	 * 
 	 * @param obj
@@ -513,7 +520,7 @@ public class OSD
 
 	/**
 	 * Uses reflection to deserialize member variables in an object from an
-	 * SDMap
+	 * OSDMap
 	 * 
 	 * @param obj
 	 *            Reference to an object to fill with deserialized values
@@ -532,7 +539,7 @@ public class OSD
 				OSD serializedField = serialized.get(field.getName());
 				if (serializedField != null)
 				{
-					field.set(obj, ToObject(field.getGenericType(), serializedField));
+					field.set(obj, ToObject(field.getClass(), serializedField));
 				}
 			}
 		}
