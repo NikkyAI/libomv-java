@@ -178,7 +178,7 @@ public class ClientManager
 		++PendingLogins;
 
 		LibSettings settings = new LibSettings();
-		settings.ENABLE_OBJECT_MANAGER = true;
+		settings.put(LibSettings.ENABLE_OBJECT_MANAGER, true);
 		final TestClient client = new TestClient(this, settings);
 
 		Callback<LoginProgressCallbackArgs> loginCallback = new Callback<LoginProgressCallbackArgs>()

@@ -100,10 +100,10 @@ public class TestClient extends GridClient implements PacketCallback
 		Logger.LOG_LEVEL = LogLevel.Warning;
 
 		Settings.LOG_RESENDS = false;
-		Settings.STORE_LAND_PATCHES = true;
+		Settings.put(LibSettings.STORE_LAND_PATCHES, true);
+		Settings.put(LibSettings.SEND_AGENT_UPDATES, true);
 		Settings.ALWAYS_DECODE_OBJECTS = true;
 		Settings.ALWAYS_REQUEST_OBJECTS = true;
-		Settings.SEND_AGENT_UPDATES = true;
 		Settings.USE_ASSET_CACHE = true;
 
 		Login.OnLoginProgress.add(new LoginHandler(), false);
