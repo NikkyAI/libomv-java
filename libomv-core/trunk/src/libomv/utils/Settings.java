@@ -29,12 +29,14 @@
 package libomv.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.text.ParseException;
+import java.util.Map.Entry;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
@@ -45,6 +47,12 @@ import libomv.utils.CallbackHandler;
 
 public class Settings
 {
+	public class DefaultSetting
+	{
+		String key;
+		Object value;
+	}
+	
 	public class SettingsUpdateCallbackArgs implements CallbackArgs
 	{
 		private String name;
@@ -72,20 +80,37 @@ public class Settings
 	
 	public CallbackHandler<SettingsUpdateCallbackArgs> OnSettingsUpdate = new CallbackHandler<SettingsUpdateCallbackArgs>();
 		
-	public Settings(String settingsPath) throws IOException, ParseException
+	public Settings(String settingsPath)
 	{
 		this.settingsPath = new File(System.getProperty("user.home"), settingsPath);
+		settings = new OSDMap();
+	}
+	
+	public void setDefaults(DefaultSetting[] defaults)
+	{
+		for (DefaultSetting setting : defaults)
+		{
+			settings.put(setting.key, OSD.FromObject(setting.value));
+		}
+		
+	}
+	
+    public void load() throws IOException, ParseException
+    {
 		Reader reader = new FileReader(settingsPath);
 		try
 		{
-			settings = (OSDMap)OSDParser.deserialize(reader);
+			for (Entry<String, OSD> entry : ((OSDMap)OSDParser.deserialize(reader)).entrySet())
+			{
+				settings.put(entry.getKey(), entry.getValue());
+			}
 		}
 		finally
 		{
-			reader.close();
+				reader.close();
 		}
-	}
-	
+    }
+    
 	public void save() throws IOException
 	{
 		Writer writer = new FileWriter(settingsPath);
@@ -132,25 +157,30 @@ public class Settings
 		return defValue;
 	}
 
-	public OSD put(String name, OSD value)
-	{
-		OSD osd = settings.put(name, value);
-		OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
-		return osd;
-	}
-
-	public boolean putBool(String name, boolean value)
+	public boolean put(String name, boolean value)
 	{
 		return put(name, OSD.FromBoolean(value)).AsBoolean();
 	}
 
-	public int putInt(String name, int value)
+	public int put(String name, int value)
 	{
 		return put(name, OSD.FromInteger(value)).AsInteger();
 	}
 
-	public String putString(String name, String value)
+	public String put(String name, String value)
 	{
 		return put(name, OSD.FromString(value)).AsString();
+	}
+
+	public OSD put(String name, Object value)
+	{
+		return put(name, OSD.FromObject(value));
+	}
+
+	private OSD put(String name, OSD value)
+	{
+		OSD osd = settings.put(name, value);
+		OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
+		return osd;
 	}
 }
