@@ -311,7 +311,7 @@ public class CommWindow extends JFrame
 		int index = getJTpComm().indexOfComponent(channel);
 		if (index >= 0)
 		{
-			getJTpComm().setBackgroundAt(index, highlight ? Color.red : null);
+			getJTpComm().setBackgroundAt(index, highlight && index != getJTpComm().getSelectedIndex() ? Color.orange : null);
 		}
 	}
 }
