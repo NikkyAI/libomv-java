@@ -25,9 +25,7 @@
  */
 package libomv;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.text.ParseException;
 
 import libomv.packets.EconomyDataPacket;
 import libomv.packets.Packet;
@@ -35,7 +33,9 @@ import libomv.packets.PacketType;
 import libomv.types.Color4;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
+import libomv.utils.Logger;
 import libomv.utils.Settings;
+import libomv.utils.Logger.LogLevel;
 
 /*
  * Class for controlling various system settings.
@@ -60,36 +60,38 @@ public class LibSettings extends Settings implements PacketCallback
 
 	/* Application Version */
 	public static final String LIBRARY_VERSION = "0.6.2";
+	
 
 	/* The relative directory where external resources are kept */
-	public static String RESOURCE_DIR = "character";
+	public static final String RESOURCE_DIR = "resourceDir";
+	
 
 	/* Initialize Avatar Manager */
-	public boolean ENABLE_AVATAR_MANAGER = true;
+	public static final String ENABLE_AVATAR_MANAGER = "enableAvatarMgr";
 
 	/* Initialize Inventory Manager */
-	public boolean ENABLE_INVENTORY_MANAGER = true;
+	public static final String ENABLE_INVENTORY_MANAGER = "enableInventoryMgr";
 
 	/* Initialize Sound Manager */
-	public boolean ENABLE_SOUND_MANAGER = true;
+	public static final String ENABLE_SOUND_MANAGER = "enableSoundMgr";
 
 	/* Initialize Asset Manager */
-	public boolean ENABLE_ASSET_MANAGER = false;
+	public static final String ENABLE_ASSET_MANAGER = "enableAssetMgr";
 
 	/* Initialize Directory Manager */
-	public boolean ENABLE_DIRECTORY_MANAGER = false;
+	public static final String ENABLE_DIRECTORY_MANAGER = "enableDirectoryMgr";
 
 	/* Initialize Object Manager */
-	public boolean ENABLE_OBJECT_MANAGER = false;
+	public static final String ENABLE_OBJECT_MANAGER = "enableObjectMgr";
 
 	/* Initialize Parcel Manager */
-	public boolean ENABLE_PARCEL_MANAGER = false;
+	public static final String ENABLE_PARCEL_MANAGER = "enableParcelMgr";
 	
 	/* Initialize Terrain Manager */
-	public boolean ENABLE_TERRAIN_MANAGER = false;
+	public static final String ENABLE_TERRAIN_MANAGER = "enableTerrainMgr";
 
 	/* Initialize Restrained Love Manager */
-	public boolean ENABLE_RLV_MANAGER = true;
+	public static final String ENABLE_RLV_MANAGER = "enableRLVMgr";
 	
 	// #region Login/Networking Settings
 
@@ -97,10 +99,10 @@ public class LibSettings extends Settings implements PacketCallback
 	public static InetSocketAddress BIND_ADDR = InetSocketAddress.createUnresolved("*", 13000);
 
 	/* Use XML-RPC Login or LLSD Login, default is XML-RPC Login */
-	public boolean USE_LLSD_LOGIN = false;
+	public static final String USE_LLSD_LOGIN = "useLLSDLogin";
 
 	/* Use Http downloads for texture requests */
-	public boolean USE_HTTP_TEXTURES = true;
+	public static final String USE_HTTP_TEXTURES = "useHTTPTextures";
 	/*
 	 * InventoryManager requests inventory information on login, GridClient
 	 * initializes an Inventory store for main inventory.
@@ -202,21 +204,21 @@ public class LibSettings extends Settings implements PacketCallback
 	 * block for a long time and would need to be rewritten as asynchronous code
 	 * before this is feasible
 	 */
-	public boolean SYNC_PACKETCALLBACKS = false;
+	public static final String SYNC_PACKETCALLBACKS = "syncPacketCallbacks";
 
-	public boolean LOG_RAW_PACKET_BYTES = false;
+	public static final String LOG_RAW_PACKET_BYTES = "logRawPacketBytes";
 
 	/* Enable/disable storing terrain heightmaps in the TerrainManager */
-	public boolean STORE_LAND_PATCHES = false;
+	public static final String STORE_LAND_PATCHES = "storeLandPatches";
 
 	/* Enable/disable sending periodic camera updates */
-	public boolean SEND_AGENT_UPDATES = true;
+	public static final String SEND_AGENT_UPDATES = "sendAgentUpdates";
 
 	/*
 	 * Enable/disable automatically setting agent appearance at login and after
 	 * sim crossing
 	 */
-	public boolean SEND_AGENT_APPEARANCE = true;
+	public static final String SEND_AGENT_APPEARANCE = "sendAgentAppearance";
 
 	/*
 	 * Enable/disable automatically setting the bandwidth throttle after
@@ -225,7 +227,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * throttle your connection will by default be throttled well below the
 	 * minimum values and you may experience connection problems
 	 */
-	public boolean SEND_AGENT_THROTTLE = true;
+	public static final String SEND_AGENT_THROTTLE = "sendAgentThrottle";
 
 	/*
 	 * Enable/disable the sending of pings to monitor lag and packet loss
@@ -257,10 +259,10 @@ public class LibSettings extends Settings implements PacketCallback
 	 * Whether to establish connections to HTTP capabilities servers for
 	 * simulators
 	 */
-	public boolean ENABLE_CAPS = true;
+	public static final String ENABLE_CAPS = "enableCaps";
 
 	/* Whether to decode sim stats */
-	public boolean ENABLE_SIMSTATS = true;
+	public static final String ENABLE_SIMSTATS = "enableSimStats";
 
 	/*
 	 * The capabilities servers are currently designed to periodically return a
@@ -349,15 +351,6 @@ public class LibSettings extends Settings implements PacketCallback
 	/* Default color used for viewer particle effects */
 	public Color4 DEFAULT_EFFECT_COLOR = new Color4(1, 0, 0, 1);
 
-	/*
-	 * Cost of uploading an asset, Read-only since this value is dynamically
-	 * fetched at login
-	 */
-	public final int getUPLOAD_COST()
-	{
-		return priceUpload;
-	}
-
 	/* Maximum number of times to resend a failed packet */
 	public int MAX_RESEND_COUNT = 3;
 
@@ -397,25 +390,68 @@ public class LibSettings extends Settings implements PacketCallback
 	/* Log packet retransmission info */
 	public boolean LOG_RESENDS = true;
 
-	// /#region Private Fields
-
+	// #region Private Fields
+	/*
+	 * Cost of uploading an asset, Read-only since this value is dynamically fetched at login
+	 */
 	private int priceUpload = 0;
+	public int getUploadPrice()
+	{
+		return priceUpload;
+	}
+	
+	// #region Default settings
+	private DefaultSetting[] defaults = {
+			new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
+			new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
+			new DefaultSetting(ENABLE_SOUND_MANAGER, true),
+			new DefaultSetting(ENABLE_ASSET_MANAGER, false),
+			new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
+			new DefaultSetting(ENABLE_PARCEL_MANAGER, false),
+			new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
+			new DefaultSetting(ENABLE_RLV_MANAGER, false),
+			new DefaultSetting(ENABLE_SOUND_MANAGER, false),
+			new DefaultSetting(SEND_AGENT_THROTTLE, true),
+			new DefaultSetting(ENABLE_CAPS, true),
+			new DefaultSetting(ENABLE_SIMSTATS, true),
+			new DefaultSetting(RESOURCE_DIR, "character"),
+			new DefaultSetting(USE_LLSD_LOGIN, false),
+			new DefaultSetting(USE_HTTP_TEXTURES, true),
+			new DefaultSetting(SEND_AGENT_UPDATES, true),
+			new DefaultSetting(SYNC_PACKETCALLBACKS, false),
+			new DefaultSetting(LOG_RAW_PACKET_BYTES, false),
+			new DefaultSetting(STORE_LAND_PATCHES, false),
+			new DefaultSetting(SEND_AGENT_APPEARANCE, true),
 
+	};
 	/**
 	 * Starts the settings update
 	 * 
 	 * @param client
 	 *            Reference to a GridClient object
 	 */
-    public LibSettings() throws IOException, ParseException
+    public LibSettings()
     {
-		super("_libomv/libomv.dat");
+		super("_libomv/settings.lib");
+		setDefaults(defaults);
 	}
+    
+    public LibSettings initialize()
+    {
+    	try
+    	{
+    		load();
+    	}
+    	catch (Exception ex)
+    	{
+			Logger.Log("Failed to load settings", LogLevel.Error, ex);
+    	}
+    	return this;
+    }
 
-    public LibSettings startup(GridClient client)
+    public void startup(GridClient client)
 	{
 		client.Network.RegisterCallback(PacketType.EconomyData, this);
-		return this;
 	}
 
 	@Override

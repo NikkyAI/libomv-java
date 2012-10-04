@@ -1281,7 +1281,7 @@ public class AssetManager implements PacketCallback
 	public final void RequestImage(UUID textureID, ImageType imageType, float priority, int discardLevel,
 			int packetStart, TextureDownloadCallback callback, boolean progress)
 	{
-        if (_Client.Settings.USE_HTTP_TEXTURES && _Client.Network.getCapabilityURI("GetTexture") != null)
+        if (_Client.Settings.getBool(LibSettings.USE_HTTP_TEXTURES) && _Client.Network.getCapabilityURI("GetTexture") != null)
         {
             HttpRequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
         }

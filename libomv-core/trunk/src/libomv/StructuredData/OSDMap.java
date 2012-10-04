@@ -265,7 +265,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 				OSD serializedField = get(field.getName());
 				if (serializedField != null)
 				{
-					field.set(obj, ToObject(field.getGenericType(), serializedField));
+					field.set(obj, ToObject(field.getType(), serializedField));
 				}
 			}
 		}

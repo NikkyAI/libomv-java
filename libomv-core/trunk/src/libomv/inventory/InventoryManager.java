@@ -1645,7 +1645,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			query.put("everyone_mask", OSD.FromInteger(permissions.EveryoneMask));
 			query.put("group_mask", OSD.FromInteger(permissions.GroupMask));
 			query.put("next_owner_mask", OSD.FromInteger(permissions.NextOwnerMask));
-			query.put("expected_upload_cost", OSD.FromInteger(_Client.Settings.getUPLOAD_COST()));
+			query.put("expected_upload_cost", OSD.FromInteger(_Client.Settings.getUploadPrice()));
 
 			// Make the request
 			CapsClient request = new CapsClient();

@@ -32,10 +32,12 @@ import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
 import libomv.types.Vector2;
 import libomv.utils.BitPack;
+import libomv.utils.Callback;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 public class TerrainManager implements PacketCallback
 {
@@ -168,12 +170,35 @@ public class TerrainManager implements PacketCallback
 
     // #endregion
 
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+			    storeLandPatches = _Client.Settings.getBool(LibSettings.STORE_LAND_PATCHES);
+			}
+			else if (key.equals(LibSettings.STORE_LAND_PATCHES))
+			{
+				storeLandPatches = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+	
     private GridClient _Client;
-
+    private boolean storeLandPatches;
+    
     public TerrainManager(GridClient client)
     {
         _Client = client;
-        _Client.Network.RegisterCallback(PacketType.LayerData, this);
+
+        storeLandPatches = _Client.Settings.getBool(LibSettings.STORE_LAND_PATCHES);
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		
+		_Client.Network.RegisterCallback(PacketType.LayerData, this);
     }
 
 	@Override
@@ -228,7 +253,7 @@ public class TerrainManager implements PacketCallback
             	Logger.Log(e.getMessage(), LogLevel.Error, _Client, e);
             }
 
-            if (_Client.Settings.STORE_LAND_PATCHES)
+            if (storeLandPatches)
             {
                 TerrainPatch patch = new TerrainPatch();
                 patch.Data = heightmap;
@@ -262,7 +287,7 @@ public class TerrainManager implements PacketCallback
         TerrainCompressor.DecodePatch(patches, bitpack, header, group.PatchSize);
         float[] yvalues = TerrainCompressor.DecompressPatch(patches, header, group);
 
-        if (_Client.Settings.STORE_LAND_PATCHES)
+        if (storeLandPatches)
         {
             for (int i = 0; i < 256; i++)
                 simulator.WindSpeeds[i] = new Vector2(xvalues[i], yvalues[i]);
@@ -291,7 +316,7 @@ public class TerrainManager implements PacketCallback
         switch (type)
         {
             case Land:
-                if (OnLandPatchReceived.count() > 0 || _Client.Settings.STORE_LAND_PATCHES)
+                if (OnLandPatchReceived.count() > 0 || storeLandPatches)
                     DecompressLand(simulator, bitpack, header);
                 break;
             case Water:

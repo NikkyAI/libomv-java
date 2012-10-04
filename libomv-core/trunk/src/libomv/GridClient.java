@@ -57,6 +57,8 @@ import libomv.StructuredData.OSDString;
 import libomv.assets.AssetManager;
 import libomv.capabilities.CapsMessage;
 import libomv.inventory.InventoryManager;
+import libomv.utils.CallbackArgs;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
 /* Main class to expose the functionality of a particular grid to clients. All of the
@@ -315,7 +317,38 @@ public class GridClient
 			return gridname + " (" + gridnick + ")";
 		}
 	}
+	
+	public enum GridListUpdate
+	{
+		Add,
+		Modify,
+		Remove;
+	}
+	
+	public class GridListUpdateCallbackArgs implements CallbackArgs
+	{
+		private GridListUpdate operation;
+		private GridInfo info;
+		
+		public GridListUpdate getOperation()
+		{
+			return operation;
+		}
 
+		public GridInfo getGridInfo()
+		{
+			return info;
+		}
+
+		public GridListUpdateCallbackArgs(GridListUpdate operation, GridInfo info)
+		{
+			this.operation = operation;
+			this.info = info;
+		}
+	}
+
+	public CallbackHandler<GridListUpdateCallbackArgs> OnGridListUpdate = new CallbackHandler<GridListUpdateCallbackArgs>();
+			
 	private static final String listUri = "http://libomv-java.sourceforge.net/grids/default_grids.xml";
 	private static HashMap<String, GridInfo> gridlist = new HashMap<String, GridInfo>();
 	private static int listversion = 0;
@@ -390,45 +423,48 @@ public class GridClient
 	{
 		initializeGridList();
 
+		Settings = settings.initialize();
 		Login = new LoginManager(this);
 		Network = new NetworkManager(this);
 		Messages = new CapsMessage();
-		/* This needs to come after the creation of the Network
-		 * manager as it registers a packetCallback */
-		Settings = settings.startup(this);
+
 		Self = new AgentManager(this);
 		Friends = new FriendsManager(this);
 		Groups = new GroupManager(this);
 		Grid = new GridManager(this);
 
-		if (Settings.SEND_AGENT_THROTTLE)
+		/* This needs to come after the creation of the Network
+		 * manager as it registers a packetCallback */
+		settings.startup(this);
+
+		if (Settings.getBool(LibSettings.SEND_AGENT_THROTTLE))
 			Throttle = new AgentThrottle(this);
 
-		if (Settings.ENABLE_AVATAR_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_AVATAR_MANAGER))
 		    Avatars = new AvatarManager(this);
 
-		if (Settings.ENABLE_ASSET_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_ASSET_MANAGER))
 			Assets = new AssetManager(this);
 
-		if (Settings.ENABLE_INVENTORY_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_INVENTORY_MANAGER))
 			Inventory = new InventoryManager(this);
 
-		if (Settings.ENABLE_SOUND_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_SOUND_MANAGER))
 			Sound = new SoundManager(this);
 
-		if (Settings.ENABLE_PARCEL_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_PARCEL_MANAGER))
 		    Parcels = new ParcelManager(this);
 
-		if (Settings.ENABLE_OBJECT_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_OBJECT_MANAGER))
 		    Objects = new ObjectManager(this);
 
-		if (Settings.ENABLE_DIRECTORY_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_DIRECTORY_MANAGER))
 			Directory = new DirectoryManager(this);
 
-		if (Settings.ENABLE_TERRAIN_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_TERRAIN_MANAGER))
 			Terrain = new TerrainManager(this);
 
-		if (Settings.ENABLE_RLV_MANAGER)
+		if (Settings.getBool(LibSettings.ENABLE_RLV_MANAGER))
 			RLV = new RLVManager(this);
 
 		Stats = new Statistics();
@@ -441,13 +477,19 @@ public class GridClient
 
 	public GridInfo[] getGridInfos()
 	{
-		GridInfo[] grids = new GridInfo[gridlist.size()];
-		return gridlist.values().toArray(grids);
+		synchronized (gridlist)
+		{
+			GridInfo[] grids = new GridInfo[gridlist.size()];
+			return gridlist.values().toArray(grids);
+		}
 	}
 
 	public Set<String> getGridNames()
 	{
-		return gridlist.keySet();
+		synchronized (gridlist)
+		{
+			return gridlist.keySet();
+		}
 	}
 
 	/**
@@ -464,12 +506,15 @@ public class GridClient
 	{
 		if (grid != null)
 		{
-			GridInfo temp = gridlist.get(grid.gridnick);
-			if (temp != null)
+			synchronized (gridlist)
 			{
-				temp.merge(grid, true);
-				currentGrid = grid.gridnick;
-				return true;
+				GridInfo temp = gridlist.get(grid.gridnick);
+				if (temp != null)
+				{
+					temp.merge(grid, true);
+					currentGrid = grid.gridnick;
+					return true;
+				}
 			}
 		}
 		else
@@ -495,14 +540,20 @@ public class GridClient
 	{
 		if (grid == null)
 			grid = currentGrid;
-		return gridlist.get(grid);
+		synchronized (gridlist)
+		{
+			return gridlist.get(grid);
+		}
 	}
 
 	public GridInfo getDefaultGrid()
 	{
 		if (defaultGrid == null || defaultGrid.isEmpty())
 			setDefaultGrid((String)null);
-		return gridlist.get(defaultGrid);
+		synchronized (gridlist)
+		{
+			return gridlist.get(defaultGrid);
+		}
 	}
 
 	public void setDefaultGrid(GridInfo grid)
@@ -512,50 +563,69 @@ public class GridClient
 	
 	public void setDefaultGrid(String gridnick)
 	{
-		if (gridnick != null && gridlist.containsKey(gridnick))
+		synchronized (gridlist)
 		{
-			defaultGrid = gridnick;
-		}
-		else if (gridlist.containsKey(DEFAULT_GRID_NAME1))
-		{
-			defaultGrid = DEFAULT_GRID_NAME1;
-		}
-		else if (gridlist.containsKey(DEFAULT_GRID_NAME2))
-		{
-			defaultGrid = DEFAULT_GRID_NAME2;
-		}
-		else if (!gridlist.isEmpty())
-		{
-			defaultGrid = gridlist.keySet().iterator().next();
-		}
-		else
-		{
-			defaultGrid = Helpers.EmptyString;
-		}
-	}
-
-	public GridInfo addGrid(GridInfo info)
-	{
-		return gridlist.put(info.gridnick, info);
-	}
-
-	public GridInfo removeGrid(String grid)
-	{
-		GridInfo info = gridlist.remove(grid);
-		if (info != null)
-		{
-			if (grid.equals(defaultGrid))
+			if (gridnick != null && gridlist.containsKey(gridnick))
 			{
-				// sets first grid if map is not empty
-				setDefaultGrid((String)null);
+				defaultGrid = gridnick;
+			}
+			else if (gridlist.containsKey(DEFAULT_GRID_NAME1))
+			{
+				defaultGrid = DEFAULT_GRID_NAME1;
+			}
+			else if (gridlist.containsKey(DEFAULT_GRID_NAME2))
+			{
+				defaultGrid = DEFAULT_GRID_NAME2;
+			}
+			else if (!gridlist.isEmpty())
+			{
+				defaultGrid = gridlist.keySet().iterator().next();
+			}
+			else
+			{
+				defaultGrid = Helpers.EmptyString;
 			}
 		}
-		return info;
 	}
 
-	public void clearGrids()
+	public GridInfo addGrid(GridInfo info, boolean sendEvent)
 	{
-		gridlist.clear();
+		synchronized (gridlist)
+		{
+			GridInfo old = gridlist.put(info.gridnick, info);
+			if (sendEvent)
+				OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Add, info));
+			return old;
+		}
+	}
+
+	public GridInfo removeGrid(String grid, boolean sendEvent)
+	{
+		synchronized (gridlist)
+		{
+			GridInfo info = gridlist.remove(grid);
+			if (info != null)
+			{
+				if (sendEvent)
+					OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Remove, info));
+				if (grid.equals(defaultGrid))
+				{
+					// sets first grid if map is not empty
+					setDefaultGrid((String)null);
+				}
+			}
+			return info;
+		}
+	}
+
+	public void clearGrids(boolean sendEvent)
+	{
+		synchronized (gridlist)
+		{
+			gridlist.clear();
+		}
+		if (sendEvent)
+			OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Remove, null));
 	}
 
 	/**
@@ -725,7 +795,7 @@ public class GridClient
 		modified |= setList(loadDefaults(), true);
 		modified |= setList(downloadList(), true);
 		if (modified)
-			saveList();
+			saveList(true);
 	}
 
 	private boolean setList(OSD list, boolean merge) throws IllegalArgumentException, IllegalAccessException
@@ -735,7 +805,10 @@ public class GridClient
 
 		if (!merge)
 		{
-			gridlist.clear();
+			synchronized (gridlist)
+			{
+				gridlist.clear();
+			}
 			listversion = 0;
 		}
 
@@ -757,11 +830,14 @@ public class GridClient
 			{
 				GridInfo newinfo = new GridInfo();
 				map.deserializeMembers(newinfo);
-				GridInfo oldinfo = gridlist.get(newinfo.gridname);
-				if (!merge || oldinfo == null || oldinfo.version < newinfo.version)
+				synchronized (gridlist)
 				{
-					gridlist.put(newinfo.gridnick, newinfo);
-					modified = true;
+					GridInfo oldinfo = gridlist.get(newinfo.gridname);
+					if (!merge || oldinfo == null || oldinfo.version < newinfo.version)
+					{
+						gridlist.put(newinfo.gridnick, newinfo);
+						modified = true;
+					}
 				}
 			}
 			if (modified)
@@ -770,28 +846,33 @@ public class GridClient
 		return modified;
 	}
 
-	public void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
+	public void saveList(boolean sendEvent) throws IllegalArgumentException, IllegalAccessException, IOException
 	{
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 		prefs.putInt(DEFAULT_GRIDS_VERSION, listversion);
-		prefs.putInt(NUMGRIDS, gridlist.size());
 		prefs.put(DEFAULT_GRID, defaultGrid);
-		int i = 0;
-		for (GridInfo info : gridlist.values())
+		synchronized (gridlist)
 		{
-			// This doesn't save the transient fields
-			OSDMap members = OSD.serializeMembers(info);
-			if (info.saveSettings)
+			prefs.putInt(NUMGRIDS, gridlist.size());
+			int i = 0;
+			for (GridInfo info : gridlist.values())
 			{
-				members.put("username", OSDString.FromString(info.username));
-				members.put("startLocation", OSDString.FromString(info.startLocation));
-				if (info.savePassword)
+				// This doesn't save the transient fields
+				OSDMap members = OSD.serializeMembers(info);
+				if (info.saveSettings)
 				{
-					members.put("userpassword", OSDString.FromString(info.password));
+					members.put("username", OSDString.FromString(info.username));
+					members.put("startLocation", OSDString.FromString(info.startLocation));
+					if (info.savePassword)
+					{
+						members.put("userpassword", OSDString.FromString(info.password));
+					}
 				}
+				prefs.put(GRIDINFO + Integer.toString(++i), OSDParser.serializeToString(members, OSDFormat.Xml));
 			}
-			prefs.put(GRIDINFO + Integer.toString(++i), OSDParser.serializeToString(members, OSDFormat.Xml));
 		}
+		if (sendEvent)
+			OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Add, null));
 	}
 
 	private OSD loadDefaults() throws IOException
@@ -881,9 +962,13 @@ public class GridClient
 	public String dumpGridlist()
 	{
 		String string = String.format("Version: %d, Default: %s\n", listversion, defaultGrid);
-		for (GridInfo info : gridlist.values())
+		synchronized (gridlist)
 		{
-			string += info.dump(); 
+			for (GridInfo info : gridlist.values())
+			{
+				string += info.dump(); 
+			}
+			
 		}
 		return string;
 	}

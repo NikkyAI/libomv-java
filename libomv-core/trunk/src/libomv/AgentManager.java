@@ -157,6 +157,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.TimeoutEvent;
 
 import org.apache.http.nio.concurrent.FutureCallback;
@@ -2326,6 +2327,26 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
+	private boolean sendAgentUpdates;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+				sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+			}
+			else if (key.equals(LibSettings.SEND_AGENT_UPDATES))
+			{
+				sendAgentUpdates = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+	
 	/**
 	 * 'CallBack Central' - Setup callbacks for packets related to our avatar
 	 *
@@ -2341,6 +2362,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 		
 		homePosition = null;
 		firstBalance = true;
+
+		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
 		// Login
@@ -3145,7 +3169,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final boolean Stand() throws Exception
 	{
-		if (_Client.Settings.SEND_AGENT_UPDATES)
+		if (sendAgentUpdates)
 		{
 			_Movement.setSitOnGround(false);
 			_Movement.setStandUp(true);
@@ -3309,7 +3333,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final boolean AutoPilotCancel() throws Exception
 	{
-		if (_Client.Settings.SEND_AGENT_UPDATES)
+		if (sendAgentUpdates)
 		{
 			_Movement.setAtPos(true);
 			_Movement.SendUpdate();
@@ -3651,7 +3675,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void PayUploadFee() throws Exception
 	{
-		GiveMoney(UUID.Zero, _Client.Settings.getUPLOAD_COST(), Helpers.EmptyString, MoneyTransactionType.UploadCharge,
+		GiveMoney(UUID.Zero, _Client.Settings.getUploadPrice(), Helpers.EmptyString, MoneyTransactionType.UploadCharge,
 				TransactionFlags.None);
 	}
 
@@ -3664,7 +3688,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void PayUploadFee(String description) throws Exception
 	{
-		GiveMoney(UUID.Zero, _Client.Settings.getUPLOAD_COST(), description, MoneyTransactionType.UploadCharge,
+		GiveMoney(UUID.Zero, _Client.Settings.getUploadPrice(), description, MoneyTransactionType.UploadCharge,
 				TransactionFlags.None);
 	}
 
@@ -5300,7 +5324,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                         // FIXME: What is this?
                     }
 
-                    if (_Client.Settings.SEND_AGENT_UPDATES)
+                    if (sendAgentUpdates)
                     {
                         // We have to manually tell the server to stop playing some animations
                         if (animID.equals(Animations.STANDUP) ||
@@ -6593,7 +6617,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			@Override
 			public void run()
 			{
-				if (_Client.Network.getConnected() && _Client.Settings.SEND_AGENT_UPDATES && _Client.Network.getCurrentSim() != null)
+				if (_Client.Network.getConnected() && sendAgentUpdates && _Client.Network.getCurrentSim() != null)
 				{
 					// Send an AgentUpdate packet
 					try
@@ -6660,7 +6684,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 */
 		public boolean TurnToward(Vector3 target, boolean sendUpdate) throws Exception
 		{
-			if (_Client.Settings.SEND_AGENT_UPDATES)
+			if (sendAgentUpdates)
 			{
 				Quaternion parentRot = Quaternion.Identity;
 

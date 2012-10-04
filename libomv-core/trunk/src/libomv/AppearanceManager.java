@@ -91,6 +91,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.TimeoutEvent;
 
 public class AppearanceManager implements PacketCallback
@@ -339,7 +340,27 @@ public class AppearanceManager implements PacketCallback
     private Thread AppearanceThread;
     // #endregion Private Members
 
-    /**
+	private boolean sendAppearanceUpdates;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+		        sendAppearanceUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
+			}
+			else if (key.equals(LibSettings.SEND_AGENT_APPEARANCE))
+			{
+				sendAppearanceUpdates = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+
+	/**
      * Default constructor
      * 
      * @param client A reference to our agent
@@ -348,7 +369,10 @@ public class AppearanceManager implements PacketCallback
     {
         _Client = client;
 
-        _Client.Network.RegisterCallback(PacketType.AgentWearablesUpdate, this);
+        sendAppearanceUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+
+		_Client.Network.RegisterCallback(PacketType.AgentWearablesUpdate, this);
         _Client.Network.RegisterCallback(PacketType.AgentCachedTextureResponse, this);
         _Client.Network.RegisterCallback(PacketType.RebakeAvatarTextures, this);
 
@@ -2111,11 +2135,10 @@ public class AppearanceManager implements PacketCallback
         RebakeAvatarTexturesPacket rebake = (RebakeAvatarTexturesPacket)packet;
 
         // allow the library to do the rebake
-        if (_Client.Settings.SEND_AGENT_APPEARANCE)
+        if (sendAppearanceUpdates)
         {
             RequestSetAppearance(true);
         }
-
         OnRebakeAvatarReply.dispatch(new RebakeAvatarTexturesCallbackArgs(rebake.TextureID));
     }
 
@@ -2155,7 +2178,7 @@ public class AppearanceManager implements PacketCallback
 		@Override
 		public boolean callback(EventQueueRunningCallbackArgs e)
 		{
-	        if (e.getSimulator() == _Client.Network.getCurrentSim() && _Client.Settings.SEND_AGENT_APPEARANCE)
+	        if (e.getSimulator() == _Client.Network.getCurrentSim() && sendAppearanceUpdates)
 	        {
 	            // Update appearance each time we enter a new sim and capabilities have been retrieved
 	            RequestSetAppearance();

@@ -1365,7 +1365,7 @@ public class LoginManager
 
 		try
 		{
-			if (_Client.Settings.USE_LLSD_LOGIN)
+			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
 			{
 				// #region LLSD Based Login
 

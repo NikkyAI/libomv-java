@@ -61,11 +61,13 @@ import libomv.packets.SimStatsPacket;
 import libomv.packets.StartPingCheckPacket;
 import libomv.types.UUID;
 import libomv.types.PacketCallback;
+import libomv.utils.Callback;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // NetworkManager is responsible for managing the network layer of
 // libsecondlife. It tracks all the server connections, serializes
@@ -594,7 +596,7 @@ public class NetworkManager implements PacketCallback
 												incomingPacket.Packet.getType(),
 												incomingPacket.Simulator.getIPEndPoint()), LogLevel.Warning, _Client);
 							}
-							else if (_Client.Settings.SYNC_PACKETCALLBACKS)
+							else if (syncPacketCallbacks)
 							{
 								FirePacketCallbacks(incomingPacket.Packet, incomingPacket.Simulator);
 							}
@@ -605,7 +607,7 @@ public class NetworkManager implements PacketCallback
 						}
 						else if (incomingPacket.Message != null)
 						{
-							if (_Client.Settings.SYNC_PACKETCALLBACKS)
+							if (syncPacketCallbacks)
 							{
 								FireCapsCallbacks(incomingPacket.Message, incomingPacket.Simulator);
 							}
@@ -678,6 +680,38 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
+	private boolean syncPacketCallbacks;
+	private boolean sendAgentUpdates;
+	private boolean enableSimStats;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+		        syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
+		        sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+		        enableSimStats = _Client.Settings.getBool(LibSettings.ENABLE_SIMSTATS);
+			}
+			else if (key.equals(LibSettings.SYNC_PACKETCALLBACKS))
+			{
+				syncPacketCallbacks = params.getValue().AsBoolean();
+			}
+			else if (key.equals(LibSettings.SEND_AGENT_UPDATES))
+			{
+				sendAgentUpdates = params.getValue().AsBoolean();
+			}
+			else if (key.equals(LibSettings.ENABLE_SIMSTATS))
+			{
+				enableSimStats = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+
 	//
 	// <param name="client"></param>
 	public NetworkManager(GridClient client) throws Exception
@@ -687,6 +721,11 @@ public class NetworkManager implements PacketCallback
 		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
 		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
 		_CurrentSim = null;
+		
+        syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
+        sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+        enableSimStats = _Client.Settings.getBool(LibSettings.ENABLE_SIMSTATS);
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 
 		// Register the internal callbacks
 		RegisterCallback(PacketType.RegionHandshake, this);
@@ -1000,7 +1039,7 @@ public class NetworkManager implements PacketCallback
 			SetCurrentSim(simulator, seedcaps);
 
 			// Send an initial AgentUpdate to complete our movement in to the sim
-			if (_Client.Settings.SEND_AGENT_UPDATES)
+			if (sendAgentUpdates)
 			{
 				_Client.Self.SendMovementUpdate(true, simulator);
 			}
@@ -1348,137 +1387,136 @@ public class NetworkManager implements PacketCallback
 	 */
 	private final void HandleSimStats(Packet packet, Simulator simulator)
 	{
-		if (!_Client.Settings.ENABLE_SIMSTATS)
+		if (enableSimStats)
 		{
-			return;
-		}
-		SimStatsPacket stats = (SimStatsPacket) packet;
-		for (int i = 0; i < stats.Stat.length; i++)
-		{
-			SimStatsPacket.StatBlock s = stats.Stat[i];
-
-			switch (SimStatType.setValue(s.StatID))
+			SimStatsPacket stats = (SimStatsPacket) packet;
+			for (int i = 0; i < stats.Stat.length; i++)
 			{
-				case TimeDilation:
-					simulator.Statistics.Dilation = s.StatValue;
-					break;
-				case SimFPS:
-					simulator.Statistics.FPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
-					break;
-				case PhysicsFPS:
-					simulator.Statistics.PhysicsFPS = s.StatValue;
-					break;
-				case AgentUpdates:
-					simulator.Statistics.AgentUpdates = s.StatValue;
-					break;
-				case FrameMS:
-					simulator.Statistics.FrameTime = s.StatValue;
-					break;
-				case NetMS:
-					simulator.Statistics.NetTime = s.StatValue;
-					break;
-				case OtherMS:
-					simulator.Statistics.OtherTime = s.StatValue;
-					break;
-				case PhysicsMS:
-					simulator.Statistics.PhysicsTime = s.StatValue;
-					break;
-				case AgentMS:
-					simulator.Statistics.AgentTime = s.StatValue;
-					break;
-				case ImageMS:
-					simulator.Statistics.ImageTime = s.StatValue;
-					break;
-				case ScriptMS:
-					simulator.Statistics.ScriptTime = s.StatValue;
-					break;
-				case TotalPrim:
-					simulator.Statistics.Objects = (int)s.StatValue;
-					break;
-				case ActivePrim:
-					simulator.Statistics.ScriptedObjects = (int)s.StatValue;
-					break;
-				case Agents:
-					simulator.Statistics.Agents = (int)s.StatValue;
-					break;
-				case ChildAgents:
-					simulator.Statistics.ChildAgents = (int)s.StatValue;
-					break;
-				case ActiveScripts:
-					simulator.Statistics.ActiveScripts = (int)s.StatValue;
-					break;
-				case ScriptInstructionsPerSecond:
-					simulator.Statistics.LSLIPS = (int)s.StatValue;
-					break;
-				case InPacketsPerSecond:
-					simulator.Statistics.INPPS = (int)s.StatValue;
-					break;
-				case OutPacketsPerSecond:
-					simulator.Statistics.OUTPPS = (int)s.StatValue;
-					break;
-				case PendingDownloads:
-					simulator.Statistics.PendingDownloads = (int)s.StatValue;
-					break;
-				case PendingUploads:
-					simulator.Statistics.PendingUploads = (int)s.StatValue;
-					break;
-				case VirtualSizeKB:
-					simulator.Statistics.VirtualSize = (int)s.StatValue;
-					break;
-				case ResidentSizeKB:
-					simulator.Statistics.ResidentSize = (int)s.StatValue;
-					break;
-				case PendingLocalUploads:
-					simulator.Statistics.PendingLocalUploads = (int)s.StatValue;
-					break;
-				case UnAckedBytes:
-					simulator.Statistics.UnackedBytes = (int)s.StatValue;
-					break;
-				case PhysicsPinnedTasks:
-					simulator.Statistics.PhysicsPinnedTasks = (int)s.StatValue;
-					break;
-				case PhysicsLODTasks:
-					simulator.Statistics.PhysicsLODTasks = (int)s.StatValue;
-					break;
-				case PhysicsStepMS:
-					simulator.Statistics.PhysicsStepMS = (int)s.StatValue;
-					break;
-				case PhysicsShapeMS:
-					simulator.Statistics.PhysicsShapeMS = (int)s.StatValue;
-					break;
-				case PhysicsOtherMS:
-					simulator.Statistics.PhysicsOtherMS = (int)s.StatValue;
-					break;
-				case PhysicsMemory:
-					simulator.Statistics.PhysicsMemory = (int)s.StatValue;
-					break;
-				case ScriptEPS:
-					simulator.Statistics.ScriptEPS = (int)s.StatValue;
-					break;
-				case SimSpareTime:
-					simulator.Statistics.SimSpareTime = (int)s.StatValue;
-					break;
-				case SimSleepTime:
-					simulator.Statistics.SimSleepTime = (int)s.StatValue;
-					break;
-				case SimIOPumpTime:
-					simulator.Statistics.SimIOPumpTime = (int)s.StatValue;
-					break;
-				case SimPctScriptsRun:
-					simulator.Statistics.SimPctScriptsRun = (int)s.StatValue;
-					break;
-				case SimAIStepMsec:
-					simulator.Statistics.SimAIStepMsec = (int)s.StatValue;
-					break;
-				case SimSkippedSilhouetteSteps:
-					simulator.Statistics.SimSkippedSilhouetteSteps = (int)s.StatValue;
-					break;
-				case SimPctSteppedCharacters:
-					simulator.Statistics.SimPctSteppedCharacters = (int)s.StatValue;
-					break;
-				default:
-					Logger.Log("Unknown stat id: " + s.StatID, LogLevel.Debug, _Client);
-					break;
+				SimStatsPacket.StatBlock s = stats.Stat[i];
+
+				switch (SimStatType.setValue(s.StatID))
+				{
+					case TimeDilation:
+						simulator.Statistics.Dilation = s.StatValue;
+						break;
+					case SimFPS:
+						simulator.Statistics.FPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+						break;
+					case PhysicsFPS:
+						simulator.Statistics.PhysicsFPS = s.StatValue;
+						break;
+					case AgentUpdates:
+						simulator.Statistics.AgentUpdates = s.StatValue;
+						break;
+					case FrameMS:
+						simulator.Statistics.FrameTime = s.StatValue;
+						break;
+					case NetMS:
+						simulator.Statistics.NetTime = s.StatValue;
+						break;
+					case OtherMS:
+						simulator.Statistics.OtherTime = s.StatValue;
+						break;
+					case PhysicsMS:
+						simulator.Statistics.PhysicsTime = s.StatValue;
+						break;
+					case AgentMS:
+						simulator.Statistics.AgentTime = s.StatValue;
+						break;
+					case ImageMS:
+						simulator.Statistics.ImageTime = s.StatValue;
+						break;
+					case ScriptMS:
+						simulator.Statistics.ScriptTime = s.StatValue;
+						break;
+					case TotalPrim:
+						simulator.Statistics.Objects = (int)s.StatValue;
+						break;
+					case ActivePrim:
+						simulator.Statistics.ScriptedObjects = (int)s.StatValue;
+						break;
+					case Agents:
+						simulator.Statistics.Agents = (int)s.StatValue;
+						break;
+					case ChildAgents:
+						simulator.Statistics.ChildAgents = (int)s.StatValue;
+						break;
+					case ActiveScripts:
+						simulator.Statistics.ActiveScripts = (int)s.StatValue;
+						break;
+					case ScriptInstructionsPerSecond:
+						simulator.Statistics.LSLIPS = (int)s.StatValue;
+						break;
+					case InPacketsPerSecond:
+						simulator.Statistics.INPPS = (int)s.StatValue;
+						break;
+					case OutPacketsPerSecond:
+						simulator.Statistics.OUTPPS = (int)s.StatValue;
+						break;
+					case PendingDownloads:
+						simulator.Statistics.PendingDownloads = (int)s.StatValue;
+						break;
+					case PendingUploads:
+						simulator.Statistics.PendingUploads = (int)s.StatValue;
+						break;
+					case VirtualSizeKB:
+						simulator.Statistics.VirtualSize = (int)s.StatValue;
+						break;
+					case ResidentSizeKB:
+						simulator.Statistics.ResidentSize = (int)s.StatValue;
+						break;
+					case PendingLocalUploads:
+						simulator.Statistics.PendingLocalUploads = (int)s.StatValue;
+						break;
+					case UnAckedBytes:
+						simulator.Statistics.UnackedBytes = (int)s.StatValue;
+						break;
+					case PhysicsPinnedTasks:
+						simulator.Statistics.PhysicsPinnedTasks = (int)s.StatValue;
+						break;
+					case PhysicsLODTasks:
+						simulator.Statistics.PhysicsLODTasks = (int)s.StatValue;
+						break;
+					case PhysicsStepMS:
+						simulator.Statistics.PhysicsStepMS = (int)s.StatValue;
+						break;
+					case PhysicsShapeMS:
+						simulator.Statistics.PhysicsShapeMS = (int)s.StatValue;
+						break;
+					case PhysicsOtherMS:
+						simulator.Statistics.PhysicsOtherMS = (int)s.StatValue;
+						break;
+					case PhysicsMemory:
+						simulator.Statistics.PhysicsMemory = (int)s.StatValue;
+						break;
+					case ScriptEPS:
+						simulator.Statistics.ScriptEPS = (int)s.StatValue;
+						break;
+					case SimSpareTime:
+						simulator.Statistics.SimSpareTime = (int)s.StatValue;
+						break;
+					case SimSleepTime:
+						simulator.Statistics.SimSleepTime = (int)s.StatValue;
+						break;
+					case SimIOPumpTime:
+						simulator.Statistics.SimIOPumpTime = (int)s.StatValue;
+						break;
+					case SimPctScriptsRun:
+						simulator.Statistics.SimPctScriptsRun = (int)s.StatValue;
+						break;
+					case SimAIStepMsec:
+						simulator.Statistics.SimAIStepMsec = (int)s.StatValue;
+						break;
+					case SimSkippedSilhouetteSteps:
+						simulator.Statistics.SimSkippedSilhouetteSteps = (int)s.StatValue;
+						break;
+					case SimPctSteppedCharacters:
+						simulator.Statistics.SimPctSteppedCharacters = (int)s.StatValue;
+						break;
+					default:
+						Logger.Log("Unknown stat id: " + s.StatID, LogLevel.Debug, _Client);
+						break;
+				}
 			}
 		}
 	}

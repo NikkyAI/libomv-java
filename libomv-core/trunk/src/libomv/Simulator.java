@@ -819,7 +819,7 @@ public class Simulator extends Thread
 		_PacketArchive = new IncomingPacketIDCollection(LibSettings.PACKET_ARCHIVE_SIZE);
 		_PendingAcks = new TreeSet<Integer>();
 
-		if (client.Settings.STORE_LAND_PATCHES)
+		if (client.Settings.getBool(LibSettings.STORE_LAND_PATCHES))
 		{
 			Terrain = new TerrainPatch[16 * 16];
 			WindSpeeds = new Vector2[16 * 16];
@@ -907,12 +907,12 @@ public class Simulator extends Thread
 				_Client.Self.CompleteAgentMovement(this);
 			}
 
-			if (_Client.Settings.SEND_AGENT_THROTTLE)
+			if (_Client.Settings.getBool(LibSettings.SEND_AGENT_THROTTLE))
 			{
 				_Client.Throttle.Set(this);
 			}
 
-			if (_Client.Settings.SEND_AGENT_UPDATES)
+			if (_Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES))
 			{
 				_Client.Self.SendMovementUpdate(true, this);
 			}
@@ -952,7 +952,7 @@ public class Simulator extends Thread
 			_Caps = null;
 		}
 
-		if (_Client.Settings.ENABLE_CAPS)
+		if (_Client.Settings.getBool(LibSettings.ENABLE_CAPS))
 		{
 			// Connect to the new CAPS system
 			if (seedcaps.isEmpty())
@@ -1149,7 +1149,7 @@ public class Simulator extends Thread
 		}
 		byte[] RecvBuffer = new byte[4096];
 		DatagramPacket p = new DatagramPacket(RecvBuffer, RecvBuffer.length);
-
+		boolean logRawPackets = _Client.Settings.getBool(LibSettings.LOG_RAW_PACKET_BYTES);
 		_Connected = true;
 
 		while (true)
@@ -1170,7 +1170,7 @@ public class Simulator extends Thread
 					// Retrieve the incoming packet
 					try
 					{
-						if (_Client.Settings.LOG_RAW_PACKET_BYTES)
+						if (logRawPackets)
 						{
 							DebugDumpBuffer(byteBuffer, numBytes, "<=============== Received packet length = ");
 						}
@@ -1184,14 +1184,14 @@ public class Simulator extends Thread
 							}
 							byteBuffer = new byte[numBytes <= 1000 ? 4000 : numBytes * 4];
 							numBytes = ZeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
-							if (_Client.Settings.LOG_RAW_PACKET_BYTES)
+							if (logRawPackets)
 							{
 								DebugDumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet length=");
 							}
 						}
 
 						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
-						if (_Client.Settings.LOG_RAW_PACKET_BYTES)
+						if (logRawPackets)
 						{
 							Logger.Log("Decoded packet " + packet.getClass().getName(), Logger.LogLevel.Debug, _Client);
 						}

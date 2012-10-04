@@ -29,7 +29,6 @@
 package libomv.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -51,6 +50,12 @@ public class Settings
 	{
 		String key;
 		Object value;
+		
+		public DefaultSetting(String key, Object value)
+		{
+			this.key = key;
+			this.value = value;
+		}
 	}
 	
 	public class SettingsUpdateCallbackArgs implements CallbackArgs
@@ -77,6 +82,7 @@ public class Settings
 	
 	private File settingsPath;
 	private OSDMap settings;
+	private OSDMap defaults;
 	
 	public CallbackHandler<SettingsUpdateCallbackArgs> OnSettingsUpdate = new CallbackHandler<SettingsUpdateCallbackArgs>();
 		
@@ -86,16 +92,22 @@ public class Settings
 		settings = new OSDMap();
 	}
 	
-	public void setDefaults(DefaultSetting[] defaults)
+	protected void setDefaults(DefaultSetting[] defaults)
 	{
-		for (DefaultSetting setting : defaults)
+		if (defaults != null)
 		{
-			settings.put(setting.key, OSD.FromObject(setting.value));
+			if (this.defaults == null)
+				this.defaults = new OSDMap();
+			
+			for (DefaultSetting setting : defaults)
+			{
+				this.defaults.put(setting.key, OSD.FromObject(setting.value));
+				this.settings.put(setting.key, OSD.FromObject(setting.value));
+			}
 		}
-		
 	}
 	
-    public void load() throws IOException, ParseException
+	protected void load() throws IOException, ParseException
     {
 		Reader reader = new FileReader(settingsPath);
 		try
@@ -104,57 +116,129 @@ public class Settings
 			{
 				settings.put(entry.getKey(), entry.getValue());
 			}
+			OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(null, null));
 		}
 		finally
 		{
-				reader.close();
+			reader.close();
 		}
     }
     
 	public void save() throws IOException
 	{
-		Writer writer = new FileWriter(settingsPath);
-		try
+		OSDMap temp = null;
+		if (defaults != null)
 		{
-			OSDParser.serialize(writer, settings, OSDFormat.Notation);
+			temp = new OSDMap();
+			for (Entry<String, OSD> entry : defaults.entrySet())
+			{
+				if (!settings.get(entry.getKey()).equals(entry.getValue()))
+				{
+					temp.put(entry);
+				}
+			}
 		}
-		finally
+		else
 		{
-			writer.close();
+			temp = settings;
+		}
+		
+		if (temp.size() > 0)
+		{
+			Writer writer = new FileWriter(settingsPath);
+			try
+			{
+				OSDParser.serialize(writer, temp, OSDFormat.Notation);
+			}
+			finally
+			{
+				writer.close();
+			}
 		}
 	}
 	
 	public OSD get(String name)
 	{
-		return settings.get(name);
+		OSD osd = settings.get(name);
+		if (osd == null && defaults != null)
+			osd = defaults.get(name);
+		return osd;
+	}
+
+	public boolean getBool(String name)
+	{
+		return get(name).AsBoolean();
+	}
+
+	public int getInt(String name)
+	{
+		return get(name).AsInteger();
+	}
+
+	public String getString(String name)
+	{
+		return get(name).AsString();
+	}
+
+	public boolean get(String name, boolean defValue)
+	{
+		OSD osd = get(name);
+		if (osd != null)
+			return osd.AsBoolean();
+		return defValue;
+	}
+
+	public int get(String name, int defValue)
+	{
+		OSD osd = get(name);
+		if (osd != null)
+			return osd.AsInteger();
+		return defValue;
+	}
+
+	public String get(String name, String defValue)
+	{
+		OSD osd = get(name);
+		if (osd != null)
+			return osd.AsString();
+		return defValue;
 	}
 
 	public OSD get(String name, OSD defValue)
 	{
-		if (settings.containsKey(name))
-			return settings.get(name);
+		OSD osd = get(name);
+		if (osd != null)
+			return osd;
 		return defValue;
 	}
 	
-	public boolean getBool(String name, boolean defValue)
+	public boolean putDefault(String name, boolean value)
 	{
-		if (settings.containsKey(name))
-			return settings.get(name).AsBoolean();
-		return defValue;
+		return putDefault(name, OSD.FromBoolean(value)).AsBoolean();
 	}
 
-	public int getInt(String name, int defValue)
+	public int putDefault(String name, int value)
 	{
-		if (settings.containsKey(name))
-			return settings.get(name).AsInteger();
-		return defValue;
+		return putDefault(name, OSD.FromInteger(value)).AsInteger();
 	}
 
-	public String getString(String name, String defValue)
+	public String putDefault(String name, String value)
 	{
-		if (settings.containsKey(name))
-			return settings.get(name).AsString();
-		return defValue;
+		return putDefault(name, OSD.FromString(value)).AsString();
+	}
+
+	public OSD putDefault(String name, Object value)
+	{
+		return putDefault(name, OSD.FromObject(value));
+	}
+
+	private OSD putDefault(String name, OSD value)
+	{
+		if (defaults == null)
+			defaults = new OSDMap();
+		
+		OSD osd = defaults.put(name, value);
+		return osd;
 	}
 
 	public boolean put(String name, boolean value)
