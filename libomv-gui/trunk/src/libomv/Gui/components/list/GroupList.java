@@ -48,9 +48,9 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import libomv.FriendsManager.FriendInfo;
 import libomv.GroupManager.Group;
 import libomv.GroupManager.GroupOperationCallbackArgs;
+import libomv.Gui.channels.GroupChannel;
 import libomv.Gui.components.list.SortedListModel.SortOrder;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
@@ -58,9 +58,18 @@ import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-public class GroupList extends JScrollPane
+public class GroupList extends JScrollPane implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
+
+	private static final String cmdProfile = "profile";
+	private static final String cmdPayTo = "payTo";
+	private static final String cmdStartIM = "startIM";
+	private static final String cmdInvite = "invite";
+	private static final String cmdActivate = "activate";
+	private static final String cmdCreateGroup = "createGroup";
+	private static final String cmdSearchGroup = "searchGroup";
+	private static final String cmdLeaveGroup = "leaveGroup";
 
 	private MainControl _Main;
 	
@@ -112,9 +121,7 @@ public class GroupList extends JScrollPane
 							// Look for a double click.
 							if (e.getClickCount() >= 2)
 							{
-								// Get the associated agent.
-								Group group = (Group) jLGroupsList.getSelectedValue();
-								// TODO: Create a group chat
+								actionPerformed(new ActionEvent(jLGroupsList, ActionEvent.ACTION_PERFORMED, cmdStartIM));
 							}
 						}
 						// If the right mouse button was pressed...
@@ -144,18 +151,23 @@ public class GroupList extends JScrollPane
 	 * @param id The UUID of the group
 	 * @return returns the group info if found, null otherwise
 	 */
-	public FriendInfo findGroup(UUID id)
+	public Group findGroup(UUID id)
 	{
 		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
 		for (Enumeration<?> e = model.elements(); e.hasMoreElements();)
 		{
-			FriendInfo info = (FriendInfo) e.nextElement();
+			Group info = (Group) e.nextElement();
 			if (info.getID().equals(id))
 			{
 				return info;
 			}
 		}
 		return null;
+	}
+	
+	private Group getSelectedGroupRow()
+	{
+		return (Group)getJGroupsList().getSelectedValue();
 	}
 	
 	/**
@@ -307,22 +319,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiSendMessage == null)
 			{
-				jmiSendMessage = new JMenuItem("Send message");
-				// Add an ActionListener
-				jmiSendMessage.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: Open a group chat
-					}
-				});
+				jmiSendMessage = _Main.newMenuItem("Send message", GroupList.this, cmdStartIM);
 			}
 			return jmiSendMessage;
 		}
@@ -336,29 +333,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiActivate == null)
 			{
-				jmiActivate = new JMenuItem("Activate");
-				// add an ActionListener
-				jmiActivate.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						try
-						{
-							_Main.getGridClient().Groups.ActivateGroup(_Info.getID());
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("ActivateGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
-						}
-					}
-				});
+				jmiActivate = _Main.newMenuItem("Activate", GroupList.this, cmdActivate);
 			}
 			jmiActivate.setEnabled(!disable);
 			return jmiActivate;
@@ -373,21 +348,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiInvite == null)
 			{
-				jmiInvite = new JMenuItem("Invite ..");
-				jmiInvite.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: Open Group Invitation window
-					}
-				});
+				jmiInvite = _Main.newMenuItem("Invite ..", GroupList.this, cmdInvite);
 			}
 			return jmiInvite;
 		}
@@ -401,22 +362,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiGroupInfo == null)
 			{
-				jmiGroupInfo = new JMenuItem("Info ..");
-				// add an ActionListener
-				jmiGroupInfo.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: open group info dialog
-					}
-				});
+				jmiGroupInfo = _Main.newMenuItem("Info ..", GroupList.this, cmdProfile);
 			}
 			return jmiGroupInfo;
 		}
@@ -430,22 +376,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiCreateGroup == null)
 			{
-				jmiCreateGroup = new JMenuItem("Create ..");
-				// add an ActionListener
-				jmiCreateGroup.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: open create group dialog
-					}
-				});
+				jmiCreateGroup = _Main.newMenuItem("Create ..", GroupList.this, cmdCreateGroup);
 			}
 			return jmiCreateGroup;
 		}
@@ -459,22 +390,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiSearchGroup == null)
 			{
-				jmiSearchGroup = new JMenuItem("Search ..");
-				// add an ActionListener
-				jmiSearchGroup.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// TODO: open search group dialog
-					}
-				});
+				jmiSearchGroup = _Main.newMenuItem("Search ..", GroupList.this, cmdSearchGroup);
 			}
 			return jmiSearchGroup;
 		}
@@ -488,30 +404,7 @@ public class GroupList extends JScrollPane
 		{
 			if (jmiLeaveGroup == null)
 			{
-				jmiLeaveGroup = new JMenuItem("Leave ..");
-				// Add an action listener
-				jmiLeaveGroup.addActionListener(new ActionListener()
-				{
-					/**
-					 * Called when an action is performed
-					 * 
-					 * @param e
-					 *            The ActionEvent
-					 */
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						// Terminate the membership
-						try
-						{
-							_Main.getGridClient().Groups.LeaveGroup(_Info.getID());
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("LeaveGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
-						}
-					}
-				});
+				jmiLeaveGroup = _Main.newMenuItem("Leave ..", GroupList.this, cmdLeaveGroup);
 			}
 			return jmiLeaveGroup;
 		}
@@ -522,6 +415,8 @@ public class GroupList extends JScrollPane
 		@Override
 		public boolean callback(GroupOperationCallbackArgs args)
 		{
+			if (args.getSuccess())
+				;
 			return false;
 		}
 	}
@@ -532,6 +427,74 @@ public class GroupList extends JScrollPane
 		public boolean callback(GroupOperationCallbackArgs args)
 		{
 			return false;
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		final Group info = getSelectedGroupRow();
+		if (e.getActionCommand().equals(cmdPayTo))
+		{
+			// TODO: open a money transfer dialog			
+		}
+		else if (e.getActionCommand().equals(cmdProfile))
+		{
+			// TODO: open group profile dialog			
+		}
+		else if (e.getActionCommand().equals(cmdStartIM))
+		{
+			if (!_Main.getCommWindow().existsChannel(info.getID()))
+			{
+				GroupChannel channel = new GroupChannel(_Main, info.getName(), info.getID(), info.getID());
+				_Main.getCommWindow().addChannel(channel);
+
+				// We need to request to join the group chat
+				try
+				{
+					_Main.getGridClient().Self.RequestJoinGroupChat(info.getID());
+					_Main.getCommWindow().setFocus(null, info.getID());
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("LeaveGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
+				}
+			}
+		}
+		else if (e.getActionCommand().equals(cmdActivate))
+		{
+			try
+			{
+				_Main.getGridClient().Groups.ActivateGroup(info.getID());
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("ActivateGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+		}
+		else if (e.getActionCommand().equals(cmdLeaveGroup))
+		{
+			// Terminate the membership
+			try
+			{
+				_Main.getGridClient().Groups.LeaveGroup(info.getID());
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("LeaveGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
+			}
+		}
+		else if (e.getActionCommand().equals(cmdSearchGroup))
+		{
+			// TODO: open search group dialog
+		}
+		else if (e.getActionCommand().equals(cmdCreateGroup))
+		{
+			// TODO: open create group dialog
+		}
+		else if (e.getActionCommand().equals(cmdInvite))
+		{
+			// TODO: Open Group Invitation window
 		}
 	}
 }

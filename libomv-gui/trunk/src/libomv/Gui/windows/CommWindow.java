@@ -59,8 +59,6 @@ public class CommWindow extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String cmdChat = "chat";
-
 	private JTabbedPane jTpComm;
 	private JTabbedPane jTpContacts;
 	
@@ -93,14 +91,25 @@ public class CommWindow extends JFrame
 		return channels.containsKey(uuid);
 	}
 	
+	/**
+	 * Make the correct tab active
+	 * 
+	 * @param focus The main tab to activate. Possible values:
+	 *             null, ""              : communication channels
+	 *             OnlinePanel.cmdFriends: friend list
+	 *             OnlinePanel.cmdGroups : group list
+	 * @param uuid The channel UUID to activate. This parameter is only relevant for the 
+	 */
+	
 	public void setFocus(String focus, UUID uuid)
 	{
-		if (focus.equals(cmdChat))
+		if (focus == null || focus.isEmpty())
 		{
-			int index = 1;
+			int index = 0;
 			if (uuid != null && !uuid.equals(UUID.Zero))
 				index = getJTpComm().indexOfComponent(channels.get(uuid));
-			getJTpComm().setSelectedIndex(index);
+			if (index >= 0)
+				getJTpComm().setSelectedIndex(index);
 		}
 		else
 		{

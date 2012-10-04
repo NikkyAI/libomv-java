@@ -43,11 +43,13 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import libomv.GridClient;
+import libomv.Gui.AppSettings;
 import libomv.Gui.components.LoginPanel;
 import libomv.Gui.components.OnlinePanel;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 import libomv.Gui.dialogs.AboutDialog;
+import libomv.utils.Settings;
 
 public class MainWindow extends JFrame implements MainControl
 {
@@ -57,6 +59,7 @@ public class MainWindow extends JFrame implements MainControl
 	private Component jPContent;
 	private JMenuBar jMenuBar;
 	private GridClient _Client;
+	private AppSettings _Settings;
 
 	/**
 	 * This is the default constructor
@@ -95,6 +98,13 @@ public class MainWindow extends JFrame implements MainControl
 		return _Client;
 	}
 	
+	@Override
+	public Settings getAppSettings()
+	{
+		// TODO Auto-generated method stub
+		return _Settings;
+	}	
+
 	public CommWindow getCommWindow()
 	{
 		if (jPSouth != null && jPSouth instanceof OnlinePanel)
@@ -223,5 +233,5 @@ public class MainWindow extends JFrame implements MainControl
 			getContentPane().add(jPSouth, BorderLayout.SOUTH);
 			validate();
 		}
-	}	
+	}
 }

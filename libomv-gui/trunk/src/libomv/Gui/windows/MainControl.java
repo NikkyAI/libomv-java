@@ -38,9 +38,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import libomv.GridClient;
-import libomv.LibSettings;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
+import libomv.utils.Settings;
 
 public interface MainControl extends ActionListener
 {
@@ -58,7 +58,7 @@ public interface MainControl extends ActionListener
 	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand);
 	public void setMenuBar(JMenuBar menuBar);
 	public JFrame getMainJFrame();
-	public LibSettings getAppSettings();
+	public Settings getAppSettings();
 	public GridClient getGridClient();
 	public CommWindow getCommWindow();
 	public FriendList getFriendList();

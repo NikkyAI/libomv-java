@@ -39,7 +39,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -66,6 +65,7 @@ import libomv.FriendsManager.FriendListChangedCallbackArgs;
 import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendRightsCallbackArgs;
 import libomv.Gui.Resources;
+import libomv.Gui.channels.PrivateChannel;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 import libomv.types.Vector3;
@@ -168,10 +168,11 @@ public class FriendList extends JPanel implements ActionListener
 		super.finalize();
 	} 
 	
-	private void installAction(AbstractButton element, String command)
+	public void selectEntry(UUID uuid)
 	{
-		element.setActionCommand(command);
-		element.addActionListener(this);
+		int rowIndex = _Main.getGridClient().Friends.getFriendIndex(uuid);
+		rowIndex = getJFriendsList().convertColumnIndexToView(rowIndex);
+		getJFriendsList().changeSelection(rowIndex, -1, false, false);
 	}
 	
 	private JPanel getButtonPanel()
@@ -183,37 +184,37 @@ public class FriendList extends JPanel implements ActionListener
 			jButtonPanel.setLayout(new GridLayout(12, 1, 0, 10));
 		
 			jBtnSendMessage = new JButton("Send message");
-			installAction(jBtnSendMessage, cmdStartIM);
+			_Main.setAction(jBtnSendMessage, this, cmdStartIM);
 			jButtonPanel.add(jBtnSendMessage);
 			
 			jBtnProfile = new JButton("Profile ..");
-			installAction(jBtnProfile, cmdProfile);
+			_Main.setAction(jBtnProfile, this, cmdProfile);
 			jButtonPanel.add(jBtnProfile);
 
 			JLabel lblSpacer1 = new JLabel("");
 			jButtonPanel.add(lblSpacer1);
 
 			jBtnMoney = new JButton("Pay ..");
-			installAction(jBtnMoney, cmdPayTo);
+			_Main.setAction(jBtnMoney, this, cmdPayTo);
 			jButtonPanel.add(jBtnMoney);
 
 			jBtnTpOffer = new JButton("Offer Teleport ..");
-			installAction(jBtnTpOffer, cmdTeleportAsk);
+			_Main.setAction(jBtnTpOffer, this, cmdTeleportAsk);
 			jButtonPanel.add(jBtnTpOffer);
 
 			jBtnRemove = new JButton("Remove ..");
-			installAction(jBtnRemove, cmdFriendRemove);
+			_Main.setAction(jBtnRemove, this, cmdFriendRemove);
 			jButtonPanel.add(jBtnRemove);		
 
 			JLabel lblSpacer2 = new JLabel("");
 			jButtonPanel.add(lblSpacer2);
 
 			jBtnTeleportTo = new JButton("Teleport to ..");
-			installAction(jBtnTeleportTo, cmdTeleportTo);
+			_Main.setAction(jBtnTeleportTo, this, cmdTeleportTo);
 			jButtonPanel.add(jBtnTeleportTo);
 
 			jBtnAutopilotTo = new JButton("Autopilot to ..");
-			installAction(jBtnAutopilotTo, cmdAutopilotTo);
+			_Main.setAction(jBtnAutopilotTo, this, cmdAutopilotTo);
 			jButtonPanel.add(jBtnAutopilotTo);
 		}
 		return jButtonPanel;
@@ -511,13 +512,7 @@ public class FriendList extends JPanel implements ActionListener
 							// Look for a double click.
 							if (e.getClickCount() >= 2)
 							{
-								// Get the associated agent.
-								FriendInfo friend = getSelectedFriendRow();
-								// Only allow creation of a chat window if the avatar name is resolved.
-								if (friend.getName() != null && !friend.getName().isEmpty())
-								{
-									// TODO: Create a private chat
-								}
+								actionPerformed(new ActionEvent(jLFriendsList, ActionEvent.ACTION_PERFORMED, cmdStartIM));
 							}
 						}
 						// If the right mouse button was pressed...
@@ -590,8 +585,6 @@ public class FriendList extends JPanel implements ActionListener
 			return false;
 		}
 	}
-
-	
 	
 	private FriendInfo getSelectedFriendRow()
 	{
@@ -630,15 +623,14 @@ public class FriendList extends JPanel implements ActionListener
 		public FriendPopupMenu(FriendInfo info)
 		{
 			super();
-			this._Info = info;
 
 			// Send message
-			add(getJmiSendMessage());
+			add(getJmiSendMessage(info));
 			// Add the profile menu item
 			add(getJmiProfile());
 			// Send money transfer
 			add(getJmiMoneyTransfer());
-			if (_Info.getIsOnline())
+			if (info.getIsOnline())
 			{
 				// Offer teleport.
 				add(getJmiOfferTeleport());
@@ -662,15 +654,13 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The "send message" menu item
 		 */
-		private JMenuItem getJmiSendMessage()
+		private JMenuItem getJmiSendMessage(FriendInfo info)
 		{
 			if (jmiSendMessage == null)
 			{
-				jmiSendMessage = new JMenuItem("Send message");
-				// Add an ActionListener
-				installAction(jmiSendMessage, cmdStartIM);
+				jmiSendMessage = _Main.newMenuItem("Send message", FriendList.this, cmdStartIM);
 			}
-			if (_Info.getName() == null || _Info.getName().isEmpty())
+			if (info.getName() == null || info.getName().isEmpty())
 				jmiSendMessage.setEnabled(false);
 			return jmiSendMessage;
 		}
@@ -684,9 +674,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiProfile == null)
 			{
-				jmiProfile = new JMenuItem("Profile ..");
-				// add an ActionListener
-				installAction(jmiProfile, cmdProfile);
+				jmiProfile = _Main.newMenuItem("Profile ..", FriendList.this, cmdProfile);
 			}
 			return jmiProfile;
 		}
@@ -700,9 +688,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiMoneyTransfer == null)
 			{
-				jmiMoneyTransfer = new JMenuItem("Pay ..");
-				// add an ActionListener
-				installAction(jmiMoneyTransfer, cmdPayTo);
+				jmiMoneyTransfer = _Main.newMenuItem("Pay ..", FriendList.this, cmdPayTo);
 			}
 			return jmiMoneyTransfer;
 		}
@@ -716,9 +702,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiOfferTeleport == null)
 			{
-				jmiOfferTeleport = new JMenuItem("Offer Teleport ..");
-				// Add an action listener.
-				installAction(jmiOfferTeleport, cmdTeleportAsk);
+				jmiOfferTeleport = _Main.newMenuItem("Offer Teleport ..", FriendList.this, cmdTeleportAsk);
 			}
 			return jmiOfferTeleport;
 		}
@@ -732,9 +716,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiRemoveAsFriend == null)
 			{
-				jmiRemoveAsFriend = new JMenuItem("Remove ..");
-				// Add an action listener
-				installAction(jmiRemoveAsFriend, cmdFriendRemove);
+				jmiRemoveAsFriend = _Main.newMenuItem("Remove ..", FriendList.this, cmdFriendRemove);
 			}
 			return jmiRemoveAsFriend;
 		}
@@ -748,9 +730,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiTeleportTo == null)
 			{
-				jmiTeleportTo = new JMenuItem("Teleport to");
-				// Add an ActionListener
-				installAction(jmiTeleportTo, cmdTeleportTo);
+				jmiTeleportTo = _Main.newMenuItem("Teleport to", FriendList.this, cmdTeleportTo);
 			}
 			return jmiTeleportTo;
 		}
@@ -765,9 +745,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiAutopilotTo == null)
 			{
-				jmiAutopilotTo = new JMenuItem("Autopilot to");
-				// Add an ActionListener.
-				installAction(jmiAutopilotTo, cmdAutopilotTo);
+				jmiAutopilotTo = _Main.newMenuItem("Autopilot to", FriendList.this, cmdAutopilotTo);
 			}
 			return jmiAutopilotTo;
 		}
@@ -787,7 +765,16 @@ public class FriendList extends JPanel implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdStartIM))
 		{
-			// TODO: Open a private chat with the friend
+			// Only allow creation of a chat window if the avatar name is resolved.
+			if (info.getName() != null && !info.getName().isEmpty())
+			{
+				if (!_Main.getCommWindow().existsChannel(info.getID()))
+				{
+					PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(), new UUID());
+					_Main.getCommWindow().addChannel(channel);
+				}
+				_Main.getCommWindow().setFocus(null, info.getID());
+			}
 		}
 		else if (e.getActionCommand().equals(cmdFriendRemove))
 		{
