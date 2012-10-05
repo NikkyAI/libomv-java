@@ -5026,7 +5026,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		mess.Position = im.MessageBlock.Position;
 		mess.GroupIM = im.MessageBlock.FromGroup;
 		mess.IMSessionID = im.MessageBlock.ID;
-		mess.Timestamp = im.MessageBlock.Timestamp > 0 ? new Date(im.MessageBlock.Timestamp) : new Date();
+		mess.Timestamp = im.MessageBlock.Timestamp == 0 ? new Date() : new Date(im.MessageBlock.Timestamp & 0xFFFFFFFFL);
 		mess.Message = message;
 		mess.BinaryBucket = im.MessageBlock.getBinaryBucket();
 		OnInstantMessage.dispatch(new InstantMessageCallbackArgs(mess, simulator));
