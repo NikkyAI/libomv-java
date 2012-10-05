@@ -1,19 +1,19 @@
 Copyright (c) 2007 - 2012 openmetaverse.org
 Copyright (c) 2009 - 2012 Frederick Martian
-
 All rights reserved.
 
-- Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
- 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
 - Redistributions of source code must retain the above copyright notice, this
   list of conditions and the following disclaimer.
+- Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+- Neither the name of the openmetaverse.org or libomv-java project nor the
+  names of its contributors may be used to endorse or promote products derived
+  from this software without specific prior written permission.
 
-- Neither the name of the Second Life Reverse Engineering Team, openmetaverse.org,
-  or Lateral Arts Limited nor the names of its contributors may be used to endorse
-  or promote products derived from this software without specific prior written
-  permission.
- 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -29,13 +29,16 @@ POSSIBILITY OF SUCH DAMAGE.
 Based on the libsecondlife-java project (BSD License)
 Copyright © 2006, Lateral Arts Limited
 Simon Whiteside (http://www.larts.co.uk)
-- original Java port for libsecondlife-java
+- original Java port from libsecondlife
 
 Based on the libopenmetaverse project (BSD License)
-Copyright (c) 2007 - 2012, openmetaverse.org
-Frederick Martian fred.martian@gmail.com
+Copyright (c) 2007-2012, openmetaverse.org
+Copyright (c) 2009-2012, Frederick Martian <fredmartian@gmail.com>
 - bug fixing of libopenmetaverse-java code and adding ports of various
   newer openmetaverse.org libomv parts
+
+Includes ported code from the Radegast project (BSD License)
+Copyright (c) 2009-2011, Radegast Development Team
 
 Includes BVH code (Apache 2.0 License)
 Copyright© 2011, aki@akjava.com

@@ -3,10 +3,11 @@ libomv-java
 
 This is the Java port of the OpenMetaverse (http://www.OpenMetaverse.org) library originally written in C#.
 
-The initial port was performed by Simon Whiteside (http://www.larts.co.uk).
+The initial port was performed by Simon Whiteside (http://www.larts.co.uk) and was based on the
+libsecondlife library.
 
 Many modifications to the original Java port and additions from newer OpenMetaverse source code were done
-by Frederick Martian.
+by Frederick Martian <fredmartian@gmail.com>.
 
 
 Installing the source code
@@ -14,11 +15,11 @@ Installing the source code
 
 The libomv-java project consists of several subprojects. There is the actual core library libomv-core
 which provides the entire network and resource handling for SL network protocol, which is used by 
-penSim and Secondlife servers.
+OpenSim and Secondlife servers.
 
 This library makes use of various other libraries which are provided in the distribution as precompiled
 libraries. One of them is a modified version of the jj2000 library. The modified source code of this
-library is provided in the libomv-jj2k subproject. You don't necessarily need to download the source
+library is provided in the libomv-j2k subproject. You don't necessarily need to download the source
 code of this library, since the libomv-core subproject contains a precompiled binary archive of this
 library in its classpath.
 
@@ -40,7 +41,7 @@ libomv-gui: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/l
 
 libomv-gui has an extra dependency for the jogl libraries that get best installed as user libraries in the
 Eclipse Environment. More details to follow. For now jogl is not a critical part as the only program
-(AvatarViewer) that needs it not yet functional.
+(AvatarViewer) that needs it, is not yet functional.
 
 
 Building the library and examples
@@ -69,6 +70,10 @@ the aditi (beta) and agni (release) grid. So the certificate handling for https 
 certificates in the res directory to the URI and if there is a match, loads it into the keystore for that
 connection. If no stored certificate can be found the Java default keystore will be used, which contains
 certificates for most standard root CAs.
+If you happen to need to connect to a different (for instance OpenSim based) server with this library that
+may be using a private SSL certificate, you can retrieve the binary (X509) certificate stream from the
+server and store it in a file, adding this file to the res/ directory of the library with a name pattern
+<server uri fragment>.cert, that matches an identifiable part of the server uri.
 
 
 Running examples
@@ -101,7 +106,7 @@ Porting Information
 -------------------
 
 The initial port was performed by Simon Whiteside and taken pretty straight from the original C# code
-as of October 26th 2006
+of the libsecondlife project as of October 26th 2006
 
 Principal areas of porting were:
 

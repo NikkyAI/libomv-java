@@ -7,16 +7,20 @@ What is working at this point but more testing is required:
 - GridList selection
 - XML_RPC login
 - LLLP (LindenLab Legacy Protocol) UDP protocol handling
+- Buddylist handling
+- Basic IM
 
 Implemented but needs lots of testing:
+- LLSD login
+- modified XML-RPC login
 - HTTP CAPS protocol handling
-- Buddylist handling
 - Inventory handling
 - Chat and IM handling
 - Basic Avatar names
 - Basic Group management
 - Basic Asset management
 - Basic Parcel management
+- Avatar baking (mostly implemented but the final J2K interface needs finalizing)
 
 What needs to be attacked:
 - JPEG2000 implementation
