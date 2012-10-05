@@ -5035,7 +5035,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private void HandleChat(Packet packet, Simulator simulator) throws Exception
 	{
 		ChatFromSimulatorPacket chat = (ChatFromSimulatorPacket) packet;
-
 		try
 		{
 			String message = Helpers.BytesToString(chat.ChatData.getMessage());
@@ -5044,8 +5043,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 					+ " Message: " + message, Logger.LogLevel.Debug, _Client);
 
 			OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType
-					.setValue(chat.ChatData.ChatType), ChatSourceType.setValue(chat.ChatData.SourceType), message,
-					from, chat.ChatData.SourceID, chat.ChatData.OwnerID, chat.ChatData.Position));
+					.setValue(chat.ChatData.ChatType), ChatSourceType.setValue(chat.ChatData.SourceType), from,
+					message, chat.ChatData.SourceID, chat.ChatData.OwnerID, chat.ChatData.Position));
 		}
 		catch (Exception ex)
 		{
