@@ -1336,7 +1336,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 		private final UUID lureID;
 		private final String message;
 		private final LureLocation location; // if null, it's a godlike lure request
-		private boolean accepted;
 		
 		public UUID getFromID()
 		{
@@ -1357,14 +1356,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 		public LureLocation getLocation()
 		{
 			return location;
-		}
-		public boolean getAccepted()
-		{
-			return accepted;
-		}
-		public void setAccepted(boolean value)
-		{
-			accepted = value;
 		}
 		public TeleportLureCallbackArgs(UUID fromID, String fromName, UUID lureID, String message, LureLocation location)
 		{
@@ -4985,10 +4976,16 @@ public class AgentManager implements PacketCallback, CapsCallback
 				if (strings.length >= 9)
 					info.maturity = strings[8];
 				
-				TeleportLureCallbackArgs args = new TeleportLureCallbackArgs(im.AgentData.AgentID, fromName, sessionID, message, info);
-				OnTeleportLure.dispatch(args);
-				TeleportLureRespond(im.AgentData.AgentID, sessionID, args.getAccepted());
-				/* We handled the lure request, so return */
+				if (OnTeleportLure.count() > 0)
+				{
+					OnTeleportLure.dispatch(new TeleportLureCallbackArgs(im.AgentData.AgentID, fromName, sessionID, message, info));
+				}
+				else
+				{
+					// Nobody to handle this lure request
+					TeleportLureRespond(im.AgentData.AgentID, sessionID, false);					
+				}
+				/* We dispatched the lure request, so return */
 				return;
 			}
 		}
