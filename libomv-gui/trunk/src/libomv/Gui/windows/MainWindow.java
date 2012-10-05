@@ -40,7 +40,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import libomv.GridClient;
 import libomv.Gui.AppSettings;
@@ -89,24 +88,25 @@ public class MainWindow extends JFrame implements MainControl
 		initializeLoginPanel();
 	}
 	
-	@Override
 	public JFrame getMainJFrame()
 	{
 		return this;
 	}
 	
-	@Override
 	public GridClient getGridClient()
 	{
 		return _Client;
 	}
 	
-	@Override
 	public Settings getAppSettings()
 	{
-		// TODO Auto-generated method stub
 		return _Settings;
 	}	
+
+	public boolean isRLVenabled()
+	{
+		return _Client.RLV != null && _Client.RLV.isEnabled();
+	}
 
 	public CommWindow getCommWindow()
 	{

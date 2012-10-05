@@ -42,6 +42,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
+import javax.swing.text.BadLocationException;
 
 import libomv.AgentManager.ChatType;
 import libomv.Gui.windows.MainControl;
@@ -90,9 +91,10 @@ public class GroupChannel extends AbstractChannel
 	 * Receive a message.
 	 * 
 	 * @param message The message received.
+	 * @throws BadLocationException 
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
 		if(message == null || message.isEmpty())
 			return;
@@ -144,9 +146,16 @@ public class GroupChannel extends AbstractChannel
 			// Normal
 			addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
 		}
-		
+		// Indicate that we're no longer typing.
+		super.transmitMessage(message, type);
+
 		// Send the message.
 		_Main.getGridClient().Self.InstantMessageGroup(getUUID(), message);
+	}
+				
+	protected void triggerTyping(boolean start) throws Exception
+	{
+		_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), start);		
 	}
 
 	private JScrollPane getJScrpAttendents()
@@ -161,10 +170,5 @@ public class GroupChannel extends AbstractChannel
 			jScrpAttendents.setViewportView(listAttendents);
 		}
 		return jScrpAttendents;
-	}
-
-	@Override
-	protected void triggerTyping() throws Exception
-	{
 	}
 }

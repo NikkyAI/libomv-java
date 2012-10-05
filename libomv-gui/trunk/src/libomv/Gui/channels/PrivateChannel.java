@@ -30,33 +30,31 @@ package libomv.Gui.channels;
 
 import java.util.Date;
 
+import javax.swing.text.BadLocationException;
+
 import libomv.AgentManager.ChatType;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
-import libomv.utils.TimeoutEvent;
 
 public class PrivateChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
-	
-	private long typingEndTime;
-	private TimeoutEvent<Boolean> isTyping = new TimeoutEvent<Boolean>();
-	
+		
 	public PrivateChannel(MainControl main, String name, UUID id, UUID session)
 	{
 		super(main, name, id, session);
-		isTyping.reset(false);
 	}
 		
 	/**
 	 * Receive a message.
 	 * 
 	 * @param message The message received.
+	 * @throws BadLocationException 
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
-		if(message == null || message.isEmpty())
+		if (message == null || message.isEmpty())
 		{
 			return;
 		}
@@ -65,10 +63,10 @@ public class PrivateChannel extends AbstractChannel
 		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
 		
 		// If this is an action message.
-		if(message.startsWith("/me "))
+		if (message.startsWith("/me "))
 		{
 			// Remove the "/me ".
-			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, "* " + message.substring(4), style != null ? style : STYLE_ACTION));
+			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), style != null ? style : STYLE_ACTION));
 		}
 		else
 		{
@@ -80,16 +78,16 @@ public class PrivateChannel extends AbstractChannel
 	@Override
 	public void transmitMessage(String message, ChatType type) throws Exception
 	{
-        if (message == null || message.trim().isEmpty())
+		if (message == null || message.trim().isEmpty())
         	return;
 
 		String self = _Main.getGridClient().Self.getName();
-		if(getUUID() != null)
+		if (getUUID() != null)
 		{
 			addHistory(message);	
 
 			// Deal with actions.
-			if(message.toLowerCase().startsWith("/me "))
+			if (message.toLowerCase().startsWith("/me "))
 			{
 				// Remove the "/me "
 				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, message.substring(4).trim(), STYLE_ACTION));
@@ -98,62 +96,20 @@ public class PrivateChannel extends AbstractChannel
 			{
 				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
 			}
-				
+			// Indicate that we're no longer typing.
+			super.transmitMessage(message, type);
+
 			// Send the message.
 			_Main.getGridClient().Self.InstantMessage(getUUID(), message, getSession());
-			// Indicate that we're no longer typing.
-			isTyping.set(false);
 		}
 		else
 		{
-			addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "Invlid UUID for this chat channel", STYLE_ERROR));			
+			addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "Invalid UUID for this chat channel", STYLE_ERROR));			
 		}
 	}
 
-	/**
-	 * Call to trigger that typing has begun.
-	 * @throws Exception 
-	 */
-	protected void triggerTyping() throws Exception
+	protected void triggerTyping(boolean start) throws Exception
 	{
-		// Update the time at which typing started
-		typingEndTime = System.currentTimeMillis() + 2000;
-
-		// If this is the beginning of typing.
-		if(!isTyping.get())
-		{
-			// Set the flag
-			isTyping.reset(true);
-			// Inform the server of the typing status
-			_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), true);
-
-			// Start a thread that checks if we paused typing
-			new Thread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						// While the channel is flagged as typing...
-						do
-						{
-							// Check for timeout.
-							if (System.currentTimeMillis() > typingEndTime)
-							{
-								// Clear the flag
-								isTyping.set(false);
-							}
-							// give up time
-						}
-						while (isTyping.waitOne(200));
-
-						// Send the "stopped typing" message.
-						_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), false);
-					}
-					catch (Exception e) { }
-				}
-			}).start();
-		}
-	}	
+		_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), start);		
+	}
 }

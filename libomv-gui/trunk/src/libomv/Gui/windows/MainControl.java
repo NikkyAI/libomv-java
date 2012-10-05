@@ -63,5 +63,6 @@ public interface MainControl extends ActionListener
 	public CommWindow getCommWindow();
 	public FriendList getFriendList();
 	public GroupList getGroupList();
+	public boolean isRLVenabled();
 	public void setContentArea(Component pane);
 }

@@ -41,6 +41,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
 
 import libomv.AgentManager.ChatSourceType;
 import libomv.AgentManager.ChatType;
@@ -53,6 +54,8 @@ import libomv.Gui.channels.LocalChannel;
 import libomv.Gui.components.ButtonTabPane;
 import libomv.Gui.components.OnlinePanel;
 import libomv.types.UUID;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 public class CommWindow extends JFrame
 {
@@ -130,8 +133,15 @@ public class CommWindow extends JFrame
         	return; //workaround the stupid autopilot alerts
 
         AbstractChannel channel = getLocalChannel();
-        channel.receiveMessage(null, null, "Alert message", alertMessage, style != null ? style : AbstractChannel.STYLE_SYSTEM);
-		highlightChannel(channel, true);
+        try
+        {
+			channel.receiveMessage(null, null, "Alert message", alertMessage, style != null ? style : AbstractChannel.STYLE_SYSTEM);
+			highlightChannel(channel, true);
+		}
+        catch (BadLocationException ex)
+        {
+			Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
+        }
 	}
 	
 	public void printChatMessage(ChatSourceType sourceType, UUID sourceID, String fromName, String message, ChatType type)
@@ -152,14 +162,14 @@ public class CommWindow extends JFrame
 					break;
         	}
         	localMessage.append(": ");
-            if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && _Main.getGridClient().RLV.restrictionActive("recvchat", sourceID.toString()))
+            if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && _Main.isRLVenabled() && _Main.getGridClient().RLV.restrictionActive("recvchat", sourceID.toString()))
             	localMessage.append("...");
             else
             	localMessage.append(message);
 		}
         else
         {
-            if (sourceType == ChatSourceType.Agent && _Main.getGridClient().RLV.restrictionActive("recvemote", sourceID.toString()))
+            if (sourceType == ChatSourceType.Agent && _Main.isRLVenabled() && _Main.getGridClient().RLV.restrictionActive("recvemote", sourceID.toString()))
             	localMessage.append(" ...");
             else
             	localMessage.append(message.substring(3));       	
@@ -183,9 +193,16 @@ public class CommWindow extends JFrame
                 }
                 break;
         }
-        AbstractChannel channel = getLocalChannel();
-        channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
-		highlightChannel(channel, true);
+        try
+        {
+            AbstractChannel channel = getLocalChannel();
+            channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
+    		highlightChannel(channel, true);
+    	}
+        catch (BadLocationException ex)
+        {
+    		Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
+        }
 	}
 	
 	public void printInstantMessage(InstantMessage message)
@@ -215,9 +232,16 @@ public class CommWindow extends JFrame
 		}
 		String style = null;
 		if (message.Offline == InstantMessageOnline.Offline)
-			style = AbstractChannel.STYLE_OFFLINE; 
-		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, style);
-		highlightChannel(channel, true);
+			style = AbstractChannel.STYLE_OFFLINE;
+		try
+		{
+			channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, style);
+			highlightChannel(channel, true);
+		}
+	    catch (BadLocationException ex)
+	    {
+			Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
+	    }
 	}
 	
 	private LocalChannel getLocalChannel()

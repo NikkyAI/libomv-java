@@ -279,7 +279,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 		}
 		return jSceneViewer;
 	}
-
+	
 	private class BalanceUpdate implements Callback<BalanceCallbackArgs>
 	{
 		@Override
@@ -308,12 +308,9 @@ public class OnlinePanel extends JPanel implements ActionListener
 		@Override
 		public boolean callback(final TeleportLureCallbackArgs args)
 		{
-			final UUID agentID = args.getFromID();
-			final UUID lureID = args.getLureID();
-			
 			try
 			{
-				EventQueue.invokeAndWait(new Runnable()
+				EventQueue.invokeLater(new Runnable()
 				{
 					public void run()
 					{
@@ -321,12 +318,18 @@ public class OnlinePanel extends JPanel implements ActionListener
 						                                   " has offered you a teleport with the following message: '" +
 						                                   args.getMessage() + "'. Do you wish to accept?",
 						                                   "Teleportation Offer", JOptionPane.YES_NO_OPTION);
-						args.setAccepted(result == JOptionPane.OK_OPTION);
+						// Accept or decline the request
+						try
+						{
+							_Main.getGridClient().Self.TeleportLureRespond(args.getFromID(), args.getLureID(), result == JOptionPane.OK_OPTION);
+						}
+						catch (Exception ex)
+						{
+							Logger.Log("Response to teleportation invite failed", LogLevel.Error, _Main.getGridClient(), ex);
+						}
 					}
 				});
 
-				// Accept or decline the request
-				_Main.getGridClient().Self.TeleportLureRespond(agentID, lureID, args.getAccepted());
 			}
 			catch (Exception ex)
 			{
@@ -366,7 +369,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 	            }
 	        }
 	        
-	        if (_Main.getGridClient().RLV.isEnabled() && params.getMessage().startsWith("@"))
+	        if (params.getMessage().startsWith("@") && _Main.isRLVenabled())
 	        {
 	        	_Main.getGridClient().RLV.tryProcessCommand(params);
 	        	return false;

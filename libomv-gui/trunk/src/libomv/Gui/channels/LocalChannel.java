@@ -41,6 +41,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
+import javax.swing.text.BadLocationException;
 
 import libomv.AgentManager.ChatType;
 import libomv.Gui.windows.MainControl;
@@ -94,9 +95,10 @@ public class LocalChannel extends AbstractChannel
 	 * Receive a message.
 	 * 
 	 * @param message The message received.
+	 * @throws BadLocationException 
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
 		if(message == null || message.isEmpty())
 			return;
@@ -196,6 +198,11 @@ public class LocalChannel extends AbstractChannel
 		_Main.getGridClient().Self.Chat(message, channel, chatType);
 	}
 	
+	protected void triggerTyping(boolean start) throws Exception
+	{
+		_Main.getGridClient().Self.Chat("", 0, start ? ChatType.StartTyping : ChatType.StopTyping);		
+	}
+
 	private JScrollPane getJScrpAttendents()
 	{
 		if (jScrpAttendents == null)
@@ -208,10 +215,5 @@ public class LocalChannel extends AbstractChannel
 			jScrpAttendents.setViewportView(listAttendents);
 		}
 		return jScrpAttendents;
-	}
-
-	@Override
-	protected void triggerTyping() throws Exception
-	{
 	}
 }

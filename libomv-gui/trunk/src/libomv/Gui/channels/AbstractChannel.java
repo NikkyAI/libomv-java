@@ -32,8 +32,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +60,7 @@ import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.TimeoutEvent;
 
 public abstract class AbstractChannel extends JPanel implements IChannel
 {
@@ -92,6 +93,12 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 
 	/** Identifier for a URL. */
 	private static final Integer IDENTIFIER_URL = new Integer(0);
+
+    protected static final String NewlineMarker = String.valueOf('\u00b6');
+
+	private long typingEndTime;
+	private TimeoutEvent<Integer> isTyping = new TimeoutEvent<Integer>();
+    protected static int AGENT_TYPING_TIMEOUT = 5000;	// milliseconds
 
 	/** Regex used for testing URLs. */
 	private static String URLRegex =
@@ -166,10 +173,14 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 	private JTextPane jTextPane;
 	private JTextField jTextChat;
 
+	private int tempStart = 0;
+	private int tempLen = 0;
+
 	private int chatPointer;
 	private List<String> chatHistory;
 	private List<ChatItem> chatBuffer;
-
+	private Pattern URL;
+	
 	private boolean printTimestamp = true; 
 	protected static DateFormat df = DateFormat.getTimeInstance();
 
@@ -185,6 +196,10 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 		chatBuffer = new ArrayList<ChatItem>(); 
 		chatHistory = new ArrayList<String>();
 		chatPointer = 0;
+		isTyping.reset(0);
+
+		// Setup an URL matcher from an URL regex.
+		URL = Pattern.compile(URLRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
 		JScrollPane scrollPaneText = new JScrollPane();
 		scrollPaneText.setViewportView(getTextPane());
@@ -245,10 +260,63 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 		return _Main.getGridClient();
 	}
 
-	abstract protected void transmitMessage(String message, ChatType chatType) throws Exception;
-	abstract protected void triggerTyping() throws Exception;
+	protected void transmitMessage(String message, ChatType chatType) throws Exception
+	{
+		isTyping.reset(-1);		
+	}
+
+	/* Overwrite this for channels who send a typing indication */
+	abstract protected void triggerTyping(boolean start) throws Exception;
 	
-	protected void addMessage(ChatItem chatItem)
+	/**
+	 * Call to trigger that typing has begun.
+	 * @throws Exception 
+	 */
+	protected void triggerTyping() throws Exception
+	{
+		// Update the time at which typing started
+		typingEndTime = System.currentTimeMillis() + AGENT_TYPING_TIMEOUT;
+
+		// If this is the beginning of typing.
+		if (isTyping.get() <= 0)
+		{
+			// Set the flag
+			isTyping.reset(1);
+			// Inform the server of the typing status
+			triggerTyping(false);
+
+			// Start a thread that checks if we paused typing
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						// While the channel is flagged as typing...
+						do
+						{
+							// Check for timeout.
+							if (System.currentTimeMillis() > typingEndTime)
+							{
+								// Clear the flag
+								isTyping.set(0);
+							}
+							// give up time
+						}
+						while (isTyping.waitOne(200) > 0);
+
+						// Send the "stopped typing" message
+						if (isTyping.get() == 0)
+							triggerTyping(false);
+					}
+					catch (Exception e) { }
+				}
+			}).start();
+		}
+	}	
+	
+	protected void addMessage(ChatItem chatItem) throws BadLocationException
 	{
 		if (chatItem == null || chatItem.message == null || chatItem.message.trim().isEmpty())
 			return;
@@ -267,44 +335,39 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 		chatPointer = chatHistory.size();
 	}
 
-	protected void printMessage(ChatItem chatItem)
+	protected void printMessage(ChatItem chatItem) throws BadLocationException
 	{
 		// Get the StyledDocument.
 		StyledDocument styledDocument = jTextPane.getStyledDocument();
 
+		if (tempLen > 0)
+		{
+			styledDocument.remove(tempStart, tempLen);
+			tempLen = 0;
+		}
+
 		// First, if timestamps are enabled add that one
 		if (printTimestamp)
 		{
-			try
-			{
-				styledDocument.insertString(styledDocument.getLength(), "[" + df.format(chatItem.timestamp) + "] ", styledDocument.getStyle(STYLE_INFORMATIONAL));
-			}
-			catch (BadLocationException e) { }
+			styledDocument.insertString(styledDocument.getLength(), "[" + df.format(chatItem.timestamp) + "] ", styledDocument.getStyle(STYLE_INFORMATIONAL));
 		}
 
 		// Second, we insert the name.
-		String name = chatItem.action ? "* " + chatItem.from + " " : "<" + chatItem.from + "> ";
-		try
-		{
-			styledDocument.insertString(styledDocument.getLength(), name, styledDocument.getStyle(chatItem.fromStyle));
-		}
-		catch (BadLocationException e) { }
+		styledDocument.insertString(styledDocument.getLength(), chatItem.from, styledDocument.getStyle(chatItem.fromStyle));
 
-		// Setup an URL matcher from an URL regex.
-		Pattern URL = Pattern.compile(URLRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+		String message = (chatItem.action ? " " : ": ") + chatItem.message + "\n";
 		Matcher matcher = URL.matcher(chatItem.message);
 
 		// Third, we insert all of the text using the desired style.
-		try
-		{
-			styledDocument.insertString(styledDocument.getLength(), chatItem.message + "\n", styledDocument.getStyle(chatItem.messageStyle));
-		}
-		catch (BadLocationException e) { }
+		styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(chatItem.messageStyle));
 
+		// Find the start of the insert point for this message
+		int offset = styledDocument.getLength() - chatItem.message.length() - 1;
+		
 		// This style will be used to create a style identifying each link.
 		Style urlStyle;
 		// Whilst there are still links to be found...
-		while(matcher.find())
+		while (matcher.find())
 		{
 			// Create a style to identify the link (so that it can be clicked).
 			urlStyle = styledDocument.addStyle("link" + matcher.start(), null);				
@@ -313,7 +376,25 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 			StyleConstants.setBold(urlStyle, true);
 			StyleConstants.setUnderline(urlStyle, true);
 			// Update the substring of the URL within the document with the link style.
-			styledDocument.setCharacterAttributes(styledDocument.getLength() - chatItem.message.length() + matcher.start(), matcher.end() - matcher.start(), urlStyle, true );
+			styledDocument.setCharacterAttributes(offset + matcher.start(), matcher.end() - matcher.start(), urlStyle, true );
+		}
+	}
+
+	protected void printStatus(String message, String style) throws BadLocationException
+	{
+		// Get the StyledDocument.
+		StyledDocument styledDocument = getTextPane().getStyledDocument();
+
+		if (message == null)
+		{
+			styledDocument.remove(tempStart, tempLen);
+			tempLen = 0;
+		}
+		else
+		{
+			tempStart = styledDocument.getLength();
+			styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(style));
+			tempLen = message.length();
 		}
 	}
 
@@ -431,27 +512,11 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 			jTextChat = new JTextField();
 			jTextChat.setHorizontalAlignment(SwingConstants.LEFT);
 			jTextChat.setColumns(20);
-			jTextChat.addKeyListener(new KeyListener()
+			jTextChat.addKeyListener(new KeyAdapter()
 			{
 				@Override
 				public void keyTyped(KeyEvent e)
 				{
-					if (e.isControlDown())
-					{
-						if (e.getKeyCode() == KeyEvent.VK_UP)
-						{
-							e.consume();
-							chatHistoryPrev();
-					return;
-						}
-						else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-						{
-							e.consume();
-							chatHistoryNext();
-							return;
-						}
-					}
-
 					if (e.getKeyChar() != '\n')
 					{
 						try
@@ -462,7 +527,6 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 						{
 							Logger.Log("Failed to send typing indication", LogLevel.Error, _Main.getGridClient(), ex);
 						}
-
 						return;
 					}
 					e.consume();
@@ -483,13 +547,23 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 				}
 
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-				}
-
-				@Override
 				public void keyReleased(KeyEvent e)
 				{
+					if (e.isAltDown())
+					{
+						if (e.getKeyCode() == KeyEvent.VK_UP)
+						{
+							e.consume();
+							chatHistoryPrev();
+							return;
+						}
+						else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+						{
+							e.consume();
+							chatHistoryNext();
+							return;
+						}
+					}
 				}
 			});
 		}
