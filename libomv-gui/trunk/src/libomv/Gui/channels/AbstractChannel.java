@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2012, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,13 +56,14 @@ import javax.swing.text.StyledDocument;
 
 import libomv.AgentManager.ChatType;
 import libomv.GridClient;
+import libomv.RLVManager;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import libomv.utils.TimeoutEvent;
 
-public abstract class AbstractChannel extends JPanel implements IChannel
+public abstract class AbstractChannel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 
@@ -139,26 +140,23 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 	public class ChatItem
 	{
 		Date timestamp;
-		boolean action;
 		String from;
 		String fromStyle;
 		String message;
 		String messageStyle;
 		
-		public ChatItem(boolean action, String from, String fromStyle, String message, String messageStyle)
+		public ChatItem(String from, String fromStyle, String message, String messageStyle)
 		{
 			this.timestamp = new Date();
-			this.action = action;
 			this.from = from;
 			this.fromStyle = fromStyle;
 			this.message = message;
 			this.messageStyle = messageStyle;
 		}
 
-		public ChatItem(Date timestamp, boolean action, String from, String fromStyle, String message, String messageStyle)
+		public ChatItem(Date timestamp, String from, String fromStyle, String message, String messageStyle)
 		{
 			this.timestamp = timestamp != null ? timestamp : new Date();
-			this.action = action;
 			this.from = from;
 			this.fromStyle = fromStyle;
 			this.message = message;
@@ -249,11 +247,10 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 		return _Session;
 	}
 
-	@Override
-	public JPanel getPanel()
-	{
-		return this;
-	}
+//	public JPanel getPanel()
+//	{
+//		return this;
+//	}
 
 	protected GridClient getClient()
 	{
@@ -265,8 +262,36 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 		isTyping.reset(-1);		
 	}
 
+	protected boolean isRLVrestrictionActive(String name, UUID id)
+	{
+		RLVManager rlv = _Main.getGridClient().RLV;
+		return rlv != null && rlv.restrictionActive(name, id.toString());
+	}
+	
 	/* Overwrite this for channels who send a typing indication */
 	abstract protected void triggerTyping(boolean start) throws Exception;
+	
+	/* this must be implemented by all channels to receive messages */
+	abstract public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException;
+
+	public void receiveStatus(UUID sourceID, String message, String style) throws BadLocationException
+	{
+		// Get the StyledDocument.
+		StyledDocument styledDocument = getTextPane().getStyledDocument();
+
+		if (tempLen > 0)
+		{
+			styledDocument.remove(tempStart, tempLen);
+			tempLen = 0;
+		}
+
+		if (message != null && !message.isEmpty())
+		{
+			tempStart = styledDocument.getLength();
+			styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(style == null ? style = STYLE_SYSTEM : style));
+			tempLen = message.length();
+		}
+	}
 	
 	/**
 	 * Call to trigger that typing has begun.
@@ -283,7 +308,7 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 			// Set the flag
 			isTyping.reset(1);
 			// Inform the server of the typing status
-			triggerTyping(false);
+			triggerTyping(true);
 
 			// Start a thread that checks if we paused typing
 			new Thread(new Runnable()
@@ -355,14 +380,12 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 		// Second, we insert the name.
 		styledDocument.insertString(styledDocument.getLength(), chatItem.from, styledDocument.getStyle(chatItem.fromStyle));
 
-		String message = (chatItem.action ? " " : ": ") + chatItem.message + "\n";
-		Matcher matcher = URL.matcher(chatItem.message);
+		// Third, we insert all of the text using plus a line feed with the desired style.
+		styledDocument.insertString(styledDocument.getLength(), chatItem.message + "\n", styledDocument.getStyle(chatItem.messageStyle));
 
-		// Third, we insert all of the text using the desired style.
-		styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(chatItem.messageStyle));
-
-		// Find the start of the insert point for this message
+		// Find the start of the insert point for this message (-1 is for the additional line feed)
 		int offset = styledDocument.getLength() - chatItem.message.length() - 1;
+		Matcher matcher = URL.matcher(chatItem.message);
 		
 		// This style will be used to create a style identifying each link.
 		Style urlStyle;
@@ -377,24 +400,6 @@ public abstract class AbstractChannel extends JPanel implements IChannel
 			StyleConstants.setUnderline(urlStyle, true);
 			// Update the substring of the URL within the document with the link style.
 			styledDocument.setCharacterAttributes(offset + matcher.start(), matcher.end() - matcher.start(), urlStyle, true );
-		}
-	}
-
-	protected void printStatus(String message, String style) throws BadLocationException
-	{
-		// Get the StyledDocument.
-		StyledDocument styledDocument = getTextPane().getStyledDocument();
-
-		if (message == null)
-		{
-			styledDocument.remove(tempStart, tempLen);
-			tempLen = 0;
-		}
-		else
-		{
-			tempStart = styledDocument.getLength();
-			styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(style));
-			tempLen = message.length();
 		}
 	}
 

@@ -100,9 +100,9 @@ public class LoginPanel extends JPanel implements ActionListener
 		_Main = main;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0, 0, 0 };
+		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0, 1, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 2.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
 		gridBagLayout.rowWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 
 		setLayout(gridBagLayout);
@@ -126,7 +126,7 @@ public class LoginPanel extends JPanel implements ActionListener
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 0;
 		add(getJLblPassword(), gridBagConstraints);
@@ -140,7 +140,7 @@ public class LoginPanel extends JPanel implements ActionListener
 				
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.gridx = 5;
 		gridBagConstraints.gridy = 0;
 		add(getChckbxSavePassword(), gridBagConstraints);
@@ -152,14 +152,14 @@ public class LoginPanel extends JPanel implements ActionListener
 		add(getJBtnLogin(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 1;
 		add(getJLblGridSelector(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 1;
@@ -167,20 +167,20 @@ public class LoginPanel extends JPanel implements ActionListener
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 1;
 		add(getBtnGrids(), gridBagConstraints);
 		
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		gridBagConstraints.insets = new Insets(0, 0, 5, 5);
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.gridx = 5;
 		gridBagConstraints.gridy = 1;
 		add(getChckbxSaveDetails(), gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.insets = new Insets(0, 5, 0, 5);
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
@@ -188,7 +188,7 @@ public class LoginPanel extends JPanel implements ActionListener
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints.insets = new Insets(0, 0, 0, 5);
+		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
@@ -197,6 +197,18 @@ public class LoginPanel extends JPanel implements ActionListener
 		main.setMenuBar(getJMBar());
 
 		initializePanel(_Main.getGridClient().getDefaultGrid());	
+	}
+	
+	protected void finalize() throws Throwable
+	{
+		if (browser != null)
+		{
+		    browser.stop();	
+		    if (!browser.isDisposed())
+			    browser.dispose();
+		    browser = null;
+		}
+		super.finalize();
 	}
 
 	/**

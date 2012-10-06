@@ -31,7 +31,6 @@ package libomv.Gui.components;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -40,12 +39,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.text.BadLocationException;
 
 import libomv.AgentManager.AlertMessageCallbackArgs;
 import libomv.AgentManager.BalanceCallbackArgs;
 import libomv.AgentManager.ChatCallbackArgs;
 import libomv.AgentManager.ChatSourceType;
+import libomv.AgentManager.ChatType;
+import libomv.AgentManager.InstantMessage;
 import libomv.AgentManager.InstantMessageCallbackArgs;
+import libomv.AgentManager.InstantMessageDialog;
+import libomv.AgentManager.InstantMessageOnline;
 import libomv.AgentManager.MuteEntry;
 import libomv.AgentManager.MuteType;
 import libomv.AgentManager.TeleportLureCallbackArgs;
@@ -57,13 +61,15 @@ import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.GridClient;
 import libomv.GroupManager.GroupInvitationCallbackArgs;
 import libomv.Gui.channels.AbstractChannel;
+import libomv.Gui.channels.GroupChannel;
+import libomv.Gui.channels.PrivateChannel;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
-import libomv.inventory.InventoryException;
 import libomv.types.UUID;
 import libomv.utils.Callback;
+import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -90,16 +96,16 @@ public class OnlinePanel extends JPanel implements ActionListener
 	private JLabel jMiAmount;
 	private JPanel jSceneViewer;
 
-	private Callback<BalanceCallbackArgs> balanceUpdateCallback = new BalanceUpdate();
-	private Callback<TeleportLureCallbackArgs> teleportLureCallback = new TeleportLure();
-	private Callback<ChatCallbackArgs> chatCallback = new ChatMessage();
-	private Callback<AlertMessageCallbackArgs> alertCallback = new AlertMessage();
-	private Callback<InstantMessageCallbackArgs> instantCallback = new InstantMessage();
-	private Callback<FriendNotificationCallbackArgs> friendNotificationCallback = new FriendNotification();
-	private Callback<FriendshipResponseCallbackArgs> friendshipResponseCallback = new FriendshipResponse();
-	private Callback<FriendshipOfferedCallbackArgs> friendshipOfferedCallback = new FriendshipOffered();
-	private Callback<FriendshipTerminatedCallbackArgs> friendshipTerminatedCallback = new FriendshipTerminated();
-	private Callback<GroupInvitationCallbackArgs> groupInvitationCallback = new GroupInvitation();
+	private Callback<BalanceCallbackArgs> balanceUpdateCallback = new BalanceUpdateCallback();
+	private Callback<TeleportLureCallbackArgs> teleportLureCallback = new TeleportLureCallback();
+	private Callback<ChatCallbackArgs> chatCallback = new ChatMessageCallback();
+	private Callback<AlertMessageCallbackArgs> alertCallback = new AlertMessageCallback();
+	private Callback<InstantMessageCallbackArgs> instantCallback = new InstantMessageCallback();
+	private Callback<FriendNotificationCallbackArgs> friendNotificationCallback = new FriendNotificationCallback();
+	private Callback<FriendshipResponseCallbackArgs> friendshipResponseCallback = new FriendshipResponseCallback();
+	private Callback<FriendshipOfferedCallbackArgs> friendshipOfferedCallback = new FriendshipOfferedCallback();
+	private Callback<FriendshipTerminatedCallbackArgs> friendshipTerminatedCallback = new FriendshipTerminatedCallback();
+	private Callback<GroupInvitationCallbackArgs> groupInvitationCallback = new GroupInvitationCallback();
 
 	public OnlinePanel(MainControl main)
 	{
@@ -280,173 +286,298 @@ public class OnlinePanel extends JPanel implements ActionListener
 		return jSceneViewer;
 	}
 	
-	private class BalanceUpdate implements Callback<BalanceCallbackArgs>
+	private class BalanceUpdateCallback implements Callback<BalanceCallbackArgs>
 	{
 		@Override
-		public boolean callback(BalanceCallbackArgs params)
+		public boolean callback(final BalanceCallbackArgs params)
 		{
-			String symbol = _Main.getGridClient().getGrid(null).currencySym;
-			getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol, params.getBalance()));
-			if (!params.getFirst() && params.getDelta() > 50)
+			EventQueue.invokeLater(new Runnable()
 			{
-				if (params.getDelta() < 0)
+				public void run()
 				{
-					/* Create money gone sound */
+					String symbol = _Main.getGridClient().getGrid(null).currencySym;
+					getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol, params.getBalance()));
+					if (!params.getFirst() && params.getDelta() > 50)
+					{
+						if (params.getDelta() < 0)
+						{
+							/* Create money gone sound */
+						}
+						else
+						{
+							/* Create cash register sound */
+						}
+					}
 				}
-				else
-				{
-					/* Create cash register sound */
-				}
-			}
+			});
 			return false;
 		}
 		
 	}
 	
-	private class TeleportLure implements Callback<TeleportLureCallbackArgs>
+	private class TeleportLureCallback implements Callback<TeleportLureCallbackArgs>
 	{
 		@Override
 		public boolean callback(final TeleportLureCallbackArgs args)
 		{
-			try
+			EventQueue.invokeLater(new Runnable()
 			{
-				EventQueue.invokeLater(new Runnable()
+				public void run()
 				{
-					public void run()
+					int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
+					                                   " has offered you a teleport with the following message: '" +
+					                                   args.getMessage() + "'. Do you wish to accept?",
+					                                   "Teleportation Offer", JOptionPane.YES_NO_OPTION);
+					// Accept or decline the request
+					try
 					{
-						int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
-						                                   " has offered you a teleport with the following message: '" +
-						                                   args.getMessage() + "'. Do you wish to accept?",
-						                                   "Teleportation Offer", JOptionPane.YES_NO_OPTION);
-						// Accept or decline the request
-						try
-						{
-							_Main.getGridClient().Self.TeleportLureRespond(args.getFromID(), args.getLureID(), result == JOptionPane.OK_OPTION);
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("Response to teleportation invite failed", LogLevel.Error, _Main.getGridClient(), ex);
-						}
+						_Main.getGridClient().Self.TeleportLureRespond(args.getFromID(), args.getLureID(), result == JOptionPane.OK_OPTION);
 					}
-				});
-
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Teleportation failed", LogLevel.Error, _Main.getGridClient(), ex);
-			}
+					catch (Exception ex)
+					{
+						Logger.Log("Response to teleportation invite failed", LogLevel.Error, _Main.getGridClient(), ex);
+					}
+				}
+			});
 			return false;
 		}
 	}
 
-	private class ChatMessage implements Callback<ChatCallbackArgs>
-	{
-		@Override
-		public boolean callback(final ChatCallbackArgs params)
-		{
-			if (params.getMessage() == null || params.getMessage().isEmpty())
-				return false;
-			
-	        // Check if the sender agent is muted
-	        if (params.getSourceType() == ChatSourceType.Agent)
-	        {
-	            for (MuteEntry me : _Main.getGridClient().Self.MuteList.values())
-	            {
-	                if (me.Type == MuteType.Resident && me.ID.equals(params.getSourceID()));
-	                	return false;
-	            }
-	        }
-
-	        // Check if sender object is muted
-	        if (params.getSourceType() == ChatSourceType.Object)
-	        {
-	           for (MuteEntry me : _Main.getGridClient().Self.MuteList.values())
-	            {
-	                if ((me.Type == MuteType.Resident && me.ID.equals(params.getOwnerID())) || // Owner muted
-	                    (me.Type == MuteType.Object && me.ID.equals(params.getSourceID())) || // Object muted by ID
-	                    (me.Type == MuteType.ByName && me.Name.equals(params.getFromName()))) // Object muted by name
-	                		return false;
-	            }
-	        }
-	        
-	        if (params.getMessage().startsWith("@") && _Main.isRLVenabled())
-	        {
-	        	_Main.getGridClient().RLV.tryProcessCommand(params);
-	        	return false;
-	        }
-	        
-	        String fromName = null;
-	        if (params.getSourceType() == ChatSourceType.Agent)
-	        {
-	        	fromName = _Main.getGridClient().Avatars.LocalAvatarNameLookup(params.getSourceID());
-	        }
-        	if (fromName == null || fromName.isEmpty())
-        		fromName = params.getFromName();
-        	
-	        final String name = fromName;
-			try
-			{
-				EventQueue.invokeLater(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-				        getCommWindow().printChatMessage(params.getSourceType(), params.getSourceID(), name, params.getMessage(), params.getType());
-					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
-			}
-	        return false;
-		}
-	}
-	
-	private class AlertMessage implements Callback<AlertMessageCallbackArgs>
+	private class AlertMessageCallback implements Callback<AlertMessageCallbackArgs>
 	{
 		@Override
 		public boolean callback(final AlertMessageCallbackArgs params)
 		{
-			try
+			//workaround the stupid autopilot alerts
+			if (!params.getAlert().toLowerCase().contains("autopilot canceled"))
 			{
 				EventQueue.invokeLater(new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						getCommWindow().printAlertMessage(params.getAlert(), null);
+			            try
+			            {
+			                AbstractChannel channel = _Main.getCommWindow().getChannel(null);
+			                channel.receiveMessage(null, null, Helpers.EmptyString, params.getAlert(), AbstractChannel.STYLE_SYSTEM);		
+			                _Main.getCommWindow().highlightChannel(channel, true);
+			        	}
+			            catch (BadLocationException ex)
+			            {
+			        		Logger.Log("Failed to send alert message", LogLevel.Error, _Main.getGridClient(), ex);
+			            }
 					}
 				});
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
-			}
+		 	}
 			return false;
 		}		
 	}
 	
-	private class InstantMessage implements Callback<InstantMessageCallbackArgs>
+    private class ChatMessageCallback implements Callback<ChatCallbackArgs>
+	{
+		@Override
+		public boolean callback(final ChatCallbackArgs params)
+		{
+			final GridClient client = _Main.getGridClient();
+			// Do some checks first to determine if we should ignore the message
+			switch (params.getSourceType())
+			{
+				case Agent:
+			        // Check if the sender agent is muted
+		            for (MuteEntry me : client.Self.MuteList.values())
+		            {
+		                if (me.Type == MuteType.Resident && me.ID.equals(params.getSourceID()));
+		                	return false;
+		            }
+		            break;
+				case Object:
+			        // Check if sender object is muted
+		            for (MuteEntry me : client.Self.MuteList.values())
+		            {
+		                if ((me.Type == MuteType.Resident && me.ID.equals(params.getOwnerID())) || // Owner muted
+		                    (me.Type == MuteType.Object && me.ID.equals(params.getSourceID())) || // Object muted by ID
+		                    (me.Type == MuteType.ByName && me.Name.equals(params.getFromName()))) // Object muted by name
+		                		return false;
+		            }
+			}
+	        
+			if (params.getMessage().startsWith("@") && client.RLV != null)
+	        {
+				client.RLV.tryProcessCommand(params);
+	        	return false;
+	        }
+
+			EventQueue.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					ChatSourceType sourceType = params.getSourceType();
+					UUID sourceID = params.getSourceID();
+					String message = params.getMessage();
+			        
+			        String fromName = null;
+			        if (sourceType == ChatSourceType.Agent)
+			        {
+			        	fromName = client.Avatars.LocalAvatarNameLookup(sourceID);
+			        }
+		        	if (fromName == null || fromName.isEmpty())
+		        		fromName = params.getFromName();
+		        	
+		            try
+		            {
+		                AbstractChannel channel = _Main.getCommWindow().getChannel(null);
+			            String style = AbstractChannel.STYLE_REGULAR;
+						StringBuilder localMessage = new StringBuilder();
+			            switch (params.getType())
+			            {
+		            		case StartTyping:
+		            			localMessage.append(fromName + " is typing");
+		            		case StopTyping:
+			                	channel.receiveStatus(sourceID, localMessage.toString(), AbstractChannel.STYLE_SYSTEM);
+			                	break;
+			                default:
+								if (message != null && !message.isEmpty())
+								{
+						            if (!message.toLowerCase().startsWith("/me "))
+						            {
+						            	switch (params.getType())
+						            	{
+						    				case Shout:
+						    					localMessage.append(" shouts");
+						    					break;
+						    				case Whisper:
+						    					localMessage.append(" whispers");
+						    					break;
+						            	}
+						            	localMessage.append(": ");
+						                if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && client.RLV != null && client.RLV.restrictionActive("recvchat", sourceID.toString()))
+						                	localMessage.append("...");
+						                else
+						                	localMessage.append(message);
+						    		}
+						            else
+						            {
+						                if (sourceType == ChatSourceType.Agent && client.RLV != null && client.RLV.restrictionActive("recvemote", sourceID.toString()))
+						                	localMessage.append(" ...");
+						                else
+						                	localMessage.append(message.substring(3));
+						                style = AbstractChannel.STYLE_ACTION;
+						            }
+
+						            switch (params.getSourceType())
+						            {
+						                case Agent:
+						                	if (fromName.endsWith("Linden"))
+						                		style = AbstractChannel.STYLE_SYSTEM;
+						                    break;
+
+						                case Object:
+						                    if (params.getType() == ChatType.OwnerSay)
+						                    {
+						                        style = AbstractChannel.STYLE_OBJECT;
+						                    }
+						                    else
+						                    {
+						                        style = AbstractChannel.STYLE_OBJECT;
+						                    }
+						                    break;
+						            }
+
+					                channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
+					                _Main.getCommWindow().highlightChannel(channel, true);
+								}
+			            }
+			        }
+			        catch (Exception ex)
+			        {
+			        	Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, client, ex);
+			        }
+				}
+			});
+	        return false;
+		}
+	}
+	
+	private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
 		public boolean callback(final InstantMessageCallbackArgs params)
 		{
-			try
+			EventQueue.invokeLater(new Runnable()
 			{
-				EventQueue.invokeLater(new Runnable()
+				@Override
+				public void run()
 				{
-					@Override
-					public void run()
+					InstantMessage message = params.getIM();
+					GridClient client = _Main.getGridClient();
+					AbstractChannel channel = _Main.getCommWindow().getChannel(message.FromAgentID);
+					if (channel == null && (message.Message == null || message.Message.isEmpty()))
 					{
-						getCommWindow().printInstantMessage(params.getIM());
+						// if the channel doesn't exist yet and we don't have a real message to report, return now
+						return;
 					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
-			}
+					
+					if (message.GroupIM)
+					{
+						if (channel == null)
+						{
+							channel = new GroupChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+							_Main.getCommWindow().addChannel(channel);
+						}
+					}
+					else
+					{
+						if (channel == null)
+						{
+							channel = new PrivateChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+							_Main.getCommWindow().addChannel(channel);
+						}
+					}
+
+					try
+					{
+						String style = AbstractChannel.STYLE_OBJECT;
+						String localMessage = null;
+						switch (message.Dialog)
+						{
+							case StartTyping:
+								localMessage = message.FromAgentName + " is typing";
+							case StopTyping:
+			                	channel.receiveStatus(message.FromAgentID, localMessage, AbstractChannel.STYLE_SYSTEM);
+			                	break;
+							case MessageFromAgent:
+								style = AbstractChannel.STYLE_REGULAR;
+							case MessageFromObject:
+								if (message.Offline == InstantMessageOnline.Offline)
+									style = AbstractChannel.STYLE_OFFLINE;
+
+								if (client.RLV != null && client.RLV.restrictionActive("recvchat", message.FromAgentID.toString()))
+								{
+									localMessage = "*** IM blocked by your viewer";
+									client.Self.InstantMessage(client.Self.getName(), params.getIM().FromAgentID,
+											 "***  The Resident you messaged is prevented from reading your instant messages at the moment, please try again later.",
+											params.getIM().IMSessionID, InstantMessageDialog.BusyAutoResponse, InstantMessageOnline.Offline);
+									
+								}
+								if (message.Message.toLowerCase().startsWith("/me "))
+					            {
+					            	localMessage = message.Message.substring(3);
+					            }
+								else
+								{
+									localMessage = ": " + message.Message;
+								}
+					            channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, localMessage, style);
+								_Main.getCommWindow().highlightChannel(channel, true);
+						}
+					}
+				    catch (Exception ex)
+				    {
+						Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
+				    }
+				}
+			});
 			return false;
 		}		
 	}
@@ -454,31 +585,34 @@ public class OnlinePanel extends JPanel implements ActionListener
 	/**
 	 * Triggered when online status changes are reported
 	 */
-	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
+	private class FriendNotificationCallback implements Callback<FriendNotificationCallbackArgs>
 	{
 		@Override
 		public boolean callback(final FriendNotificationCallbackArgs e)
 		{
-			try
+			EventQueue.invokeLater(new Runnable()
 			{
-				EventQueue.invokeLater(new Runnable()
+				@Override
+				public void run()
 				{
-					@Override
-					public void run()
+				    AbstractChannel channel = _Main.getCommWindow().getChannel(null);
+					String message = e.getOnline() ? " is online" : " is offline";
+					GridClient client = _Main.getGridClient();
+					for (UUID uuid : e.getAgentID())
 					{
-						String message = e.getOnline() ? " is online" : " is offline";
-						for (UUID uuid : e.getAgentID())
-						{
-				        	FriendInfo info = _Main.getGridClient().Friends.getFriendList().get(uuid);
-							getCommWindow().printAlertMessage(info.getName() + message, AbstractChannel.STYLE_INFORMATIONAL);
+			        	FriendInfo info = client.Friends.getFriendList().get(uuid);
+					    try
+					    {
+							channel.receiveMessage(null, uuid, info.getName(), message, AbstractChannel.STYLE_INFORMATIONAL);
+							_Main.getCommWindow().highlightChannel(channel, true);
 						}
+					    catch (BadLocationException ex)
+					    {
+					    	Logger.Log("Failed to print alert message", LogLevel.Error, client, ex);
+					    }
 					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
-			}
+				}
+			});
 			return false;
 		}
 	}
@@ -486,7 +620,7 @@ public class OnlinePanel extends JPanel implements ActionListener
 	/**
 	 * Triggered when a user has accepted or declined our friendship offer
 	 */
-	private class FriendshipResponse implements Callback<FriendshipResponseCallbackArgs>
+	private class FriendshipResponseCallback implements Callback<FriendshipResponseCallbackArgs>
 	{
 		@Override
 		public boolean callback(FriendshipResponseCallbackArgs e)
@@ -495,22 +629,15 @@ public class OnlinePanel extends JPanel implements ActionListener
 			final String title = "Friendship " + verb;
 			final String message = e.getName() + " has " + verb + " your friendship offer.";
 
-			try
+			EventQueue.invokeLater(new Runnable()
 			{
-				EventQueue.invokeLater(new Runnable()
+				@Override
+				public void run()
 				{
-					@Override
-					public void run()
-					{
-						/* Show dialog informing about the decision of the other */
-						JOptionPane.showMessageDialog(_Main.getMainJFrame(), message, title, JOptionPane.PLAIN_MESSAGE);		
-					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Error invoking to send alert message to local chat", LogLevel.Error, _Main.getGridClient(), ex);
-			}
+					/* Show dialog informing about the decision of the other */
+					JOptionPane.showMessageDialog(_Main.getMainJFrame(), message, title, JOptionPane.PLAIN_MESSAGE);		
+				}
+			});
 			return false;
 		}
 	}
@@ -518,52 +645,36 @@ public class OnlinePanel extends JPanel implements ActionListener
 	/**
 	 * Triggered when a user has sent us a friendship offer
 	 */
-	private class FriendshipOffered implements Callback<FriendshipOfferedCallbackArgs>
+	private class FriendshipOfferedCallback implements Callback<FriendshipOfferedCallbackArgs>
 	{
 		@Override
-		public boolean callback(FriendshipOfferedCallbackArgs e)
+		public boolean callback(final FriendshipOfferedCallbackArgs e)
 		{
-			final String message = e.getName() + " wants to be your friend. Do you accept this request?";
-			final AtomicBoolean accept = new AtomicBoolean(false);
-			GridClient client = _Main.getGridClient();
-
-			try
+			EventQueue.invokeLater(new Runnable()
 			{
-				EventQueue.invokeAndWait(new Runnable()
+				@Override
+				public void run()
 				{
-					@Override
-					public void run()
+					GridClient client = _Main.getGridClient();
+					/* Prompt user for acceptance of friendship offer */
+					int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), e.getName() + " wants to be your friend. Do you accept this request?", "Friendship Request", JOptionPane.YES_NO_OPTION);
+					try
 					{
-						/* Prompt user for acceptance of friendship offer */
-						int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), message, "Friendship Request", JOptionPane.YES_NO_OPTION);
-						accept.set(result == JOptionPane.OK_OPTION);
+						if (result == JOptionPane.OK_OPTION)
+						{
+							client.Friends.AcceptFriendship(e.getFriendID(), e.getSessionID());
+						}
+						else
+						{
+							client.Friends.DeclineFriendship(e.getFriendID(), e.getSessionID());
+						}
 					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Error invoking option dialog", LogLevel.Error, client, ex);
-			}
-
-			try
-			{
-				if (accept.get())
-				{
-					client.Friends.AcceptFriendship(e.getFriendID(), e.getSessionID());
+					catch (Exception ex)
+					{
+				    	Logger.Log("Failed to answer to friendship offer", LogLevel.Error, client, ex);
+					}
 				}
-				else
-				{
-					client.Friends.DeclineFriendship(e.getFriendID(), e.getSessionID());
-				}
-			}
-			catch (InventoryException ex)
-			{
-				Logger.Log("Inventory Exception", LogLevel.Error, client, ex);
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Exception sending response", LogLevel.Error, client, ex);
-			}
+			});
 			return false;
 		}
 	}
@@ -571,15 +682,21 @@ public class OnlinePanel extends JPanel implements ActionListener
 	/**
 	 * Triggered when a user has removed us from their friends list
 	 */
-	private class FriendshipTerminated implements Callback<FriendshipTerminatedCallbackArgs>
+	private class FriendshipTerminatedCallback implements Callback<FriendshipTerminatedCallbackArgs>
 	{
 		@Override
-		public boolean callback(FriendshipTerminatedCallbackArgs e)
+		public boolean callback(final FriendshipTerminatedCallbackArgs e)
 		{
-			/* Inform user about the friendship termination */
-			JOptionPane.showMessageDialog(_Main.getMainJFrame(), e.getName() + " terminated the friendship.", 
-					                                   "Friendship Termination", JOptionPane.PLAIN_MESSAGE);
-
+			EventQueue.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					/* Inform user about the friendship termination */
+					JOptionPane.showMessageDialog(_Main.getMainJFrame(), e.getName() + " terminated the friendship.", 
+							                                   "Friendship Termination", JOptionPane.PLAIN_MESSAGE);
+				}
+			});
 			return false;
 		}
 	}
@@ -587,26 +704,31 @@ public class OnlinePanel extends JPanel implements ActionListener
 	/**
 	 * Triggered when a someone invites us to a group
 	 */
-	private class GroupInvitation implements Callback<GroupInvitationCallbackArgs>
+	private class GroupInvitationCallback implements Callback<GroupInvitationCallbackArgs>
 	{
 		@Override
-		public boolean callback(GroupInvitationCallbackArgs args)
+		public boolean callback(final GroupInvitationCallbackArgs args)
 		{
-			final UUID groupID = args.getGroupID();
-			final UUID session = args.getSessionID();
-
-			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
-													   " has invited you to join a group with following message '" +
-					                                   args.getMessage() + "'. Do you accept this offer?",
-                                                       "Group Invitation", JOptionPane.YES_NO_OPTION);		
-			try
+			EventQueue.invokeLater(new Runnable()
 			{
-				_Main.getGridClient().Self.GroupInviteRespond(groupID, session, result == JOptionPane.OK_OPTION);
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Exception when trying to respond to group invitation", LogLevel.Error, _Main.getGridClient(), ex);
-			}
+				@Override
+				public void run()
+				{
+					GridClient client = _Main.getGridClient();
+					int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), args.getFromName() +
+															   " has invited you to join a group with following message '" +
+							                                   args.getMessage() + "'. Do you accept this offer?",
+		                                                       "Group Invitation", JOptionPane.YES_NO_OPTION);		
+					try
+					{
+						client.Self.GroupInviteRespond(args.getGroupID(), args.getSessionID(), result == JOptionPane.OK_OPTION);
+					}
+					catch (Exception ex)
+					{
+						Logger.Log("Exception when trying to respond to group invitation", LogLevel.Error, client, ex);
+					}
+				}
+			});
 			return false;
 		}
 	}

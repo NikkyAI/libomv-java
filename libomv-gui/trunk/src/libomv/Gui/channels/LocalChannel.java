@@ -50,6 +50,8 @@ import libomv.types.UUID;
 public class LocalChannel extends AbstractChannel
 {
 	private static final long serialVersionUID = 1L;
+	
+	private boolean printLocalMessage = false;
 
 	private JScrollPane jScrpAttendents; 
 	private int chatChannel = 0;
@@ -100,24 +102,34 @@ public class LocalChannel extends AbstractChannel
 	@Override
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
-		if(message == null || message.isEmpty())
-			return;
-		
-		// Determine if this is a friend...
-		boolean friend = false;
-		if (fromId == null)
-			friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
-		
-		// If this is an action message.
-		if(message.startsWith("/me "))
+		boolean self = fromId != null && fromId.equals(_Main.getGridClient().Self.getAgentID());
+		// Did we already print that message?
+		if (!(self  && printLocalMessage))
 		{
-			// Remove the "/me ".
-			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), style != null ? style : STYLE_ACTION));
-		}
-		else
-		{
-			// This is a normal message.
-			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style != null ? style : STYLE_REGULAR));
+			String chatStyle = STYLE_CHATREMOTE;
+			if (self)
+			{
+				chatStyle = STYLE_CHATLOCAL;
+			}
+			// Determine if this is a friend...
+			else if (_Main.getGridClient().Friends.getFriendList().containsKey(fromId))
+			{
+				chatStyle = STYLE_CHATREMOTEFRIEND;
+			}
+		
+			// If this is an action message
+			if (message.startsWith("/me "))
+			{
+				style = style != null ? style : STYLE_ACTION;
+				// Remove the "/me"
+				message = message.substring(3);
+			}
+			else if (style == null)
+			{
+				 style = STYLE_REGULAR;
+				 message = ": " + message;
+			}
+			addMessage(new ChatItem(timestamp, fromName, chatStyle, message, style));
 		}
 	}
 
@@ -127,11 +139,17 @@ public class LocalChannel extends AbstractChannel
         	return;
 
         int channel = 0;
-		String self = _Main.getGridClient().Self.getName();
+		String shortMessage, style = STYLE_REGULAR,
+			   self = _Main.getGridClient().Self.getName();
+
+        if (message.length() >= 1000)
+        {
+        	message = message.substring(0, 1000);
+        }
 		addHistory(message);	
 
 		// Do we have a command?
-		if(message.charAt(0) == '/')
+		if (message.charAt(0) == '/')
 		{
 			String firstWord = "";
 			try
@@ -140,31 +158,33 @@ public class LocalChannel extends AbstractChannel
 			}
 			catch(Exception ex) { }
 
-			String localMessage = message.substring(firstWord.length()).trim();
+			shortMessage = message.substring(firstWord.length()).trim();
 
 			// Deal with actions.
-			if(firstWord.equals("/me"))
+			if (firstWord.equals("/me"))
 			{
-				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
+				style = STYLE_ACTION;
 				// Send the message as is
 			}
 			// Shout
-			else if((firstWord.equals("/shout")) || (firstWord.equals("/s")))
+			else if ((firstWord.startsWith("/shout")) || (firstWord.equals("/s")))
 			{
 				chatType = ChatType.Shout;
-				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "shouts: " + localMessage, STYLE_ACTION));
-				// Remove the shout command from the message
-				message = message.substring(firstWord.length()).trim();
+				style = STYLE_ACTION;
+				// Send the message without the /shout command
+				message = shortMessage;
+				shortMessage = " shouts: " + shortMessage;
 			}
 			// Whisper
-			else if((firstWord.equals("/whisper")) || (firstWord.equals("/w")))
+			else if ((firstWord.startsWith("/whisper")) || (firstWord.equals("/w")))
 			{
 				chatType = ChatType.Whisper;
-				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "whispers: " + localMessage, STYLE_ACTION));
-				// Remove the whisper command from the message
-				message = message.substring(firstWord.length()).trim();
+				style = STYLE_ACTION;
+				// Send the message without the /whisper command
+				message = shortMessage;
+				shortMessage = " whispers: " + shortMessage;
 			} 
-			else if(firstWord.length() > 1)
+			else if (firstWord.length() > 1)
 			{
 				// Is there a channel request?
 				if (firstWord.equals("//"))
@@ -179,28 +199,38 @@ public class LocalChannel extends AbstractChannel
 						channel = Integer.parseInt(firstWord.substring(1));
 						chatChannel = channel;
 					}
-					catch(Exception ex) { }
+					catch (Exception ex) { }
 				}
+
 				if (channel != 0)
 				{
-					localMessage = "(" + channel + ") " + localMessage;
+					message = shortMessage;
 					// Remove the channel command from the message
-					message = message.substring(firstWord.length()).trim();
+					shortMessage = "(" + channel + ") " + shortMessage;
 				}
-				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, localMessage, STYLE_REGULAR));
+				else
+				{
+					shortMessage = ": " + shortMessage;
+				}
 			}
 		}
 		else
 		{
-			addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
+			shortMessage = ": " + message;
 		}
+
+		if (printLocalMessage)
+		{
+			addMessage(new ChatItem(self, STYLE_CHATLOCAL, shortMessage, style));
+		}
+
 		// Send the message.
 		_Main.getGridClient().Self.Chat(message, channel, chatType);
 	}
 	
 	protected void triggerTyping(boolean start) throws Exception
 	{
-		_Main.getGridClient().Self.Chat("", 0, start ? ChatType.StartTyping : ChatType.StopTyping);		
+		_Main.getGridClient().Self.Chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);		
 	}
 
 	private JScrollPane getJScrpAttendents()

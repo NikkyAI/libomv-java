@@ -46,6 +46,7 @@ public interface MainControl extends ActionListener
 {
 	public static final String cmdOnline = "online";
 	public static final String cmdLogout = "logout";
+	public static final String cmdLogin = "login";
 	public static final String cmdQuit = "quit";
 	public static final String cmdAbout = "about";
 	public static final String cmdBugs = "bugs";
@@ -63,6 +64,5 @@ public interface MainControl extends ActionListener
 	public CommWindow getCommWindow();
 	public FriendList getFriendList();
 	public GroupList getGroupList();
-	public boolean isRLVenabled();
 	public void setContentArea(Component pane);
 }

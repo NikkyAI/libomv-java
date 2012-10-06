@@ -96,34 +96,42 @@ public class GroupChannel extends AbstractChannel
 	@Override
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
-		if(message == null || message.isEmpty())
-			return;
-		
 		// Determine if this is a friend...
 		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
 		
 		// If this is an action message.
-		if(message.startsWith("/me "))
+		if (message.startsWith("/me "))
 		{
-			// Remove the "/me ".
-			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), STYLE_ACTION));
+			style = STYLE_ACTION;
+			// Remove the "/me".
+			message = message.substring(3);
 		}
-		else
+		else if (style == null)
 		{
+			style = STYLE_REGULAR;
 			// This is a normal message.
-			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, STYLE_REGULAR));
+			message = ": " + message;
 		}
+		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style));
+	}
+
+	@Override
+	public void receiveStatus(UUID sourceID, final String message, final String style) throws BadLocationException
+	{
+		
 	}
 
 	@Override
 	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception
 	{
-        if (message == null || message.trim().isEmpty())
-        	return;
-
 		String self = _Main.getGridClient().Self.getName();
-		addHistory(message);	
 
+		if (message.length() >= 1000)
+        {
+        	message = message.substring(0, 1000);
+        }
+		addHistory(message);	
+		
 		// Do we have an action command?
 		if(message.charAt(0) == '/')
 		{
@@ -138,13 +146,13 @@ public class GroupChannel extends AbstractChannel
 			// Deal with actions.
 			if(firstWord.equals("/me"))
 			{
-				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
+				addMessage(new ChatItem(self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
 			}
 		}
 		else
 		{
 			// Normal
-			addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
+			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + message, STYLE_REGULAR));
 		}
 		// Indicate that we're no longer typing.
 		super.transmitMessage(message, type);

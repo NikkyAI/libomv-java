@@ -43,8 +43,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 
-import libomv.AgentManager.ChatSourceType;
-import libomv.AgentManager.ChatType;
 import libomv.AgentManager.InstantMessage;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.Gui.channels.AbstractChannel;
@@ -88,30 +86,40 @@ public class CommWindow extends JFrame
         setVisible(true);
 	}
 	
-	public boolean existsChannel(UUID uuid)
+	/**
+	 * Return the chat channel component for the uuid
+	 * 
+	 * @param uuid The uuid identifying the channel (avatar uuid or group uuid, null returns the local chat channel)
+	 * @return the AbstractChannel object to communicate with
+	 */
+	public AbstractChannel getChannel(UUID uuid)
 	{
-		return channels.containsKey(uuid);
+		if (uuid == null || uuid.equals(UUID.Zero))
+		{
+			if (localChat == null)
+			{
+				localChat = new LocalChannel(_Main);
+			}
+			return localChat;
+		}
+		return channels.get(uuid);
 	}
 	
 	/**
 	 * Make the correct tab active
 	 * 
 	 * @param focus The main tab to activate. Possible values:
-	 *             null, ""              : communication channels
-	 *             OnlinePanel.cmdFriends: friend list
-	 *             OnlinePanel.cmdGroups : group list
-	 * @param uuid The channel UUID to activate. This parameter is only relevant for the 
+	 *             null or empty          : communication channels
+	 *             OnlinePanel.cmdFriends : friend list
+	 *             OnlinePanel.cmdGroups  : group list
+	 * @param uuid The channel UUID to activate. null activates the local chat channel 
 	 */
 	
 	public void setFocus(String focus, UUID uuid)
 	{
 		if (focus == null || focus.isEmpty())
 		{
-			int index = 0;
-			if (uuid != null && !uuid.equals(UUID.Zero))
-				index = getJTpComm().indexOfComponent(channels.get(uuid));
-			if (index >= 0)
-				getJTpComm().setSelectedIndex(index);
+			getJTpComm().setSelectedIndex(getJTpComm().indexOfComponent(getChannel(uuid)));
 		}
 		else
 		{
@@ -126,133 +134,7 @@ public class CommWindow extends JFrame
 			}
 		}
 	}
-	
-	public void printAlertMessage(String alertMessage, String style)
-	{
-        if (alertMessage.toLowerCase().contains("autopilot canceled"))
-        	return; //workaround the stupid autopilot alerts
 
-        AbstractChannel channel = getLocalChannel();
-        try
-        {
-			channel.receiveMessage(null, null, "Alert message", alertMessage, style != null ? style : AbstractChannel.STYLE_SYSTEM);
-			highlightChannel(channel, true);
-		}
-        catch (BadLocationException ex)
-        {
-			Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
-        }
-	}
-	
-	public void printChatMessage(ChatSourceType sourceType, UUID sourceID, String fromName, String message, ChatType type)
-	{
-        
-        StringBuilder localMessage = new StringBuilder();
-        boolean isEmote = message.toLowerCase().startsWith("/me ");
-
-        if (!isEmote)
-        {
-        	switch (type)
-        	{
-				case Shout:
-					localMessage.append(" shouts");
-					break;
-				case Whisper:
-					localMessage.append(" whispers");
-					break;
-        	}
-        	localMessage.append(": ");
-            if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && _Main.isRLVenabled() && _Main.getGridClient().RLV.restrictionActive("recvchat", sourceID.toString()))
-            	localMessage.append("...");
-            else
-            	localMessage.append(message);
-		}
-        else
-        {
-            if (sourceType == ChatSourceType.Agent && _Main.isRLVenabled() && _Main.getGridClient().RLV.restrictionActive("recvemote", sourceID.toString()))
-            	localMessage.append(" ...");
-            else
-            	localMessage.append(message.substring(3));       	
-        }
-
-        String style = null;
-        switch (sourceType)
-        {
-            case Agent:
-                style = (fromName.endsWith("Linden") ? AbstractChannel.STYLE_SYSTEM : AbstractChannel.STYLE_REGULAR);
-                break;
-
-            case Object:
-                if (type == ChatType.OwnerSay)
-                {
-                    style = AbstractChannel.STYLE_OBJECT;
-                }
-                else
-                {
-                    style = AbstractChannel.STYLE_OBJECT;
-                }
-                break;
-        }
-        try
-        {
-            AbstractChannel channel = getLocalChannel();
-            channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
-    		highlightChannel(channel, true);
-    	}
-        catch (BadLocationException ex)
-        {
-    		Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
-        }
-	}
-	
-	public void printInstantMessage(InstantMessage message)
-	{
-		AbstractChannel channel = channels.get(message.FromAgentID);
-		if (channel == null && (message.Message == null || message.Message.isEmpty()))
-		{
-			// if the channel doesn't exist yet and we don't have a real message to report, return now
-			return;
-		}
-		
-		if (message.GroupIM)
-		{
-			if (channel == null)
-			{
-				channel = new GroupChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
-				addChannel(channel);
-			}
-		}
-		else
-		{
-			if (channel == null)
-			{
-				channel = new PrivateChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
-				addChannel(channel);
-			}
-		}
-		String style = null;
-		if (message.Offline == InstantMessageOnline.Offline)
-			style = AbstractChannel.STYLE_OFFLINE;
-		try
-		{
-			channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, message.Message, style);
-			highlightChannel(channel, true);
-		}
-	    catch (BadLocationException ex)
-	    {
-			Logger.Log("Failed to print alert message", LogLevel.Error, _Main.getGridClient(), ex);
-	    }
-	}
-	
-	private LocalChannel getLocalChannel()
-	{
-		if (localChat == null)
-		{
-			localChat = new LocalChannel(_Main);
-		}
-		return localChat;
-	}
-	
 	private JTabbedPane getJTpComm()
 	{
 		if (jTpComm == null)
@@ -262,7 +144,7 @@ public class CommWindow extends JFrame
 			jTpComm.setBorder(new LineBorder(new Color(0, 0, 0)));
 
 			jTpComm.add("Contacts", getJTpContacts());
-			jTpComm.add("Local Chat", getLocalChannel());
+			jTpComm.add("Local Chat", getChannel(null));
 			// Install container listener so we can detect tab panes removed through the tab close button
 			jTpComm.addContainerListener(new ContainerListener()
 			{

@@ -768,7 +768,7 @@ public class FriendList extends JPanel implements ActionListener
 			// Only allow creation of a chat window if the avatar name is resolved.
 			if (info.getName() != null && !info.getName().isEmpty())
 			{
-				if (!_Main.getCommWindow().existsChannel(info.getID()))
+				if (_Main.getCommWindow().getChannel(info.getID()) == null)
 				{
 					PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(), new UUID());
 					_Main.getCommWindow().addChannel(channel);

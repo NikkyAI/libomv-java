@@ -33,12 +33,15 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import libomv.GridClient;
@@ -48,6 +51,8 @@ import libomv.Gui.components.OnlinePanel;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
 import libomv.Gui.dialogs.AboutDialog;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 import libomv.utils.Settings;
 
 public class MainWindow extends JFrame implements MainControl
@@ -84,7 +89,15 @@ public class MainWindow extends JFrame implements MainControl
 		setSize(1024, 800);
 		setPreferredSize(new Dimension(640, 480));
 		setMinimumSize(new Dimension(640, 480));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+			@Override
+            public void windowClosing(WindowEvent e)
+            {
+               	actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, cmdQuit));
+            }
+        });
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		initializeLoginPanel();
 	}
 	
@@ -102,11 +115,6 @@ public class MainWindow extends JFrame implements MainControl
 	{
 		return _Settings;
 	}	
-
-	public boolean isRLVenabled()
-	{
-		return _Client.RLV != null && _Client.RLV.isEnabled();
-	}
 
 	public CommWindow getCommWindow()
 	{
@@ -196,15 +204,29 @@ public class MainWindow extends JFrame implements MainControl
 		}
 		else if (action.equals(MainControl.cmdQuit))
 		{
-		    try
-		    {
-				_Client.Network.Logout();
-			}
-		    catch (Exception e1)
+			if (_Client.Network.getConnected())
 			{
-				e1.printStackTrace();
+                int confirm = JOptionPane.showOptionDialog(MainWindow.this,
+                        "Are You Sure to Logout from the network and Close this Application?",
+                        "Quit Confirmation", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, null, null);
+                if (confirm == JOptionPane.YES_OPTION)
+                {
+         		    try
+        		    {
+        				_Client.Network.Logout();
+        			}
+        		    catch (Exception ex)
+        			{
+						Logger.Log("Response to teleportation invite failed", LogLevel.Error, _Client, ex);
+        			}
+        			System.exit(0);			
+                }
 			}
-			System.exit(0);			
+			else
+			{
+    			System.exit(0);			
+			}
 		}
 	}
 

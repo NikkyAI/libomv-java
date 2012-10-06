@@ -444,7 +444,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdStartIM))
 		{
-			if (!_Main.getCommWindow().existsChannel(info.getID()))
+			if (_Main.getCommWindow().getChannel(info.getID()) == null)
 			{
 				GroupChannel channel = new GroupChannel(_Main, info.getName(), info.getID(), info.getID());
 				_Main.getCommWindow().addChannel(channel);

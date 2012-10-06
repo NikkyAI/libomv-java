@@ -102,6 +102,7 @@ public class AboutDialog extends JDialog
 			jTxtLicenses.setText(Resources.loadTextFile("Licenses.txt"));
 			JScrollPane jScrLicense = new JScrollPane();
 			jScrLicense.setViewportView(jTxtLicenses);
+			jScrLicense.getVerticalScrollBar().setValue(0);
 			
 			JTextArea jTxtCredits = new JTextArea();
 			jTxtCredits.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -111,6 +112,7 @@ public class AboutDialog extends JDialog
 			jTxtCredits.setText(Resources.loadTextFile("Credits.txt"));
 			JScrollPane jScrCredits = new JScrollPane();
 			jScrCredits.setViewportView(jTxtCredits);
+			jScrCredits.getVerticalScrollBar().setValue(0);
 			
 			JButton jBtnClose = new JButton("Close");
 			jBtnClose.addActionListener(new ActionListener()

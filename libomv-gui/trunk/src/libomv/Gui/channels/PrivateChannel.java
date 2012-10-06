@@ -54,25 +54,23 @@ public class PrivateChannel extends AbstractChannel
 	@Override
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
-		if (message == null || message.isEmpty())
-		{
-			return;
-		}
-
 		// Determine if this is a friend...
 		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
 		
 		// If this is an action message.
 		if (message.startsWith("/me "))
 		{
-			// Remove the "/me ".
-			addMessage(new ChatItem(timestamp, true, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message.substring(4), style != null ? style : STYLE_ACTION));
+			style = STYLE_ACTION;
+			// Remove the "/me".
+			message = message.substring(3);
 		}
-		else
+		else if (style == null) 
 		{
-			// This is a normal message.
-			addMessage(new ChatItem(timestamp, false, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style != null ? style : STYLE_REGULAR));
+			style = STYLE_REGULAR;
+			message = ": " + message;
 		}
+		// This is a normal message.
+		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style));
 	}
 
 	@Override
@@ -84,17 +82,36 @@ public class PrivateChannel extends AbstractChannel
 		String self = _Main.getGridClient().Self.getName();
 		if (getUUID() != null)
 		{
+	        if (message.length() >= 1000)
+	        {
+	        	message = message.substring(0, 1000);
+	        }
 			addHistory(message);	
 
+            if (isRLVrestrictionActive("sendim", getUUID()))
+            {
+            	message = "*** IM blocked by sender's viewer";
+            }
+            
 			// Deal with actions.
 			if (message.toLowerCase().startsWith("/me "))
 			{
 				// Remove the "/me "
-				addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, message.substring(4).trim(), STYLE_ACTION));
+				addMessage(new ChatItem(self, STYLE_CHATLOCAL, " " + message.substring(4).trim(), STYLE_ACTION));
 			}
 			else
 			{
-				addMessage(new ChatItem(false, self, STYLE_CHATLOCAL, message, STYLE_REGULAR));
+				switch (type)
+				{
+					case Shout:
+						addMessage(new ChatItem(self, STYLE_CHATLOCAL, " shouts: " + message, STYLE_ACTION));
+						break;
+					case Whisper:
+						addMessage(new ChatItem(self, STYLE_CHATLOCAL, " whispers: " + message, STYLE_ACTION));;
+						break;
+					default:
+						addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + message, STYLE_REGULAR));
+				}
 			}
 			// Indicate that we're no longer typing.
 			super.transmitMessage(message, type);
@@ -104,7 +121,7 @@ public class PrivateChannel extends AbstractChannel
 		}
 		else
 		{
-			addMessage(new ChatItem(true, self, STYLE_CHATLOCAL, "Invalid UUID for this chat channel", STYLE_ERROR));			
+			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": Invalid UUID for this chat channel", STYLE_ERROR));			
 		}
 	}
 
