@@ -779,7 +779,7 @@ public class FriendList extends JPanel implements ActionListener
 		else if (e.getActionCommand().equals(cmdFriendRemove))
 		{
 			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), "Do you really want to remove " + info.getName() + 
-					                                   " as friend?", "Friend removal", JOptionPane.YES_NO_OPTION);		
+					                                   " as friend?", "Remove Friend", JOptionPane.YES_NO_OPTION);		
 			if (result == JOptionPane.OK_OPTION)
 			{
 				try

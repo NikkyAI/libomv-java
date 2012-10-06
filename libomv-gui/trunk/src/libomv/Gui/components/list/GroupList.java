@@ -457,9 +457,10 @@ public class GroupList extends JScrollPane implements ActionListener
 				}
 				catch (Exception ex)
 				{
-					Logger.Log("LeaveGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
+					Logger.Log("Start GroupIM failed", LogLevel.Error, _Main.getGridClient(), ex);
 				}
 			}
+			_Main.getCommWindow().setFocus(null, info.getID());
 		}
 		else if (e.getActionCommand().equals(cmdActivate))
 		{
@@ -469,7 +470,7 @@ public class GroupList extends JScrollPane implements ActionListener
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("ActivateGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
+				Logger.Log("Activate Group failed", LogLevel.Error, _Main.getGridClient(), ex);
 			}
 		}
 		else if (e.getActionCommand().equals(cmdLeaveGroup))
@@ -481,7 +482,7 @@ public class GroupList extends JScrollPane implements ActionListener
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("LeaveGroup failed", LogLevel.Error, _Main.getGridClient(), ex);
+				Logger.Log("Leave Group failed", LogLevel.Error, _Main.getGridClient(), ex);
 			}
 		}
 		else if (e.getActionCommand().equals(cmdSearchGroup))
