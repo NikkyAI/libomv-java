@@ -279,12 +279,14 @@ public class mapgenerator
 			case FieldType.Variable:
 				if (field.count == 1)
 				{
-					writer.println("copyByteArray1(bytes, _" + fieldName.toLowerCase() + ");");
+					writer.print("bytes.put((byte)_");
 				}
 				else
 				{
-					writer.println("copyByteArray2(bytes, _" + fieldName.toLowerCase() + ");");
+					writer.print("bytes.putShort((short)_");
 				}
+				String varName = fieldName.toLowerCase();
+				writer.println(varName + ".length);\n" + lead + "bytes.put(_" + varName + ");");
 				break;
 			default:
 				writer.println("!!! ERROR: Unhandled FieldType: " + field.type + " !!!");
@@ -421,7 +423,7 @@ public class mapgenerator
 				if (field.type == FieldType.Variable)
 				{
 					String fieldName = protocol.keywordPosition(field.keywordIndex);
-					writer.println("            if (_" + fieldName.toLowerCase() + " != null) { length += " + (field.count + 1)
+					writer.println("            if (_" + fieldName.toLowerCase() + " != null) { length += " + field.count
 							+ " + _" + fieldName.toLowerCase() + ".length; }");
 				}
 			}
@@ -1188,14 +1190,6 @@ public class mapgenerator
 					+ "    public abstract ByteBuffer ToBytes() throws Exception;\n\n"
 					+ "    public ByteBuffer[] ToBytesMultiple()\n    {\n"
 					+ "         throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n    }\n\n"
-					+ "    protected void copyByteArray1(ByteBuffer bytes, byte[] data)\n    {\n"
-					+ "         bytes.put((byte)(data.length + 1));\n"
-					+ "         bytes.put(data);\n"
-					+ "         bytes.put((byte)0);\n    }\n\n"
-					+ "    protected void copyByteArray2(ByteBuffer bytes, byte[] data)\n    {\n"
-					+ "         bytes.putShort((short)(data.length + 1));\n"
-					+ "         bytes.put(data);\n"
-					+ "         bytes.put((byte)0);\n    }\n\n"
 					+ "    //Get the PacketType for a given packet id and packet frequency\n"
 					+ "    //<param name=\"id\">The packet ID from the header</param>\n"
 					+ "    //<param name=\"frequency\">Frequency of this packet</param>\n"
