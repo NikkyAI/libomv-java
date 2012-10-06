@@ -1837,14 +1837,17 @@ public class Helpers
 	 */
 	public static byte[] StringToBytes(String str)
 	{
-		if (str.length() == 0)
+		int length = str.length();
+		if (length == 0)
 		{
 			return Helpers.EmptyBytes;
 		}
 
 		try
 		{
-			return str.getBytes(UTF8_ENCODING);
+			byte[] bytes = new byte[length + 1];
+			System.arraycopy(str.getBytes(UTF8_ENCODING), 0, bytes, 0, length);
+			return bytes;
 		}
 		catch (UnsupportedEncodingException ex)
 		{
