@@ -103,7 +103,6 @@ public class GridEditor extends JDialog
 	private JButton jBtnAdd;
 	private JButton jBtnRemove;
 	private JButton jBtnSetDefault;
-	private GridBagConstraints gbConstraints_1;
 
 	public GridEditor(MainControl main, String title, boolean modal)
 	{
@@ -300,12 +299,12 @@ public class GridEditor extends JDialog
 		gbConstraints.gridy = 12;
 		jEditPanel.add(jLblCurrencySymbol, gbConstraints);
 
-		gbConstraints_1 = new GridBagConstraints();
-		gbConstraints_1.anchor = GridBagConstraints.WEST;
-		gbConstraints_1.insets = new Insets(5, 0, 5, 5);
-		gbConstraints_1.gridx = 2;
-		gbConstraints_1.gridy = 12;
-		jEditPanel.add(getJTxtCurrencySym(), gbConstraints_1);
+		gbConstraints = new GridBagConstraints();
+		gbConstraints.anchor = GridBagConstraints.WEST;
+		gbConstraints.insets = new Insets(5, 0, 5, 5);
+		gbConstraints.gridx = 2;
+		gbConstraints.gridy = 12;
+		jEditPanel.add(getJTxtCurrencySym(), gbConstraints);
 
 		getRootPane().setDefaultButton(getJBtnOk());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
