@@ -43,17 +43,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import libomv.GridClient;
 import libomv.Gui.AppSettings;
-import libomv.Gui.components.LoginPanel;
-import libomv.Gui.components.OnlinePanel;
-import libomv.Gui.components.list.FriendList;
-import libomv.Gui.components.list.GroupList;
 import libomv.Gui.dialogs.AboutDialog;
+import libomv.core.state.OfflineController;
+import libomv.core.state.OnlineController;
+import libomv.core.state.StateController;
 import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 import libomv.utils.Settings;
+import libomv.utils.Logger.LogLevel;
 
 public class MainWindow extends JFrame implements MainControl
 {
@@ -62,8 +62,10 @@ public class MainWindow extends JFrame implements MainControl
 	private JPanel jPSouth;
 	private Component jPContent;
 	private JMenuBar jMenuBar;
+
 	private GridClient _Client;
 	private AppSettings _Settings;
+	private StateController _State;
 
 	/**
 	 * This is the default constructor
@@ -98,10 +100,11 @@ public class MainWindow extends JFrame implements MainControl
             }
         });
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		initializeLoginPanel();
+
+		_State = new OfflineController(this);
 	}
 	
-	public JFrame getMainJFrame()
+	public JFrame getJFrame()
 	{
 		return this;
 	}
@@ -114,36 +117,15 @@ public class MainWindow extends JFrame implements MainControl
 	public Settings getAppSettings()
 	{
 		return _Settings;
-	}	
-
-	public CommWindow getCommWindow()
-	{
-		if (jPSouth != null && jPSouth instanceof OnlinePanel)
-		{
-			return ((OnlinePanel)jPSouth).getCommWindow();
-		}
-		return null;
-	}
-
-	public FriendList getFriendList()
-	{
-		if (jPSouth != null && jPSouth instanceof OnlinePanel)
-		{
-			return ((OnlinePanel)jPSouth).getFriendList();
-		}
-		return null;
 	}
 	
-	public GroupList getGroupList()
+	public StateController getStateControl()
 	{
-		if (jPSouth != null && jPSouth instanceof OnlinePanel)
-		{
-			return ((OnlinePanel)jPSouth).getGroupList();
-		}
-		return null;
+		return _State;
 	}
-
-	public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand)
+	
+	/* Convinience methods */
+	static public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand)
 	{
 		if (actionCommand != null)
 		{
@@ -152,7 +134,7 @@ public class MainWindow extends JFrame implements MainControl
 		comp.addActionListener(actionListener);
 	}
 
-	public void setAction(JComboBox comp, ActionListener actionListener, String actionCommand)
+	static public void setAction(JTextField comp, ActionListener actionListener, String actionCommand)
 	{
 		if (actionCommand != null)
 		{
@@ -161,32 +143,68 @@ public class MainWindow extends JFrame implements MainControl
 		comp.addActionListener(actionListener);
 	}
 
-	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand)
+	static public void setAction(JComboBox comp, ActionListener actionListener, String actionCommand)
+	{
+		if (actionCommand != null)
+		{
+			comp.setActionCommand(actionCommand);
+		}
+		comp.addActionListener(actionListener);
+	}
+
+	static public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand)
 	{
 		JMenuItem item = new JMenuItem(label);
 		setAction(item, actionListener, actionCommand);
 		return item;
 	}
 
-	public void setMenuBar(JMenuBar menuBar)
+	public void setJMenuBar(JMenuBar menuBar)
 	{
+		if (jMenuBar != null)
+		{
+			remove(jMenuBar);
+		}
+		if (menuBar != null)
+		{
+			super.setJMenuBar(menuBar);
+		}
 		jMenuBar = menuBar;
-		this.setJMenuBar(menuBar);
 	}
 
-	public void setContentArea(Component component)
+	public void setContentPane(Component component)
 	{
+		if (jPContent != null)
+		{
+			getContentPane().remove(jPContent);
+		}
+		if (component != null)
+		{
+			getContentPane().add(component, BorderLayout.CENTER);
+		}
 		jPContent = component;
-		getContentPane().add(component, BorderLayout.CENTER);
 	}
 
+	public void setControlPane(JPanel panel)
+	{
+		if (jPSouth != null)
+		{
+			getContentPane().remove(jPSouth);			
+		}
+		if (panel != null)
+		{
+			getContentPane().add(panel, BorderLayout.SOUTH);
+		}
+		jPSouth = panel;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		String action = e.getActionCommand();
 		if (action.equals(MainControl.cmdAbout))
 		{
-			AboutDialog about = new AboutDialog(getMainJFrame());
+			AboutDialog about = new AboutDialog((JFrame)this);
 			about.setVisible(true);			
 		}
 		else if (action.equals(MainControl.cmdSettings))
@@ -196,14 +214,17 @@ public class MainWindow extends JFrame implements MainControl
 		}
 		else if (action.equals(MainControl.cmdOnline))
 		{
-			initializeOnlinePanel();			
+			_State.dispose();
+			_State = new OnlineController(this);			
 		}
 		else if (action.equals(MainControl.cmdLogout))
 		{
-			initializeLoginPanel();			
+			_State.dispose();
+			_State = new OfflineController(this);			
 		}
 		else if (action.equals(MainControl.cmdQuit))
 		{
+			_State.dispose();
 			if (_Client.Network.getConnected())
 			{
                 int confirm = JOptionPane.showOptionDialog(MainWindow.this,
@@ -227,36 +248,6 @@ public class MainWindow extends JFrame implements MainControl
 			{
     			System.exit(0);			
 			}
-		}
-	}
-
-	public void initializeLoginPanel()
-	{
-		if (jPSouth == null || !(jPSouth instanceof LoginPanel))
-		{
-			if (jMenuBar != null)
-				remove(jMenuBar);
-			if (jPSouth != null)
-				remove(jPSouth);
-			if (jPContent != null)
-				remove(jPContent);
-			jPSouth = new LoginPanel(this);
-			getContentPane().add(jPSouth, BorderLayout.SOUTH);
-			validate();		
-		}
-	}
-
-	public void initializeOnlinePanel()
-	{
-		if (jPSouth == null || !(jPSouth instanceof OnlinePanel))
-		{
-			if (jPSouth != null)
-				remove(jPSouth);
-			if (jPContent != null)
-				remove(jPContent);
-			jPSouth = new OnlinePanel(this);
-			getContentPane().add(jPSouth, BorderLayout.SOUTH);
-			validate();
 		}
 	}
 }

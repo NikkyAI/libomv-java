@@ -31,7 +31,9 @@ package libomv.Gui.dialogs;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 
 import libomv.Gui.Resources;
 import libomv.Gui.components.ImagePanel;
@@ -43,16 +45,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class AboutDialog extends JDialog
 {
-
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
-
-	/**
-	 * 
-	 */
+	
+	private JScrollPane jScrLicense;
+	private JScrollPane jScrCredits;
+	private JButton jBtnClose;
+	
 	public AboutDialog(JFrame owner)
 	{
 		super(owner);
@@ -63,8 +67,25 @@ public class AboutDialog extends JDialog
 		setResizable(false);
 
 		setContentPane(getJContentPane());
+		getRootPane().setDefaultButton(getJBtnClose());
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		
+		// Add a component listener to this dialog to reset the text area scroll bars
+		// after the GroupLayout messed with it
+		addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentShown(ComponentEvent e)
+			{
+				JScrollBar scrollBar = getScrLicense().getVerticalScrollBar();
+				scrollBar.setValue(scrollBar.getMinimum());
+				
+				scrollBar = getScrCredits().getVerticalScrollBar();
+				scrollBar.setValue(scrollBar.getMinimum());
+			}
+		});
 	}
-
+	
 	/**
 	 * This method initializes jContentPane
 	 * 
@@ -82,62 +103,28 @@ public class AboutDialog extends JDialog
 			jTxtVersion = new JTextArea();
 			jTxtVersion.setText("Version 0.7.1");
 			jTxtVersion.setFont(new Font("Tahoma", Font.BOLD, 16));
-			jTxtVersion.setOpaque(false);
-			jTxtVersion.setEnabled(false);
 			jTxtVersion.setEditable(false);
 			jTxtVersion.setColumns(10);
 
 			JTextArea jTxtCopyright = new JTextArea();
 			jTxtCopyright.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			jTxtCopyright.setOpaque(false);
-			jTxtCopyright.setEnabled(false);
 			jTxtCopyright.setEditable(false);
 			jTxtCopyright.setText("Written by Frederick Martian\nwith contributions from\n");
-			
-			JTextArea jTxtLicenses = new JTextArea();
-			jTxtLicenses.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			jTxtLicenses.setOpaque(false);
-			jTxtLicenses.setEnabled(false);
-			jTxtLicenses.setEditable(false);
-			jTxtLicenses.setText(Resources.loadTextFile("Licenses.txt"));
-			JScrollPane jScrLicense = new JScrollPane();
-			jScrLicense.setViewportView(jTxtLicenses);
-			jScrLicense.getVerticalScrollBar().setValue(0);
-			
-			JTextArea jTxtCredits = new JTextArea();
-			jTxtCredits.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			jTxtCredits.setOpaque(false);
-			jTxtCredits.setEnabled(false);
-			jTxtCredits.setEditable(false);
-			jTxtCredits.setText(Resources.loadTextFile("Credits.txt"));
-			JScrollPane jScrCredits = new JScrollPane();
-			jScrCredits.setViewportView(jTxtCredits);
-			jScrCredits.getVerticalScrollBar().setValue(0);
-			
-			JButton jBtnClose = new JButton("Close");
-			jBtnClose.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					dispose();
-				}
-			});
 			
 			GroupLayout gl_jContentPane = new GroupLayout(jContentPane);
 			gl_jContentPane.setHorizontalGroup(
 				gl_jContentPane.createSequentialGroup()
 						.addContainerGap()
 						.addGroup(gl_jContentPane.createParallelGroup(Alignment.TRAILING)
-							.addComponent(jBtnClose, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJBtnClose(), GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
 							.addGroup(Alignment.LEADING, gl_jContentPane.createSequentialGroup()
 								.addComponent(jPanImage, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED)
 								.addGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING)
 									.addComponent(jTxtCopyright, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
 									.addComponent(jTxtVersion, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)))
-							.addComponent(jScrCredits, GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
-							.addComponent(jScrLicense, GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE))
+							.addComponent(getScrCredits(), GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+							.addComponent(getScrLicense(), GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE))
 						.addContainerGap()
 			);
 			gl_jContentPane.setVerticalGroup(
@@ -151,16 +138,58 @@ public class AboutDialog extends JDialog
 								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(jTxtCopyright, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)))
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(jScrLicense, GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
+						.addComponent(getScrLicense(), GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(jScrCredits, GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
+						.addComponent(getScrCredits(), GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(jBtnClose, GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+						.addComponent(getJBtnClose(), GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
 						.addContainerGap())
 			);
-			
 			jContentPane.setLayout(gl_jContentPane);
 		}
 		return jContentPane;
+	}
+	
+	private JButton getJBtnClose()
+	{
+		if (jBtnClose == null)
+		{
+			jBtnClose = new JButton("Close");
+			jBtnClose.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					dispose();
+				}
+			});
+		}
+		return jBtnClose;
+	}
+	
+	private JScrollPane getScrLicense()
+	{
+		if (jScrLicense == null)
+		{
+			JTextArea jTxtLicenses = new JTextArea();
+			jTxtLicenses.setFont(new Font("Tahoma", Font.PLAIN, 11));
+			jTxtLicenses.setEditable(false);
+			jTxtLicenses.setText(Resources.loadTextFile("Licenses.txt"));
+			jScrLicense = new JScrollPane(jTxtLicenses);
+		}
+		return jScrLicense;
+	}
+	
+	private JScrollPane getScrCredits()
+	{
+		if (jScrCredits == null)
+		{
+			JTextArea jTxtCredits = new JTextArea();
+			jTxtCredits.setFont(new Font("Tahoma", Font.PLAIN, 11));
+			jTxtCredits.setEditable(false);
+			jTxtCredits.setText(Resources.loadTextFile("Credits.txt"));
+			jScrCredits = new JScrollPane(jTxtCredits);
+		}
+		return jScrCredits;
 	}
 }

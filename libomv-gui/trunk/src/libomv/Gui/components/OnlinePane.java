@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2010-2011, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,38 +26,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.programs.JOMV;
+package libomv.Gui.components;
 
-import libomv.GridClient;
-import libomv.Gui.windows.MainWindow;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class jOMVMain
+import libomv.Gui.windows.MainControl;
+
+public class OnlinePane extends ControlPane implements ActionListener
 {
-	private static MainWindow main;
+	private static final long serialVersionUID = 1L;
 	
-	private static void createAndShowGUI() throws Exception
+	private MainControl _Main;
+	
+	public OnlinePane(MainControl main)
 	{
-		main = new MainWindow(new GridClient());
-		main.setVisible(true);	
+		super();
+		_Main = main;
+		
 	}
 	
-	// The main entry point for the application.
-	static public void main(String[] args) throws Exception
+	@Override
+	public void actionPerformed(ActionEvent e)
 	{
-		java.awt.EventQueue.invokeLater(new Runnable()
-	    {
-	    	@Override
-			public void run()
-	    	{
-	    		try
-				{
-					createAndShowGUI();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-	        }
-	    });
+		// TODO Auto-generated method stub
+		
 	}
 }

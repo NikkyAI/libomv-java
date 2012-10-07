@@ -44,7 +44,7 @@ public class PreferenceWindow extends JDialog
 	 */
 	public PreferenceWindow(MainControl main)
 	{
-		super(main.getMainJFrame());
+		super(main.getJFrame());
 		setTitle("Preferences");
 		setSize(300, 200);
 		setContentPane(getJContentPane());

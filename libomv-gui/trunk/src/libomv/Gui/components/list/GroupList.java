@@ -52,7 +52,9 @@ import libomv.GroupManager.Group;
 import libomv.GroupManager.GroupOperationCallbackArgs;
 import libomv.Gui.channels.GroupChannel;
 import libomv.Gui.components.list.SortedListModel.SortOrder;
+import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
+import libomv.Gui.windows.MainWindow;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Logger;
@@ -72,16 +74,18 @@ public class GroupList extends JScrollPane implements ActionListener
 	private static final String cmdLeaveGroup = "leaveGroup";
 
 	private MainControl _Main;
+	private CommWindow _Comm;
 	
 	private JList jLGroupsList;
 	
 	/**
 	 * Constructs a list to display
 	 */
-	public GroupList(MainControl main)
+	public GroupList(MainControl main, CommWindow comm)
 	{
 		super();
 		_Main = main;
+		_Comm = comm;
 
 		_Main.getGridClient().Groups.OnGroupJoinedReply.add(new GroupJoined());
 		_Main.getGridClient().Groups.OnGroupLeaveReply.add(new GroupLeave());
@@ -319,7 +323,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiSendMessage == null)
 			{
-				jmiSendMessage = _Main.newMenuItem("Send message", GroupList.this, cmdStartIM);
+				jmiSendMessage = MainWindow.newMenuItem("Send message", GroupList.this, cmdStartIM);
 			}
 			return jmiSendMessage;
 		}
@@ -333,7 +337,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiActivate == null)
 			{
-				jmiActivate = _Main.newMenuItem("Activate", GroupList.this, cmdActivate);
+				jmiActivate = MainWindow.newMenuItem("Activate", GroupList.this, cmdActivate);
 			}
 			jmiActivate.setEnabled(!disable);
 			return jmiActivate;
@@ -348,7 +352,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiInvite == null)
 			{
-				jmiInvite = _Main.newMenuItem("Invite ..", GroupList.this, cmdInvite);
+				jmiInvite = MainWindow.newMenuItem("Invite ..", GroupList.this, cmdInvite);
 			}
 			return jmiInvite;
 		}
@@ -362,7 +366,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiGroupInfo == null)
 			{
-				jmiGroupInfo = _Main.newMenuItem("Info ..", GroupList.this, cmdProfile);
+				jmiGroupInfo = MainWindow.newMenuItem("Info ..", GroupList.this, cmdProfile);
 			}
 			return jmiGroupInfo;
 		}
@@ -376,7 +380,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiCreateGroup == null)
 			{
-				jmiCreateGroup = _Main.newMenuItem("Create ..", GroupList.this, cmdCreateGroup);
+				jmiCreateGroup = MainWindow.newMenuItem("Create ..", GroupList.this, cmdCreateGroup);
 			}
 			return jmiCreateGroup;
 		}
@@ -390,7 +394,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiSearchGroup == null)
 			{
-				jmiSearchGroup = _Main.newMenuItem("Search ..", GroupList.this, cmdSearchGroup);
+				jmiSearchGroup = MainWindow.newMenuItem("Search ..", GroupList.this, cmdSearchGroup);
 			}
 			return jmiSearchGroup;
 		}
@@ -404,7 +408,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			if (jmiLeaveGroup == null)
 			{
-				jmiLeaveGroup = _Main.newMenuItem("Leave ..", GroupList.this, cmdLeaveGroup);
+				jmiLeaveGroup = MainWindow.newMenuItem("Leave ..", GroupList.this, cmdLeaveGroup);
 			}
 			return jmiLeaveGroup;
 		}
@@ -444,23 +448,23 @@ public class GroupList extends JScrollPane implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdStartIM))
 		{
-			if (_Main.getCommWindow().getChannel(info.getID()) == null)
+			if (_Comm.getChannel(info.getID()) == null)
 			{
 				GroupChannel channel = new GroupChannel(_Main, info.getName(), info.getID(), info.getID());
-				_Main.getCommWindow().addChannel(channel);
+				_Comm.addChannel(channel);
 
 				// We need to request to join the group chat
 				try
 				{
 					_Main.getGridClient().Self.RequestJoinGroupChat(info.getID());
-					_Main.getCommWindow().setFocus(null, info.getID());
+					_Comm.setFocus(null, info.getID());
 				}
 				catch (Exception ex)
 				{
 					Logger.Log("Start GroupIM failed", LogLevel.Error, _Main.getGridClient(), ex);
 				}
 			}
-			_Main.getCommWindow().setFocus(null, info.getID());
+			_Comm.setFocus(null, info.getID());
 		}
 		else if (e.getActionCommand().equals(cmdActivate))
 		{

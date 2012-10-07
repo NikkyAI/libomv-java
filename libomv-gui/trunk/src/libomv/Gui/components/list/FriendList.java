@@ -66,7 +66,9 @@ import libomv.FriendsManager.FriendNotificationCallbackArgs;
 import libomv.FriendsManager.FriendRightsCallbackArgs;
 import libomv.Gui.Resources;
 import libomv.Gui.channels.PrivateChannel;
+import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
+import libomv.Gui.windows.MainWindow;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
@@ -96,6 +98,7 @@ public class FriendList extends JPanel implements ActionListener
 	private static ImageIcon canEditTheirs;
 
 	private MainControl _Main;
+	private CommWindow _Comm;
 
 	private JScrollPane jScrollPane;
 	private JTable jLFriendsList;
@@ -115,10 +118,11 @@ public class FriendList extends JPanel implements ActionListener
 	/**
 	 * Constructs a list to display
 	 */
-	public FriendList(MainControl main)
+	public FriendList(MainControl main, CommWindow comm)
 	{
 		super();
-		this._Main = main;
+		_Main = main;
+		_Comm = comm;
 
 		// The rights in respect to a friend have changed
 		_Main.getGridClient().Friends.OnFriendRights.add(friendRightsCallback);
@@ -184,37 +188,37 @@ public class FriendList extends JPanel implements ActionListener
 			jButtonPanel.setLayout(new GridLayout(12, 1, 0, 10));
 		
 			jBtnSendMessage = new JButton("Send message");
-			_Main.setAction(jBtnSendMessage, this, cmdStartIM);
+			MainWindow.setAction(jBtnSendMessage, this, cmdStartIM);
 			jButtonPanel.add(jBtnSendMessage);
 			
 			jBtnProfile = new JButton("Profile ..");
-			_Main.setAction(jBtnProfile, this, cmdProfile);
+			MainWindow.setAction(jBtnProfile, this, cmdProfile);
 			jButtonPanel.add(jBtnProfile);
 
 			JLabel lblSpacer1 = new JLabel("");
 			jButtonPanel.add(lblSpacer1);
 
 			jBtnMoney = new JButton("Pay ..");
-			_Main.setAction(jBtnMoney, this, cmdPayTo);
+			MainWindow.setAction(jBtnMoney, this, cmdPayTo);
 			jButtonPanel.add(jBtnMoney);
 
 			jBtnTpOffer = new JButton("Offer Teleport ..");
-			_Main.setAction(jBtnTpOffer, this, cmdTeleportAsk);
+			MainWindow.setAction(jBtnTpOffer, this, cmdTeleportAsk);
 			jButtonPanel.add(jBtnTpOffer);
 
 			jBtnRemove = new JButton("Remove ..");
-			_Main.setAction(jBtnRemove, this, cmdFriendRemove);
+			MainWindow.setAction(jBtnRemove, this, cmdFriendRemove);
 			jButtonPanel.add(jBtnRemove);		
 
 			JLabel lblSpacer2 = new JLabel("");
 			jButtonPanel.add(lblSpacer2);
 
 			jBtnTeleportTo = new JButton("Teleport to ..");
-			_Main.setAction(jBtnTeleportTo, this, cmdTeleportTo);
+			MainWindow.setAction(jBtnTeleportTo, this, cmdTeleportTo);
 			jButtonPanel.add(jBtnTeleportTo);
 
 			jBtnAutopilotTo = new JButton("Autopilot to ..");
-			_Main.setAction(jBtnAutopilotTo, this, cmdAutopilotTo);
+			MainWindow.setAction(jBtnAutopilotTo, this, cmdAutopilotTo);
 			jButtonPanel.add(jBtnAutopilotTo);
 		}
 		return jButtonPanel;
@@ -349,7 +353,7 @@ public class FriendList extends JPanel implements ActionListener
                 	case 4:
                 		if (set)
                 		{
-                			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), "Do you really want to enable object modifications for " + 
+                			int result = JOptionPane.showConfirmDialog(_Main.getJFrame(), "Do you really want to enable object modifications for " + 
                 		                                               info.getName() + "? This allows the person to modify, delete and take ownership " +
                 					                                   "of any inworld objects you own!", "Warning", JOptionPane.YES_NO_OPTION);		
                 		    if (result == JOptionPane.OK_OPTION)
@@ -658,7 +662,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiSendMessage == null)
 			{
-				jmiSendMessage = _Main.newMenuItem("Send message", FriendList.this, cmdStartIM);
+				jmiSendMessage = MainWindow.newMenuItem("Send message", FriendList.this, cmdStartIM);
 			}
 			if (info.getName() == null || info.getName().isEmpty())
 				jmiSendMessage.setEnabled(false);
@@ -674,7 +678,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiProfile == null)
 			{
-				jmiProfile = _Main.newMenuItem("Profile ..", FriendList.this, cmdProfile);
+				jmiProfile = MainWindow.newMenuItem("Profile ..", FriendList.this, cmdProfile);
 			}
 			return jmiProfile;
 		}
@@ -688,7 +692,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiMoneyTransfer == null)
 			{
-				jmiMoneyTransfer = _Main.newMenuItem("Pay ..", FriendList.this, cmdPayTo);
+				jmiMoneyTransfer = MainWindow.newMenuItem("Pay ..", FriendList.this, cmdPayTo);
 			}
 			return jmiMoneyTransfer;
 		}
@@ -702,7 +706,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiOfferTeleport == null)
 			{
-				jmiOfferTeleport = _Main.newMenuItem("Offer Teleport ..", FriendList.this, cmdTeleportAsk);
+				jmiOfferTeleport = MainWindow.newMenuItem("Offer Teleport ..", FriendList.this, cmdTeleportAsk);
 			}
 			return jmiOfferTeleport;
 		}
@@ -716,7 +720,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiRemoveAsFriend == null)
 			{
-				jmiRemoveAsFriend = _Main.newMenuItem("Remove ..", FriendList.this, cmdFriendRemove);
+				jmiRemoveAsFriend = MainWindow.newMenuItem("Remove ..", FriendList.this, cmdFriendRemove);
 			}
 			return jmiRemoveAsFriend;
 		}
@@ -730,7 +734,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiTeleportTo == null)
 			{
-				jmiTeleportTo = _Main.newMenuItem("Teleport to", FriendList.this, cmdTeleportTo);
+				jmiTeleportTo = MainWindow.newMenuItem("Teleport to", FriendList.this, cmdTeleportTo);
 			}
 			return jmiTeleportTo;
 		}
@@ -745,7 +749,7 @@ public class FriendList extends JPanel implements ActionListener
 		{
 			if (jmiAutopilotTo == null)
 			{
-				jmiAutopilotTo = _Main.newMenuItem("Autopilot to", FriendList.this, cmdAutopilotTo);
+				jmiAutopilotTo = MainWindow.newMenuItem("Autopilot to", FriendList.this, cmdAutopilotTo);
 			}
 			return jmiAutopilotTo;
 		}
@@ -768,17 +772,17 @@ public class FriendList extends JPanel implements ActionListener
 			// Only allow creation of a chat window if the avatar name is resolved.
 			if (info.getName() != null && !info.getName().isEmpty())
 			{
-				if (_Main.getCommWindow().getChannel(info.getID()) == null)
+				if (_Comm.getChannel(info.getID()) == null)
 				{
 					PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(), new UUID());
-					_Main.getCommWindow().addChannel(channel);
+					_Comm.addChannel(channel);
 				}
-				_Main.getCommWindow().setFocus(null, info.getID());
+				_Comm.setFocus(null, info.getID());
 			}
 		}
 		else if (e.getActionCommand().equals(cmdFriendRemove))
 		{
-			int result = JOptionPane.showConfirmDialog(_Main.getMainJFrame(), "Do you really want to remove " + info.getName() + 
+			int result = JOptionPane.showConfirmDialog(_Main.getJFrame(), "Do you really want to remove " + info.getName() + 
 					                                   " as friend?", "Remove Friend", JOptionPane.YES_NO_OPTION);		
 			if (result == JOptionPane.OK_OPTION)
 			{

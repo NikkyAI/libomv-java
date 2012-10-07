@@ -31,15 +31,12 @@ package libomv.Gui.windows;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import libomv.GridClient;
-import libomv.Gui.components.list.FriendList;
-import libomv.Gui.components.list.GroupList;
+import libomv.core.state.StateController;
 import libomv.utils.Settings;
 
 public interface MainControl extends ActionListener
@@ -51,18 +48,16 @@ public interface MainControl extends ActionListener
 	public static final String cmdAbout = "about";
 	public static final String cmdBugs = "bugs";
 	public static final String cmdUpdates = "Updates";
-	public static final String cmdDebugCon = "debugCon";
 	public static final String cmdSettings = "settings";
-	
-	public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand);
-	public void setAction(JComboBox comp, ActionListener actionListener, String actionCommand);
-	public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand);
-	public void setMenuBar(JMenuBar menuBar);
-	public JFrame getMainJFrame();
-	public Settings getAppSettings();
+	public static final String cmdRefresh = "refresh";
+	public static final String cmdCancel = "cancel";
+
+	/* interface methods */
+	public JFrame getJFrame();
 	public GridClient getGridClient();
-	public CommWindow getCommWindow();
-	public FriendList getFriendList();
-	public GroupList getGroupList();
-	public void setContentArea(Component pane);
+	public Settings getAppSettings();
+	public StateController getStateControl();
+	public void setJMenuBar(JMenuBar menuBar);
+	public void setContentPane(Component pane);
+	public void setControlPane(JPanel panel);
 }

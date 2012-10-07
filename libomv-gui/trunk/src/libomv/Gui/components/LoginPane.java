@@ -45,10 +45,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
@@ -56,32 +52,24 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.JTextComponent;
 
 import com.teamdev.jxbrowser.Browser;
-import com.teamdev.jxbrowser.BrowserFactory;
-import com.teamdev.jxbrowser.BrowserType;
 
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
-import libomv.LoginManager.LoginProgressCallbackArgs;
-import libomv.LoginManager.LoginStatus;
 import libomv.Gui.dialogs.GridEditor;
 import libomv.Gui.windows.MainControl;
-import libomv.utils.Callback;
+import libomv.Gui.windows.MainWindow;
 
-public class LoginPanel extends JPanel implements ActionListener
+public class LoginPane extends ControlPane implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	private static final String cmdLogin = "login";
+	public static final String cmdGrid = "grid";
 	private static final String cmdGrids = "grids";
-	private static final String cmdGrid = "grid";
-	private static final String cmdRefresh = "refresh";
 	private static final String cmdSaveDetails = "saveDetails";
 
-	private Browser browser;
-
 	private MainControl _Main;
+	private Browser _Browser;
 	
-	private JMenuBar jMbMain;
 	private JLabel jLblUserName;
 	private JTextField jTxtUserName;
 	private JLabel jLblPassword;
@@ -95,9 +83,11 @@ public class LoginPanel extends JPanel implements ActionListener
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
 	
-	public LoginPanel(MainControl main)
+	public LoginPane(MainControl main, Browser browser)
 	{
+		super();
 		_Main = main;
+		_Browser = browser; 
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0, 1, 0 };
@@ -193,79 +183,37 @@ public class LoginPanel extends JPanel implements ActionListener
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
 		
-		main.setContentArea(getJBrowser().getComponent());
-		main.setMenuBar(getJMBar());
-
-		initializePanel(_Main.getGridClient().getDefaultGrid());	
-	}
-	
-	protected void finalize() throws Throwable
-	{
-		if (browser != null)
-		{
-		    browser.stop();	
-		    if (!browser.isDisposed())
-			    browser.dispose();
-		    browser = null;
-		}
-		super.finalize();
-	}
-
-	/**
-	 * This method initializes mainJMenuBar
-	 * 
-	 * @return JMenuBar
-	 */
-	private JMenuBar getJMBar()
-	{
-		if (jMbMain == null)
-		{
-			jMbMain = new JMenuBar();
-
-			JMenu file = new JMenu("File");
-			
-			JMenuItem jMiSettings = _Main.newMenuItem("Settings...", this, MainControl.cmdSettings);
-			file.add(jMiSettings);
-			
-			file.addSeparator();
-
-			JMenuItem jMiQuit = _Main.newMenuItem("Quit...", this, MainControl.cmdQuit);
-			file.add(jMiQuit);
-
-			jMbMain.add(file);
-			
-			JMenu help = new JMenu("Help");
-
-			JMenuItem jMiBugReports = _Main.newMenuItem("Bugs/Feature Request...", this, MainControl.cmdBugs);
-			help.add(jMiBugReports);
-
-			JMenuItem jMiUpdates = _Main.newMenuItem("Check for Updates...", this, MainControl.cmdUpdates);
-			help.add(jMiUpdates);
-
-			JMenuItem jMiDebugConsole = _Main.newMenuItem("Debug Console...", this, MainControl.cmdDebugCon);
-			help.add(jMiDebugConsole);
-
-			help.addSeparator();
-			
-			JMenuItem jMiAbout = _Main.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
-			help.add(jMiAbout);
-
-			jMbMain.add(help);
-//			jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
-
-			JPanel panel = new JPanel();
-			jMbMain.add(panel);
-		}
-		return jMbMain;
+		initializePanel((GridInfo)getJcbGridSelector().getSelectedItem());
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		/* Handle local events */
-		if (e.getActionCommand().equals(cmdLogin))
+		if (e.getActionCommand().equals(MainControl.cmdLogin))
 		{
-			doLogin();
+			GridClient client = _Main.getGridClient();
+			GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
+			client.setDefaultGrid(grid);
+
+			grid.saveSettings = getChckbxSaveDetails().isSelected();
+			grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
+			grid.startLocation = getJcbStartLocation().getSelectedItem().toString().toLowerCase();
+
+			String string = getJTxtUserName().getText(); 
+			if (string != null)
+				grid.username = string;
+			string = String.valueOf(getJPwdPassword().getPassword());
+			if (string != null)
+				grid.setPassword(string);
+			try
+			{
+				client.saveList(false);
+			}
+			catch (Exception ex) { };
+
+			// Pass this event to the state controller to perform the actual login
+			_Main.getStateControl().actionPerformed(e);
 		}
 		else if (e.getActionCommand().equals(cmdGrid))
 		{
@@ -273,10 +221,10 @@ public class LoginPanel extends JPanel implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdGrids))
 		{
-			GridEditor gridEdit = new GridEditor(_Main.getGridClient(), _Main.getMainJFrame(), "Grid List", true);
+			GridEditor gridEdit = new GridEditor(_Main, "Grid List", true);
 			gridEdit.setVisible(true);
 		}
-		else if (e.getActionCommand().equals(cmdRefresh))
+		else if (e.getActionCommand().equals(MainControl.cmdRefresh))
 		{
 			refreshGridList();
 		}
@@ -442,7 +390,7 @@ public class LoginPanel extends JPanel implements ActionListener
 			});
 
 			// Add a key listener
-			jPwdPassword.addKeyListener(new KeyAdapter()
+			jTxtUserName.addKeyListener(new KeyAdapter()
 			{
 				/**
 				 * Called when a key is pressed
@@ -455,7 +403,10 @@ public class LoginPanel extends JPanel implements ActionListener
 				{
 					if (e.getKeyCode() == KeyEvent.VK_ENTER)
 					{
-						doLogin();
+						if (validateSettings())
+							actionPerformed(new ActionEvent(jTxtUserName, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogin));
+						else
+							getJTxtUserName().requestFocus();				
 					}
 				}
 			});
@@ -474,7 +425,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		{
 			jBtnLogin = new JButton();
 			jBtnLogin.setText("Login");
-			_Main.setAction(jBtnLogin, this, cmdLogin);
+			MainWindow.setAction(jBtnLogin, this, MainControl.cmdLogin);
 		}
 		return jBtnLogin;
 	}
@@ -485,7 +436,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		{
 			jcbGridSelector = new JComboBox(_Main.getGridClient().getGridInfos());
 			jcbGridSelector.setSelectedItem(_Main.getGridClient().getDefaultGrid());
-			_Main.setAction(jcbGridSelector, this, cmdGrid);
+			MainWindow.setAction(jcbGridSelector, this, cmdGrid);
 		}
 		return jcbGridSelector;
 	}
@@ -527,7 +478,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		if (jBtnGrids == null)
 		{
 			jBtnGrids = new JButton("Grids");
-			_Main.setAction(jBtnGrids, this, cmdGrids);
+			MainWindow.setAction(jBtnGrids, this, cmdGrids);
 		}
 		return jBtnGrids;
 	}
@@ -537,7 +488,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		if (jChkSaveDetails == null)
 		{
 			jChkSaveDetails = new JCheckBox("Save Details");
-			_Main.setAction(jChkSaveDetails, this, cmdSaveDetails);
+			MainWindow.setAction(jChkSaveDetails, this, cmdSaveDetails);
 		}
 		return jChkSaveDetails;
 	}
@@ -551,62 +502,6 @@ public class LoginPanel extends JPanel implements ActionListener
 		return jChkSavePassword;
 	}
 
-	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
-	{
-		@Override
-		public boolean callback(LoginProgressCallbackArgs e)
-		{
-			if (e.getStatus() == LoginStatus.Success)
-			{
-				// Login was successful
-				System.out.println("JOMV: Message of the day: " + e.getMessage());
-				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdOnline));
-				return true;
-			}
-			else if (e.getStatus() == LoginStatus.Redirecting)
-			{
-				// Server requested redirection
-				System.out.println("JOMV: Server requested redirection: " + e.getReason());
-			}
-			else if (e.getStatus() == LoginStatus.Failed)
-			{
-				System.out.println("JOMV: Error logging in: " + e.getReason() + " : " + e.getMessage());
-				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogout));
-				return true;
-			}
-			return false;
-		}
-	}
-
-	private boolean doLogin()
-	{
-		GridClient client = _Main.getGridClient();
-		GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
-		client.setDefaultGrid(grid);
-
-		grid.saveSettings = getChckbxSaveDetails().isSelected();
-		grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
-		grid.startLocation = getJcbStartLocation().getSelectedItem().toString().toLowerCase();
-
-		String string = getJTxtUserName().getText(); 
-		if (string != null)
-			grid.username = string;
-		string = String.valueOf(getJPwdPassword().getPassword());
-		if (string != null)
-			grid.setPassword(string);
-		
-		client.Login.OnLoginProgress.add(new LoginProgressHandler(), false);
-		try
-		{
-			return client.Login.Login(client.Login.new LoginParams(client));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
 	private void refreshGridList()
 	{
 		GridInfo[] grids = _Main.getGridClient().getGridInfos();
@@ -694,8 +589,6 @@ public class LoginPanel extends JPanel implements ActionListener
 
 	private void initializePanel(GridInfo grid)
 	{
-		getJBrowser().navigate(grid.loginpage);
-		
 		if (grid.startLocation != null)
 		{
 			getJcbStartLocation().setSelectedItem(grid.startLocation);
@@ -707,14 +600,7 @@ public class LoginPanel extends JPanel implements ActionListener
 		getChckbxSaveDetails().setSelected(grid.saveSettings);
 		getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
 		getChckbxSavePassword().setEnabled(grid.saveSettings);
-	}
-	
-	private Browser getJBrowser()
-	{
-		if (browser == null)
-		{
-	        browser = BrowserFactory.createBrowser(BrowserType.getCrossPlatformBrowser());		
-		}
-		return browser;
+
+		_Browser.navigate(grid.loginpage);
 	}
 }
