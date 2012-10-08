@@ -441,6 +441,9 @@ public class GridClient
 		 * manager as it registers a packetCallback */
 		settings.startup(this);
 
+		if (Settings.getBool(LibSettings.ENABLE_APPEARANCE_MANAGER))
+			Appearance = new AppearanceManager(this);
+
 		if (Settings.getBool(LibSettings.SEND_AGENT_THROTTLE))
 			Throttle = new AgentThrottle(this);
 

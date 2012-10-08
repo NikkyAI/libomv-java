@@ -70,6 +70,9 @@ public class LibSettings extends Settings implements PacketCallback
 	public static final String RESOURCE_DIR = "resourceDir";
 	
 
+	/* Initialize Appearncew Manager */
+	public static final String ENABLE_APPEARANCE_MANAGER = "enableAppearanceMgr";
+
 	/* Initialize Avatar Manager */
 	public static final String ENABLE_AVATAR_MANAGER = "enableAvatarMgr";
 
@@ -406,6 +409,7 @@ public class LibSettings extends Settings implements PacketCallback
 	
 	// #region Default settings
 	private DefaultSetting[] defaults = {
+			new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
 			new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
 			new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
 			new DefaultSetting(ENABLE_SOUND_MANAGER, true),
