@@ -418,7 +418,7 @@ public class AppearanceManager implements PacketCallback
      */
     public void RequestSetAppearance(final boolean forceRebake)
     {
-        if (AppearanceThread.isAlive())
+        if (AppearanceThread != null && AppearanceThread.isAlive())
         {
             Logger.Log("Appearance thread is already running, skipping", LogLevel.Warning, _Client);
             return;
@@ -2281,7 +2281,7 @@ public class AppearanceManager implements PacketCallback
     /** 
      * Gives the layer number that is used for morph mask
      * 
-     * @param bakeType >A BakeType
+     * @param bakeType A BakeType
      * @returns Which layer number as defined in BakeTypeToTextures is used for morph mask
      */
     public static AvatarTextureIndex MorphLayerForBakeType(BakeType bakeType)
