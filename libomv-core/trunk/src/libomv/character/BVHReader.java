@@ -757,7 +757,7 @@ public class BVHReader extends KeyFrameMotion
 		// fill in header
         Joints = new Joint[numJoints];
 
-		Quaternion fixup_rot, first_frame_rot = new Quaternion();
+		Quaternion first_frame_rot = new Quaternion();
 
 		for (BVHNode node : bvh.getNodeList())
 		{
@@ -796,14 +796,12 @@ public class BVHReader extends KeyFrameMotion
 			joint.rotationkeys = new KeyFrameMotion.JointKey[node.mNumRotKeys];
 
 			Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
-			int outcount = 0, frame = 0, rotOffset = node.getChannels().getRotOffset();
+			int frame = 0, rotOffset = node.getChannels().getRotOffset();
 			for (float[] keyFrame : bvh.getMotion().getMotions())
 			{
 				if (frame == 0 && node.getTranslation().mRelativeRotationKey)
 				{
 					first_frame_rot = Quaternion.mayaQ(keyFrame, rotOffset, order);
-					
-					fixup_rot = Quaternion.shortestArc(frameRot.multiply(first_frame_rot.multiply(Vector3.UnitZ)), Vector3.UnitZ);
 				}
 
 				if (node.mIgnoreRot[frame])
@@ -846,7 +844,6 @@ public class BVHReader extends KeyFrameMotion
 				joint.rotationkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
 				joint.rotationkeys[frame].keyElement = outRot.toVector3();
 
-				outcount++;
 				frame++;
 			}
 			
