@@ -29,6 +29,7 @@
 package libomv.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -109,18 +110,25 @@ public class Settings
 	
 	protected void load() throws IOException, ParseException
     {
-		Reader reader = new FileReader(settingsPath);
 		try
 		{
-			for (Entry<String, OSD> entry : ((OSDMap)OSDParser.deserialize(reader)).entrySet())
+			Reader reader = new FileReader(settingsPath);
+			try
 			{
-				settings.put(entry.getKey(), entry.getValue());
+				for (Entry<String, OSD> entry : ((OSDMap)OSDParser.deserialize(reader)).entrySet())
+				{
+					settings.put(entry.getKey(), entry.getValue());
+				}
+				OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(null, null));
 			}
-			OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(null, null));
+			finally
+			{
+				reader.close();
+			}
 		}
-		finally
+		catch (FileNotFoundException ex)
 		{
-			reader.close();
+			// Catch FileNotFoundException and ignore as this happens whenever we startup without a settings file
 		}
     }
     
