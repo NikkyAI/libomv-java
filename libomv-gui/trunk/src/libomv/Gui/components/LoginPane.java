@@ -29,6 +29,7 @@
 package libomv.Gui.components;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -55,9 +56,11 @@ import com.teamdev.jxbrowser.Browser;
 
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
+import libomv.GridClient.GridListUpdateCallbackArgs;
 import libomv.Gui.dialogs.GridEditor;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
+import libomv.utils.Callback;
 
 public class LoginPane extends ControlPane implements ActionListener
 {
@@ -68,7 +71,10 @@ public class LoginPane extends ControlPane implements ActionListener
 	private static final String cmdSaveDetails = "saveDetails";
 
 	private MainControl _Main;
+	private GridClient _Client;
 	private Browser _Browser;
+	
+	private Callback<GridListUpdateCallbackArgs> gridListCallback = new GridListUpdateCallback();
 	
 	private JLabel jLblUserName;
 	private JTextField jTxtUserName;
@@ -87,6 +93,7 @@ public class LoginPane extends ControlPane implements ActionListener
 	{
 		super();
 		_Main = main;
+		_Client = _Main.getGridClient();
 		_Browser = browser; 
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -183,7 +190,15 @@ public class LoginPane extends ControlPane implements ActionListener
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
 		
+		_Client.OnGridListUpdate.add(gridListCallback);
+		
 		initializePanel((GridInfo)getJcbGridSelector().getSelectedItem());
+	}
+	
+	protected void finalize() throws Throwable
+	{
+		_Client.OnGridListUpdate.remove(gridListCallback);
+		super.finalize();
 	}
 	
 	@Override
@@ -192,9 +207,8 @@ public class LoginPane extends ControlPane implements ActionListener
 		/* Handle local events */
 		if (e.getActionCommand().equals(MainControl.cmdLogin))
 		{
-			GridClient client = _Main.getGridClient();
 			GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
-			client.setDefaultGrid(grid);
+			_Client.setDefaultGrid(grid);
 
 			grid.saveSettings = getChckbxSaveDetails().isSelected();
 			grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
@@ -208,7 +222,7 @@ public class LoginPane extends ControlPane implements ActionListener
 				grid.setPassword(string);
 			try
 			{
-				client.saveList(false);
+				_Client.saveList(false);
 			}
 			catch (Exception ex) { };
 
@@ -223,10 +237,6 @@ public class LoginPane extends ControlPane implements ActionListener
 		{
 			GridEditor gridEdit = new GridEditor(_Main, "Grid List", true);
 			gridEdit.setVisible(true);
-		}
-		else if (e.getActionCommand().equals(MainControl.cmdRefresh))
-		{
-			refreshGridList();
 		}
 		else if (e.getActionCommand().equals(cmdSaveDetails))
 		{
@@ -434,8 +444,8 @@ public class LoginPane extends ControlPane implements ActionListener
 	{
 		if (jcbGridSelector == null)
 		{
-			jcbGridSelector = new JComboBox(_Main.getGridClient().getGridInfos());
-			jcbGridSelector.setSelectedItem(_Main.getGridClient().getDefaultGrid());
+			jcbGridSelector = new JComboBox(_Client.getGridInfos());
+			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid());
 			MainWindow.setAction(jcbGridSelector, this, cmdGrid);
 		}
 		return jcbGridSelector;
@@ -450,7 +460,7 @@ public class LoginPane extends ControlPane implements ActionListener
 			jcbLocation.addItem("Last");
 			jcbLocation.addItem("Home");
 			
-			String start = _Main.getGridClient().getDefaultGrid().startLocation;
+			String start = _Client.getDefaultGrid().startLocation;
 			if (start == null || start.isEmpty() || start.equalsIgnoreCase("last"))
 			{
 				jcbLocation.setSelectedIndex(0);
@@ -504,11 +514,11 @@ public class LoginPane extends ControlPane implements ActionListener
 
 	private void refreshGridList()
 	{
-		GridInfo[] grids = _Main.getGridClient().getGridInfos();
+		GridInfo[] grids = _Client.getGridInfos();
 		GridInfo gridInfo = (GridInfo)getJcbGridSelector().getSelectedItem();
 		if (gridInfo != null)
 		{
-			gridInfo = _Main.getGridClient().getGrid(gridInfo.gridnick);
+			gridInfo = _Client.getGrid(gridInfo.gridnick);
 		}
 		if (gridInfo == null)
 		{
@@ -602,5 +612,23 @@ public class LoginPane extends ControlPane implements ActionListener
 		getChckbxSavePassword().setEnabled(grid.saveSettings);
 
 		_Browser.navigate(grid.loginpage);
+	}
+	
+	private class GridListUpdateCallback implements Callback<GridListUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(GridListUpdateCallbackArgs params)
+		{
+			EventQueue.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					refreshGridList();
+				}
+			});
+			return false;
+		}
+		
 	}
 }

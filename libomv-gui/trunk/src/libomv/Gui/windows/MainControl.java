@@ -49,7 +49,6 @@ public interface MainControl extends ActionListener
 	public static final String cmdBugs = "bugs";
 	public static final String cmdUpdates = "Updates";
 	public static final String cmdSettings = "settings";
-	public static final String cmdRefresh = "refresh";
 	public static final String cmdCancel = "cancel";
 
 	/* interface methods */
