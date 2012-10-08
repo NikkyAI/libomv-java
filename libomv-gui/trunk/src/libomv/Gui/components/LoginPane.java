@@ -222,7 +222,7 @@ public class LoginPane extends ControlPane implements ActionListener
 				grid.setPassword(string);
 			try
 			{
-				_Client.saveList(false);
+				_Client.saveList();
 			}
 			catch (Exception ex) { };
 
