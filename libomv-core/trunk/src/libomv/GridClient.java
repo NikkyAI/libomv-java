@@ -850,7 +850,12 @@ public class GridClient
 		return modified;
 	}
 
-	public void saveList(boolean sendEvent) throws IllegalArgumentException, IllegalAccessException, IOException
+	public void saveList() throws IllegalArgumentException, IllegalAccessException, IOException
+	{
+			saveList(true);
+	}
+	
+	protected void saveList(boolean sendEvent) throws IllegalArgumentException, IllegalAccessException, IOException
 	{
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 		prefs.putInt(DEFAULT_GRIDS_VERSION, listversion);
