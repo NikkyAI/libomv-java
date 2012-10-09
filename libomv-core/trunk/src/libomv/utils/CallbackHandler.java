@@ -42,12 +42,13 @@ public class CallbackHandler<T>
 	 * information in the library that has been inserted by the library callback. */
 	private LinkedHashMap<Callback<T>, Boolean> callbackHandlers = null;
 
-	public int count()
+	public synchronized int count()
 	{
-		if (callbackHandlers == null)
-			return 0;
-
-		return callbackHandlers.size();
+		if (callbackHandlers != null)
+		{
+			return callbackHandlers.size();
+		}
+		return 0;
 	}
 
 	public boolean add(Callback<T> handler)
@@ -66,15 +67,16 @@ public class CallbackHandler<T>
 	 * @return True when the callback handler replaced an earlier instance of
 	 *         itself, false otherwise
 	 */
-	public boolean add(Callback<T> handler, boolean autoremove)
+	public synchronized boolean add(Callback<T> handler, boolean autoremove)
 	{
-		if (callbackHandlers == null)
-			callbackHandlers = new LinkedHashMap<Callback<T>, Boolean>();
-
-		synchronized (callbackHandlers)
+		if (handler != null)
 		{
+			if (callbackHandlers == null)
+				callbackHandlers = new LinkedHashMap<Callback<T>, Boolean>();
+
 			return (callbackHandlers.put(handler, autoremove) != null);
 		}
+		return false;
 	}
 
 	/**
@@ -88,15 +90,13 @@ public class CallbackHandler<T>
 	 * @return True when the callback handler was removed, false when it didn't
 	 *         exist
 	 */
-	public boolean remove(Callback<T> handler)
+	public synchronized boolean remove(Callback<T> handler)
 	{
-		if (callbackHandlers == null)
-			return false;
-
-		synchronized (callbackHandlers)
+		if (handler != null && callbackHandlers != null)
 		{
 			return (callbackHandlers.remove(handler) != null);
 		}
+		return false;
 	}
 
 	/**
@@ -106,30 +106,27 @@ public class CallbackHandler<T>
 	 *            The argument class to pass to the callback handlers
 	 * @return The number of callback handlers that got invoked
 	 */
-	public int dispatch(T args)
+	public synchronized  int dispatch(T args)
 	{
 		int count = 0;
 
 		if (callbackHandlers != null)
 		{
-			synchronized (callbackHandlers)
+			Iterator<Entry<Callback<T>, Boolean>> iter = callbackHandlers.entrySet().iterator();
+			while (iter.hasNext())
 			{
-				Iterator<Entry<Callback<T>, Boolean>> iter = callbackHandlers.entrySet().iterator();
-				while (iter.hasNext())
+				Entry<Callback<T>, Boolean> entry = iter.next();
+				Callback<T> handler = entry.getKey();
+				boolean remove = false;
+				
+				synchronized (handler)
 				{
-					Entry<Callback<T>, Boolean> entry = iter.next();
-					Callback<T> handler = entry.getKey();
-					boolean remove = false;
-					
-					synchronized (handler)
-					{
-						remove = handler.callback(args);
-						handler.notifyAll();
-					}
-					if (remove || entry.getValue())
-						iter.remove();
-					count++;
+					remove = handler.callback(args);
+					handler.notifyAll();
 				}
+				if (remove || entry.getValue())
+					iter.remove();
+				count++;
 			}
 		}
 		return count;
