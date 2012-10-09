@@ -45,7 +45,6 @@ import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.Gui.components.LoginPane;
 import libomv.Gui.components.ProgressPane;
-import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.utils.Callback;
@@ -53,16 +52,17 @@ import libomv.utils.Callback;
 public class OfflineController implements StateController, ActionListener
 {
 	private MainControl _Main;
+	private GridClient _Client;
 	private Browser _Browser;
 	private JMenuBar jMbMain;
 	
 	public OfflineController(MainControl main)
 	{
 		_Main = main;
+		_Client = _Main.getGridClient();
 
 		main.setJMenuBar(getJMenuBar());
 		main.setContentPane(getJBrowser().getComponent());
-
 		main.setControlPane(new LoginPane(_Main, getJBrowser()));
 		main.getJFrame().validate();
 	}
@@ -79,11 +79,10 @@ public class OfflineController implements StateController, ActionListener
 	{
 		if (e.getActionCommand().equals(MainControl.cmdLogin))
 		{
-			GridClient client = _Main.getGridClient();
 			try
 			{
 				_Main.setControlPane(new ProgressPane(_Main));
-				client.Login.RequestLogin(client.Login.new LoginParams(client), new LoginProgressHandler());
+				_Client.Login.RequestLogin(_Client.Login.new LoginParams(_Client), new LoginProgressHandler());
 			}
 			catch (Exception ex)
 			{
@@ -92,8 +91,7 @@ public class OfflineController implements StateController, ActionListener
 		}
 		if (e.getActionCommand().equals(MainControl.cmdCancel))
 		{
-			GridClient client = _Main.getGridClient();
-			client.Login.AbortLogin();			
+			_Client.Login.AbortLogin();			
 			_Main.setControlPane(new LoginPane(_Main, getJBrowser()));
 		}
 		else
@@ -105,16 +103,12 @@ public class OfflineController implements StateController, ActionListener
 	public void dispose()
 	{
 		_Main.setContentPane(null);
+		_Main.setControlPane(null);
 		if (_Browser != null)
 		{
 			_Browser.dispose();
 			_Browser = null;
 		}		
-	}
-
-	public CommWindow getCommControl()
-	{
-		return null;
 	}
 
 	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>

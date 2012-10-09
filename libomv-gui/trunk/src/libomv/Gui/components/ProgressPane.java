@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JProgressBar;
@@ -13,7 +14,7 @@ import javax.swing.JButton;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 
-public class ProgressPane extends ControlPane implements ActionListener
+public class ProgressPane extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 

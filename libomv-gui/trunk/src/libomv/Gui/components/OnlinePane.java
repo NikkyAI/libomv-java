@@ -31,9 +31,11 @@ package libomv.Gui.components;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JPanel;
+
 import libomv.Gui.windows.MainControl;
 
-public class OnlinePane extends ControlPane implements ActionListener
+public class OnlinePane extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -49,7 +51,15 @@ public class OnlinePane extends ControlPane implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+		/* Handle local events */
+		if (e.getActionCommand().equals(MainControl.cmdLogout))
+		{
+
+		}
+		else
+		{
+			/* Pass to main window to be handled */
+			_Main.actionPerformed(e);
+		}
 	}
 }

@@ -46,6 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
@@ -62,7 +63,7 @@ import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.utils.Callback;
 
-public class LoginPane extends ControlPane implements ActionListener
+public class LoginPane extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -73,6 +74,7 @@ public class LoginPane extends ControlPane implements ActionListener
 	private MainControl _Main;
 	private GridClient _Client;
 	private Browser _Browser;
+	private String cachedPage;
 	
 	private Callback<GridListUpdateCallbackArgs> gridListCallback = new GridListUpdateCallback();
 	
@@ -231,7 +233,9 @@ public class LoginPane extends ControlPane implements ActionListener
 		}
 		else if (e.getActionCommand().equals(cmdGrid))
 		{
-			initializePanel((GridInfo)getJcbGridSelector().getSelectedItem());
+			GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
+			if (grid != null)
+			    initializePanel(grid);
 		}
 		else if (e.getActionCommand().equals(cmdGrids))
 		{
@@ -400,7 +404,7 @@ public class LoginPane extends ControlPane implements ActionListener
 			});
 
 			// Add a key listener
-			jTxtUserName.addKeyListener(new KeyAdapter()
+			jPwdPassword.addKeyListener(new KeyAdapter()
 			{
 				/**
 				 * Called when a key is pressed
@@ -611,7 +615,11 @@ public class LoginPane extends ControlPane implements ActionListener
 		getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
 		getChckbxSavePassword().setEnabled(grid.saveSettings);
 
-		_Browser.navigate(grid.loginpage);
+		if (cachedPage == null || !cachedPage.equals(grid.loginpage))
+		{
+			cachedPage = grid.loginpage;
+			_Browser.navigate(grid.loginpage);
+		}
 	}
 	
 	private class GridListUpdateCallback implements Callback<GridListUpdateCallbackArgs>

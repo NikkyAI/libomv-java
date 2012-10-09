@@ -104,6 +104,13 @@ public class MainWindow extends JFrame implements MainControl
 		_State = new OfflineController(this);
 	}
 	
+	protected void finalize() throws Throwable
+	{
+		_State.dispose();
+		_State = null;
+		super.finalize();
+	}
+	
 	public JFrame getJFrame()
 	{
 		return this;
@@ -215,12 +222,14 @@ public class MainWindow extends JFrame implements MainControl
 		else if (action.equals(MainControl.cmdOnline))
 		{
 			_State.dispose();
-			_State = new OnlineController(this);			
+			_State = new OnlineController(this);
+			validate();
 		}
 		else if (action.equals(MainControl.cmdLogout))
 		{
 			_State.dispose();
 			_State = new OfflineController(this);			
+			validate();
 		}
 		else if (action.equals(MainControl.cmdQuit))
 		{

@@ -109,15 +109,6 @@ public class OnlineController implements StateController, ActionListener
 		_Comm.dispose();
 	}
 	
-	public void refresh(String context)
-	{
-	}
-
-	public CommWindow getCommControl()
-	{
-		return _Comm;
-	}
-
 	private JMenuBar getJMenuBar()
 	{
 		if (jMbMain == null)
