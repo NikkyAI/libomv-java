@@ -412,9 +412,6 @@ public class GridClient
 	// Packet Statistics
 	public Statistics Stats;
 
-	// Restrained Love Manager
-	public RLVManager RLV;
-
 	//
 	// Constructor.
 	//
@@ -470,9 +467,6 @@ public class GridClient
 
 		if (Settings.getBool(LibSettings.ENABLE_TERRAIN_MANAGER))
 			Terrain = new TerrainManager(this);
-
-		if (Settings.getBool(LibSettings.ENABLE_RLV_MANAGER))
-			RLV = new RLVManager(this);
 
 		Stats = new Statistics();
 	}

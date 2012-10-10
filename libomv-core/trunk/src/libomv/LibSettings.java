@@ -97,9 +97,6 @@ public class LibSettings extends Settings implements PacketCallback
 	/* Initialize Terrain Manager */
 	public static final String ENABLE_TERRAIN_MANAGER = "enableTerrainMgr";
 
-	/* Initialize Restrained Love Manager */
-	public static final String ENABLE_RLV_MANAGER = "enableRLVMgr";
-	
 	// #region Login/Networking Settings
 
 	/* IP Address the client will bind to */
@@ -417,7 +414,6 @@ public class LibSettings extends Settings implements PacketCallback
 			new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
 			new DefaultSetting(ENABLE_PARCEL_MANAGER, false),
 			new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
-			new DefaultSetting(ENABLE_RLV_MANAGER, false),
 			new DefaultSetting(ENABLE_SOUND_MANAGER, false),
 			new DefaultSetting(SEND_AGENT_THROTTLE, true),
 			new DefaultSetting(ENABLE_CAPS, true),
