@@ -36,12 +36,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 import libomv.GridClient;
-import libomv.core.state.StateController;
+import libomv.Gui.StateController;
 import libomv.utils.Settings;
 
 public interface MainControl extends ActionListener
 {
-	public static final String cmdOnline = "online";
 	public static final String cmdLogout = "logout";
 	public static final String cmdLogin = "login";
 	public static final String cmdQuit = "quit";

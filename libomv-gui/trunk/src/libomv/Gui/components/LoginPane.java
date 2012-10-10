@@ -29,6 +29,7 @@
 package libomv.Gui.components;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -195,6 +196,14 @@ public class LoginPane extends JPanel implements ActionListener
 		_Client.OnGridListUpdate.add(gridListCallback);
 		
 		initializePanel((GridInfo)getJcbGridSelector().getSelectedItem());
+	}
+	
+	@Override
+	public Dimension getMinimumSize()
+	{
+		Dimension size = super.getMinimumSize();
+		size.height = 110;
+		return size;
 	}
 	
 	protected void finalize() throws Throwable

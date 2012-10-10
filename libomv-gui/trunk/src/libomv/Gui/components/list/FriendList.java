@@ -552,12 +552,16 @@ public class FriendList extends JPanel implements ActionListener
 					if (enable)
 					{
 						FriendInfo info = _Friends.getFriend(e.getFirstIndex());
-						if (!info.getIsOnline())
+						enable = info.getIsOnline();
+						if (!enable)
 						{
 							jBtnTpOffer.setEnabled(false);
 						}
-							
-						if (!info.getIsOnline() || !_Main.getGridClient().Network.getCurrentSim().getAvatarPositions().containsKey(info.getID()))
+						else
+						{
+							enable = _Main.getGridClient().Network.getCurrentSim().getAvatarPositions().containsKey(info.getID());
+						}						
+						if (!enable)
 						{
 							jBtnTeleportTo.setEnabled(false);
 							jBtnAutopilotTo.setEnabled(false);					

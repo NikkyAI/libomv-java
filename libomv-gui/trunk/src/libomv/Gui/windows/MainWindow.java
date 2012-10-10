@@ -47,10 +47,8 @@ import javax.swing.JTextField;
 
 import libomv.GridClient;
 import libomv.Gui.AppSettings;
+import libomv.Gui.StateController;
 import libomv.Gui.dialogs.AboutDialog;
-import libomv.core.state.OfflineController;
-import libomv.core.state.OnlineController;
-import libomv.core.state.StateController;
 import libomv.utils.Logger;
 import libomv.utils.Settings;
 import libomv.utils.Logger.LogLevel;
@@ -101,7 +99,7 @@ public class MainWindow extends JFrame implements MainControl
         });
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-		_State = new OfflineController(this);
+		_State = new StateController(this);
 	}
 	
 	protected void finalize() throws Throwable
@@ -218,18 +216,6 @@ public class MainWindow extends JFrame implements MainControl
 		{
 			PreferenceWindow pref = new PreferenceWindow(this);
 			pref.setVisible(true);			
-		}
-		else if (action.equals(MainControl.cmdOnline))
-		{
-			_State.dispose();
-			_State = new OnlineController(this);
-			validate();
-		}
-		else if (action.equals(MainControl.cmdLogout))
-		{
-			_State.dispose();
-			_State = new OfflineController(this);			
-			validate();
 		}
 		else if (action.equals(MainControl.cmdQuit))
 		{

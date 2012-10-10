@@ -88,7 +88,7 @@ public class PrivateChannel extends AbstractChannel
 	        }
 			addHistory(message);	
 
-            if (isRLVrestrictionActive("sendim", getUUID()))
+            if (_Main.getStateControl().RLV.restrictionActive("sendim", getUUID()))
             {
             	message = "*** IM blocked by sender's viewer";
             }

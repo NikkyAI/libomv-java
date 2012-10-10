@@ -63,6 +63,7 @@ import libomv.FriendsManager.FriendshipResponseCallbackArgs;
 import libomv.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.GridClient;
 import libomv.GroupManager.GroupInvitationCallbackArgs;
+import libomv.Gui.StateController;
 import libomv.Gui.channels.AbstractChannel;
 import libomv.Gui.channels.GroupChannel;
 import libomv.Gui.channels.PrivateChannel;
@@ -70,7 +71,6 @@ import libomv.Gui.channels.LocalChannel;
 import libomv.Gui.components.ButtonTabPane;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
-import libomv.core.state.OnlineController;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
@@ -193,11 +193,11 @@ public class CommWindow extends JFrame
 		else
 		{
 			getJTpComm().setSelectedIndex(0);
-			if (focus.equals(OnlineController.cmdFriends))
+			if (focus.equals(StateController.cmdFriends))
 			{
 				getJTpContacts().setSelectedIndex(0);
 			}
-			else if (focus.equals(OnlineController.cmdGroups))
+			else if (focus.equals(StateController.cmdGroups))
 			{
 				getJTpContacts().setSelectedIndex(1);
 			}
@@ -390,9 +390,9 @@ public class CommWindow extends JFrame
 		            }
 			}
 	        
-			if (params.getMessage().startsWith("@") && client.RLV != null)
+			if (params.getMessage().startsWith("@"))
 	        {
-				client.RLV.tryProcessCommand(params);
+				_Main.getStateControl().RLV.tryProcessCommand(params);
 	        	return false;
 	        }
 
@@ -440,14 +440,14 @@ public class CommWindow extends JFrame
 						    					break;
 						            	}
 						            	localMessage.append(": ");
-						                if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && client.RLV != null && client.RLV.restrictionActive("recvchat", sourceID.toString()))
+						                if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && _Main.getStateControl().RLV.restrictionActive("recvchat", sourceID.toString()))
 						                	localMessage.append("...");
 						                else
 						                	localMessage.append(message);
 						    		}
 						            else
 						            {
-						                if (sourceType == ChatSourceType.Agent && client.RLV != null && client.RLV.restrictionActive("recvemote", sourceID.toString()))
+						                if (sourceType == ChatSourceType.Agent && _Main.getStateControl().RLV.restrictionActive("recvemote", sourceID.toString()))
 						                	localMessage.append(" ...");
 						                else
 						                	localMessage.append(message.substring(3));
@@ -541,7 +541,7 @@ public class CommWindow extends JFrame
 								if (message.Offline == InstantMessageOnline.Offline)
 									style = AbstractChannel.STYLE_OFFLINE;
 
-								if (client.RLV != null && client.RLV.restrictionActive("recvchat", message.FromAgentID.toString()))
+								if (_Main.getStateControl().RLV.restrictionActive("recvchat", message.FromAgentID.toString()))
 								{
 									localMessage = "*** IM blocked by your viewer";
 									client.Self.InstantMessage(client.Self.getName(), params.getIM().FromAgentID,

@@ -56,7 +56,6 @@ import javax.swing.text.StyledDocument;
 
 import libomv.AgentManager.ChatType;
 import libomv.GridClient;
-import libomv.RLVManager;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
 import libomv.utils.Logger;
@@ -262,12 +261,6 @@ public abstract class AbstractChannel extends JPanel
 		isTyping.reset(-1);		
 	}
 
-	protected boolean isRLVrestrictionActive(String name, UUID id)
-	{
-		RLVManager rlv = _Main.getGridClient().RLV;
-		return rlv != null && rlv.restrictionActive(name, id.toString());
-	}
-	
 	/* Overwrite this for channels who send a typing indication */
 	abstract protected void triggerTyping(boolean start) throws Exception;
 	

@@ -1,11 +1,13 @@
 package libomv.Gui.components;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JProgressBar;
@@ -13,6 +15,9 @@ import javax.swing.JButton;
 
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
+import java.awt.Color;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
 
 public class ProgressPane extends JPanel implements ActionListener
 {
@@ -44,15 +49,19 @@ public class ProgressPane extends JPanel implements ActionListener
 	}
 
 	@Override
+	public Dimension getMinimumSize()
+	{
+		Dimension size = super.getMinimumSize();
+		size.height = 110;
+		return size;
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		if (e.getActionCommand().equals(MainControl.cmdCancel))
 		{
 			
-		}
-		else if (e.getActionCommand().equals(cmdUpdateInfo))
-		{
-			getJLblInfoText().setText((String)e.getSource());
 		}
 		else if (e.getActionCommand().equals(cmdUpdateMessage))
 		{
@@ -62,10 +71,22 @@ public class ProgressPane extends JPanel implements ActionListener
 		{
 			getJProgressBar().setValue((Integer)e.getSource());
 		}
+		else if (e.getActionCommand().equals(cmdUpdateInfo))
+		{
+			getJLblInfoText().setText((String)e.getSource());
+		}
 		else
 		{
 			_Main.actionPerformed(e);
 		}
+	}
+	
+	public void updateProgress(int value, String status, String info)
+	{
+		getJProgressBar().setValue(value);
+		getJLblProgressText().setText(status);
+		if (info != null)
+			getJLblInfoText().setText(info.isEmpty() ? " " : info);
 	}
 
 	private JLabel getJLblProgressText()
@@ -73,6 +94,7 @@ public class ProgressPane extends JPanel implements ActionListener
 		if (jLblProgressText == null)
 		{
 			jLblProgressText = new JLabel();
+			jLblProgressText.setMinimumSize(new Dimension(200, 10));
 			jLblProgressText.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return jLblProgressText;
@@ -83,6 +105,7 @@ public class ProgressPane extends JPanel implements ActionListener
 		if (jLblInfoText == null)
 		{
 			jLblInfoText = new JLabel();
+			jLblInfoText.setMinimumSize(new Dimension(200, 10));
 			jLblInfoText.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return jLblInfoText;

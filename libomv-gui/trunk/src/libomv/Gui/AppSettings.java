@@ -32,13 +32,18 @@ import libomv.GridClient;
 import libomv.utils.Logger;
 import libomv.utils.Settings;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.DefaultSetting;
 
 public class AppSettings extends Settings
 {
 	public static String disableSound = "disabledSound";
 
+	/* Initialize Restrained Love Manager */
+	public static final String ENABLE_RLV_MANAGER = "rlv_enabled";
+	
 	DefaultSetting[] defaults = {
 			new DefaultSetting(disableSound, true),
+			new DefaultSetting(ENABLE_RLV_MANAGER, false),
 	};
 	
 	public AppSettings(GridClient client)
