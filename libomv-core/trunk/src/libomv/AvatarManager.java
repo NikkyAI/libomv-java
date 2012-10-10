@@ -50,6 +50,7 @@ import libomv.packets.AvatarGroupsReplyPacket;
 import libomv.packets.AvatarInterestsReplyPacket;
 import libomv.packets.AvatarPickerReplyPacket;
 import libomv.packets.AvatarPropertiesReplyPacket;
+import libomv.packets.GenericMessagePacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.packets.UUIDNameReplyPacket;
@@ -640,18 +641,114 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		return Helpers.EmptyString;
 	}
 
-	/**
+    /**
+     * Start a request for Avatar Picks
+     *
+     * @param avatarid UUID of the avatar
+     * @throws Exception 
+     */
+    public void RequestAvatarPicks(UUID avatarid) throws Exception
+    {
+        GenericMessagePacket gmp = new GenericMessagePacket();
+
+        gmp.AgentData.AgentID = _Client.Self.getAgentID();
+        gmp.AgentData.SessionID = _Client.Self.getSessionID();
+        gmp.AgentData.TransactionID = UUID.Zero;
+
+        gmp.MethodData.setMethod(Helpers.StringToBytes("avatarpicksrequest"));
+        gmp.MethodData.Invoice = UUID.Zero;
+        gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
+        gmp.ParamList[0] = gmp.new ParamListBlock();
+        gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+
+        _Client.Network.SendPacket(gmp);
+    }
+
+    /**
+     * Start a request for Avatar Classifieds
+     *
+     * @param avatarid UUID of the avatar
+     * @throws Exception
+     */
+    public void RequestAvatarClassified(UUID avatarid) throws Exception
+    {
+        GenericMessagePacket gmp = new GenericMessagePacket();
+
+        gmp.AgentData.AgentID = _Client.Self.getAgentID();
+        gmp.AgentData.SessionID = _Client.Self.getSessionID();
+        gmp.AgentData.TransactionID = UUID.Zero;
+
+        gmp.MethodData.setMethod(Helpers.StringToBytes("avatarclassifiedsrequest"));
+        gmp.MethodData.Invoice = UUID.Zero;
+        gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
+        gmp.ParamList[0] = gmp.new ParamListBlock();
+        gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+
+        _Client.Network.SendPacket(gmp);
+    }
+
+    /**
+     * Start a request for details of a specific profile pick
+     *
+     * @param avatarid UUID of the avatar
+     * @param pickid UUID of the profile pick
+     * @throws Exception
+     */
+    public void RequestPickInfo(UUID avatarid, UUID pickid) throws Exception
+    {
+        GenericMessagePacket gmp = new GenericMessagePacket();
+
+        gmp.AgentData.AgentID = _Client.Self.getAgentID();
+        gmp.AgentData.SessionID = _Client.Self.getSessionID();
+        gmp.AgentData.TransactionID = UUID.Zero;
+
+        gmp.MethodData.setMethod(Helpers.StringToBytes("pickinforequest"));
+        gmp.MethodData.Invoice = UUID.Zero;
+        gmp.ParamList = new GenericMessagePacket.ParamListBlock[2];
+        gmp.ParamList[0] = gmp.new ParamListBlock();
+        gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+        gmp.ParamList[1] = gmp.new ParamListBlock();
+        gmp.ParamList[1].setParameter(Helpers.StringToBytes(pickid.toString()));
+
+        _Client.Network.SendPacket(gmp);
+    }
+
+    /**
+     * Start a request for details of a specific profile classified
+     *
+     * @param avatarid UUID of the avatar
+     * @param UUID of the profile classified
+     * @throws Exception
+     */
+    public void RequestClassifiedInfo(UUID avatarid, UUID classifiedid) throws Exception
+    {
+        GenericMessagePacket gmp = new GenericMessagePacket();
+
+        gmp.AgentData.AgentID = _Client.Self.getAgentID();
+        gmp.AgentData.SessionID = _Client.Self.getSessionID();
+        gmp.AgentData.TransactionID = UUID.Zero;
+
+        gmp.MethodData.setMethod(Helpers.StringToBytes("classifiedinforequest"));
+        gmp.MethodData.Invoice = UUID.Zero;
+        gmp.ParamList = new GenericMessagePacket.ParamListBlock[2];
+        gmp.ParamList[0] = gmp.new ParamListBlock();
+        gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+        gmp.ParamList[1] = gmp.new ParamListBlock();
+        gmp.ParamList[1].setParameter(Helpers.StringToBytes(classifiedid.toString()));
+
+        _Client.Network.SendPacket(gmp);
+    }
+
+    /**
 	 * Request a name update for an avatar
 	 * 
-	 * @param id
-	 *            The uuid of the avatar to get the name for
-	 * @param anc
-	 *            A callback being called when a name request is answered
+	 * @param id The uuid of the avatar to get the name for
+	 * @param anc A callback being called when a name request is answered
 	 * @throws Exception
 	 */
 	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception
 	{
-		// TODO: BeginGetAvatarNames is pretty bulky, rewrite a simple version
+		// TODO: RequestAvatarNames is pretty bulky, rewrite a simple version
 		// here
 		ArrayList<UUID> ids = new ArrayList<UUID>();
 		ids.add(id);
