@@ -59,7 +59,7 @@ public class RLVManager
     private MainControl _Main;
 	
     private List<RLVRule> rules = new ArrayList<RLVRule>();
-    private Pattern rlv_regex = Pattern.compile("(?<behaviour>[^:=]+)(:(?<option>[^=]+))?=(?<param>\w+)", RegexOptions.Compiled);
+ //   private Pattern rlv_regex = Pattern.compile("(?<behaviour>[^:=]+)(:(?<option>[^=]+))?=(?<param>\w+)", RegexOptions.Compiled);
 	
 	private Callback<SettingsUpdateCallbackArgs> settingsUpdate = new SettingsUpdateCallback();
 	
