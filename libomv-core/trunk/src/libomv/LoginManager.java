@@ -313,9 +313,9 @@ public class LoginManager
 		 *            XML-RPC logins do not require this as XML-RPC.NET
 		 *            automatically populates the struct properly using
 		 *            attributes
-		 * @throws IOException
+		 * @return this object pointer 
 		 */
-		private void ParseLoginReply(OSDMap reply)
+		private LoginResponseData ParseLoginReply(OSDMap reply)
 		{
 			if (reply.containsKey("login"))
 			{
@@ -347,7 +347,7 @@ public class LoginManager
 					// Reason can be: tos, critical, key, update, optional, presence
 					Reason = reply.get("reason").AsString();
 				}
-				return;
+				return this;
 			}
 
 			// UDP Blacklist
@@ -453,9 +453,10 @@ public class LoginManager
             {
                 XMPPHost = reply.get("xmpp_host").AsString();
             }
-}
+            return this;
+		}
 
-		private void ParseLoginReply(Map<String, Object> reply)
+		private LoginResponseData ParseLoginReply(Map<String, Object> reply)
 		{
 			if (reply.containsKey("login"))
 			{
@@ -479,7 +480,7 @@ public class LoginManager
 					// Reason can be: tos, critical, key, update, optional, presence
 					Reason = ParseString("reason", reply);
 				}
-				return;
+				return this;
 			}
 
 			// UDP Blacklist
@@ -605,6 +606,7 @@ public class LoginManager
             {
                 XMPPHost = ParseString("xmpp_host", reply);
             }
+            return this;
 		}
 
 		private void ParseHome(String value) throws ParseException, IOException
@@ -1298,16 +1300,15 @@ public class LoginManager
 		return String.format("uri:%s&%d&%d&%d", sim, x, y, z);
 	}
 
+	/**
+	 * Abort any ongoing login. If no login is currently ongoing, this function does nothing 
+	 */
 	public void AbortLogin()
 	{
 		// FIXME: Now that we're using CAPS we could cancel the current login and start a new one	
 		if (LoginEvents.size() != 0)
 		{
 			UpdateLoginStatus(LoginStatus.Failed, "Abort Requested", " aborted", null);
-		}
-		else
-		{
-			Logger.DebugLog("No Login was in progress", _Client);
 		}
 	}
 
@@ -1539,34 +1540,33 @@ public class LoginManager
 	 */
 	private void HandleLoginReplyXmlRpc(Object response, LoginParams loginParams) throws Exception
 	{
-		LoginResponseData reply = new LoginResponseData();
-
 		// Fetch the login response
-		if (response == null || !(response instanceof Map))
+		if (response != null && response instanceof Map)
+		{
+			UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
+
+			@SuppressWarnings("unchecked")
+			Map<String, Object> result = (Map<String, Object>) response;
+			LoginResponseData reply = new LoginResponseData().ParseLoginReply(result);
+
+			if (reply.Success)
+			{
+				// Remove the quotes around our first name.
+				if (reply.FirstName.charAt(0) == '"')
+				{
+					reply.FirstName = reply.FirstName.substring(1);
+				}
+				if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"')
+				{
+					reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
+				}
+			}
+			HandleLoginResponse(reply, loginParams);
+		}
+		else
 		{
 			UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", "bad response", null);
-			return;
 		}
-
-		UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
-
-		@SuppressWarnings("unchecked")
-		Map<String, Object> result = (Map<String, Object>) response;
-		reply.ParseLoginReply(result);
-
-		if (reply.Success)
-		{
-			// Remove the quotes around our first name.
-			if (reply.FirstName.charAt(0) == '"')
-			{
-				reply.FirstName = reply.FirstName.substring(1);
-			}
-			if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"')
-			{
-				reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
-			}
-		}
-		HandleLoginResponse(reply, loginParams);
 	}
 
 	/**
@@ -1590,12 +1590,22 @@ public class LoginManager
 		{
 			if (result != null && result.getType().equals(OSDType.Map))
 			{
-				OSDMap map = (OSDMap) result;
-
 				UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
-				LoginResponseData reply = new LoginResponseData();
-				reply.ParseLoginReply(map);
+				LoginResponseData reply = new LoginResponseData().ParseLoginReply((OSDMap)result);
+
+				if (reply.Success)
+				{
+					// Remove the quotes around our first name.
+					if (reply.FirstName.charAt(0) == '"')
+					{
+						reply.FirstName = reply.FirstName.substring(1);
+					}
+					if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"')
+					{
+						reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
+					}
+				}
 
 				try
 				{
