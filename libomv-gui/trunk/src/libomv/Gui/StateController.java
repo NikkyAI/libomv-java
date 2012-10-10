@@ -329,7 +329,7 @@ public class StateController implements ActionListener
 				// Create the CommWindow as hidden window as it is also our communication manager
 				Comm = new CommWindow(_Main);
 				// Create the RLV manager
-				RLV = new RLVManager(_Client);
+				RLV = new RLVManager(_Main);
 				
 				try
 				{
