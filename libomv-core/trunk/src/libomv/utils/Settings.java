@@ -193,7 +193,7 @@ public class Settings
 		OSD osd = get(name);
 		if (osd != null)
 			return osd.AsBoolean();
-		return defValue;
+		return putDefault(name, defValue);
 	}
 
 	public int get(String name, int defValue)
@@ -201,7 +201,7 @@ public class Settings
 		OSD osd = get(name);
 		if (osd != null)
 			return osd.AsInteger();
-		return defValue;
+		return putDefault(name, defValue);
 	}
 
 	public String get(String name, String defValue)
@@ -209,7 +209,7 @@ public class Settings
 		OSD osd = get(name);
 		if (osd != null)
 			return osd.AsString();
-		return defValue;
+		return putDefault(name, defValue);
 	}
 
 	public OSD get(String name, OSD defValue)
@@ -217,7 +217,7 @@ public class Settings
 		OSD osd = get(name);
 		if (osd != null)
 			return osd;
-		return defValue;
+		return putDefault(name, defValue);
 	}
 	
 	public boolean putDefault(String name, boolean value)
