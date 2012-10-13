@@ -32,6 +32,7 @@ package libomv.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Calendar;
 
@@ -70,13 +71,15 @@ public final class Logger
 	{
 		private void output(String level, Object message, Throwable ex)
 		{
-			String str =  Calendar.getInstance().getTime().toString() + " " + level + ": " + message + (ex != null ? " Exception: " + ex.toString() : "");
+			String str =  Calendar.getInstance().getTime().toString() + " " + level + ": " + message;
 			if (debugFile != null)
 			{
 				try
 				{
-					Writer write = new FileWriter(debugFile);
-					write.write(str);
+					PrintWriter write = new PrintWriter(debugFile);
+					write.println(str);
+					if (ex != null)
+						ex.printStackTrace(write);
 					write.close();
 				}
 				catch (IOException e)
@@ -87,6 +90,8 @@ public final class Logger
 			else
 			{
 				System.out.println(str);
+				if (ex != null)
+					ex.printStackTrace(System.out);
 			}
 		}
 
