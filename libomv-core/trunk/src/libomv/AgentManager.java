@@ -38,6 +38,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -1599,6 +1600,52 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public CallbackHandler<AlertMessageCallbackArgs> OnAlertMessage = new CallbackHandler<AlertMessageCallbackArgs>();
 	
 
+	public class GenericMessageCallbackArgs implements CallbackArgs
+	{
+		private final UUID sessionID;
+		private final UUID transactionID;
+		private final String method;
+		private final UUID invoiceID;
+		private List<String> parameters;
+
+		public UUID getSessionID()
+		{
+			return sessionID;
+		}
+
+		public UUID getTransactionID()
+		{
+			return transactionID;
+		}
+
+		public String getMethod()
+		{
+			return method;
+		}
+
+		public UUID getInvoiceID()
+		{
+			return invoiceID;
+		}
+		
+		public List<String> getParameters()
+		{
+			return parameters;
+		}
+		
+		public GenericMessageCallbackArgs(UUID sessionID, UUID transactionID, String method, UUID invoiceID, List<String> parameters)
+		{
+			this.sessionID = sessionID;
+			this.transactionID = transactionID;
+			this.method = method;
+			this.invoiceID = invoiceID;
+			this.parameters = parameters;	
+		}
+	}
+    
+	public CallbackHandler<GenericMessageCallbackArgs> OnGenericMessage = new CallbackHandler<GenericMessageCallbackArgs>();
+
+	
 	public class CameraConstraintCallbackArgs implements CallbackArgs
 	{
 		private final Vector4 constraints;
@@ -2270,8 +2317,27 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public HashMap<UUID, Integer> SignaledAnimations = new HashMap<UUID, Integer>();
 	// Dictionary containing current Group Chat sessions and members
 	public HashMap<UUID, ArrayList<ChatSessionMember>> GroupChatSessions = new HashMap<UUID, ArrayList<ChatSessionMember>>();
-    // Dictionary containing mute list keyead on mute name and key
-    public HashMap<String, MuteEntry> MuteList = new HashMap<String, MuteEntry>();
+    // Dictionary containing mute list keyed on mute name and key
+    private HashMap<String, MuteEntry> MuteList = new HashMap<String, MuteEntry>();
+
+    /**
+     * Finds if a MuteEntry by using a comparison function that is passed in as object parameter
+     * 
+     * @param compare The Comparable object that implements the comparison 
+     * @return the found MuteEntry if any or null
+     */
+	public MuteEntry findMuteEntry(Comparable<MuteEntry> compare)
+	{
+		synchronized (MuteList)
+		{
+			for (MuteEntry me : MuteList.values())
+			{
+				if (compare.compareTo(me) == 0)
+					return me;
+			}
+		}
+		return null;
+	}
 
 	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
 	{
@@ -2425,6 +2491,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(CapsEventType.ChatterBoxSessionAgentListUpdates, this);
 		// Alert Messages
 		_Client.Network.RegisterCallback(PacketType.AlertMessage, this);
+		// Generic Messages
+		_Client.Network.RegisterCallback(PacketType.GenericMessage, this);
 		// Camera Constraint (probably needs to move to AgentManagerCamera TODO:
 		_Client.Network.RegisterCallback(PacketType.CameraConstraint, this);
 	}
@@ -2511,6 +2579,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 				break;
 			case ScriptSensorReply:
 				HandleScriptSensorReply(packet, simulator);
+				break;
+			case GenericMessage:
+				HandleGenericMessage(packet, simulator);
 				break;
 			case AlertMessage:
 				HandleAlertMessage(packet, simulator);
@@ -2638,7 +2709,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		InstantMessage(fromName, target, message, imSessionID, InstantMessageDialog.MessageFromAgent,
 				InstantMessageOnline.Online, null, null, 0, binaryBucket);
 	}
-
+	
 	/**
 	 * Send an Instant Message
 	 * 
@@ -5607,6 +5678,34 @@ public class AgentManager implements PacketCallback, CapsCallback
         OnAlertMessage.dispatch(new AlertMessageCallbackArgs(Helpers.BytesToString(alert.AlertData.getMessage())));
     }
 
+    private void HandleGenericMessage(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+       GenericMessagePacket message = (GenericMessagePacket)packet;
+       
+       if (message.AgentData.AgentID.equals(agentID))
+       {
+    	   if (message.MethodData.getMethod().equals("emptymutelist"))
+    	   {
+               synchronized (MuteList)
+               {
+                   MuteList.clear();
+               }
+    	   }
+    	   else
+    	   {
+               Logger.Log("GenericMessage: " + message.MethodData.getMethod() + ", " + message.ParamList.length + " parameters", LogLevel.Info, _Client);
+
+               List<String> parameters = new ArrayList<String>(message.ParamList.length);
+               for (GenericMessagePacket.ParamListBlock block : message.ParamList)
+               {
+            	   parameters.add(Helpers.BytesToString(block.getParameter()));
+               }
+               OnGenericMessage.dispatch(new GenericMessageCallbackArgs(message.AgentData.SessionID, message.AgentData.TransactionID,
+            		                     Helpers.BytesToString(message.MethodData.getMethod()), message.MethodData.Invoice, parameters));
+    	   }
+       }
+    }
+
     private void HandleCameraConstraint(Packet packet, Simulator simulator)
     {
         CameraConstraintPacket camera = (CameraConstraintPacket)packet;
@@ -5627,7 +5726,6 @@ public class AgentManager implements PacketCallback, CapsCallback
                   block.ObjectID, block.OwnerID, block.Position, block.Range, block.Rotation, ScriptSensorTypeFlags.setValue(block.Type), block.Velocity));
             }
         }
-
     }
 
     private void HandleAvatarSitResponse(Packet packet, Simulator simulator)
