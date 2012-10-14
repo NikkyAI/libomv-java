@@ -2322,7 +2322,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     private HashMap<String, MuteEntry> MuteList = new HashMap<String, MuteEntry>();
 
     /**
-     * Finds if a MuteEntry by using a comparison function that is passed in as object parameter
+     * Finds if a MuteEntry exists by using a predicate function that is passed in as object parameter
      * 
      * @param predicate The Predicate object that implements the test 
      * @return true if a matching MuteEntry was found, or false otherwise
