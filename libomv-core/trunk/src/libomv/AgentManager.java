@@ -151,6 +151,7 @@ import libomv.primitives.Primitive;
 import libomv.types.Color4;
 import libomv.types.Matrix4;
 import libomv.types.PacketCallback;
+import libomv.types.Predicate;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
 import libomv.types.Vector3;
@@ -2323,20 +2324,20 @@ public class AgentManager implements PacketCallback, CapsCallback
     /**
      * Finds if a MuteEntry by using a comparison function that is passed in as object parameter
      * 
-     * @param compare The Comparable object that implements the comparison 
-     * @return the found MuteEntry if any or null
+     * @param predicate The Predicate object that implements the test 
+     * @return true if a matching MuteEntry was found, or false otherwise
      */
-	public MuteEntry findMuteEntry(Comparable<MuteEntry> compare)
+	public boolean findMuteEntry(Predicate<MuteEntry> predicate)
 	{
 		synchronized (MuteList)
 		{
 			for (MuteEntry me : MuteList.values())
 			{
-				if (compare.compareTo(me) == 0)
-					return me;
+				if (predicate.evaluate(me))
+					return true;
 			}
 		}
-		return null;
+		return false;
 	}
 
 	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
