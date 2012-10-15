@@ -443,7 +443,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Struct representing a member of a group chat session and their settings
-	static public final class ChatSessionMember
+	public final class ChatSessionMember
 	{
 		// The <see cref="UUID"/> of the Avatar
 		public UUID AvatarKey;
@@ -455,6 +455,20 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public boolean MuteText;
 		// True if a moderator has muted this avatars voice
 		public boolean MuteVoice;
+		
+		public boolean equals(Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (!(obj instanceof ChatSessionMember))
+				return false;
+			return AvatarKey.equals(((ChatSessionMember)obj).AvatarKey);
+		}
+		
+		public int hashCode()
+		{
+			return AvatarKey.hashCode();
+		}
 	}
 
 	// #endregion Structs

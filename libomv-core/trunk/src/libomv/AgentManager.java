@@ -5549,7 +5549,10 @@ public class AgentManager implements PacketCallback, CapsCallback
             	for (ChatSessionMember member : GroupChatSessions.get(msg.SessionID))
             	{
                     if (member.AvatarKey.equals(msg.Updates[i].AgentID))
+                    {
                     	fndMbr = member;
+                    	break;
+                    }
                 }
             }
 
@@ -5559,7 +5562,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                 {
                     if (fndMbr == null || fndMbr.AvatarKey.equals(UUID.Zero))
                     {
-                        fndMbr = new ChatSessionMember();
+                        fndMbr = _Client.Groups.new ChatSessionMember();
                         fndMbr.AvatarKey = msg.Updates[i].AgentID;
 
                         synchronized (GroupChatSessions)
