@@ -87,10 +87,6 @@ public class LocalChannel extends AbstractChannel
 	
 		panelNorth.add(jtbExpandAttendents);
 		add(panelNorth, BorderLayout.NORTH);
-
-		JScrollPane scrollPaneText = new JScrollPane();
-		scrollPaneText.setViewportView(getTextPane());
-		add(scrollPaneText, BorderLayout.CENTER);
 	}
 
 	/**
@@ -102,7 +98,7 @@ public class LocalChannel extends AbstractChannel
 	@Override
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
-		boolean self = fromId != null && fromId.equals(_Main.getGridClient().Self.getAgentID());
+		boolean self = fromId != null && fromId.equals(_Client.Self.getAgentID());
 		// Did we already print that message?
 		if (!(self  && printLocalMessage))
 		{
@@ -112,7 +108,7 @@ public class LocalChannel extends AbstractChannel
 				chatStyle = STYLE_CHATLOCAL;
 			}
 			// Determine if this is a friend...
-			else if (_Main.getGridClient().Friends.getFriendList().containsKey(fromId))
+			else if (_Client.Friends.getFriendList().containsKey(fromId))
 			{
 				chatStyle = STYLE_CHATREMOTEFRIEND;
 			}
@@ -138,9 +134,12 @@ public class LocalChannel extends AbstractChannel
         if (message == null || message.trim().isEmpty())
         	return;
 
+		// Indicate that we're no longer typing.
+		super.transmitMessage(message, chatType);
+
         int channel = 0;
 		String shortMessage, style = STYLE_REGULAR,
-			   self = _Main.getGridClient().Self.getName();
+			   self = _Client.Self.getName();
 
         if (message.length() >= 1000)
         {
@@ -225,12 +224,12 @@ public class LocalChannel extends AbstractChannel
 		}
 
 		// Send the message.
-		_Main.getGridClient().Self.Chat(message, channel, chatType);
+		_Client.Self.Chat(message, channel, chatType);
 	}
 	
 	protected void triggerTyping(boolean start) throws Exception
 	{
-		_Main.getGridClient().Self.Chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);		
+		_Client.Self.Chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);		
 	}
 
 	private JScrollPane getJScrpAttendents()

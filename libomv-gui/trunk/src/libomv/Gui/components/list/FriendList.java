@@ -839,6 +839,17 @@ public class FriendList extends JPanel implements ActionListener
 					}	
 				}
 			}
+			else if (e.getActionCommand().equals(cmdTeleportAsk))
+			{
+				try
+				{
+					_Main.getGridClient().Self.SendTeleportLure(info.getID());
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("SendTeleportLure failed", LogLevel.Error, _Main.getGridClient(), ex);
+				}
+			}
 			else if (e.getActionCommand().equals(cmdTeleportTo))
 			{
 				try
@@ -849,17 +860,6 @@ public class FriendList extends JPanel implements ActionListener
 				catch (Exception ex)
 				{
 					Logger.Log("Teleporting to " + info.getName() + " failed", LogLevel.Error, _Main.getGridClient(), ex);
-				}
-			}
-			else if (e.getActionCommand().equals(cmdTeleportAsk))
-			{
-				try
-				{
-					_Main.getGridClient().Self.SendTeleportLure(info.getID());
-				}
-				catch (Exception ex)
-				{
-					Logger.Log("SendTeleportLure failed", LogLevel.Error, _Main.getGridClient(), ex);
 				}
 			}
 			else if (e.getActionCommand().equals(cmdAutopilotTo))

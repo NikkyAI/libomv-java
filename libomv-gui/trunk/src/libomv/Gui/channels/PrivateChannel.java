@@ -55,7 +55,7 @@ public class PrivateChannel extends AbstractChannel
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
 		// Determine if this is a friend...
-		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
+		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
 		
 		// If this is an action message.
 		if (message.startsWith("/me "))
@@ -74,12 +74,15 @@ public class PrivateChannel extends AbstractChannel
 	}
 
 	@Override
-	public void transmitMessage(String message, ChatType type) throws Exception
+	public void transmitMessage(String message, ChatType chatType) throws Exception
 	{
 		if (message == null || message.trim().isEmpty())
         	return;
 
-		String self = _Main.getGridClient().Self.getName();
+		// Indicate that we're no longer typing.
+		super.transmitMessage(message, chatType);
+
+		String self = _Client.Self.getName();
 		if (getUUID() != null)
 		{
 	        if (message.length() >= 1000)
@@ -101,23 +104,11 @@ public class PrivateChannel extends AbstractChannel
 			}
 			else
 			{
-				switch (type)
-				{
-					case Shout:
-						addMessage(new ChatItem(self, STYLE_CHATLOCAL, " shouts: " + message, STYLE_ACTION));
-						break;
-					case Whisper:
-						addMessage(new ChatItem(self, STYLE_CHATLOCAL, " whispers: " + message, STYLE_ACTION));;
-						break;
-					default:
-						addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + message, STYLE_REGULAR));
-				}
+				addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + message, STYLE_REGULAR));
 			}
-			// Indicate that we're no longer typing.
-			super.transmitMessage(message, type);
 
 			// Send the message.
-			_Main.getGridClient().Self.InstantMessage(getUUID(), message, getSession());
+			_Client.Self.InstantMessage(getUUID(), message, getSession());
 		}
 		else
 		{
@@ -127,6 +118,6 @@ public class PrivateChannel extends AbstractChannel
 
 	protected void triggerTyping(boolean start) throws Exception
 	{
-		_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), start);		
+		_Client.Self.SendTypingState(getUUID(), getSession(), start);		
 	}
 }

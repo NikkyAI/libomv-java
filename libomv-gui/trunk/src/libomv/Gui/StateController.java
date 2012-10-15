@@ -89,6 +89,8 @@ public class StateController implements ActionListener
 		_Main = main;
 		_Client = _Main.getGridClient();
 
+		RLV = new RLVManager(_Main);
+
 		actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogout));
 	}
 

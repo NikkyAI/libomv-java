@@ -59,8 +59,18 @@ public class RLVManager
     private MainControl _Main;
 	
     private List<RLVRule> rules = new ArrayList<RLVRule>();
- //   private Pattern rlv_regex = Pattern.compile("(?<behaviour>[^:=]+)(:(?<option>[^=]+))?=(?<param>\w+)", RegexOptions.Compiled);
-	
+    
+    
+    
+    Pattern pattern = Pattern.compile("");
+/*
+ *  syntax:
+ *  
+ *  <behaviour>[:<option>]=<param>
+ */     
+    private Pattern rlv_regex = Pattern.compile("([^:=]+)(:([^=]+))?=(\\w+)");
+ 
+    
 	private Callback<SettingsUpdateCallbackArgs> settingsUpdate = new SettingsUpdateCallback();
 	
 	private class SettingsUpdateCallback implements Callback<SettingsUpdateCallbackArgs>
@@ -119,6 +129,15 @@ public class RLVManager
 	}
 	
 	public boolean tryProcessCommand(ChatCallbackArgs cmd)
+	{
+		if (isEnabled())
+		{
+			
+		}
+		return false;
+	}
+	
+	public boolean autoAcceptTP(UUID fromID)
 	{
 		if (isEnabled())
 		{

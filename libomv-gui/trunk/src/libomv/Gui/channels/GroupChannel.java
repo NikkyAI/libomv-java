@@ -47,6 +47,8 @@ import javax.swing.text.BadLocationException;
 import libomv.AgentManager.ChatType;
 import libomv.Gui.windows.MainControl;
 import libomv.types.UUID;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 public class GroupChannel extends AbstractChannel
 {
@@ -85,6 +87,18 @@ public class GroupChannel extends AbstractChannel
 		add(panelNorth, BorderLayout.NORTH);
 
 		add(getJScrpAttendents(), BorderLayout.EAST);
+		
+    	try
+    	{
+    		if (!_Client.Self.GroupChatSessions.containsKey(session))
+    		{
+				_Client.Self.ChatterBoxAcceptInvite(session);
+    		}
+		}
+    	catch (Exception ex)
+    	{
+			Logger.Log("Failed to join group chat", LogLevel.Error, _Client, ex);
+		}
 	}
 
 	/**
@@ -97,7 +111,7 @@ public class GroupChannel extends AbstractChannel
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
 	{
 		// Determine if this is a friend...
-		boolean friend = _Main.getGridClient().Friends.getFriendList().containsKey(fromId);
+		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
 		
 		// If this is an action message.
 		if (message.startsWith("/me "))
@@ -124,7 +138,7 @@ public class GroupChannel extends AbstractChannel
 	@Override
 	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception
 	{
-		String self = _Main.getGridClient().Self.getName();
+		String self = _Client.Self.getName();
 
 		if (message.length() >= 1000)
         {
@@ -133,18 +147,18 @@ public class GroupChannel extends AbstractChannel
 		addHistory(message);	
 		
 		// Do we have an action command?
-		if(message.charAt(0) == '/')
+		if (message.charAt(0) == '/')
 		{
 			String firstWord = "";
 			try
 			{
 				firstWord = message.split("\\s")[0].toLowerCase();
 			}
-			catch(Exception ex) { }
+			catch (Exception ex) { }
 			String localMessage = message.substring(firstWord.length()).trim();
 
 			// Deal with actions.
-			if(firstWord.equals("/me"))
+			if (firstWord.equals("/me"))
 			{
 				addMessage(new ChatItem(self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
 			}
@@ -158,12 +172,12 @@ public class GroupChannel extends AbstractChannel
 		super.transmitMessage(message, type);
 
 		// Send the message.
-		_Main.getGridClient().Self.InstantMessageGroup(getUUID(), message);
+		_Client.Self.InstantMessageGroup(getUUID(), message);
 	}
 				
 	protected void triggerTyping(boolean start) throws Exception
 	{
-		_Main.getGridClient().Self.SendTypingState(getUUID(), getSession(), start);		
+		_Client.Self.SendTypingState(getUUID(), getSession(), start);		
 	}
 
 	private JScrollPane getJScrpAttendents()

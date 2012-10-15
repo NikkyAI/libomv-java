@@ -49,7 +49,7 @@ public class ButtonTabPane extends JPanel
  
     public ButtonTabPane(final JTabbedPane pane)
     {
-        //unset default FlowLayout' gaps
+        // unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null)
         {
@@ -59,7 +59,7 @@ public class ButtonTabPane extends JPanel
         setOpaque(false);
          
         //Make the tab pane look the same for all Laf's
-//        setUI(new BasicPanelUI());
+        setUI(new BasicPanelUI());
 
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel()
@@ -95,7 +95,7 @@ public class ButtonTabPane extends JPanel
             setPreferredSize(new Dimension(size, size));
             setToolTipText("close this tab");
             //Make the button looks the same for all Laf's
-//            setUI(new BasicButtonUI());
+            setUI(new BasicButtonUI());
             //Make it transparent
             setContentAreaFilled(false);
             //No need to be focusable
@@ -135,10 +135,13 @@ public class ButtonTabPane extends JPanel
                 g2.translate(1, 1);
             }
             g2.setStroke(new BasicStroke(2));
-            g2.setColor(Color.BLACK);
             if (getModel().isRollover())
             {
                 g2.setColor(Color.MAGENTA);
+            }
+            else
+            {
+                g2.setColor(Color.BLACK);            	
             }
             int delta = 6;
             g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);

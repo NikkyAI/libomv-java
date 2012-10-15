@@ -166,6 +166,7 @@ public abstract class AbstractChannel extends JPanel
 	private UUID _UUID;
 	private UUID _Session;
 	protected MainControl _Main;
+	protected GridClient _Client;
 
 	private JTextPane jTextPane;
 	private JTextField jTextChat;
@@ -187,6 +188,8 @@ public abstract class AbstractChannel extends JPanel
 		_UUID = id;
 		_Session = session;
 		_Main = main;
+		_Client = main.getGridClient();
+
 		setName(name);
 		setLayout(new BorderLayout(0, 0));
 
@@ -250,11 +253,6 @@ public abstract class AbstractChannel extends JPanel
 //	{
 //		return this;
 //	}
-
-	protected GridClient getClient()
-	{
-		return _Main.getGridClient();
-	}
 
 	protected void transmitMessage(String message, ChatType chatType) throws Exception
 	{
@@ -373,7 +371,7 @@ public abstract class AbstractChannel extends JPanel
 		// Second, we insert the name.
 		styledDocument.insertString(styledDocument.getLength(), chatItem.from, styledDocument.getStyle(chatItem.fromStyle));
 
-		// Third, we insert all of the text using plus a line feed with the desired style.
+		// Third, we insert all of the text plus a line feed with the desired style.
 		styledDocument.insertString(styledDocument.getLength(), chatItem.message + "\n", styledDocument.getStyle(chatItem.messageStyle));
 
 		// Find the start of the insert point for this message (-1 is for the additional line feed)
@@ -540,7 +538,7 @@ public abstract class AbstractChannel extends JPanel
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Failed to send local chat text", LogLevel.Error, _Main.getGridClient(), ex);
+						Logger.Log("Failed to send local chat text", LogLevel.Error, _Client, ex);
 					}
 				}
 
