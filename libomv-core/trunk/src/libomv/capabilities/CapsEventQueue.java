@@ -48,7 +48,7 @@ import libomv.packets.Packet;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
-public class EventQueue extends CapsClient
+public class CapsEventQueue extends CapsClient
 {
 	public final int REQUEST_TIMEOUT = 1000 * 120;
 
@@ -69,7 +69,7 @@ public class EventQueue extends CapsClient
 
 	private Simulator Simulator;
 
-	public EventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
+	public CapsEventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
 	{
 		super();
 		this.address = eventQueueLocation;

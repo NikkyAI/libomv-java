@@ -42,7 +42,7 @@ import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsClient;
-import libomv.capabilities.EventQueue;
+import libomv.capabilities.CapsEventQueue;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -59,7 +59,7 @@ public class CapsManager
 	private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
 
 	private Future<OSD> _SeedRequest = null;
-	private EventQueue _EventQueue = null;
+	private CapsEventQueue _EventQueue = null;
 
 	/* Capabilities URI this system was initialized with */
 	public final String getSeedCapsURI()
@@ -198,9 +198,9 @@ public class CapsManager
 			_SeedRequest = request.executeHttpPost(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml,
 					new SeedRequestHandler(), _Simulator.getClient().Settings.CAPS_TIMEOUT);
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-
+			Logger.Log("Couldn't startup capability system", LogLevel.Error, _Simulator.getClient(), ex);
 		}
 	}
 
@@ -228,7 +228,7 @@ public class CapsManager
 						Logger.DebugLog("Starting event queue for " + _Simulator.Name, _Simulator.getClient());
 						try
 						{
-							_EventQueue = new EventQueue(_Simulator, _Capabilities.get("EventQueueGet"));
+							_EventQueue = new CapsEventQueue(_Simulator, _Capabilities.get("EventQueueGet"));
 							_EventQueue.start();
 						}
 						catch (Exception ex)

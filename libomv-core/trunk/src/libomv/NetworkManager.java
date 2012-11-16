@@ -502,7 +502,7 @@ public class NetworkManager implements PacketCallback
 
 		if (!specialHandler && type != PacketType.Default && type != PacketType.PacketAck)
 		{
-			Logger.Log("No handler registered for packet event " + type, LogLevel.Warning, _Client);
+//			Logger.Log("No handler registered for packet event " + type, LogLevel.Warning, _Client);
 		}
 	}
 

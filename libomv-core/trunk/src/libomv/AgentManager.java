@@ -2443,7 +2443,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.TeleportCancel, this);
 		_Client.Network.RegisterCallback(PacketType.TeleportLocal, this);
 
-		// these come in via the EventQueue
+		// these come in via the CapsEventQueue
 		_Client.Network.RegisterCallback(CapsEventType.TeleportFailed, this);
 		_Client.Network.RegisterCallback(CapsEventType.TeleportFinish, this);
 
@@ -5248,7 +5248,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Process TeleportFailed message sent via EventQueue, informs agent its
+	 * Process TeleportFailed message sent via CapsEventQueue, informs agent its
 	 * last teleport has failed and why.
 	 */
 	private void HandleTeleportFailed(IMessage message, Simulator simulator)
@@ -5446,7 +5446,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     }
 
     /**
-     * Crossed region handler for message that comes across the EventQueue. Sent to an agent
+     * Crossed region handler for message that comes across the CapsEventQueue. Sent to an agent
      * when the agent crosses a sim border into a new region.
      *
      * @param message IMessage object containing the deserialized data sent from the simulator
@@ -5688,7 +5688,8 @@ public class AgentManager implements PacketCallback, CapsCallback
        
        if (message.AgentData.AgentID.equals(agentID))
        {
-    	   if (message.MethodData.getMethod().equals("emptymutelist"))
+           String method = Helpers.BytesToString(message.MethodData.getMethod());
+    	   if (method.equals("emptymutelist"))
     	   {
                synchronized (MuteList)
                {
@@ -5697,7 +5698,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     	   }
     	   else
     	   {
-               Logger.Log("GenericMessage: " + message.MethodData.getMethod() + ", " + message.ParamList.length + " parameters", LogLevel.Info, _Client);
+               Logger.Log("GenericMessage: " + method + ", " + message.ParamList.length + " parameter(s)", LogLevel.Info, _Client);
 
                List<String> parameters = new ArrayList<String>(message.ParamList.length);
                for (GenericMessagePacket.ParamListBlock block : message.ParamList)

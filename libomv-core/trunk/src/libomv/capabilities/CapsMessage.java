@@ -1841,7 +1841,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	// An EventQueue message sent from the simulator to an agent when the agent
+	// An CapsEventQueue message sent from the simulator to an agent when the agent
 	// leaves a group
 	public class AgentDropGroupMessage implements IMessage
 	{
@@ -4097,7 +4097,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	// An EventQueue message sent when the agent is forcibly removed from a
+	// An CapsEventQueue message sent when the agent is forcibly removed from a
 	// chatterbox session
 	public class ForceCloseChatterBoxSessionMessage implements IMessage
 	{
@@ -4146,7 +4146,7 @@ public class CapsMessage implements IMessage
 
 	// #endregion
 
-	// #region EventQueue
+	// #region CapsEventQueue
 
 	public abstract class EventMessageBlock
 	{
