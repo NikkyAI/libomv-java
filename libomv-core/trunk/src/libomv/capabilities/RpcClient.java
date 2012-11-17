@@ -92,9 +92,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 
 	public Future<OSD> call(URI address, String method, OSDArray params, FutureCallback<OSD> callback, long timeout) throws XmlPullParserException
 	{
-		AbstractHttpEntity entity = new OSDEntity(method, params);
-		
-		return executeHttpPost(address, entity, null, callback, timeout);
+		return executeHttpPost(address, new OSDEntity(method, params), callback, timeout);
 	}
 	
 
@@ -143,6 +141,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			this.params = params;
 			serializer = XmlPullParserFactory.newInstance().newSerializer();
 			setContentType("text/xml");
+			setContentEncoding(Helpers.UTF8_ENCODING);
 		}
 
 		@Override

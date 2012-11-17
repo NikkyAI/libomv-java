@@ -156,7 +156,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 */
 	public Future<OSD> executeHttpPost(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
 	{
-		return executeHttpPost(address, new OSDEntity(message.Serialize(), OSD.OSDFormat.Xml), null, callback, timeout);
+		return executeHttpPost(address, new OSDEntity(message.Serialize(), OSD.OSDFormat.Xml), callback, timeout);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format)
 	{
-		return executeHttpPost(address, new OSDEntity(data, format), null, null, TIMEOUT_INFINITE);
+		return executeHttpPost(address, new OSDEntity(data, format), null, TIMEOUT_INFINITE);
 	}
 
 	/**
@@ -188,11 +188,11 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, FutureCallback<OSD> callback, long timeout)
 	{
-		return executeHttpPost(address, new OSDEntity(data, format), null, callback, timeout);
+		return executeHttpPost(address, new OSDEntity(data, format), callback, timeout);
 	}
 
 	/**
-	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
+	 * Asynchronous HTTP Post request from a capability that requires an OSD formated
 	 * request entity. This function returns either after the server responded
 	 * with any data or when the timeout expired
 	 * 
@@ -208,10 +208,8 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 			                           FutureCallback<OSD> callback, long timeout) throws IOException
 	{
 		AbstractHttpEntity entity = new OSDEntity(data, format);
-		if (encoding == null)
-			encoding = OSDFormat.contentEncodingDefault(format);
 		entity.setContentEncoding(encoding);
-		return executeHttpPost(address, entity, encoding, callback, timeout);
+		return executeHttpPost(address, entity, callback, timeout);
 	}
 	
 	private class OSDEntity extends AbstractHttpEntity
@@ -227,6 +225,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 			this.osd = osd;
 			this.format = format;
 			setContentType(OSDFormat.contentType(format));
+			setContentEncoding(OSDFormat.contentEncodingDefault(format));
 		}
 
 		@Override

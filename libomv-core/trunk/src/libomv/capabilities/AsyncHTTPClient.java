@@ -185,9 +185,7 @@ public abstract class AsyncHTTPClient<T>
 	{
 		HttpGet request = new HttpGet(address);
 		if (acceptHeader != null && !acceptHeader.isEmpty())
-		{
 			request.addHeader("Accept", acceptHeader);
-		}
 		return executeHttp(request, null, TIMEOUT_INFINITE);
 	}
 
@@ -205,9 +203,7 @@ public abstract class AsyncHTTPClient<T>
 	{
 		HttpGet request = new HttpGet(address);
 		if (acceptHeader != null && !acceptHeader.isEmpty())
-		{
 			request.addHeader("Accept", acceptHeader);
-		}
 		return executeHttp(request, callback, millisecondTimeout);
 	}
 
@@ -225,10 +221,10 @@ public abstract class AsyncHTTPClient<T>
 	{
 		AbstractHttpEntity entity = new StringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
-		{
 			entity.setContentType(contentType);
-		}
-		return executeHttpPost(address, entity, encoding, null, TIMEOUT_INFINITE);
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+		return executeHttpPost(address, entity, null, TIMEOUT_INFINITE);
 	}
 
 	/**
@@ -249,10 +245,10 @@ public abstract class AsyncHTTPClient<T>
 	{
 		AbstractHttpEntity entity = new StringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
-		{
 			entity.setContentType(contentType);
-		}
-		return executeHttpPost(address, entity, encoding, callback, millisecondTimeout);
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+		return executeHttpPost(address, entity, callback, millisecondTimeout);
 	}
 
 	/**
@@ -268,10 +264,10 @@ public abstract class AsyncHTTPClient<T>
 	{
 		AbstractHttpEntity entity = new ByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
-		{
 			entity.setContentType(contentType);
-		}
-		return executeHttpPost(address, entity, encoding, null, TIMEOUT_INFINITE);
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+		return executeHttpPost(address, entity, null, TIMEOUT_INFINITE);
 	}
 
 	/**
@@ -291,10 +287,10 @@ public abstract class AsyncHTTPClient<T>
 	{
 		AbstractHttpEntity entity = new ByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
-		{
 			entity.setContentType(contentType);
-		}
-		return executeHttpPost(address, entity, encoding, callback, millisecondTimeout);
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+		return executeHttpPost(address, entity, callback, millisecondTimeout);
 	}
 
 	/**
@@ -302,17 +298,14 @@ public abstract class AsyncHTTPClient<T>
 	 * 
 	 * @param address The uri to post the data to
 	 * @param entity The content entity to send
-	 * @param encoding The encoding to use to stream the data
 	 * @param callback The result callback to be called on success, exception or failure
 	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
 	 *                The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, AbstractHttpEntity entity, String encoding,
+	public Future<T> executeHttpPost(URI address, AbstractHttpEntity entity,
 			                         FutureCallback<T> callback, long millisecondTimeout)
 	{
-		if (encoding != null)
-			entity.setContentEncoding(encoding);
 		// Create the request
 		HttpPost request = new HttpPost(address);
 		// set POST body
@@ -370,7 +363,7 @@ public abstract class AsyncHTTPClient<T>
 				return null;
 			}
 
-			if (resultCb != null)
+			if (callback != null)
 				resultCb = callback;
 
 			try
