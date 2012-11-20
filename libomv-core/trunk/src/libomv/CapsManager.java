@@ -134,60 +134,71 @@ public class CapsManager
 		OSDArray req = new OSDArray();
 		// This list can be updated by using the following command to obtain a
 		// current list of capabilities the official linden viewer supports:
-		// wget -q -O -
-		// http://svn.secondlife.com/svn/linden/branches/2010/viewer-external/indra/newview/llviewerregion.cpp
-		// | grep 'capabilityNames.append' | sed 's/^[
-		// \t]*//;s/capabilityNames.append("/req.Add("/'
+		// wget -q -O - https://bitbucket.org/lindenlab/viewer-development/raw/default/indra/newview/llviewerregion.cpp
+		// | grep 'capabilityNames.append' | sed 's/^[ \t]*//;s/capabilityNames.append("/req.Add("/'
+		req.add(OSD.FromString("AgentState"));
 		req.add(OSD.FromString("AttachmentResources"));
 		req.add(OSD.FromString("AvatarPickerSearch"));
+		req.add(OSD.FromString("CharacterProperties"));
 		req.add(OSD.FromString("ChatSessionRequest"));
 		req.add(OSD.FromString("CopyInventoryFromNotecard"));
+		req.add(OSD.FromString("CreateInventoryCategory"));
 		req.add(OSD.FromString("DispatchRegionInfo"));
+		req.add(OSD.FromString("EnvironmentSettings"));
 		req.add(OSD.FromString("EstateChangeInfo"));
 		req.add(OSD.FromString("EventQueueGet"));
-		req.add(OSD.FromString("FetchInventory"));
-		req.add(OSD.FromString("FetchLib"));
-		req.add(OSD.FromString("FetchLibDescendents"));
+		req.add(OSD.FromString("FetchInventory2"));
+		req.add(OSD.FromString("FetchInventoryDescendents2"));
+		req.add(OSD.FromString("FetchLib2"));
+		req.add(OSD.FromString("FetchLibDescendents2"));
 		req.add(OSD.FromString("GetDisplayNames"));
+		req.add(OSD.FromString("GetMesh"));
+		req.add(OSD.FromString("GetObjectCost"));
+		req.add(OSD.FromString("GetObjectPhysicsData"));
 		req.add(OSD.FromString("GetTexture"));
+		req.add(OSD.FromString("GroupMemberData"));
 		req.add(OSD.FromString("GroupProposalBallot"));
 		req.add(OSD.FromString("HomeLocation"));
 		req.add(OSD.FromString("LandResources"));
 		req.add(OSD.FromString("MapLayer"));
 		req.add(OSD.FromString("MapLayerGod"));
+		req.add(OSD.FromString("MeshUploadFlags"));
+		req.add(OSD.FromString("NavMeshGenerationStatus"));
 		req.add(OSD.FromString("NewFileAgentInventory"));
 		req.add(OSD.FromString("ObjectMedia"));
 		req.add(OSD.FromString("ObjectMediaNavigate"));
+		req.add(OSD.FromString("ObjNavMeshProperties"));
 		req.add(OSD.FromString("ParcelPropertiesUpdate"));
-		req.add(OSD.FromString("ParcelMediaURLFilterList"));
-		req.add(OSD.FromString("ParcelNavigateMedia"));
 		req.add(OSD.FromString("ParcelVoiceInfoRequest"));
 		req.add(OSD.FromString("ProductInfoRequest"));
 		req.add(OSD.FromString("ProvisionVoiceAccountRequest"));
 		req.add(OSD.FromString("RemoteParcelRequest"));
 		req.add(OSD.FromString("RequestTextureDownload"));
+		req.add(OSD.FromString("ResourceCostSelected"));
+		req.add(OSD.FromString("RetrieveNavMeshSrc"));
 		req.add(OSD.FromString("SearchStatRequest"));
 		req.add(OSD.FromString("SearchStatTracking"));
 		req.add(OSD.FromString("SendPostcard"));
 		req.add(OSD.FromString("SendUserReport"));
 		req.add(OSD.FromString("SendUserReportWithScreenshot"));
 		req.add(OSD.FromString("ServerReleaseNotes"));
-		req.add(OSD.FromString("SimConsole"));
-		req.add(OSD.FromString("SimulatorFeatures"));
 		req.add(OSD.FromString("SetDisplayName"));
 		req.add(OSD.FromString("SimConsoleAsync"));
+		req.add(OSD.FromString("SimulatorFeatures"));
 		req.add(OSD.FromString("StartGroupProposal"));
+		req.add(OSD.FromString("TerrainNavMeshProperties"));
 		req.add(OSD.FromString("TextureStats"));
 		req.add(OSD.FromString("UntrustedSimulatorMessage"));
 		req.add(OSD.FromString("UpdateAgentInformation"));
 		req.add(OSD.FromString("UpdateAgentLanguage"));
 		req.add(OSD.FromString("UpdateGestureAgentInventory"));
-		req.add(OSD.FromString("UpdateNotecardAgentInventory"));
-		req.add(OSD.FromString("UpdateScriptAgent"));
 		req.add(OSD.FromString("UpdateGestureTaskInventory"));
+		req.add(OSD.FromString("UpdateNotecardAgentInventory"));
 		req.add(OSD.FromString("UpdateNotecardTaskInventory"));
+		req.add(OSD.FromString("UpdateScriptAgent"));
 		req.add(OSD.FromString("UpdateScriptTask"));
 		req.add(OSD.FromString("UploadBakedTexture"));
+		req.add(OSD.FromString("ViewerMetrics"));
 		req.add(OSD.FromString("ViewerStartAuction"));
 		req.add(OSD.FromString("ViewerStats"));
 		req.add(OSD.FromString("WebFetchInventoryDescendents"));
