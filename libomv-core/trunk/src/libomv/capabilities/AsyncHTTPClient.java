@@ -28,13 +28,14 @@
  */
 package libomv.capabilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.Timer;
@@ -59,10 +60,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.ContentEncoder;
@@ -73,7 +73,10 @@ import org.apache.http.nio.concurrent.BasicFuture;
 import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.conn.scheme.Scheme;
 import org.apache.http.nio.conn.ssl.SSLLayeringStrategy;
+import org.apache.http.nio.entity.NByteArrayEntity;
+import org.apache.http.nio.entity.NFileEntity;
 import org.apache.http.nio.entity.NHttpEntityWrapper;
+import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.nio.entity.ProducingNHttpEntity;
 import org.apache.http.nio.reactor.IOReactorException;
 import org.apache.http.protocol.HTTP;
@@ -219,7 +222,7 @@ public abstract class AsyncHTTPClient<T>
 	 */
 	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding) throws UnsupportedEncodingException
 	{
-		AbstractHttpEntity entity = new StringEntity(data);
+		AbstractHttpEntity entity = new NStringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
 		if (encoding != null)
@@ -243,7 +246,7 @@ public abstract class AsyncHTTPClient<T>
 	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding,
 							FutureCallback<T> callback, long millisecondTimeout) throws UnsupportedEncodingException
 	{
-		AbstractHttpEntity entity = new StringEntity(data);
+		AbstractHttpEntity entity = new NStringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
 		if (encoding != null)
@@ -262,7 +265,7 @@ public abstract class AsyncHTTPClient<T>
 	 */
 	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding)
 	{
-		AbstractHttpEntity entity = new ByteArrayEntity(data);
+		AbstractHttpEntity entity = new NByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
 		if (encoding != null)
@@ -285,14 +288,37 @@ public abstract class AsyncHTTPClient<T>
 	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding,
 							         FutureCallback<T> callback, long millisecondTimeout)
 	{
-		AbstractHttpEntity entity = new ByteArrayEntity(data);
+		AbstractHttpEntity entity = new NByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
 		if (encoding != null)
 			entity.setContentEncoding(encoding);
 		return executeHttpPost(address, entity, callback, millisecondTimeout);
 	}
-
+	
+	/**
+	 * Do a HTTP Put Request from the server from file data
+	 * 
+	 * @param address The uri to post the data to
+	 * @param file The binary data to add as entity content
+	 * @param contentType The content type to add as ContentType: header or null
+	 * @param encoding The encoding to use in the header
+	 * @param callback The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
+	 *                The request can still be aborted through the returned future.
+	 * @return A Future that can be used to retrieve the data or cancel the request
+	 */
+	public Future<T> executeHttpPut(URI address, File file, String contentType, String encoding,
+	         FutureCallback<T> callback, long millisecondTimeout)
+	{
+		AbstractHttpEntity entity = new NFileEntity(file, contentType);
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+		HttpPut request = new HttpPut(address);
+		request.setEntity(entity);
+		return executeHttp(request, callback, millisecondTimeout);
+	}
+	
 	/**
 	 * Do a HTTP Post Request from the server from binary data
 	 * 
@@ -303,7 +329,7 @@ public abstract class AsyncHTTPClient<T>
 	 *                The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, AbstractHttpEntity entity,
+	public Future<T> executeHttpPost(URI address, HttpEntity entity,
 			                         FutureCallback<T> callback, long millisecondTimeout)
 	{
 		// Create the request
@@ -420,7 +446,8 @@ public abstract class AsyncHTTPClient<T>
 			cancel(false);
 		}
 	}
-	private class AsyncHttpRequestProducer implements HttpAsyncRequestProducer
+
+	private class AsyncHttpRequestProducer implements HttpAsyncRequestProducer, Closeable
 	{
 		private final HttpHost target;
 		private final HttpRequestBase request;
@@ -448,54 +475,46 @@ public abstract class AsyncHTTPClient<T>
 			{
 				if (entity instanceof ProducingNHttpEntity)
 				{
-					this.producer = (ProducingNHttpEntity) entity;
+					producer = (ProducingNHttpEntity) entity;
 				}
 				else
 				{
-					this.producer = new NHttpEntityWrapper(entity);
+					producer = new NHttpEntityWrapper(entity);
 				}
 			}
 			else
 			{
-				this.producer = null;
+				producer = null;
 			}
 		}
 
 		@Override
 		public HttpRequestBase generateRequest()
 		{
-			return this.request;
+			return request;
 		}
 
 		@Override
 		public HttpHost getTarget()
 		{
-			return this.target;
+			return target;
 		}
 
 		@Override
 		public synchronized void produceContent(final ContentEncoder encoder, final IOControl ioctrl)
 				throws IOException
 		{
-			if (this.producer == null)
-			{
-				throw new IllegalStateException("Content producer is null");
-			}
-			this.producer.produceContent(encoder, ioctrl);
+			producer.produceContent(encoder, ioctrl);
 			if (encoder.isCompleted())
 			{
-				this.producer.finish();
+				producer.finish();
 			}
 		}
 
 		@Override
 		public synchronized boolean isRepeatable()
 		{
-			if (this.producer != null)
-			{
-				return this.producer.isRepeatable();
-			}
-			return true;
+			return producer.isRepeatable();
 		}
 
 		@Override
@@ -503,33 +522,37 @@ public abstract class AsyncHTTPClient<T>
 		{
 			try
 			{
-				if (this.producer != null)
-				{
-					this.producer.finish();
-				}
+				producer.finish();
 			}
 			catch (IOException ignore)
 			{
 			}
 		}
+
+		public synchronized void close() throws IOException
+		{
+	        this.producer.finish();
+	    }
 	}
 
-	protected abstract T convertContent(InputStreamReader in) throws IOException;
+	protected abstract T convertContent(InputStream in, String encoding) throws IOException;
 	
 	private class AsyncHttpResponseConsumer implements HttpAsyncResponseConsumer<T>
 	{
-		private volatile Charset charset;
+		private volatile String encoding;
 		private volatile long length;
 		private volatile T result;
 		private volatile Exception ex;
 		private volatile boolean completed;
 
+		private ByteBuffer buffer;
+		
 		@Override
 		public synchronized void responseReceived(final HttpResponse response) throws IOException
 		{
-			Logger.Log("HTTP response: " + response.getStatusLine(), LogLevel.Debug);
-
 			StatusLine status = response.getStatusLine();
+			Logger.Log("HTTP response: " + status, LogLevel.Debug);
+
 			if (status.getStatusCode() != HttpStatus.SC_OK)
 			{
 				throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
@@ -538,8 +561,12 @@ public abstract class AsyncHTTPClient<T>
 			HttpEntity entity = response.getEntity();
 			if (entity != null)
 			{
-				String charset = null;
-				if (entity.getContentType() != null)
+				length = entity.getContentLength();
+				if (entity.getContentEncoding() != null)
+				{
+					encoding = entity.getContentEncoding().getValue();
+				}
+				else if (entity.getContentType() != null)
 				{
 					HeaderElement values[] = entity.getContentType().getElements();
 					if (values.length > 0)
@@ -547,16 +574,14 @@ public abstract class AsyncHTTPClient<T>
 						NameValuePair param = values[0].getParameterByName("charset");
 						if (param != null)
 						{
-							charset = param.getValue();
+							encoding = param.getValue();
 						}
 					}
 				}
-				if (charset == null)
+				if (encoding == null)
 				{
-					charset = HTTP.DEFAULT_CONTENT_CHARSET;
+					encoding = HTTP.UTF_8;
 				}
-				this.length = entity.getContentLength();
-				this.charset = Charset.forName(charset);
 			}
 		}
 
@@ -575,14 +600,45 @@ public abstract class AsyncHTTPClient<T>
 		public synchronized void consumeContent(final ContentDecoder decoder, final IOControl ioctrl)
 				throws IOException
 		{
-			InputStreamReader in = new InputStreamReader(new ContentDecoderStream(decoder), this.charset);
-			try
+			int toRead;
+			
+			if (buffer == null)
 			{
-				this.result = convertContent(in);
+				if (length < 0)
+					buffer = ByteBuffer.allocate(8 * 1024);
+				else 
+					buffer = ByteBuffer.allocate((int)length);
 			}
-			finally
+			
+			do
 			{
-				in.close();
+				if (length < 0 && buffer.capacity() - buffer.position() < 1024)
+				{		
+					buffer.flip();
+					buffer = ByteBuffer.allocate(buffer.capacity() * 2).put(buffer);
+				}
+				toRead = decoder.read(buffer);
+			}
+			while (toRead > 0);
+			
+			if (progressCb != null)
+				progressCb.progress(buffer.position(), length);	
+
+				if (decoder.isCompleted() || toRead < 0)
+			{
+				if (length < 0 && progressCb != null)
+					progressCb.progress(buffer.position(), buffer.position());	
+					
+				buffer.flip();
+				InputStream in = new ByteArrayInputStream(buffer.array(), 0, buffer.limit());
+				try
+				{
+					result = convertContent(in, encoding);
+				}
+				finally
+				{
+					in.close();
+				}
 			}
 		}
 
@@ -592,185 +648,45 @@ public abstract class AsyncHTTPClient<T>
 		@Override
 		public synchronized void responseCompleted()
 		{
-			if (this.completed)
+			if (completed)
 			{
 				return;
 			}
-			this.completed = true;
+			completed = true;
 		}
 
 		@Override
 		public synchronized void cancel()
 		{
-			if (this.completed)
+			if (completed)
 			{
 				return;
 			}
-			this.completed = true;
-			this.result = null;
+			completed = true;
+			result = null;
 		}
 
 		@Override
-		public synchronized void failed(final Exception ex)
+		public synchronized void failed(final Exception exc)
 		{
-			if (this.completed)
+			if (completed)
 			{
 				return;
 			}
-			this.ex = ex;
-			this.completed = true;
+			ex = exc;
+			completed = true;
 		}
 
 		@Override
 		public T getResult()
 		{
-			return this.result;
+			return result;
 		}
 
 		@Override
 		public Exception getException()
 		{
 			return ex;
-		}
-
-		private class ContentDecoderStream extends InputStream
-		{
-			private final ContentDecoder decoder;
-			private final ByteBuffer buffer;
-			private volatile long pos;
-
-			public ContentDecoderStream(ContentDecoder decoder)
-			{
-				this.decoder = decoder;
-				this.buffer = ByteBuffer.allocate(1024);
-				this.pos = 0;
-			}
-
-			@Override
-			public int read() throws IOException
-			{
-				// Find out how many bytes we can read from the intermediate
-				// buffer
-				int toread = this.buffer.remaining();
-				if (toread == 0)
-				{
-					// is decoder stream complete?
-					if (this.decoder.isCompleted())
-						return -1;
-
-					// Fill in the intermediate buffer again from the stream
-					this.buffer.clear();
-					this.decoder.read(this.buffer);
-					this.buffer.flip();
-				}
-				progress(1);
-				return this.buffer.get();
-			}
-
-			@Override
-			public int read(byte[] b) throws IOException
-			{
-				int bytes = read(b, 0, b.length);
-				if (bytes > 0)
-					progress(bytes);
-				return bytes;
-			}
-
-			/**
-			 * Reads up to len bytes of data from the input stream into an array
-			 * of bytes. An attempt is made to read as many as len bytes, but a
-			 * smaller number may be read, possibly zero. The number of bytes
-			 * actually read is returned as an integer. This method blocks until
-			 * input data is available, end of file is detected, or an exception
-			 * is thrown.
-			 * 
-			 * If b is null, a NullPointerException is thrown.
-			 * 
-			 * If off is negative, or len is negative, or off+len is greater
-			 * than the length of the array b, then an IndexOutOfBoundsException
-			 * is thrown.
-			 * 
-			 * If len is zero, then no bytes are read and 0 is returned;
-			 * otherwise, there is an attempt to read at least one byte. If no
-			 * byte is available because the stream is at end of file, the value
-			 * -1 is returned; otherwise, at least one byte is read and stored
-			 * into b.
-			 * 
-			 * The first byte read is stored into element b[off], the next one
-			 * into b[off+1], and so on. The number of bytes read is, at most,
-			 * equal to len. Let k be the number of bytes actually read; these
-			 * bytes will be stored in elements b[off] through b[off+k-1],
-			 * leaving elements b[off+k] through b[off+len-1] unaffected.
-			 * 
-			 * In every case, elements b[0] through b[off] and elements
-			 * b[off+len] through b[b.length-1] are unaffected.
-			 * 
-			 * If the first byte cannot be read for any reason other than end of
-			 * file, then an IOException is thrown. In particular, an
-			 * IOException is thrown if the input stream has been closed.
-			 * 
-			 * @param b
-			 *            - the buffer into which the data is read.
-			 * @param off
-			 *            - the start offset in array b at which the data is
-			 *            written.
-			 * @param len
-			 *            - the maximum number of bytes to read.
-			 * @return the total number of bytes read into the buffer, or -1 if
-			 *         there is no more data because the end of the stream has
-			 *         been reached.
-			 * @throws IOException
-			 */
-			@Override
-			public int read(byte[] b, int offset, int length) throws IOException
-			{
-				int toread, bytes = 0;
-
-				if (b == null)
-					throw new NullPointerException();
-
-				if (offset < 0 || length < 0 || offset + length > b.length)
-					throw new IndexOutOfBoundsException();
-
-				while (length > 0)
-				{
-					// Find out how many bytes we can read from the intermediate buffer
-					toread = this.buffer.remaining();
-					if (length < toread)
-						toread = length;
-
-					if (toread > 0)
-					{
-						// get first bytes from the buffer if any
-						this.buffer.get(b, offset, toread);
-						length -= toread;
-						offset += toread;
-						bytes += toread;
-					}
-
-					// is decoder stream complete or have we copied all
-					// requested bytes
-					if (this.decoder.isCompleted() || length == 0)
-					{
-						progress(bytes);
-						return bytes == 0 ? -1 : bytes;
-					}
-
-					// Fill in the intermediate buffer again from the stream
-					this.buffer.clear();
-					this.decoder.read(this.buffer);
-					this.buffer.flip();
-				}
-				progress(bytes);
-				return bytes;
-			}
-			
-			private void progress(int bytes)
-			{
-				pos += bytes;
-				if (progressCb != null)
-					progressCb.progress(pos, length);
-			}
 		}
 	}
 }

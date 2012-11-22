@@ -30,6 +30,7 @@
 package libomv;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.security.cert.X509Certificate;
@@ -91,8 +92,7 @@ public class DownloadManager
 		}
         
 		@Override
-		protected byte[] convertContent(InputStreamReader in) throws IOException
-		{
+		protected byte[] convertContent(InputStream in, String encoding) throws IOException {
 			// TODO Auto-generated method stub
 			return null;
 		}

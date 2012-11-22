@@ -32,7 +32,6 @@ package libomv.capabilities;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.ParseException;
@@ -266,11 +265,11 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	}
 
 	@Override
-	protected OSD convertContent(InputStreamReader in) throws IOException
+	protected OSD convertContent(InputStream in, String encoding) throws IOException
 	{
 		try
 		{
-			return OSDParser.deserialize(in);
+			return OSDParser.deserialize(in, encoding);
 		}
 		catch (ParseException ex)
 		{
