@@ -79,7 +79,6 @@ import org.apache.http.nio.entity.NHttpEntityWrapper;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.nio.entity.ProducingNHttpEntity;
 import org.apache.http.nio.reactor.IOReactorException;
-import org.apache.http.protocol.HTTP;
 
 public abstract class AsyncHTTPClient<T>
 {
@@ -531,8 +530,8 @@ public abstract class AsyncHTTPClient<T>
 
 		public synchronized void close() throws IOException
 		{
-	        this.producer.finish();
-	    }
+			this.producer.finish();
+		}
 	}
 
 	protected abstract T convertContent(InputStream in, String encoding) throws IOException;
@@ -578,10 +577,6 @@ public abstract class AsyncHTTPClient<T>
 						}
 					}
 				}
-				if (encoding == null)
-				{
-					encoding = HTTP.UTF_8;
-				}
 			}
 		}
 
@@ -601,7 +596,7 @@ public abstract class AsyncHTTPClient<T>
 				throws IOException
 		{
 			int toRead;
-			
+
 			if (buffer == null)
 			{
 				if (length < 0)
@@ -613,22 +608,22 @@ public abstract class AsyncHTTPClient<T>
 			do
 			{
 				if (length < 0 && buffer.capacity() - buffer.position() < 1024)
-				{		
+				{
 					buffer.flip();
 					buffer = ByteBuffer.allocate(buffer.capacity() * 2).put(buffer);
 				}
 				toRead = decoder.read(buffer);
 			}
 			while (toRead > 0);
-			
+
 			if (progressCb != null)
 				progressCb.progress(buffer.position(), length);	
 
-				if (decoder.isCompleted() || toRead < 0)
+			if (decoder.isCompleted() || toRead < 0)
 			{
 				if (length < 0 && progressCb != null)
 					progressCb.progress(buffer.position(), buffer.position());	
-					
+
 				buffer.flip();
 				InputStream in = new ByteArrayInputStream(buffer.array(), 0, buffer.limit());
 				try
