@@ -31,7 +31,6 @@ package libomv;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
