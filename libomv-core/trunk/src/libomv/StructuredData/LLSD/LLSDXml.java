@@ -65,8 +65,8 @@ public final class LLSDXml extends OSDParser
 	 *    <? llsd/xml ?>
 	 *    <?xml..?>
 	 */
-	private static final String llsdXmlHeader = "xml" ;
-	private static final String llsdXmlHeader2 = "llsd" ;
+	private static final String llsdXmlHeader = "?xml" ;
+	private static final String llsdXmlHeader2 = "llsd/xml" ;
 
 	private static final String LLSD_TAG = "llsd";
 	private static final String UNDEF_TAG = "undef";
@@ -115,7 +115,7 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
+	public OSD unflatten(Reader reader, String header, String encoding) throws IOException, ParseException
 	{
 		try
 		{
@@ -137,7 +137,7 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
+	public OSD unflatten(InputStream stream, byte[] header, String encoding) throws IOException, ParseException
 	{
 		try
 		{

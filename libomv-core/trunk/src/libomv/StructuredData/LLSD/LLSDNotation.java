@@ -129,28 +129,30 @@ public final class LLSDNotation extends OSDParser
 	 * Parse an LLSD Notation reader and convert it into an hierarchical OSD object
 	 * 
 	 * @param stream The LLSD Notation stream to parse
+	 * @param header The possible header used to detect the format
 	 * @param encoding The encoding to use for the stream, can be null which uses UTF8
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
+	public OSD unflatten(InputStream stream, byte[] header, String encoding) throws ParseException, IOException
 	{
 		if (encoding == null)
 			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Notation);
-		return unflatten(new InputStreamReader(stream, encoding), encoding);
+		return unflatten(new InputStreamReader(stream, encoding), new String(header, encoding), encoding);
 	}
 	
 	/**
 	 * Parse an LLSD Notation reader and convert it into an hierarchical OSD object
 	 * 
 	 * @param reader The LLSD Notation reader to parse
+	 * @param header The possible header used to detect the format
 	 * @param encoding The encoding to use for reader (not used)
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
+	public OSD unflatten(Reader reader, String header, String encoding) throws ParseException, IOException
 	{
 		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
 		int marker = skipWhiteSpace(push);
