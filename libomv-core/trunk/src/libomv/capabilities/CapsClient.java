@@ -219,8 +219,8 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		
 		public OSDEntity(OSD osd, OSDFormat format)
 		{
-	        super();
-	        bytes = null;
+			super();
+			bytes = null;
 			this.osd = osd;
 			this.format = format;
 			setContentType(OSDFormat.contentType(format));
@@ -250,11 +250,11 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		@Override
 		public void writeTo(OutputStream outstream) throws IOException
 		{
-	        if (outstream == null)
-	        {
-	            throw new IllegalArgumentException("Output stream may not be null");
-	        }
-	        OSDParser.serialize(outstream, osd, format);
+			if (outstream == null)
+			{
+				throw new IllegalArgumentException("Output stream may not be null");
+			}
+			OSDParser.serialize(outstream, osd, format);
 		}
 
 		@Override
@@ -269,7 +269,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	{
 		try
 		{
-			return OSDParser.deserialize(in, encoding);
+			return OSDParser.deserialize(in, OSDFormat.Xml, encoding);
 		}
 		catch (ParseException ex)
 		{
