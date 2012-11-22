@@ -31,11 +31,14 @@ package libomv;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import org.apache.http.nio.concurrent.FutureCallback;
 
 import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
@@ -43,10 +46,12 @@ import libomv.AgentManager.InstantMessageOnline;
 import libomv.GroupManager.GroupAccountTransactions.TransactionEntry;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
+import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsCallback;
+import libomv.capabilities.CapsClient;
 import libomv.capabilities.CapsMessage.AgentDropGroupMessage;
 import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
@@ -104,6 +109,8 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.HashList;
 import libomv.utils.HashMapInt;
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 // Handles all network traffic related to reading and writing group
 // information
@@ -946,6 +953,69 @@ public class GroupManager implements PacketCallback, CapsCallback
 		Client.Network.SendPacket(request);
 	}
 
+	private class GroupMembersHandlerCaps implements FutureCallback<OSD>
+	{
+		private UUID requestID;
+	
+		public GroupMembersHandlerCaps(UUID requestID)
+		{
+			this.requestID = requestID;
+		}
+
+		@Override
+		public void completed(OSD result)
+		{
+			try
+			{
+				OSDMap res = (OSDMap)result;
+//				int memberCount = res.get("member_count").AsInteger();
+				OSDArray titlesOSD = (OSDArray)res.get("titles");
+				String[] titles = new String[titlesOSD.size()];
+				for (int i = 0; i < titlesOSD.size(); i++)
+				{
+					titles[i] = titlesOSD.get(i).AsString();
+				}
+				UUID groupID = res.get("group_id").AsUUID();
+				long defaultPowers = ((OSDMap)res.get("defaults")).get("default_powers").AsULong();
+				OSDMap membersOSD = (OSDMap)res.get("members");
+				HashMap<UUID, GroupMember> groupMembers = new HashMap<UUID, GroupMember>(membersOSD.size());
+				for (String memberID : membersOSD.keySet())
+				{
+					OSDMap member = (OSDMap)membersOSD.get(memberID);
+
+					GroupMember groupMember = GroupManager.this.new GroupMember(UUID.Parse(memberID));
+					groupMember.Contribution = member.get("donated_square_meters").AsInteger();
+					groupMember.IsOwner = "Y" == member.get("owner").AsString();
+					groupMember.OnlineStatus = member.get("last_login").AsString();
+					groupMember.Powers = defaultPowers;
+					if (member.containsKey("powers"))
+					{
+						groupMember.Powers = member.get("powers").AsULong();
+					}
+					groupMember.Title = titles[member.get("title").AsInteger()];
+					groupMembers.put(groupMember.ID, groupMember);
+				}
+				OnGroupMembersReply.dispatch(new GroupMembersReplyCallbackArgs(requestID, groupID, groupMembers));
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Failed to decode result of GroupMemberData capability: ", LogLevel.Error, Client, ex);
+			}
+		}
+		
+		@Override
+		public void failed(Exception ex)
+		{
+			Logger.Log("Failed to request GroupMemberData capability: ", LogLevel.Error, Client, ex);
+		}
+		
+		@Override
+		public void cancelled()
+		{
+			Logger.Log("GroupMemberData capability request canceled!", LogLevel.Error, Client);
+		}
+	}
+
 	/**
 	 * Request a list of group members. Subscribe to <code>OnGroupMembers</code>
 	 * event to receive the results.
@@ -958,19 +1028,30 @@ public class GroupManager implements PacketCallback, CapsCallback
 	public final UUID RequestGroupMembers(UUID group) throws Exception
 	{
 		UUID requestID = new UUID();
-		synchronized (GroupMembersRequests)
+		URI url = Client.Network.getCapabilityURI("GroupMemberData");
+		if (url != null)
 		{
-			GroupMembersRequests.add(requestID);
+			CapsClient req = new CapsClient();
+			OSDMap requestData = new OSDMap(1);
+			requestData.put("group_id", OSD.FromUUID(group));
+			req.executeHttpPost(url, requestData, OSDFormat.Xml, new GroupMembersHandlerCaps(requestID), Client.Settings.CAPS_TIMEOUT * 4);
 		}
+		else
+		{
+			synchronized (GroupMembersRequests)
+			{
+				GroupMembersRequests.add(requestID);
+			}
 
-		GroupMembersRequestPacket request = new GroupMembersRequestPacket();
+			GroupMembersRequestPacket request = new GroupMembersRequestPacket();
 
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
-		request.GroupData.GroupID = group;
-		request.GroupData.RequestID = requestID;
+			request.AgentData.AgentID = Client.Self.getAgentID();
+			request.AgentData.SessionID = Client.Self.getSessionID();
+			request.GroupData.GroupID = group;
+			request.GroupData.RequestID = requestID;
 
-		Client.Network.SendPacket(request);
+			Client.Network.SendPacket(request);
+		}
 		return requestID;
 	}
 
