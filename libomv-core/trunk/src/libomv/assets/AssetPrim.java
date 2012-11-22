@@ -362,6 +362,7 @@ public class AssetPrim extends AssetItem
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectPart");
 
 		obj.AllowedDrop = true;
+//		obj.PassTouches = false;
 
 		do
 		{
@@ -409,9 +410,13 @@ public class AssetPrim extends AssetItem
 			{
 				obj.Name = parser.nextText().trim();
 			}
-			else if (name.equals("LocalId"))
+			else if (name.equals("Material"))
 			{
 				obj.Material = Helpers.TryParseInt(parser.nextText().trim());
+			}
+			else if (name.equals("PassTouches"))
+			{
+//	            obj.PassTouches = Helpers.TryParseBoolean(parser.nextText().trim());
 			}
 			else if (name.equals("RegionHandle"))
 			{

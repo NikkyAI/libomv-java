@@ -1496,7 +1496,6 @@ public class AssetManager implements PacketCallback
         }
 
         AsyncHTTPClient.ProgressCallback progressHandler = null;
-
         if (progress)
         {
             progressHandler = new AsyncHTTPClient.ProgressCallback()
@@ -1530,8 +1529,7 @@ public class AssetManager implements PacketCallback
 
                 		callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
                 		FireImageProgressEvent(image.ID, image.Transferred, image.Size);
-
-                		_Client.Assets.getCache().SaveAssetToCache(textureID, response);
+                		_Client.Assets.getCache().SaveAssetToCache(image.ID, image.AssetData);
                 	}
             	}
             	
