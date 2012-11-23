@@ -340,20 +340,21 @@ public abstract class AsyncHTTPClient<T>
 
 	private HttpHost determineTarget(URI address)
 	{
+		HttpHost host = URIUtils.extractHost(address);
 		if (address.getScheme().equals("https"))
 		{
 			try
 			{
-				String host = address.getHost();
+				String hostname = host.getHostName();
 				if (certificate == null)
 				{
-					certificate = Helpers.getCertificate(host);
+					certificate = Helpers.getCertificate(hostname);
 				}
 
 				if (certificate != null)
 				{
 					KeyStore store = Helpers.getExtendedKeyStore();
-					store.setCertificateEntry(host, certificate);
+					store.setCertificateEntry(hostname, certificate);
 					register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 				}
 			}
@@ -362,7 +363,7 @@ public abstract class AsyncHTTPClient<T>
 				// Ignore exceptions that happen while trying to add extra certificates to keystore
 			}
 		}
-		return URIUtils.extractHost(address);
+		return host;
 	}
 
 	private Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback, long millisecondTimeout)
@@ -537,8 +538,6 @@ public abstract class AsyncHTTPClient<T>
 		public synchronized void responseReceived(final HttpResponse response) throws IOException
 		{
 			StatusLine status = response.getStatusLine();
-			Logger.Log("HTTP response: " + status, LogLevel.Debug);
-
 			if (status.getStatusCode() != HttpStatus.SC_OK)
 			{
 				throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
