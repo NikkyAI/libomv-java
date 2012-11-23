@@ -56,12 +56,12 @@ import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.nio.ContentDecoder;
@@ -338,17 +338,13 @@ public abstract class AsyncHTTPClient<T>
 		return executeHttp(request, callback, millisecondTimeout);
 	}
 
-	private HttpHost determineTarget(URI address) throws ClientProtocolException
+	private HttpHost determineTarget(URI address)
 	{
-		// A null target may be acceptable if there is a default target.
-		// Otherwise, the null target is detected in the director.
-		HttpHost target = null;
-
-		String host = address.getHost();
 		if (address.getScheme().equals("https"))
 		{
 			try
 			{
+				String host = address.getHost();
 				if (certificate == null)
 				{
 					certificate = Helpers.getCertificate(host);
@@ -363,19 +359,10 @@ public abstract class AsyncHTTPClient<T>
 			}
 			catch (Exception ex)
 			{
+				// Ignore exceptions that happen while trying to add extra certificates to keystore
 			}
 		}
-
-		if (address.isAbsolute())
-		{
-			if (host == null)
-			{
-				throw new ClientProtocolException("URI does not specify a valid host name: " + address);
-			}
-			target = new HttpHost(host, address.getPort(), address.getScheme());
-			// TODO use URIUtils#extractTarget once it becomes available
-		}
-		return target;
+		return URIUtils.extractHost(address);
 	}
 
 	private Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback, long millisecondTimeout)
