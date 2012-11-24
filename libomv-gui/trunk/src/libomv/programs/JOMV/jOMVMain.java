@@ -28,6 +28,8 @@
  */
 package libomv.programs.JOMV;
 
+import javax.swing.JPopupMenu;
+
 import libomv.GridClient;
 import libomv.Gui.windows.MainWindow;
 
@@ -37,6 +39,7 @@ public class jOMVMain
 	
 	private static void createAndShowGUI() throws Exception
 	{
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		main = new MainWindow(new GridClient());
 		main.setVisible(true);	
 	}
