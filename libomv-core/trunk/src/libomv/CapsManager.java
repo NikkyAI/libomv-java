@@ -227,11 +227,15 @@ public class CapsManager
 				_SeedRequest = null;
 
 				OSDMap respTable = (OSDMap) result;
+//				OSDMap meta = (OSDMap) respTable.remove("Metadata");
 				synchronized (_Capabilities)
 				{
 					for (String cap : respTable.keySet())
 					{
-						_Capabilities.put(cap, respTable.get(cap).AsUri());
+						OSD osd = respTable.get(cap);
+						OSD.OSDType type = osd.getType();
+						if (type == OSD.OSDType.String || type == OSD.OSDType.URI)
+							_Capabilities.put(cap, osd.AsUri());
 					}
 
 					if (_Capabilities.containsKey("EventQueueGet"))
