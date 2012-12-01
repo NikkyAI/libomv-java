@@ -107,7 +107,7 @@ public class CapsEventQueue extends CapsClient
 		}
 
 		OSDMap osdRequest = new OSDMap();
-		osdRequest.put("ack", (ack != 0) ? OSD.FromInteger(ack) : new OSD());
+		osdRequest.put("ack", ack > 0 ? OSD.FromInteger(ack) : new OSD());
 		osdRequest.put("done", OSD.FromBoolean(Done));
 
 		// Start or resume the connection
@@ -231,10 +231,8 @@ public class CapsEventQueue extends CapsClient
 					// normal.
 					// The EventQueue server is a proxy that connects to a Squid
 					// cache which will time out periodically. The EventQueue
-					// server
-					// interprets this as a generic error and returns a 502 to
-					// us
-					// that we ignore
+					// server interprets this as a generic error and returns a
+					// 502 to us that we ignore
 				}
 				else
 				{

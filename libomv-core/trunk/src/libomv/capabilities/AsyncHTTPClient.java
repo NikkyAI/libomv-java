@@ -44,8 +44,8 @@ import java.util.concurrent.Future;
 
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
+import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -98,12 +98,12 @@ public abstract class AsyncHTTPClient<T>
 
 	public void setProgressCallback(ProgressCallback callback)
 	{
-		this.progressCb = callback;
+		progressCb = callback;
 	}
 	
 	public void setCertificate(X509Certificate cert)
 	{
-		this.certificate = cert;
+		certificate = cert;
 	}
 	
 	/**
@@ -133,23 +133,20 @@ public abstract class AsyncHTTPClient<T>
 		return client.getConnectionManager().getSchemeRegistry().register(scheme);
 	}
 
-	private void cancel(boolean mayInterruptIfRunning)
+	private synchronized void cancel(boolean mayInterruptIfRunning)
 	{
-		synchronized (this)
+		if (timeout != null)
 		{
-			if (timeout != null)
+			timeout.cancel();
+			timeout = null;
+		}
+		if (mayInterruptIfRunning && resultFuture != null)
+		{
+			if (!resultFuture.isDone())
 			{
-				timeout.cancel();
-				timeout = null;
+				resultFuture.cancel(mayInterruptIfRunning);
 			}
-			if (resultFuture != null)
-			{
-				if (!resultFuture.isDone())
-				{
-					resultFuture.cancel(mayInterruptIfRunning);
-				}
-				resultFuture = null;
-			}
+			resultFuture = null;
 		}
 	}
 	
@@ -162,6 +159,7 @@ public abstract class AsyncHTTPClient<T>
 	public AsyncHTTPClient() throws IOReactorException
 	{
 		client = new DefaultHttpAsyncClient();
+		ConnectionReuseStrategy strategy = client.getConnectionReuseStrategy();
 		client.start();
 	}
 
@@ -366,44 +364,41 @@ public abstract class AsyncHTTPClient<T>
 		return host;
 	}
 
-	private Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback, long millisecondTimeout)
+	private synchronized Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback, long millisecondTimeout)
 	{
-		synchronized (this)
+		if (timeout != null)
 		{
-			if (timeout != null)
+			Logger.Log("This Capability Client is already waiting for a response", Logger.LogLevel.Error, new Throwable());
+			return null;
+		}
+
+		if (callback != null)
+			resultCb = callback;
+
+		try
+		{
+			resultFuture = client.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
+				                                	new AsyncHttpResponseConsumer(), new AsyncHttpResultCallback());
+
+			if (millisecondTimeout >= 0)
 			{
-				Logger.Log("This Capability Client is already waiting for a response", Logger.LogLevel.Error);
-				return null;
-			}
-
-			if (callback != null)
-				resultCb = callback;
-
-			try
-			{
-				resultFuture = client.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
-					                                	new AsyncHttpResponseConsumer(), new AsyncHttpResultCallback());
-
-				if (millisecondTimeout >= 0)
+				timeout = new Timer();
+				timeout.schedule(new TimerTask()
 				{
-					timeout = new Timer();
-					timeout.schedule(new TimerTask()
+					@Override
+					public void run()
 					{
-						@Override
-						public void run()
-						{
-							AsyncHTTPClient.this.cancel(true);
-						}
-					}, millisecondTimeout);
-				}
-				return resultFuture;
+						AsyncHTTPClient.this.cancel(true);
+					}
+				}, millisecondTimeout);
 			}
-			catch (Exception ex)
-			{
-				BasicFuture<T> failed = new BasicFuture<T>(resultCb);
-				failed.failed(ex);
-				return failed;
-			}
+			return resultFuture;
+		}
+		catch (Exception ex)
+		{
+			BasicFuture<T> failed = new BasicFuture<T>(resultCb);
+			failed.failed(ex);
+			return failed;
 		}
 	}
 
@@ -412,25 +407,25 @@ public abstract class AsyncHTTPClient<T>
 		@Override
 		public void completed(T result)
 		{
+			cancel(false);
 			if (resultCb != null)
 				resultCb.completed(result);
-			cancel(false);
 		}
 
 		@Override
 		public void failed(Exception ex)
 		{
+			cancel(false);
 			if (resultCb != null)
 				resultCb.failed(ex);
-			cancel(false);
 		}
 
 		@Override
 		public void cancelled()
 		{
+			cancel(false);
 			if (resultCb != null)
 				resultCb.cancelled();
-			cancel(false);
 		}
 	}
 
