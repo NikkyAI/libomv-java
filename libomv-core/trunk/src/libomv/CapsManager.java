@@ -106,7 +106,7 @@ public class CapsManager
 
 		if (_EventQueue != null)
 		{
-			_EventQueue.stop(immediate);
+			_EventQueue.shutdown(immediate);
 		}
 	}
 

@@ -79,6 +79,7 @@ public class CapsMessage implements IMessage
 	{
 		Default,
 		AgentGroupDataUpdate,
+		AgentStateUpdate,
 		AvatarGroupsReply,
 		ParcelProperties,
 		ParcelObjectOwnersReply,
@@ -1654,6 +1655,8 @@ public class CapsMessage implements IMessage
 			public UUID GroupInsigniaID;
 			// The name of the group
 			public String GroupName;
+			// The Active Title
+			public String GroupTitle; 
 			// The aggregate permissions the agent has in the group for all
 			// roles the agent is assigned
 			public long GroupPowers;
@@ -1704,12 +1707,13 @@ public class CapsMessage implements IMessage
 
 			for (int i = 0; i < GroupDataBlock.length; i++)
 			{
-				OSDMap group = new OSDMap(6);
+				OSDMap group = new OSDMap(7);
 				group.put("AcceptNotices", OSD.FromBoolean(GroupDataBlock[i].AcceptNotices));
 				group.put("Contribution", OSD.FromInteger(GroupDataBlock[i].Contribution));
 				group.put("GroupID", OSD.FromUUID(GroupDataBlock[i].GroupID));
 				group.put("GroupInsigniaID", OSD.FromUUID(GroupDataBlock[i].GroupInsigniaID));
 				group.put("GroupName", OSD.FromString(GroupDataBlock[i].GroupName));
+				group.put("GroupTitle", OSD.FromString(GroupDataBlock[i].GroupTitle));
 				group.put("GroupPowers", OSD.FromLong(GroupDataBlock[i].GroupPowers));
 				groupDataArray.add(group);
 			}
@@ -1759,6 +1763,7 @@ public class CapsMessage implements IMessage
 				groupData.GroupName = groupMap.get("GroupName").AsString();
 				groupData.GroupPowers = groupMap.get("GroupPowers").AsLong();
 				groupData.AcceptNotices = groupMap.get("AcceptNotices").AsBoolean();
+				groupData.GroupTitle = groupMap.get("GroupTitle").AsString();
 				GroupDataBlock[i] = groupData;
 			}
 
@@ -1914,6 +1919,88 @@ public class CapsMessage implements IMessage
 
 				AgentDataBlock[i] = agentData;
 			}
+		}
+	}
+
+	// An CapsEventQueue message sent from the simulator to an agent when the agent
+	// state changes
+	public class AgentStateUpdateMessage implements IMessage
+	{
+		public class Preferences
+		{
+			public int godLevel;
+			public boolean langPublic;
+			public String maxAccess;
+			public String language;
+			public boolean alterPerm;
+			public boolean alterNavMesh;
+		}
+
+		// An Array containing the AgentID and GroupID
+
+		public boolean hasModNavMesh;
+		public boolean canModNavMesh;
+
+		public Preferences preferences;
+
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.AgentStateUpdate;
+		}
+
+		/**
+		 * Serialize the object
+		 * 
+		 * @return An <see cref="OSDMap"/> containing the objects data
+		 */
+		@Override
+		public OSDMap Serialize()
+		{
+			OSDMap access = new OSDMap(4);
+			access.put("max", OSD.FromString(preferences.maxAccess));
+			access.put("language", OSD.FromString(preferences.language));
+			access.put("alter_permanent_objects", OSD.FromBoolean(preferences.alterPerm));			
+			access.put("alter_navmesh_objects", OSD.FromBoolean(preferences.alterNavMesh));			
+
+			OSDMap prefs = new OSDMap(3);
+			prefs.put("god_level", OSD.FromInteger(preferences.godLevel));
+			prefs.put("language_is_public", OSD.FromBoolean(preferences.langPublic));
+			prefs.put("access_prefs", access);
+			
+			OSDMap map = new OSDMap(3);
+			map.put("has_modified_navmesh", OSD.FromBoolean(hasModNavMesh));
+			map.put("can_modify_navmesh", OSD.FromBoolean(canModNavMesh));
+			map.put("preferences", prefs);
+
+			return map;
+		}
+
+		/**
+		 * Deserialize the message
+		 * 
+		 * @param map
+		 *            An <see cref="OSDMap"/> containing the data
+		 */
+		@Override
+		public void Deserialize(OSDMap map)
+		{
+			hasModNavMesh = map.get("has_modified_navmesh").AsBoolean();
+			canModNavMesh = map.get("can_modify_navmesh").AsBoolean();
+
+			OSDMap prefs = (OSDMap)map.get("preferences");
+			preferences = new Preferences();
+			preferences.godLevel = prefs.get("god_level").AsInteger();
+			preferences.langPublic = prefs.get("language_is_public").AsBoolean();
+
+			OSDMap access = (OSDMap)prefs.get("access_prefs");
+			preferences.maxAccess = access.get("max").AsString();
+			preferences.language = access.get("language").AsString();
+			preferences.alterPerm = access.get("alter_permanent_objects").AsBoolean();			
+			preferences.alterNavMesh = access.get("alter_navmesh_objects").AsBoolean();			
 		}
 	}
 
@@ -6075,13 +6162,25 @@ public class CapsMessage implements IMessage
 
 	// #endregion Display names
 
+	public IMessage DecodeEvent(String eventName, OSDMap map)
+	{
+		try
+		{
+			CapsEventType eventType = CapsEventType.valueOf(eventName);
+			return DecodeEvent(eventType, map);
+		}
+		catch (Exception ex)
+		{
+			return null;
+		}
+	}
 	/**
 	 * Return a decoded capabilities message as a strongly typed object
 	 * 
-	 * @param eventName
-	 *            A string containing the name of the capabilities message key
+	 * @param eventType
+	 *            The event type enumeration key of the capabilities message
 	 * @param map
-	 *            An <see cref="OSDMap"/> to decode
+	 *            An <see cref="OSDMap"/> OSDMap to decode
 	 * @return A strongly typed object containing the decoded information from
 	 *         the capabilities message, or null if no existing Message object
 	 *         exists for the specified event
@@ -6093,6 +6192,9 @@ public class CapsMessage implements IMessage
 		{
 			case AgentGroupDataUpdate:
 				message = new AgentGroupDataUpdateMessage();
+				break;
+			case AgentStateUpdate:
+				message = new AgentStateUpdateMessage();
 				break;
 			case AvatarGroupsReply: // OpenSim sends the above with the wrong key
 				message = new AgentGroupDataUpdateMessage();
