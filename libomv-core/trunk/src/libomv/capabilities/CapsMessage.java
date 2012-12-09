@@ -1763,7 +1763,8 @@ public class CapsMessage implements IMessage
 				groupData.GroupName = groupMap.get("GroupName").AsString();
 				groupData.GroupPowers = groupMap.get("GroupPowers").AsLong();
 				groupData.AcceptNotices = groupMap.get("AcceptNotices").AsBoolean();
-				groupData.GroupTitle = groupMap.get("GroupTitle").AsString();
+				if (groupMap.containsKey("GroupTitle"))
+					groupData.GroupTitle = groupMap.get("GroupTitle").AsString();
 				GroupDataBlock[i] = groupData;
 			}
 
