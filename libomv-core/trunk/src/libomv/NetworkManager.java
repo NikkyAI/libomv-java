@@ -1543,41 +1543,42 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
     private void HandleEnableSimulator(IMessage message, Simulator simulator) throws Exception
     {
-        if (!_Client.Settings.MULTIPLE_SIMS) return;
+		if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS))
+		{
+			EnableSimulatorMessage msg = (EnableSimulatorMessage)message;
 
-        EnableSimulatorMessage msg = (EnableSimulatorMessage)message;
+	        for (int i = 0; i < msg.Simulators.length; i++)
+	        {
+	            InetAddress ip = msg.Simulators[i].IP;
+	    		InetSocketAddress endPoint = new InetSocketAddress(ip, msg.Simulators[i].Port);
 
-        for (int i = 0; i < msg.Simulators.length; i++)
-        {
-            InetAddress ip = msg.Simulators[i].IP;
-    		InetSocketAddress endPoint = new InetSocketAddress(ip, msg.Simulators[i].Port);
+	            if (FindSimulator(endPoint) != null) return;
 
-            if (FindSimulator(endPoint) != null) return;
-
-            if (Connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null)
-            {
-                Logger.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port, LogLevel.Error, _Client);
-            }
-        }
+	            if (Connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null)
+	            {
+	                Logger.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port, LogLevel.Error, _Client);
+	            }
+	        }
+		}
     }
 
     private void HandleEnableSimulator(Packet packet, Simulator simulator) throws Exception
 	{
-		if (!_Client.Settings.MULTIPLE_SIMS) return;
-
-		EnableSimulatorPacket msg = (EnableSimulatorPacket) packet;
-
-		InetAddress ip = InetAddress.getByAddress(Helpers.Int32ToBytesB(msg.SimulatorInfo.IP));
-		InetSocketAddress endPoint = new InetSocketAddress(ip, msg.SimulatorInfo.Port);
-
-		if (FindSimulator(endPoint) != null) return;
-
-		if (Connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null)
+		if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS))
 		{
-			Logger.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, LogLevel.Error, _Client);
+			EnableSimulatorPacket msg = (EnableSimulatorPacket) packet;
+
+			InetAddress ip = InetAddress.getByAddress(Helpers.Int32ToBytesB(msg.SimulatorInfo.IP));
+			InetSocketAddress endPoint = new InetSocketAddress(ip, msg.SimulatorInfo.Port);
+
+			if (FindSimulator(endPoint) != null) return;
+
+			if (Connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null)
+			{
+				Logger.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, LogLevel.Error, _Client);
+			}
 		}
 	}
-
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 * 

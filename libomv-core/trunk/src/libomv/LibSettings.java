@@ -65,11 +65,11 @@ public class LibSettings extends Settings implements PacketCallback
 	/* Application Version */
 	public static final String LIBRARY_VERSION = "0.6.2";
 	
-
 	/* The relative directory where external resources are kept */
 	public static final String RESOURCE_DIR = "resourceDir";
 	
-
+	// #region manager control
+	
 	/* Initialize Appearncew Manager */
 	public static final String ENABLE_APPEARANCE_MANAGER = "enableAppearanceMgr";
 
@@ -242,7 +242,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * Should we connect to multiple sims? This will allow viewing in to
 	 * neighboring simulators and sim crossings (Experimental)
 	 */
-	public boolean MULTIPLE_SIMS = true;
+	public static final String MULTIPLE_SIMS = "multipleSims";
 
 	/*
 	 * If true, all object update packets will be decoded in to native objects.
@@ -415,6 +415,7 @@ public class LibSettings extends Settings implements PacketCallback
 			new DefaultSetting(ENABLE_PARCEL_MANAGER, false),
 			new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
 			new DefaultSetting(ENABLE_SOUND_MANAGER, false),
+			new DefaultSetting(MULTIPLE_SIMS, true),
 			new DefaultSetting(SEND_AGENT_THROTTLE, true),
 			new DefaultSetting(ENABLE_CAPS, true),
 			new DefaultSetting(ENABLE_SIMSTATS, true),
