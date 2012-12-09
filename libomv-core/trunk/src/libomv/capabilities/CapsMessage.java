@@ -1937,8 +1937,6 @@ public class CapsMessage implements IMessage
 			public boolean alterNavMesh;
 		}
 
-		// An Array containing the AgentID and GroupID
-
 		public boolean hasModNavMesh;
 		public boolean canModNavMesh;
 

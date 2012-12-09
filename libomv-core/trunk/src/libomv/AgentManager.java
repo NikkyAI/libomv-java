@@ -2484,6 +2484,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		// CAPS callbacks
 		_Client.Network.RegisterCallback(CapsEventType.EstablishAgentCommunication, this);
 		_Client.Network.RegisterCallback(CapsEventType.SetDisplayNameReply, this);
+		_Client.Network.RegisterCallback(CapsEventType.AgentStateUpdate, this);
 		// Incoming Group Chat
 		_Client.Network.RegisterCallback(CapsEventType.ChatterBoxInvitation, this);
 		// Outgoing Group Chat Reply
@@ -2529,6 +2530,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 				break;
 			case SetDisplayNameReply:
 				HandleSetDisplayNameReply(message, simulator);
+				break;
+			case AgentStateUpdate:
+				HandleAgentStateUpdate(message, simulator);
 				break;
 			default:
 				Logger.Log("AgentManager: Unhandled message" + message.getType().toString(), LogLevel.Warning, _Client);
@@ -5293,7 +5297,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * 
      * @throws UnsupportedEncodingException 
      */
-    private final void HandleAgentDataUpdate(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    private void HandleAgentDataUpdate(Packet packet, Simulator simulator) throws UnsupportedEncodingException
     {
         AgentDataUpdatePacket p = (AgentDataUpdatePacket)packet;
 
@@ -5318,6 +5322,11 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
     }
 
+    private void HandleAgentStateUpdate(IMessage message, Simulator simulator)
+    {
+    	
+    }
+    
     /**
 	 * Process an incoming packet and raise the appropriate events
 	 * 
