@@ -51,6 +51,7 @@ import libomv.Simulator.SimAccess;
 import libomv.Simulator.SimStatType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.capabilities.CapsMessage.EnableSimulatorMessage;
 import libomv.capabilities.IMessage;
 import libomv.packets.CompletePingCheckPacket;
 import libomv.packets.EnableSimulatorPacket;
@@ -78,7 +79,7 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 // outgoing traffic and deserializes incoming traffic, and provides
 // instances of delegates for network-related events.
 
-public class NetworkManager implements PacketCallback
+public class NetworkManager implements PacketCallback, CapsCallback
 {
 	/** Explains why a simulator or the grid disconnected from us */
 	public enum DisconnectType
@@ -684,6 +685,18 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
+	@Override
+	public void capsCallback(IMessage message, Simulator simulator) throws Exception 
+	{
+		switch (message.getType())
+		{
+			case EnableSimulator:
+				HandleEnableSimulator(message, simulator);
+				break;
+		}
+		
+	}
+
 	private boolean syncPacketCallbacks;
 	private boolean sendAgentUpdates;
 	private boolean enableSimStats;
@@ -731,7 +744,10 @@ public class NetworkManager implements PacketCallback
         enableSimStats = _Client.Settings.getBool(LibSettings.ENABLE_SIMSTATS);
 		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 
-		// Register the internal callbacks
+        // Register internal CAPS callbacks
+        RegisterCallback(CapsEventType.EnableSimulator, this);
+
+        // Register the internal callbacks
 		RegisterCallback(PacketType.RegionHandshake, this);
 		RegisterCallback(PacketType.StartPingCheck, this);
 		RegisterCallback(PacketType.DisableSimulator, this);
@@ -1525,26 +1541,40 @@ public class NetworkManager implements PacketCallback
 		}
 	}
 
-	private void HandleEnableSimulator(Packet packet, Simulator simulator) throws Exception
+    private void HandleEnableSimulator(IMessage message, Simulator simulator) throws Exception
+    {
+        if (!_Client.Settings.MULTIPLE_SIMS) return;
+
+        EnableSimulatorMessage msg = (EnableSimulatorMessage)message;
+
+        for (int i = 0; i < msg.Simulators.length; i++)
+        {
+            InetAddress ip = msg.Simulators[i].IP;
+    		InetSocketAddress endPoint = new InetSocketAddress(ip, msg.Simulators[i].Port);
+
+            if (FindSimulator(endPoint) != null) return;
+
+            if (Connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null)
+            {
+                Logger.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port, LogLevel.Error, _Client);
+            }
+        }
+    }
+
+    private void HandleEnableSimulator(Packet packet, Simulator simulator) throws Exception
 	{
-		if (!_Client.Settings.MULTIPLE_SIMS)
-		{
-			return;
-		}
+		if (!_Client.Settings.MULTIPLE_SIMS) return;
 
 		EnableSimulatorPacket msg = (EnableSimulatorPacket) packet;
 
 		InetAddress ip = InetAddress.getByAddress(Helpers.Int32ToBytesB(msg.SimulatorInfo.IP));
 		InetSocketAddress endPoint = new InetSocketAddress(ip, msg.SimulatorInfo.Port);
 
-		if (FindSimulator(endPoint) != null)
-		{
-			return;
-		}
+		if (FindSimulator(endPoint) != null) return;
 
 		if (Connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null)
 		{
-			Logger.Log("Unabled to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, LogLevel.Error);
+			Logger.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, LogLevel.Error, _Client);
 		}
 	}
 
