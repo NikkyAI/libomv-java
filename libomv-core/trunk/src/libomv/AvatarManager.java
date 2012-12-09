@@ -589,14 +589,12 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			case DisplayNameUpdate:
 				HandleDisplayNameUpdate(message, simulator);
 				break;
-//			case AgentGroupDataUpdate:
-//				// HandleAgentGroupDataUpdate(message, simulator);
-//				break;
+			case AgentGroupDataUpdate:
 			case AvatarGroupsReply:
 				HandleAvatarGroupsReply(message, simulator);
 				break;
 			default:
-				Logger.Log("AvatarManager: Unhandled message" + message.getType().toString(), LogLevel.Warning, _Client);
+				Logger.Log("AvatarManager: Unhandled message " + message.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -979,6 +977,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
                 avatarGroup.GroupID = msg.GroupDataBlock[i].GroupID;
                 avatarGroup.GroupInsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
                 avatarGroup.GroupName = msg.GroupDataBlock[i].GroupName;
+                avatarGroup.GroupTitle = msg.GroupDataBlock[i].GroupTitle;
                 avatarGroup.GroupPowers = msg.GroupDataBlock[i].GroupPowers;
                 avatarGroup.ListInProfile = msg.NewGroupDataBlock[i].ListInProfile;
 
