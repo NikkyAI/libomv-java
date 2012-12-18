@@ -44,19 +44,20 @@ public final class Logger
 	{
 		public final static int None = 0;
 
-		// Non-noisy useful information, may be helpful in debugging a problem
-		public final static int Info = 1;
+		// A critical error has occurred. Generally this will be followed by the
+		// network layer shutting down, although the stability of libomv after an
+		// error is uncertain
+		public final static int Error = 1;
 
 		// A non-critical error occurred. A warning will not prevent the rest of
 		// libomv from operating as usual, although it may be indicative of an
 		// underlying issue
 		public final static int Warning = 2;
 
-		// A critical error has occurred. Generally this will be followed by the
-		// network layer shutting down, although the stability of libomv after an
-		// error is uncertain
-		public final static int Error = 3;
+		// Non-noisy useful information, may be helpful in debugging a problem
+		public final static int Info = 3;
 
+		// Noisy debug information, may be helpful in debugging a problem
 		public final static int Debug = 4;
 	}
 
@@ -205,35 +206,21 @@ public final class Logger
 		{
 			OnLogMessage.callback(message, level, exception);
 		}
-		else
+		else if (level > LogLevel.None && level <= LOG_LEVEL)
 		{
 			switch (level)
 			{
 				case LogLevel.Debug:
-					if (LOG_LEVEL == LogLevel.Debug)
-					{
-						LogInstance.debug(message, exception);
-					}
+					LogInstance.debug(message, exception);
 					break;
 				case LogLevel.Info:
-					if (LOG_LEVEL == LogLevel.Debug || LOG_LEVEL == LogLevel.Info)
-					{
-						LogInstance.info(message, exception);
-					}
+					LogInstance.info(message, exception);
 					break;
 				case LogLevel.Warning:
-					if (LOG_LEVEL == LogLevel.Debug || LOG_LEVEL == LogLevel.Info
-						|| LOG_LEVEL == LogLevel.Warning)
-					{
-						LogInstance.warn(message, exception);
-					}
+					LogInstance.warn(message, exception);
 					break;
 				case LogLevel.Error:
-					if (LOG_LEVEL == LogLevel.Debug || LOG_LEVEL == LogLevel.Info
-						|| LOG_LEVEL == LogLevel.Warning || LOG_LEVEL == LogLevel.Error)
-					{
-						LogInstance.error(message, exception);
-					}
+					LogInstance.error(message, exception);
 					break;
 				default:
 					break;
