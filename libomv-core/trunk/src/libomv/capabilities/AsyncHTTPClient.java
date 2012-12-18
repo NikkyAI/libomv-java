@@ -374,11 +374,12 @@ public abstract class AsyncHTTPClient<T>
 
 		if (callback != null)
 			resultCb = callback;
+		FutureCallback<T> internalCallback = new AsyncHttpResultCallback();
 
 		try
 		{
 			resultFuture = client.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
-				                                	new AsyncHttpResponseConsumer(), new AsyncHttpResultCallback());
+				                                	new AsyncHttpResponseConsumer(), internalCallback);
 
 			if (millisecondTimeout >= 0)
 			{
@@ -396,7 +397,7 @@ public abstract class AsyncHTTPClient<T>
 		}
 		catch (Exception ex)
 		{
-			BasicFuture<T> failed = new BasicFuture<T>(resultCb);
+			BasicFuture<T> failed = new BasicFuture<T>(internalCallback);
 			failed.failed(ex);
 			return failed;
 		}

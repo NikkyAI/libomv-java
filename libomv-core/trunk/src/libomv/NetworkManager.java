@@ -1175,13 +1175,12 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				Simulator simulator = _Simulators.get(i);
 				// Don't disconnect the current sim, we'll use LogoutRequest for
 				// that
-				if (simulator != null && simulator.equals(_CurrentSim))
+				if (simulator != null && !simulator.equals(_CurrentSim))
 				{
 					simulator.Disconnect(sendCloseCircuit);
 
 					// Fire the SimDisconnected event if a handler is registered
-					OnSimDisconnected
-							.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
+					OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
 				}
 
 			}
@@ -1220,7 +1219,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			else if (_CurrentSim.getDisconnectCandidate())
 			{
 				// The currently occupied simulator hasn't sent us any traffic in a while, shutdown
-				Logger.Log("Network timeout for the current simulator (" + _CurrentSim.Name + "), logging out",
+				Logger.Log("Network timeout for the current simulator (" + _CurrentSim.getSimName() + "), logging out",
 						LogLevel.Warning);
 
 				if (_DisconnectTimer != null)
@@ -1271,7 +1270,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				for (Simulator simulator : disconnectedSims)
 				{
 					// This sim hasn't received any network traffic since the timer last elapsed, consider it disconnected
-					Logger.Log("Network timeout for simulator " + simulator.Name + ", disconnecting", LogLevel.Warning);
+					Logger.Log("Network timeout for simulator " + simulator.getSimName() + ", disconnecting", LogLevel.Warning);
 
 					try
 					{
@@ -1293,7 +1292,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *            InetSocketAddress of the Simulator to search for
 	 * @return A Simulator reference on success, otherwise null
 	 */
-	private final Simulator FindSimulator(InetSocketAddress endPoint)
+	public final Simulator FindSimulator(InetSocketAddress endPoint)
 	{
 		synchronized (_Simulators)
 		{
@@ -1315,7 +1314,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		simulator.ID = handshake.RegionInfo.CacheID;
 
 		simulator.IsEstateManager = handshake.RegionInfo.IsEstateManager;
-		simulator.Name = Helpers.BytesToString(handshake.RegionInfo.getSimName());
+		simulator.setSimName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
 		simulator.SimOwner = handshake.RegionInfo.SimOwner;
 		simulator.TerrainBase0 = handshake.RegionInfo.TerrainBase0;
 		simulator.TerrainBase1 = handshake.RegionInfo.TerrainBase1;
@@ -1354,7 +1353,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		reply.Flags = 0;
 		simulator.SendPacket(reply);
 
-		Logger.Log("Received a region handshake for " + simulator.Name, LogLevel.Info, _Client);
+		Logger.Log("Received a region handshake for " + simulator.getSimName(), LogLevel.Info, _Client);
 	}
 
 	/**
@@ -1388,13 +1387,13 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
 		simulator.Statistics.ReceivedPongs++;
-		String retval = "Pong2: " + simulator.Statistics.LastLag;
+		String retval = "Pong2: " + simulator.getSimName() + " lag : " + simulator.Statistics.LastLag + "ms";
 		if ((pong.PingID - simulator.Statistics.LastPingID + 1) != 0)
 		{
 			retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";
 		}
 
-		Logger.Log(retval, LogLevel.Info, _Client);
+		Logger.Log(retval, LogLevel.Debug, _Client);
 	}
 
 	/**

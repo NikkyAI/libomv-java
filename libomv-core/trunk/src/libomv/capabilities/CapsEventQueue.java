@@ -126,6 +126,7 @@ public class CapsEventQueue extends CapsClient
 								IMessage message = Client.Messages.DecodeEvent(name, body);
 								if (message != null)
 								{
+									Logger.Log("Caps message: " + name + ".", LogLevel.Debug, Client);
 									Client.Network.DistributeCaps(Simulator, message);
 
 									// #region Stats Tracking
@@ -164,10 +165,11 @@ public class CapsEventQueue extends CapsClient
 
 					try
 					{
-						OSD result;
+						OSD result = null;
 						synchronized (address)
 						{
-							result = Request.get();
+							if (Request != null)
+								result = Request.get();
 						}
 						if (result == null)
 						{
@@ -234,7 +236,7 @@ public class CapsEventQueue extends CapsClient
 						{
 							++errorCount;
 
-							Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning, Client);
+							Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning, Client, ex);
 						}
 					}
 					catch (Exception ex)

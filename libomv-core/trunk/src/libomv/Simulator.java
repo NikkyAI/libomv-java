@@ -607,7 +607,17 @@ public class Simulator extends Thread
 	public String SimVersion = "";
 
 	/*  */
-	public String Name = "";
+	private String _SimName = "";
+
+	public String getSimName()
+	{
+		return _SimName;
+	}
+	
+	public void setSimName(String simName)
+	{
+		_SimName = simName;
+	}
 
 	/*
 	 * A 64x64 grid of parcel coloring values. The values stored in this array
@@ -894,7 +904,7 @@ public class Simulator extends Thread
 			}
 			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
 			{
-				Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Warning, _Client);
+				Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Error, _Client);
 				return false;
 			}
 			Thread.sleep(10);
@@ -947,9 +957,7 @@ public class Simulator extends Thread
 		if (_Caps != null)
 		{
 			if (_Caps.getSeedCapsURI().equals(seedcaps))
-			{
 				return;
-			}
 
 			Logger.Log("Unexpected change of seed capability", LogLevel.Warning);
 			_Caps.Disconnect(true);
@@ -1010,6 +1018,7 @@ public class Simulator extends Thread
 				{
 					ByteBuffer data = close.ToBytes();
 					_Connection.send(new DatagramPacket(data.array(), data.position()));
+					Thread.sleep(50);
 				}
 				catch (IOException e)
 				{
@@ -1020,6 +1029,7 @@ public class Simulator extends Thread
 
 			try
 			{
+				_Connection.disconnect();
 				// Shut the socket communication down
 				_Connection.close();
 			}
@@ -1202,7 +1212,7 @@ public class Simulator extends Thread
 					}
 					catch (IOException ex)
 					{
-						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, _Client, ex);
+						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client, ex);
 
 						_Connected = false;
 						_Client.Network.DisconnectSim(this, true);
@@ -1303,7 +1313,7 @@ public class Simulator extends Thread
 			}
 			catch (IOException ex)
 			{
-				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + Name, LogLevel.Info, _Client, ex);
+				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client, ex);
 
 				_Connected = false;
 				return;
@@ -1589,7 +1599,7 @@ public class Simulator extends Thread
 			{
 				Statistics.IncomingBPS = (int) (recv - old_in) / _InBytes.size();
 				Statistics.OutgoingBPS = (int) (sent - old_out) / _OutBytes.size();
-				Logger.Log("Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
+				Logger.Log(_SimName + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
 						+ " bps, Lag: " + Statistics.LastLag + " ms, Pings: " + Statistics.ReceivedPongs + "/"
 						+ Statistics.SentPings, LogLevel.Debug, _Client);
 			}

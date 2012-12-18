@@ -84,6 +84,7 @@ import libomv.capabilities.CapsMessage.ChatterBoxSessionAgentListUpdatesMessage;
 import libomv.capabilities.CapsMessage.ChatterBoxSessionEventReplyMessage;
 import libomv.capabilities.CapsMessage.ChatterBoxSessionStartReplyMessage;
 import libomv.capabilities.CapsMessage.CrossedRegionMessage;
+import libomv.capabilities.CapsMessage.EstablishAgentCommunicationMessage;
 import libomv.capabilities.CapsMessage.SetDisplayNameMessage;
 import libomv.capabilities.CapsMessage.SetDisplayNameReplyMessage;
 import libomv.capabilities.CapsMessage.TeleportFailedMessage;
@@ -2514,7 +2515,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HandleCrossedRegion(message, simulator);
 				break;
 			case EstablishAgentCommunication:
-				// TODO: 
+				HandleEstablishAgentComm(message, simulator); 
 				break;
 			case ChatterBoxInvitation:
 				HandleChatterBoxInvitation(message, simulator);
@@ -4330,7 +4331,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return false;
 		}
 
-		if (!simName.equals(_Client.Network.getCurrentSim().getName()))
+		if (!simName.equals(_Client.Network.getCurrentSim().getSimName()))
 		{
 			// Teleporting to a foreign sim
 			GridRegion region = _Client.Grid.GetGridRegion(simName, GridLayerType.Objects);
@@ -4358,7 +4359,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void SendTeleportLure(UUID targetID) throws Exception
 	{
-		SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().Name + "!");
+		SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().getSimName() + "!");
 	}
 
 	/**
@@ -5218,7 +5219,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				teleportMessage = "Teleport finished";
 				teleportStatus = TeleportStatus.Finished;
 
-				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Name + " ("
+				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getSimName() + " ("
 						+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
 			}
 			else
@@ -5278,7 +5279,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleportMessage = "Teleport finished";
 			teleportStatus = TeleportStatus.Finished;
 
-			Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().Name + " ("
+			Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getSimName() + " ("
 					+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
 		}
 		else
@@ -5292,6 +5293,30 @@ public class AgentManager implements PacketCallback, CapsCallback
 		teleportTimeout.set(teleportStatus);
 	}
 
+    private void HandleEstablishAgentComm(IMessage message, Simulator simulator)
+    {
+        EstablishAgentCommunicationMessage msg = (EstablishAgentCommunicationMessage)message;
+
+        if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS))
+        {
+            InetSocketAddress endPoint = new InetSocketAddress(msg.Address, msg.Port);
+            Simulator sim = _Client.Network.FindSimulator(endPoint);
+
+            if (sim == null)
+            {
+                Logger.Log("Got EstablishAgentCommunication for unknown sim " + msg.Address + ":" + msg.Port,
+                    LogLevel.Error, _Client);
+
+                // FIXME: Should we use this opportunity to connect to the simulator?
+            }
+            else
+            {
+                Logger.Log("Got EstablishAgentCommunication for " + sim.getSimName(), LogLevel.Debug, _Client);
+
+                sim.SetSeedCaps(msg.SeedCapability.toString());
+            }
+        }
+    }
     /**
      * Process an incoming packet and raise the appropriate events
      * 
