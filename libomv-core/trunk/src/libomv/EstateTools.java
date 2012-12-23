@@ -56,7 +56,7 @@ public class EstateTools
 		estate.ParamList[0].setParameter(Helpers.StringToField(Client.Self.getAgentID().toString()));
 		estate.ParamList[1].setParameter(Helpers.StringToField(prey.toString()));
 
-		Client.Network.SendPacket(estate);
+		Client.Network.sendPacket(estate);
 	}
 
 	// <param name="prey"></param>

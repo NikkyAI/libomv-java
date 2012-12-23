@@ -560,7 +560,7 @@ public class TexturePipeline implements PacketCallback
 				request.RequestImage[0].Image = imageID;
 				request.RequestImage[0].Type = type.getValue();
 
-				_Client.Network.SendPacket(request);
+				_Client.Network.sendPacket(request);
 			}
 			else
 			{
@@ -596,7 +596,7 @@ public class TexturePipeline implements PacketCallback
 				request.RequestImage[0].Packet = 0;
 				request.RequestImage[0].Image = textureID;
 				request.RequestImage[0].Type = task.Type.getValue();
-				_Client.Network.SendPacket(request);
+				_Client.Network.sendPacket(request);
 
 				RemoveTransfer(textureID);
 

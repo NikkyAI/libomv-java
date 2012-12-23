@@ -1230,7 +1230,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		request.ObjectData[0].ID = localID;
 		request.ObjectData[0].CacheMissType = 0;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1255,7 +1255,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			request.ObjectData[i].ID = localIDs[i];
 			request.ObjectData[i].CacheMissType = 0;
 		}
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1298,7 +1298,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		buy.ObjectData[0].SaleType = (byte) saleType.ordinal();
 		buy.ObjectData[0].SalePrice = price;
 
-		simulator.SendPacket(buy);
+		simulator.sendPacket(buy);
 	}
 
 	/**
@@ -1318,7 +1318,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		RequestPayPricePacket payPriceRequest = new RequestPayPricePacket();
 		payPriceRequest.ObjectID = objectID;
-		simulator.SendPacket(payPriceRequest);
+		simulator.sendPacket(payPriceRequest);
 	}
 
 	/**
@@ -1363,7 +1363,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		select.ObjectLocalID = new int[1];
 		select.ObjectLocalID[0] = localID;
 
-		simulator.SendPacket(select);
+		simulator.sendPacket(select);
 
 		if (automaticDeselect)
 		{
@@ -1416,7 +1416,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			select.ObjectLocalID[i] = localIDs[i];
 		}
 
-		simulator.SendPacket(select);
+		simulator.sendPacket(select);
 
 		if (automaticDeselect)
 		{
@@ -1448,7 +1448,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		sale.ObjectData[0].SalePrice = price;
 		sale.ObjectData[0].SaleType = (byte) saleType.ordinal();
 
-		simulator.SendPacket(sale);
+		simulator.sendPacket(sale);
 	}
 
 	/**
@@ -1479,7 +1479,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			sale.ObjectData[i].SaleType = (byte) saleType.ordinal();
 		}
 
-		simulator.SendPacket(sale);
+		simulator.sendPacket(sale);
 	}
 
 	/**
@@ -1501,7 +1501,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		deselect.ObjectLocalID = new int[1];
 		deselect.ObjectLocalID[0] = localID;
 
-		simulator.SendPacket(deselect);
+		simulator.sendPacket(deselect);
 	}
 
 	/**
@@ -1527,7 +1527,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			deselect.ObjectLocalID[i] = localIDs[i];
 		}
 
-		simulator.SendPacket(deselect);
+		simulator.sendPacket(deselect);
 	}
 
 	/**
@@ -1585,7 +1585,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		grab.SurfaceInfo[0].Normal = normal;
 		grab.SurfaceInfo[0].Binormal = binormal;
 
-		simulator.SendPacket(grab);
+		simulator.sendPacket(grab);
 
 		// TODO: If these hit the server out of order the click will fail
 		// and we'll be grabbing the object
@@ -1604,7 +1604,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		degrab.SurfaceInfo[0].Normal = normal;
 		degrab.SurfaceInfo[0].Binormal = binormal;
 
-		simulator.SendPacket(degrab);
+		simulator.sendPacket(degrab);
 	}
 
 	/**
@@ -1708,7 +1708,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		packet.ObjectData.RayTargetID = UUID.Zero;
 		packet.ObjectData.BypassRaycast = 1;
 
-		simulator.SendPacket(packet);
+		simulator.sendPacket(packet);
 	}
 
 	/**
@@ -1751,7 +1751,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		add.ObjectData.Scale = scale;
 		add.ObjectData.State = (byte) treeType.ordinal();
 
-		simulator.SendPacket(add);
+		simulator.sendPacket(add);
 	}
 
 	/**
@@ -1792,7 +1792,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		add.ObjectData.Scale = scale;
 		add.ObjectData.State = (byte) grassType.ordinal();
 
-		simulator.SendPacket(add);
+		simulator.sendPacket(add);
 	}
 
 	/**
@@ -1843,7 +1843,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		image.ObjectData[0].setTextureEntry(textures.GetBytes());
 		image.ObjectData[0].setMediaURL(Helpers.StringToBytes(mediaUrl));
 
-		simulator.SendPacket(image);
+		simulator.sendPacket(image);
 	}
 
 	/**
@@ -1882,7 +1882,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		extra.ObjectData[0].setParamData(light.GetBytes());
 		extra.ObjectData[0].ParamSize = light.GetBytes().length;
 
-		simulator.SendPacket(extra);
+		simulator.sendPacket(extra);
 	}
 
 	/**
@@ -1913,7 +1913,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		extra.ObjectData[0].setParamData(flexible.GetBytes());
 		extra.ObjectData[0].ParamSize = flexible.GetBytes().length;
 
-		simulator.SendPacket(extra);
+		simulator.sendPacket(extra);
 	}
 
 	/**
@@ -1945,7 +1945,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		extra.ObjectData[0].setParamData(sculpt.GetBytes());
 		extra.ObjectData[0].ParamSize = sculpt.GetBytes().length;
 
-		simulator.SendPacket(extra);
+		simulator.sendPacket(extra);
 
 		// Not sure why, but if you don't send this the sculpted prim disappears
 		ObjectShapePacket shape = new ObjectShapePacket();
@@ -1960,7 +1960,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		shape.ObjectData[0].PathScaleY = (byte) 150;
 		shape.ObjectData[0].PathCurve = 32;
 
-		simulator.SendPacket(shape);
+		simulator.sendPacket(shape);
 	}
 
 	/**
@@ -1990,7 +1990,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		extra.ObjectData[0].setParamData(Helpers.EmptyBytes);
 		extra.ObjectData[0].ParamSize = 0;
 
-		simulator.SendPacket(extra);
+		simulator.sendPacket(extra);
 	}
 
 	/**
@@ -2019,7 +2019,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			packet.ObjectLocalID[i] = localIDs[i];
 		}
 
-		simulator.SendPacket(packet);
+		simulator.sendPacket(packet);
 	}
 
 	/**
@@ -2046,7 +2046,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			packet.ObjectLocalID[i] = localIDs[i];
 		}
 
-		simulator.SendPacket(packet);
+		simulator.sendPacket(packet);
 	}
 
 	/**
@@ -2073,7 +2073,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		objRotPacket.ObjectData[0] = objRotPacket.new ObjectDataBlock();
 		objRotPacket.ObjectData[0].ObjectLocalID = localID;
 		objRotPacket.ObjectData[0].Rotation = rotation;
-		simulator.SendPacket(objRotPacket);
+		simulator.sendPacket(objRotPacket);
 	}
 
 	/**
@@ -2122,7 +2122,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			namePacket.ObjectData[i].setName(Helpers.StringToBytes(names[i]));
 		}
 
-		simulator.SendPacket(namePacket);
+		simulator.sendPacket(namePacket);
 	}
 
 	/**
@@ -2171,7 +2171,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			descPacket.ObjectData[i].setDescription(Helpers.StringToBytes(descriptions[i]));
 		}
 
-		simulator.SendPacket(descPacket);
+		simulator.sendPacket(descPacket);
 	}
 
 	/**
@@ -2202,7 +2202,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		attach.ObjectData[0].ObjectLocalID = localID;
 		attach.ObjectData[0].Rotation = rotation;
 
-		simulator.SendPacket(attach);
+		simulator.sendPacket(attach);
 	}
 
 	/**
@@ -2226,7 +2226,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		dropit.ObjectLocalID = new int[1];
 		dropit.ObjectLocalID[0] = localID;
 
-		simulator.SendPacket(dropit);
+		simulator.sendPacket(dropit);
 	}
 
 	/**
@@ -2254,7 +2254,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			detach.ObjectLocalID[i] = localIDs[i];
 		}
 
-		simulator.SendPacket(detach);
+		simulator.sendPacket(detach);
 	}
 
 	/**
@@ -2379,7 +2379,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		multiObjectUpdate.ObjectData[0].ObjectLocalID = localID;
 		multiObjectUpdate.ObjectData[0].setData(quat.GetBytes());
 
-		simulator.SendPacket(multiObjectUpdate);
+		simulator.sendPacket(multiObjectUpdate);
 	}
 
 	/**
@@ -2411,7 +2411,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		multiObjectUpdate.ObjectData[0].ObjectLocalID = localID;
 		multiObjectUpdate.ObjectData[0].setData(data.GetBytes());
 
-		simulator.SendPacket(multiObjectUpdate);
+		simulator.sendPacket(multiObjectUpdate);
 	}
 
 	/**
@@ -2443,7 +2443,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		objDeedPacket.ObjectLocalID[0] = localID;
 
-		simulator.SendPacket(objDeedPacket);
+		simulator.sendPacket(objDeedPacket);
 	}
 
 	/**
@@ -2476,7 +2476,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			packet.ObjectLocalID[i] = localIDs[i];
 		}
-		simulator.SendPacket(packet);
+		simulator.sendPacket(packet);
 	}
 
 	/**
@@ -2519,7 +2519,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			packet.ObjectData[i].Set = (byte) (set ? 1 : 0);
 		}
 
-		simulator.SendPacket(packet);
+		simulator.sendPacket(packet);
 	}
 
 	/**
@@ -2562,7 +2562,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		properties.getHeader().setReliable(reliable);
 
-		simulator.SendPacket(properties);
+		simulator.sendPacket(properties);
 	}
 
 	/**
@@ -2590,7 +2590,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			packet.ObjectLocalID[i] = localIds[i];
 		}
-		simulator.SendPacket(packet);
+		simulator.sendPacket(packet);
 	}
 
 	protected final void UpdateDilation(Simulator s, int dilation)
@@ -3796,7 +3796,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
         shape.ObjectData[0].ProfileEnd = Primitive.PackEndCut(prim.ProfileEnd);
         shape.ObjectData[0].ProfileHollow = Primitive.PackProfileHollow(prim.ProfileHollow);
 
-        simulator.SendPacket(shape);
+        simulator.sendPacket(shape);
     }
 
     /**
@@ -3820,7 +3820,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
         matPacket.ObjectData[0].ObjectLocalID = localID;
         matPacket.ObjectData[0].Material = material.getValue();
 
-        simulator.SendPacket(matPacket);
+        simulator.sendPacket(matPacket);
     }
     // #endregion Utility Functions
 

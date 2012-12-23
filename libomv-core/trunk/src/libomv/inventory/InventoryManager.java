@@ -509,7 +509,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		fetch.InventoryData[0].ItemID = itemID;
 		fetch.InventoryData[0].OwnerID = ownerID;
 
-		_Client.Network.SendPacket(fetch);
+		_Client.Network.sendPacket(fetch);
 	}
 
 	/**
@@ -540,7 +540,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			fetch.InventoryData[i].ItemID = itemIDs.get(i);
 			fetch.InventoryData[i].OwnerID = ownerIDs.get(i);
 		}
-		_Client.Network.SendPacket(fetch);
+		_Client.Network.sendPacket(fetch);
 	}
 
 	/**
@@ -632,7 +632,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		fetch.InventoryData.OwnerID = owner;
 		fetch.InventoryData.SortOrder = order;
 
-		_Client.Network.SendPacket(fetch);
+		_Client.Network.sendPacket(fetch);
 	}
 
     /**
@@ -1058,7 +1058,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		invFolder.FolderData[0].setName(Helpers.StringToBytes(name));
 		invFolder.FolderData[0].Type = type.getValue();
 
-		_Client.Network.SendPacket(invFolder);
+		_Client.Network.sendPacket(invFolder);
 	}
 
 	/**
@@ -1082,7 +1082,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		move.InventoryData[0].FolderID = folderID;
 		move.InventoryData[0].ParentID = newParentID;
 
-		_Client.Network.SendPacket(move);
+		_Client.Network.sendPacket(move);
 
 		synchronized (_Store)
 		{
@@ -1120,7 +1120,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			block.ParentID = folder.getValue();
 			move.InventoryData[index++] = block;
 		}
-		_Client.Network.SendPacket(move);
+		_Client.Network.sendPacket(move);
 
 		// FIXME: Use two List<UUID> to stay consistent
 		synchronized (_Store)
@@ -1174,7 +1174,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		move.InventoryData[0].FolderID = folderID;
 		move.InventoryData[0].setNewName(Helpers.StringToBytes(newName));
 
-		_Client.Network.SendPacket(move);
+		_Client.Network.sendPacket(move);
 
 		// Update our local copy
 		synchronized (_Store)
@@ -1216,7 +1216,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			move.InventoryData[index++] = block;
 		}
 
-		_Client.Network.SendPacket(move);
+		_Client.Network.sendPacket(move);
 
 		// Update our local copy
 		synchronized (_Store)
@@ -1249,7 +1249,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		purge.AgentData.AgentID = _Client.Self.getAgentID();
 		purge.AgentData.SessionID = _Client.Self.getSessionID();
 		purge.FolderID = folderID;
-		_Client.Network.SendPacket(purge);
+		_Client.Network.sendPacket(purge);
 
 		// Update our local copy
 		synchronized (_Store)
@@ -1364,7 +1364,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 			}
 		}
-		_Client.Network.SendPacket(rem);
+		_Client.Network.sendPacket(rem);
 	}
 
 	/**
@@ -1500,7 +1500,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		create.InventoryBlock.setName(Helpers.StringToBytes(name));
 		create.InventoryBlock.setDescription(Helpers.StringToBytes(description));
 
-		_Client.Network.SendPacket(create);
+		_Client.Network.sendPacket(create);
 	}
 
 	/**
@@ -1572,7 +1572,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		create.FolderData.Type = preferredType.getValue();
 		create.FolderData.setName(Helpers.StringToBytes(name));
 
-		_Client.Network.SendPacket(create);
+		_Client.Network.sendPacket(create);
 
 		return id;
 	}
@@ -1755,7 +1755,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		create.InventoryBlock.setName(Helpers.StringToBytes(name));
 		create.InventoryBlock.setDescription(Helpers.StringToBytes(description));
 
-		_Client.Network.SendPacket(create);
+		_Client.Network.sendPacket(create);
 	}
 
 	// #endregion Create
@@ -1894,7 +1894,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				copy.InventoryData[i].setNewName(Helpers.EmptyBytes);
 			}
 		}
-		_Client.Network.SendPacket(copy);
+		_Client.Network.sendPacket(copy);
 	}
 
 	/**
@@ -1943,7 +1943,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			copy.InventoryData[0].FolderID = folderID;
 			copy.InventoryData[0].ItemID = itemID;
 
-			_Client.Network.SendPacket(copy);
+			_Client.Network.sendPacket(copy);
 		}
 	}
 
@@ -2021,7 +2021,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 			update.InventoryData[i] = block;
 		}
-		_Client.Network.SendPacket(update);
+		_Client.Network.sendPacket(update);
 		return transactionID;
 	}
 
@@ -2305,7 +2305,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
 		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 
-		simulator.SendPacket(add);
+		simulator.sendPacket(add);
 
 		return queryID;
 	}
@@ -2361,7 +2361,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		take.ObjectLocalID = new int[1];
 		take.ObjectLocalID[0] = objectLocalID;
 
-		_Client.Network.SendPacket(take);
+		_Client.Network.sendPacket(take);
 	}
 
 	/**
@@ -2402,7 +2402,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		add.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
 		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 
-		simulator.SendPacket(add);
+		simulator.sendPacket(add);
 
 		return queryID;
 	}
@@ -2540,7 +2540,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		update.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 		update.InventoryData.CRC = ItemCRC(item);
 
-		_Client.Network.SendPacket(update);
+		_Client.Network.sendPacket(update);
 
 		return transactionID;
 	}
@@ -2665,7 +2665,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.LocalID = objectLocalID;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -2695,7 +2695,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		request.InventoryData.ItemID = taskItemID;
 		request.InventoryData.LocalID = objectLocalID;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -2721,7 +2721,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		remove.InventoryData.ItemID = taskItemID;
 		remove.InventoryData.LocalID = objectLocalID;
 
-		simulator.SendPacket(remove);
+		simulator.sendPacket(remove);
 	}
 
 	/**
@@ -2783,7 +2783,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		ScriptPacket.InventoryBlock.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
 		ScriptPacket.InventoryBlock.CRC = ItemCRC(item);
 
-		_Client.Network.SendPacket(ScriptPacket);
+		_Client.Network.sendPacket(ScriptPacket);
 
 		return transactionID;
 	}
@@ -2805,7 +2805,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		request.Script.ObjectID = objectID;
 		request.Script.ItemID = scriptID;
 
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -2831,7 +2831,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		request.Script.ItemID = scriptID;
 		request.Script.ObjectID = objectID;
 
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	// #endregion Task
@@ -3421,7 +3421,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						imp.MessageBlock.setBinaryBucket(Helpers.EmptyBytes);
 					}
 
-					e.getSimulator().SendPacket(imp);
+					e.getSimulator().sendPacket(imp);
 				}
 				catch (Exception ex)
 				{

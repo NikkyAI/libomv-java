@@ -659,7 +659,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         gmp.ParamList[0] = gmp.new ParamListBlock();
         gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
 
-        _Client.Network.SendPacket(gmp);
+        _Client.Network.sendPacket(gmp);
     }
 
     /**
@@ -682,7 +682,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         gmp.ParamList[0] = gmp.new ParamListBlock();
         gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
 
-        _Client.Network.SendPacket(gmp);
+        _Client.Network.sendPacket(gmp);
     }
 
     /**
@@ -708,7 +708,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         gmp.ParamList[1] = gmp.new ParamListBlock();
         gmp.ParamList[1].setParameter(Helpers.StringToBytes(pickid.toString()));
 
-        _Client.Network.SendPacket(gmp);
+        _Client.Network.sendPacket(gmp);
     }
 
     /**
@@ -734,7 +734,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         gmp.ParamList[1] = gmp.new ParamListBlock();
         gmp.ParamList[1].setParameter(Helpers.StringToBytes(classifiedid.toString()));
 
-        _Client.Network.SendPacket(gmp);
+        _Client.Network.sendPacket(gmp);
     }
 
     /**
@@ -799,7 +799,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			{
 				request.ID[i] = neednames.get(i);
 			}
-			_Client.Network.SendPacket(request);
+			_Client.Network.sendPacket(request);
 		}
 		else
 		{

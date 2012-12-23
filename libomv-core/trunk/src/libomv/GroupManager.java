@@ -860,7 +860,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		request.AgentData.AgentID = Client.Self.getAgentID();
 		request.AgentData.SessionID = Client.Self.getSessionID();
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -889,7 +889,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		UUIDGroupNameRequestPacket req = new UUIDGroupNameRequestPacket();
 		req.ID = new UUID[1];
 		req.ID[0] = groupID;
-		Client.Network.SendPacket(req);
+		Client.Network.sendPacket(req);
 	}
 
 	/**
@@ -926,7 +926,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			{
 				req.ID[i] = tempIDs.get(i);
 			}
-			Client.Network.SendPacket(req);
+			Client.Network.sendPacket(req);
 		}
 
 		// fire handler from cache
@@ -950,7 +950,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		request.AgentData.SessionID = Client.Self.getSessionID();
 		request.GroupID = group;
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	private class GroupMembersHandlerCaps implements FutureCallback<OSD>
@@ -1050,7 +1050,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			request.GroupData.GroupID = group;
 			request.GroupData.RequestID = requestID;
 
-			Client.Network.SendPacket(request);
+			Client.Network.sendPacket(request);
 		}
 		return requestID;
 	}
@@ -1079,7 +1079,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		request.GroupData.GroupID = group;
 		request.GroupData.RequestID = requestID;
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 		return requestID;
 	}
 
@@ -1105,7 +1105,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		request.AgentData.SessionID = Client.Self.getSessionID();
 		request.GroupData.GroupID = group;
 		request.GroupData.RequestID = requestID;
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 		return requestID;
 	}
 
@@ -1129,7 +1129,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		request.AgentData.GroupID = group;
 		request.AgentData.RequestID = requestID;
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 		return requestID;
 	}
 
@@ -1155,7 +1155,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		p.MoneyData.RequestID = new UUID();
 		p.MoneyData.CurrentInterval = currentInterval;
 		p.MoneyData.IntervalDays = intervalDays;
-		Client.Network.SendPacket(p);
+		Client.Network.sendPacket(p);
 	}
 
 	/**
@@ -1180,7 +1180,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		p.MoneyData.RequestID = new UUID();
 		p.MoneyData.CurrentInterval = currentInterval;
 		p.MoneyData.IntervalDays = intervalDays;
-		Client.Network.SendPacket(p);
+		Client.Network.sendPacket(p);
 	}
 
 	/**
@@ -1213,7 +1213,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			igp.InviteData[i].RoleID = roles.get(i);
 		}
 
-		Client.Network.SendPacket(igp);
+		Client.Network.sendPacket(igp);
 	}
 
 	/**
@@ -1230,7 +1230,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		activate.AgentData.SessionID = Client.Self.getSessionID();
 		activate.AgentData.GroupID = id;
 
-		Client.Network.SendPacket(activate);
+		Client.Network.sendPacket(activate);
 	}
 
 	/**
@@ -1250,7 +1250,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		gtu.AgentData.TitleRoleID = role;
 		gtu.AgentData.GroupID = group;
 
-		Client.Network.SendPacket(gtu);
+		Client.Network.sendPacket(gtu);
 	}
 
 	/**
@@ -1270,7 +1270,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		sgp.Data.GroupID = group;
 		sgp.Data.Contribution = contribution;
 
-		Client.Network.SendPacket(sgp);
+		Client.Network.sendPacket(sgp);
 	}
 
 	/**
@@ -1295,7 +1295,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		p.Data.AcceptNotices = acceptNotices;
 		p.ListInProfile = listInProfile;
 
-		Client.Network.SendPacket(p);
+		Client.Network.sendPacket(p);
 	}
 
 	/**
@@ -1313,7 +1313,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 		join.GroupID = id;
 
-		Client.Network.SendPacket(join);
+		Client.Network.sendPacket(join);
 	}
 
 	/**
@@ -1343,7 +1343,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		cgrp.GroupData.OpenEnrollment = group.OpenEnrollment;
 		cgrp.GroupData.ShowInList = group.ShowInList;
 
-		Client.Network.SendPacket(cgrp);
+		Client.Network.sendPacket(cgrp);
 	}
 
 	/**
@@ -1373,7 +1373,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		cgrp.GroupData.OpenEnrollment = group.OpenEnrollment;
 		cgrp.GroupData.ShowInList = group.ShowInList;
 
-		Client.Network.SendPacket(cgrp);
+		Client.Network.sendPacket(cgrp);
 	}
 
 	/**
@@ -1397,7 +1397,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		eject.EjecteeID = new UUID[1];
 		eject.EjecteeID[0] = member;
 
-		Client.Network.SendPacket(eject);
+		Client.Network.sendPacket(eject);
 	}
 
 	/**
@@ -1421,7 +1421,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		gru.RoleData[0].RoleID = role.ID;
 		gru.RoleData[0].setTitle(Helpers.StringToBytes(role.Title));
 		gru.RoleData[0].UpdateType = GroupRoleUpdate.UpdateAll.getValue();
-		Client.Network.SendPacket(gru);
+		Client.Network.sendPacket(gru);
 	}
 
 	/**
@@ -1447,7 +1447,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		gru.RoleData[0].Powers = role.Powers;
 		gru.RoleData[0].setTitle(Helpers.StringToBytes(role.Title));
 		gru.RoleData[0].UpdateType = GroupRoleUpdate.Create.getValue();
-		Client.Network.SendPacket(gru);
+		Client.Network.sendPacket(gru);
 	}
 
 	/**
@@ -1473,7 +1473,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		gru.RoleData[0].Powers = 0;
 		gru.RoleData[0].setTitle(Helpers.StringToBytes(Helpers.EmptyString));
 		gru.RoleData[0].UpdateType = GroupRoleUpdate.Delete.getValue();
-		Client.Network.SendPacket(gru);
+		Client.Network.sendPacket(gru);
 	}
 
 	/**
@@ -1500,7 +1500,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		grc.RoleChange[0].RoleID = role;
 		// 1 = Remove From Role TODO: this should be in an enum
 		grc.RoleChange[0].Change = 1;
-		Client.Network.SendPacket(grc);
+		Client.Network.sendPacket(grc);
 	}
 
 	/**
@@ -1527,7 +1527,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		grc.RoleChange[0].RoleID = role;
 		// 0 = Add to Role TODO: this should be in an enum
 		grc.RoleChange[0].Change = 0;
-		Client.Network.SendPacket(grc);
+		Client.Network.sendPacket(grc);
 	}
 
 	/**
@@ -1543,7 +1543,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		gnl.AgentData.AgentID = Client.Self.getAgentID();
 		gnl.AgentData.SessionID = Client.Self.getSessionID();
 		gnl.GroupID = group;
-		Client.Network.SendPacket(gnl);
+		Client.Network.sendPacket(gnl);
 	}
 
 	/**
@@ -1559,7 +1559,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		gnr.AgentData.AgentID = Client.Self.getAgentID();
 		gnr.AgentData.SessionID = Client.Self.getSessionID();
 		gnr.GroupNoticeID = noticeID;
-		Client.Network.SendPacket(gnr);
+		Client.Network.sendPacket(gnr);
 	}
 
 	/**
@@ -1597,7 +1597,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		p.ProposalData.Quorum = prop.Quorum;
 		p.ProposalData.Majority = prop.Majority;
 		p.ProposalData.Duration = prop.Duration;
-		Client.Network.SendPacket(p);
+		Client.Network.sendPacket(p);
 	}
 
 	/**
@@ -1614,7 +1614,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		p.AgentData.SessionID = Client.Self.getSessionID();
 		p.GroupID = groupID;
 
-		Client.Network.SendPacket(p);
+		Client.Network.sendPacket(p);
 	}
 
 	// #endregion

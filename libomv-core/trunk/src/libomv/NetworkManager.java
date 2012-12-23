@@ -311,7 +311,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
 
-	public final void RaiseConnectedEvent(Simulator simulator)
+	public final void raiseConnectedEvent(Simulator simulator)
 	{
 		OnEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
 	}
@@ -449,7 +449,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 							Logger.DebugLog(String.format("Rate limiting, last packet was %d ms ago", remains), _Client);
 							Thread.sleep(remains);
 						}
-						outgoingPacket.Simulator.SendPacketFinal(outgoingPacket);
+						outgoingPacket.Simulator.sendPacketFinal(outgoingPacket);
 					}
 				}
 				catch (InterruptedException ex)
@@ -607,7 +607,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 							}
 							else
 							{
-								threadPool.submit(new PacketCallbackExecutor(incomingPacket));
+								if (!threadPool.isShutdown())
+									threadPool.submit(new PacketCallbackExecutor(incomingPacket));
 							}
 						}
 						else if (incomingPacket.Message != null)
@@ -618,7 +619,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 							}
 							else
 							{
-								threadPool.submit(new PacketCallbackExecutor(incomingPacket));
+								if (!threadPool.isShutdown())
+									threadPool.submit(new PacketCallbackExecutor(incomingPacket));
 							}
 						}
 					}
@@ -897,7 +899,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *            The packet to send
 	 * @throws Exception
 	 */
-	public void SendPacket(Packet packet) throws Exception
+	public void sendPacket(Packet packet) throws Exception
 	{
 		// try CurrentSim, however directly after login this will be null, so if it is, we'll
 		// try to find the first simulator we're connected to in order to send the packet.
@@ -913,7 +915,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 		if (simulator != null && simulator.getConnected())
 		{
-			simulator.SendPacket(packet);
+			simulator.sendPacket(packet);
 		}
 		else
 		{
@@ -1013,7 +1015,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			}
 
 			// Attempt to establish a connection to the simulator
-			if (simulator.Connect(setDefault))
+			if (simulator.connect(setDefault))
 			{
 				if (_DisconnectTimer == null)
 				{
@@ -1025,7 +1027,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 				if (setDefault)
 				{
-					SetCurrentSim(simulator, seedcaps);
+					setCurrentSim(simulator, seedcaps);
 				}
 
 				// Raise the SimConnected event
@@ -1052,11 +1054,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		else if (setDefault)
 		{
 			// Move in to this simulator
-			simulator.UseCircuitCode();
+			simulator.useCircuitCode();
 			_Client.Self.CompleteAgentMovement(simulator);
 
 			// We're already connected to this server, but need to set it to the default
-			SetCurrentSim(simulator, seedcaps);
+			setCurrentSim(simulator, seedcaps);
 
 			// Send an initial AgentUpdate to complete our movement in to the sim
 			if (sendAgentUpdates)
@@ -1092,16 +1094,16 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		logout.AgentData.AgentID = _Client.Self.getAgentID();
 		logout.AgentData.SessionID = _Client.Self.getSessionID();
 
-		_CurrentSim.SendPacket(logout);
+		_CurrentSim.sendPacket(logout);
 
 		// TODO: We should probably check if the server actually received the
 		// logout request
 
 		// Shutdown the network layer
-		Shutdown(DisconnectType.ClientInitiated, "User logged out");
+		shutdown(DisconnectType.ClientInitiated, "User logged out");
 	}
 
-	private void SetCurrentSim(Simulator simulator, String seedcaps)
+	private void setCurrentSim(Simulator simulator, String seedcaps)
 	{
 		if (simulator != getCurrentSim())
 		{
@@ -1111,7 +1113,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			{
 				setCurrentSim(simulator);
 			}
-			simulator.SetSeedCaps(seedcaps);
+			simulator.setSeedCaps(seedcaps);
 
 			// If the current simulator changed fire the callback
 			if (simulator != oldSim)
@@ -1121,11 +1123,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	public void DisconnectSim(Simulator simulator, boolean sendCloseCircuit) throws Exception
+	public void disconnectSim(Simulator simulator, boolean sendCloseCircuit) throws Exception
 	{
 		if (simulator != null)
 		{
-			simulator.Disconnect(sendCloseCircuit);
+			simulator.disconnect(sendCloseCircuit);
 
 			// Fire the SimDisconnected event if a handler is registered
 			OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
@@ -1135,7 +1137,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				_Simulators.remove(simulator);
 				if (_Simulators.isEmpty())
 				{
-					Shutdown(DisconnectType.SimShutdown);
+					shutdown(DisconnectType.SimShutdown, "Last simulator disconnected");
 				}
 			}
 		}
@@ -1154,12 +1156,12 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *            Type of shutdown
 	 * @throws Exception
 	 */
-	public final void Shutdown(DisconnectType type) throws Exception
+	public final void shutdown(DisconnectType type) throws Exception
 	{
-		Shutdown(type, type.toString());
+		shutdown(type, type.toString());
 	}
 
-	private void Shutdown(DisconnectType type, String message) throws Exception
+	private void shutdown(DisconnectType type, String message) throws Exception
 	{
 		Logger.Log("NetworkManager shutdown initiated", LogLevel.Info, _Client);
 
@@ -1177,7 +1179,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				// that
 				if (simulator != null && !simulator.equals(_CurrentSim))
 				{
-					simulator.Disconnect(sendCloseCircuit);
+					simulator.disconnect(sendCloseCircuit);
 
 					// Fire the SimDisconnected event if a handler is registered
 					OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
@@ -1188,7 +1190,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 			if (_CurrentSim != null)
 			{
-				_CurrentSim.Disconnect(sendCloseCircuit);
+				_CurrentSim.disconnect(sendCloseCircuit);
 
 				// Fire the SimDisconnected event if a handler is registered
 				OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(_CurrentSim, DisconnectType.NetworkTimeout));
@@ -1232,7 +1234,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				// Shutdown the network layer
 				try
 				{
-					Shutdown(DisconnectType.NetworkTimeout);
+					shutdown(DisconnectType.NetworkTimeout, "DisconnectTimer elapsed");
 				}
 				catch (Exception ex)
 				{
@@ -1274,7 +1276,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 					try
 					{
-						DisconnectSim(simulator, false);
+						disconnectSim(simulator, false);
 					}
 					catch (Exception ex)
 					{
@@ -1351,7 +1353,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		reply.AgentData.AgentID = _Client.Self.getAgentID();
 		reply.AgentData.SessionID = _Client.Self.getSessionID();
 		reply.Flags = 0;
-		simulator.SendPacket(reply);
+		simulator.sendPacket(reply);
 
 		Logger.Log("Received a region handshake for " + simulator.getSimName(), LogLevel.Info, _Client);
 	}
@@ -1374,7 +1376,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		// TODO: We can use OldestUnacked to correct transmission errors
 		// I don't think that's right. As far as I can tell, the Viewer
 		// only uses this to prune its duplicate-checking buffer. -bushing
-		simulator.SendPacket(ping);
+		simulator.sendPacket(ping);
 	}
 
 	/**
@@ -1589,7 +1591,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 */
 	private final void HandleDisableSimulator(Packet packet, Simulator simulator) throws Exception
 	{
-		DisconnectSim(simulator, false);
+		disconnectSim(simulator, false);
 	}
 
 	/**
@@ -1624,7 +1626,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 			// If we are receiving a LogoutReply packet assume this is a client
 			// initiated shutdown
-			Shutdown(DisconnectType.ClientInitiated);
+			shutdown(DisconnectType.ClientInitiated, "Logout from simulator");
 		}
 		else
 		{
@@ -1645,6 +1647,6 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		String message = Helpers.BytesToString(((KickUserPacket) packet).UserInfo.getReason());
 
 		// Shutdown the network layer
-		Shutdown(DisconnectType.ServerInitiated, message);
+		shutdown(DisconnectType.ServerInitiated, message);
 	}
 }

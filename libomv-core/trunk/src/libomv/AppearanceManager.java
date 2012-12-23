@@ -515,7 +515,7 @@ public class AppearanceManager implements PacketCallback
         request.AgentData.AgentID = _Client.Self.getAgentID();
         request.AgentData.SessionID = _Client.Self.getSessionID();
 
-        _Client.Network.SendPacket(request);
+        _Client.Network.sendPacket(request);
     }
 
     /**
@@ -573,7 +573,7 @@ public class AppearanceManager implements PacketCallback
 
             cache.WearableData = (WearableDataBlock[])hashes.toArray();
 
-            _Client.Network.SendPacket(cache);
+            _Client.Network.sendPacket(cache);
         }
     }
 
@@ -919,7 +919,7 @@ public class AppearanceManager implements PacketCallback
             if (!replace)
             	attachmentsPacket.ObjectData[i].AttachmentPt |= ATTACHMENT_ADD;
         }
-        _Client.Network.SendPacket(attachmentsPacket);
+        _Client.Network.sendPacket(attachmentsPacket);
     }
 
     /** 
@@ -998,7 +998,7 @@ public class AppearanceManager implements PacketCallback
         attach.ObjectData.NextOwnerMask = perms.NextOwnerMask;
         attach.ObjectData.OwnerID = ownerID;
 
-        _Client.Network.SendPacket(attach);
+        _Client.Network.sendPacket(attach);
     }
 
     /** 
@@ -1024,7 +1024,7 @@ public class AppearanceManager implements PacketCallback
         detach.ObjectData.AgentID = _Client.Self.getAgentID();
         detach.ObjectData.ItemID = itemID;
 
-        _Client.Network.SendPacket(detach);
+        _Client.Network.sendPacket(detach);
     }
 
     // #endregion Attachments
@@ -1057,7 +1057,7 @@ public class AppearanceManager implements PacketCallback
                     wearing.WearableData[i].ItemID = UUID.Zero;
             }
         }
-        _Client.Network.SendPacket(wearing);
+        _Client.Network.sendPacket(wearing);
     }
 
     /**
@@ -1781,7 +1781,7 @@ public class AppearanceManager implements PacketCallback
     private void RequestAgentSetAppearance() throws Exception
     {
         AgentSetAppearancePacket set = MakeAppearancePacket();
-        _Client.Network.SendPacket(set);
+        _Client.Network.sendPacket(set);
         Logger.DebugLog("Send AgentSetAppearance packet");        
     }
     

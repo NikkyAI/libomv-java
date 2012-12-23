@@ -854,11 +854,11 @@ public class Simulator extends Thread
 	 *         false if there was a failure
 	 * @throws Exception
 	 */
-	public final boolean Connect(boolean moveToSim) throws Exception
+	public final boolean connect(boolean moveToSim) throws Exception
 	{
 		if (_Connected)
 		{
-			UseCircuitCode();
+			useCircuitCode();
 			if (moveToSim)
 			{
 				_Client.Self.CompleteAgentMovement(this);
@@ -913,7 +913,7 @@ public class Simulator extends Thread
 		try
 		{
 			// Initiate connection
-			UseCircuitCode();
+			useCircuitCode();
 
 			// Move our agent in to the sim to complete the connection
 			if (moveToSim)
@@ -940,7 +940,7 @@ public class Simulator extends Thread
 	}
 
 	/* Initiates connection to the simulator */
-	public final void UseCircuitCode() throws Exception
+	public final void useCircuitCode() throws Exception
 	{
 		// Send the UseCircuitCode packet to initiate the connection
 		UseCircuitCodePacket use = new UseCircuitCodePacket();
@@ -949,10 +949,10 @@ public class Simulator extends Thread
 		use.CircuitCode.SessionID = _Client.Self.getSessionID();
 
 		// Send the initial packet out
-		SendPacket(use);
+		sendPacket(use);
 	}
 
-	public final void SetSeedCaps(String seedcaps)
+	public final void setSeedCaps(String seedcaps)
 	{
 		if (_Caps != null)
 		{
@@ -978,7 +978,7 @@ public class Simulator extends Thread
 		}
 	}
 
-	public void Disconnect(boolean sendCloseCircuit) throws Exception
+	public void disconnect(boolean sendCloseCircuit) throws Exception
 	{
 		if (_Connected)
 		{
@@ -1044,25 +1044,25 @@ public class Simulator extends Thread
 	 * Instructs the simulator to stop sending update (and possibly other)
 	 * packets
 	 */
-	public final void Pause() throws Exception
+	public final void pauseUpdates() throws Exception
 	{
 		AgentPausePacket pause = new AgentPausePacket();
 		pause.AgentData.AgentID = _Client.Self.getAgentID();
 		pause.AgentData.SessionID = _Client.Self.getSessionID();
 		pause.AgentData.SerialNum = _PauseSerial.getAndIncrement();
 
-		SendPacket(pause);
+		sendPacket(pause);
 	}
 
 	/* Instructs the simulator to resume sending update packets (unpause) */
-	public final void Resume() throws Exception
+	public final void resumeUpdates() throws Exception
 	{
 		AgentResumePacket resume = new AgentResumePacket();
 		resume.AgentData.AgentID = _Client.Self.getAgentID();
 		resume.AgentData.SessionID = _Client.Self.getSessionID();
 		resume.AgentData.SerialNum = _PauseSerial.get();
 
-		SendPacket(resume);
+		sendPacket(resume);
 	}
 
 	/**
@@ -1097,7 +1097,7 @@ public class Simulator extends Thread
 		return false;
 	}
 
-	public final void SendPing() throws Exception
+	private final void sendPing() throws Exception
 	{
 		int oldestUnacked = 0;
 
@@ -1117,7 +1117,7 @@ public class Simulator extends Thread
 		ping.PingID.PingID = Statistics.LastPingID++;
 		ping.PingID.OldestUnacked = oldestUnacked;
 		ping.getHeader().setReliable(false);
-		SendPacket(ping);
+		sendPacket(ping);
 		Statistics.LastPingSent = System.currentTimeMillis();
 	}
 
@@ -1215,7 +1215,7 @@ public class Simulator extends Thread
 						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client, ex);
 
 						_Connected = false;
-						_Client.Network.DisconnectSim(this, true);
+						_Client.Network.disconnectSim(this, true);
 						return;
 					}
 					catch (BufferUnderflowException ex)
@@ -1281,7 +1281,7 @@ public class Simulator extends Thread
 				// Send out ACKs if we have a lot of them
 				if (_PendingAcks.size() >= _Client.Settings.MAX_PENDING_ACKS)
 				{
-					SendPendingAcks();
+					sendPendingAcks();
 				}
 
 				/*
@@ -1325,7 +1325,7 @@ public class Simulator extends Thread
 		}
 	}
 
-	public void SendPacket(Packet packet) throws Exception
+	public void sendPacket(Packet packet) throws Exception
 	{
 		if (packet.hasVariableBlocks && packet.getLength() > Packet.MTU)
 		{
@@ -1351,17 +1351,17 @@ public class Simulator extends Thread
 
 			for (int i = 0; i < packetCount; i++)
 			{
-				SendPacketData(datas[i], packet.getType(), packet.getHeader().getZerocoded());
+				sendPacketData(datas[i], packet.getType(), packet.getHeader().getZerocoded());
 			}
 		}
 		else
 		{
 			ByteBuffer data = packet.ToBytes();
-			SendPacketData(data, packet.getType(), packet.getHeader().getZerocoded());
+			sendPacketData(data, packet.getType(), packet.getHeader().getZerocoded());
 		}
 	}
 
-	public final void SendPacketData(ByteBuffer data, PacketType type, boolean doZerocode) throws InterruptedException
+	private final void sendPacketData(ByteBuffer data, PacketType type, boolean doZerocode) throws InterruptedException
 	{
 		// Zerocode if needed
 		if (doZerocode)
@@ -1390,7 +1390,7 @@ public class Simulator extends Thread
 		if (_Client.Settings.THROTTLE_OUTGOING_PACKETS == false || type == PacketType.PacketAck
 				|| type == PacketType.LogoutRequest)
 		{
-			SendPacketFinal(outgoingPacket);
+			sendPacketFinal(outgoingPacket);
 		}
 		else
 		{
@@ -1406,7 +1406,7 @@ public class Simulator extends Thread
 	}
 
 	/* Sends out pending acknowledgements */
-	private void SendPendingAcks()
+	private void sendPendingAcks()
 	{
 		synchronized (_PendingAcks)
 		{
@@ -1425,7 +1425,7 @@ public class Simulator extends Thread
 
 				try
 				{
-					SendPacket(acks);
+					sendPacket(acks);
 				}
 				catch (Exception ex)
 				{
@@ -1438,7 +1438,7 @@ public class Simulator extends Thread
 	/**
 	 * Resend unacknowledged packets
 	 */
-	private void ResendUnacked()
+	private void resendUnacked()
 	{
 		if (_NeedAck.size() > 0)
 		{
@@ -1479,7 +1479,7 @@ public class Simulator extends Thread
 						outgoing.ResendCount++;
 						Statistics.ResentPackets++;
 
-						SendPacketFinal(outgoing);
+						sendPacketFinal(outgoing);
 					}
 					else
 					{
@@ -1496,7 +1496,7 @@ public class Simulator extends Thread
 		}
 	}
 
-	public final void SendPacketFinal(NetworkManager.OutgoingPacket outgoingPacket)
+	public final void sendPacketFinal(NetworkManager.OutgoingPacket outgoingPacket)
 	{
 		ByteBuffer buffer = outgoingPacket.Buffer;
 		byte[] bytes = buffer.array();
@@ -1577,8 +1577,8 @@ public class Simulator extends Thread
 				return;
 			}
 
-			SendPendingAcks();
-			ResendUnacked();
+			sendPendingAcks();
+			resendUnacked();
 
 			_AckTimer.schedule(new AckTimer_Elapsed(), LibSettings.NETWORK_TICK_INTERVAL);
 		}
@@ -1613,7 +1613,7 @@ public class Simulator extends Thread
 		{
 			try
 			{
-				SendPing();
+				sendPing();
 			}
 			catch (Exception ex)
 			{

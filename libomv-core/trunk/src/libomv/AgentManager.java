@@ -2629,7 +2629,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		chat.ChatData.setMessage(Helpers.StringToField(message));
 		chat.ChatData.Type = (byte) type.getValue();
 
-		_Client.Network.SendPacket(chat);
+		_Client.Network.sendPacket(chat);
 	}
 
 	/**
@@ -2643,7 +2643,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		RetrieveInstantMessagesPacket p = new RetrieveInstantMessagesPacket();
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
-		_Client.Network.SendPacket(p);
+		_Client.Network.sendPacket(p);
 	}
 
 	/**
@@ -2792,7 +2792,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			}
 
 			// Send the message
-			_Client.Network.SendPacket(im);
+			_Client.Network.sendPacket(im);
 		}
 		else
 		{
@@ -2921,7 +2921,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		reply.Data.ChatChannel = channel;
 		reply.Data.ObjectID = objectID;
 
-		_Client.Network.SendPacket(reply);
+		_Client.Network.sendPacket(reply);
 	}
 
 	/**
@@ -3034,7 +3034,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		effect.Effect[0].setTypeData(typeData);
 
-		_Client.Network.SendPacket(effect);
+		_Client.Network.sendPacket(effect);
 	}
 
 	/**
@@ -3109,7 +3109,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		effect.Effect[0].setTypeData(typeData);
 
-		_Client.Network.SendPacket(effect);
+		_Client.Network.sendPacket(effect);
 	}
 
 	/**
@@ -3153,7 +3153,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		effect.Effect[0].setTypeData(typeData);
 
-		_Client.Network.SendPacket(effect);
+		_Client.Network.sendPacket(effect);
 	}
 
 	/**
@@ -3193,7 +3193,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		effect.Effect[0].setTypeData(typeData);
 
-		_Client.Network.SendPacket(effect);
+		_Client.Network.sendPacket(effect);
 	}
 
 	// #endregion Viewer Effects
@@ -3216,7 +3216,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		requestSit.AgentData.SessionID = _Client.Self.getSessionID();
 		requestSit.TargetObject.TargetID = targetID;
 		requestSit.TargetObject.Offset = offset;
-		_Client.Network.SendPacket(requestSit);
+		_Client.Network.sendPacket(requestSit);
 	}
 
 	/**
@@ -3230,7 +3230,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		AgentSitPacket sit = new AgentSitPacket();
 		sit.AgentData.AgentID = _Client.Self.getAgentID();
 		sit.AgentData.SessionID = _Client.Self.getSessionID();
-		_Client.Network.SendPacket(sit);
+		_Client.Network.sendPacket(sit);
 	}
 
 	/**
@@ -3339,7 +3339,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		autopilot.ParamList[2] = autopilot.new ParamListBlock();
 		autopilot.ParamList[2].setParameter(Helpers.StringToBytes(((Double) z).toString()));
 
-		_Client.Network.SendPacket(autopilot);
+		_Client.Network.sendPacket(autopilot);
 	}
 
 	/**
@@ -3372,7 +3372,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		autopilot.ParamList[2] = autopilot.new ParamListBlock();
 		autopilot.ParamList[2].setParameter(Helpers.StringToBytes(((Float) z).toString()));
 
-		_Client.Network.SendPacket(autopilot);
+		_Client.Network.sendPacket(autopilot);
 	}
 
 	/**
@@ -3467,7 +3467,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         grab.SurfaceInfo[0].Normal = normal;
         grab.SurfaceInfo[0].Binormal = binormal;
 
-        _Client.Network.SendPacket(grab);
+        _Client.Network.sendPacket(grab);
     }
 
     /**
@@ -3518,7 +3518,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         grab.SurfaceInfo[0].Normal = normal;
         grab.SurfaceInfo[0].Binormal = binormal;
 
-        _Client.Network.SendPacket(grab);
+        _Client.Network.sendPacket(grab);
     }
 
     /**
@@ -3566,7 +3566,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         degrab.SurfaceInfo[0].Normal = normal;
         degrab.SurfaceInfo[0].Binormal = binormal;
 
-        _Client.Network.SendPacket(degrab);
+        _Client.Network.sendPacket(degrab);
     }
 
     /**
@@ -3602,7 +3602,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         apup.PropertiesData.MaturePublish = profile.getMaturePublish();
         apup.PropertiesData.setProfileURL(Helpers.StringToBytes(profile.ProfileURL));
 
-        _Client.Network.SendPacket(apup);
+        _Client.Network.sendPacket(apup);
     }
 
     /**
@@ -3621,7 +3621,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         aiup.PropertiesData.WantToMask = interests.WantToMask;
         aiup.PropertiesData.setWantToText(Helpers.StringToBytes(interests.WantToText));
 
-        _Client.Network.SendPacket(aiup);
+        _Client.Network.sendPacket(aiup);
     }
 
     /**
@@ -3643,7 +3643,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		heightwidth.HeightWidthBlock.Width = width;
 		heightwidth.HeightWidthBlock.GenCounter = heightWidthGenCounter++;
 
-		_Client.Network.SendPacket(heightwidth);
+		_Client.Network.sendPacket(heightwidth);
 	}
 
     // #region Money
@@ -3659,7 +3659,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         money.AgentData.SessionID = this.sessionID;
         money.TransactionID = UUID.Zero;
 
-        _Client.Network.SendPacket(money);
+        _Client.Network.sendPacket(money);
     }
 
 	/**
@@ -3796,7 +3796,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		money.MoneyData.Flags = flags;
 		money.MoneyData.Amount = amount;
 
-		_Client.Network.SendPacket(money);
+		_Client.Network.sendPacket(money);
 	}
     // #endregion Money
 
@@ -3951,7 +3951,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		p.Data = new ActivateGesturesPacket.DataBlock[1];
 		p.Data[0] = b;
 
-		_Client.Network.SendPacket(p);
+		_Client.Network.sendPacket(p);
 
 	}
 
@@ -3976,7 +3976,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		p.Data = new DeactivateGesturesPacket.DataBlock[1];
 		p.Data[0] = b;
 
-		_Client.Network.SendPacket(p);
+		_Client.Network.sendPacket(p);
 	}
 
 	// #endregion
@@ -4053,7 +4053,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			animate.PhysicalAvatarEventList[i] = animate.new PhysicalAvatarEventListBlock();
 			animate.PhysicalAvatarEventList[i].setTypeData(null);
 		}
-		_Client.Network.SendPacket(animate);
+		_Client.Network.sendPacket(animate);
 	}
 
 	// #endregion Animations
@@ -4116,7 +4116,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			Logger.Log("Requesting teleport to simulator " + landmark.toString(), LogLevel.Info);
 
-			_Client.Network.SendPacket(p);
+			_Client.Network.sendPacket(p);
 		}
 		else
 		{
@@ -4247,7 +4247,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			Logger.Log("Requesting teleport to region handle " + ((Long) regionHandle).toString(), LogLevel.Info,
 					_Client);
 
-			_Client.Network.SendPacket(teleport);
+			_Client.Network.sendPacket(teleport);
 		}
 		else
 		{
@@ -4380,7 +4380,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		p.Info.setMessage(Helpers.StringToBytes(message));
 		p.TargetID = new UUID[1];
 		p.TargetID[0] = targetID;
-		_Client.Network.SendPacket(p);
+		_Client.Network.sendPacket(p);
 	}
 
 	/**
@@ -4417,7 +4417,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
 				lure.Info.TeleportFlags = TeleportFlags.ViaLure;
 			}
-			_Client.Network.SendPacket(lure);
+			_Client.Network.sendPacket(lure);
 		}
 		else
 		{
@@ -4436,7 +4436,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         mute.AgentData.SessionID = _Client.Self.getSessionID();
         mute.MuteCRC = 0;
 
-        _Client.Network.SendPacket(mute);
+        _Client.Network.sendPacket(mute);
     }
 
     /**
@@ -4472,7 +4472,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         p.MuteData.setMuteName(Helpers.StringToBytes(name));
         p.MuteData.MuteFlags = flags;
 
-        _Client.Network.SendPacket(p);
+        _Client.Network.sendPacket(p);
 
         MuteEntry me = new MuteEntry();
         me.Type = type;
@@ -4503,7 +4503,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         p.MuteData.MuteID = id;
         p.MuteData.setMuteName(Helpers.StringToBytes(name));
         
-        _Client.Network.SendPacket(p);
+        _Client.Network.sendPacket(p);
 
         String listKey = String.format("%s|%s", id, name);
         if (MuteList.containsKey(listKey))
@@ -4600,7 +4600,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	        s.StartLocationData.LocationID = id;
 	        s.StartLocationData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
 	        s.StartLocationData.LocationLookAt = lookAt;
-	        _Client.Network.SendPacket(s);
+	        _Client.Network.sendPacket(s);
 
 	        if (id == 1)
 			{
@@ -4624,7 +4624,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		move.AgentData.SessionID = this.sessionID;
 		move.AgentData.CircuitCode = _Client.Network.getCircuitCode();
 
-		simulator.SendPacket(move);
+		simulator.sendPacket(move);
 	}
 
 	public void SendMovementUpdate(boolean reliable, Simulator simulator) throws Exception
@@ -4656,7 +4656,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		yes.Data.TaskID = taskID;
 		yes.Data.Questions = permissions;
 
-		simulator.SendPacket(yes);
+		simulator.sendPacket(yes);
 	}
 
 	/**
@@ -4714,7 +4714,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		request.Requester.SourceID = _Client.Self.getAgentID();
 		request.Requester.Type = type;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -4754,7 +4754,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		pick.Data.SortOrder = 0;
 		pick.Data.Enabled = false;
 
-		_Client.Network.SendPacket(pick);
+		_Client.Network.sendPacket(pick);
 	}
 
 	/**
@@ -4770,7 +4770,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		delete.AgentData.SessionID = _Client.Self.getSessionID();
 		delete.PickID = pickID;
 
-		_Client.Network.SendPacket(delete);
+		_Client.Network.sendPacket(delete);
 	}
 
 	/**
@@ -4819,7 +4819,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		classified.Data.PriceForListing = price;
 		classified.Data.setName(Helpers.StringToBytes(name));
 		classified.Data.setDesc(Helpers.StringToBytes(desc));
-		_Client.Network.SendPacket(classified);
+		_Client.Network.sendPacket(classified);
 	}
 
 	/**
@@ -4863,7 +4863,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		classified.AgentData.SessionID = _Client.Self.getSessionID();
 
 		classified.ClassifiedID = classifiedID;
-		_Client.Network.SendPacket(classified);
+		_Client.Network.sendPacket(classified);
 	}
 
 	/**
@@ -4988,7 +4988,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		update.AgentData.Flags = 0;
 		update.getHeader().setReliable(reliable);
 
-		_Client.Network.SendPacket(update);
+		_Client.Network.sendPacket(update);
 
 		// Send an AgentFOV packet widening our field of vision
 		/*
@@ -4998,7 +4998,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 * simulator.CircuitCode; fovPacket.FOVBlock.GenCounter = 0;
 		 * fovPacket.FOVBlock.VerticalAngle = 6.28318531f;
 		 * fovPacket.Header.Reliable = true;
-		 * _Client.Network.SendPacket(fovPacket);
+		 * _Client.Network.sendPacket(fovPacket);
 		 */
 	}
 
@@ -5313,7 +5313,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             {
                 Logger.Log("Got EstablishAgentCommunication for " + sim.getSimName(), LogLevel.Debug, _Client);
 
-                sim.SetSeedCaps(msg.SeedCapability.toString());
+                sim.setSeedCaps(msg.SeedCapability.toString());
             }
         }
     }
@@ -6625,7 +6625,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			run.AgentData.AgentID = _Client.Self.getAgentID();
 			run.AgentData.SessionID = _Client.Self.getSessionID();
 			run.AgentData.AlwaysRun = alwaysRun;
-			_Client.Network.SendPacket(run);
+			_Client.Network.sendPacket(run);
 		}
 
 		/* The current value of the agent control flags */
@@ -6992,7 +6992,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			update.getHeader().setReliable(reliable);
 
-			simulator.SendPacket(update);
+			simulator.sendPacket(update);
 		}
 	
 		

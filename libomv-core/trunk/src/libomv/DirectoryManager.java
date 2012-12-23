@@ -838,7 +838,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		query.QueryData.QueryID = queryID;
 		query.QueryData.setQueryText(Helpers.StringToBytes(searchText));
 
-		Client.Network.SendPacket(query);
+		Client.Network.sendPacket(query);
 
 		return queryID;
 	}
@@ -914,7 +914,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		query.QueryData.QueryStart = queryStart;
 		query.QueryData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
 
-		Client.Network.SendPacket(query);
+		Client.Network.sendPacket(query);
 
 		return query.QueryData.QueryID;
 
@@ -1042,7 +1042,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		query.QueryData.QueryFlags = findFlags;
 		query.QueryData.QueryID = UUID.GenerateUUID();
 
-		Client.Network.SendPacket(query);
+		Client.Network.sendPacket(query);
 	}
 
 	/**
@@ -1086,7 +1086,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.QueryData.QueryID = UUID.GenerateUUID();
 		find.QueryData.QueryStart = queryStart;
 
-		Client.Network.SendPacket(find);
+		Client.Network.sendPacket(find);
 
 		return find.QueryData.QueryID;
 	}
@@ -1128,7 +1128,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.QueryData.QueryID = uuid;
 		find.QueryData.QueryStart = queryStart;
 
-		Client.Network.SendPacket(find);
+		Client.Network.sendPacket(find);
 	}
 
 	/**
@@ -1214,7 +1214,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.QueryData.Category = (byte) searchCategory.ordinal();
 		find.QueryData.setSimName(Helpers.StringToBytes(simulatorName));
 
-		Client.Network.SendPacket(find);
+		Client.Network.sendPacket(find);
 		return transactionID;
 	}
 
@@ -1280,7 +1280,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.QueryData.QueryFlags = queryFlags;
 		find.QueryData.QueryStart = queryStart;
 
-		Client.Network.SendPacket(find);
+		Client.Network.sendPacket(find);
 		return find.QueryData.QueryID;
 	}
 
@@ -1301,7 +1301,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 		find.EventID = eventID;
 
-		Client.Network.SendPacket(find);
+		Client.Network.sendPacket(find);
 	}
 
 	// /#region Blocking Functions

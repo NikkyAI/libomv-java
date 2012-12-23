@@ -884,7 +884,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				request.ParcelData.UserLocation = this.UserLocation;
 				request.ParcelData.UserLookAt = this.UserLookAt;
 
-				simulator.SendPacket(request);
+				simulator.sendPacket(request);
 			}
 			UpdateOtherCleanTime(simulator);
 		}
@@ -904,7 +904,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			request.ParcelData.LocalID = this.LocalID;
 			request.ParcelData.OtherCleanTime = this.OtherCleanTime;
 
-			simulator.SendPacket(request);
+			simulator.sendPacket(request);
 		}
 	}
 
@@ -1535,7 +1535,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.ParcelID = parcelID;
 
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -1561,7 +1561,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.ParcelData.LocalID = localID;
 		request.ParcelData.SequenceID = sequenceID;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1589,7 +1589,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.Data.Flags = AccessList.setValue(flags);
 		request.Data.SequenceID = sequenceID;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1628,7 +1628,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.ParcelData.SequenceID = sequenceID;
 		request.ParcelData.SnapSelection = snapSelection;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1736,7 +1736,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.Data.LocalID = localID;
 		request.Data.ParcelID = UUID.Zero; // Not used by clients
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1775,7 +1775,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.ParcelData.Area = parcelArea;
 		request.ParcelData.Price = parcelPrice;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1795,7 +1795,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 		request.LocalID = localID;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1818,7 +1818,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.Data.LocalID = localID;
 		request.Data.GroupID = groupID;
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1838,7 +1838,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 
 		request.LocalID = localID;
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1884,7 +1884,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			request.OwnerID = new UUID[0];
 		}
 
-		simulator.SendPacket(request);
+		simulator.sendPacket(request);
 	}
 
 	/**
@@ -1908,7 +1908,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		divide.ParcelData.South = south;
 		divide.ParcelData.West = west;
 
-		simulator.SendPacket(divide);
+		simulator.sendPacket(divide);
 	}
 
 	/**
@@ -1932,7 +1932,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		join.ParcelData.South = south;
 		join.ParcelData.West = west;
 
-		simulator.SendPacket(join);
+		simulator.sendPacket(join);
 	}
 
 	/**
@@ -2119,7 +2119,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		land.BrushSize = new float[1];
 		land.BrushSize[0] = brushSize;
 
-		simulator.SendPacket(land);
+		simulator.sendPacket(land);
 	}
 
 	/**
@@ -2148,7 +2148,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		select.ReturnID = new UUID[1];
 		select.ReturnID[0] = ownerID;
 
-		_Client.Network.SendPacket(select);
+		_Client.Network.sendPacket(select);
 	}
 
 	/**
@@ -2173,7 +2173,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		{
 			eject.Data.Flags = 0;
 		}
-		_Client.Network.SendPacket(eject);
+		_Client.Network.sendPacket(eject);
 	}
 
 	/**
@@ -2199,7 +2199,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			frz.Data.Flags = 1;
 		}
 
-		_Client.Network.SendPacket(frz);
+		_Client.Network.sendPacket(frz);
 	}
 
 	/**
@@ -2217,7 +2217,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		abandon.AgentData.SessionID = _Client.Self.getSessionID();
 		abandon.LocalID = localID;
 
-		simulator.SendPacket(abandon);
+		simulator.sendPacket(abandon);
 	}
 
 	/**

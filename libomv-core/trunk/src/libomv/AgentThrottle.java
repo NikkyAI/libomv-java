@@ -284,7 +284,7 @@ public class AgentThrottle
 		throttle.Throttle.GenCounter = 0;
 		throttle.Throttle.setThrottles(this.ToBytes());
 
-		simulator.SendPacket(throttle);
+		simulator.sendPacket(throttle);
 	}
 
 	/**

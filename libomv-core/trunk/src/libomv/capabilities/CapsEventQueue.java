@@ -181,7 +181,7 @@ public class CapsEventQueue extends CapsClient
 							errorCount = 0;
 							if (first)
 							{
-								Client.Network.RaiseConnectedEvent(Simulator);
+								Client.Network.raiseConnectedEvent(Simulator);
 								first = false;
 							}
 

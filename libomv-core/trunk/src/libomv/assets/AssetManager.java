@@ -786,7 +786,7 @@ public class AssetManager implements PacketCallback
 		System.arraycopy(Helpers.Int32ToBytesL(type.getValue()), 0, paramField, 16, 4);
 		request.TransferInfo.setParams(paramField);
 
-		transfer.Simulator.SendPacket(request);
+		transfer.Simulator.sendPacket(request);
 	}
 
 	/**
@@ -839,7 +839,7 @@ public class AssetManager implements PacketCallback
 		request.XferID.VFileID = vFileID;
 		request.XferID.VFileType = vFileType.getValue();
 
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 
 		return id;
 	}
@@ -924,7 +924,7 @@ public class AssetManager implements PacketCallback
 		System.arraycopy(Helpers.Int32ToBytesL(type.getValue()), 0, paramField, 96, 4);
 		request.TransferInfo.setParams(paramField);
 
-		transfer.Simulator.SendPacket(request);
+		transfer.Simulator.sendPacket(request);
 	}
 
 	public final void RequestInventoryAsset(InventoryItem item, boolean priority, AssetReceivedCallback callback)
@@ -1083,7 +1083,7 @@ public class AssetManager implements PacketCallback
 					WaitingForUploadConfirm = true;
 				}
 				PendingUpload.set(upload);
-				_Client.Network.SendPacket(request);
+				_Client.Network.sendPacket(request);
 
 				return upload.ID;
 			}
@@ -1648,7 +1648,7 @@ public class AssetManager implements PacketCallback
 			send.DataPacket.setData(data);
 			upload.Transferred += lastlen;
 		}
-		_Client.Network.SendPacket(send);
+		_Client.Network.sendPacket(send);
 	}
 
 	private void SendConfirmXferPacket(long xferID, int packetNum) throws Exception
@@ -1657,7 +1657,7 @@ public class AssetManager implements PacketCallback
 		confirm.XferID.ID = xferID;
 		confirm.XferID.Packet = packetNum;
 
-		_Client.Network.SendPacket(confirm);
+		_Client.Network.sendPacket(confirm);
 	}
 
 	// #endregion Helpers
@@ -1780,7 +1780,7 @@ public class AssetManager implements PacketCallback
 					TransferAbortPacket abort = new TransferAbortPacket();
 					abort.TransferInfo.ChannelType = download.Channel.getValue();
 					abort.TransferInfo.TransferID = download.ID;
-					download.Simulator.SendPacket(abort);
+					download.Simulator.sendPacket(abort);
 
 					download.Success = false;
 					synchronized (_Transfers)

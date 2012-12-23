@@ -646,7 +646,7 @@ public class FriendsManager implements PacketCallback
 		request.FolderID = new UUID[1];
 		request.FolderID[0] = callingCardFolder;
 
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 
 		addFriend(new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline));
 
@@ -673,7 +673,7 @@ public class FriendsManager implements PacketCallback
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.TransactionID = imSessionID;
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 
 		synchronized (_FriendRequests)
 		{
@@ -727,7 +727,7 @@ public class FriendsManager implements PacketCallback
 			request.AgentData.SessionID = _Client.Self.getSessionID();
 			request.OtherID = agentID;
 
-			_Client.Network.SendPacket(request);
+			_Client.Network.sendPacket(request);
 		}
 	}
 
@@ -785,7 +785,7 @@ public class FriendsManager implements PacketCallback
 		request.Rights[0].AgentRelated = friendID;
 		request.Rights[0].RelatedRights = rights;
 
-		_Client.Network.SendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -808,7 +808,7 @@ public class FriendsManager implements PacketCallback
 		stalk.LocationBlock[0].GlobalX = 0.0; // Filled in by the simulator
 		stalk.LocationBlock[0].GlobalY = 0.0;
 
-		_Client.Network.SendPacket(stalk);
+		_Client.Network.sendPacket(stalk);
 	}
 
 	/**
@@ -825,7 +825,7 @@ public class FriendsManager implements PacketCallback
 		stalk.AgentData.SessionID = _Client.Self.getSessionID();
 		stalk.PreyID = friendID;
 
-		_Client.Network.SendPacket(stalk);
+		_Client.Network.sendPacket(stalk);
 	}
 
 	/**
@@ -848,7 +848,7 @@ public class FriendsManager implements PacketCallback
 		gmp.ParamList[0] = gmp.new ParamListBlock();
 		gmp.ParamList[0].setParameter(Helpers.StringToBytes(friendID.toString()));
 
-		_Client.Network.SendPacket(gmp);
+		_Client.Network.sendPacket(gmp);
 	}
 
 	/**

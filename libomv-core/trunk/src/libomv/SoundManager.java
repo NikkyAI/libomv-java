@@ -529,7 +529,7 @@ public class SoundManager implements PacketCallback
         soundtrigger.SoundData.Position = position;
         soundtrigger.SoundData.Gain = gain;
 
-        _Client.Network.SendPacket(soundtrigger);
+        _Client.Network.sendPacket(soundtrigger);
     }
     // #endregion
 

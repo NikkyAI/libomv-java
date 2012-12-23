@@ -1677,7 +1677,7 @@ public class LoginManager
 					_Client.setCurrentGrid(reply.Grid);
 
 					// Request the economy data right after login
-					_Client.Network.SendPacket(new EconomyDataRequestPacket());
+					_Client.Network.sendPacket(new EconomyDataRequestPacket());
 					
 					// Update the login message with the MOTD returned from the server
 					UpdateLoginStatus(LoginStatus.Success, reply.Message, reply.Reason, reply);

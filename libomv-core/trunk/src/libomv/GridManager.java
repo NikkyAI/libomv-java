@@ -428,7 +428,7 @@ public class GridManager implements PacketCallback
 		request.AgentData.Godlike = false; // Filled in on the sim
 		request.NameData.setName(Helpers.StringToBytes(regionName));
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class GridManager implements PacketCallback
 		request.PositionData.MaxX = (short) (maxX & 0xFFFF);
 		request.PositionData.MaxY = (short) (maxY & 0xFFFF);
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	// Fire off packet for Estate/Island sim data request.
@@ -473,7 +473,7 @@ public class GridManager implements PacketCallback
 		request.AgentData.EstateID = 0;
 		request.AgentData.Godlike = false;
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class GridManager implements PacketCallback
 		request.RequestData.ItemType = item.ordinal();
 		request.RequestData.RegionHandle = regionHandle;
 
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	/* Request data for all mainland (Linden managed) simulators */
@@ -516,7 +516,7 @@ public class GridManager implements PacketCallback
 	{
 		RegionHandleRequestPacket request = new RegionHandleRequestPacket();
 		request.RegionID = regionID;
-		Client.Network.SendPacket(request);
+		Client.Network.sendPacket(request);
 	}
 
 	/**
