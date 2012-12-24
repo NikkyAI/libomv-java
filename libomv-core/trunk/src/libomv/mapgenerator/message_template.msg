@@ -2916,10 +2916,10 @@ version 2.0
 	SimStats Low 140 Trusted Unencoded
 	{
 		Region Single
-		{	RegionX				U32				}
-		{	RegionY				U32				}
-		{	RegionFlags			U32				}
-		{	ObjectCapacity		U32				}
+		{	RegionX				U32			}
+		{	RegionY				U32			}
+		{	RegionFlags			U32			}
+		{	ObjectCapacity		U32			}
 	}
 	{
 		Stat	Variable
@@ -2928,7 +2928,11 @@ version 2.0
 	}
 	{
 		PidStat Single
-		{	PID					S32				}
+		{	PID					S32			}
+	}
+	{
+		RegionInfo Variable
+		{  RegionFlagsExtended  U64        	}
 	}
 }
 
@@ -2982,6 +2986,10 @@ version 2.0
 		{	HardMaxAgents		U32			}
 		{	HardMaxObjects		U32			}
 	}
+	{
+		RegionInfo3    Variable
+		{	RegionFlagsExtended	U64			}
+	}
 }
 
 // GodUpdateRegionInfo
@@ -3006,6 +3014,10 @@ version 2.0
 		{	PricePerMeter 		S32			}
 		{	RedirectGridX 		S32			}
 		{	RedirectGridY 		S32			}
+	}
+	{
+		RegionInfo2  Variable
+		{	RegionFlagsExtended	U64			}
 	}
 }
 
@@ -3107,6 +3119,11 @@ version 2.0
 		{	ProductSKU				Variable	1	}	// string
 		{	ProductName				Variable	1	}	// string
 	}
+	{
+		RegionInfo4    Variable
+		{	RegionFlagsExtended		U64		}
+		{	RegionProtocols			U64		}
+	}
 }
 
 // RegionHandshakeReply
@@ -3150,7 +3167,7 @@ version 2.0
 	}
     {
          AgentData       Variable
-         {       AgentID                 LLUUID                  }
+		{	AgentID	LLUUID	}
     }
 }
 
@@ -3561,6 +3578,12 @@ version 2.0
 	{
 		VisualParam			Variable
 		{	ParamValue		U8	}
+	}
+	{
+		AppearanceData    Variable
+		{	AppearanceVersion	U8	}
+		{	CofVersion			S32	}
+		{	Flags				U32	}
 	}
 }
 
