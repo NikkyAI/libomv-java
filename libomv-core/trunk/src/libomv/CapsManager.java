@@ -191,6 +191,7 @@ public class CapsManager
 		req.add(OSD.FromString("UntrustedSimulatorMessage"));
 		req.add(OSD.FromString("UpdateAgentInformation"));
 		req.add(OSD.FromString("UpdateAgentLanguage"));
+		req.add(OSD.FromString("UpdateAvatarAppearance"));
 		req.add(OSD.FromString("UpdateGestureAgentInventory"));
 		req.add(OSD.FromString("UpdateGestureTaskInventory"));
 		req.add(OSD.FromString("UpdateNotecardAgentInventory"));
