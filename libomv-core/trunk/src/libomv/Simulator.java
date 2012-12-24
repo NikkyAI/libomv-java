@@ -893,13 +893,13 @@ public class Simulator extends Thread
 
 		Statistics.ConnectTime = System.currentTimeMillis();
 
-		Logger.Log("Waiting for connection", LogLevel.Info, _Client);
+		Logger.Log("Waiting for connection", LogLevel.Debug, _Client);
 		while (true)
 		{
 			if (_Connected)
 			{
 				Logger.Log(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime),
-						   LogLevel.Info, _Client);
+						   LogLevel.Debug, _Client);
 				break;
 			}
 			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
@@ -1020,7 +1020,7 @@ public class Simulator extends Thread
 					_Connection.send(new DatagramPacket(data.array(), data.position()));
 					Thread.sleep(50);
 				}
-				catch (IOException e)
+				catch (IOException ex)
 				{
 					// There's a high probability of this failing if the network
 					// is disconnected, so don't even bother logging the error
@@ -1029,13 +1029,12 @@ public class Simulator extends Thread
 
 			try
 			{
-				_Connection.disconnect();
 				// Shut the socket communication down
 				_Connection.close();
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				Logger.Log(e.toString(), LogLevel.Error, e);
+				Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
 			}
 		}
 	}
@@ -1313,7 +1312,7 @@ public class Simulator extends Thread
 			}
 			catch (IOException ex)
 			{
-				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client, ex);
+				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client);
 
 				_Connected = false;
 				return;

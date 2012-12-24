@@ -1355,7 +1355,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		reply.Flags = 0;
 		simulator.sendPacket(reply);
 
-		Logger.Log("Received a region handshake for " + simulator.getSimName(), LogLevel.Info, _Client);
+		Logger.Log("Received a region handshake for " + simulator.getSimName(), LogLevel.Debug, _Client);
 	}
 
 	/**
