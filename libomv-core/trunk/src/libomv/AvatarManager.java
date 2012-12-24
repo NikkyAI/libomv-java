@@ -90,7 +90,9 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		public boolean IsDefaultDisplayName;
 		// Cache display name until
 		public Date NextUpdate;
-
+		// Last updated timestamp
+		public Date Updated;
+		
 		public String getLegacyFullName()
 		{
 			return String.format("%s %s", LegacyFirstName, LegacyLastName);
@@ -114,7 +116,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			ret.LegacyLastName = map.get("legacy_last_name").AsString();
 			ret.IsDefaultDisplayName = map.get("is_display_name_default").AsBoolean();
 			ret.NextUpdate = map.get("display_name_next_update").AsDate();
-
+			ret.Updated = map.get("last_updated").AsDate();
 			return ret;
 		}
 
@@ -134,6 +136,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			map.put("legacy_last_name", OSD.FromString(LegacyLastName));
 			map.put("is_display_name_default", OSD.FromBoolean(IsDefaultDisplayName));
 			map.put("display_name_next_update", OSD.FromDate(NextUpdate));
+			map.put("last_updated", OSD.FromDate(Updated));
 
 			return map;
 		}
