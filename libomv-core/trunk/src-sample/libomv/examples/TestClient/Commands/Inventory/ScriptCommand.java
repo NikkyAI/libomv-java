@@ -61,7 +61,7 @@ public class ScriptCommand extends Command
 
             if (line.length() > 0)
             {
-                ClientManager.getInstance().DoCommandAll(line, UUID.Zero);
+                ClientManager.getInstance().doCommandAll(line, UUID.Zero);
                 lines++;
             }
         }

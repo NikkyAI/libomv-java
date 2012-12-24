@@ -181,12 +181,12 @@ public class Program
         }
 
         // Login the accounts and run the input loop
-        ClientManager.getInstance().Start(accounts, getTextures);
+        ClientManager.getInstance().start(accounts, getTextures);
 
         if (scriptFile != null)
-            ClientManager.getInstance().DoCommandAll("script " + scriptFile.getAbsolutePath(), UUID.Zero);
+            ClientManager.getInstance().doCommandAll("script " + scriptFile.getAbsolutePath(), UUID.Zero);
 
         // Then Run the ClientManager normally
-        ClientManager.getInstance().Run(noGUI);
+        ClientManager.getInstance().run(noGUI);
     }
 }

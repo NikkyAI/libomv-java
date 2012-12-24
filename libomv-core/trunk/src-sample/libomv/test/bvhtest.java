@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2009, openmetaverse.org
- * Copyright (c) 2012, Frederick Martian
+ * Copyright (c) 2009-2012, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -23,35 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.examples.TestClient.Commands.System;
+package libomv.test;
 
-import libomv.examples.TestClient.Command;
-import libomv.examples.TestClient.TestClient;
-import libomv.types.UUID;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
-
-public class LogoutCommand extends Command
+public class bvhtest
 {
-    public LogoutCommand(TestClient testClient)
-    {
-        Name = "logout";
-        Description = "Log this avatar out";
-        Category = CommandCategory.TestClient;
-    }
-
-    @Override
-	public String execute(String[] args, UUID fromAgentID)
-    {
-        String name = Client.toString();
-	    try
-		{
-			Client._ClientManager.logout(Client);
-		}
-		catch (Exception ex)
-		{
-			Logger.Log("Error logging out", LogLevel.Error, Client, ex);
-		}
-        return "Logged " + name + " out";
-    }
+	 String username = "Rolf.Kal";
+	 String[] strings = username.split("[\\. ]");
+	 
 }

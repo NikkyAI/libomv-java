@@ -97,7 +97,7 @@ public class TestClient extends GridClient implements PacketCallback
 
 		RegisterAllCommands(this.getClass());
 
-		Logger.LOG_LEVEL = LogLevel.Warning;
+ 		Logger.LOG_LEVEL = LogLevel.Info;
 
 		Settings.LOG_RESENDS = false;
 		Settings.put(LibSettings.STORE_LAND_PATCHES, true);
@@ -173,7 +173,7 @@ public class TestClient extends GridClient implements PacketCallback
 					else if (e.getIM().Dialog == InstantMessageDialog.MessageFromAgent
 							|| e.getIM().Dialog == InstantMessageDialog.MessageFromObject)
 					{
-						ClientManager.getInstance().DoCommandAll(e.getIM().Message, e.getIM().FromAgentID);
+						ClientManager.getInstance().doCommandAll(e.getIM().Message, e.getIM().FromAgentID);
 					}
 				}
 				catch (Exception ex)

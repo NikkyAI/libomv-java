@@ -102,15 +102,15 @@ public class ClientManager
 
     Scanner in = new Scanner(System.in);
 
-	public void Start(List<LoginDetails> accounts, boolean getTextures) throws Exception
+	public void start(List<LoginDetails> accounts, boolean getTextures) throws Exception
 	{
 		GetTextures = getTextures;
 
 		for (LoginDetails account : accounts)
-			Login(account);
+			login(account);
 	}
 
-	public TestClient Login(String[] args) throws Exception
+	public TestClient login(String[] args) throws Exception
 	{
 		if (args.length < 3)
 		{
@@ -160,17 +160,17 @@ public class ClientManager
 			account.URI = Program.LoginURI;
 		Logger.Log("Using login URI " + account.URI, LogLevel.Info);
 
-		return Login(account);
+		return login(account);
 	}
 	
-	public TestClient Login(final LoginDetails account) throws Exception
+	public TestClient login(final LoginDetails account) throws Exception
 	{
 		// Check if this client is already logged in
 		for (TestClient c : Clients.values())
 		{
 			if (c.Self.getFirstName().equals(account.FirstName) && c.Self.getLastName().equals(account.LastName))
 			{
-				Logout(c);
+				logout(c);
 				break;
 			}
 		}
@@ -231,7 +231,7 @@ public class ClientManager
 						}
 					}
 
-					Logger.Log("Logged in " + client.toString(), LogLevel.Info);
+					Logger.Log("Logged in " + client.toString(), LogLevel.Debug);
 					--PendingLogins;
 					return true;
 				}
@@ -277,7 +277,7 @@ public class ClientManager
 	 * @param noGUI
 	 * @throws Exception
 	 */
-	public void Run(boolean noGUI) throws Exception
+	public void run(boolean noGUI) throws Exception
 	{
 		if (noGUI)
 		{
@@ -292,10 +292,10 @@ public class ClientManager
 
 			while (Running)
 			{
-				PrintPrompt();
+				printPrompt();
 				
 				String input = in.nextLine();
-				DoCommandAll(input, UUID.Zero);
+				doCommandAll(input, UUID.Zero);
 			}
 		}
 
@@ -306,7 +306,7 @@ public class ClientManager
 		}
 	}
 
-	private void PrintPrompt()
+	private void printPrompt()
 	{
 		int online = 0;
 
@@ -326,7 +326,7 @@ public class ClientManager
 	 * @param fromAgentID
 	 * @throws Exception 
 	 */
-	public void DoCommandAll(String cmd, final UUID fromAgentID) throws Exception
+	public void doCommandAll(String cmd, final UUID fromAgentID) throws Exception
     {
         String[] tokens = cmd.trim().split("[ \t]");
         if (tokens.length == 0)
@@ -374,11 +374,11 @@ public class ClientManager
 
         if (firstToken.equals("login"))
         {
-            Login(args);
+            login(args);
         }
         else if (firstToken.equals("quit"))
         {
-            Quit();
+            quit();
             Logger.Log("All clients logged out and program finished running.", LogLevel.Info);
         }
         else if (firstToken.equals("help"))
@@ -466,7 +466,7 @@ public class ClientManager
 	 * @param client
 	 * @throws Exception
 	 */
-	public void Logout(TestClient client) throws Exception
+	public void logout(TestClient client) throws Exception
 	{
 		Clients.remove(client.Self.getAgentID());
 		client.Network.Logout();
@@ -476,7 +476,7 @@ public class ClientManager
 	 * @throws IOException 
 	 * 
 	 */
-	public void Quit() throws IOException
+	public void quit() throws IOException
 	{
 		Running = false;
 		in.close();
