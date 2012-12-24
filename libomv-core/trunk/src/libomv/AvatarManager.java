@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import libomv.AgentManager.EffectType;
+import libomv.AppearanceManager.AppearanceFlags;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsCallback;
@@ -303,6 +304,9 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		private TextureEntry.TextureEntryFace defaultTexture;
 		private TextureEntry.TextureEntryFace[] faceTextures;
 		private byte[] parameters;
+		private byte appearanceVersion;
+		private int COFVersion;
+		private AppearanceFlags appearanceFlags;
 
 		public Simulator getSimulator()
 		{
@@ -334,8 +338,24 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			return parameters;
 		}
 		
+		public byte getAppearanceVersion()
+		{
+			return appearanceVersion;
+		}
+
+		public int getCOFVersion()
+		{
+			return COFVersion;
+		}
+		
+		public AppearanceFlags getAppearanceFlags()
+		{
+			return appearanceFlags;
+		}
+
 		public AvatarAppearanceCallbackArgs(Simulator simulator, UUID id, boolean isTrial,
-	    		TextureEntry.TextureEntryFace defaultTexture, TextureEntry.TextureEntryFace[] faceTextures, byte[] parameters)
+	    		TextureEntry.TextureEntryFace defaultTexture, TextureEntry.TextureEntryFace[] faceTextures, byte[] parameters,
+	    		byte appearanceVersion, int COFVersion, AppearanceFlags appearanceFlags)
 	    {
 	    	this.simulator = simulator;
 	    	this.id = id;
@@ -343,6 +363,9 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	    	this.defaultTexture = defaultTexture;
 	    	this.faceTextures = faceTextures;
 	    	this.parameters = parameters;
+	    	this.appearanceVersion = appearanceVersion;
+	    	this.COFVersion = COFVersion;
+	    	this.appearanceFlags = appearanceFlags;
 	    }
 	}
 	
@@ -877,15 +900,29 @@ public class AvatarManager implements PacketCallback, CapsCallback
             TextureEntry.TextureEntryFace defaultTexture = textureEntry.defaultTexture;
             TextureEntry.TextureEntryFace[] faceTextures = textureEntry.faceTextures;
 
+            byte appearanceVersion = 0;
+            int COFVersion = 0;
+            AppearanceManager.AppearanceFlags appearanceFlags = AppearanceManager.AppearanceFlags.None;
+
+            if (appearance.AppearanceData != null && appearance.AppearanceData.length > 0)
+            {
+            	appearanceVersion = appearance.AppearanceData[0].AppearanceVersion;
+            	COFVersion = appearance.AppearanceData[0].CofVersion;
+            	appearanceFlags = AppearanceManager.AppearanceFlags.setValue(appearance.AppearanceData[0].Flags);
+            }
+            
             Avatar av = simulator.findAvatar(appearance.Sender.ID);
            	if (av != null)
         	{
                 av.Textures = textureEntry;
                 av.VisualParameters = appearance.ParamValue;
+                av.AppearanceVersion = appearanceVersion;
+                av.COFVersion = COFVersion;
+                av.AppearanceFlags = appearanceFlags;
             }
 
             OnAvatarAppearance.dispatch(new AvatarAppearanceCallbackArgs(simulator, appearance.Sender.ID, appearance.Sender.IsTrial,
-                defaultTexture, faceTextures, appearance.ParamValue));
+                defaultTexture, faceTextures, appearance.ParamValue, appearanceVersion, COFVersion, appearanceFlags));
         }
     }
 

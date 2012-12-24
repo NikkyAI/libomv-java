@@ -33,6 +33,7 @@ package libomv.primitives;
 import java.util.ArrayList;
 
 import libomv.AgentManager;
+import libomv.AppearanceManager;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
@@ -341,7 +342,16 @@ public class Avatar extends Primitive
 	// Contains the visual parameters describing the deformation of the avatar
 	public byte[] VisualParameters = null;
 
-	// #endregion Public Members
+	// Appearance version. Value greater than 0 indicates using server side baking
+	public byte AppearanceVersion = 0;
+
+	// Version of the Current Outfit Folder that the appearance is based on
+	public int COFVersion = 0;
+
+	// Appearance flags. Introduced with server side baking, currently unused.
+	public AppearanceManager.AppearanceFlags AppearanceFlags = AppearanceManager.AppearanceFlags.None;
+    
+    // #endregion Public Members
 
 	protected String name;
 	protected String displayName;

@@ -116,7 +116,24 @@ public class AppearanceManager implements PacketCallback
 		}
 	}
 
-    // #region Constants
+	// Appearance Flags, introdued with server side baking, currently unused
+    // [Flags]
+    public enum AppearanceFlags
+    {
+    	None;
+
+    	public static AppearanceFlags setValue(int value)
+		{
+			return values()[value + 1];
+		}
+
+		public static byte getValue(BakeType value)
+		{
+			return (byte) (value.ordinal() - 1);
+		}
+    }
+  	
+  	// #region Constants
     // Mask for multiple attachments</summary>
     public static final byte ATTACHMENT_ADD = (byte) 0x80;
     // Mapping between BakeType and AvatarTextureIndex
