@@ -226,9 +226,13 @@ public class AssetManager implements PacketCallback
 		}
 	}
 
+	// When requesting image download, type of the image requested
 	public enum ImageType
 	{
-		Normal, Baked;
+		// Normal in-world object texture
+		Normal,
+		// Local or Server baked avatar texture
+		Baked;
 
 		public static ImageType setValue(int value)
 		{
@@ -1409,8 +1413,7 @@ public class AssetManager implements PacketCallback
                     @Override
 					public void failed(Exception ex)
                     {
-                        Logger.Log(String.format("Failed to fetch mesh asset {%s}: {%s}", meshID, (ex == null) ? "" : ex.getMessage()),
-                        		   LogLevel.Warning, _Client);
+                        Logger.Log("Failed to fetch mesh asset {" + meshID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
                         callback.callback(false, null);
                     }
                     
@@ -1424,7 +1427,7 @@ public class AssetManager implements PacketCallback
         	}
     		catch (URISyntaxException ex)
     		{
-                Logger.Log(String.format("Failed to fetch mesh asset {%s}: {%s}", meshID, ex.getMessage()), LogLevel.Warning, _Client);
+                Logger.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), LogLevel.Warning, _Client);
                 callback.callback(false, null);
     		}
         }
@@ -1433,6 +1436,90 @@ public class AssetManager implements PacketCallback
             Logger.Log("GetMesh capability not available", LogLevel.Error, _Client);
             callback.callback(false, null);
         }
+    }
+
+    /**
+     * Fetch avatar texture on a grid capable of server side baking
+     * 
+     * @param avatarID ID of the avatar
+	 * @param textureID ID of the texture
+     * @param bakeName Name of the part of the avatar texture applies to
+     * @param callback Callback invoked on operation completion
+     */
+    public void RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName, final TextureDownloadCallback callback)
+    {
+        if (avatarID == UUID.Zero || textureID == UUID.Zero || callback == null)
+            return;
+        
+        String appearenceUri = _Client.Network.AgentAppearanceServiceURL;
+
+        if (appearenceUri == null || appearenceUri.isEmpty())
+        {
+            callback.callback(TextureRequestState.NotFound, null);
+            return;
+        }
+
+        byte[] assetData;
+
+        // Do we have this image in the cache?
+        if (_Client.Assets.getCache().containsKey(textureID)
+            && (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
+        {
+            ImageDownload image = new ImageDownload();
+            image.ID = textureID;
+            image.AssetData = assetData;
+            image.Size = image.AssetData.length;
+            image.Transferred = image.AssetData.length;
+            image.ImageType = ImageType.Baked;
+            image.AssetType = AssetType.Texture;
+            image.Success = true;
+
+            callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
+            FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+            return;
+        }
+
+        URI url = new URI(appearenceUri + "texture/" + avatarID + "/" + bakeName + "/" + textureID);
+        DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", null, new FutureCallback<byte[]>()
+        {
+            @Override
+			public void completed(byte[] response)
+            {
+                if (response != null) // success
+                {
+                    ImageDownload image = new ImageDownload();
+                    image.ID = textureID;
+                    image.AssetData = response;
+                    image.Size = image.AssetData.length;
+                    image.Transferred = image.AssetData.length;
+                    image.ImageType = ImageType.Baked;
+                    image.AssetType = AssetType.Texture;
+                    image.Success = true;
+
+                    callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
+                    _Client.Assets.getCache().SaveAssetToCache(textureID, response);
+                }
+                else // download failed
+                {
+                    Logger.Log("Failed to fetch server bake {" + textureID + "}: empty data", LogLevel.Warning, _Client);
+                    callback.callback(TextureRequestState.Timeout, null);
+                }
+            }
+            
+            @Override
+			public void failed(Exception ex)
+            {
+                Logger.Log("Failed to fetch server bake {" + textureID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
+                callback.callback(TextureRequestState.Timeout, null);
+            }
+            
+            @Override
+			public void cancelled()
+            {
+                callback.callback(TextureRequestState.Aborted, null);
+            }
+        });
+		_HttpDownloads.enque(req);
     }
 
     /**

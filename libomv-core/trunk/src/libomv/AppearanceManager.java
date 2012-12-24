@@ -31,6 +31,7 @@ package libomv;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,17 +40,23 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.NetworkManager.EventQueueRunningCallbackArgs;
+import libomv.Simulator.RegionProtocols;
 import libomv.VisualParams.VisualAlphaParam;
 import libomv.VisualParams.VisualColorParam;
 import libomv.VisualParams.VisualParam;
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSD.OSDFormat;
+import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.AssetDownload;
 import libomv.assets.AssetManager.AssetReceivedCallback;
@@ -60,9 +67,11 @@ import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.assets.AssetWearable.WearableType;
 import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
+import libomv.capabilities.CapsClient;
 import libomv.imaging.Baker;
 import libomv.inventory.InventoryAttachment;
 import libomv.inventory.InventoryException;
+import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryManager.InventorySortOrder;
 import libomv.inventory.InventoryNode;
@@ -350,15 +359,17 @@ public class AppearanceManager implements PacketCallback
     private AtomicInteger SetAppearanceSerialNum = new AtomicInteger();
     // Indicates whether or not the appearance thread is currently running, to prevent multiple
     // appearance threads from running simultaneously
-//    private AtomicBoolean AppearanceThreadRunning = new AtomicBoolean(false);
+// 	private AtomicBoolean AppearanceThreadRunning = new AtomicBoolean(false);
     // Reference to our agent
     private GridClient _Client;
     // 
-    /// Timer used for delaying rebake on changing outfit
-    /// 
+    // Timer used for delaying rebake on changing outfit
+    // 
     private Timer RebakeScheduleTimer;
-    /// Main appearance thread
+    // Main appearance thread
     private Thread AppearanceThread;
+    // Is server baking complete. It needs doing only once
+    private boolean ServerBakingDone = false;
     // #endregion Private Members
 
 	private boolean sendAppearanceUpdates;
@@ -475,36 +486,51 @@ public class AppearanceManager implements PacketCallback
                         }
                     }
 
-                    // Download and parse all of the agent wearables
-                    success = DownloadWearables();
-                    if (!success)
+                    // Is this a server side baking enabled sim
+                    if ((_Client.Network.getCurrentSim().Protocols & RegionProtocols.AgentAppearanceService) != 0)
                     {
-                        Logger.Log("One or more agent wearables failed to download, appearance will be incomplete",
-                            LogLevel.Warning, _Client);
+                    	if (!ServerBakingDone || forceRebake)
+                    	{
+                    		success = UpdateAvatarAppearance();
+                    		if (success)
+                    	    {
+                    	        ServerBakingDone = true;
+                    	    }
+                    	}
                     }
-
-                    // If this is the first time setting appearance and we're not forcing rebakes, check the server
-                    // for cached bakes
-                    if (SetAppearanceSerialNum.get() == 0 && !forceRebake)
+                    else // Classic client side baking
                     {
-                        // Compute hashes for each bake layer and compare against what the simulator currently has
-                        if (!GetCachedBakes())
+                        // Download and parse all of the agent wearables
+                        success = DownloadWearables();
+                        if (!success)
                         {
-                            Logger.Log("Failed to get a list of cached bakes from the simulator, appearance will be rebaked",
+                            Logger.Log("One or more agent wearables failed to download, appearance will be incomplete",
                                 LogLevel.Warning, _Client);
                         }
-                    }
 
-                    // Download textures, compute bakes, and upload for any cache misses
-                    if (!CreateBakes())
-                    {
-                        success = false;
-                        Logger.Log("Failed to create or upload one or more bakes, appearance will be incomplete",
-                            LogLevel.Warning, _Client);
-                    }
+                        // If this is the first time setting appearance and we're not forcing rebakes, check the server
+                        // for cached bakes
+                        if (SetAppearanceSerialNum.get() == 0 && !forceRebake)
+                        {
+                            // Compute hashes for each bake layer and compare against what the simulator currently has
+                            if (!GetCachedBakes())
+                            {
+                                Logger.Log("Failed to get a list of cached bakes from the simulator, appearance will be rebaked",
+                                    LogLevel.Warning, _Client);
+                            }
+                        }
 
-                    // Send the appearance packet
-                    RequestAgentSetAppearance();
+                        // Download textures, compute bakes, and upload for any cache misses
+                        if (!CreateBakes())
+                        {
+                            success = false;
+                            Logger.Log("Failed to create or upload one or more bakes, appearance will be incomplete",
+                                LogLevel.Warning, _Client);
+                        }
+
+                        // Send the appearance packet
+                        RequestAgentSetAppearance();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1751,7 +1777,7 @@ public class AppearanceManager implements PacketCallback
         UUID bakeID = uploadEvent.waitOne(UPLOAD_TIMEOUT);
         return bakeID != null ? bakeID : UUID.Zero;
     }
-
+    
     /**
      * Creates a dictionary of visual param values from the downloaded wearables
      * 
@@ -1788,6 +1814,63 @@ public class AppearanceManager implements PacketCallback
             }
         }
         return paramValues;
+    }
+
+    /**
+     * Initate server baking process
+
+     * @throws InventoryException 
+     * @throws IOException 
+     * @throws TimeoutException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
+     *
+     * @returns True if the server baking was successful
+	 */
+    private boolean UpdateAvatarAppearance() throws InventoryException, InterruptedException, ExecutionException, TimeoutException, IOException
+    {
+        URI url = _Client.Network.getCapabilityURI("UpdateAvatarAppearance");
+        if (url == null)
+        {
+            return false;
+        }
+
+        InventoryFolder COF = _Client.Inventory.FindFolderForType(AssetType.CurrentOutfitFolder);
+        if (COF == null)
+        {
+            return false;
+        }
+        else
+        {
+            // TODO: create Current Outfit Folder
+        }
+            
+        CapsClient capsRequest = new CapsClient();
+        OSDMap request = new OSDMap(1);
+        request.put("cof_version", OSD.FromInteger(COF.version));
+
+        String msg = "Setting server side baking failed";
+        OSD res = capsRequest.getResponse(url, request, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT * 2);
+        if (res != null && res instanceof OSDMap)
+        {
+            OSDMap result = (OSDMap)res;
+            if (result.get("success").AsBoolean())
+            {
+                // TODO: Set local visual params and baked textures based on the result here
+                return true;
+            }
+            else
+            {
+                if (result.containsKey("error"))
+                {
+                    msg += ": " + result.get("error").AsString();
+                }
+            }
+        }
+
+        Logger.Log(msg, LogLevel.Error, _Client);
+
+        return false;
     }
 
     /**
