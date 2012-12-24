@@ -293,7 +293,7 @@ public class LoginManager
         public int MaxAgentGroups;
         public String MapServerUrl;
         public String OpenIDUrl;
-        public String XMPPHost;
+        public String AgentAppearanceServiceURL;
         
 		// Unhandled:
 		// reply.gestures
@@ -449,9 +449,9 @@ public class LoginManager
                 OpenIDUrl = reply.get("openid_url").AsString();
             }
 
-            if (reply.containsKey("xmpp_host"))
+            if (reply.containsKey("agent_appearance_service"))
             {
-                XMPPHost = reply.get("xmpp_host").AsString();
+            	AgentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
             }
             return this;
 		}
@@ -602,9 +602,9 @@ public class LoginManager
                 OpenIDUrl = ParseString("openid_url", reply);
             }
 
-            if (reply.containsKey("xmpp_host"))
+            if (reply.containsKey("agent_appearance_service"))
             {
-                XMPPHost = ParseString("xmpp_host", reply);
+            	AgentAppearanceServiceURL = ParseString("agent_appearance_service", reply);
             }
             return this;
 		}
