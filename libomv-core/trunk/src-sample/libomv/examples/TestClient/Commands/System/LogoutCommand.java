@@ -52,6 +52,6 @@ public class LogoutCommand extends Command
 		{
 			Logger.Log("Error logging out", LogLevel.Error, Client, ex);
 		}
-        return "Logged " + name + " out";
+        return "Logged out " + name;
     }
 }
