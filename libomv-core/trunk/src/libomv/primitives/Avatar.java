@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import libomv.AgentManager;
 import libomv.AppearanceManager;
+import libomv.AvatarManager.Animation;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
@@ -351,6 +352,9 @@ public class Avatar extends Primitive
 	// Appearance flags. Introduced with server side baking, currently unused.
 	public AppearanceManager.AppearanceFlags AppearanceFlags = AppearanceManager.AppearanceFlags.None;
     
+	// List of current avatar animations
+    public ArrayList<Animation> Animations;
+
     // #endregion Public Members
 
 	protected String name;

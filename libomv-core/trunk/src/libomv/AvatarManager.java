@@ -866,27 +866,28 @@ public class AvatarManager implements PacketCallback, CapsCallback
 
     private void HandleAvatarAnimation(Packet packet, Simulator simulator) throws Exception
     {
-        if (OnAvatarAnimation.count() > 0)
+        AvatarAnimationPacket data = (AvatarAnimationPacket)packet;
+        ArrayList<Animation> signaledAnimations = new ArrayList<Animation>(data.AnimationList.length);
+
+        for (int i = 0; i < data.AnimationList.length; i++)
         {
-            AvatarAnimationPacket data = (AvatarAnimationPacket)packet;
-
-            ArrayList<Animation> signaledAnimations = new ArrayList<Animation>(data.AnimationList.length);
-
-            for (int i = 0; i < data.AnimationList.length; i++)
+            Animation animation = new Animation();
+            animation.AnimationID = data.AnimationList[i].AnimID;
+            animation.AnimationSequence = data.AnimationList[i].AnimSequenceID;
+            if (i < data.ObjectID.length)
             {
-                Animation animation = new Animation();
-                animation.AnimationID = data.AnimationList[i].AnimID;
-                animation.AnimationSequence = data.AnimationList[i].AnimSequenceID;
-                if (i < data.ObjectID.length)
-                {
-                    animation.AnimationSourceObjectID = data.ObjectID[i];
-                }
-
-                signaledAnimations.add(animation);
+                animation.AnimationSourceObjectID = data.ObjectID[i];
             }
-
-            OnAvatarAnimation.dispatch(new AvatarAnimationCallbackArgs(data.ID, signaledAnimations));
+            signaledAnimations.add(animation);
         }
+
+        Avatar avatar = simulator.findAvatar(data.ID);
+        if (avatar != null)
+        {
+            avatar.Animations = signaledAnimations;
+        }
+      	
+      	OnAvatarAnimation.dispatch(new AvatarAnimationCallbackArgs(data.ID, signaledAnimations));
     }
 	    
     private void HandleAvatarAppearance(Packet packet, Simulator simulator) throws Exception
