@@ -52,7 +52,7 @@ public class AssetMutable extends AssetItem
 	 * Construct an Asset object of a mutable type
 	 * 
 	 * @param type the @see AssetType of this asset
-	 * @param assetID A unique @see UUID" specific to this asset
+	 * @param assetID A unique @see UUID specific to this asset
 	 * @param assetData A byte array containing the raw asset data
 	 */
 	public AssetMutable(AssetType type, UUID assetID, byte[] assetData)

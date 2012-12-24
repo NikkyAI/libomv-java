@@ -1910,18 +1910,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 		/**
 		 * Construct a new instance of the MoneyBalanceReplyEventArgs object
 		 * 
-		 * @param transactionID
-		 *            ">The ID of the transaction
-		 * @param transactionSuccess
-		 *            ">True of the transaction was successful
-		 * @param balance
-		 *            ">The current currency balance
-		 * @param metersCredit
-		 *            ">The meters credited
-		 * @param metersCommitted
-		 *            ">The meters comitted
-		 * @param description
-		 *            ">A brief description of the transaction
+		 * @param transactionID The ID of the transaction
+		 * @param transactionSuccess True of the transaction was successful
+		 * @param balance The current currency balance
+		 * @param metersCredit The meters credited
+		 * @param metersCommitted The meters comitted
+		 * @param description A brief description of the transaction
+		 * @param transactionInfo Transaction info
 		 */
 		public MoneyBalanceReplyCallbackArgs(UUID transactionID, boolean transactionSuccess, int balance,
 				int metersCredit, int metersCommitted, String description, TransactionInfo transactionInfo)
