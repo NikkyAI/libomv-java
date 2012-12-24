@@ -47,6 +47,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import libomv.Simulator.RegionFlags;
+import libomv.Simulator.RegionProtocols;
 import libomv.Simulator.SimAccess;
 import libomv.Simulator.SimStatType;
 import libomv.capabilities.CapsCallback;
@@ -1348,6 +1349,13 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		simulator.ProductName = Helpers.BytesToString(handshake.RegionInfo3.getProductName());
 		simulator.ProductSku = Helpers.BytesToString(handshake.RegionInfo3.getProductSKU());
 
+		if (handshake.RegionInfo4 != null && handshake.RegionInfo4.length > 0)
+		{
+            simulator.Protocols = RegionProtocols.setValue(handshake.RegionInfo4[0].RegionProtocols);
+		    // Yes, overwrite region flags if we have extended version of them
+            simulator.Flags = RegionFlags.setValue(handshake.RegionInfo4[0].RegionFlagsExtended);
+        }
+		  	
 		// Send a RegionHandshakeReply
 		RegionHandshakeReplyPacket reply = new RegionHandshakeReplyPacket();
 		reply.AgentData.AgentID = _Client.Self.getAgentID();
