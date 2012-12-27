@@ -1666,6 +1666,7 @@ public class LoginManager
 			// Login succeeded
 			_Client.Network.setCircuitCode(reply.CircuitCode);
 			_Client.Network.setUDPBlacklist(reply.UDPBlacklist);
+			_Client.Network.setAgentAppearanceServiceURL(reply.AgentAppearanceServiceURL);
 
 			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
 

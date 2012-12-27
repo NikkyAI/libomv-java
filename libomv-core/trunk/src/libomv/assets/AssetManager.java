@@ -1445,14 +1445,14 @@ public class AssetManager implements PacketCallback
 	 * @param textureID ID of the texture
      * @param bakeName Name of the part of the avatar texture applies to
      * @param callback Callback invoked on operation completion
+     * @throws URISyntaxException 
      */
-    public void RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName, final TextureDownloadCallback callback)
+    public void RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName, final TextureDownloadCallback callback) throws URISyntaxException
     {
         if (avatarID == UUID.Zero || textureID == UUID.Zero || callback == null)
             return;
         
-        String appearenceUri = _Client.Network.AgentAppearanceServiceURL;
-
+        String appearenceUri = _Client.Network.getAgentAppearanceServiceURL();
         if (appearenceUri == null || appearenceUri.isEmpty())
         {
             callback.callback(TextureRequestState.NotFound, null);

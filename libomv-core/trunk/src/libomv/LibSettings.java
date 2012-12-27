@@ -111,14 +111,17 @@ public class LibSettings extends Settings implements PacketCallback
 	 * InventoryManager requests inventory information on login, GridClient
 	 * initializes an Inventory store for main inventory.
 	 */
-	public static final boolean ENABLE_INVENTORY_STORE = true;
+	public static final String ENABLE_INVENTORY_STORE = "enableInventoryStore";
 
 	/*
 	 * InventoryManager requests library information on login, GridClient
 	 * initializes an Inventory store for the library.
 	 */
-	public static final boolean ENABLE_LIBRARY_STORE = true;
+	public static final String ENABLE_LIBRARY_STORE = "enableLibraryStore";
 
+	// Use Caps for fetching inventory where available
+	public static final String HTTP_INVENTORY = "httpInventory";
+	
 	// #region Timeouts and Intervals
 
 	/* Number of milliseconds before an asset transfer will time out */
@@ -427,6 +430,9 @@ public class LibSettings extends Settings implements PacketCallback
 			new DefaultSetting(LOG_RAW_PACKET_BYTES, false),
 			new DefaultSetting(STORE_LAND_PATCHES, false),
 			new DefaultSetting(SEND_AGENT_APPEARANCE, true),
+			new DefaultSetting(ENABLE_INVENTORY_STORE, true),
+		    new DefaultSetting(ENABLE_LIBRARY_STORE, true),
+			new DefaultSetting(HTTP_INVENTORY, true),
 
 	};
 	/**

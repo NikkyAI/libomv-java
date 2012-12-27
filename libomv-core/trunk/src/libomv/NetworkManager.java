@@ -390,8 +390,21 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			}
 		}
 	}
+	
+    // Server side baking service URL
+    private String AgentAppearanceServiceURL;
+    
+    public void setAgentAppearanceServiceURL(String url)
+    {
+    	AgentAppearanceServiceURL = url;
+    }
 
-	private ArrayList<Simulator> _Simulators;
+    public String getAgentAppearanceServiceURL()
+    {
+    	return AgentAppearanceServiceURL;
+    }
+
+    private ArrayList<Simulator> _Simulators;
 
 	/**
 	 * Get the array with all currently known simulators. This list must be

@@ -48,6 +48,7 @@ import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
 import libomv.GridClient;
+import libomv.LibSettings;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginResponseData;
 import libomv.LoginManager.LoginStatus;
@@ -605,31 +606,33 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * Request the contents of an inventory folder
 	 * {@link InventoryManager.FolderContents}
 	 * 
-	 * @param folder
-	 *            The folder to search
-	 * @param owner
-	 *            The folder owner {@link UUID}
-	 * @param folders
-	 *            true to return {@link InventoryManager.InventoryFolder} s
-	 *            contained in folder
-	 * @param items
-	 *            true to return {@link InventoryManager.InventoryItem} s
-	 *            containd in folder
-	 * @param order
-	 *            the sort order to return items in
+	 * @param folderID The folder to search
+	 * @param ownerID The folder owner {@link UUID}
+	 * @param fetchFolders true to return {@link InventoryManager.InventoryFolder}'s contained in folder
+	 * @param fetchItems true to return {@link InventoryManager.InventoryItem}'s contained in folder
+	 * @param order the sort order to return items in {@link InventoryManager.InventorySortOrder}
 	 * @throws Exception
 	 */
-	public final void RequestFolderContents(UUID folder, UUID owner, boolean folders, boolean items, int order)
+	public final void RequestFolderContents(UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
 			throws Exception
 	{
+		if (_Client.Settings.getBool(LibSettings.HTTP_INVENTORY))
+		{
+			URI url = _Client.Network.getCapabilityURI("FetchInventoryDescendents2");
+			if (url != null)
+			{
+				RequestFolderContents(url, folderID, ownerID, fetchFolders, fetchItems, order);
+				return;
+			}	
+		}
 		FetchInventoryDescendentsPacket fetch = new FetchInventoryDescendentsPacket();
 		fetch.AgentData.AgentID = _Client.Self.getAgentID();
 		fetch.AgentData.SessionID = _Client.Self.getSessionID();
 
-		fetch.InventoryData.FetchFolders = folders;
-		fetch.InventoryData.FetchItems = items;
-		fetch.InventoryData.FolderID = folder;
-		fetch.InventoryData.OwnerID = owner;
+		fetch.InventoryData.FetchFolders = fetchFolders;
+		fetch.InventoryData.FetchItems = fetchItems;
+		fetch.InventoryData.FolderID = folderID;
+		fetch.InventoryData.OwnerID = ownerID;
 		fetch.InventoryData.SortOrder = order;
 
 		_Client.Network.sendPacket(fetch);
@@ -639,17 +642,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
      * Request the contents of an inventory folder using HTTP capabilities
      *
 	 * @param folderID The folder to search
-	 * @param ownerID The folder owners {@link libomv.types.UUID}
-	 * @param fetchFolders true to return {@link InventoryManager.InventoryFolder}s contained in folder
-	 * @param fetchItems true to return {@link  InventoryManager.InventoryItem}s contained in folder
-	 * @param order the sort order to return items in {@link InvnetoryManager.InventorySortOrder}
+	 * @param ownerID The folder owner {@link libomv.types.UUID}
+	 * @param fetchFolders true to return {@link InventoryManager.InventoryFolder}'s contained in folder
+	 * @param fetchItems true to return {@link  InventoryManager.InventoryItem}'s contained in folder
+	 * @param order the sort order to return items in {@link InventoryManager.InventorySortOrder}
 	 * {@link InventoryManager.FolderContents}
 	 */
-    public final void RequestFolderContentsCap(final UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
+    private final void RequestFolderContents(URI capabilityUrl, final UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
     {
-        URI url = _Client.Network.getCapabilityURI("FetchInventoryDescendents2");
-
-        if (url == null)
+        if (capabilityUrl == null)
         {
             Logger.Log("FetchInventoryDescendents2 capability not available in the current sim", LogLevel.Warning, _Client);
             return;
@@ -771,7 +772,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
             OSDMap req = new OSDMap(1);
             req.put("folders", requestedFolders);
 
-            request.executeHttpPost(url, req, OSDFormat.Xml, new CapsCallback(), _Client.Settings.CAPS_TIMEOUT);
+            request.executeHttpPost(capabilityUrl, req, OSDFormat.Xml, new CapsCallback(), _Client.Settings.CAPS_TIMEOUT);
         }
         catch (Exception ex)
         {
