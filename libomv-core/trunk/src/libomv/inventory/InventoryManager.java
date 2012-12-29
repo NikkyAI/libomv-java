@@ -250,8 +250,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private Hashtable<Integer, Callback<ItemCreatedCallbackArgs>> _ItemCreatedCallbacks = new Hashtable<Integer, Callback<ItemCreatedCallbackArgs>>();
-
 	/**
 	 * Callback for an inventory item being create from an uploaded asset
 	 * 
@@ -322,7 +320,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		}
 	}
 
+	private Hashtable<Integer, Callback<ItemCreatedCallbackArgs>> _ItemCreatedCallbacks = new Hashtable<Integer, Callback<ItemCreatedCallbackArgs>>();
 	private Hashtable<Integer, Callback<ItemCopiedCallbackArgs>> _ItemCopiedCallbacks = new Hashtable<Integer, Callback<ItemCopiedCallbackArgs>>();
+	private Hashtable<Integer, InventoryType> _ItemInventoryTypeRequest = new Hashtable<Integer, InventoryType>();
 
 	private Object _CallbacksLock = new Object();
 	private int _CallbackPos;
@@ -1748,7 +1748,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		create.AgentData.SessionID = _Client.Self.getSessionID();
 
 		create.InventoryBlock.CallbackID = RegisterItemCreatedCallback(callback);
-		create.InventoryBlock.FolderID = folderID;
+        _ItemInventoryTypeRequest.put(create.InventoryBlock.CallbackID, invType);
+
+        create.InventoryBlock.FolderID = folderID;
 		create.InventoryBlock.TransactionID = transactionID;
 		create.InventoryBlock.OldItemID = itemID;
 		create.InventoryBlock.Type = assetType.getValue();
@@ -4232,8 +4234,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
         for (BulkUpdateInventoryMessage.ItemDataInfo newItem : msg.ItemData)
         {
             if (newItem.ItemID == UUID.Zero) continue;
-
-			InventoryItem item = SafeCreateInventoryItem(newItem.InvType, newItem.ItemID, newItem.FolderID, newItem.OwnerID);
+            InventoryType invType = newItem.InvType;
+            if (_ItemInventoryTypeRequest.containsKey(newItem.CallbackID))
+            {
+            	invType = _ItemInventoryTypeRequest.remove(newItem.CallbackID);
+            }
+			InventoryItem item = SafeCreateInventoryItem(invType, newItem.ItemID, newItem.FolderID, newItem.OwnerID);
 
             item.assetType = newItem.Type;
             item.AssetID = newItem.AssetID;
