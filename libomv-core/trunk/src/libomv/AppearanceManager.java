@@ -40,11 +40,9 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -70,11 +68,9 @@ import libomv.assets.TexturePipeline.TextureRequestState;
 import libomv.capabilities.CapsClient;
 import libomv.imaging.Baker;
 import libomv.inventory.InventoryAttachment;
-import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryManager.InventorySortOrder;
-import libomv.inventory.InventoryNode;
 import libomv.inventory.InventoryObject;
 import libomv.inventory.InventoryWearable;
 import libomv.packets.AgentCachedTexturePacket;
@@ -2089,61 +2085,6 @@ public class AppearanceManager implements PacketCallback
         }, REBAKE_DELAY);
     }
     // #endregion Appearance Helpers
-
-    // #region Inventory Helpers
-
-    private boolean GetFolderWearables(String[] folderPath, List<InventoryWearable> wearables, List<InventoryItem> attachments) throws Exception
-    {
-        UUID folder = _Client.Inventory.FindObjectByPath(
-            _Client.Inventory.getRootNode(false).itemID, _Client.Self.getAgentID(), Helpers.join("/", folderPath), INVENTORY_TIMEOUT);
-
-        if (folder != UUID.Zero)
-        {
-            return GetFolderWearables(folder, wearables, attachments);
-        }
-
-        Logger.Log("Failed to resolve outfit folder path " + folderPath, LogLevel.Error, _Client);
-        return false;
-    }
-
-    private boolean GetFolderWearables(UUID folder, List<InventoryWearable> wearables, List<InventoryItem> attachments) throws InventoryException, Exception
-    {
-        List<InventoryNode> objects = _Client.Inventory.FolderContents(folder, _Client.Self.getAgentID(), false, true,
-            InventorySortOrder.ByName, INVENTORY_TIMEOUT);
-
-        if (objects != null)
-        {
-            for (InventoryNode ib : objects)
-            {
-                if (ib instanceof InventoryWearable)
-                {
-                    Logger.DebugLog("Adding wearable " + ib.name, _Client);
-                    wearables.add((InventoryWearable)ib);
-                }
-                else if (ib instanceof InventoryAttachment)
-                {
-                    Logger.DebugLog("Adding attachment (attachment) " + ib.name, _Client);
-                    attachments.add((InventoryItem)ib);
-                }
-                else if (ib instanceof InventoryObject)
-                {
-                    Logger.DebugLog("Adding attachment (object) " + ib.name, _Client);
-                    attachments.add((InventoryItem)ib);
-                }
-                else
-                {
-                    Logger.DebugLog("Ignoring inventory item " + ib.name, _Client);
-                }
-            }
-        }
-        else
-        {
-            Logger.Log("Failed to download folder contents of + " + folder, LogLevel.Error, _Client);
-            return false;
-        }
-        return true;
-    }
-    // #endregion Inventory Helpers
 
     // #region Callbacks
 
