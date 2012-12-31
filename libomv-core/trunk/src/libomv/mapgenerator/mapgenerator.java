@@ -679,7 +679,6 @@ public class mapgenerator
 		writer.println("    }\n");
 
 		// Constructor that takes a byte array and beginning position only (no prebuilt header)
-		boolean seenVariable = false;
 		writer.println("    public " + packet.Name + "Packet(ByteBuffer bytes) throws Exception");
 		writer.println("    {");
 		writer.println("        header = new PacketHeader(bytes, PacketFrequency." + PacketFrequency.Names[packet.Frequency] + ");");
@@ -706,19 +705,13 @@ public class mapgenerator
 				else if (block.count == -1)
 				{
 					// Variable count block
-					if (!seenVariable)
-					{
-						writer.println("        int count = bytes.get() & 0xFF;");
-						seenVariable = true;
-					}
-					else
-					{
-						writer.println("        count = bytes.get() & 0xFF;");
-					}
-					writer.println("        " + sanitizedName + " = new " + blockName + "Block[count];");
-					writer.println("        for (int j = 0; j < count; j++)\n        {");
-					writer.println("            " + sanitizedName + "[j] = new " + blockName + "Block(bytes);");
-					writer.println("        }");
+					writer.println("        if (bytes.hasRemaining())\n        {");
+					writer.println("            int count = bytes.get() & 0xFF;");
+					writer.println("            " + sanitizedName + " = new " + blockName + "Block[count];");
+					writer.println("            for (int j = 0; j < count; j++)\n            {");
+					writer.println("                " + sanitizedName + "[j] = new " + blockName + "Block(bytes);");
+					writer.println("            }\n        }\n        else\n        {");
+					writer.println("            " + sanitizedName + " = new " + blockName + "Block[0];\n        }");
 				}
 				else
 				{
@@ -741,26 +734,21 @@ public class mapgenerator
 				else if (block.count == -1)
 				{
 					// Variable count block
-					if (!seenVariable)
-					{
-						writer.println("        int count = bytes.get() & 0xFF;");
-						seenVariable = true;
-					}
-					else
-					{
-						writer.println("        count = bytes.get() & 0xFF;");
-					}
-					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[count];");
+					writer.println("        if (bytes.hasRemaining())\n        {");
+					writer.println("            int count = bytes.get() & 0xFF;");
+					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[count];");
 					if (field.type == FieldType.I8 || field.type == FieldType.U8)
 					{
-						writer.println("        bytes.get(" + fieldName + ");");						
+						writer.println("            bytes.get(" + fieldName + ");");						
 					}
 					else
 					{
-						writer.println("        for (int j = 0; j < count; j++)\n        {");
-						WriteFieldFromBytes(writer, 12, fieldName, field, "[j]");
-						writer.println("        }");
+						writer.println("            for (int j = 0; j < count; j++)\n            {");
+						WriteFieldFromBytes(writer, 16, fieldName, field, "[j]");
+						writer.println("            }");
 					}
+					writer.println("        }\n        else\n        {");
+					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[0];\n        }");
 				}
 				else
 				{
@@ -780,8 +768,6 @@ public class mapgenerator
 			}
 		}
 		writer.println("     }\n");
-
-		seenVariable = false;
 
 		// Constructor that takes a byte array and a prebuilt header
 		writer.println("    public " + packet.Name + "Packet(PacketHeader head, ByteBuffer bytes)");
@@ -810,19 +796,13 @@ public class mapgenerator
 				else if (block.count == -1)
 				{
 					// Variable count block
-					if (!seenVariable)
-					{
-						writer.println("        int count = bytes.get() & 0xFF;");
-						seenVariable = true;
-					}
-					else
-					{
-						writer.println("        count = bytes.get() & 0xFF;");
-					}
-					writer.println("        " + sanitizedName + " = new " + blockName + "Block[count];");
-					writer.println("        for (int j = 0; j < count; j++)\n        {");
-					writer.println("            " + sanitizedName + "[j] = new " + blockName + "Block(bytes);");
-					writer.println("        }");
+					writer.println("        if (bytes.hasRemaining())\n        {");
+					writer.println("            int count = bytes.get() & 0xFF;");
+					writer.println("            " + sanitizedName + " = new " + blockName + "Block[count];");
+					writer.println("            for (int j = 0; j < count; j++)\n            {");
+					writer.println("                " + sanitizedName + "[j] = new " + blockName + "Block(bytes);");
+					writer.println("            }\n        }\n        else\n        {");
+					writer.println("            " + sanitizedName + " = new " + blockName + "Block[0];\n        }");
 				}
 				else
 				{
@@ -845,26 +825,21 @@ public class mapgenerator
 				else if (block.count == -1)
 				{
 					// Variable count block
-					if (!seenVariable)
-					{
-						writer.println("        int count = bytes.get() & 0xFF;");
-						seenVariable = true;
-					}
-					else
-					{
-						writer.println("        count = bytes.get() & 0xFF;");
-					}
-					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[count];");
+					writer.println("        if (bytes.hasRemaining())\n        {");
+					writer.println("            int count = bytes.get() & 0xFF;");
+					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[count];");
 					if (field.type == FieldType.I8 || field.type == FieldType.U8)
 					{
-						writer.println("        bytes.get(" + fieldName + ");");						
+						writer.println("            bytes.get(" + fieldName + ");");						
 					}
 					else
 					{
-						writer.println("        for (int j = 0; j < count; j++)\n        {");
-						WriteFieldFromBytes(writer, 12, fieldName, field, "[j]");
-						writer.println("        }");
+						writer.println("            for (int j = 0; j < count; j++)\n            {");
+						WriteFieldFromBytes(writer, 16, fieldName, field, "[j]");
+						writer.println("            }");
 					}
+					writer.println("        }\n        else\n        {");
+					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[0];\n        }");
 				}
 				else
 				{
@@ -941,8 +916,10 @@ public class mapgenerator
 				if (block.count == -1)
 				{
 					writer.println("        length++;");
-					writer.println("        for (int j = 0; j < " + sanitizedName + ".length; j++) { length += "
+					writer.println("        if (" + sanitizedName + " != null)\n        {");
+					writer.println("            for (int j = 0; j < " + sanitizedName + ".length; j++) { length += "
 							+ sanitizedName + "[j].getLength(); }");
+					writer.println("        }");
 				}
 				else if (block.count > 1)
 				{
@@ -957,7 +934,9 @@ public class mapgenerator
 				if (block.count == -1)
 				{
 					writer.println("        length++;");
-					writer.println("        length += " + fieldName + ".length * " + GetFieldLength(writer, protocol, field) + ";");
+					writer.println("        if (" + fieldName + " != null)\n        {");
+					writer.println("            length += " + fieldName + ".length * " + GetFieldLength(writer, protocol, field) + ";");
+					writer.println("        }");
 				}
 				else if (block.count > 1)
 				{
@@ -993,9 +972,15 @@ public class mapgenerator
 				if (block.count == -1)
 				{
 					// Variable count block
-					writer.println("        bytes.put((byte)" + sanitizedName + ".length);");
-					writer.println("        for (int j = 0; j < " + sanitizedName + ".length; j++) { " + sanitizedName
-							+ "[j].ToBytes(bytes); }");
+					writer.println("        if (" + sanitizedName + " != null)\n        {");
+					writer.println("            bytes.put((byte)" + sanitizedName + ".length);");
+					writer.println("            for (int j = 0; j < " + sanitizedName + ".length; j++)");
+				    writer.println("            {");
+					writer.println("                " + sanitizedName + "[j].ToBytes(bytes);");
+					writer.println("            }");
+					writer.println("        }\n        else\n        {");
+					writer.println("            bytes.put((byte)0);");
+					writer.println("        }");					
 				}
 				else if (block.count == 1)
 				{
@@ -1019,17 +1004,21 @@ public class mapgenerator
 				else if (block.count == -1)
 				{
 					// Variable count block
-					writer.println("        bytes.put((byte)" + fieldName + ".length);");
+					writer.println("        if (" + fieldName + " != null)\n        {");
+					writer.println("            bytes.put((byte)" + fieldName + ".length);");
 					if (field.type == FieldType.I8 || field.type == FieldType.U8)
 					{
-						writer.println("        bytes.put(" + fieldName + ");");						
+						writer.println("            bytes.put(" + fieldName + ");");						
 					}
 					else
 					{
-						writer.println("        for (int j = 0; j < " + fieldName + ".length; j++)\n        {");
-						WriteFieldToBytes(writer, 12, fieldName, field, "[j]");
-						writer.println("        }");
+						writer.println("            for (int j = 0; j < " + fieldName + ".length; j++)\n            {");
+						WriteFieldToBytes(writer, 16, fieldName, field, "[j]");
+						writer.println("            }");
 					}
+					writer.println("        }\n        else\n        {");
+					writer.println("            bytes.put((byte)0);");
+					writer.println("        }");					
 				}
 				else
 				{
@@ -1073,8 +1062,11 @@ public class mapgenerator
 				if (block.count == -1)
 				{
 					// Variable count block
-					writer.println("        for (int j = 0; j < " + sanitizedName + ".length; j++)\n        {");
-					writer.println("            output += " + sanitizedName + "[j].toString() + \"\\n\";\n        }");
+					writer.println("        if (" + sanitizedName + " != null)\n        {");
+					writer.println("            for (int j = 0; j < " + sanitizedName + ".length; j++)\n            {");
+					writer.println("                output += " + sanitizedName + "[j].toString() + \"\\n\";\n            }");
+					writer.println("        }");
+					
 				}
 				else if (block.count == 1)
 				{
@@ -1098,9 +1090,10 @@ public class mapgenerator
 				else if (block.count == -1)
 				{
 					// Variable count block
-					writer.println("        for (int j = 0; j < " + fieldName + ".length; j++)\n        {");
-					WriteFieldToString(writer, 12, fieldName, field, "j");
-					writer.println("        }");
+					writer.println("        if (" + fieldName + " != null)\n        {");
+					writer.println("            for (int j = 0; j < " + fieldName + ".length; j++)\n            {");
+					WriteFieldToString(writer, 16, fieldName, field, "j");
+					writer.println("            }\n        }");
 				}
 				else
 				{
