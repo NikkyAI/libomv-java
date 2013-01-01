@@ -730,18 +730,18 @@ public class Simulator extends Thread
 	private InetSocketAddress ipEndPoint;
 
 	/* A non thread-safe dictionary containing avatars in a simulator */
-	private HashMap<Integer, Avatar> ObjectsAvatars = new HashMap<Integer, Avatar>();
+	private HashMap<Integer, Avatar> _ObjectsAvatars = new HashMap<Integer, Avatar>();
 
 	public HashMap<Integer, Avatar> getObjectsAvatars()
 	{
-		return ObjectsAvatars;
+		return _ObjectsAvatars;
 	}
 
 	public Avatar findAvatar(UUID id)
 	{
-		synchronized (ObjectsAvatars)
+		synchronized (_ObjectsAvatars)
 		{
-			for (Avatar av : ObjectsAvatars.values())
+			for (Avatar av : _ObjectsAvatars.values())
 			{
 				if (av.ID.equals(id))
 					return av;
@@ -753,24 +753,19 @@ public class Simulator extends Thread
 	
 	
 	/* A non thread-safe dictionary containing primitives in a simulator */
-	private HashMap<Integer, Primitive> ObjectsPrimitives = new HashMap<Integer, Primitive>();
+	private HashMap<Integer, Primitive> _ObjectsPrimitives = new HashMap<Integer, Primitive>();
 
 	public HashMap<Integer, Primitive> getObjectsPrimitives()
 	{
-		return ObjectsPrimitives;
+		return _ObjectsPrimitives;
 	}
 
 	/* Coarse locations of avatars in this simulator */
-	private HashMap<UUID, Vector3> avatarPositions = new HashMap<UUID, Vector3>();
-
-	public void setAvatarPositions(HashMap<UUID, Vector3> avatarPositions)
-	{
-		this.avatarPositions = avatarPositions;
-	}
+	private HashMap<UUID, Vector3> _AvatarPositions = new HashMap<UUID, Vector3>();
 
 	public HashMap<UUID, Vector3> getAvatarPositions()
 	{
-		return avatarPositions;
+		return _AvatarPositions;
 	}
 
 	/* AvatarPositions key representing TrackAgent target */
