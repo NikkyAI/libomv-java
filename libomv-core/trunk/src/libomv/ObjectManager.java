@@ -2683,7 +2683,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 				for (int i = 0; i < lines.length; i++)
 				{
-					if (lines[i] != null && lines[i].equals(Helpers.EmptyString))
+					if (!Helpers.isEmpty(lines[i]))
 					{
 						NameValue nv = new NameValue(lines[i]);
 						if (nv.Name.equals("AttachItemID"))
@@ -2958,8 +2958,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					{
 						// #region Update Client.Self
 
-						// We need the local ID to recognize terse updates for
-						// our agent
+						// We need the local ID to recognize terse updates for our agent
 						Client.Self.setLocalID(block.ID);
 
 						// Packed parameters
@@ -3497,7 +3496,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 			}
 
-			if (Client.Settings.AVATAR_TRACKING)
+			if (Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 			{
 				int localID;
 
@@ -3895,7 +3894,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
 	{
-		if (Client.Settings.AVATAR_TRACKING)
+		if (Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 		{
 			synchronized (simulator.getObjectsAvatars())
 			{
