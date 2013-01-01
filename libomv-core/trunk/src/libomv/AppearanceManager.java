@@ -2055,7 +2055,7 @@ public class AppearanceManager implements PacketCallback
 
             // #endregion Agent Size
 
-            if (_Client.Settings.AVATAR_TRACKING)
+            if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
             {
                 Avatar me;
                 if (_Client.Network.getCurrentSim().getObjectsAvatars().containsKey(_Client.Self.getLocalID()))

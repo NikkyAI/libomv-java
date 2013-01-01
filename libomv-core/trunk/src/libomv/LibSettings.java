@@ -296,7 +296,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * <code>Simulator.ObjectAvatars</code>. If false, a new Avatar or Primitive
 	 * object will be created each time an object update packet is received
 	 */
-	public boolean AVATAR_TRACKING = true;
+	public static final String AVATAR_TRACKING = "avatarTracking";
 
 	/*
 	 * If true, currently visible avatars will be stored in dictionaries inside
@@ -407,32 +407,33 @@ public class LibSettings extends Settings implements PacketCallback
 		return priceUpload;
 	}
 	
-	// #region Default settings
-	private DefaultSetting[] defaults = {
-			new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
-			new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
-			new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
-			new DefaultSetting(ENABLE_SOUND_MANAGER, true),
-			new DefaultSetting(ENABLE_ASSET_MANAGER, false),
-			new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
-			new DefaultSetting(ENABLE_PARCEL_MANAGER, false),
-			new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
-			new DefaultSetting(ENABLE_SOUND_MANAGER, false),
-			new DefaultSetting(MULTIPLE_SIMS, true),
-			new DefaultSetting(SEND_AGENT_THROTTLE, true),
-			new DefaultSetting(ENABLE_CAPS, true),
-			new DefaultSetting(ENABLE_SIMSTATS, true),
-			new DefaultSetting(RESOURCE_DIR, "character"),
-			new DefaultSetting(USE_LLSD_LOGIN, false),
-			new DefaultSetting(USE_HTTP_TEXTURES, true),
-			new DefaultSetting(SEND_AGENT_UPDATES, true),
-			new DefaultSetting(SYNC_PACKETCALLBACKS, false),
-			new DefaultSetting(LOG_RAW_PACKET_BYTES, false),
-			new DefaultSetting(STORE_LAND_PATCHES, false),
-			new DefaultSetting(SEND_AGENT_APPEARANCE, true),
-			new DefaultSetting(ENABLE_INVENTORY_STORE, true),
-		    new DefaultSetting(ENABLE_LIBRARY_STORE, true),
-			new DefaultSetting(HTTP_INVENTORY, true),
+    // #region Default settings
+    private DefaultSetting[] defaults = {
+            new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
+            new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
+            new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
+            new DefaultSetting(ENABLE_SOUND_MANAGER, true),
+            new DefaultSetting(ENABLE_ASSET_MANAGER, false),
+            new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
+            new DefaultSetting(ENABLE_PARCEL_MANAGER, false),
+            new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
+            new DefaultSetting(ENABLE_SOUND_MANAGER, false),
+            new DefaultSetting(MULTIPLE_SIMS, true),
+            new DefaultSetting(SEND_AGENT_THROTTLE, true),
+            new DefaultSetting(ENABLE_CAPS, true),
+            new DefaultSetting(ENABLE_SIMSTATS, true),
+            new DefaultSetting(RESOURCE_DIR, "character"),
+            new DefaultSetting(USE_LLSD_LOGIN, false),
+            new DefaultSetting(USE_HTTP_TEXTURES, true),
+            new DefaultSetting(SEND_AGENT_UPDATES, true),
+            new DefaultSetting(SYNC_PACKETCALLBACKS, false),
+            new DefaultSetting(LOG_RAW_PACKET_BYTES, false),
+            new DefaultSetting(STORE_LAND_PATCHES, false),
+            new DefaultSetting(SEND_AGENT_APPEARANCE, true),
+            new DefaultSetting(ENABLE_INVENTORY_STORE, true),
+            new DefaultSetting(ENABLE_LIBRARY_STORE, true),
+            new DefaultSetting(HTTP_INVENTORY, true),
+            new DefaultSetting(AVATAR_TRACKING, true),
 
 	};
 	/**

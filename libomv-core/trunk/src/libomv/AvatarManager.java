@@ -892,7 +892,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	    
     private void HandleAvatarAppearance(Packet packet, Simulator simulator) throws Exception
     {
-        if (OnAvatarAppearance.count() > 0 || _Client.Settings.AVATAR_TRACKING)
+        if (OnAvatarAppearance.count() > 0 || _Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
         {
             AvatarAppearancePacket appearance = (AvatarAppearancePacket)packet;
 
