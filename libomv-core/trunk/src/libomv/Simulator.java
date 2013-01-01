@@ -1157,9 +1157,9 @@ public class Simulator extends Thread
 		return false;
 	}
 
-	private void DebugDumpBuffer(byte[] byteBuffer, int numBytes, String head)
+	private void DumpBuffer(byte[] byteBuffer, int numBytes, String head, int level)
 	{
-		Logger.Log(head + numBytes, Logger.LogLevel.Debug, _Client);
+		Logger.Log(head + numBytes, level, _Client);
 		StringBuffer dump = new StringBuffer(numBytes * 2);
 		for (int i = 0; i < numBytes; i++)
 		{
@@ -1167,7 +1167,7 @@ public class Simulator extends Thread
 			dump.append(Integer.toHexString(value & 0xFF));
 			dump.append(" ");
 		}
-		Logger.Log(dump, Logger.LogLevel.Debug, _Client);
+		Logger.Log(dump, level, _Client);
 
 	}
 
@@ -1208,7 +1208,7 @@ public class Simulator extends Thread
 					{
 						if (logRawPackets)
 						{
-							DebugDumpBuffer(byteBuffer, numBytes, "<=============== Received packet length = ");
+							DumpBuffer(byteBuffer, numBytes, "<=============== Received packet, length = ", LogLevel.Debug);
 						}
 
 						if ((RecvBuffer[0] & Helpers.MSG_ZEROCODED) != 0)
@@ -1222,7 +1222,7 @@ public class Simulator extends Thread
 							numBytes = ZeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
 							if (logRawPackets)
 							{
-								DebugDumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet length=");
+								DumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet, length=", LogLevel.Debug);
 							}
 						}
 
@@ -1242,13 +1242,13 @@ public class Simulator extends Thread
 					}
 					catch (BufferUnderflowException ex)
 					{
-						DebugDumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet length = ");
+						DumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet, length = ", LogLevel.Debug);
 					}
 				}
 
 				if (packet == null)
 				{
-					Logger.Log("Couldn't build a message from the incoming data", LogLevel.Warning, _Client);
+					DumpBuffer(RecvBuffer, numBytes, "<=========== Couldn't build a message from the incoming data, length = ", LogLevel.Warning);
 					continue;
 				}
 
