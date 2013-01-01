@@ -529,10 +529,12 @@ public class Avatar extends Primitive
 	// Default constructor
 	public Avatar()
 	{
+		super();
 	}
 
 	public Avatar(UUID ID)
 	{
+		super();
 		this.ID = ID;
 	}
 
