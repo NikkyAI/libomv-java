@@ -387,7 +387,8 @@ public class ClientManager
             {
                 for (TestClient client : Clients.values())
                 {
-                    System.out.println(client.Commands.get("help").execute(args, UUID.Zero));
+                    Command command = client.Commands.get("help");
+                    System.out.println(command.execute(args, UUID.Zero));
                     break;
                 }
             }
