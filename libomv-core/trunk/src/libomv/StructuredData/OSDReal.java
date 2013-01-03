@@ -67,7 +67,7 @@ public class OSDReal extends OSD
 		{
 			return Integer.MIN_VALUE;
 		}
-		return (int) Math.round(value);
+		return Helpers.roundFromZero(value);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class OSDReal extends OSD
 		{
 			return 0;
 		}
-		return (int) Math.round(value);
+		return Helpers.roundFromZero(value);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class OSDReal extends OSD
 		{
 			return Long.MIN_VALUE;
 		}
-		return Math.round(value);
+		return Helpers.roundFromZero(value);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class OSDReal extends OSD
 		{
 			return 0;
 		}
-		return Math.round(value);
+		return Helpers.roundFromZero(value);
 	}
 
 	@Override

@@ -232,17 +232,17 @@ public final class Color4
 
 		if (inverted)
 		{
-			R = (255 - byteArray[pos]) * quanta;
-			G = (255 - byteArray[pos + 1]) * quanta;
-			B = (255 - byteArray[pos + 2]) * quanta;
-			A = (255 - byteArray[pos + 3]) * quanta;
+			R = (255 - (byteArray[pos] & 0xFF)) * quanta;
+			G = (255 - (byteArray[pos + 1] & 0xFF)) * quanta;
+			B = (255 - (byteArray[pos + 2] & 0xFF)) * quanta;
+			A = (255 - (byteArray[pos + 3] & 0xFF)) * quanta;
 		}
 		else
 		{
-			R = byteArray[pos] * quanta;
-			G = byteArray[pos + 1] * quanta;
-			B = byteArray[pos + 2] * quanta;
-			A = byteArray[pos + 3] * quanta;
+			R = (byteArray[pos] & 0xFF) * quanta;
+			G = (byteArray[pos + 1] & 0xFF) * quanta;
+			B = (byteArray[pos + 2] & 0xFF) * quanta;
+			A = (byteArray[pos + 3] & 0xFF) * quanta;
 		}
 	}
 
@@ -328,10 +328,10 @@ public final class Color4
 
 		if (inverted)
 		{
-			dest[pos + 0] = (byte) (255 - dest[pos + 0]);
-			dest[pos + 1] = (byte) (255 - dest[pos + 1]);
-			dest[pos + 2] = (byte) (255 - dest[pos + 2]);
-			dest[pos + 3] = (byte) (255 - dest[pos + 3]);
+			dest[pos + 0] = (byte) (255 - (dest[pos + 0] & 0xFF));
+			dest[pos + 1] = (byte) (255 - (dest[pos + 1] & 0xFF));
+			dest[pos + 2] = (byte) (255 - (dest[pos + 2] & 0xFF));
+			dest[pos + 3] = (byte) (255 - (dest[pos + 3] & 0xFF));
 		}
 		return 4;
 	}

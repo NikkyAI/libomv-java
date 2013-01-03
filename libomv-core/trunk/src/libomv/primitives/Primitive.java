@@ -1773,22 +1773,22 @@ public class Primitive
 
 	public static short PackBeginCut(float beginCut)
 	{
-		return (short) Math.round(beginCut / CUT_QUANTA);
+		return (short) Helpers.roundFromZero(beginCut / CUT_QUANTA);
 	}
 
 	public static short PackEndCut(float endCut)
 	{
-		return (short) (50000 - (short) Math.round(endCut / CUT_QUANTA));
+		return (short) (50000 - Helpers.roundFromZero(endCut / CUT_QUANTA));
 	}
 
 	public static byte PackPathScale(float pathScale)
 	{
-		return (byte) (200 - (byte) Math.round(pathScale / SCALE_QUANTA));
+		return (byte) (200 - Helpers.roundFromZero(pathScale / SCALE_QUANTA));
 	}
 
 	public static byte PackPathShear(float pathShear)
 	{
-		return (byte) Math.round(pathShear / SHEAR_QUANTA);
+		return (byte) Helpers.roundFromZero(pathShear / SHEAR_QUANTA);
 	}
 
 	/**
@@ -1801,22 +1801,22 @@ public class Primitive
 	 */
 	public static byte PackPathTwist(float pathTwist)
 	{
-		return (byte) Math.round(pathTwist / SCALE_QUANTA);
+		return (byte) Helpers.roundFromZero(pathTwist / SCALE_QUANTA);
 	}
 
 	public static byte PackPathTaper(float pathTaper)
 	{
-		return (byte) Math.round(pathTaper / TAPER_QUANTA);
+		return (byte) Helpers.roundFromZero(pathTaper / TAPER_QUANTA);
 	}
 
 	public static byte PackPathRevolutions(float pathRevolutions)
 	{
-		return (byte) Math.round((pathRevolutions - 1f) / REV_QUANTA);
+		return (byte) Helpers.roundFromZero((pathRevolutions - 1f) / REV_QUANTA);
 	}
 
 	public static short PackProfileHollow(float profileHollow)
 	{
-		return (short) Math.round(profileHollow / HOLLOW_QUANTA);
+		return (short) Helpers.roundFromZero(profileHollow / HOLLOW_QUANTA);
 	}
 
 	// #endregion Parameter Packing Methods

@@ -270,7 +270,7 @@ public class TextureEntry
 		public float getRepeatV()
 		{
 			if ((hasAttribute & TextureAttributes.RepeatV) != 0)
-				return repeatU;
+				return repeatV;
 			return defaultTexture.repeatV;
 		}
 
@@ -1018,25 +1018,25 @@ public class TextureEntry
 
 		// #region Bitfield Setup
 
-		int[] textures = new int[faceTextures.length];
+		long[] textures = new long[faceTextures.length];
 		InitializeArray(textures);
-		int[] rgbas = new int[faceTextures.length];
+		long[] rgbas = new long[faceTextures.length];
 		InitializeArray(rgbas);
-		int[] repeatus = new int[faceTextures.length];
+		long[] repeatus = new long[faceTextures.length];
 		InitializeArray(repeatus);
-		int[] repeatvs = new int[faceTextures.length];
+		long[] repeatvs = new long[faceTextures.length];
 		InitializeArray(repeatvs);
-		int[] offsetus = new int[faceTextures.length];
+		long[] offsetus = new long[faceTextures.length];
 		InitializeArray(offsetus);
-		int[] offsetvs = new int[faceTextures.length];
+		long[] offsetvs = new long[faceTextures.length];
 		InitializeArray(offsetvs);
-		int[] rotations = new int[faceTextures.length];
+		long[] rotations = new long[faceTextures.length];
 		InitializeArray(rotations);
-		int[] materials = new int[faceTextures.length];
+		long[] materials = new long[faceTextures.length];
 		InitializeArray(materials);
-		int[] medias = new int[faceTextures.length];
+		long[] medias = new long[faceTextures.length];
 		InitializeArray(medias);
-		int[] glows = new int[faceTextures.length];
+		long[] glows = new long[faceTextures.length];
 		InitializeArray(glows);
 
 		for (int i = 0; i < faceTextures.length; i++)
@@ -1044,66 +1044,63 @@ public class TextureEntry
 			if (faceTextures[i] == null)
 				continue;
 
-			if (faceTextures[i].getTextureID() != defaultTexture.getTextureID())
+			if (!faceTextures[i].getTextureID().equals(defaultTexture.getTextureID()))
 			{
-				if (textures[i] == Integer.MAX_VALUE)
+				if (textures[i] == Long.MAX_VALUE)
 					textures[i] = 0;
 				textures[i] |= (1 << i);
 			}
-			if (faceTextures[i].getRGBA() != defaultTexture.getRGBA())
+			if (!faceTextures[i].getRGBA().equals(defaultTexture.getRGBA()))
 			{
-				if (rgbas[i] == Integer.MAX_VALUE)
+				if (rgbas[i] == Long.MAX_VALUE)
 					rgbas[i] = 0;
 				rgbas[i] |= (1 << i);
 			}
 			if (faceTextures[i].getRepeatU() != defaultTexture.getRepeatU())
 			{
-				if (repeatus[i] == Integer.MAX_VALUE)
+				if (repeatus[i] == Long.MAX_VALUE)
 					repeatus[i] = 0;
 				repeatus[i] |= (1 << i);
 			}
 			if (faceTextures[i].getRepeatV() != defaultTexture.getRepeatV())
 			{
-				if (repeatvs[i] == Integer.MAX_VALUE)
+				if (repeatvs[i] == Long.MAX_VALUE)
 					repeatvs[i] = 0;
 				repeatvs[i] |= (1 << i);
 			}
-			if (Helpers.TEOffsetShort(faceTextures[i].getOffsetU()) != Helpers.TEOffsetShort(defaultTexture
-					.getOffsetU()))
+			if (!Helpers.TEOffsetShort(faceTextures[i].getOffsetU()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetU())))
 			{
-				if (offsetus[i] == Integer.MAX_VALUE)
+				if (offsetus[i] == Long.MAX_VALUE)
 					offsetus[i] = 0;
 				offsetus[i] |= (1 << i);
 			}
-			if (Helpers.TEOffsetShort(faceTextures[i].getOffsetV()) != Helpers.TEOffsetShort(defaultTexture
-					.getOffsetV()))
+			if (!Helpers.TEOffsetShort(faceTextures[i].getOffsetV()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetV())))
 			{
-				if (offsetvs[i] == Integer.MAX_VALUE)
+				if (offsetvs[i] == Long.MAX_VALUE)
 					offsetvs[i] = 0;
 				offsetvs[i] |= (1 << i);
 			}
-			if (Helpers.TERotationShort(faceTextures[i].getRotation()) != Helpers.TERotationShort(defaultTexture
-					.getRotation()))
+			if (!Helpers.TERotationShort(faceTextures[i].getRotation()).equals(Helpers.TERotationShort(defaultTexture.getRotation())))
 			{
-				if (rotations[i] == Integer.MAX_VALUE)
+				if (rotations[i] == Long.MAX_VALUE)
 					rotations[i] = 0;
 				rotations[i] |= (1 << i);
 			}
 			if (faceTextures[i].material != defaultTexture.material)
 			{
-				if (materials[i] == Integer.MAX_VALUE)
+				if (materials[i] == Long.MAX_VALUE)
 					materials[i] = 0;
 				materials[i] |= (1 << i);
 			}
 			if (faceTextures[i].media != defaultTexture.media)
 			{
-				if (medias[i] == Integer.MAX_VALUE)
+				if (medias[i] == Long.MAX_VALUE)
 					medias[i] = 0;
 				medias[i] |= (1 << i);
 			}
 			if (Helpers.TEGlowByte(faceTextures[i].getGlow()) != Helpers.TEGlowByte(defaultTexture.getGlow()))
 			{
-				if (glows[i] == Integer.MAX_VALUE)
+				if (glows[i] == Long.MAX_VALUE)
 					glows[i] = 0;
 				glows[i] |= (1 << i);
 			}
@@ -1114,7 +1111,7 @@ public class TextureEntry
 		memStream.write(defaultTexture.getTextureID().GetBytes());
 		for (int i = 0; i < textures.length; i++)
 		{
-			if (textures[i] != Integer.MAX_VALUE)
+			if (textures[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(textures[i]));
 				memStream.write(faceTextures[i].getTextureID().GetBytes());
@@ -1128,7 +1125,7 @@ public class TextureEntry
 		memStream.write(defaultTexture.getRGBA().GetBytes(true));
 		for (int i = 0; i < rgbas.length; i++)
 		{
-			if (rgbas[i] != Integer.MAX_VALUE)
+			if (rgbas[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(rgbas[i]));
 				// Serialize the color bytes inverted to optimize for zerocoding
@@ -1142,7 +1139,7 @@ public class TextureEntry
 		memStream.write(Helpers.FloatToBytesL(defaultTexture.getRepeatU()));
 		for (int i = 0; i < repeatus.length; i++)
 		{
-			if (repeatus[i] != Integer.MAX_VALUE)
+			if (repeatus[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(repeatus[i]));
 				memStream.write(Helpers.FloatToBytesL(faceTextures[i].getRepeatU()));
@@ -1155,7 +1152,7 @@ public class TextureEntry
 		memStream.write(Helpers.FloatToBytesL(defaultTexture.getRepeatV()));
 		for (int i = 0; i < repeatvs.length; i++)
 		{
-			if (repeatvs[i] != Integer.MAX_VALUE)
+			if (repeatvs[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(repeatvs[i]));
 				memStream.write(Helpers.FloatToBytesL(faceTextures[i].getRepeatV()));
@@ -1168,7 +1165,7 @@ public class TextureEntry
 		memStream.write(Helpers.TEOffsetShort(defaultTexture.getOffsetU()));
 		for (int i = 0; i < offsetus.length; i++)
 		{
-			if (offsetus[i] != Integer.MAX_VALUE)
+			if (offsetus[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(offsetus[i]));
 				memStream.write(Helpers.TEOffsetShort(faceTextures[i].getOffsetU()));
@@ -1181,7 +1178,7 @@ public class TextureEntry
 		memStream.write(Helpers.TEOffsetShort(defaultTexture.getOffsetV()));
 		for (int i = 0; i < offsetvs.length; i++)
 		{
-			if (offsetvs[i] != Integer.MAX_VALUE)
+			if (offsetvs[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(offsetvs[i]));
 				memStream.write(Helpers.TEOffsetShort(faceTextures[i].getOffsetV()));
@@ -1194,7 +1191,7 @@ public class TextureEntry
 		memStream.write(Helpers.TERotationShort(defaultTexture.getRotation()));
 		for (int i = 0; i < rotations.length; i++)
 		{
-			if (rotations[i] != Integer.MAX_VALUE)
+			if (rotations[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(rotations[i]));
 				memStream.write(Helpers.TERotationShort(faceTextures[i].getRotation()));
@@ -1207,7 +1204,7 @@ public class TextureEntry
 		memStream.write(defaultTexture.material);
 		for (int i = 0; i < materials.length; i++)
 		{
-			if (materials[i] != Integer.MAX_VALUE)
+			if (materials[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(materials[i]));
 				memStream.write(faceTextures[i].material);
@@ -1220,7 +1217,7 @@ public class TextureEntry
 		memStream.write(defaultTexture.media);
 		for (int i = 0; i < medias.length; i++)
 		{
-			if (medias[i] != Integer.MAX_VALUE)
+			if (medias[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(medias[i]));
 				memStream.write(faceTextures[i].media);
@@ -1233,7 +1230,7 @@ public class TextureEntry
 		memStream.write(Helpers.TEGlowByte(defaultTexture.getGlow()));
 		for (int i = 0; i < glows.length; i++)
 		{
-			if (glows[i] != Integer.MAX_VALUE)
+			if (glows[i] != Long.MAX_VALUE)
 			{
 				memStream.write(GetFaceBitfieldBytes(glows[i]));
 				memStream.write(Helpers.TEGlowByte(faceTextures[i].getGlow()));
@@ -1273,17 +1270,17 @@ public class TextureEntry
 	}
 
 	// #region Helpers
-	private void InitializeArray(int[] array)
+	private void InitializeArray(long[] array)
 	{
 		for (int i = 0; i < array.length; i++)
-			array[i] = Integer.MAX_VALUE;
+			array[i] = Long.MAX_VALUE;
 	}
 
 	class Values
 	{
 		int bitfieldSize;
-		int faceBits;
 		int i;
+		long faceBits;
 	}
 
 	private boolean ReadFaceBitfield(byte[] data, Values pos)
@@ -1298,7 +1295,7 @@ public class TextureEntry
 		do
 		{
 			b = data[pos.i];
-			pos.faceBits = (pos.faceBits << 7) | (b & 0x7F);
+			pos.faceBits = (pos.faceBits << 7) | (b & 0x7FL);
 			pos.bitfieldSize += 7;
 			pos.i++;
 		} while ((b & 0x80) != 0);
@@ -1306,10 +1303,10 @@ public class TextureEntry
 		return (pos.faceBits != 0);
 	}
 
-	private byte[] GetFaceBitfieldBytes(int bitfield)
+	private byte[] GetFaceBitfieldBytes(long bitfield)
 	{
 		int byteLength = 0;
-		int tmpBitfield = bitfield;
+		long tmpBitfield = bitfield;
 		while (tmpBitfield != 0)
 		{
 			tmpBitfield >>= 7;

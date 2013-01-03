@@ -216,15 +216,26 @@ public class Helpers
 	}
 
 	/**
-	 * Round a floating-point value to the nearest integer
+	 * Round a floating-point value away from zero to the nearest integer
 	 * 
 	 * @param val
 	 *            Floating point number to round
 	 * @return Integer
 	 */
-	public static int Round(float val)
+	public static int roundFromZero(float val)
 	{
-		return (int) Math.floor(val + 0.5f);
+		if (val < 0)
+			return (int) Math.ceil(val - 0.5f);
+		else
+			return (int) Math.floor(val + 0.5f);
+	}
+
+	public static int roundFromZero(double val)
+	{
+		if (val < 0)
+			return (int) Math.ceil(val - 0.5f);
+		else
+			return (int) Math.floor(val + 0.5f);
 	}
 
 	/** Test if a single precision float is a finite number */
@@ -1939,7 +1950,7 @@ public class Helpers
 	}
 
 	/**
-	 * Convert a float value to a byte given a minimum and maximum range
+	 * Convert a float value to an unsigned byte value given a minimum and maximum range
 	 * 
 	 * @param val
 	 *            Value to convert to a byte
@@ -1956,7 +1967,7 @@ public class Helpers
 		val -= lower;
 		val /= (upper - lower);
 
-		return (byte) Math.floor(val * Byte.MAX_VALUE);
+		return (byte) Math.floor(val * 255);
 	}
 
 	/**
@@ -2046,11 +2057,11 @@ public class Helpers
 		return (int) value;
 	}
 
-	public static short TEOffsetShort(float offset)
+	public static byte[] TEOffsetShort(float offset)
 	{
 		offset = Helpers.Clamp(offset, -1.0f, 1.0f);
 		offset *= 32767.0f;
-		return (short) Math.round(offset);
+		return Int16ToBytesL((short) roundFromZero(offset));
 	}
 
 	public static float TEOffsetFloat(byte[] bytes, int pos)
@@ -2059,17 +2070,18 @@ public class Helpers
 		return offset / 32767.0f;
 	}
 
-	public static short TERotationShort(float rotation)
+	public static byte[] TERotationShort(float rotation)
 	{
 		final double TWO_PI = 6.283185307179586476925286766559d;
 		double remainder = Math.IEEEremainder(rotation, TWO_PI);
-		return (short) Math.round(((remainder / TWO_PI) * 32767.0f) + 0.5f);
+		return Int16ToBytesL((short) roundFromZero((remainder / TWO_PI) * 32767.0f));
 	}
 
 	public static float TERotationFloat(byte[] bytes, int pos)
 	{
 		final float TWO_PI = 6.283185307179586476925286766559f;
-		return ((bytes[pos] | (bytes[pos + 1] << 8)) / 32767.0f) * TWO_PI;
+		int tmp = BytesToInt16L(bytes, pos);
+		return tmp * TWO_PI / 32767.0f ;
 	}
 
 	public static byte TEGlowByte(float glow)
