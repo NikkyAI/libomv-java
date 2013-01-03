@@ -760,6 +760,21 @@ public class Simulator extends Thread
 		return null;
 	}
 	
+	public Avatar findAvatar(String name)
+	{
+		synchronized (_ObjectsAvatars)
+		{
+			for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
+			{
+				if (e.getValue().getName().equals(name))
+				{
+					return e.getValue();
+				}
+			}
+		}
+		return null;
+	}
+
 	/* A non thread-safe dictionary containing primitives in a simulator */
 	private HashMap<Integer, Primitive> _ObjectsPrimitives = new HashMap<Integer, Primitive>();
 
