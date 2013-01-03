@@ -563,11 +563,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            a integer representing the number of milliseconds to wait for
 	 *            results
 	 * @return A list of inventory items matching search criteria within folder
-	 * @throws InventoryException
 	 * @throws Exception
 	 */
 	public final ArrayList<InventoryNode> FolderContents(final UUID folderID, UUID ownerID, boolean folders, boolean items,
-			byte order, int timeout) throws InventoryException, Exception
+			byte order, int timeout) throws Exception
 	{
 		final TimeoutEvent<ArrayList<InventoryNode>> fetchEvent = new TimeoutEvent<ArrayList<InventoryNode>>();
 
