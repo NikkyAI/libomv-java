@@ -1383,9 +1383,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * Empty the Trash folder
 	 * 
 	 * @throws Exception
-	 * @throws InventoryException
 	 */
-	public final void EmptyTrash() throws InventoryException, Exception
+	public final void EmptyTrash() throws Exception
 	{
 		EmptySystemFolder(AssetType.TrashFolder);
 	}
@@ -1396,9 +1395,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @param folderType
 	 *            The type of folder to empty
 	 * @throws Exception
-	 * @throws InventoryException
 	 */
-	private void EmptySystemFolder(AssetType folderType) throws Exception, InventoryException
+	private void EmptySystemFolder(AssetType folderType) throws Exception
 	{
 		synchronized (_Store)
 		{
