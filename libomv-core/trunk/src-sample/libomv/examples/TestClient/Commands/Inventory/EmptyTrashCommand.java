@@ -5,7 +5,9 @@ import libomv.examples.TestClient.TestClient;
 import libomv.inventory.InventoryException;
 import libomv.types.UUID;
 
-/// TestClient command to download and display a notecard asset
+/**
+ * TestClient command to empty the trash
+ */
 public class EmptyTrashCommand extends Command
 {
     public EmptyTrashCommand(TestClient testClient)
