@@ -304,7 +304,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * Primitive object will be created each time an object update packet is
 	 * received
 	 */
-	public boolean OBJECT_TRACKING = true;
+	public static final String OBJECT_TRACKING = "objectTracking";
 
 	/*
 	 * If true, position and velocity will periodically be interpolated
@@ -434,6 +434,7 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(ENABLE_LIBRARY_STORE, true),
             new DefaultSetting(HTTP_INVENTORY, true),
             new DefaultSetting(AVATAR_TRACKING, true),
+            new DefaultSetting(OBJECT_TRACKING, true),
 
 	};
 	/**

@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
@@ -739,18 +740,25 @@ public class Simulator extends Thread
 
 	public Avatar findAvatar(UUID id)
 	{
+		return findAvatar(id, false);
+	}
+	
+	public Avatar findAvatar(UUID id, boolean remove)
+	{
 		synchronized (_ObjectsAvatars)
 		{
-			for (Avatar av : _ObjectsAvatars.values())
+			for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
 			{
-				if (av.ID.equals(id))
-					return av;
+				if (e.getValue().ID.equals(id))
+				{
+					if (remove)
+						_ObjectsAvatars.remove(e.getKey());
+					return e.getValue();
+				}
 			}
 		}
 		return null;
 	}
-	
-	
 	
 	/* A non thread-safe dictionary containing primitives in a simulator */
 	private HashMap<Integer, Primitive> _ObjectsPrimitives = new HashMap<Integer, Primitive>();
@@ -758,6 +766,23 @@ public class Simulator extends Thread
 	public HashMap<Integer, Primitive> getObjectsPrimitives()
 	{
 		return _ObjectsPrimitives;
+	}
+
+	public Primitive findPrimitive(UUID id, boolean remove)
+	{
+		synchronized (_ObjectsPrimitives)
+		{
+			for (Entry<Integer, Primitive> e : _ObjectsPrimitives.entrySet())
+			{
+				if (e.getValue().ID.equals(id))
+				{
+					if (remove)
+						_ObjectsPrimitives.remove(e.getKey());
+					return e.getValue();
+				}
+			}
+		}
+		return null;
 	}
 
 	/* Coarse locations of avatars in this simulator */

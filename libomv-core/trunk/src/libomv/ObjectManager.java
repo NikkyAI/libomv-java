@@ -3152,7 +3152,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				// #endregion Decode update data
 
-				Primitive obj = !Client.Settings.OBJECT_TRACKING ? null : (update.Avatar) ? (Primitive) GetAvatar(
+				Primitive obj = !Client.Settings.getBool(LibSettings.OBJECT_TRACKING) ? null : (update.Avatar) ? (Primitive) GetAvatar(
 						simulator, update.LocalID, UUID.Zero) : (Primitive) GetPrimitive(simulator, update.LocalID,
 						UUID.Zero);
 
@@ -3171,7 +3171,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					Client.Self.setAngularVelocity(update.AngularVelocity);
 				}
 				// #endregion Update Client.Self
-				if (Client.Settings.OBJECT_TRACKING && obj != null)
+				if (obj != null && Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 				{
 					obj.Position = update.Position;
 					obj.Rotation = update.Rotation;
@@ -3473,13 +3473,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		synchronized (simulator.getObjectsPrimitives())
 		{
-			if (Client.Settings.OBJECT_TRACKING)
+			if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 			{
-				int localID;
-				for (int i = 0; i < kill.ID.length; i++)
+				for (int localID : kill.ID)
 				{
-					localID = kill.ID[i];
-
 					if (simulator.getObjectsPrimitives().containsKey(localID))
 					{
 						removePrims.add(localID);
@@ -3498,14 +3495,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 			if (Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 			{
-				int localID;
-
 				synchronized (simulator.getObjectsAvatars())
 				{
-					for (int i = 0; i < kill.ID.length; i++)
+					for (int localID : kill.ID)
 					{
-						localID = kill.ID[i];
-
 						if (simulator.getObjectsAvatars().containsKey(localID))
 						{
 							removeAvatars.add(localID);
@@ -3604,7 +3597,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				props.TextureIDs[j] = new UUID(objectData.getTextureID(), j * 16);
 			}
 
-			if (Client.Settings.OBJECT_TRACKING)
+			if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 			{
 				synchronized (simulator.getObjectsPrimitives())
 				{
@@ -3658,7 +3651,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			return;
 		}
 
-		if (Client.Settings.OBJECT_TRACKING)
+		if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			synchronized (simulator.getObjectsPrimitives())
 			{
@@ -3707,7 +3700,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage) message;
 
-		if (Client.Settings.OBJECT_TRACKING)
+		if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			for (int i = 0; i < msg.ObjectPhysicsProperties.length; i++)
 			{
@@ -3853,7 +3846,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	public Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, boolean createIfMissing)
 	{
-		if (Client.Settings.OBJECT_TRACKING)
+		if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			synchronized (simulator.getObjectsPrimitives())
 			{
@@ -3863,13 +3856,21 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					return prim;
 				}
 				
-				if (!createIfMissing)
-					return null; 
-				
-				prim = new Primitive();
+				prim = simulator.findPrimitive(fullID, true);
+				if (prim == null)
+				{
+					if (!createIfMissing)
+					    return null;
+
+					prim = new Primitive();
+					prim.ID = fullID;
+					prim.RegionHandle = simulator.getHandle();
+				}
+				else
+				{
+					Logger.Log("GetObject(): Object with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, Client);
+				}
 				prim.LocalID = localID;
-				prim.ID = fullID;
-				prim.RegionHandle = simulator.getHandle();
 
 				simulator.getObjectsPrimitives().put(localID, prim);
 
@@ -3905,10 +3906,18 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					return avatar;
 				}
 
-				avatar = new Avatar();
+				avatar = simulator.findAvatar(fullID, true);
+				if (avatar == null)
+				{
+					avatar = new Avatar();
+					avatar.ID = fullID;
+					avatar.RegionHandle = simulator.getHandle();
+				}
+				else
+				{
+					Logger.Log("GetAvatar(): Avatar with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, Client);
+				}
 				avatar.LocalID = localID;
-				avatar.ID = fullID;
-				avatar.RegionHandle = simulator.getHandle();
 
 				simulator.getObjectsAvatars().put(localID, avatar);
 
