@@ -1016,104 +1016,13 @@ public class TextureEntry
 
 		ByteArrayOutputStream memStream = new ByteArrayOutputStream();
 
-		// #region Bitfield Setup
-
-		long[] textures = new long[faceTextures.length];
-		InitializeArray(textures);
-		long[] rgbas = new long[faceTextures.length];
-		InitializeArray(rgbas);
-		long[] repeatus = new long[faceTextures.length];
-		InitializeArray(repeatus);
-		long[] repeatvs = new long[faceTextures.length];
-		InitializeArray(repeatvs);
-		long[] offsetus = new long[faceTextures.length];
-		InitializeArray(offsetus);
-		long[] offsetvs = new long[faceTextures.length];
-		InitializeArray(offsetvs);
-		long[] rotations = new long[faceTextures.length];
-		InitializeArray(rotations);
-		long[] materials = new long[faceTextures.length];
-		InitializeArray(materials);
-		long[] medias = new long[faceTextures.length];
-		InitializeArray(medias);
-		long[] glows = new long[faceTextures.length];
-		InitializeArray(glows);
-
-		for (int i = 0; i < faceTextures.length; i++)
-		{
-			if (faceTextures[i] == null)
-				continue;
-
-			if (!faceTextures[i].getTextureID().equals(defaultTexture.getTextureID()))
-			{
-				if (textures[i] == Long.MAX_VALUE)
-					textures[i] = 0;
-				textures[i] |= (1 << i);
-			}
-			if (!faceTextures[i].getRGBA().equals(defaultTexture.getRGBA()))
-			{
-				if (rgbas[i] == Long.MAX_VALUE)
-					rgbas[i] = 0;
-				rgbas[i] |= (1 << i);
-			}
-			if (faceTextures[i].getRepeatU() != defaultTexture.getRepeatU())
-			{
-				if (repeatus[i] == Long.MAX_VALUE)
-					repeatus[i] = 0;
-				repeatus[i] |= (1 << i);
-			}
-			if (faceTextures[i].getRepeatV() != defaultTexture.getRepeatV())
-			{
-				if (repeatvs[i] == Long.MAX_VALUE)
-					repeatvs[i] = 0;
-				repeatvs[i] |= (1 << i);
-			}
-			if (!Helpers.TEOffsetShort(faceTextures[i].getOffsetU()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetU())))
-			{
-				if (offsetus[i] == Long.MAX_VALUE)
-					offsetus[i] = 0;
-				offsetus[i] |= (1 << i);
-			}
-			if (!Helpers.TEOffsetShort(faceTextures[i].getOffsetV()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetV())))
-			{
-				if (offsetvs[i] == Long.MAX_VALUE)
-					offsetvs[i] = 0;
-				offsetvs[i] |= (1 << i);
-			}
-			if (!Helpers.TERotationShort(faceTextures[i].getRotation()).equals(Helpers.TERotationShort(defaultTexture.getRotation())))
-			{
-				if (rotations[i] == Long.MAX_VALUE)
-					rotations[i] = 0;
-				rotations[i] |= (1 << i);
-			}
-			if (faceTextures[i].material != defaultTexture.material)
-			{
-				if (materials[i] == Long.MAX_VALUE)
-					materials[i] = 0;
-				materials[i] |= (1 << i);
-			}
-			if (faceTextures[i].media != defaultTexture.media)
-			{
-				if (medias[i] == Long.MAX_VALUE)
-					medias[i] = 0;
-				medias[i] |= (1 << i);
-			}
-			if (Helpers.TEGlowByte(faceTextures[i].getGlow()) != Helpers.TEGlowByte(defaultTexture.getGlow()))
-			{
-				if (glows[i] == Long.MAX_VALUE)
-					glows[i] = 0;
-				glows[i] |= (1 << i);
-			}
-		}
-		// #endregion Bitfield Setup
-
 		// #region Texture
 		memStream.write(defaultTexture.getTextureID().GetBytes());
-		for (int i = 0; i < textures.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (textures[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && !faceTextures[i].getTextureID().equals(defaultTexture.getTextureID()))
 			{
-				memStream.write(GetFaceBitfieldBytes(textures[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(faceTextures[i].getTextureID().GetBytes());
 			}
 		}
@@ -1123,11 +1032,11 @@ public class TextureEntry
 		// #region Color
 		// Serialize the color bytes inverted to optimize for zerocoding
 		memStream.write(defaultTexture.getRGBA().GetBytes(true));
-		for (int i = 0; i < rgbas.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (rgbas[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && !faceTextures[i].getRGBA().equals(defaultTexture.getRGBA()))
 			{
-				memStream.write(GetFaceBitfieldBytes(rgbas[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				// Serialize the color bytes inverted to optimize for zerocoding
 				memStream.write(faceTextures[i].getRGBA().GetBytes(true));
 			}
@@ -1137,11 +1046,11 @@ public class TextureEntry
 
 		// #region RepeatU
 		memStream.write(Helpers.FloatToBytesL(defaultTexture.getRepeatU()));
-		for (int i = 0; i < repeatus.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (repeatus[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && faceTextures[i].getRepeatU() != defaultTexture.getRepeatU())
 			{
-				memStream.write(GetFaceBitfieldBytes(repeatus[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(Helpers.FloatToBytesL(faceTextures[i].getRepeatU()));
 			}
 		}
@@ -1150,11 +1059,11 @@ public class TextureEntry
 
 		// #region RepeatV
 		memStream.write(Helpers.FloatToBytesL(defaultTexture.getRepeatV()));
-		for (int i = 0; i < repeatvs.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (repeatvs[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && faceTextures[i].getRepeatV() != defaultTexture.getRepeatV())
 			{
-				memStream.write(GetFaceBitfieldBytes(repeatvs[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(Helpers.FloatToBytesL(faceTextures[i].getRepeatV()));
 			}
 		}
@@ -1163,11 +1072,11 @@ public class TextureEntry
 
 		// #region OffsetU
 		memStream.write(Helpers.TEOffsetShort(defaultTexture.getOffsetU()));
-		for (int i = 0; i < offsetus.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (offsetus[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && !Helpers.TEOffsetShort(faceTextures[i].getOffsetU()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetU())))
 			{
-				memStream.write(GetFaceBitfieldBytes(offsetus[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(Helpers.TEOffsetShort(faceTextures[i].getOffsetU()));
 			}
 		}
@@ -1176,11 +1085,11 @@ public class TextureEntry
 
 		// #region OffsetV
 		memStream.write(Helpers.TEOffsetShort(defaultTexture.getOffsetV()));
-		for (int i = 0; i < offsetvs.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (offsetvs[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && !Helpers.TEOffsetShort(faceTextures[i].getOffsetV()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetV())))
 			{
-				memStream.write(GetFaceBitfieldBytes(offsetvs[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(Helpers.TEOffsetShort(faceTextures[i].getOffsetV()));
 			}
 		}
@@ -1189,11 +1098,11 @@ public class TextureEntry
 
 		// #region Rotation
 		memStream.write(Helpers.TERotationShort(defaultTexture.getRotation()));
-		for (int i = 0; i < rotations.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (rotations[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && !Helpers.TERotationShort(faceTextures[i].getRotation()).equals(Helpers.TERotationShort(defaultTexture.getRotation())))
 			{
-				memStream.write(GetFaceBitfieldBytes(rotations[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(Helpers.TERotationShort(faceTextures[i].getRotation()));
 			}
 		}
@@ -1202,11 +1111,11 @@ public class TextureEntry
 
 		// #region Material
 		memStream.write(defaultTexture.material);
-		for (int i = 0; i < materials.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (materials[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && faceTextures[i].material != defaultTexture.material)
 			{
-				memStream.write(GetFaceBitfieldBytes(materials[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(faceTextures[i].material);
 			}
 		}
@@ -1215,11 +1124,11 @@ public class TextureEntry
 
 		// #region Media
 		memStream.write(defaultTexture.media);
-		for (int i = 0; i < medias.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (medias[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && faceTextures[i].media != defaultTexture.media)
 			{
-				memStream.write(GetFaceBitfieldBytes(medias[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(faceTextures[i].media);
 			}
 		}
@@ -1228,11 +1137,11 @@ public class TextureEntry
 
 		// #region Glow
 		memStream.write(Helpers.TEGlowByte(defaultTexture.getGlow()));
-		for (int i = 0; i < glows.length; i++)
+		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (glows[i] != Long.MAX_VALUE)
+			if (faceTextures[i] != null && Helpers.TEGlowByte(faceTextures[i].getGlow()) != Helpers.TEGlowByte(defaultTexture.getGlow()))
 			{
-				memStream.write(GetFaceBitfieldBytes(glows[i]));
+				memStream.write(GetFaceBitfieldBytes(1 << i));
 				memStream.write(Helpers.TEGlowByte(faceTextures[i].getGlow()));
 			}
 		}
@@ -1270,12 +1179,6 @@ public class TextureEntry
 	}
 
 	// #region Helpers
-	private void InitializeArray(long[] array)
-	{
-		for (int i = 0; i < array.length; i++)
-			array[i] = Long.MAX_VALUE;
-	}
-
 	class Values
 	{
 		int bitfieldSize;
