@@ -583,7 +583,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						ArrayList<InventoryNode> contents = folder.getContents();
 						// FIXME: InventoryDescendentsHandler only stores correct
 						// descendendCount if both folders and items are fetched.
-						if (contents.size() >= folder.descendentCount)
+						if (contents != null && contents.size() >= folder.descendentCount)
 						{
 							fetchEvent.set(contents);
 							return false;
@@ -696,7 +696,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                                         category.name = descFolder.get("name").AsString();
                                         category.version = descFolder.get("version").AsInteger();
                                         category.preferredType = AssetType.setValue(descFolder.get("type_default").AsInteger());
-                                        _Store.add(folder);
+                                        _Store.add(category);
                                     }
                                 }
                                 // Fetch descendent items
@@ -736,7 +736,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                                     }
                                 }
                             }
-                            OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(folderID));
+                            OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(folder.itemID));
                         }
                     }
                     catch (Exception ex)
