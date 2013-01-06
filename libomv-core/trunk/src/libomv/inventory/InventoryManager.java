@@ -339,7 +339,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// #endregion String Arrays
 
 	private GridClient _Client;
-	private InventoryStore __Store;
+	private InventoryStore _Store;
 	// private Random _RandNumbers = new Random();
 	private ArrayList<InventorySearch> _Searches = new ArrayList<InventorySearch>();
 
