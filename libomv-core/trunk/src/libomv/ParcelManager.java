@@ -1003,20 +1003,19 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		private final int m_LocalID;
 		private final float m_Dwell;
 
-		// Tangible_doc_comment_start Get the global ID of the parcel
+		// Get the global ID of the parcel
 		public final UUID getParcelID()
 		{
 			return m_ParcelID;
 		}
 
-		// Tangible_doc_comment_start Get the simulator specific ID of the
-		// parcel
+		// Get the simulator specific ID of the parcel
 		public final int getLocalID()
 		{
 			return m_LocalID;
 		}
 
-		// Tangible_doc_comment_start Get the calculated dwell
+		// Get the calculated dwell
 		public final float getDwell()
 		{
 			return m_Dwell;

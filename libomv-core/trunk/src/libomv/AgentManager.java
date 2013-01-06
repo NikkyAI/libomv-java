@@ -1970,7 +1970,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private long activeGroupPowers;
 
 	// Your (client) Avatar ID, local to Region/sim
-	private long localID;
+	private int localID;
 	// Current position of avatar
 	private Vector3 relativePosition;
 	// Current rotation of avatar
@@ -2011,12 +2011,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/* Your (client) avatar ID, local to the current region/sim */
-	public final long getLocalID()
+	public final int getLocalID()
 	{
 		return localID;
 	}
 
-	public final void setLocalID(long id)
+	public final void setLocalID(int id)
 	{
 		localID = id;
 	}
@@ -2303,6 +2303,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private final GridClient _Client;
 	/* Used for movement and camera tracking */
 	private final AgentMovement _Movement;
+
+	public AgentMovement getMovement()
+	{
+		return _Movement;
+	}
 
 	private ExecutorService _ThreadPool;
 

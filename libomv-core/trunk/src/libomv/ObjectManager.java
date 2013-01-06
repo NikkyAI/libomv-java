@@ -3095,7 +3095,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			{
 				int pos = 4;
 				byte[] data = block.getData();
-				long localid = Helpers.BytesToUInt32L(data, 0);
+				int localid = Helpers.BytesToInt32L(data, 0);
 
 				// Check if we are interested in this update
 				if (!Client.Settings.ALWAYS_DECODE_OBJECTS && localid != Client.Self.getLocalID()
@@ -3109,7 +3109,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				ObjectMovementUpdate update = new ObjectMovementUpdate();
 
 				// LocalID
-				update.LocalID = (int) localid;
+				update.LocalID = localid;
 				// State
 				update.State = data[pos++];
 				// Avatar boolean
