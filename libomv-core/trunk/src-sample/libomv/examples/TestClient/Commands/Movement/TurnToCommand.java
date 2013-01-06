@@ -27,45 +27,38 @@ package libomv.examples.TestClient.Commands.Movement;
 
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
-import libomv.primitives.Primitive;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 
-public class SitCommand extends Command
+public class TurnToCommand extends Command
 {
-    public SitCommand(TestClient testClient)
-	{
-		Name = "sit";
-		Description = "Attempt to sit on the closest prim";
+    public TurnToCommand(TestClient client)
+    {
+        Name = "turnto";
+        Description = "Turns the avatar looking to a specified point. Usage: turnto x y z";
         Category = CommandCategory.Movement;
-	}
-		
+    }
+
+    @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
-	{
-        Primitive closest = null;
-	    double closestDistance = Double.MAX_VALUE;
-
-        for (Primitive prim : Client.Network.getCurrentSim().getObjectsPrimitives().values())
+    {
+        if (args.length != 3)
+            return "Usage: turnto x y z";
+        try
         {
-            float distance = Vector3.distance(Client.Self.getAgentPosition(), prim.Position);
+        	float x = Float.valueOf(args[0]),
+                  y = Float.valueOf(args[1]),
+                  z = Float.valueOf(args[2]);
 
-            if (closest == null || distance < closestDistance)
-            {
-                closest = prim;
-                closestDistance = distance;
-            }
+            Vector3 newDirection = new Vector3(x, y, z);
+            Client.Self.getMovement().TurnToward(newDirection);
+            Client.Self.getMovement().SendUpdate(false);
+            return "Turned to ";
+        }
+        catch (NumberFormatException ex)
+        {
+            return "Usage: turnto x y z";
         }
 
-        if (closest != null)
-        {
-            Client.Self.RequestSit(closest.ID, Vector3.Zero);
-            Client.Self.Sit();
-
-            return "Sat on " + closest.ID + " (" + closest.LocalID + "). Distance: " + closestDistance;
-        }
-        else
-        {
-            return "Couldn't find a nearby prim to sit on";
-        }
-	}
+    }
 }

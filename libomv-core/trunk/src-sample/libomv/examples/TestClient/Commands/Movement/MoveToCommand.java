@@ -27,45 +27,44 @@ package libomv.examples.TestClient.Commands.Movement;
 
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
-import libomv.primitives.Primitive;
 import libomv.types.UUID;
-import libomv.types.Vector3;
+import libomv.utils.Helpers;
 
-public class SitCommand extends Command
+public class MoveToCommand extends Command
 {
-    public SitCommand(TestClient testClient)
-	{
-		Name = "sit";
-		Description = "Attempt to sit on the closest prim";
+    public void MovetoCommand(TestClient client)
+    {
+        Name = "moveto";
+        Description = "Moves the avatar to the specified global position using simulator autopilot. Usage: moveto x y z";
         Category = CommandCategory.Movement;
-	}
-		
+    }
+
+    @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
-	{
-        Primitive closest = null;
-	    double closestDistance = Double.MAX_VALUE;
+    {
+        if (args.length != 3)
+            return "Usage: moveto x y z";
 
-        for (Primitive prim : Client.Network.getCurrentSim().getObjectsPrimitives().values())
+        int[] region = new int[2];
+        Helpers.LongToUInts(Client.Network.getCurrentSim().getHandle(), region);
+
+        try
         {
-            float distance = Vector3.distance(Client.Self.getAgentPosition(), prim.Position);
+        	double x = Double.valueOf(args[0]),
+                   y = Double.valueOf(args[1]),
+                   z = Double.valueOf(args[2]);
 
-            if (closest == null || distance < closestDistance)
-            {
-                closest = prim;
-                closestDistance = distance;
-            }
+            // Convert the local coordinates to global ones by adding the region handle parts to x and y
+            x += region[0];
+            y += region[1];
+
+            Client.Self.AutoPilot(x, y, z);
+
+            return String.format("Attempting to move to <%.1f,%.1f,%.1f>", x, y, z);
         }
-
-        if (closest != null)
+        catch (NumberFormatException ex)
         {
-            Client.Self.RequestSit(closest.ID, Vector3.Zero);
-            Client.Self.Sit();
-
-            return "Sat on " + closest.ID + " (" + closest.LocalID + "). Distance: " + closestDistance;
+            return "Usage: moveto x y z";
         }
-        else
-        {
-            return "Couldn't find a nearby prim to sit on";
-        }
-	}
+    }
 }
