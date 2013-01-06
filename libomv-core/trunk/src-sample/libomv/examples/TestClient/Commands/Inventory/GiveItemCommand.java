@@ -29,7 +29,6 @@ import java.util.List;
 
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
-import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode;
 import libomv.types.UUID;
