@@ -17,6 +17,7 @@ public class AvatarInfoCommand extends Command
         Category = CommandCategory.Appearance;
     }
 
+	@Override
     public String execute(String[] args, UUID fromAgentID)
     {
         if (args.length != 2)

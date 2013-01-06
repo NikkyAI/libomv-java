@@ -18,6 +18,7 @@ public class InventoryCommand extends Command
         Category = CommandCategory.Inventory;
     }
 
+	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         StringBuilder result = new StringBuilder();

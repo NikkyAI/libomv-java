@@ -18,6 +18,7 @@ public class HelpCommand extends Command
         Category = CommandCategory.TestClient;
 	}
 
+	@Override
     public String execute(String[] args, UUID fromAgentID)
 	{
         if (args.length > 0)

@@ -24,6 +24,7 @@ public class ActivateGroupCommand extends Command implements PacketCallback
         Category = CommandCategory.Groups;
     }
 
+	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length < 1)

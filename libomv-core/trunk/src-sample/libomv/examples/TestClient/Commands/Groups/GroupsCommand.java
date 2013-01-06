@@ -14,6 +14,7 @@ public class GroupsCommand extends Command
         Category = CommandCategory.Groups;
     }
 
+	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         Client.ReloadGroupsCache();
