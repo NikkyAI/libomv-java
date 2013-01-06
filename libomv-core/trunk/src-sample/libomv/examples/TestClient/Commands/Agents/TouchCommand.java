@@ -44,8 +44,7 @@ public class TouchCommand extends Command
 	{
         if (args.length != 1)
             return "Usage: touch UUID";
-        UUID target = UUID.Parse(args[0]);
-        
+        UUID target = UUID.parse(args[0]);
         if (target != null)
         {
         	synchronized (Client.Network.getCurrentSim())

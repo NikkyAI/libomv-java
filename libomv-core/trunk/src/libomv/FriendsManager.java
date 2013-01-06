@@ -1073,7 +1073,7 @@ public class FriendsManager implements PacketCallback
 					{
 						for (BuddyListEntry buddy : e.getReply().BuddyList)
 						{
-							UUID bubid = UUID.Parse(buddy.buddy_id);
+							UUID bubid = UUID.parse(buddy.buddy_id);
 							if (!_FriendList.containsKey(bubid))
 							{
 								addFriend(new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));

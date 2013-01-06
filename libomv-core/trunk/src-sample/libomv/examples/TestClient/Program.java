@@ -68,7 +68,7 @@ public class Program
             groupCommands = true;
 
         if (arguments.get("masterkey") != null)
-            masterKey = UUID.Parse(arguments.get("masterkey"));
+            masterKey = UUID.parse(arguments.get("masterkey"));
 
         if (arguments.get("master") != null)
             masterName = arguments.get("master");

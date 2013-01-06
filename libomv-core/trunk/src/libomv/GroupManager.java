@@ -983,7 +983,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 				{
 					OSDMap member = (OSDMap)membersOSD.get(memberID);
 
-					GroupMember groupMember = GroupManager.this.new GroupMember(UUID.Parse(memberID));
+					GroupMember groupMember = GroupManager.this.new GroupMember(UUID.parse(memberID));
 					groupMember.Contribution = member.get("donated_square_meters").AsInteger();
 					groupMember.IsOwner = "Y" == member.get("owner").AsString();
 					groupMember.OnlineStatus = member.get("last_login").AsString();

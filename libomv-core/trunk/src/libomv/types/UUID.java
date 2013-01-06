@@ -85,7 +85,7 @@ public class UUID implements Serializable
 	 */
 	public UUID(String string)
 	{
-		FromString(string);
+		fromString(string);
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class UUID implements Serializable
 			String name = parser.getName();
 			if (name.equals("Guid") || name.equals("UUID"))
 			{
-				FromString(parser.nextText());
+				fromString(parser.nextText());
 			}
 		}
 		parser.nextTag();
@@ -192,7 +192,7 @@ public class UUID implements Serializable
 	 *            Starting position of the UUID in the byte array
 	 * @return true when successful, false otherwise
 	 */
-	public boolean FromBytes(byte[] source, int pos)
+	public boolean fromBytes(byte[] source, int pos)
 	{
 		if (source.length >= pos + 16)
 		{
@@ -212,7 +212,7 @@ public class UUID implements Serializable
 	 *            either be hyphenated or non-hyphenated
 	 * @return true when successful, false otherwise
 	 */
-	public boolean FromString(String string)
+	public boolean fromString(String string)
 	{
 		// Always create new data array to prevent overwriting byref data
 		data = new byte[16];
@@ -235,11 +235,16 @@ public class UUID implements Serializable
 		// Any valid string contains now only hexadecimal characters in its first 32 bytes	
 		if (string.length() >= 32 && !string.substring(0, 32).matches("^0-9a-fA-F"))
 		{
-			for (int i = 0; i < 16; ++i)
+			try
 			{
-				data[i] = (byte) Integer.parseInt(string.substring(i * 2, (i * 2) + 2), 16);
+				for (int i = 0; i < 16; ++i)
+				{
+					data[i] = (byte) Integer.parseInt(string.substring(i * 2, (i * 2) + 2), 16);
+				}
+				return true;
 			}
-			return true;
+			catch (NumberFormatException ex)
+			{}
 		}
 		return false;
 	}
@@ -376,7 +381,7 @@ public class UUID implements Serializable
 	public static UUID parse(String val)
 	{
 		UUID uuid = new UUID(false);
-		if (uuid.FromString(val))
+		if (uuid.fromString(val))
 			return uuid;
 		return null;
 	}
@@ -404,7 +409,7 @@ public class UUID implements Serializable
 
 		try
 		{
-			result.argvalue = Parse(val);
+			result.argvalue = parse(val);
 			return true;
 		}
 		catch (Throwable t)

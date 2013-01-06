@@ -3071,11 +3071,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 							}
 							else if (key.equals("obj_id"))
 							{
-								itemID = UUID.Parse(val);
+								itemID = UUID.parse(val);
 							}
 							else if (key.equals("parent_id"))
 							{
-								parentID = UUID.Parse(val);
+								parentID = UUID.parse(val);
 							}
 							else if (key.equals("type"))
 							{
@@ -3125,11 +3125,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 							}
 							else if (key.equals("item_id"))
 							{
-								itemID = UUID.Parse(val);
+								itemID = UUID.parse(val);
 							}
 							else if (key.equals("parent_id"))
 							{
-								parentID = UUID.Parse(val);
+								parentID = UUID.parse(val);
 							}
 							else if (key.equals("permissions"))
 							{
@@ -3195,19 +3195,19 @@ public class InventoryManager implements PacketCallback, CapsCallback
 										}
 										else if (key.equals("creator_id"))
 										{
-											creatorID.FromString(val);
+											creatorID.fromString(val);
 										}
 										else if (key.equals("owner_id"))
 										{
-											ownerID.FromString(val);
+											ownerID.fromString(val);
 										}
 										else if (key.equals("last_owner_id"))
 										{
-											lastOwnerID.FromString(val);
+											lastOwnerID.fromString(val);
 										}
 										else if (key.equals("group_id"))
 										{
-											groupID.FromString(val);
+											groupID.fromString(val);
 										}
 										else if (key.equals("group_owned"))
 										{

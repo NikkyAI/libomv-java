@@ -307,7 +307,7 @@ public class TestClient extends GridClient implements PacketCallback
 
 	public UUID GroupName2UUID(String groupName) throws Exception
     {
-        UUID tryUUID = UUID.Parse(groupName);
+        UUID tryUUID = UUID.parse(groupName);
         if (tryUUID != null)
             return tryUUID;
 

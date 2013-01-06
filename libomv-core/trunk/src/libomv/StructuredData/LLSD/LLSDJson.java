@@ -300,13 +300,9 @@ public final class LLSDJson extends OSDParser
 		String string = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
 		if (string.length() >=36)
 		{
-			try
-			{
-				UUID uuid = new UUID();
-				if (uuid.FromString(string))
-				    return OSD.FromUUID(uuid);
-			}
-			catch (Exception ex) {}
+			UUID uuid = new UUID();
+			if (uuid.fromString(string))
+			    return OSD.FromUUID(uuid);
 		}
 		OSD osd = OSD.FromString(string);
 		

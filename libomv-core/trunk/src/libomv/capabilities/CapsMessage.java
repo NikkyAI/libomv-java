@@ -4146,7 +4146,7 @@ public class CapsMessage implements IMessage
 					// <string>ENTER</string>
 					// </map>
 					AgentUpdatesBlock block = new AgentUpdatesBlock();
-					block.AgentID = UUID.Parse(kvp.getKey());
+					block.AgentID = UUID.parse(kvp.getKey());
 
 					OSDMap infoMap = (OSDMap) kvp.getValue();
 
