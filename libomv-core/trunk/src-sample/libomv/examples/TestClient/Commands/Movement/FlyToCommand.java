@@ -210,7 +210,7 @@ public class FlyToCommand extends Command
     private void Debug(String x)
     {
     	AgentMovement mov = Client.Self.getMovement();
-        System.out.format(x + " {0,3:##0} {1,3:##0} {2,3:##0} diff {3,5:##0.0} olddiff {4,5:##0.0}  At:{5,5} {6,5}  Up:{7,5} {8,5}  v: {9} w: {10}",
+        System.out.format(x + " %.3f %.3f %.3f diff %.5f olddiff %.5f  At:%.5f %.5f  Up:%.5f %.5f  v: %s w: %s\n",
             myPos.X, myPos.Y, myPos.Z, diff, saveolddiff,
             mov.getAtPos(), mov.getAtNeg(), mov.getUpPos(), mov.getUpNeg(),
             Client.Self.getVelocity().toString(), Client.Self.getAngularVelocity().toString());
