@@ -160,6 +160,11 @@ public abstract class InventoryNode implements Serializable
 	// parent of item/folder in tree hierarchy
 	protected InventoryFolder parent;
 	
+	public InventoryFolder getParentFolder()
+	{
+		return parent;
+	}
+	
 	public abstract InventoryType getType();
 	
 	public abstract Date getModifyTime();

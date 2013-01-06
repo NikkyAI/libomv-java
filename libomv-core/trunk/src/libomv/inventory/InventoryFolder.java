@@ -110,7 +110,7 @@ public class InventoryFolder extends InventoryNode
 	 * @return an arraylist containing the children nodes of this folder or null if there is
 	 * no children list yet
 	 */
-	protected ArrayList<InventoryNode> getContents()
+	public ArrayList<InventoryNode> getContents()
 	{
 		if (children != null)
 			return new ArrayList<InventoryNode>(children);
