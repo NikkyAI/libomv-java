@@ -29,7 +29,6 @@ import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.primitives.Avatar;
-import libomv.primitives.Primitive;
 import libomv.primitives.TextureEntry.TextureEntryFace;
 import libomv.types.UUID;
 
