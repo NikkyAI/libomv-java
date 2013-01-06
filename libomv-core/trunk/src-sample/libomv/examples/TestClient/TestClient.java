@@ -205,7 +205,7 @@ public class TestClient extends GridClient implements PacketCallback
 			if (e.getStatus() == LoginStatus.Success)
 			{
 				// Start in the inventory root folder.
-				CurrentDirectory = Inventory.getRootNode(true);
+				CurrentDirectory = Inventory.getRootNode(false);
 			}
 			return false;
 		}

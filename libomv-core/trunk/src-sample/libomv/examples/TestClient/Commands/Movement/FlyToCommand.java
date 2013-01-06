@@ -142,7 +142,6 @@ public class FlyToCommand extends Command
         }
     }
 
-
     private boolean XYMovement()
     {
         boolean res = false;
