@@ -368,15 +368,17 @@ public class UUID implements Serializable
 	/**
 	 * Generate a UUID from a string
 	 * 
-	 * @param val
-	 *            A string representation of a UUID, case insensitive and can
+	 * @param val A string representation of a UUID, case insensitive and can
 	 *            either be hyphenated or non-hyphenated
-	 *            <example>UUID.Parse("11f8aa9c-b071-4242-836b-13b7abe0d489"
-	 *            )</example>
+	 *            example: UUID.Parse("11f8aa9c-b071-4242-836b-13b7abe0d489")
+	 * @returns a new UUID if successful, null otherwise
 	 */
-	public static UUID Parse(String val)
+	public static UUID parse(String val)
 	{
-		return new UUID(val);
+		UUID uuid = new UUID(false);
+		if (uuid.FromString(val))
+			return uuid;
+		return null;
 	}
 
 	/**
