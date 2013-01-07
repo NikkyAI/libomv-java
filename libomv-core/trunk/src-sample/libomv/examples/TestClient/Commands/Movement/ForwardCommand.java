@@ -25,35 +25,63 @@
  */
 package libomv.examples.TestClient.Commands.Movement;
 
+import libomv.AgentManager;
+import libomv.AgentManager.AgentFlags;
+import libomv.AgentManager.AgentMovement;
+import libomv.AgentManager.AgentState;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
 
-public class FlyCommand extends Command
+public class ForwardCommand extends Command
 {
-    public FlyCommand(TestClient testClient)
+    public ForwardCommand(TestClient client)
     {
-        Name = "fly";
-        Description = "Starts or stops flying. Usage: fly [start/stop]";
+        Name = "forward";
+        Description = "Sends the move forward command to the server for a single packet or a given number of seconds. Usage: forward [seconds]";
         Category = CommandCategory.Movement;
     }
 
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        boolean start = true;
+        if (args.length > 1)
+            return "Usage: forward [seconds]";
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("stop"))
-            start = false;
-
-        Client.Self.Fly(start);
-        if (start)
+        AgentMovement Movement = Client.Self.getMovement();
+        if (args.length == 0)
         {
-            return "Started flying";
+            Movement.SendManualUpdate(AgentManager.ControlFlags.AGENT_CONTROL_AT_POS, Movement.Camera.getPosition(),
+                Movement.Camera.getAtAxis(), Movement.Camera.getLeftAxis(), Movement.Camera.getUpAxis(),
+                Movement.BodyRotation, Movement.HeadRotation, Movement.Camera.Far, AgentFlags.None,
+                AgentState.None, true);
         }
         else
         {
-            return "Stopped flying";
+            // Parse the number of seconds
+            long duration = 0;
+            try
+            {
+            	duration = Long.valueOf(args[0]) * 1000;
+            }
+            catch (NumberFormatException ex)
+            {}
+            if (duration == 0)
+                return "Usage: forward [seconds]";
+
+            long start = System.currentTimeMillis();
+
+            Movement.setAtPos(true);
+
+            while (System.currentTimeMillis() - start < duration)
+            {
+                // The movement timer will do this automatically, but we do it here as an example
+                // and to make sure updates are being sent out fast enough
+                Movement.SendUpdate(false);
+                Thread.sleep(100);
+            }
+            Movement.setAtPos(false);
         }
+        return "Moved forward";
     }
 }

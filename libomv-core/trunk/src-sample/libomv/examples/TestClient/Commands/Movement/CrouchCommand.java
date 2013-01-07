@@ -29,31 +29,32 @@ import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
 
-public class JumpCommand extends Command
+public class CrouchCommand extends Command
 {
-    public JumpCommand(TestClient testClient)
-	{
-		Name = "jump";
-		Description = "Jumps or flies up";
+    public CrouchCommand(TestClient testClient)
+    {
+        Name = "crouch";
+        Description = "Starts or stops crouching. Usage: crouch [start/stop]";
         Category = CommandCategory.Movement;
-	}
+    }
 
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
-	{
+    {
         boolean start = true;
 
         if (args.length == 1 && args[0].equalsIgnoreCase("stop"))
             start = false;
 
-        Client.Self.Jump(start);
+        Client.Self.Crouch(start);
         if (start)
         {
-            return "Started jumping";
+            return "Started crouching";
         }
         else
         {
-            return "Stopped jumping";
+            return "Stopped crouching";
         }
-	}
+    }
+
 }
