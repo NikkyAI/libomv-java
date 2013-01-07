@@ -32,38 +32,30 @@ import libomv.examples.TestClient.TestClient;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryNode;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 public class ChangeDirectoryCommand extends Command
 {
     public ChangeDirectoryCommand(TestClient client)
     {
         Name = "cd";
-        Description = "Changes the current working inventory folder.";
+        Description = "Changes the current working inventory folder. Usage: cd [path-to-folder]";
         Category = CommandCategory.Inventory;
     }
     
 	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        if (args.length > 1)
-            return "Usage: cd [path-to-folder]";
+        // parse the command line
+        String target = Helpers.EmptyString;
+        for (int ct = 0; ct < args.length; ct++)
+            target = target + args[ct] + " ";
+        target = target.trim();
 
-        String pathStr = "";
-        String[] path = null;
-        if (args.length == 0)
-        {
-            path = new String[1];
-            path[0] = "";
-            // cd without any arguments doesn't do anything.
-        }
-        else if (args.length == 1)
-        {
-            pathStr = args[0];
-            path = pathStr.split("/");
-            // Use '/' as a path seperator.
-        }
+        // Use '/' as a path separator.
+        String[] path = target.split("/");
         InventoryFolder currentFolder;
-        if (pathStr.startsWith("/"))
+        if (target.startsWith("/"))
             currentFolder = Client.Inventory.getRootNode(false);
         else
         	currentFolder = Client.CurrentDirectory;
@@ -75,7 +67,7 @@ public class ChangeDirectoryCommand extends Command
         for (int i = 0; i < path.length; ++i)
         {
             String nextName = path[i];
-            if (nextName == null || nextName.isEmpty() || nextName == ".")
+            if (nextName == null || nextName.isEmpty() || nextName.equals("."))
                 continue; // Ignore '.' and blanks, stay in the current directory.
  
             if (nextName.equals("..") && !currentFolder.equals(Client.Inventory.getRootNode(false)))

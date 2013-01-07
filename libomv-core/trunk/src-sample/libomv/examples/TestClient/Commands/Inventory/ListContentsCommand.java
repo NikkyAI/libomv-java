@@ -34,6 +34,7 @@ import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 public class ListContentsCommand extends Command
 {
@@ -51,7 +52,7 @@ public class ListContentsCommand extends Command
             return "Usage: ls [-l]";
 
         boolean longDisplay = false;
-        if (args.length > 0 && args[0] == "-l")
+        if (args.length > 0 && args[0].equals("-l"))
             longDisplay = true;
 
         // WARNING: Uses local copy of inventory contents, need to download them first.
@@ -59,8 +60,7 @@ public class ListContentsCommand extends Command
         if (contents == null)
             return "Empty directory";
 
-        String displayString = "";
-        String nl = "\n"; // New line character
+        String displayString = Client.CurrentDirectory.name + " contains:" + Helpers.NewLine;
         // Pretty simple, just print out the contents.
         for (InventoryNode node : contents)
         {
@@ -88,7 +88,7 @@ public class ListContentsCommand extends Command
                     displayString += PermMaskString(item.Permissions.EveryoneMask);
                     displayString += " " + item.itemID;
                     displayString += " " + item.name;
-                    displayString += nl;
+                    displayString += Helpers.NewLine;
                     displayString += "  AssetID: " + item.AssetID;
                 }
             }
@@ -96,7 +96,7 @@ public class ListContentsCommand extends Command
             {
                 displayString += node.name;
             }
-            displayString += nl;
+            displayString += Helpers.NewLine;
         }
         return displayString;
     }
@@ -118,6 +118,7 @@ public class ListContentsCommand extends Command
             str += "C";
         else
             str += "-";
+
         if ((mask & PermissionMask.Modify) != 0)
             str += "M";
         else

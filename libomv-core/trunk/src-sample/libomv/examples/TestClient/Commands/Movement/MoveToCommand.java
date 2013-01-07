@@ -32,7 +32,7 @@ import libomv.utils.Helpers;
 
 public class MoveToCommand extends Command
 {
-    public void MoveToCommand(TestClient client)
+    public MoveToCommand(TestClient client)
     {
         Name = "moveto";
         Description = "Moves the avatar to the specified global position using simulator autopilot. Usage: moveto x y z";
