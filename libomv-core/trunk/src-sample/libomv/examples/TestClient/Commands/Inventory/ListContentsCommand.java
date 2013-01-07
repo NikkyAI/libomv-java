@@ -56,6 +56,9 @@ public class ListContentsCommand extends Command
 
         // WARNING: Uses local copy of inventory contents, need to download them first.
         List<InventoryNode> contents = Client.CurrentDirectory.getContents();
+        if (contents == null)
+            return "Empty directory";
+
         String displayString = "";
         String nl = "\n"; // New line character
         // Pretty simple, just print out the contents.
