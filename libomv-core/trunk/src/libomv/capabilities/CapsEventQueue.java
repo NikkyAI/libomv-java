@@ -253,7 +253,7 @@ public class CapsEventQueue extends CapsClient
 		eventloop.start();
 	}
 
-	public void shutdown(boolean immediate)
+	public void shutdown(boolean immediate) throws InterruptedException
 	{
 		running = false;
 		synchronized (address)
@@ -261,5 +261,6 @@ public class CapsEventQueue extends CapsClient
 			if (Request != null)
 				Request.cancel(immediate);
 		}
+		super.shutdown();
 	}
 }

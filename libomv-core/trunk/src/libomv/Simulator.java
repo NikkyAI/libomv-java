@@ -997,7 +997,7 @@ public class Simulator extends Thread
 		sendPacket(use);
 	}
 
-	public final void setSeedCaps(String seedcaps)
+	public final void setSeedCaps(String seedcaps) throws InterruptedException
 	{
 		if (_Caps != null)
 		{
@@ -1005,7 +1005,7 @@ public class Simulator extends Thread
 				return;
 
 			Logger.Log("Unexpected change of seed capability", LogLevel.Warning);
-			_Caps.Disconnect(true);
+			_Caps.disconnect(true);
 			_Caps = null;
 		}
 
@@ -1050,7 +1050,7 @@ public class Simulator extends Thread
 			// Kill the current CAPS system
 			if (_Caps != null)
 			{
-				_Caps.Disconnect(true);
+				_Caps.disconnect(true);
 				_Caps = null;
 			}
 
@@ -1168,7 +1168,7 @@ public class Simulator extends Thread
 	public URI getCapabilityURI(String capability)
 	{
 		if (_Caps != null)
-			return _Caps.CapabilityURI(capability);
+			return _Caps.capabilityURI(capability);
 		return null;
 	}
 

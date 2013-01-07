@@ -1117,7 +1117,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		shutdown(DisconnectType.ClientInitiated, "User logged out");
 	}
 
-	private void setCurrentSim(Simulator simulator, String seedcaps)
+	private void setCurrentSim(Simulator simulator, String seedcaps) throws InterruptedException
 	{
 		if (simulator != getCurrentSim())
 		{

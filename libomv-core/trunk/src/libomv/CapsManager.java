@@ -90,10 +90,10 @@ public class CapsManager
 	{
 		_Simulator = simulator;
 		_SeedCapsURI = seedcaps;
-		MakeSeedRequest();
+		makeSeedRequest();
 	}
 
-	public final void Disconnect(boolean immediate)
+	public final void disconnect(boolean immediate) throws InterruptedException
 	{
 		Logger.Log(
 				String.format("Caps system for " + _Simulator.getName() + " is "
@@ -118,12 +118,12 @@ public class CapsManager
 	 * @return The URI of the requested capability, or String. Empty if the
 	 *         capability does not exist
 	 */
-	public final URI CapabilityURI(String capability)
+	public final URI capabilityURI(String capability)
 	{
 		return _Capabilities.get(capability);
 	}
 
-	private void MakeSeedRequest()
+	private void makeSeedRequest()
 	{
 		if (_Simulator == null || !_Simulator.getClient().Network.getConnected())
 		{
@@ -257,7 +257,7 @@ public class CapsManager
 			else
 			{
 				// The initial CAPS connection failed, try again
-				MakeSeedRequest();
+				makeSeedRequest();
 			}
 		}
 
@@ -273,7 +273,7 @@ public class CapsManager
 			else
 			{
 				// The initial CAPS connection failed, try again
-				MakeSeedRequest();
+				makeSeedRequest();
 			}
 		}
 
