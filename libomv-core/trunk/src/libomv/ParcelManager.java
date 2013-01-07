@@ -1660,7 +1660,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	{
 		if (simulator.getDownloadingParcelMap())
 		{
-			Logger.Log("Already downloading parcels in " + simulator.getSimName(), LogLevel.Info, _Client);
+			Logger.Log("Already downloading parcels in " + simulator.getName(), LogLevel.Info, _Client);
 			return;
 		}
 		simulator.setDownloadingParcelMap(true);
@@ -2651,7 +2651,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				// TODO: ParcelOverlaysReceived should become internal, and
 				// reset to zero every time it hits four. Also need a callback
 				// here
-				Logger.Log("Finished building the " + simulator.getSimName() + " parcel overlay", LogLevel.Info);
+				Logger.Log("Finished building the " + simulator.getName() + " parcel overlay", LogLevel.Info);
 			}
 		}
 		else

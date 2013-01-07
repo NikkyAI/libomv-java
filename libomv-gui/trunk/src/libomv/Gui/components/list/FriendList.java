@@ -872,7 +872,7 @@ public class FriendList extends JPanel implements ActionListener
 				try
 				{
 					Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
-					_Client.Self.Teleport(_Client.Network.getCurrentSim().Name, pos);
+					_Client.Self.Teleport(_Client.Network.getCurrentSim().getName(), pos);
 				}
 				catch (Exception ex)
 				{

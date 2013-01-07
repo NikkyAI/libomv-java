@@ -1235,7 +1235,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			else if (_CurrentSim.getDisconnectCandidate())
 			{
 				// The currently occupied simulator hasn't sent us any traffic in a while, shutdown
-				Logger.Log("Network timeout for the current simulator (" + _CurrentSim.getSimName() + "), logging out",
+				Logger.Log("Network timeout for the current simulator (" + _CurrentSim.getName() + "), logging out",
 						LogLevel.Warning);
 
 				if (_DisconnectTimer != null)
@@ -1286,7 +1286,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				for (Simulator simulator : disconnectedSims)
 				{
 					// This sim hasn't received any network traffic since the timer last elapsed, consider it disconnected
-					Logger.Log("Network timeout for simulator " + simulator.getSimName() + ", disconnecting", LogLevel.Warning);
+					Logger.Log("Network timeout for simulator " + simulator.getName() + ", disconnecting", LogLevel.Warning);
 
 					try
 					{
@@ -1330,7 +1330,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		simulator.ID = handshake.RegionInfo.CacheID;
 
 		simulator.IsEstateManager = handshake.RegionInfo.IsEstateManager;
-		simulator.setSimName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
+		simulator.setName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
 		simulator.SimOwner = handshake.RegionInfo.SimOwner;
 		simulator.TerrainBase0 = handshake.RegionInfo.TerrainBase0;
 		simulator.TerrainBase1 = handshake.RegionInfo.TerrainBase1;
@@ -1376,7 +1376,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		reply.Flags = 0;
 		simulator.sendPacket(reply);
 
-		Logger.Log("Received a region handshake for " + simulator.getSimName(), LogLevel.Debug, _Client);
+		Logger.Log("Received a region handshake for " + simulator.getName(), LogLevel.Debug, _Client);
 	}
 
 	/**
@@ -1410,7 +1410,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
 		simulator.Statistics.ReceivedPongs++;
-		String retval = "Pong2: " + simulator.getSimName() + " lag : " + simulator.Statistics.LastLag + "ms";
+		String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.LastLag + "ms";
 		if ((pong.PingID - simulator.Statistics.LastPingID + 1) != 0)
 		{
 			retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";

@@ -96,7 +96,7 @@ public class CapsManager
 	public final void Disconnect(boolean immediate)
 	{
 		Logger.Log(
-				String.format("Caps system for " + _Simulator.getSimName() + " is "
+				String.format("Caps system for " + _Simulator.getName() + " is "
 						+ (immediate ? "aborting" : "disconnecting")), LogLevel.Info, _Simulator.getClient());
 
 		if (_SeedRequest != null)
@@ -241,7 +241,7 @@ public class CapsManager
 
 					if (_Capabilities.containsKey("EventQueueGet"))
 					{
-						Logger.DebugLog("Starting event queue for " + _Simulator.getSimName(), _Simulator.getClient());
+						Logger.DebugLog("Starting event queue for " + _Simulator.getName(), _Simulator.getClient());
 						try
 						{
 							_EventQueue = new CapsEventQueue(_Simulator, _Capabilities.get("EventQueueGet"));

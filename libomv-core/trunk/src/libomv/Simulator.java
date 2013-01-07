@@ -627,19 +627,6 @@ public class Simulator extends Thread
 	/* The current version of software this simulator is running */
 	public String SimVersion = "";
 
-	/*  */
-	private String _SimName = "";
-
-	public String getSimName()
-	{
-		return _SimName;
-	}
-	
-	public void setSimName(String simName)
-	{
-		_SimName = simName;
-	}
-
 	/*
 	 * A 64x64 grid of parcel coloring values. The values stored in this array
 	 * are of the {@link ParcelArrayType} type
@@ -1269,7 +1256,7 @@ public class Simulator extends Thread
 					}
 					catch (IOException ex)
 					{
-						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client, ex);
+						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), LogLevel.Info, _Client, ex);
 
 						_Connected = false;
 						_Client.Network.disconnectSim(this, true);
@@ -1370,7 +1357,7 @@ public class Simulator extends Thread
 			}
 			catch (IOException ex)
 			{
-				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + _SimName, LogLevel.Info, _Client);
+				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), LogLevel.Info, _Client);
 
 				_Connected = false;
 				return;
@@ -1656,7 +1643,7 @@ public class Simulator extends Thread
 			{
 				Statistics.IncomingBPS = (int) (recv - old_in) / _InBytes.size();
 				Statistics.OutgoingBPS = (int) (sent - old_out) / _OutBytes.size();
-				Logger.Log(_SimName + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
+				Logger.Log(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
 						+ " bps, Lag: " + Statistics.LastLag + " ms, Pings: " + Statistics.ReceivedPongs + "/"
 						+ Statistics.SentPings, LogLevel.Debug, _Client);
 			}

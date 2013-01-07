@@ -4331,7 +4331,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return false;
 		}
 
-		if (!simName.equals(_Client.Network.getCurrentSim().getSimName()))
+		if (!simName.equals(_Client.Network.getCurrentSim().getName()))
 		{
 			// Teleporting to a foreign sim
 			GridRegion region = _Client.Grid.GetGridRegion(simName, GridLayerType.Objects);
@@ -4359,7 +4359,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void SendTeleportLure(UUID targetID) throws Exception
 	{
-		SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().getSimName() + "!");
+		SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().getName() + "!");
 	}
 
 	/**
@@ -5219,7 +5219,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				teleportMessage = "Teleport finished";
 				teleportStatus = TeleportStatus.Finished;
 
-				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getSimName() + " ("
+				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getName() + " ("
 						+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
 			}
 			else
@@ -5279,7 +5279,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleportMessage = "Teleport finished";
 			teleportStatus = TeleportStatus.Finished;
 
-			Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getSimName() + " ("
+			Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getName() + " ("
 					+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
 		}
 		else
@@ -5311,7 +5311,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             }
             else
             {
-                Logger.Log("Got EstablishAgentCommunication for " + sim.getSimName(), LogLevel.Debug, _Client);
+                Logger.Log("Got EstablishAgentCommunication for " + sim.getName(), LogLevel.Debug, _Client);
 
                 sim.setSeedCaps(msg.SeedCapability.toString());
             }

@@ -42,7 +42,7 @@ public class SetHomeCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
 		Client.Self.SetHome();
-        return "Home set to " + Client.Network.getCurrentSim().getSimName() + " Pos: " + Client.Self.getAgentPosition().toString();
+        return "Home set to " + Client.Network.getCurrentSim().getName() + " Pos: " + Client.Self.getAgentPosition().toString();
     }
 }
 
