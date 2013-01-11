@@ -38,6 +38,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import libomv.LoginManager.LoginProgressCallbackArgs;
+import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.CapsEventType;
@@ -344,7 +345,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * and <see cref="PrimCallbackArgs.IsAttachment"/> properties to display new
 	 * Primitives and Attachments on the <see cref="Console"/> window. <code>
 	 *     // Subscribe to the event that gives us prim and foliage information
-	 *     Client.Objects.OnObjectUpdate.add(new Objects_ObjectUpdate());
+	 *     _Client.Objects.OnObjectUpdate.add(new Objects_ObjectUpdate());
 	 * 
 	 * 
 	 *     private Objects_ObjectUpdate implements CallbackHandler<PrimCallbackArgs>
@@ -438,7 +439,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * the name of the attachment then display it on the <see cref="Console"/>
 	 * window. <code>
 	 *     // Subscribe to the event that provides additional primitive details
-	 *     Client.Objects.ObjectProperties += Objects_ObjectProperties;
+	 *     _Client.Objects.ObjectProperties += Objects_ObjectProperties;
 	 * 
 	 *     // handle the properties data that arrives
 	 *     private void Objects_ObjectProperties(object sender, ObjectPropertiesEventArgs e)
@@ -597,21 +598,21 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * 
 	 *     CallbackHandler<AvatarUpdateCallbackArgs> cbu = new Objects_AvatarUpdate();
 	 *     CallbackHandler<AvatarPicksReplyCallbackArgs> cba = new Objects_AvatarPicksReply();
-	 *     Client.Objects.OnAvatarUpdate.add(cbu, false);
-	 *     Client.Avatars.OnAvatarPicksReply.add(cba, true);
+	 *     _Client.Objects.OnAvatarUpdate.add(cbu, false);
+	 *     _Client.Avatars.OnAvatarPicksReply.add(cba, true);
 	 * 
 	 *     private class Objects_AvatarUpdate implements CallbackHandler<AvatarUpdateCallbackArgs>
 	 *     {
 	 *     	   public void callback(AvatarUpdateCallbackArgs e)
 	 *         {
 	 *             // we only want our own data
-	 *             if (e.Avatar.LocalID == Client.Self.LocalID)
+	 *             if (e.Avatar.LocalID == _Client.Self.LocalID)
 	 *             {
 	 *                 // Unsubscribe from the avatar update event to prevent a loop
 	 *                 // where we continually request the picks every time we get an update for ourselves
-	 *                 Client.Objects.OnAvatarUpdate.remove(cbu);
+	 *                 _Client.Objects.OnAvatarUpdate.remove(cbu);
 	 *                 // make the top picks request through AvatarManager
-	 *                 Client.Avatars.RequestAvatarPicks(e.Avatar.ID);
+	 *                 _Client.Avatars.RequestAvatarPicks(e.Avatar.ID);
 	 *             }
 	 *         }
 	 *     }
@@ -622,7 +623,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *         {
 	 *             // we'll unsubscribe from the AvatarPicksReply event since we now have the data
 	 *             // we were looking for
-	 *             Client.Avatars.AvatarPicksReply.remove(cba);
+	 *             _Client.Avatars.AvatarPicksReply.remove(cba);
 	 *             // loop through the dictionary and extract the names of the top picks from our profile
 	 *             for (String pickName : e.Picks.Values)
 	 *             {
@@ -998,12 +999,12 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		@Override
 		public boolean callback(DisconnectedCallbackArgs args)
 		{
-			if (InterpolationTimer != null)
+			if (_InterpolationTimer != null)
 			{
-				InterpolationTimer.cancel();
-				InterpolationTimer = null;
+				_InterpolationTimer.cancel();
+				_InterpolationTimer = null;
 			}
-			return false;
+			return true;
 		}
 	}
 
@@ -1012,10 +1013,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		@Override
 		public boolean callback(LoginProgressCallbackArgs args)
 		{
-			if (Client.Settings.USE_INTERPOLATION_TIMER)
+			if (args.getStatus() == LoginStatus.Success && _Client.Settings.getBool(LibSettings.USE_INTERPOLATION_TIMER))
 			{
-				InterpolationTimer = new Timer();
-				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), LibSettings.INTERPOLATION_INTERVAL);
+				_InterpolationTimer = new Timer("InterpolationTimer");
+				_InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), LibSettings.INTERPOLATION_INTERVAL);
 			}
 			return false;
 		}
@@ -1028,14 +1029,14 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			long elapsed = 0;
 
-			if (Client.Network.getConnected())
+			if (_Client.Network.getConnected())
 			{
 				long start = System.currentTimeMillis();
 
 				long interval = start - lastInterpolation;
 				float seconds = interval / 1000f;
 
-				ArrayList<Simulator> simulators = Client.Network.getSimulators();
+				ArrayList<Simulator> simulators = _Client.Network.getSimulators();
 				synchronized (simulators)
 				{
 					// Iterate through all of the simulators
@@ -1093,7 +1094,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		                            	}
 		                            	else
 		                            	{
-											Logger.Log("null angular velocity " + prim.toString(), LogLevel.Warning, Client);		                            		
+											Logger.Log("null angular velocity " + prim.toString(), LogLevel.Warning, _Client);		                            		
 		                            	}
 										// #endregion Angular Velocity
 										
@@ -1118,7 +1119,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	                                }
 	                                else
 	                                {
-										Logger.Log("Unhandled joint type " + prim.Joint, LogLevel.Warning, Client);
+										Logger.Log("Unhandled joint type " + prim.Joint, LogLevel.Warning, _Client);
 										break;
 									}
 								}
@@ -1136,36 +1137,36 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Start the timer again. Use a minimum of a 50ms pause in between
 			// calculations
 			int delay = Math.max(50, (int) (LibSettings.INTERPOLATION_INTERVAL - elapsed));
-			if (InterpolationTimer != null)
+			if (_InterpolationTimer != null)
 			{
-				InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), delay);
+				_InterpolationTimer.schedule(new InterpolationTimer_Elapsed(), delay);
 			}
 		}
 	}
 
-	private GridClient Client;
+	private GridClient _Client;
 	// Does periodic dead reckoning calculation to convert
 	// velocity and acceleration to new positions for objects
-	private Timer InterpolationTimer;
+	private Timer _InterpolationTimer;
 	private long lastInterpolation;
 
 	public ObjectManager(GridClient client)
 	{
-		Client = client;
+		_Client = client;
 
-		Client.Login.OnLoginProgress.add(new Network_OnLoginProgress());
-		Client.Network.OnDisconnected.add(new Network_OnDisconnected());
+		_Client.Login.OnLoginProgress.add(new Network_OnLoginProgress());
+		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), true);
 
-		Client.Network.RegisterCallback(PacketType.ObjectUpdate, this);
-		Client.Network.RegisterCallback(PacketType.ImprovedTerseObjectUpdate, this);
-		Client.Network.RegisterCallback(PacketType.ObjectUpdateCompressed, this);
-		Client.Network.RegisterCallback(PacketType.ObjectUpdateCached, this);
-		Client.Network.RegisterCallback(PacketType.KillObject, this);
-		Client.Network.RegisterCallback(PacketType.ObjectPropertiesFamily, this);
-		Client.Network.RegisterCallback(PacketType.ObjectProperties, this);
-		Client.Network.RegisterCallback(PacketType.PayPriceReply, this);
+		_Client.Network.RegisterCallback(PacketType.ObjectUpdate, this);
+		_Client.Network.RegisterCallback(PacketType.ImprovedTerseObjectUpdate, this);
+		_Client.Network.RegisterCallback(PacketType.ObjectUpdateCompressed, this);
+		_Client.Network.RegisterCallback(PacketType.ObjectUpdateCached, this);
+		_Client.Network.RegisterCallback(PacketType.KillObject, this);
+		_Client.Network.RegisterCallback(PacketType.ObjectPropertiesFamily, this);
+		_Client.Network.RegisterCallback(PacketType.ObjectProperties, this);
+		_Client.Network.RegisterCallback(PacketType.PayPriceReply, this);
 
-		Client.Network.RegisterCallback(CapsEventType.ObjectPhysicsProperties, this);
+		_Client.Network.RegisterCallback(CapsEventType.ObjectPhysicsProperties, this);
 	}
 
 	@Override
@@ -1224,8 +1225,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public void RequestObject(Simulator simulator, int localID) throws Exception
 	{
 		RequestMultipleObjectsPacket request = new RequestMultipleObjectsPacket();
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.ObjectData = new RequestMultipleObjectsPacket.ObjectDataBlock[1];
 		request.ObjectData[0].ID = localID;
 		request.ObjectData[0].CacheMissType = 0;
@@ -1245,8 +1246,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void RequestObjects(Simulator simulator, int[] localIDs) throws Exception
 	{
 		RequestMultipleObjectsPacket request = new RequestMultipleObjectsPacket();
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.ObjectData = new RequestMultipleObjectsPacket.ObjectDataBlock[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
@@ -1278,8 +1279,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * @param categoryID
 	 *            Inventory folder UUID where the object or objects purchased
 	 *            should be placed <example> <code>
-	 *     BuyObject(Client.Network.CurrentSim, 500, SaleType.Copy,
-	 *         100, UUID.Zero, Client.Self.InventoryRootFolderUUID);
+	 *     BuyObject(_Client.Network.CurrentSim, 500, SaleType.Copy,
+	 *         100, UUID.Zero, _Client.Self.InventoryRootFolderUUID);
 	 *  </code> </example>
 	 * @throws Exception
 	 */
@@ -1288,8 +1289,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectBuyPacket buy = new ObjectBuyPacket();
 
-		buy.AgentData.AgentID = Client.Self.getAgentID();
-		buy.AgentData.SessionID = Client.Self.getSessionID();
+		buy.AgentData.AgentID = _Client.Self.getAgentID();
+		buy.AgentData.SessionID = _Client.Self.getSessionID();
 		buy.AgentData.GroupID = groupID;
 		buy.AgentData.CategoryID = categoryID;
 
@@ -1357,8 +1358,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectSelectPacket select = new ObjectSelectPacket();
 
-		select.AgentData.AgentID = Client.Self.getAgentID();
-		select.AgentData.SessionID = Client.Self.getSessionID();
+		select.AgentData.AgentID = _Client.Self.getAgentID();
+		select.AgentData.SessionID = _Client.Self.getSessionID();
 
 		select.ObjectLocalID = new int[1];
 		select.ObjectLocalID[0] = localID;
@@ -1406,8 +1407,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectSelectPacket select = new ObjectSelectPacket();
 
-		select.AgentData.AgentID = Client.Self.getAgentID();
-		select.AgentData.SessionID = Client.Self.getSessionID();
+		select.AgentData.AgentID = _Client.Self.getAgentID();
+		select.AgentData.SessionID = _Client.Self.getSessionID();
 
 		select.ObjectLocalID = new int[localIDs.length];
 
@@ -1440,8 +1441,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void SetSaleInfo(Simulator simulator, int localID, SaleType saleType, int price) throws Exception
 	{
 		ObjectSaleInfoPacket sale = new ObjectSaleInfoPacket();
-		sale.AgentData.AgentID = Client.Self.getAgentID();
-		sale.AgentData.SessionID = Client.Self.getSessionID();
+		sale.AgentData.AgentID = _Client.Self.getAgentID();
+		sale.AgentData.SessionID = _Client.Self.getSessionID();
 		sale.ObjectData = new ObjectSaleInfoPacket.ObjectDataBlock[1];
 		sale.ObjectData[0] = sale.new ObjectDataBlock();
 		sale.ObjectData[0].LocalID = localID;
@@ -1467,8 +1468,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void SetSaleInfo(Simulator simulator, int[] localIDs, SaleType saleType, int price) throws Exception
 	{
 		ObjectSaleInfoPacket sale = new ObjectSaleInfoPacket();
-		sale.AgentData.AgentID = Client.Self.getAgentID();
-		sale.AgentData.SessionID = Client.Self.getSessionID();
+		sale.AgentData.AgentID = _Client.Self.getAgentID();
+		sale.AgentData.SessionID = _Client.Self.getSessionID();
 		sale.ObjectData = new ObjectSaleInfoPacket.ObjectDataBlock[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
@@ -1495,8 +1496,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectDeselectPacket deselect = new ObjectDeselectPacket();
 
-		deselect.AgentData.AgentID = Client.Self.getAgentID();
-		deselect.AgentData.SessionID = Client.Self.getSessionID();
+		deselect.AgentData.AgentID = _Client.Self.getAgentID();
+		deselect.AgentData.SessionID = _Client.Self.getSessionID();
 
 		deselect.ObjectLocalID = new int[1];
 		deselect.ObjectLocalID[0] = localID;
@@ -1517,8 +1518,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectDeselectPacket deselect = new ObjectDeselectPacket();
 
-		deselect.AgentData.AgentID = Client.Self.getAgentID();
-		deselect.AgentData.SessionID = Client.Self.getSessionID();
+		deselect.AgentData.AgentID = _Client.Self.getAgentID();
+		deselect.AgentData.SessionID = _Client.Self.getSessionID();
 
 		deselect.ObjectLocalID = new int[localIDs.length];
 
@@ -1572,8 +1573,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			Vector3 position, Vector3 normal, Vector3 binormal) throws Exception
 	{
 		ObjectGrabPacket grab = new ObjectGrabPacket();
-		grab.AgentData.AgentID = Client.Self.getAgentID();
-		grab.AgentData.SessionID = Client.Self.getSessionID();
+		grab.AgentData.AgentID = _Client.Self.getAgentID();
+		grab.AgentData.SessionID = _Client.Self.getSessionID();
 		grab.ObjectData.GrabOffset = Vector3.Zero;
 		grab.ObjectData.LocalID = localID;
 		grab.SurfaceInfo = new ObjectGrabPacket.SurfaceInfoBlock[1];
@@ -1592,8 +1593,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		Thread.sleep(50);
 
 		ObjectDeGrabPacket degrab = new ObjectDeGrabPacket();
-		degrab.AgentData.AgentID = Client.Self.getAgentID();
-		degrab.AgentData.SessionID = Client.Self.getSessionID();
+		degrab.AgentData.AgentID = _Client.Self.getAgentID();
+		degrab.AgentData.SessionID = _Client.Self.getSessionID();
 		degrab.LocalID = localID;
 		degrab.SurfaceInfo = new ObjectDeGrabPacket.SurfaceInfoBlock[1];
 		degrab.SurfaceInfo[0] = degrab.new SurfaceInfoBlock();
@@ -1670,8 +1671,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectAddPacket packet = new ObjectAddPacket();
 
-		packet.AgentData.AgentID = Client.Self.getAgentID();
-		packet.AgentData.SessionID = Client.Self.getSessionID();
+		packet.AgentData.AgentID = _Client.Self.getAgentID();
+		packet.AgentData.SessionID = _Client.Self.getSessionID();
 		packet.AgentData.GroupID = groupID;
 
 		packet.ObjectData.State = prim.State;
@@ -1737,8 +1738,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectAddPacket add = new ObjectAddPacket();
 
-		add.AgentData.AgentID = Client.Self.getAgentID();
-		add.AgentData.SessionID = Client.Self.getSessionID();
+		add.AgentData.AgentID = _Client.Self.getAgentID();
+		add.AgentData.SessionID = _Client.Self.getSessionID();
 		add.AgentData.GroupID = groupOwner;
 		add.ObjectData.BypassRaycast = 1;
 		add.ObjectData.Material = 3;
@@ -1778,8 +1779,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectAddPacket add = new ObjectAddPacket();
 
-		add.AgentData.AgentID = Client.Self.getAgentID();
-		add.AgentData.SessionID = Client.Self.getSessionID();
+		add.AgentData.AgentID = _Client.Self.getAgentID();
+		add.AgentData.SessionID = _Client.Self.getSessionID();
 		add.AgentData.GroupID = groupOwner;
 		add.ObjectData.BypassRaycast = 1;
 		add.ObjectData.Material = 3;
@@ -1835,8 +1836,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectImagePacket image = new ObjectImagePacket();
 
-		image.AgentData.AgentID = Client.Self.getAgentID();
-		image.AgentData.SessionID = Client.Self.getSessionID();
+		image.AgentData.AgentID = _Client.Self.getAgentID();
+		image.AgentData.SessionID = _Client.Self.getSessionID();
 		image.ObjectData = new ObjectImagePacket.ObjectDataBlock[1];
 		image.ObjectData[0] = image.new ObjectDataBlock();
 		image.ObjectData[0].ObjectLocalID = localID;
@@ -1864,8 +1865,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectExtraParamsPacket extra = new ObjectExtraParamsPacket();
 
-		extra.AgentData.AgentID = Client.Self.getAgentID();
-		extra.AgentData.SessionID = Client.Self.getSessionID();
+		extra.AgentData.AgentID = _Client.Self.getAgentID();
+		extra.AgentData.SessionID = _Client.Self.getSessionID();
 		extra.ObjectData = new ObjectExtraParamsPacket.ObjectDataBlock[1];
 		extra.ObjectData[0] = extra.new ObjectDataBlock();
 		extra.ObjectData[0].ObjectLocalID = localID;
@@ -1903,8 +1904,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectExtraParamsPacket extra = new ObjectExtraParamsPacket();
 
-		extra.AgentData.AgentID = Client.Self.getAgentID();
-		extra.AgentData.SessionID = Client.Self.getSessionID();
+		extra.AgentData.AgentID = _Client.Self.getAgentID();
+		extra.AgentData.SessionID = _Client.Self.getSessionID();
 		extra.ObjectData = new ObjectExtraParamsPacket.ObjectDataBlock[1];
 		extra.ObjectData[0] = extra.new ObjectDataBlock();
 		extra.ObjectData[0].ObjectLocalID = localID;
@@ -1934,8 +1935,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectExtraParamsPacket extra = new ObjectExtraParamsPacket();
 
-		extra.AgentData.AgentID = Client.Self.getAgentID();
-		extra.AgentData.SessionID = Client.Self.getSessionID();
+		extra.AgentData.AgentID = _Client.Self.getAgentID();
+		extra.AgentData.SessionID = _Client.Self.getSessionID();
 
 		extra.ObjectData = new ObjectExtraParamsPacket.ObjectDataBlock[1];
 		extra.ObjectData[0] = extra.new ObjectDataBlock();
@@ -1950,8 +1951,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		// Not sure why, but if you don't send this the sculpted prim disappears
 		ObjectShapePacket shape = new ObjectShapePacket();
 
-		shape.AgentData.AgentID = Client.Self.getAgentID();
-		shape.AgentData.SessionID = Client.Self.getSessionID();
+		shape.AgentData.AgentID = _Client.Self.getAgentID();
+		shape.AgentData.SessionID = _Client.Self.getSessionID();
 
 		shape.ObjectData = new ObjectShapePacket.ObjectDataBlock[1];
 		shape.ObjectData[0] = shape.new ObjectDataBlock();
@@ -1980,8 +1981,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectExtraParamsPacket extra = new ObjectExtraParamsPacket();
 
-		extra.AgentData.AgentID = Client.Self.getAgentID();
-		extra.AgentData.SessionID = Client.Self.getSessionID();
+		extra.AgentData.AgentID = _Client.Self.getAgentID();
+		extra.AgentData.SessionID = _Client.Self.getSessionID();
 		extra.ObjectData = new ObjectExtraParamsPacket.ObjectDataBlock[1];
 		extra.ObjectData[0] = extra.new ObjectDataBlock();
 		extra.ObjectData[0].ObjectLocalID = localID;
@@ -2009,8 +2010,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectLinkPacket packet = new ObjectLinkPacket();
 
-		packet.AgentData.AgentID = Client.Self.getAgentID();
-		packet.AgentData.SessionID = Client.Self.getSessionID();
+		packet.AgentData.AgentID = _Client.Self.getAgentID();
+		packet.AgentData.SessionID = _Client.Self.getSessionID();
 
 		packet.ObjectLocalID = new int[localIDs.length];
 
@@ -2036,8 +2037,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectDelinkPacket packet = new ObjectDelinkPacket();
 
-		packet.AgentData.AgentID = Client.Self.getAgentID();
-		packet.AgentData.SessionID = Client.Self.getSessionID();
+		packet.AgentData.AgentID = _Client.Self.getAgentID();
+		packet.AgentData.SessionID = _Client.Self.getSessionID();
 
 		packet.ObjectLocalID = new int[localIDs.length];
 
@@ -2065,8 +2066,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void SetRotation(Simulator simulator, int localID, Quaternion rotation) throws Exception
 	{
 		ObjectRotationPacket objRotPacket = new ObjectRotationPacket();
-		objRotPacket.AgentData.AgentID = Client.Self.getAgentID();
-		objRotPacket.AgentData.SessionID = Client.Self.getSessionID();
+		objRotPacket.AgentData.AgentID = _Client.Self.getAgentID();
+		objRotPacket.AgentData.SessionID = _Client.Self.getSessionID();
 
 		objRotPacket.ObjectData = new ObjectRotationPacket.ObjectDataBlock[1];
 
@@ -2110,8 +2111,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void SetNames(Simulator simulator, int[] localIDs, String[] names) throws Exception
 	{
 		ObjectNamePacket namePacket = new ObjectNamePacket();
-		namePacket.AgentData.AgentID = Client.Self.getAgentID();
-		namePacket.AgentData.SessionID = Client.Self.getSessionID();
+		namePacket.AgentData.AgentID = _Client.Self.getAgentID();
+		namePacket.AgentData.SessionID = _Client.Self.getSessionID();
 
 		namePacket.ObjectData = new ObjectNamePacket.ObjectDataBlock[localIDs.length];
 
@@ -2159,8 +2160,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void SetDescriptions(Simulator simulator, int[] localIDs, String[] descriptions) throws Exception
 	{
 		ObjectDescriptionPacket descPacket = new ObjectDescriptionPacket();
-		descPacket.AgentData.AgentID = Client.Self.getAgentID();
-		descPacket.AgentData.SessionID = Client.Self.getSessionID();
+		descPacket.AgentData.AgentID = _Client.Self.getAgentID();
+		descPacket.AgentData.SessionID = _Client.Self.getSessionID();
 
 		descPacket.ObjectData = new ObjectDescriptionPacket.ObjectDataBlock[localIDs.length];
 
@@ -2193,8 +2194,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			Quaternion rotation) throws Exception
 	{
 		ObjectAttachPacket attach = new ObjectAttachPacket();
-		attach.AgentData.AgentID = Client.Self.getAgentID();
-		attach.AgentData.SessionID = Client.Self.getSessionID();
+		attach.AgentData.AgentID = _Client.Self.getAgentID();
+		attach.AgentData.SessionID = _Client.Self.getSessionID();
 		attach.AgentData.AttachmentPoint = (byte) attachPoint.ordinal();
 
 		attach.ObjectData = new ObjectAttachPacket.ObjectDataBlock[1];
@@ -2221,8 +2222,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void DropObject(Simulator simulator, int localID) throws Exception
 	{
 		ObjectDropPacket dropit = new ObjectDropPacket();
-		dropit.AgentData.AgentID = Client.Self.getAgentID();
-		dropit.AgentData.SessionID = Client.Self.getSessionID();
+		dropit.AgentData.AgentID = _Client.Self.getAgentID();
+		dropit.AgentData.SessionID = _Client.Self.getSessionID();
 		dropit.ObjectLocalID = new int[1];
 		dropit.ObjectLocalID[0] = localID;
 
@@ -2245,8 +2246,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void DetachObjects(Simulator simulator, int[] localIDs) throws Exception
 	{
 		ObjectDetachPacket detach = new ObjectDetachPacket();
-		detach.AgentData.AgentID = Client.Self.getAgentID();
-		detach.AgentData.SessionID = Client.Self.getSessionID();
+		detach.AgentData.AgentID = _Client.Self.getAgentID();
+		detach.AgentData.SessionID = _Client.Self.getSessionID();
 		detach.ObjectLocalID = new int[localIDs.length];
 
 		for (int i = 0; i < localIDs.length; i++)
@@ -2369,8 +2370,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		}
 
 		MultipleObjectUpdatePacket multiObjectUpdate = new MultipleObjectUpdatePacket();
-		multiObjectUpdate.AgentData.AgentID = Client.Self.getAgentID();
-		multiObjectUpdate.AgentData.SessionID = Client.Self.getSessionID();
+		multiObjectUpdate.AgentData.AgentID = _Client.Self.getAgentID();
+		multiObjectUpdate.AgentData.SessionID = _Client.Self.getSessionID();
 
 		multiObjectUpdate.ObjectData = new MultipleObjectUpdatePacket.ObjectDataBlock[1];
 
@@ -2401,8 +2402,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void UpdateObject(Simulator simulator, int localID, Vector3 data, byte type) throws Exception
 	{
 		MultipleObjectUpdatePacket multiObjectUpdate = new MultipleObjectUpdatePacket();
-		multiObjectUpdate.AgentData.AgentID = Client.Self.getAgentID();
-		multiObjectUpdate.AgentData.SessionID = Client.Self.getSessionID();
+		multiObjectUpdate.AgentData.AgentID = _Client.Self.getAgentID();
+		multiObjectUpdate.AgentData.SessionID = _Client.Self.getSessionID();
 
 		multiObjectUpdate.ObjectData = new MultipleObjectUpdatePacket.ObjectDataBlock[1];
 
@@ -2431,8 +2432,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void DeedObject(Simulator simulator, int localID, UUID groupOwner) throws Exception
 	{
 		ObjectOwnerPacket objDeedPacket = new ObjectOwnerPacket();
-		objDeedPacket.AgentData.AgentID = Client.Self.getAgentID();
-		objDeedPacket.AgentData.SessionID = Client.Self.getSessionID();
+		objDeedPacket.AgentData.AgentID = _Client.Self.getAgentID();
+		objDeedPacket.AgentData.SessionID = _Client.Self.getSessionID();
 
 		// Can only be use in God mode
 		objDeedPacket.HeaderData.Override = false;
@@ -2462,8 +2463,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void DeedObjects(Simulator simulator, int[] localIDs, UUID groupOwner) throws Exception
 	{
 		ObjectOwnerPacket packet = new ObjectOwnerPacket();
-		packet.AgentData.AgentID = Client.Self.getAgentID();
-		packet.AgentData.SessionID = Client.Self.getSessionID();
+		packet.AgentData.AgentID = _Client.Self.getAgentID();
+		packet.AgentData.SessionID = _Client.Self.getSessionID();
 
 		// Can only be use in God mode
 		packet.HeaderData.Override = false;
@@ -2501,8 +2502,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectPermissionsPacket packet = new ObjectPermissionsPacket();
 
-		packet.AgentData.AgentID = Client.Self.getAgentID();
-		packet.AgentData.SessionID = Client.Self.getSessionID();
+		packet.AgentData.AgentID = _Client.Self.getAgentID();
+		packet.AgentData.SessionID = _Client.Self.getSessionID();
 
 		// Override can only be used by gods
 		packet.Override = false;
@@ -2552,8 +2553,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			throws Exception
 	{
 		RequestObjectPropertiesFamilyPacket properties = new RequestObjectPropertiesFamilyPacket();
-		properties.AgentData.AgentID = Client.Self.getAgentID();
-		properties.AgentData.SessionID = Client.Self.getSessionID();
+		properties.AgentData.AgentID = _Client.Self.getAgentID();
+		properties.AgentData.SessionID = _Client.Self.getSessionID();
 		properties.ObjectData.ObjectID = objectID;
 		// TODO: RequestFlags is typically only for bug report submissions, but
 		// we might be able to
@@ -2581,9 +2582,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public final void SetObjectsGroup(Simulator simulator, int[] localIds, UUID groupID) throws Exception
 	{
 		ObjectGroupPacket packet = new ObjectGroupPacket();
-		packet.AgentData.AgentID = Client.Self.getAgentID();
+		packet.AgentData.AgentID = _Client.Self.getAgentID();
 		packet.AgentData.GroupID = groupID;
-		packet.AgentData.SessionID = Client.Self.getSessionID();
+		packet.AgentData.SessionID = _Client.Self.getSessionID();
 
 		packet.ObjectLocalID = new int[localIds.length];
 		for (int i = 0; i < localIds.length; i++)
@@ -2638,7 +2639,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Check if we are interested in this object
 			Primitive.PCode pcode;
 			pcode = PCode.setValue(block.PCode);
-			if (!Client.Settings.ALWAYS_DECODE_OBJECTS)
+			if (!_Client.Settings.ALWAYS_DECODE_OBJECTS)
 			{
 				switch (pcode)
 				{
@@ -2653,7 +2654,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						break;
 					case Avatar:
 						// Make an exception for updates about our own agent
-						if (block.FullID != Client.Self.getAgentID() && OnAvatarUpdate.count() == 0)
+						if (block.FullID != _Client.Self.getAgentID() && OnAvatarUpdate.count() == 0)
 						{
 							continue;
 						}
@@ -2801,7 +2802,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					break;
 				default:
 					Logger.Log("Got an ObjectUpdate block with ObjectUpdate field length of "
-							+ block.getObjectData().length, LogLevel.Warning, Client);
+							+ block.getObjectData().length, LogLevel.Warning, _Client);
 
 					continue;
 			}
@@ -2843,7 +2844,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					prim.Flags = PrimFlags.setValue(block.UpdateFlags);
 					if ((prim.Flags & PrimFlags.ZlibCompressed) != 0)
 					{
-						Logger.Log("Got a ZlibCompressed ObjectUpdate, implement me!", LogLevel.Warning, Client);
+						Logger.Log("Got a ZlibCompressed ObjectUpdate, implement me!", LogLevel.Warning, _Client);
 						continue;
 					}
 
@@ -2954,20 +2955,20 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 
 					// Update some internals if this is our avatar
-					if (block.FullID.equals(Client.Self.getAgentID()) && simulator.equals(Client.Network.getCurrentSim()))
+					if (block.FullID.equals(_Client.Self.getAgentID()) && simulator.equals(_Client.Network.getCurrentSim()))
 					{
-						// #region Update Client.Self
+						// #region Update _Client.Self
 
 						// We need the local ID to recognize terse updates for our agent
-						Client.Self.setLocalID(block.ID);
+						_Client.Self.setLocalID(block.ID);
 
 						// Packed parameters
-						Client.Self.setCollisionPlane(objectupdate.CollisionPlane);
-						Client.Self.setRelativePosition(objectupdate.Position);
-						Client.Self.setVelocity(objectupdate.Velocity);
-						Client.Self.setAcceleration(objectupdate.Acceleration);
-						Client.Self.setRelativeRotation(objectupdate.Rotation);
-						Client.Self.setAngularVelocity(objectupdate.AngularVelocity);
+						_Client.Self.setCollisionPlane(objectupdate.CollisionPlane);
+						_Client.Self.setRelativePosition(objectupdate.Position);
+						_Client.Self.setVelocity(objectupdate.Velocity);
+						_Client.Self.setAcceleration(objectupdate.Acceleration);
+						_Client.Self.setRelativeRotation(objectupdate.Rotation);
+						_Client.Self.setAngularVelocity(objectupdate.AngularVelocity);
 						// #endregion
 					}
 
@@ -3029,7 +3030,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					// TODO: Create a callback for particle updates
 					break;
 				default:
-					Logger.DebugLog("Got an ObjectUpdate block with an unrecognized PCode " + pcode.toString(), Client);
+					Logger.DebugLog("Got an ObjectUpdate block with an unrecognized PCode " + pcode.toString(), _Client);
 					break;
 			}
 		}
@@ -3098,7 +3099,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				int localid = Helpers.BytesToInt32L(data, 0);
 
 				// Check if we are interested in this update
-				if (!Client.Settings.ALWAYS_DECODE_OBJECTS && localid != Client.Self.getLocalID()
+				if (!_Client.Settings.ALWAYS_DECODE_OBJECTS && localid != _Client.Self.getLocalID()
 						&& OnTerseObjectUpdate.count() > 0)
 				{
 					continue;
@@ -3152,7 +3153,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				// #endregion Decode update data
 
-				Primitive obj = !Client.Settings.getBool(LibSettings.OBJECT_TRACKING) ? null : (update.Avatar) ? (Primitive) GetAvatar(
+				Primitive obj = !_Client.Settings.getBool(LibSettings.OBJECT_TRACKING) ? null : (update.Avatar) ? (Primitive) GetAvatar(
 						simulator, update.LocalID, UUID.Zero) : (Primitive) GetPrimitive(simulator, update.LocalID,
 						UUID.Zero);
 
@@ -3160,18 +3161,18 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				OnTerseObjectUpdate.dispatch(new TerseObjectUpdateCallbackArgs(simulator, obj, update,
 						terse.RegionData.TimeDilation));
 
-				// #region Update Client.Self
-				if (update.LocalID == Client.Self.getLocalID())
+				// #region Update _Client.Self
+				if (update.LocalID == _Client.Self.getLocalID())
 				{
-					Client.Self.setCollisionPlane(update.CollisionPlane);
-					Client.Self.setRelativePosition(update.Position);
-					Client.Self.setVelocity(update.Velocity);
-					Client.Self.setAcceleration(update.Acceleration);
-					Client.Self.setRelativeRotation(update.Rotation);
-					Client.Self.setAngularVelocity(update.AngularVelocity);
+					_Client.Self.setCollisionPlane(update.CollisionPlane);
+					_Client.Self.setRelativePosition(update.Position);
+					_Client.Self.setVelocity(update.Velocity);
+					_Client.Self.setAcceleration(update.Acceleration);
+					_Client.Self.setRelativeRotation(update.Rotation);
+					_Client.Self.setAngularVelocity(update.AngularVelocity);
 				}
-				// #endregion Update Client.Self
-				if (obj != null && Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+				// #endregion Update _Client.Self
+				if (obj != null && _Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 				{
 					obj.Position = update.Position;
 					obj.Rotation = update.Rotation;
@@ -3187,7 +3188,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			catch (Throwable ex)
 			{
-				Logger.Log(ex.getMessage(), LogLevel.Warning, Client, ex);
+				Logger.Log(ex.getMessage(), LogLevel.Warning, _Client, ex);
 			}
 		}
 	}
@@ -3215,7 +3216,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			PCode pcode = PCode.setValue(data[i++]);
 
 			// /#region Relevance check
-			if (!Client.Settings.ALWAYS_DECODE_OBJECTS)
+			if (!_Client.Settings.ALWAYS_DECODE_OBJECTS)
 			{
 				switch (pcode)
 				{
@@ -3433,7 +3434,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	private final void HandleObjectUpdateCached(Packet packet, Simulator simulator)
 	{
-		if (Client.Settings.ALWAYS_REQUEST_OBJECTS)
+		if (_Client.Settings.ALWAYS_REQUEST_OBJECTS)
 		{
 			ObjectUpdateCachedPacket update = (ObjectUpdateCachedPacket) packet;
 			int[] ids = new int[update.ObjectData.length];
@@ -3473,7 +3474,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		synchronized (simulator.getObjectsPrimitives())
 		{
-			if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+			if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 			{
 				for (int localID : kill.ID)
 				{
@@ -3493,7 +3494,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 			}
 
-			if (Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
+			if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 			{
 				synchronized (simulator.getObjectsAvatars())
 				{
@@ -3597,7 +3598,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				props.TextureIDs[j] = new UUID(objectData.getTextureID(), j * 16);
 			}
 
-			if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+			if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 			{
 				synchronized (simulator.getObjectsPrimitives())
 				{
@@ -3651,7 +3652,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			return;
 		}
 
-		if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			synchronized (simulator.getObjectsPrimitives())
 			{
@@ -3700,7 +3701,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage) message;
 
-		if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			for (int i = 0; i < msg.ObjectPhysicsProperties.length; i++)
 			{
@@ -3735,9 +3736,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
      */
 	protected final void SetAvatarSittingOn(Simulator sim, Avatar av, int localid, int oldSeatID)
 	{
-		if (Client.Network.getCurrentSim() == sim && av.LocalID == Client.Self.getLocalID())
+		if (_Client.Network.getCurrentSim() == sim && av.LocalID == _Client.Self.getLocalID())
 		{
-			Client.Self.setSittingOn(localid);
+			_Client.Self.setSittingOn(localid);
 		}
 
 		av.ParentID = localid;
@@ -3760,8 +3761,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
     {
         ObjectShapePacket shape = new ObjectShapePacket();
 
-        shape.AgentData.AgentID = Client.Self.getAgentID();
-        shape.AgentData.SessionID = Client.Self.getSessionID();
+        shape.AgentData.AgentID = _Client.Self.getAgentID();
+        shape.AgentData.SessionID = _Client.Self.getSessionID();
 
         shape.ObjectData = new ObjectShapePacket.ObjectDataBlock[1];
         shape.ObjectData[0] = shape.new ObjectDataBlock();
@@ -3803,8 +3804,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
     {
         ObjectMaterialPacket matPacket = new ObjectMaterialPacket();
 
-        matPacket.AgentData.AgentID = Client.Self.getAgentID();
-        matPacket.AgentData.SessionID = Client.Self.getSessionID();
+        matPacket.AgentData.AgentID = _Client.Self.getAgentID();
+        matPacket.AgentData.SessionID = _Client.Self.getSessionID();
 
         matPacket.ObjectData = new ObjectMaterialPacket.ObjectDataBlock[1];
         matPacket.ObjectData[0] = matPacket.new ObjectDataBlock();
@@ -3846,7 +3847,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	public Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, boolean createIfMissing)
 	{
-		if (Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			synchronized (simulator.getObjectsPrimitives())
 			{
@@ -3868,7 +3869,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					Logger.Log("GetObject(): Object with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, Client);
+					Logger.Log("GetObject(): Object with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, _Client);
 				}
 				prim.LocalID = localID;
 
@@ -3895,7 +3896,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
 	{
-		if (Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
+		if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 		{
 			synchronized (simulator.getObjectsAvatars())
 			{
@@ -3915,7 +3916,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					Logger.Log("GetAvatar(): Avatar with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, Client);
+					Logger.Log("GetAvatar(): Avatar with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, _Client);
 				}
 				avatar.LocalID = localID;
 

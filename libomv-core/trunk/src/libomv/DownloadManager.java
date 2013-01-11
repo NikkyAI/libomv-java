@@ -87,7 +87,7 @@ public class DownloadManager
 
         public ActiveDownload() throws IOReactorException
 		{
-			super();
+			super("ActiveDownload");
 		}
         
 		@Override

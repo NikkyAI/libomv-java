@@ -87,7 +87,20 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 
 	public RpcClient() throws IOReactorException
 	{
-		super();
+		super("RpcClient");
+	}
+
+	@Override
+	protected void finalize()
+	{
+		try
+		{
+			shutdown();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public Future<OSD> call(URI address, String method, OSDArray params, FutureCallback<OSD> callback, long timeout) throws XmlPullParserException

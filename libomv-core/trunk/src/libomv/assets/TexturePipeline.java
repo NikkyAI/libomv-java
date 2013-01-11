@@ -582,8 +582,7 @@ public class TexturePipeline implements PacketCallback
 		TaskInfo task = GetTransferValue(textureID);
 		if (task != null)
 		{
-			// this means we've actually got the request assigned to the
-			// threadpool
+			// this means we've actually got the request assigned to the threadpool
 			if (task.State == TextureRequestState.Progress)
 			{
 				RequestImagePacket request = new RequestImagePacket();

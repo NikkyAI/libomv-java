@@ -56,6 +56,7 @@ public class CapsManager
 	private Simulator _Simulator;
 
 	private String _SeedCapsURI;
+	private CapsClient _Client;
 	private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
 
 	private Future<OSD> _SeedRequest = null;
@@ -99,14 +100,22 @@ public class CapsManager
 				String.format("Caps system for " + _Simulator.getName() + " is "
 						+ (immediate ? "aborting" : "disconnecting")), LogLevel.Info, _Simulator.getClient());
 
+		if (_Client != null)
+		{
+			_Client.shutdown();
+			_Client = null;
+		}
+
 		if (_SeedRequest != null)
 		{
 			_SeedRequest.cancel(immediate);
+			_SeedRequest = null;
 		}
 
 		if (_EventQueue != null)
 		{
 			_EventQueue.shutdown(immediate);
+			_EventQueue = null;
 		}
 	}
 
@@ -206,8 +215,9 @@ public class CapsManager
 
 		try
 		{
-			CapsClient request = new CapsClient();
-			_SeedRequest = request.executeHttpPost(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml,
+			if (_Client == null)
+				_Client = new CapsClient("makeSeedRequest");
+			_Client.executeHttpPost(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml,
 					new SeedRequestHandler(), _Simulator.getClient().Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception ex)
@@ -264,11 +274,11 @@ public class CapsManager
 		@Override
 		public void failed(Exception ex)
 		{
+			_SeedRequest = null;
 			if (ex instanceof HttpResponseException
 					&& ((HttpResponseException) ex).getStatusCode() == HttpStatus.SC_NOT_FOUND)
 			{
-				Logger.Log("Seed capability returned a 404 status, capability system is aborting", LogLevel.Error,
-						_Simulator.getClient());
+				Logger.Log("Seed capability returned a 404 status, capability system is aborting", LogLevel.Error, _Simulator.getClient());
 			}
 			else
 			{
@@ -280,8 +290,8 @@ public class CapsManager
 		@Override
 		public void cancelled()
 		{
-			Logger.Log("Seed capability got cancelled, capability system is shutting down", LogLevel.Info,
-					_Simulator.getClient());
+			_SeedRequest = null;
+			Logger.Log("Seed capability got cancelled, capability system is shutting down", LogLevel.Info, _Simulator.getClient());
 		}
 	}
 }

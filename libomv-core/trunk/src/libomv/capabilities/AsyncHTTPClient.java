@@ -45,7 +45,6 @@ import java.util.concurrent.Future;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 
-import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -89,7 +88,7 @@ public abstract class AsyncHTTPClient<T>
 		public void progress(long bytesTransceived, long totalBytes);
 	}
 	
-	private final DefaultHttpAsyncClient client;
+	private DefaultHttpAsyncClient client;
 	private X509Certificate certificate;
 	private Timer timeout;
 	private Future<T> resultFuture;
@@ -132,7 +131,7 @@ public abstract class AsyncHTTPClient<T>
 	{
 		return client.getConnectionManager().getSchemeRegistry().register(scheme);
 	}
-
+	
 	private synchronized void cancel(boolean mayInterruptIfRunning)
 	{
 		if (timeout != null)
@@ -154,12 +153,12 @@ public abstract class AsyncHTTPClient<T>
 	{
 		cancel(true);
 		client.shutdown();
+		client = null;
 	}
 
-	public AsyncHTTPClient() throws IOReactorException
+	public AsyncHTTPClient(String name) throws IOReactorException
 	{
 		client = new DefaultHttpAsyncClient();
-		ConnectionReuseStrategy strategy = client.getConnectionReuseStrategy();
 		client.start();
 	}
 

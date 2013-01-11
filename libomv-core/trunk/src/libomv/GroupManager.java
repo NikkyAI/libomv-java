@@ -1031,7 +1031,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		URI url = Client.Network.getCapabilityURI("GroupMemberData");
 		if (url != null)
 		{
-			CapsClient req = new CapsClient();
+			CapsClient req = new CapsClient("RequestGroupMembers");
 			OSDMap requestData = new OSDMap(1);
 			requestData.put("group_id", OSD.FromUUID(group));
 			req.executeHttpPost(url, requestData, OSDFormat.Xml, new GroupMembersHandlerCaps(requestID), Client.Settings.CAPS_TIMEOUT * 4);

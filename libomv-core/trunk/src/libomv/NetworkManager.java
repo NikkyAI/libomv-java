@@ -1034,7 +1034,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				if (_DisconnectTimer == null)
 				{
 					// Start a timer that checks if we've been disconnected
-					_DisconnectTimer = new Timer();
+					_DisconnectTimer = new Timer("_DisconnectTimer");
 					_DisconnectTimer.scheduleAtFixedRate(new DisconnectTimer_Elapsed(),
 							_Client.Settings.SIMULATOR_TIMEOUT, _Client.Settings.SIMULATOR_TIMEOUT);
 				}

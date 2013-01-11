@@ -54,15 +54,14 @@ public class CapsEventQueue extends CapsClient
 	public final int REQUEST_TIMEOUT = 1000 * 120;
 
 	private URI address;
-	private Simulator Simulator;
-	private GridClient Client;
+	private Simulator _Simulator;
+	private GridClient _Client;
 
 	public CapsEventQueue(Simulator sim, URI eventQueueLocation) throws IOReactorException
 	{
-		super();
+		super("EventQueue");
 		address = eventQueueLocation;
-		Simulator = sim;
-		Client = sim.getClient();
+		_Simulator = sim;
 	}
 
 	private int errorCount;
@@ -77,6 +76,7 @@ public class CapsEventQueue extends CapsClient
 	public void start()
 	{
 		running = true;
+		_Client = _Simulator.getClient();
 		Thread eventloop = new Thread(new Runnable()
 		{
 			public void run()
@@ -123,14 +123,14 @@ public class CapsEventQueue extends CapsClient
 							{
 								OSDMap body = (OSDMap) osd;
 								String name = evt.get("message").AsString();
-								IMessage message = Client.Messages.DecodeEvent(name, body);
+								IMessage message = _Client.Messages.DecodeEvent(name, body);
 								if (message != null)
 								{
-									Logger.Log("Caps message: " + name + ".", LogLevel.Debug, Client);
-									Client.Network.DistributeCaps(Simulator, message);
+									Logger.Log("Caps message: " + name + ".", LogLevel.Debug, _Client);
+									_Client.Network.DistributeCaps(_Simulator, message);
 
 									// #region Stats Tracking
-									if (Client.Settings.TRACK_UTILIZATION)
+									if (_Client.Settings.TRACK_UTILIZATION)
 									{
 										/* TODO add Stats support to Client manager */
 										// Simulator.getClient().Stats.Update(eventName,
@@ -141,21 +141,21 @@ public class CapsEventQueue extends CapsClient
 								else
 								{
 									Logger.Log("No Message handler exists for event " + name
-											+ ". Unable to decode. Will try Generic Handler next", LogLevel.Warning, Client);
+											+ ". Unable to decode. Will try Generic Handler next", LogLevel.Warning, _Client);
 									Logger.Log("Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
-											LogLevel.Debug, Client);
+											LogLevel.Debug, _Client);
 
 									// try generic decoder next which takes a caps event and
 									// tries to match it to an existing packet
 									Packet packet = CapsToPacket.BuildPacket(name, body);
 									if (packet != null)
 									{
-										Logger.DebugLog("Serializing " + packet.getType() + " capability with generic handler", Client);
-										Client.Network.DistributePacket(Simulator, packet);
+										Logger.DebugLog("Serializing " + packet.getType() + " capability with generic handler", _Client);
+										_Client.Network.DistributePacket(_Simulator, packet);
 									}
 									else
 									{
-										Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning, Client);
+										Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning, _Client);
 									}
 								}
 							}
@@ -174,14 +174,14 @@ public class CapsEventQueue extends CapsClient
 						if (result == null)
 						{
 							++errorCount;
-							Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning, Client);
+							Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning, _Client);
 						}
 						else if (result instanceof OSDMap)
 						{
 							errorCount = 0;
 							if (first)
 							{
-								Client.Network.raiseConnectedEvent(Simulator);
+								_Client.Network.raiseConnectedEvent(_Simulator);
 								first = false;
 							}
 
@@ -200,7 +200,7 @@ public class CapsEventQueue extends CapsClient
 							{
 								running = false;
 								Logger.Log(String.format("Closing event queue at %s due to missing caps URI", address),
-										LogLevel.Info, Client);
+										LogLevel.Info, _Client);
 							}
 							else if (status == HttpStatus.SC_BAD_GATEWAY)
 							{
@@ -218,17 +218,17 @@ public class CapsEventQueue extends CapsClient
 								if (status != HttpStatus.SC_OK)
 								{
 									Logger.Log(String.format("Unrecognized caps connection problem from %s: %d",
-											address, status), LogLevel.Warning, Client);
+											address, status), LogLevel.Warning, _Client);
 								}
 								else if (ex.getCause() != null)
 								{
 									Logger.Log(String.format("Unrecognized internal caps exception from %s: %s",
-											address, ex.getCause().getMessage()), LogLevel.Warning, Client);
+											address, ex.getCause().getMessage()), LogLevel.Warning, _Client);
 								}
 								else
 								{
 									Logger.Log(String.format("Unrecognized caps exception from %s: %s", address,
-													ex.getMessage()), LogLevel.Warning, Client);
+													ex.getMessage()), LogLevel.Warning, _Client);
 								}
 							}
 						}
@@ -236,19 +236,20 @@ public class CapsEventQueue extends CapsClient
 						{
 							++errorCount;
 
-							Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning, Client, ex);
+							Logger.Log("No response from the event queue but no reported error either", LogLevel.Warning, _Client, ex);
 						}
 					}
 					catch (Exception ex)
 					{
 						++errorCount;
-						Logger.Log("Error retrieving response from the event queue request!", LogLevel.Warning, Client, ex);
+						Logger.Log("Error retrieving response from the event queue request!", LogLevel.Warning, _Client, ex);
 					} 
 				}
 				while (running);
-				Logger.DebugLog("Caps Event queue terminated", Client);
+				Logger.DebugLog("Caps Event queue terminated", _Client);
 			}
 		});
+		eventloop.setName("EventLoop");
 		// Startup the event queue
 		eventloop.start();
 	}
@@ -261,6 +262,7 @@ public class CapsEventQueue extends CapsClient
 			if (Request != null)
 				Request.cancel(immediate);
 		}
+		_Client = null;
 		super.shutdown();
 	}
 }

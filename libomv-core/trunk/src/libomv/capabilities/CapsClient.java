@@ -51,9 +51,22 @@ import libomv.utils.Logger;
 
 public class CapsClient extends AsyncHTTPClient<OSD>
 {
-	public CapsClient() throws IOReactorException
+	public CapsClient(String name) throws IOReactorException
 	{
-		super();
+		super(name);
+	}
+	
+	@Override
+	protected void finalize()
+	{
+		try
+		{
+			shutdown();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/**

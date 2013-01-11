@@ -2386,7 +2386,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			// in again (with a different account name or different login
 			// server but using the same GridClient object
 			fullName = null;
-			return false;
+			return true;
 		}
 	}
 
@@ -2429,7 +2429,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
 		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 
-		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), false);
+		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), true);
 		// Login
 		_Client.Login.OnLoginProgress.add(new Network_OnLoginProgress(), false);
 
@@ -2938,7 +2938,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		{
 			ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
 			acceptInvite.SessionID = session_id;
-			new CapsClient().executeHttpPost(uri, acceptInvite, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient("ChatterBoxAcceptInvite").executeHttpPost(uri, acceptInvite, null, _Client.Settings.CAPS_TIMEOUT);
 
 			synchronized (GroupChatSessions)
 			{
@@ -2978,7 +2978,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				startConference.AgentsBlock[i] = participants[i];
 			}
 			startConference.SessionID = tmp_session_id;
-			new CapsClient().executeHttpPost(url, startConference, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient("StartIMConference").executeHttpPost(url, startConference, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -4582,7 +4582,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		URI url = _Client.Network.getCapabilityURI("HomeLocation");
 		if (url != null)
 		{
-			CapsClient request = new CapsClient();
+			CapsClient request = new CapsClient("SetHome");
 			OSDMap map = new OSDMap(2);
 			map.put("LocationId", OSD.FromInteger(id));
 			map.put("LocationPos", OSD.FromVector3(pos));
@@ -4912,7 +4912,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		URI url = _Client.Network.getCapabilityURI("AttachmentResources");
 		if (url != null)
 		{
-			CapsClient request = new CapsClient();
+			CapsClient request = new CapsClient("GetAttachmentResources");
 			request.executeHttpGet(url, Helpers.EmptyString, new AttachmentResourceReplyHandler(callback), _Client.Settings.CAPS_TIMEOUT);
 		}
 	}
@@ -4939,7 +4939,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		msg.OldDisplayName = oldName;
 		msg.NewDisplayName = newName;
 
-		new CapsClient().executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
+		new CapsClient("SetDisplayName").executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
 	}
 
 	/**
@@ -4960,7 +4960,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			msg.LanguagePublic = isPublic;
 
 			URI url = _Client.Network.getCapabilityURI("UpdateAgentLanguage");
-			new CapsClient().executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient("UpdateAgentLanguage").executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception ex)
 		{
@@ -5701,7 +5701,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             req.SessionID = sessionID;
             req.AgentID = memberID;
 
-            CapsClient request = new CapsClient();
+            CapsClient request = new CapsClient("ModerateChatSessions");
             request.getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
         }
         else
@@ -6745,7 +6745,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			public boolean callback(DisconnectedCallbackArgs e)
 			{
 				CleanupTimer();
-				return false;
+				return true;
 			}
 		}
 

@@ -855,6 +855,7 @@ public class Simulator extends Thread
 
 	public Simulator(GridClient client, InetSocketAddress endPoint, long handle) throws Exception
 	{
+		super("Simulator: " + endPoint.getHostName());
 		_Client = client;
 
 		ipEndPoint = endPoint;
@@ -913,21 +914,21 @@ public class Simulator extends Thread
 
 		if (_AckTimer == null)
 		{
-			_AckTimer = new Timer();
+			_AckTimer = new Timer("Simulator Acknowledge");
 		}
 		_AckTimer.schedule(new AckTimer_Elapsed(), LibSettings.NETWORK_TICK_INTERVAL);
 
 		// Timer for recording simulator connection statistics
 		if (_StatsTimer == null)
 		{
-			_StatsTimer = new Timer();
+			_StatsTimer = new Timer("Simulator Statistics");
 			_StatsTimer.scheduleAtFixedRate(new StatsTimer_Elapsed(), 1000, 1000);
 		}
 
 		// Timer for periodically pinging the simulator
 		if (_PingTimer == null && _Client.Settings.SEND_PINGS)
 		{
-			_PingTimer = new Timer();
+			_PingTimer = new Timer("Simulator Pings");
 			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), LibSettings.PING_INTERVAL, LibSettings.PING_INTERVAL);
 		}
 
@@ -1033,19 +1034,20 @@ public class Simulator extends Thread
 			if (_AckTimer != null)
 			{
 				_AckTimer.cancel();
+				_AckTimer = null;
 			}
+
 			if (_StatsTimer != null)
 			{
 				_StatsTimer.cancel();
+				_StatsTimer = null;
 			}
+
 			if (_PingTimer != null)
 			{
 				_PingTimer.cancel();
+				_PingTimer = null;
 			}
-
-			_AckTimer = null;
-			_StatsTimer = null;
-			_PingTimer = null;
 
 			// Kill the current CAPS system
 			if (_Caps != null)
@@ -1081,6 +1083,7 @@ public class Simulator extends Thread
 			{
 				Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
 			}
+			_Client = null;
 		}
 	}
 

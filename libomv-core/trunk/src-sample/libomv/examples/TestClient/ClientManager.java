@@ -95,12 +95,13 @@ public class ClientManager
 	public HashMap<UUID, TestClient> Clients = new HashMap<UUID, TestClient>();
 	public HashMap<Simulator, HashMap<Integer, Primitive>> SimPrims = new HashMap<Simulator, HashMap<Integer, Primitive>>();
 
-	public boolean Running = true;
+	private boolean _Running = true;
 	public boolean GetTextures = false;
 	public volatile int PendingLogins = 0;
 	public String onlyAvatar = Helpers.EmptyString;
 
-    Scanner in = new Scanner(System.in);
+    private Scanner in = new Scanner(System.in);
+    private ExecutorService _ThreadPool = Executors.newCachedThreadPool();
 
 	public void start(List<LoginDetails> accounts, boolean getTextures) throws Exception
 	{
@@ -170,7 +171,8 @@ public class ClientManager
 		{
 			if (c.Self.getFirstName().equals(account.FirstName) && c.Self.getLastName().equals(account.LastName))
 			{
-				logout(c);
+				Clients.remove(c.Self.getAgentID());
+				c.Network.Logout();
 				break;
 			}
 		}
@@ -279,30 +281,35 @@ public class ClientManager
 	 */
 	public void run(boolean noGUI) throws Exception
 	{
-		if (noGUI)
+		try
 		{
-			while (Running)
+			if (noGUI)
 			{
-				Thread.sleep(2 * 1000);
+				while (_Running)
+				{
+					Thread.sleep(2 * 1000);
+				}
+			}
+			else
+			{
+				System.out.println("Type quit to exit. Type help for a command list.");
+
+				while (_Running)
+				{
+					printPrompt();
+					
+					String input = in.nextLine();
+					doCommandAll(input, UUID.Zero);
+				}
 			}
 		}
-		else
+		finally
 		{
-			System.out.println("Type quit to exit. Type help for a command list.");
-
-			while (Running)
+			for (TestClient client : Clients.values())
 			{
-				printPrompt();
-				
-				String input = in.nextLine();
-				doCommandAll(input, UUID.Zero);
-			}
-		}
-
-		for (GridClient client : Clients.values())
-		{
-			if (client.Network.getConnected())
 				client.Network.Logout();
+			}
+			Clients = null;
 		}
 	}
 
@@ -315,7 +322,6 @@ public class ClientManager
 			if (client.Network.getConnected())
 				online++;
 		}
-
 		System.out.print(online + " avatars online> ");
 	}
 
@@ -422,12 +428,10 @@ public class ClientManager
             HashMap<UUID, TestClient> clientsCopy = new HashMap<UUID, TestClient>(Clients);
 
             final AtomicInteger completed = new AtomicInteger();
-
-            ExecutorService threadPool = Executors.newCachedThreadPool();
             
             for (final TestClient testClient : clientsCopy.values())
             {
-                threadPool.execute(new Runnable()
+                _ThreadPool.execute(new Runnable()
                 { 	
                 	@Override
 					public void run()
@@ -463,23 +467,13 @@ public class ClientManager
     }
 
 	/**
-	 * 
-	 * @param client
-	 * @throws Exception
-	 */
-	public void logout(TestClient client) throws Exception
-	{
-		Clients.remove(client.Self.getAgentID());
-		client.Network.Logout();
-	}
-
-	/**
 	 * @throws IOException 
 	 * 
 	 */
 	public void quit() throws IOException
 	{
-		Running = false;
+		_Running = false;
+		_ThreadPool.shutdownNow();
 		in.close();
 	}
 }

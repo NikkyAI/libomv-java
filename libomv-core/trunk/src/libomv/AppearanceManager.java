@@ -328,7 +328,7 @@ public class AppearanceManager implements PacketCallback
      */
     public boolean getManagerBusy()
     {
-        return AppearanceThread.isAlive();
+        return _AppearanceThread.isAlive();
     }
 
     // Visual parameters last sent to the sim
@@ -357,9 +357,9 @@ public class AppearanceManager implements PacketCallback
     // Reference to our agent
     private GridClient _Client;
     // Timer used for delaying rebake on changing outfit
-    private Timer RebakeScheduleTimer;
+    private Timer _RebakeScheduleTimer;
     // Main appearance thread
-    private Thread AppearanceThread;
+    private Thread _AppearanceThread;
     // Is server baking complete. It needs doing only once
     private boolean ServerBakingDone = false;
     // #endregion Private Members
@@ -401,7 +401,7 @@ public class AppearanceManager implements PacketCallback
         _Client.Network.RegisterCallback(PacketType.RebakeAvatarTextures, this);
 
         _Client.Network.OnEventQueueRunning.add(new Network_OnEventQueueRunning());
-        _Client.Network.OnDisconnected.add(new Network_OnDisconnected());
+        _Client.Network.OnDisconnected.add(new Network_OnDisconnected(), true);
     }
 
     @Override
@@ -438,21 +438,21 @@ public class AppearanceManager implements PacketCallback
      */
     public void RequestSetAppearance(final boolean forceRebake)
     {
-        if (AppearanceThread != null && AppearanceThread.isAlive())
+        if (_AppearanceThread != null && _AppearanceThread.isAlive())
         {
             Logger.Log("Appearance thread is already running, skipping", LogLevel.Warning, _Client);
             return;
         }
 
         // If we have an active delayed scheduled appearance bake, we dispose of it
-        if (RebakeScheduleTimer != null)
+        if (_RebakeScheduleTimer != null)
         {
-            RebakeScheduleTimer.cancel();
-            RebakeScheduleTimer = null;
+            _RebakeScheduleTimer.cancel();
+            _RebakeScheduleTimer = null;
         }
 
         // This is the first time setting appearance, run through the entire sequence
-        AppearanceThread = new Thread()
+        _AppearanceThread = new Thread("AppearenceThread")
         {
             @Override
             public void run()
@@ -538,9 +538,8 @@ public class AppearanceManager implements PacketCallback
                 }
             }
         };
-        AppearanceThread.setName("Appearance");
-        AppearanceThread.setDaemon(true);
-        AppearanceThread.start();
+        _AppearanceThread.setDaemon(true);
+        _AppearanceThread.start();
     }
 
     /**
@@ -1835,7 +1834,7 @@ public class AppearanceManager implements PacketCallback
             return false;
         }
             
-        CapsClient capsRequest = new CapsClient();
+        CapsClient capsRequest = new CapsClient("UpdateAvatarAppearance");
         OSDMap request = new OSDMap(1);
         request.put("cof_version", OSD.FromInteger(COF.version));
 
@@ -2071,11 +2070,11 @@ public class AppearanceManager implements PacketCallback
 
     private void DelayedRequestSetAppearance()
     {
-        if (RebakeScheduleTimer == null)
+        if (_RebakeScheduleTimer == null)
         {
-            RebakeScheduleTimer = new Timer();
+            _RebakeScheduleTimer = new Timer("DelayedRequestSetAppearance");
         }
-        RebakeScheduleTimer.schedule(new TimerTask()
+        _RebakeScheduleTimer.schedule(new TimerTask()
         {
             @Override
             public void run()
@@ -2230,21 +2229,21 @@ public class AppearanceManager implements PacketCallback
         @Override
         public boolean callback(DisconnectedCallbackArgs e)
         {
-            if (RebakeScheduleTimer != null)
+            if (_RebakeScheduleTimer != null)
             {
-                RebakeScheduleTimer.cancel();
-                RebakeScheduleTimer = null;
+                _RebakeScheduleTimer.cancel();
+                _RebakeScheduleTimer = null;
             }
 
-            if (AppearanceThread != null)
+            if (_AppearanceThread != null)
             {
-                if (AppearanceThread.isAlive())
+                if (_AppearanceThread.isAlive())
                 {
-                    AppearanceThread.stop();
+                    _AppearanceThread.stop();
                 }
-                AppearanceThread = null;
+                _AppearanceThread = null;
             }
-            return false;
+            return true;
         }
     }
 

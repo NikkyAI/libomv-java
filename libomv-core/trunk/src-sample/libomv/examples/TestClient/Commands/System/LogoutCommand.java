@@ -46,7 +46,8 @@ public class LogoutCommand extends Command
         String name = Client.toString();
 	    try
 		{
-			Client._ClientManager.logout(Client);
+			Client._ClientManager.Clients.remove(Client.Self.getAgentID());
+			Client.Network.Logout();
 		}
 		catch (Exception ex)
 		{

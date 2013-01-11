@@ -48,6 +48,7 @@ import libomv.GroupManager.GroupMember;
 import libomv.GroupManager.GroupMembersReplyCallbackArgs;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
+import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.LibSettings;
 import libomv.Simulator;
 import libomv.inventory.InventoryFolder;
@@ -67,11 +68,21 @@ import libomv.utils.TimeoutEvent;
 
 public class TestClient extends GridClient implements PacketCallback
 {
+	private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
+	{
+		@Override
+		public boolean callback(DisconnectedCallbackArgs e)
+		{
+			updateTimer.cancel();
+			updateTimer = null;
+			return true;
+		}
+	}
+
 	public UUID GroupID = UUID.Zero;
 	public HashMap<UUID, GroupMember> GroupMembers;
 	public HashMap<UUID, AvatarAppearancePacket> Appearances = new HashMap<UUID, AvatarAppearancePacket>();
 	public HashMap<String, Command> Commands = new HashMap<String, Command>();
-	public boolean Running = true;
 	public boolean GroupCommands = false;
 	public String MasterName = Helpers.EmptyString;
 	public UUID MasterKey = UUID.Zero;
@@ -110,14 +121,15 @@ public class TestClient extends GridClient implements PacketCallback
 		Self.OnInstantMessage.add(new Self_IM(), false);
 		Groups.OnGroupMembersReply.add(new GroupMembersHandler(), false);
 		Inventory.OnInventoryObjectOffered.add(new Inventory_OnInventoryObjectReceived(), false);
-
+		Network.OnDisconnected.add(new Network_OnDisconnected(), true);
+		
 		Network.RegisterCallback(PacketType.AgentDataUpdate, this);
 		Network.RegisterCallback(PacketType.AvatarAppearance, this);
 		Network.RegisterCallback(PacketType.AlertMessage, this);
 		
 //		_VoiceManager = new VoiceManager(this);
 
-		updateTimer = new Timer();
+		updateTimer = new Timer("TestClient UpdateTimer");
 		updateTimer.schedule(new TimerTask()
 		{
 			@Override
@@ -211,7 +223,7 @@ public class TestClient extends GridClient implements PacketCallback
 		}
 	}
 	
-	public void RegisterAllCommands(Class<?> assembly)
+	private void RegisterAllCommands(Class<?> assembly)
     {
 		ArrayList<Class<?>> classes = getDerivedClasses(assembly.getPackage(), Command.class);
         for (Class<?> clazz : classes)
@@ -234,7 +246,7 @@ public class TestClient extends GridClient implements PacketCallback
         }
     }
 
-	public void RegisterCommand(Command command)
+	private void RegisterCommand(Command command)
 	{
 		command.Client = this;
 		if (!Commands.containsKey(command.Name.toLowerCase()))

@@ -312,7 +312,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * tracked by the library. This is necessary to increase the accuracy of
 	 * speed and position estimates for simulated objects
 	 */
-	public boolean USE_INTERPOLATION_TIMER = true;
+	public static final String USE_INTERPOLATION_TIMER = "useInterpolationTimer";
 
 	/*
 	 * If true, utilization statistics will be tracked. There is a minor penalty
@@ -435,7 +435,7 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(HTTP_INVENTORY, true),
             new DefaultSetting(AVATAR_TRACKING, true),
             new DefaultSetting(OBJECT_TRACKING, true),
-
+            new DefaultSetting(USE_INTERPOLATION_TIMER, true),
 	};
 	/**
 	 * Starts the settings update

@@ -400,7 +400,7 @@ public class GridManager implements PacketCallback
 
 			try
 			{
-				CapsClient request = new CapsClient();
+				CapsClient request = new CapsClient("RequestMapLayer");
 				request.executeHttpPost(url, body, OSDFormat.Xml, new MapLayerCallback(), Client.Settings.CAPS_TIMEOUT);
 			}
 			catch (Exception e)

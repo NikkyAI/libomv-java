@@ -1102,7 +1102,7 @@ public class AssetManager implements PacketCallback
 		if (url != null)
 		{
 			// Fetch the uploader capability
-			CapsClient request = new CapsClient();
+			CapsClient request = new CapsClient("RequestUploadBakedTexture");
 
 			class RequestUploadBakedTextureComplete implements FutureCallback<OSD>
 			{
@@ -1126,7 +1126,7 @@ public class AssetManager implements PacketCallback
 								try
 								{
 									// POST the asset data
-									CapsClient upload = new CapsClient();
+									CapsClient upload = new CapsClient("UploadBakedTexture");
 									upload.executeHttpPost(uploadUrl, textureData, "application/octet-stream", null,
 											new RequestUploadBakedTextureComplete(), _Client.Settings.CAPS_TIMEOUT);
 								}
