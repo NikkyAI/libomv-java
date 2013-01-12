@@ -66,7 +66,6 @@ public class CapsEventQueue extends CapsClient
 
 	private int errorCount;
 	private boolean running;
-	private Future<OSD> Request;
 
 	public boolean getRunning()
 	{
@@ -105,10 +104,7 @@ public class CapsEventQueue extends CapsClient
 					osdRequest.put("done", OSD.FromBoolean(!running));
 
 					// Start or resume the connection
-					synchronized (address)
-					{
-						Request = executeHttpPost(address, osdRequest, OSD.OSDFormat.Xml, null, REQUEST_TIMEOUT);
-					}
+					Future<OSD> Request = executeHttpPost(address, osdRequest, OSD.OSDFormat.Xml, null, REQUEST_TIMEOUT);
 				
 					// Handle incoming events from previous request
 					if (events != null && events.size() > 0)
@@ -252,17 +248,5 @@ public class CapsEventQueue extends CapsClient
 		eventloop.setName("EventLoop");
 		// Startup the event queue
 		eventloop.start();
-	}
-
-	public void shutdown(boolean immediate) throws InterruptedException
-	{
-		running = false;
-		synchronized (address)
-		{
-			if (Request != null)
-				Request.cancel(immediate);
-		}
-		_Client = null;
-		super.shutdown();
 	}
 }

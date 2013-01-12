@@ -100,7 +100,7 @@ public class CapsManager
 
 		if (_Client != null)
 		{
-			_Client.shutdown();
+			_Client.shutdown(true);
 			_Client = null;
 		}
 

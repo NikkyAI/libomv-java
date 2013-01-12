@@ -147,7 +147,7 @@ public class DownloadManager
             {
                 try
                 {
-                    download.shutdown();
+                    download.shutdown(true);
                 }
                 catch (Exception ex) { }
             }

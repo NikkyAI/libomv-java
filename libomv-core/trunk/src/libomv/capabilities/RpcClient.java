@@ -95,7 +95,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 	{
 		try
 		{
-			shutdown();
+			shutdown(true);
 		}
 		catch (InterruptedException e)
 		{

@@ -149,9 +149,9 @@ public abstract class AsyncHTTPClient<T>
 		}
 	}
 	
-	public void shutdown() throws InterruptedException
+	public void shutdown(boolean mayInterruptIfRunning) throws InterruptedException
 	{
-		cancel(true);
+		cancel(mayInterruptIfRunning);
 		client.shutdown();
 		client = null;
 	}

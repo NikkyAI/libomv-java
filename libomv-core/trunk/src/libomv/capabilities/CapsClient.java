@@ -61,7 +61,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	{
 		try
 		{
-			shutdown();
+			shutdown(true);
 		}
 		catch (InterruptedException e)
 		{

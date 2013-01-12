@@ -92,7 +92,7 @@ public class UpdateChecker
     {
         if (client != null)
         {
-            client.shutdown();
+            client.shutdown(true);
             client = null;
         }
     }
