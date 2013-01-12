@@ -1005,7 +1005,7 @@ public class Simulator extends Thread
 			if (_Caps.getSeedCapsURI().equals(seedcaps))
 				return;
 
-			Logger.Log("Unexpected change of seed capability", LogLevel.Warning);
+			Logger.Log("Unexpected change of seed capability", LogLevel.Warning, _Client);
 			_Caps.disconnect(true);
 			_Caps = null;
 		}
@@ -1015,7 +1015,7 @@ public class Simulator extends Thread
 			// Connect to the new CAPS system
 			if (seedcaps.isEmpty())
 			{
-				Logger.Log("Setting up a sim without a valid capabilities server!", LogLevel.Error);
+				Logger.Log("Setting up a sim without a valid capabilities server!", LogLevel.Error, _Client);
 			}
 			else
 			{

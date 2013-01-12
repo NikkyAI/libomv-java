@@ -1119,7 +1119,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	private void setCurrentSim(Simulator simulator, String seedcaps) throws InterruptedException
 	{
-		if (simulator != getCurrentSim())
+		if (!simulator.equals(getCurrentSim()))
 		{
 			Simulator oldSim = getCurrentSim();
 			synchronized (_Simulators) // CurrentSim is synchronized against
@@ -1130,7 +1130,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			simulator.setSeedCaps(seedcaps);
 
 			// If the current simulator changed fire the callback
-			if (simulator != oldSim)
+			if (!simulator.equals(oldSim))
 			{
 				OnSimChanged.dispatch(new SimChangedCallbackArgs(oldSim));
 			}

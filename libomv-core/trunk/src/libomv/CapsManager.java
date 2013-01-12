@@ -31,7 +31,6 @@ package libomv;
 
 import java.net.URI;
 import java.util.Hashtable;
-import java.util.concurrent.Future;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
@@ -59,7 +58,6 @@ public class CapsManager
 	private CapsClient _Client;
 	private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
 
-	private Future<OSD> _SeedRequest = null;
 	private CapsEventQueue _EventQueue = null;
 
 	/* Capabilities URI this system was initialized with */
@@ -104,12 +102,6 @@ public class CapsManager
 		{
 			_Client.shutdown();
 			_Client = null;
-		}
-
-		if (_SeedRequest != null)
-		{
-			_SeedRequest.cancel(immediate);
-			_SeedRequest = null;
 		}
 
 		if (_EventQueue != null)
@@ -233,10 +225,6 @@ public class CapsManager
 		{
 			if (result != null && result.getType().equals(OSDType.Map))
 			{
-				// Our request succeeded, clear the Future as it is not needed
-				// anymore
-				_SeedRequest = null;
-
 				OSDMap respTable = (OSDMap) result;
 //				OSDMap meta = (OSDMap) respTable.remove("Metadata");
 				synchronized (_Capabilities)
@@ -251,7 +239,7 @@ public class CapsManager
 
 					if (_Capabilities.containsKey("EventQueueGet"))
 					{
-						Logger.DebugLog("Starting event queue for " + _Simulator.getName(), _Simulator.getClient());
+						Logger.Log("Starting event queue for " + _Simulator.getName(), LogLevel.Info, _Simulator.getClient());
 						try
 						{
 							_EventQueue = new CapsEventQueue(_Simulator, _Capabilities.get("EventQueueGet"));
@@ -274,7 +262,6 @@ public class CapsManager
 		@Override
 		public void failed(Exception ex)
 		{
-			_SeedRequest = null;
 			if (ex instanceof HttpResponseException
 					&& ((HttpResponseException) ex).getStatusCode() == HttpStatus.SC_NOT_FOUND)
 			{
@@ -290,7 +277,6 @@ public class CapsManager
 		@Override
 		public void cancelled()
 		{
-			_SeedRequest = null;
 			Logger.Log("Seed capability got cancelled, capability system is shutting down", LogLevel.Info, _Simulator.getClient());
 		}
 	}
