@@ -344,12 +344,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// #region Properties
 
 
+	public InventoryStore getRoot()
+	{
+		return _Store;
+	}
+	
 	/* Get this agents Inventory data */
 	public final InventoryFolder getRootNode(boolean library)
 	{
 		if (library)
 			return _Store.getLibraryFolder();
-
 		return _Store.getInventoryFolder();
 	}
 
@@ -396,6 +400,31 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		_Client.Self.OnInstantMessage.remove(instantMessageCallback);
 		_Client.Login.UnregisterLoginProgressCallback(loginProgressCallback);
 		super.finalize();
+	}
+
+	public ArrayList<InventoryNode> getChildren(InventoryFolder folder)
+	{
+		if (folder != null)
+			return folder.children;
+		return null;
+	}
+	
+	public void updateChild(InventoryFolder parent, Object element, Object value)
+	{	
+		if (parent.children == null)
+			parent.children = new ArrayList<InventoryNode>(1);
+		int index = parent.children.indexOf(element);
+		InventoryNode node = (InventoryNode)value;
+		if (index >= 0)
+		{
+			parent.children.set(index, node);
+		}
+		else
+		{
+			parent.children.add(node);
+		}
+		node.parent = parent;
+		node.parentID = parent.itemID;
 	}
 
 	@Override

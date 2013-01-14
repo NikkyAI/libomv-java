@@ -149,6 +149,7 @@ public class InventoryStore extends InventoryFolder
 
 	public InventoryStore(GridClient client, UUID owner)
 	{
+		super(UUID.Zero, UUID.Zero, owner);
 		_Client = client;
 
 		if (owner == null || owner.equals(UUID.Zero))
@@ -162,11 +163,9 @@ public class InventoryStore extends InventoryFolder
 		_Folders.put(UUID.Zero, this);
 
 		name = "Root";
-		itemID = UUID.Zero;
-		ownerID = owner;
 		preferredType = AssetType.RootFolder;
 	}
-	
+		
 	// The root folder of the avatars inventory
 	public final InventoryFolder getInventoryFolder()
 	{

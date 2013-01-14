@@ -60,10 +60,6 @@ public class InventoryFolder extends InventoryNode
 	// The list of children this folder contains
 	protected ArrayList<InventoryNode> children;
 	
-	public InventoryFolder()
-	{
-		super();
-	}
 	/**
 	 * Constructor
 	 * 
