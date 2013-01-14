@@ -31,6 +31,7 @@ package libomv.Gui.components.list;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +49,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import libomv.GridClient;
+import libomv.GroupManager.CurrentGroupsCallbackArgs;
 import libomv.GroupManager.Group;
 import libomv.GroupManager.GroupOperationCallbackArgs;
 import libomv.Gui.channels.GroupChannel;
@@ -74,27 +77,38 @@ public class GroupList extends JScrollPane implements ActionListener
 	private static final String cmdLeaveGroup = "leaveGroup";
 
 	private MainControl _Main;
+	private GridClient _Client;
 	private CommWindow _Comm;
 	
 	private JList jLGroupsList;
 	
 	/**
 	 * Constructs a list to display
+	 * @throws Exception 
 	 */
 	public GroupList(MainControl main, CommWindow comm)
 	{
 		super();
 		_Main = main;
 		_Comm = comm;
+		_Client = _Main.getGridClient();
 
-		_Main.getGridClient().Groups.OnGroupJoinedReply.add(new GroupJoined());
-		_Main.getGridClient().Groups.OnGroupLeaveReply.add(new GroupLeave());
+		_Client.Groups.OnGroupJoinedReply.add(new GroupJoined());
+		_Client.Groups.OnGroupLeaveReply.add(new GroupLeave());
 
-//		_Main.getGridClient().Groups.OnCurrentGroups.add(new GroupCurrentGroups());
-//		_Main.getGridClient().Groups.OnGroupCreatedReply.add(new GroupCreated());
-//      _Main.getGridClient().Self.OnMuteListUpdated.add(new MuteListUpdated());
+		_Client.Groups.OnCurrentGroups.add(new GroupCurrentGroups());
+//		_Client.Groups.OnGroupCreatedReply.add(new GroupCreated());
+//      _Client.Self.OnMuteListUpdated.add(new MuteListUpdated());
+
 		// CapsEventQueue must be working for this
-//      _Main.getGridClient().Groups.RequestCurrentGroups();
+		try
+		{
+			_Client.Groups.RequestCurrentGroups();
+		}
+		catch (Exception ex)
+		{
+			Logger.Log("Error requesting group names", LogLevel.Error, _Client, ex);
+		}
 		
 		// Choose a sensible minimum size.
 		setPreferredSize(new Dimension(200, 320));
@@ -138,9 +152,6 @@ public class GroupList extends JScrollPane implements ActionListener
 				}
 			});
 			
-			// Initialize the list with the values from the friends manager
-			DefaultListModel model = (DefaultListModel) ((SortedListModel) jLGroupsList.getModel()).getUnsortedModel();
-			model.copyInto(_Main.getGridClient().Groups.GroupList.values().toArray());
 			// create Renderer and display
 			jLGroupsList.setCellRenderer(new GroupListRow());
 			// only allow single selections.
@@ -250,7 +261,7 @@ public class GroupList extends JScrollPane implements ActionListener
 			int style = font.getStyle();
 			Group group = (Group) value;
 
-			if (_Main.getGridClient().Self.getActiveGroup().equals(group.getID()))
+			if (_Client.Self.getActiveGroup().equals(group.getID()))
 			{
 				style |= Font.BOLD;
 			}
@@ -300,7 +311,7 @@ public class GroupList extends JScrollPane implements ActionListener
 			// Send message
 			add(getJmiSendMessage());
 			// Activate this group
-			add(getJmiActivate(_Main.getGridClient().Self.getActiveGroup().equals(_Info.getID())));
+			add(getJmiActivate(_Client.Self.getActiveGroup().equals(_Info.getID())));
 			// Add the group invitation menu
 			add(getJmiInvite());
 			// Add the group info menu item
@@ -414,13 +425,40 @@ public class GroupList extends JScrollPane implements ActionListener
 		}
 	}
 	
+	private class GroupCurrentGroups implements Callback<CurrentGroupsCallbackArgs>
+	{
+		@Override
+		public boolean callback(final CurrentGroupsCallbackArgs params)
+		{
+			EventQueue.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+					model.clear();
+					model.copyInto(params.getGroups().values().toArray());
+				}
+			});
+			return false;
+		}
+		
+	}
+	
 	private class GroupJoined implements Callback<GroupOperationCallbackArgs>
 	{
 		@Override
-		public boolean callback(GroupOperationCallbackArgs args)
+		public boolean callback(final GroupOperationCallbackArgs params)
 		{
-			if (args.getSuccess())
-				;
+			EventQueue.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (params.getSuccess())
+						;
+				}
+			});
 			return false;
 		}
 	}
@@ -456,12 +494,12 @@ public class GroupList extends JScrollPane implements ActionListener
 				// We need to request to join the group chat
 				try
 				{
-					_Main.getGridClient().Self.RequestJoinGroupChat(info.getID());
+					_Client.Self.RequestJoinGroupChat(info.getID());
 					_Comm.setFocus(null, info.getID());
 				}
 				catch (Exception ex)
 				{
-					Logger.Log("Start GroupIM failed", LogLevel.Error, _Main.getGridClient(), ex);
+					Logger.Log("Start GroupIM failed", LogLevel.Error, _Client, ex);
 				}
 			}
 			_Comm.setFocus(null, info.getID());
@@ -470,11 +508,11 @@ public class GroupList extends JScrollPane implements ActionListener
 		{
 			try
 			{
-				_Main.getGridClient().Groups.ActivateGroup(info.getID());
+				_Client.Groups.ActivateGroup(info.getID());
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Activate Group failed", LogLevel.Error, _Main.getGridClient(), ex);
+				Logger.Log("Activate Group failed", LogLevel.Error, _Client, ex);
 			}
 		}
 		else if (e.getActionCommand().equals(cmdLeaveGroup))
@@ -482,11 +520,11 @@ public class GroupList extends JScrollPane implements ActionListener
 			// Terminate the membership
 			try
 			{
-				_Main.getGridClient().Groups.LeaveGroup(info.getID());
+				_Client.Groups.LeaveGroup(info.getID());
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Leave Group failed", LogLevel.Error, _Main.getGridClient(), ex);
+				Logger.Log("Leave Group failed", LogLevel.Error, _Client, ex);
 			}
 		}
 		else if (e.getActionCommand().equals(cmdSearchGroup))

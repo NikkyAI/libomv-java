@@ -32,7 +32,6 @@ import libomv.GridClient;
 import libomv.utils.Logger;
 import libomv.utils.Settings;
 import libomv.utils.Logger.LogLevel;
-import libomv.utils.Settings.DefaultSetting;
 
 public class AppSettings extends Settings
 {

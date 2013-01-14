@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JProgressBar;
@@ -15,9 +14,6 @@ import javax.swing.JButton;
 
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
-import java.awt.Color;
-import java.awt.SystemColor;
-import javax.swing.UIManager;
 
 public class ProgressPane extends JPanel implements ActionListener
 {
