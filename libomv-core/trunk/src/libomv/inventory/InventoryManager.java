@@ -341,24 +341,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// private Random _RandNumbers = new Random();
 	private ArrayList<InventorySearch> _Searches = new ArrayList<InventorySearch>();
 
-	// #region Properties
-
-
-	public InventoryStore getRoot()
-	{
-		return _Store;
-	}
-	
-	/* Get this agents Inventory data */
-	public final InventoryFolder getRootNode(boolean library)
-	{
-		if (library)
-			return _Store.getLibraryFolder();
-		return _Store.getInventoryFolder();
-	}
-
-	// #endregion Properties
-
 	private Callback<InstantMessageCallbackArgs> instantMessageCallback;
 	private Callback<LoginProgressCallbackArgs> loginProgressCallback;
 
@@ -402,6 +384,19 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		super.finalize();
 	}
 
+	/* Get this agents Inventory data */
+	public final InventoryFolder getRootNode(boolean library)
+	{
+		if (library)
+			return _Store.getLibraryFolder();
+		return _Store.getInventoryFolder();
+	}
+
+	public InventoryFolder getRoot()
+	{
+		return _Store;
+	}
+	
 	public ArrayList<InventoryNode> getChildren(InventoryFolder folder)
 	{
 		if (folder != null)
