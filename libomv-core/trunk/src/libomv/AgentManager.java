@@ -5293,7 +5293,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		teleportTimeout.set(teleportStatus);
 	}
 
-    private void HandleEstablishAgentComm(IMessage message, Simulator simulator) throws InterruptedException
+    private void HandleEstablishAgentComm(IMessage message, Simulator simulator) throws InterruptedException, IOException
     {
         EstablishAgentCommunicationMessage msg = (EstablishAgentCommunicationMessage)message;
 

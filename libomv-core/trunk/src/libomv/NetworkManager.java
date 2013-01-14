@@ -30,6 +30,7 @@
  */
 package libomv;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -1117,7 +1118,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		shutdown(DisconnectType.ClientInitiated, "User logged out");
 	}
 
-	private void setCurrentSim(Simulator simulator, String seedcaps) throws InterruptedException
+	private void setCurrentSim(Simulator simulator, String seedcaps) throws InterruptedException, IOException
 	{
 		if (!simulator.equals(getCurrentSim()))
 		{

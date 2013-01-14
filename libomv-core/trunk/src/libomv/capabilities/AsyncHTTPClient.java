@@ -88,7 +88,7 @@ public abstract class AsyncHTTPClient<T>
 		public void progress(long bytesTransceived, long totalBytes);
 	}
 	
-	private DefaultHttpAsyncClient client;
+	private DefaultHttpAsyncClient asyncClient;
 	private X509Certificate certificate;
 	private Timer timeout;
 	private Future<T> resultFuture;
@@ -112,9 +112,9 @@ public abstract class AsyncHTTPClient<T>
 	 * @param username The plain text username
 	 * @param password The plain text password
 	 */
-	public void setBasicAuthentication(URI uri, String username, String password)
+	public synchronized void setBasicAuthentication(URI uri, String username, String password)
 	{
-		client.getCredentialsProvider().setCredentials(
+		asyncClient.getCredentialsProvider().setCredentials(
 				new AuthScope(uri.getHost(), uri.getPort(), AuthScope.ANY_REALM),
 				new UsernamePasswordCredentials(username, password));
 	}
@@ -127,9 +127,9 @@ public abstract class AsyncHTTPClient<T>
 	 * @param scheme The scheme to add to the connection manager for this connection
 	 * @return The scheme registered
 	 */
-	public Scheme register(Scheme scheme)
+	public synchronized Scheme register(Scheme scheme)
 	{
-		return client.getConnectionManager().getSchemeRegistry().register(scheme);
+		return asyncClient.getConnectionManager().getSchemeRegistry().register(scheme);
 	}
 	
 	private synchronized void cancel(boolean mayInterruptIfRunning)
@@ -149,17 +149,17 @@ public abstract class AsyncHTTPClient<T>
 		}
 	}
 	
-	public void shutdown(boolean mayInterruptIfRunning) throws InterruptedException
+	public synchronized void shutdown(boolean mayInterruptIfRunning) throws InterruptedException
 	{
 		cancel(mayInterruptIfRunning);
-		client.shutdown();
-		client = null;
+		asyncClient.shutdown();
+		asyncClient = null;
 	}
 
 	public AsyncHTTPClient(String name) throws IOReactorException
 	{
-		client = new DefaultHttpAsyncClient();
-		client.start();
+		asyncClient = new DefaultHttpAsyncClient();
+		asyncClient.start();
 	}
 
 	/**
@@ -377,7 +377,7 @@ public abstract class AsyncHTTPClient<T>
 
 		try
 		{
-			resultFuture = client.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
+			resultFuture = asyncClient.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
 				                                	new AsyncHttpResponseConsumer(), internalCallback);
 
 			if (millisecondTimeout >= 0)

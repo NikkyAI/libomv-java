@@ -53,6 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.ParcelManager.Parcel;
 import libomv.TerrainManager.TerrainPatch;
+import libomv.capabilities.CapsManager;
 import libomv.packets.AgentPausePacket;
 import libomv.packets.AgentResumePacket;
 import libomv.packets.CloseCircuitPacket;
@@ -998,7 +999,7 @@ public class Simulator extends Thread
 		sendPacket(use);
 	}
 
-	public final void setSeedCaps(String seedcaps) throws InterruptedException
+	public final void setSeedCaps(String seedcaps) throws InterruptedException, IOException
 	{
 		if (_Caps != null)
 		{
