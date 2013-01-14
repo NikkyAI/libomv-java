@@ -38,6 +38,7 @@ import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
 
 import libomv.GridClient;
+import libomv.Gui.components.list.InventoryTreeModel;
 import libomv.inventory.InventoryNode;
 
 public class InventoryTree extends JScrollPane implements TreeWillExpandListener
@@ -60,7 +61,7 @@ public class InventoryTree extends JScrollPane implements TreeWillExpandListener
 	{
 		if (jTrInventory == null)
 		{
-            jTrInventory = new JTree(_Client.Inventory.getTreeModel());
+            jTrInventory = new JTree(new InventoryTreeModel(_Client.Inventory));
             jTrInventory.setRootVisible(false);
             jTrInventory.setCellRenderer(new CellRenderer(jTrInventory.getCellRenderer()));
 		}
