@@ -1014,7 +1014,7 @@ public class Simulator extends Thread
 		if (_Client.Settings.getBool(LibSettings.ENABLE_CAPS))
 		{
 			// Connect to the new CAPS system
-			if (seedcaps.isEmpty())
+			if (seedcaps == null || seedcaps.isEmpty())
 			{
 				Logger.Log("Setting up a sim without a valid capabilities server!", LogLevel.Error, _Client);
 			}
@@ -1179,7 +1179,7 @@ public class Simulator extends Thread
 	public boolean getIsEventQueueRunning()
 	{
 		if (_Caps != null)
-			return _Caps.getIsEventQueueRunning();
+			return _Caps.isRunning();
 		return false;
 	}
 
