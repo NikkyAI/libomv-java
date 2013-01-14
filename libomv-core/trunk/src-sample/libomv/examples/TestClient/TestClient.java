@@ -68,17 +68,6 @@ import libomv.utils.TimeoutEvent;
 
 public class TestClient extends GridClient implements PacketCallback
 {
-	private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
-	{
-		@Override
-		public boolean callback(DisconnectedCallbackArgs e)
-		{
-			updateTimer.cancel();
-			updateTimer = null;
-			return true;
-		}
-	}
-
 	public UUID GroupID = UUID.Zero;
 	public HashMap<UUID, GroupMember> GroupMembers;
 	public HashMap<UUID, AvatarAppearancePacket> Appearances = new HashMap<UUID, AvatarAppearancePacket>();
@@ -95,8 +84,8 @@ public class TestClient extends GridClient implements PacketCallback
 
 	private Timer updateTimer;
 	private UUID GroupMembersRequestID;
-	public HashMap<UUID, Group> GroupsCache = null;
-	private TimeoutEvent<Boolean> GroupsEvent = new TimeoutEvent<Boolean>();
+	private HashMap<UUID, Group> GroupsCache;
+	private TimeoutEvent<HashMap<UUID, Group>> GroupsEvent = new TimeoutEvent<HashMap<UUID, Group>>();
 
 	// / <summary>
 	// /
@@ -117,11 +106,11 @@ public class TestClient extends GridClient implements PacketCallback
 		Settings.ALWAYS_REQUEST_OBJECTS = true;
 		Settings.USE_ASSET_CACHE = true;
 
-		Login.OnLoginProgress.add(new LoginHandler(), false);
+		Network.OnDisconnected.add(new Network_OnDisconnected(), true);
+		Login.OnLoginProgress.add(new Network_OnLoginProgress(), false);
 		Self.OnInstantMessage.add(new Self_IM(), false);
 		Groups.OnGroupMembersReply.add(new GroupMembersHandler(), false);
 		Inventory.OnInventoryObjectOffered.add(new Inventory_OnInventoryObjectReceived(), false);
-		Network.OnDisconnected.add(new Network_OnDisconnected(), true);
 		
 		Network.RegisterCallback(PacketType.AgentDataUpdate, this);
 		Network.RegisterCallback(PacketType.AvatarAppearance, this);
@@ -144,6 +133,35 @@ public class TestClient extends GridClient implements PacketCallback
 		}, 500, 500);
 	}
 
+	public HashMap<UUID, Group> getCurrentGroups(boolean reload) throws Exception
+	{
+		if (GroupsCache == null || reload)
+			GroupsCache = ReloadCurrentGroups();
+		return GroupsCache;
+	}
+
+	public UUID groupName2UUID(String groupName) throws Exception
+    {
+        UUID tryUUID = UUID.parse(groupName);
+        if (tryUUID != null)
+            return tryUUID;
+
+        if (null == GroupsCache)
+        {
+        	GroupsCache = ReloadCurrentGroups();
+            if (null == GroupsCache)
+                return UUID.Zero;
+        }
+
+        synchronized (GroupsCache)
+        {
+            for (Group currentGroup : GroupsCache.values())
+                if (currentGroup.getName().equalsIgnoreCase(groupName))
+                    return currentGroup.getID();
+        }
+        return UUID.Zero;
+    }
+
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception
 	{
@@ -161,6 +179,47 @@ public class TestClient extends GridClient implements PacketCallback
 		}
 	}
 	
+	private boolean cancel()
+	{
+		updateTimer.cancel();
+		updateTimer = null;
+		return true;
+	}
+
+	private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs>
+	{
+		@Override
+		public boolean callback(DisconnectedCallbackArgs e)
+		{
+			return cancel();
+		}
+	}
+
+	/**
+	 * Initialize everything that needs to be initialized once we're logged in.
+	 *
+	 * @param login The status of the login
+	 * @param message Error message on failure, MOTD on success.
+	 */
+	private class Network_OnLoginProgress implements Callback<LoginProgressCallbackArgs>
+	{
+		@Override
+		public boolean callback(LoginProgressCallbackArgs e)
+		{
+			if (e.getStatus() == LoginStatus.Success)
+			{
+				// Start in the inventory root folder.
+				CurrentDirectory = Inventory.getRootNode(false);
+				return true;				
+			}
+			else if (e.getStatus() == LoginStatus.Failed)
+			{
+				return cancel();
+			}
+			return false;
+		}
+	}
+				
 	private class Self_IM implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
@@ -202,84 +261,24 @@ public class TestClient extends GridClient implements PacketCallback
 			return false;
 		}
 	}
-
-	/**
-	 * Initialize everything that needs to be initialized once we're logged in.
-	 *
-	 * @param login The status of the login
-	 * @param message Error message on failure, MOTD on success.
-	 */
-	private class LoginHandler implements Callback<LoginProgressCallbackArgs>
-	{
-		@Override
-		public boolean callback(LoginProgressCallbackArgs e)
-		{
-			if (e.getStatus() == LoginStatus.Success)
-			{
-				// Start in the inventory root folder.
-				CurrentDirectory = Inventory.getRootNode(false);
-			}
-			return false;
-		}
-	}
 	
-	private void RegisterAllCommands(Class<?> assembly)
-    {
-		ArrayList<Class<?>> classes = getDerivedClasses(assembly.getPackage(), Command.class);
-        for (Class<?> clazz : classes)
-        {
-        	Class<?> supClass = clazz.getSuperclass();
-            try
-            {
-                if (supClass != null && supClass.equals(Command.class))
-                {
-                    @SuppressWarnings("unchecked")
-					Constructor<Command> ctor = (Constructor<Command>) clazz.getDeclaredConstructor(new Class[] {TestClient.class});
-                    Command command = ctor.newInstance(new Object[] {this});
-                    RegisterCommand(command);
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println(e.toString());
-            }
-        }
-    }
-
-	private void RegisterCommand(Command command)
-	{
-		command.Client = this;
-		if (!Commands.containsKey(command.Name.toLowerCase()))
-		{
-			Commands.put(command.Name.toLowerCase(), command);
-		}
-	}
-
-	public void ReloadGroupsCache() throws Exception
+	private HashMap<UUID, Group> ReloadCurrentGroups() throws Exception
 	{
 		Callback<CurrentGroupsCallbackArgs> currentGroups = new Groups_CurrentGroups();
 		Groups.OnCurrentGroups.add(currentGroups);
 		Groups.RequestCurrentGroups();
-		GroupsEvent.waitOne(10000);
+		HashMap<UUID, Group> groups = GroupsEvent.waitOne(10000);
 		Groups.OnCurrentGroups.remove(currentGroups);
 		GroupsEvent.reset();
+		return groups;
 	}
-
+	
 	private class Groups_CurrentGroups implements Callback<CurrentGroupsCallbackArgs>
 	{
 		@Override
 		public boolean callback(CurrentGroupsCallbackArgs e)
 		{
-			if (null == GroupsCache)
-				GroupsCache = e.getGroups();
-			else
-			{
-				synchronized (GroupsCache)
-				{
-					GroupsCache = e.getGroups();
-				}
-			}
-			GroupsEvent.set(true);
+			GroupsEvent.set(e.getGroups());
 			return false;
 		}
 	}
@@ -316,31 +315,6 @@ public class TestClient extends GridClient implements PacketCallback
 			return false;
 		}
 	}
-
-	public UUID GroupName2UUID(String groupName) throws Exception
-    {
-        UUID tryUUID = UUID.parse(groupName);
-        if (tryUUID != null)
-            return tryUUID;
-
-        if (null == GroupsCache)
-        {
-            ReloadGroupsCache();
-            if (null == GroupsCache)
-                return UUID.Zero;
-        }
-
-        synchronized (GroupsCache)
-        {
-            if (GroupsCache.size() > 0)
-            {
-                for (Group currentGroup : GroupsCache.values())
-                    if (currentGroup.getName().equalsIgnoreCase(groupName))
-                        return currentGroup.getID();
-            }
-        }
-        return UUID.Zero;
-    }
 	
 	private void AgentDataUpdateHandler(Packet packet, Simulator simulator) throws Exception
 	{
@@ -370,6 +344,38 @@ public class TestClient extends GridClient implements PacketCallback
 		Logger.Log("[AlertMessage] " + Helpers.BytesToString(message.AlertData.getMessage()), LogLevel.Info, this);
 	}
 	
+	private void RegisterAllCommands(Class<?> assembly)
+    {
+		ArrayList<Class<?>> classes = getDerivedClasses(assembly.getPackage(), Command.class);
+        for (Class<?> clazz : classes)
+        {
+        	Class<?> supClass = clazz.getSuperclass();
+            try
+            {
+                if (supClass != null && supClass.equals(Command.class))
+                {
+                    @SuppressWarnings("unchecked")
+					Constructor<Command> ctor = (Constructor<Command>) clazz.getDeclaredConstructor(new Class[] {TestClient.class});
+                    Command command = ctor.newInstance(new Object[] {this});
+                    RegisterCommand(command);
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println(e.toString());
+            }
+        }
+    }
+
+	private void RegisterCommand(Command command)
+	{
+		command.Client = this;
+		if (!Commands.containsKey(command.Name.toLowerCase()))
+		{
+			Commands.put(command.Name.toLowerCase(), command);
+		}
+	}
+
 	private static ArrayList<Class<?>> getDerivedClasses(Package pkg, Class<?> superClazz)
 	{
 	    String pkgname = pkg.getName();

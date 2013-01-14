@@ -232,6 +232,8 @@ public class ClientManager
 							Logger.Log("Exception when trying to do people search", LogLevel.Error, client, ex);
 						}
 					}
+					System.out.println("MOTD: " + e.getMessage());
+					printPrompt();
 
 					Logger.Log("Logged in " + client.toString(), LogLevel.Debug);
 					--PendingLogins;

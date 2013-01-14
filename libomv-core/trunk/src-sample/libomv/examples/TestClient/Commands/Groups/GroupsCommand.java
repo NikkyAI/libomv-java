@@ -25,6 +25,8 @@
  */
 package libomv.examples.TestClient.Commands.Groups;
 
+import java.util.HashMap;
+
 import libomv.GroupManager.Group;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
@@ -35,26 +37,27 @@ public class GroupsCommand extends Command
     public GroupsCommand(TestClient testClient)
     {
         Name = "groups";
-        Description = "List avatar groups. Usage: groups";
+        Description = "List avatar groups. Usage: groups {reload}";
         Category = CommandCategory.Groups;
     }
 
 	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        Client.ReloadGroupsCache();
-        return getGroupsString();
+		boolean reload = (args.length > 0 && args[0] != null && args[0].equalsIgnoreCase("reload"));
+        
+        return getGroupsString(Client.getCurrentGroups(reload));
     }
 
-    String getGroupsString()
+    String getGroupsString(HashMap<UUID, Group> groups)
     {
-        if (null == Client.GroupsCache)
-                return "Groups cache failed.";
-        if (0 == Client.GroupsCache.size())
+        if (null == groups)
+                return "getCurrentGroups failed.";
+        if (0 == groups.size())
                 return "No groups";
         StringBuilder sb = new StringBuilder();
-        sb.append("got "+ Client.GroupsCache.size() +" groups:\n");
-        for (Group group : Client.GroupsCache.values())
+        sb.append("got "+ groups.size() +" groups:\n");
+        for (Group group : groups.values())
         {
             sb.append(group.getID() + ", " + group.getName() + "\n");           
         } 

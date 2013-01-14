@@ -62,7 +62,7 @@ public class ActivateGroupCommand extends Command implements PacketCallback
             groupName += args[i] + " ";
         groupName = groupName.trim();
 
-        UUID groupUUID = Client.GroupName2UUID(groupName);
+        UUID groupUUID = Client.groupName2UUID(groupName);
         if (!groupUUID.equals(UUID.Zero))
         {
             Client.Network.RegisterCallback(PacketType.AgentDataUpdate, this);
