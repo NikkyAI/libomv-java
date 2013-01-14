@@ -1717,6 +1717,11 @@ public class Helpers
 		return String.format("%08x", i);
 	}
 
+	public static String LocalIDToString(int localID)
+	{
+		return Long.toString(localID & 0xFFFFFFFFL);
+	}
+
 	/**
 	 * read a variable length UTF8 byte array to a string, consuming  len characters
 	 * 
