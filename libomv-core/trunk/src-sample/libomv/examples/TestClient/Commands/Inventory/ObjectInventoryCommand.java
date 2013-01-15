@@ -34,6 +34,7 @@ import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode;
 import libomv.primitives.Primitive;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 public class ObjectInventoryCommand extends Command
 {
@@ -83,7 +84,7 @@ public class ObjectInventoryCommand extends Command
         }
         else
         {
-            return "Failed to download task inventory for " + Long.toString(objectLocalID & 0xFFFFFFFFL);
+            return "Failed to download task inventory for " + Helpers.LocalIDToString(objectLocalID);
         }
     }
 }

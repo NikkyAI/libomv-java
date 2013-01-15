@@ -53,7 +53,7 @@ public class WhoCommand extends Command
                 {
                     result.append(Helpers.NewLine);
                     result.append(String.format("%s (Group: %s, Location: %s, UUID: %s LocalID: %s)",
-                           av.getName(), av.getGroupName(), av.Position, av.ID, av.LocalID));
+                           av.getName(), av.getGroupName(), av.Position, av.ID, Helpers.LocalIDToString(av.LocalID)));
                 }
             }
         }
