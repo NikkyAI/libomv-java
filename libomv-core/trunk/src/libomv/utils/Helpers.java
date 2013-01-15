@@ -1714,7 +1714,7 @@ public class Helpers
 	 */
 	public static String UInt32ToHexString(long i)
 	{
-		return String.format("%08x", i);
+		return String.format("%#08x", i);
 	}
 
 	public static String LocalIDToString(int localID)

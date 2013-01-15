@@ -42,6 +42,8 @@ import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.types.Vector4;
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 public class Primitive
 {
@@ -312,6 +314,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
+			Logger.Log(String.format("Unknown ExtraParamType value %x" + value), LogLevel.Warning);
 			return null;
 		}
 
@@ -1023,9 +1026,9 @@ public class Primitive
 			fromOSD(osd);
 		}
 
-		public FlexibleData(byte[] data, int pos)
+		public FlexibleData(byte[] data, int pos, int length)
 		{
-			if (data.length >= pos + 16)
+			if (length >= 16 && data.length >= pos + 16)
 			{
 				Softness = ((data[pos] & 0x80) >> 6) | ((data[pos + 1] & 0x80) >> 7);
 
@@ -1132,9 +1135,9 @@ public class Primitive
 			fromOSD(osd);
 		}
 
-		public LightData(byte[] data, int pos)
+		public LightData(byte[] data, int pos, int length)
 		{
-			if (data.length >= 16 + pos)
+			if (length >= 16 && data.length >= 16 + pos)
 			{
 				Color = new Color4(data, pos, false);
 				Radius = Helpers.BytesToFloatL(data, pos + 4);
@@ -1263,9 +1266,9 @@ public class Primitive
 			fromOSD(osd);
 		}
 
-		public SculptData(byte[] data, int pos)
+		public SculptData(byte[] data, int pos, int length)
 		{
-			if (data.length >= 17 + pos)
+			if (length >= 17 && data.length >= 17 + pos)
 			{
 				SculptTexture = new UUID(data, pos);
 				type = data[pos + 16];
@@ -1627,14 +1630,14 @@ public class Primitive
 			switch (type)
 			{
 				case Flexible:
-					Flexible = new FlexibleData(data, i);
+					Flexible = new FlexibleData(data, i, paramLength);
 					break;
 				case Light:
-					Light = new LightData(data, i);
+					Light = new LightData(data, i, paramLength);
 					break;
 				case Sculpt:
 				case Mesh:
-					Sculpt = new SculptData(data, i);
+					Sculpt = new SculptData(data, i, paramLength);
 					break;
 			}
 			i += paramLength;
