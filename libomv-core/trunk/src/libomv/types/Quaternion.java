@@ -99,7 +99,7 @@ public class Quaternion
 
 	public Quaternion(Matrix4 mat)
 	{
-		mat.GetQuaternion(this).normalize();
+		mat.getQuaternion(this).normalize();
 	}
 	/**
 	 * Constructor, builds a quaternion object from a byte array
@@ -207,7 +207,17 @@ public class Quaternion
 	/** Normalizes the quaternion */
 	public Quaternion normalize()
 	{
-		return normalize(this);
+		float mag = length();
+		// Catch very small rounding errors when normalizing
+		if (mag > Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			return divide(mag);
+		}
+		X = 0f;
+		Y = 0f;
+		Z = 0f;
+		W = 1f;
+		return this;
 	}
 
 	public Vector3 toVector3()
@@ -550,7 +560,7 @@ public class Quaternion
 	{
 		Quaternion quat = new Quaternion();
 
-		float trace = m.Trace();
+		float trace = m.trace();
 
 		if (trace > Helpers.FLOAT_MAG_THRESHOLD)
 		{
@@ -595,9 +605,9 @@ public class Quaternion
 		return quat;
 	}
 
-	public static float dot(Quaternion q1, Quaternion q2)
+	public static float dot(Quaternion quaternion1, Quaternion quaternion2)
 	{
-		return (q1.X * q2.X) + (q1.Y * q2.Y) + (q1.Z * q2.Z) + (q1.W * q2.W);
+		return quaternion1.dot(quaternion2);
 	}
 
 	/**
@@ -683,27 +693,9 @@ public class Quaternion
 				              q1.Z * scale + q2.Z * invscale, q1.W * scale + q2.W * invscale);
 	}
 
-	public static Quaternion normalize(Quaternion q)
+	public static Quaternion normalize(Quaternion quaternion)
 	{
-		float mag = q.length();
-
-		// Catch very small rounding errors when normalizing
-		if (mag > Helpers.FLOAT_MAG_THRESHOLD)
-		{
-			float oomag = 1f / mag;
-			q.X *= oomag;
-			q.Y *= oomag;
-			q.Z *= oomag;
-			q.W *= oomag;
-		}
-		else
-		{
-			q.X = 0f;
-			q.Y = 0f;
-			q.Z = 0f;
-			q.W = 1f;
-		}
-		return q;
+		return new Quaternion(quaternion).normalize();
 	}
 
 	public static Quaternion Parse(String val)
@@ -749,148 +741,194 @@ public class Quaternion
 		return (X == 0f && Y == 0f && Z == 0f && W == 1f);
 	}
 	
+	public Quaternion negate()
+	{
+		X = -X;
+		Y = -Y;
+		Z = -Z;
+		W = -W;
+		return this;
+	}
+
+	/** Returns the conjugate (spatial inverse) of a quaternion */
+	public Quaternion conjugate()
+	{
+		X = -X;
+		Y = -Y;
+		Z = -Z;
+		return this;
+	}
+
+	public Quaternion add(Quaternion quaternion)
+	{
+		X += quaternion.X;
+		Y += quaternion.Y;
+        Z += quaternion.Z;
+        W += quaternion.W;
+        return this;
+    }
+
+	public Quaternion subtract(Quaternion quaternion)
+	{
+		X -= quaternion.X;
+		Y -= quaternion.Y;
+        Z -= quaternion.Z;
+        W -= quaternion.W;
+        return this;
+    }
+
+	public Quaternion multiply(float scaleFactor)
+	{
+		X *= scaleFactor;
+		Y *= scaleFactor;
+        Z *= scaleFactor;
+        W *= scaleFactor;
+        return this;
+	}
+
+	public Quaternion multiply(Quaternion quaternion)
+	{
+		X = (W * quaternion.X) + (X * quaternion.W) + (Y * quaternion.Z) - (Z * quaternion.Y);
+	    Y = (W * quaternion.Y) - (X * quaternion.Z) + (Y * quaternion.W) + (Z * quaternion.X); 
+	    Z = (W * quaternion.Z) + (X * quaternion.Y) - (Y * quaternion.X) + (Z * quaternion.W);
+	    W = (W * quaternion.W) - (X * quaternion.X) - (Y * quaternion.Y) - (Z * quaternion.Z);
+        return this;
+	}
+
+	public Vector4 multiply(Vector4 vector)
+	{
+	    float rw = - X * vector.X - Y * vector.Y - Z * vector.Z;
+	    float rx =   W * vector.X + Y * vector.Z - Z * vector.Y;
+	    float ry =   W * vector.Y + Z * vector.X - X * vector.Z;
+	    float rz =   W * vector.Z + X * vector.Y - Y * vector.X;
+
+	    float nx = - rw * X +  rx * W - ry * Z + rz * Y;
+	    float ny = - rw * Y +  ry * W - rz * X + rx * Z;
+	    float nz = - rw * Z +  rz * W - rx * Y + ry * X;
+	    return new Vector4(nx, ny, nz, vector.S);
+	}
+
+	public Vector3 multiply(Vector3 vector)
+	{
+	    float rw = - X * vector.X - Y * vector.Y - Z * vector.Z;
+	    float rx =   W * vector.X + Y * vector.Z - Z * vector.Y;
+	    float ry =   W * vector.Y + Z * vector.X - X * vector.Z;
+	    float rz =   W * vector.Z + X * vector.Y - Y * vector.X;
+
+	    float nx = - rw * X +  rx * W - ry * Z + rz * Y;
+	    float ny = - rw * Y +  ry * W - rz * X + rx * Z;
+	    float nz = - rw * Z +  rz * W - rx * Y + ry * X;
+	    return new Vector3(nx, ny, nz);
+	}
+
+	public Vector3d multiply(Vector3d vector)
+	{
+	    double rw = - X * vector.X - Y * vector.Y - Z * vector.Z;
+	    double rx =   W * vector.X + Y * vector.Z - Z * vector.Y;
+	    double ry =   W * vector.Y + Z * vector.X - X * vector.Z;
+	    double rz =   W * vector.Z + X * vector.Y - Y * vector.X;
+
+	    double nx = - rw * X +  rx * W - ry * Z + rz * Y;
+	    double ny = - rw * Y +  ry * W - rz * X + rx * Z;
+	    double nz = - rw * Z +  rz * W - rx * Y + ry * X;
+	    return new Vector3d(nx, ny, nz);
+	}
+
+	public Quaternion divide(float divider)
+	{
+		divider = 1f / divider;
+		X *= divider;
+		Y *= divider;
+        Z *= divider;
+        W *= divider;
+        return this;
+	}
+
+	public Quaternion divide(Quaternion quaternion)
+	{
+		float q2lensq = quaternion.lengthSquared();
+		float x2 = quaternion.X / q2lensq;
+		float y2 = quaternion.Y / q2lensq;
+		float z2 = quaternion.Z / q2lensq;
+		float w2 = quaternion.W / q2lensq;
+
+		X = (X * w2) - (W * x2) - (Y * z2) + (Z * y2);
+		Y =	(Y * w2) - (W * y2) - (Z * x2) + (X * z2);
+		Z = (Z * w2) - (W * z2) - (X * y2) + (Y * x2); 
+		W = (W * w2) + (X * x2) + (Y * y2) + (Z * z2);
+		return this;
+	}
+
+	public float dot(Quaternion quaternion)
+	{
+		return (X * quaternion.X) + (Y * quaternion.Y) + (Z * quaternion.Z) + (W * quaternion.W);
+	}
+	
+	public Quaternion inverse()
+	{
+		float norm = lengthSquared();
+
+		if (norm == 0f)
+		{
+			X = Y = Z = W = 0f;
+		}
+		else
+		{
+			conjugate().divide(norm);
+		}
+		return this;
+	}
+
 	public static Quaternion negate(Quaternion quaternion)
 	{
-		return new Quaternion(-quaternion.X, -quaternion.Y, -quaternion.Z, -quaternion.W);
+		return new Quaternion(quaternion).negate();
 	}
 
 	/** Returns the conjugate (spatial inverse) of a quaternion */
 	public static Quaternion conjugate(Quaternion quaternion)
 	{
-		return new Quaternion(-quaternion.X, -quaternion.Y, -quaternion.Z, quaternion.W);
-	}
-
-	public Quaternion add(Quaternion q)
-	{
-		return add(this, q);
-	}
-
-	public Quaternion subtract(Quaternion q)
-	{
-		return subtract(this, q);
-	}
-
-	public Quaternion multiply(float scale)
-	{
-		return multiply(this, scale);
-	}
-
-	public Quaternion multiply(Quaternion q)
-	{
-		return multiply(this, q);
-	}
-
-	public Vector4 multiply(Vector4 a)
-	{
-		return multiply(this, a);
-	}
-
-	public Vector3 multiply(Vector3 a)
-	{
-		return multiply(this, a);
-	}
-
-	public Vector3d multiply(Vector3d a)
-	{
-		return multiply(this, a);
-	}
-
-	public Quaternion divide(Quaternion q)
-	{
-		return divide(this, q);
-	}
-
-	public float dot(Quaternion q)
-	{
-		return dot(this, q);
-	}
-	
-	public Quaternion inverse()
-	{
-		return inverse(this);
+		return new Quaternion(quaternion).conjugate();
 	}
 
 	public static Quaternion add(Quaternion quaternion1, Quaternion quaternion2)
 	{
 		
-		return new Quaternion(quaternion1.X + quaternion2.X, quaternion1.Y + quaternion2.Y,
-		                      quaternion1.Z + quaternion2.Z, quaternion1.W + quaternion2.W);
+		return new Quaternion(quaternion1).add(quaternion2);
 	}
 
 	public static Quaternion subtract(Quaternion quaternion1, Quaternion quaternion2)
 	{
-		return new Quaternion(quaternion1.X - quaternion2.X, quaternion1.Y - quaternion2.Y, 
-				              quaternion1.Z - quaternion2.Z, quaternion1.W - quaternion2.W);
+		return new Quaternion(quaternion1).subtract(quaternion2);
 	}
 
-	public static Quaternion multiply(Quaternion q1, Quaternion q2)
+	public static Quaternion multiply(Quaternion quaternion1, Quaternion quaternion2)
 	{
-		return new Quaternion((q1.W * q2.X) + (q1.X * q2.W) + (q1.Y * q2.Z) - (q1.Z * q2.Y), 
-				              (q1.W * q2.Y) - (q1.X * q2.Z) + (q1.Y * q2.W) + (q1.Z * q2.X), 
-				              (q1.W * q2.Z) + (q1.X * q2.Y) - (q1.Y * q2.X) + (q1.Z * q2.W),
-				              (q1.W * q2.W) - (q1.X * q2.X) - (q1.Y * q2.Y) - (q1.Z * q2.Z));
+		return new Quaternion(quaternion1).multiply(quaternion2);
 	}
 
 	public static Quaternion multiply(Quaternion quaternion, float scaleFactor)
 	{	
-		return new Quaternion(quaternion.X * scaleFactor, quaternion.Y * scaleFactor,
-		                      quaternion.Z * scaleFactor, quaternion.W * scaleFactor);
+		return new Quaternion(quaternion).multiply(scaleFactor);
 	}
 
-	public static Vector4 multiply(Quaternion rot, Vector4 a)
+	public static Vector4 multiply(Quaternion rot, Vector4 vector)
 	{
-	    float rw = - rot.X * a.X - rot.Y * a.Y - rot.Z * a.Z;
-	    float rx =   rot.W * a.X + rot.Y * a.Z - rot.Z * a.Y;
-	    float ry =   rot.W * a.Y + rot.Z * a.X - rot.X * a.Z;
-	    float rz =   rot.W * a.Z + rot.X * a.Y - rot.Y * a.X;
-
-	    float nx = - rw * rot.X +  rx * rot.W - ry * rot.Z + rz * rot.Y;
-	    float ny = - rw * rot.Y +  ry * rot.W - rz * rot.X + rx * rot.Z;
-	    float nz = - rw * rot.Z +  rz * rot.W - rx * rot.Y + ry * rot.X;
-
-	    return new Vector4(nx, ny, nz, a.S);
+		return rot.multiply(vector);
 	}
 
-	public static Vector3 multiply(Quaternion rot, Vector3 a)
+	public static Vector3 multiply(Quaternion rot, Vector3 vector)
 	{
-		float rw = - rot.X * a.X - rot.Y * a.Y - rot.Z * a.Z;
-		float rx =   rot.W * a.X + rot.Y * a.Z - rot.Z * a.Y;
-		float ry =   rot.W * a.Y + rot.Z * a.X - rot.X * a.Z;
-		float rz =   rot.W * a.Z + rot.X * a.Y - rot.Y * a.X;
-
-		float nx = - rw * rot.X +  rx * rot.W - ry * rot.Z + rz * rot.Y;
-		float ny = - rw * rot.Y +  ry * rot.W - rz * rot.X + rx * rot.Z;
-		float nz = - rw * rot.Z +  rz * rot.W - rx * rot.Y + ry * rot.X;
-
-	    return new Vector3(nx, ny, nz);
+		return rot.multiply(vector);
 	}
 
-	public static Vector3d multiply(Quaternion rot, Vector3d a)
+	public static Vector3d multiply(Quaternion rot, Vector3d vector)
 	{
-	    double rw = - rot.X * a.X - rot.Y * a.Y - rot.Z * a.Z;
-	    double rx =   rot.W * a.X + rot.Y * a.Z - rot.Z * a.Y;
-	    double ry =   rot.W * a.Y + rot.Z * a.X - rot.X * a.Z;
-	    double rz =   rot.W * a.Z + rot.X * a.Y - rot.Y * a.X;
-
-	    double nx = - rw * rot.X +  rx * rot.W - ry * rot.Z + rz * rot.Y;
-	    double ny = - rw * rot.Y +  ry * rot.W - rz * rot.X + rx * rot.Z;
-	    double nz = - rw * rot.Z +  rz * rot.W - rx * rot.Y + ry * rot.X;
-
-	    return new Vector3d(nx, ny, nz);
+		return rot.multiply(vector);
 	}
 
 	public static Quaternion divide(Quaternion quaternion1, Quaternion quaternion2)
 	{
-		float q2lensq = quaternion2.lengthSquared();
-		float x2 = quaternion2.X / q2lensq;
-		float y2 = quaternion2.Y / q2lensq;
-		float z2 = quaternion2.Z / q2lensq;
-		float w2 = quaternion2.W / q2lensq;
-
-		return new Quaternion((quaternion1.X * w2) - (quaternion1.W * x2) - (quaternion1.Y * z2) + (quaternion1.Z * y2),
-				              (quaternion1.Y * w2) - (quaternion1.W * y2) - (quaternion1.Z * x2) + (quaternion1.X * z2),
-				              (quaternion1.Z * w2) - (quaternion1.W * z2) - (quaternion1.X * y2) + (quaternion1.Y * x2), 
-				              (quaternion1.W * w2) + (quaternion1.X * x2) + (quaternion1.Y * y2) + (quaternion1.Z * z2));
+		return new Quaternion(quaternion1).divide(quaternion2);
 	}
 
 	// calculate the shortest rotation from a to b

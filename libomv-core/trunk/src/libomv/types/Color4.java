@@ -198,10 +198,10 @@ public final class Color4
 	 * Sorting ends up like this: |--Grayscale--||--Color--|. Alpha is only used
 	 * when the colors are otherwise equivalent
 	 */
-	public int CompareTo(Color4 color)
+	public int compareTo(Color4 color)
 	{
-		float thisHue = GetHue();
-		float thatHue = color.GetHue();
+		float thisHue = getHue();
+		float thatHue = color.getHue();
 
 		if (thisHue < 0f && thatHue < 0f)
 		{
@@ -356,7 +356,7 @@ public final class Color4
 		return 4;
 	}
 
-	public float GetHue()
+	public float getHue()
 	{
 		final float HUE_MAX = 360f;
 
@@ -390,7 +390,7 @@ public final class Color4
 	}
 
 	/** Ensures that values are in range 0-1 */
-	public void ClampValues()
+	public void clampValues()
 	{
 		if (R < 0f)
 		{
@@ -437,7 +437,7 @@ public final class Color4
 	 *            Value
 	 * @return An fully opaque RGB color (alpha is 1.0)
 	 */
-	public static Color4 FromHSV(double hue, double saturation, double value)
+	public static Color4 fromHSV(double hue, double saturation, double value)
 	{
 		double r = 0d;
 		double g = 0d;
@@ -528,7 +528,7 @@ public final class Color4
 	 *            Amount to interpolate
 	 * @return The interpolated color
 	 */
-	public static Color4 Lerp(Color4 value1, Color4 value2, float amount)
+	public static Color4 lerp(Color4 value1, Color4 value2, float amount)
 	{
 		return new Color4(Helpers.Lerp(value1.R, value2.R, amount), Helpers.Lerp(value1.G, value2.G, amount),
 				Helpers.Lerp(value1.B, value2.B, amount), Helpers.Lerp(value1.A, value2.A, amount));
@@ -586,7 +586,7 @@ public final class Color4
 		lhs.G += rhs.G;
 		lhs.B += rhs.B;
 		lhs.A += rhs.A;
-		lhs.ClampValues();
+		lhs.clampValues();
 
 		return lhs;
 	}
@@ -597,7 +597,7 @@ public final class Color4
 		lhs.G -= rhs.G;
 		lhs.B -= rhs.B;
 		lhs.A -= rhs.A;
-		lhs.ClampValues();
+		lhs.clampValues();
 
 		return lhs;
 	}
@@ -608,7 +608,7 @@ public final class Color4
 		lhs.G *= rhs.G;
 		lhs.B *= rhs.B;
 		lhs.A *= rhs.A;
-		lhs.ClampValues();
+		lhs.clampValues();
 
 		return lhs;
 	}

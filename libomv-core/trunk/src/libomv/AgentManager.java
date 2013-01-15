@@ -6112,7 +6112,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public CoordinateFrame(Vector3 origin, Quaternion rotation) throws Exception
 			{
-				Matrix4 m = Matrix4.CreateFromQuaternion(rotation);
+				Matrix4 m = Matrix4.createFromQuaternion(rotation);
 
 				this.origin = origin;
 				xAxis = m.getAtAxis();
@@ -6140,7 +6140,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			public final void Rotate(Quaternion q) throws Exception
 			{
-				Matrix4 m = Matrix4.CreateFromQuaternion(q);
+				Matrix4 m = Matrix4.createFromQuaternion(q);
 				Rotate(m);
 			}
 
@@ -6160,7 +6160,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			public final void Roll(float angle) throws Exception
 			{
 				Quaternion q = Quaternion.createFromAxisAngle(xAxis, angle);
-				Matrix4 m = Matrix4.CreateFromQuaternion(q);
+				Matrix4 m = Matrix4.createFromQuaternion(q);
 				Rotate(m);
 
 				if (!yAxis.isFinite() || !zAxis.isFinite())
@@ -6172,7 +6172,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			public final void Pitch(float angle) throws Throwable
 			{
 				Quaternion q = Quaternion.createFromAxisAngle(yAxis, angle);
-				Matrix4 m = Matrix4.CreateFromQuaternion(q);
+				Matrix4 m = Matrix4.createFromQuaternion(q);
 				Rotate(m);
 
 				if (!xAxis.isFinite() || !zAxis.isFinite())
@@ -6184,7 +6184,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			public final void Yaw(float angle) throws Throwable
 			{
 				Quaternion q = Quaternion.createFromAxisAngle(zAxis, angle);
-				Matrix4 m = Matrix4.CreateFromQuaternion(q);
+				Matrix4 m = Matrix4.createFromQuaternion(q);
 				Rotate(m);
 
 				if (!xAxis.isFinite() || !yAxis.isFinite())

@@ -109,7 +109,7 @@ public final class Matrix4
 
 	public Matrix4(float roll, float pitch, float yaw)
 	{
-		Matrix4 m = CreateFromEulers(roll, pitch, yaw);
+		Matrix4 m = createFromEulers(roll, pitch, yaw);
 		M11 = m.M11;
 		M12 = m.M12;
 		M13 = m.M13;
@@ -154,7 +154,7 @@ public final class Matrix4
 		M44 = m.M44;
 	}
 
-	public float Determinant()
+	public float determinant()
 	{
 		return M14 * M23 * M32 * M41 - M13 * M24 * M32 * M41 - M14 * M22 * M33 * M41 + M12 * M24 * M33 * M41 + M13
 				* M22 * M34 * M41 - M12 * M23 * M34 * M41 - M14 * M23 * M31 * M42 + M13 * M24 * M31 * M42 + M14 * M21
@@ -164,7 +164,7 @@ public final class Matrix4
 				* M23 * M32 * M44 - M12 * M21 * M33 * M44 + M11 * M22 * M33 * M44;
 	}
 
-	public float Determinant3x3()
+	public float determinant3x3()
 	{
 		float det = 0f;
 
@@ -180,7 +180,7 @@ public final class Matrix4
 		return det;
 	}
 
-	public float Trace()
+	public float trace()
 	{
 		return M11 + M22 + M33 + M44;
 	}
@@ -195,7 +195,7 @@ public final class Matrix4
 	 * @param yaw
 	 *            Z euler angle
 	 */
-	public void GetEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
+	public void getEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
 	{
 		double angleX, angleY, angleZ;
 		double cx, cy, cz; // cosines
@@ -252,23 +252,29 @@ public final class Matrix4
 	 * 
 	 * @return A quaternion representation of this rotation matrix
 	 */
-	public Quaternion GetQuaternion()
+	public Quaternion getQuaternion()
 	{
-		return GetQuaternion(new Quaternion());
+		return getQuaternion(new Quaternion());
 	}
 		
-	public Quaternion GetQuaternion(Quaternion quat)
+	/**
+	 * Convert this matrix to a quaternion rotation
+	 * 
+	 * @param quaternion The quaternion to fill the information into
+	 * @return A quaternion representation of this rotation matrix
+	 */
+	public Quaternion getQuaternion(Quaternion quaternion)
 	{
-		float trace = Trace() + 1f;
+		float trace = trace() + 1f;
 
 		if (trace > Helpers.FLOAT_MAG_THRESHOLD)
 		{
 			float s = 0.5f / (float) Math.sqrt(trace);
 
-			quat.X = (M32 - M23) * s;
-			quat.Y = (M13 - M31) * s;
-			quat.Z = (M21 - M12) * s;
-			quat.W = 0.25f / s;
+			quaternion.X = (M32 - M23) * s;
+			quaternion.Y = (M13 - M31) * s;
+			quaternion.Z = (M21 - M12) * s;
+			quaternion.W = 0.25f / s;
 		}
 		else
 		{
@@ -276,34 +282,34 @@ public final class Matrix4
 			{
 				float s = 2.0f * (float) Math.sqrt(1.0f + M11 - M22 - M33);
 
-				quat.X = 0.25f * s;
-				quat.Y = (M12 + M21) / s;
-				quat.Z = (M13 + M31) / s;
-				quat.W = (M23 - M32) / s;
+				quaternion.X = 0.25f * s;
+				quaternion.Y = (M12 + M21) / s;
+				quaternion.Z = (M13 + M31) / s;
+				quaternion.W = (M23 - M32) / s;
 			}
 			else if (M22 > M33)
 			{
 				float s = 2.0f * (float) Math.sqrt(1.0f + M22 - M11 - M33);
 
-				quat.X = (M12 + M21) / s;
-				quat.Y = 0.25f * s;
-				quat.Z = (M23 + M32) / s;
-				quat.W = (M13 - M31) / s;
+				quaternion.X = (M12 + M21) / s;
+				quaternion.Y = 0.25f * s;
+				quaternion.Z = (M23 + M32) / s;
+				quaternion.W = (M13 - M31) / s;
 			}
 			else
 			{
 				float s = 2.0f * (float) Math.sqrt(1.0f + M33 - M11 - M22);
 
-				quat.X = (M13 + M31) / s;
-				quat.Y = (M23 + M32) / s;
-				quat.Z = 0.25f * s;
-				quat.W = (M12 - M21) / s;
+				quaternion.X = (M13 + M31) / s;
+				quaternion.Y = (M23 + M32) / s;
+				quaternion.Z = 0.25f * s;
+				quaternion.W = (M12 - M21) / s;
 			}
 		}
-		return quat;
+		return quaternion;
 	}
 
-	public static Matrix4 CreateFromAxisAngle(Vector3 axis, float angle)
+	public static Matrix4 createFromAxisAngle(Vector3 axis, float angle)
 	{
 		Matrix4 matrix = new Matrix4();
 
@@ -350,7 +356,7 @@ public final class Matrix4
 	 * @param yaw
 	 *            Z euler angle in radians
 	 */
-	public static Matrix4 CreateFromEulers(float roll, float pitch, float yaw)
+	public static Matrix4 createFromEulers(float roll, float pitch, float yaw)
 	{
 		Matrix4 m = new Matrix4();
 
@@ -388,7 +394,7 @@ public final class Matrix4
 		return m;
 	}
 
-	public static Matrix4 CreateFromQuaternion(Quaternion quaternion)
+	public static Matrix4 createFromQuaternion(Quaternion quaternion)
 	{
 		float xx = quaternion.X * quaternion.X;
 		float yy = quaternion.Y * quaternion.Y;
@@ -405,7 +411,7 @@ public final class Matrix4
 				0f, 0f, 0f, 1f);
 	}
 
-	public static Matrix4 CreateLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector)
+	public static Matrix4 createLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector)
 	{
 
 		Vector3 z = Vector3.normalize(Vector3.subtract(cameraPosition, cameraTarget));
@@ -416,7 +422,7 @@ public final class Matrix4
 				-Vector3.dot(y, cameraPosition), -Vector3.dot(z, cameraPosition), 1f);
 	}
 
-	public static Matrix4 CreateRotationX(float radians)
+	public static Matrix4 createRotationX(float radians)
 	{
 		float cos = (float) Math.cos(radians);
 		float sin = (float) Math.sin(radians);
@@ -424,7 +430,7 @@ public final class Matrix4
 		return new Matrix4(1f, 0f, 0f, 0f, 0f, cos, sin, 0f, 0f, -sin, cos, 0f, 0f, 0f, 0f, 1f);
 	}
 
-	public static Matrix4 CreateRotationY(float radians)
+	public static Matrix4 createRotationY(float radians)
 	{
 		Matrix4 matrix = new Matrix4();
 
@@ -454,7 +460,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateRotationZ(float radians)
+	public static Matrix4 createRotationZ(float radians)
 	{
 		Matrix4 matrix = new Matrix4();
 
@@ -484,7 +490,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateScale(Vector3 scale)
+	public static Matrix4 createScale(Vector3 scale)
 	{
 		Matrix4 matrix = new Matrix4();
 
@@ -511,7 +517,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateTranslation(Vector3 position)
+	public static Matrix4 createTranslation(Vector3 position)
 	{
 		Matrix4 matrix = new Matrix4();
 
@@ -538,7 +544,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateWorld(Vector3 position, Vector3 forward, Vector3 up)
+	public static Matrix4 createWorld(Vector3 position, Vector3 forward, Vector3 up)
 	{
 		Matrix4 result = new Matrix4();
 
@@ -576,7 +582,7 @@ public final class Matrix4
 		return result;
 	}
 
-	public static Matrix4 Lerp(Matrix4 matrix1, Matrix4 matrix2, float amount)
+	public static Matrix4 lerp(Matrix4 matrix1, Matrix4 matrix2, float amount)
 	{
 		return new Matrix4(matrix1.M11 + ((matrix2.M11 - matrix1.M11) * amount), matrix1.M12
 				+ ((matrix2.M12 - matrix1.M12) * amount), matrix1.M13 + ((matrix2.M13 - matrix1.M13) * amount),
@@ -673,7 +679,7 @@ public final class Matrix4
 				* oodivider);
 	}
 
-	public static Matrix4 Transform(Matrix4 value, Quaternion rotation)
+	public static Matrix4 transform(Matrix4 value, Quaternion rotation)
 	{
 		float x2 = rotation.X + rotation.X;
 		float y2 = rotation.Y + rotation.Y;
@@ -702,60 +708,60 @@ public final class Matrix4
 						+ (value.M43 * f), ((value.M41 * g) + (value.M42 * h)) + (value.M43 * i), value.M44);
 	}
 
-	public static Matrix4 Transpose(Matrix4 matrix)
+	public static Matrix4 transpose(Matrix4 matrix)
 	{
 		return new Matrix4(matrix.M11, matrix.M21, matrix.M31, matrix.M41, matrix.M12, matrix.M22, matrix.M32,
 				matrix.M42, matrix.M13, matrix.M23, matrix.M33, matrix.M43, matrix.M14, matrix.M24, matrix.M34,
 				matrix.M44);
 	}
 
-	public static Matrix4 Inverse3x3(Matrix4 matrix) throws Exception
+	public static Matrix4 inverse3x3(Matrix4 matrix) throws Exception
 	{
-		if (matrix.Determinant3x3() == 0f)
+		if (matrix.determinant3x3() == 0f)
 		{
 			throw new Exception("Singular matrix inverse not possible");
 		}
-		return (Matrix4.divide(Adjoint3x3(matrix), matrix.Determinant3x3()));
+		return (Matrix4.divide(adjoint3x3(matrix), matrix.determinant3x3()));
 	}
 
-	public static Matrix4 Adjoint3x3(Matrix4 matrix)
+	public static Matrix4 adjoint3x3(Matrix4 matrix)
 	{
 		Matrix4 adjointMatrix = new Matrix4();
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * (Minor(matrix, i, j).Determinant3x3())));
+				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * (minor(matrix, i, j).determinant3x3())));
 			}
 		}
-		adjointMatrix = Transpose(adjointMatrix);
+		adjointMatrix = transpose(adjointMatrix);
 		return adjointMatrix;
 	}
 
-	public static Matrix4 Inverse(Matrix4 matrix) throws Exception
+	public static Matrix4 inverse(Matrix4 matrix) throws Exception
 	{
-		if (matrix.Determinant() == 0f)
+		if (matrix.determinant() == 0f)
 		{
 			throw new Exception("Singular matrix inverse not possible");
 		}
-		return (Matrix4.divide(Adjoint(matrix), matrix.Determinant()));
+		return (Matrix4.divide(adjoint(matrix), matrix.determinant()));
 	}
 
-	public static Matrix4 Adjoint(Matrix4 matrix)
+	public static Matrix4 adjoint(Matrix4 matrix)
 	{
 		Matrix4 adjointMatrix = new Matrix4();
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * ((Minor(matrix, i, j)).Determinant())));
+				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * ((minor(matrix, i, j)).determinant())));
 			}
 		}
-		adjointMatrix = Transpose(adjointMatrix);
+		adjointMatrix = transpose(adjointMatrix);
 		return adjointMatrix;
 	}
 
-	public static Matrix4 Minor(Matrix4 matrix, int row, int col)
+	public static Matrix4 minor(Matrix4 matrix, int row, int col)
 	{
 		Matrix4 minor = new Matrix4();
 		int m = 0, n = 0;

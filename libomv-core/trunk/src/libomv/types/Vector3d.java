@@ -128,12 +128,12 @@ public class Vector3d
 		byteArray.putDouble(Z);
 	}
 
-	public static double Distance(Vector3d value1, Vector3d value2)
+	public static double distance(Vector3d value1, Vector3d value2)
 	{
-		return Math.sqrt(DistanceSquared(value1, value2));
+		return Math.sqrt(distanceSquared(value1, value2));
 	}
 
-	public static double DistanceSquared(Vector3d value1, Vector3d value2)
+	public static double distanceSquared(Vector3d value1, Vector3d value2)
 	{
 		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
 				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
@@ -141,39 +141,30 @@ public class Vector3d
 
 	public static Vector3d normalize(Vector3d value)
 	{
-		double factor = Distance(value, Zero);
-		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
+		return new Vector3d(value).normalize(); 
+	}
+
+	public double length()
+	{
+		return Math.sqrt(distanceSquared(this, Zero));
+	}
+
+	public double lengthSquared()
+	{
+		return distanceSquared(this, Zero);
+	}
+
+	public Vector3d normalize()
+	{
+		double length = length();
+		if (length > Helpers.FLOAT_MAG_THRESHOLD)
 		{
-			factor = 1f / factor;
-			value.X *= factor;
-			value.Y *= factor;
-			value.Z *= factor;
+			return divide(length);
 		}
-		else
-		{
-			value.X = 0f;
-			value.Y = 0f;
-			value.Z = 0f;
-		}
-		return value;
-	}
-
-	public double Length()
-	{
-		return Math.sqrt(DistanceSquared(this, Zero));
-	}
-
-	public double LengthSquared()
-	{
-		return DistanceSquared(this, Zero);
-	}
-
-	public void normalize()
-	{
-		Vector3d val = normalize(this);
-		X = val.X;
-		Y = val.Y;
-		Z = val.Z;
+		X = 0f;
+		Y = 0f;
+		Z = 0f;
+		return this;
 	}
 
 	/**
@@ -267,6 +258,71 @@ public class Vector3d
 	public int hashCode()
 	{
 		return ((Double)X).hashCode() + ((Double)Y).hashCode() + ((Double)Z).hashCode();
+	}
+
+	public Vector3d negate()
+	{
+		X = -X;
+		Y = -Y;
+		Z = -Z;
+		return this;
+	}
+
+	public Vector3d add(Vector3d val)
+	{
+		X += val.X;
+		Y += val.Y;
+		Z += val.Z;
+		return this;
+	}
+
+	public Vector3d subtract(Vector3d val)
+	{
+		X -= val.X;
+		Y -= val.Y;
+		Z -= val.Z;
+		return this;
+	}
+
+	public Vector3d multiply(double scaleFactor)
+	{
+		X *= scaleFactor;
+		Y *= scaleFactor;
+		Z *= scaleFactor;
+		return this;
+	}
+	
+	public Vector3d multiply(Vector3d value)
+	{
+		X *= value.X;
+		Y *= value.Y;
+		Z *= value.Z;
+		return this;
+	}
+
+	public Vector3d divide(Vector3d value)
+	{
+		X /= value.X;
+		Y /= value.Y;
+		Z /= value.Z;
+		return this;
+	}
+
+	public Vector3d divide(double divider)
+	{
+		double factor = 1d / divider;
+		X *= factor;
+		Y *= factor;
+		Z *= factor;
+		return this;
+	}
+	
+	public Vector3d cross(Vector3d value)
+	{
+		X = Y * value.Z - value.Y * Z;
+		Y = Z * value.X - value.Z * X;
+		Z = X * value.Y - value.X * Y;
+		return this;
 	}
 
 	/** A vector with a value of 0,0,0 */

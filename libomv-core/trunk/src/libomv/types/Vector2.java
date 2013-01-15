@@ -208,7 +208,7 @@ public final class Vector2
 	 * 
 	 * @return Raw string representation of the vector
 	 */
-	public String ToRawString()
+	public String toRawString()
 	{
 		return String.format(Helpers.EnUsCulture, "%.3f, %.3f", X, Y);
 	}
@@ -287,21 +287,26 @@ public final class Vector2
 		}
 	}
 
-	public float Length()
+	public float length()
 	{
-		return (float) Math.sqrt(DistanceSquared(this, Zero));
+		return (float) Math.sqrt(distanceSquared(this, Zero));
 	}
 
-	public float LengthSquared()
+	public float lengthSquared()
 	{
-		return DistanceSquared(this, Zero);
+		return distanceSquared(this, Zero);
 	}
 
-	public void Normalize()
+	public Vector2 normalize()
 	{
-		Vector2 val = Normalize(this);
-		X = val.X;
-		Y = val.Y;
+		float length = length();
+		if (length > Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			return divide(length);
+		}
+		X = 0f;
+		Y = 0f;
+		return this;
 	}
 
 	/**
@@ -315,94 +320,80 @@ public final class Vector2
 	 * @return True if the magnitude of difference between the two vectors is
 	 *         less than the given tolerance, otherwise false
 	 */
-	public boolean ApproxEquals(Vector2 vec, float tolerance)
+	public boolean approxEquals(Vector2 vec, float tolerance)
 	{
 		Vector2 diff = subtract(vec);
-		return (diff.LengthSquared() <= tolerance * tolerance);
+		return (diff.lengthSquared() <= tolerance * tolerance);
 	}
 
-	public int CompareTo(Vector2 vector)
+	public int compareTo(Vector2 vector)
 	{
-		return ((Float) Length()).compareTo(vector.Length());
+		return ((Float) length()).compareTo(vector.length());
 	}
 
 	/** Test if this vector is composed of all finite numbers */
-	public boolean IsFinite()
+	public boolean isFinite()
 	{
 		return Helpers.IsFinite(X) && Helpers.IsFinite(Y);
 	}
 
-	public static Vector2 Clamp(Vector2 value1, Vector2 min, Vector2 max)
+	public static Vector2 clamp(Vector2 value1, Vector2 min, Vector2 max)
 	{
 		return new Vector2(Helpers.Clamp(value1.X, min.X, max.X), Helpers.Clamp(value1.Y, min.Y, max.Y));
 	}
 
-	public static float Distance(Vector2 value1, Vector2 value2)
+	public static float distance(Vector2 value1, Vector2 value2)
 	{
-		return (float) Math.sqrt(DistanceSquared(value1, value2));
+		return (float) Math.sqrt(distanceSquared(value1, value2));
 	}
 
-	public static float DistanceSquared(Vector2 value1, Vector2 value2)
+	public static float distanceSquared(Vector2 value1, Vector2 value2)
 	{
 		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y);
 	}
 
-	public static float Dot(Vector2 value1, Vector2 value2)
+	public static float dot(Vector2 value1, Vector2 value2)
 	{
 		return value1.X * value2.X + value1.Y * value2.Y;
 	}
 
-	public static Vector2 Lerp(Vector2 value1, Vector2 value2, float amount)
+	public static Vector2 lerp(Vector2 value1, Vector2 value2, float amount)
 	{
 		return new Vector2(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount));
 	}
 
-	public static Vector2 Max(Vector2 value1, Vector2 value2)
+	public static Vector2 max(Vector2 value1, Vector2 value2)
 	{
 		return new Vector2(Math.max(value1.X, value2.X), Math.max(value1.Y, value2.Y));
 	}
 
-	public static Vector2 Min(Vector2 value1, Vector2 value2)
+	public static Vector2 min(Vector2 value1, Vector2 value2)
 	{
 		return new Vector2(Math.min(value1.X, value2.X), Math.min(value1.Y, value2.Y));
 	}
 
-	public static Vector2 Normalize(Vector2 value)
+	public static Vector2 normalize(Vector2 value)
 	{
-		float factor = DistanceSquared(value, Zero);
-		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
-		{
-			factor = 1f / (float) Math.sqrt(factor);
-			value.X *= factor;
-			value.Y *= factor;
-		}
-		else
-		{
-			value.X = 0f;
-			value.Y = 0f;
-		}
-		return value;
+		return new Vector2(value).normalize();
 	}
 
 	/** Interpolates between two vectors using a cubic equation */
-	public static Vector2 SmoothStep(Vector2 value1, Vector2 value2, float amount)
+	public static Vector2 smoothStep(Vector2 value1, Vector2 value2, float amount)
 	{
 		return new Vector2(Helpers.SmoothStep(value1.X, value2.X, amount), Helpers.SmoothStep(value1.Y, value2.Y,
 				amount));
 	}
 
-	public static Vector2 Transform(Vector2 position, Matrix4 matrix)
+	public static Vector2 transform(Vector2 position, Matrix4 matrix)
 	{
-		position.X = (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41;
-		position.Y = (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42;
-		return position;
+		return new Vector2((position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41,
+		                   (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42);
 	}
 
-	public static Vector2 TransformNormal(Vector2 position, Matrix4 matrix)
+	public static Vector2 transformNormal(Vector2 position, Matrix4 matrix)
 	{
-		position.X = (position.X * matrix.M11) + (position.Y * matrix.M21);
-		position.Y = (position.X * matrix.M12) + (position.Y * matrix.M22);
-		return position;
+		return new Vector2((position.X * matrix.M11) + (position.Y * matrix.M21),
+		                   (position.X * matrix.M12) + (position.Y * matrix.M22));
 	}
 
 	/**
@@ -449,64 +440,89 @@ public final class Vector2
 		return o != null && o.X == X && o.Y == Y;
 	}
 
-	public static Vector2 negate(Vector2 value)
+	public Vector2 negate()
 	{
-		value.X = -value.X;
-		value.Y = -value.Y;
-		return value;
+		X = -X;
+		Y = -Y;
+		return this;
 	}
 
-	public Vector2 add(Vector2 val)
+	public Vector2 add(Vector2 value)
 	{
-		return new Vector2(X + val.X, Y + val.Y);
+		X += value.X;
+		Y += value.Y;
+		return this;
 	}
 
 	public Vector2 subtract(Vector2 value)
 	{
-		return new Vector2(X - value.X, Y - value.X);
+		X -= value.X;
+		Y -= value.X;
+		return this;
+	}
+
+	public Vector2 multiply(Vector2 value)
+	{
+		X *= value.X;
+		Y *= value.Y;
+		return this;
+	}
+
+	public Vector2 multiply(float scaleFactor)
+	{
+		X *= scaleFactor;
+		Y *= scaleFactor;
+		return this;
+	}
+
+	public Vector2 divide(Vector2 value)
+	{
+		X /= value.X;
+		Y /= value.Y;
+		return this;
+	}
+
+	public Vector2 divide(float divider)
+	{
+		float factor = 1 / divider;
+		X *= factor;
+		Y *= factor;
+		return this;
+	}
+
+	public static Vector2 negate(Vector2 value)
+	{
+		return new Vector2(value).negate();
 	}
 
 	public static Vector2 add(Vector2 value1, Vector2 value2)
 	{
-		value1.X += value2.X;
-		value1.Y += value2.Y;
-		return value1;
+		return new Vector2(value1).add(value2);
 	}
 
 	public static Vector2 subtract(Vector2 value1, Vector2 value2)
 	{
-		value1.X -= value2.X;
-		value1.Y -= value2.Y;
-		return value1;
+		return new Vector2(value1).subtract(value2);
 	}
 
 	public static Vector2 multiply(Vector2 value1, Vector2 value2)
 	{
-		value1.X *= value2.X;
-		value1.Y *= value2.Y;
-		return value1;
+		return new Vector2(value1).multiply(value2);
 	}
 
 	public static Vector2 multiply(Vector2 value1, float scaleFactor)
 	{
-		value1.X *= scaleFactor;
-		value1.Y *= scaleFactor;
-		return value1;
+		return new Vector2(value1).multiply(scaleFactor);
 	}
 
 	public static Vector2 divide(Vector2 value1, Vector2 value2)
 	{
-		value1.X /= value2.X;
-		value1.Y /= value2.Y;
-		return value1;
+		return new Vector2(value1).divide(value2);
 	}
 
 	public static Vector2 divide(Vector2 value1, float divider)
 	{
-		float factor = 1 / divider;
-		value1.X *= factor;
-		value1.Y *= factor;
-		return value1;
+		return new Vector2(value1).divide(divider);
 	}
 
 	/**

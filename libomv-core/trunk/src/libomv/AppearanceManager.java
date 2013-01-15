@@ -1216,7 +1216,7 @@ public class AppearanceManager implements PacketCallback
 
                     // Distance is some fraction of the step, use that fraction
                     // to find the value in the range from color1 to color2
-                    paramColor = Color4.Lerp(c1, c2, distance / step);
+                    paramColor = Color4.lerp(c1, c2, distance / step);
                 }
 
                 // Please leave this fragment even if its commented out
@@ -1240,7 +1240,7 @@ public class AppearanceManager implements PacketCallback
                     res = Color4.multiply(res, paramColor);
                     break;
                 case Blend:
-                    res = Color4.Lerp(res, paramColor, p.Value);
+                    res = Color4.lerp(res, paramColor, p.Value);
                     break;
             }
         }

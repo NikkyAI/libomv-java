@@ -332,7 +332,16 @@ public class Vector3
 
 	public Vector3 normalize()
 	{
-		return normalize(this);
+        // Catch very small rounding errors when normalizing
+		float length = length();
+		if (length > Helpers.FLOAT_MAG_THRESHOLD)
+		{
+			return divide(length);
+		}
+		X = 0f;
+		Y = 0f;
+		Z = 0f;
+		return this;
 	}
 
 	/**
@@ -365,12 +374,18 @@ public class Vector3
 
 	public Vector3 clamp(Vector3 min, Vector3 max)
 	{
-		return new Vector3(Helpers.Clamp(X, min.X, max.X), Helpers.Clamp(Y, min.Y, max.Y), Helpers.Clamp(Z, min.Z, max.Z));
+		X = Helpers.Clamp(X, min.X, max.X);
+		Y = Helpers.Clamp(Y, min.Y, max.Y);
+		Z = Helpers.Clamp(Z, min.Z, max.Z);
+		return this;
 	}
 	
 	public Vector3 clamp(float min, float max)
 	{
-		return new Vector3(Helpers.Clamp(X, min, max), Helpers.Clamp(Y, min, max), Helpers.Clamp(Z, min, max));
+		X = Helpers.Clamp(X, min, max);
+		Y = Helpers.Clamp(Y, min, max);
+		Z = Helpers.Clamp(Z, min, max);
+		return this;
 	}
 	
 	public float mag()
@@ -380,8 +395,7 @@ public class Vector3
 
 	public static Vector3 cross(Vector3 value1, Vector3 value2)
 	{
-		return new Vector3(value1.Y * value2.Z - value2.Y * value1.Z, value1.Z * value2.X - value2.Z * value1.X,
-				value1.X * value2.Y - value2.X * value1.Y);
+		return new Vector3(value1).cross(value2);
 	}
 
 	public static float distance(Vector3 value1, Vector3 value2)
@@ -391,7 +405,8 @@ public class Vector3
 
 	public static float distanceSquared(Vector3 value1, Vector3 value2)
 	{
-		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
+		return (value1.X - value2.X) * (value1.X - value2.X)
+                + (value1.Y - value2.Y) * (value1.Y - value2.Y)
 				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
 	}
 
@@ -403,8 +418,9 @@ public class Vector3
 	public static Vector3 lerp(Vector3 value1, Vector3 value2, float amount)
 	{
 
-		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount),
-				Helpers.Lerp(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount),
+				           Helpers.Lerp(value1.Y, value2.Y, amount),
+				           Helpers.Lerp(value1.Z, value2.Z, amount));
 	}
 
 	public static float mag(Vector3 value)
@@ -424,21 +440,17 @@ public class Vector3
 
 	public static Vector3 normalize(Vector3 value)
 	{
-		float factor = distance(value, Zero);
-		if (factor > Helpers.FLOAT_MAG_THRESHOLD)
-		{
-			factor = 1f / factor;
-			value.X *= factor;
-			value.Y *= factor;
-			value.Z *= factor;
-		}
-		else
-		{
-			value.X = 0f;
-			value.Y = 0f;
-			value.Z = 0f;
-		}
-		return value;
+		return new Vector3(value).normalize();
+	}
+
+	public static Vector3 clamp(Vector3 value, Vector3 min, Vector3 max)
+	{
+		return new Vector3(value).clamp(min, max);
+	}
+	
+	public static Vector3 clamp(Vector3 value, float min, float max)
+	{
+		return new Vector3(value).clamp(min, max);
 	}
 
 	/**
@@ -456,7 +468,7 @@ public class Vector3
 		Vector3 crossProduct = cross(a, b);
 		float magProduct = a.length() * b.length();
 		double angle = Math.acos(dotProduct / magProduct);
-		Vector3 axis = normalize(crossProduct);
+		Vector3 axis = crossProduct.normalize();
 		float s = (float) Math.sin(angle / 2d);
 
 		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float) Math.cos(angle / 2d));
@@ -536,89 +548,110 @@ public class Vector3
 		return obj != null && (obj instanceof Vector3) && equals((Vector3)obj);
 	}
 
-	public static Vector3 negate(Vector3 value)
+	public Vector3 negate()
 	{
-		value.X = -value.X;
-		value.Y = -value.Y;
-		value.Z = -value.Z;
-		return value;
+		X = -X;
+		Y = -Y;
+		Z = -Z;
+		return this;
 	}
 
 	public Vector3 add(Vector3 val)
 	{
-		return new Vector3(X + val.X, Y + val.Y, Z + val.Z);
+		X += val.X;
+		Y += val.Y;
+		Z += val.Z;
+		return this;
 	}
 
 	public Vector3 subtract(Vector3 val)
 	{
-		return new Vector3(X - val.X, Y - val.X, Z - val.X);
+		X -= val.X;
+		Y -= val.Y;
+		Z -= val.Z;
+		return this;
 	}
 
 	public Vector3 multiply(float scaleFactor)
 	{
-		return multiply(this, scaleFactor);
+		X *= scaleFactor;
+		Y *= scaleFactor;
+		Z *= scaleFactor;
+		return this;
 	}
 	
 	public Vector3 multiply(Vector3 value)
 	{
-		return multiply(this, value);
+		X *= value.X;
+		Y *= value.Y;
+		Z *= value.Z;
+		return this;
 	}
 
-	public Vector3 multiply(Quaternion value)
+	public Vector3 multiply(Quaternion rot)
 	{
-		return multiply(this, value);
+		X = rot.W * rot.W * X + 2f * rot.Y * rot.W * Z - 2f * rot.Z * rot.W * Y + rot.X * rot.X * X
+		  + 2f * rot.Y * rot.X * Y + 2f * rot.Z * rot.X * Z - rot.Z * rot.Z * X - rot.Y * rot.Y * X;
+        Y = 2f * rot.X * rot.Y * X + rot.Y * rot.Y * Y + 2f * rot.Z * rot.Y * Z + 2f * rot.W * rot.Z * X
+          - rot.Z * rot.Z * Y + rot.W * rot.W * Y - 2f * rot.X * rot.W * Z - rot.X * rot.X * Y;
+        Z = 2f * rot.X * rot.Z * X + 2f * rot.Y * rot.Z * Y + rot.Z * rot.Z * Z - 2f * rot.W * rot.Y * X
+		  - rot.Y * rot.Y * Z + 2f * rot.W * rot.X * Y - rot.X * rot.X * Z + rot.W * rot.W * Z;
+		return this;
 	}
 
 	public Vector3 divide(Vector3 value)
 	{
-		return divide(this, value);
+		X /= value.X;
+		Y /= value.Y;
+		Z /= value.Z;
+		return this;
 	}
 
 	public Vector3 divide(float divider)
 	{
-		return divide(this, divider);
+		float factor = 1f / divider;
+		X *= factor;
+		Y *= factor;
+		Z *= factor;
+		return this;
 	}
 	
+	public Vector3 cross(Vector3 value)
+	{
+		X = Y * value.Z - value.Y * Z;
+		Y = Z * value.X - value.Z * X;
+		Z = X * value.Y - value.X * Y;
+		return this;
+	}
+
+	public static Vector3 negate(Vector3 value)
+	{
+		return new Vector3(value).negate();
+	}
+
 	public static Vector3 add(Vector3 val1, Vector3 val2)
 	{
-		val1.X += val2.X;
-		val1.Y += val2.Y;
-		val1.Z += val2.Z;
-		return val1;
+		return new Vector3(val1).add(val2);
 	}
 
 	public static Vector3 subtract(Vector3 val1, Vector3 val2)
 	{
-		val1.X -= val2.X;
-		val1.Y -= val2.Y;
-		val1.Z -= val2.Z;
-		return val1;
+		return new Vector3(val1).subtract(val2);
 	}
 
 	public static Vector3 multiply(Vector3 value1, Vector3 value2)
 	{
-		value1.X *= value2.X;
-		value1.Y *= value2.Y;
-		value1.Z *= value2.Z;
-		return value1;
+		return new Vector3(value1).multiply(value2);
 	}
 
 	public static Vector3 multiply(Vector3 value1, float scaleFactor)
 	{
-		value1.X *= scaleFactor;
-		value1.Y *= scaleFactor;
-		value1.Z *= scaleFactor;
-		return value1;
+		return new Vector3(value1).multiply(scaleFactor);
 	}
 
 	public static Vector3 multiply(Vector3 vec, Quaternion rot)
 	{
-		return new Vector3(rot.W * rot.W * vec.X + 2f * rot.Y * rot.W * vec.Z - 2f * rot.Z * rot.W * vec.Y + rot.X * rot.X * vec.X
-				           + 2f * rot.Y * rot.X * vec.Y + 2f * rot.Z * rot.X * vec.Z - rot.Z * rot.Z * vec.X - rot.Y * rot.Y * vec.X,
-		                   2f * rot.X * rot.Y * vec.X + rot.Y * rot.Y * vec.Y + 2f * rot.Z * rot.Y * vec.Z + 2f * rot.W * rot.Z * vec.X
-		                   - rot.Z * rot.Z * vec.Y + rot.W * rot.W * vec.Y - 2f * rot.X * rot.W * vec.Z - rot.X * rot.X * vec.Y,
-		                   2f * rot.X * rot.Z * vec.X + 2f * rot.Y * rot.Z * vec.Y + rot.Z * rot.Z * vec.Z - 2f * rot.W * rot.Y * vec.X
-				           - rot.Y * rot.Y * vec.Z + 2f * rot.W * rot.X * vec.Y - rot.X * rot.X * vec.Z + rot.W * rot.W * vec.Z);
+		return new Vector3(vec).multiply(rot);
 	}
 
 	public static Vector3 multiply(Vector3 vector, Matrix4 matrix)
@@ -628,19 +661,12 @@ public class Vector3
 
 	public static Vector3 divide(Vector3 value1, Vector3 value2)
 	{
-		value1.X /= value2.X;
-		value1.Y /= value2.Y;
-		value1.Z /= value2.Z;
-		return value1;
+		return new Vector3(value1).divide(value2);
 	}
 
 	public static Vector3 divide(Vector3 value, float divider)
 	{
-		float factor = 1f / divider;
-		value.X *= factor;
-		value.Y *= factor;
-		value.Z *= factor;
-		return value;
+		return new Vector3(value).divide(divider);
 	}
 
 	/** A vector with a value of 0,0,0 */
