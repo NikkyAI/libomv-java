@@ -149,9 +149,9 @@ public class FlyToCommand extends Command
         myPos = Client.Self.getAgentPosition();
         myPos0.X = myPos.X;
         myPos0.Y = myPos.Y;
-        diff = Vector2.Distance(target0, myPos0);
+        diff = Vector2.distance(target0, myPos0);
         Vector2 vvel = new Vector2(Client.Self.getVelocity().X, Client.Self.getVelocity().Y);
-        float vel = vvel.Length();
+        float vel = vvel.length();
         if (diff >= 10.0)
         {
             Client.Self.getMovement().setAtPos(true);
