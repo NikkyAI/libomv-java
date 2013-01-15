@@ -1017,7 +1017,7 @@ public class Helpers
 	 */
 	public static int BytesToUInt16L(byte[] bytes, int pos)
 	{
-		if (bytes.length <= pos + 1)
+		if (bytes.length < pos + 2)
 		{
 			return 0;
 		}
@@ -1031,7 +1031,7 @@ public class Helpers
 
 	public static int BytesToUInt16B(byte[] bytes, int pos)
 	{
-		if (bytes.length <= pos + 1)
+		if (bytes.length < pos + 2)
 		{
 			return 0;
 		}
