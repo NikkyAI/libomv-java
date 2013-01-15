@@ -93,7 +93,7 @@ public class HelpCommand extends Command
             }
             result.append("\n");
         }
-        result.append("\nHelp [command] for usage/information");
+        result.append("\nhelp [command] for usage/information");
         
         return result.toString();
 	}
