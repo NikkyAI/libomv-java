@@ -362,13 +362,13 @@ public class FriendsManager implements PacketCallback
 	// Triggered when a map request for a friend is answered
 	public class FriendFoundReplyCallbackArgs implements CallbackArgs
 	{
-		private final UUID preyID;
+		private final UUID agentID;
 		private final long regionHandle;
-		private final Vector3 vector3;
+		private final Vector3 location;
 
-		public UUID getPreyID()
+		public UUID getAgentID()
 		{
-			return preyID;
+			return agentID;
 		}
 
 		public long getRegionHandle()
@@ -376,16 +376,16 @@ public class FriendsManager implements PacketCallback
 			return regionHandle;
 		}
 
-		public Vector3 getVector3()
+		public Vector3 getLocation()
 		{
-			return vector3;
+			return location;
 		}
 
-		public FriendFoundReplyCallbackArgs(UUID preyID, long regionHandle, Vector3 vector3)
+		public FriendFoundReplyCallbackArgs(UUID agentID, long regionHandle, Vector3 location)
 		{
-			this.preyID = preyID;
+			this.agentID = agentID;
 			this.regionHandle = regionHandle;
-			this.vector3 = vector3;
+			this.location = location;
 		}
 	}
 
