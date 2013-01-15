@@ -3845,7 +3845,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * @param createIfMissing Create the item if it doesn't exist
 	 * @return the object that corresponds to the localID
 	 */
-	public Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, boolean createIfMissing)
+	protected Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, boolean createIfMissing)
 	{
 		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
@@ -3869,7 +3869,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					Logger.Log("GetObject(): Object with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, _Client);
+					Logger.Log("GetObject(): Object with UUID {" + fullID.toString() + "}, old localID: "
+				               + Helpers.LocalIDToString(prim.LocalID) + " new localID: "
+							   + Helpers.LocalIDToString(localID) + " found!", LogLevel.Warning, _Client);
 				}
 				prim.LocalID = localID;
 
@@ -3916,7 +3918,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					Logger.Log("GetAvatar(): Avatar with UUID {" + fullID.toString() + "} found!", LogLevel.Warning, _Client);
+					Logger.Log("GetAvatar(): Avatar with UUID {" + fullID.toString() + "}, old localID: "
+				               + Helpers.LocalIDToString(avatar.LocalID) + " new localID: "
+							   + Helpers.LocalIDToString(localID) + " found!", LogLevel.Warning, _Client);
 				}
 				avatar.LocalID = localID;
 
