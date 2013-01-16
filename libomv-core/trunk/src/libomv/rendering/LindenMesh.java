@@ -68,7 +68,7 @@ public class LindenMesh
 
     public class Vertex
     {
-        public Vector3 Coord;
+        public Vector3 Position;
         public Vector3 Normal;
         public Vector3 BiNormal;
         public Vector2 TexCoord;
@@ -78,14 +78,14 @@ public class LindenMesh
         @Override
 		public String toString()
         {
-            return String.format("Coord: %s Norm: %s BiNorm: %s TexCoord: %s DetailTexCoord: %s", Coord, Normal, BiNormal, TexCoord, DetailTexCoord, Weight);
+            return String.format("Position: %s Norm: %s BiNorm: %s TexCoord: %s DetailTexCoord: %s", Position, Normal, BiNormal, TexCoord, DetailTexCoord, Weight);
         }
     }
 
     public class MorphVertex
     {
         public int VertexIndex;
-        public Vector3 Coord;
+        public Vector3 Position;
         public Vector3 Normal;
         public Vector3 BiNormal;
         public Vector2 TexCoord;
@@ -93,7 +93,7 @@ public class LindenMesh
         @Override
 		public String toString()
         {
-            return String.format("Index: %d Coord: %s Norm: %s BiNorm: %s TexCoord: %s", VertexIndex, Coord, Normal, BiNormal, TexCoord);
+            return String.format("Index: %d Position: %s Norm: %s BiNorm: %s TexCoord: %s", VertexIndex, Position, Normal, BiNormal, TexCoord);
         }
     }
 
@@ -118,7 +118,7 @@ public class LindenMesh
         @Override
 		public String toString()
         {
-            return String.format("{0} -> {1}", RemapSource, RemapDestination);
+            return String.format("%d -> %d", RemapSource, RemapDestination);
         }
     }
     // #endregion Mesh Structs
@@ -208,7 +208,7 @@ public class LindenMesh
 
     	Vertex vertex = new Vertex();
     	int offset = index * 3;
-    	vertex.Coord = new Vector3(Vertices.get(offset), Vertices.get(offset + 1), Vertices.get(offset + 2));
+    	vertex.Position = new Vector3(Vertices.get(offset), Vertices.get(offset + 1), Vertices.get(offset + 2));
     	vertex.Normal = new Vector3(Normals.get(offset), Normals.get(offset + 1), Normals.get(offset + 2));
     	vertex.BiNormal = new Vector3(BiNormals.get(offset), BiNormals.get(offset + 1), BiNormals.get(offset + 2));
     	offset = index * 2;
@@ -407,7 +407,7 @@ public class LindenMesh
             for (int i = 0; i < morph.NumVertices; i++)
             {
                 morph.Vertices[i].VertexIndex = fis.readInt();
-                morph.Vertices[i].Coord = new Vector3(fis);
+                morph.Vertices[i].Position = new Vector3(fis);
                 morph.Vertices[i].Normal = new Vector3(fis);
                 morph.Vertices[i].BiNormal = new Vector3(fis);
                 morph.Vertices[i].TexCoord = new Vector2(fis);
