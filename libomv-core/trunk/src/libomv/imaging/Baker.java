@@ -179,7 +179,7 @@ public class Baker
             // FIXME: if texture is smaller than the layer, don't stretch it, tile it
             if (texture.Width != bakeWidth || texture.Height != bakeHeight)
             {
-                try { texture.ResizeNearestNeighbor(bakeWidth, bakeHeight); }
+                try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
                 catch (Exception ex) { continue; }
             }
 
@@ -279,7 +279,7 @@ public class Baker
             ManagedImage texture = textures.get(0).Texture.Image.clone();
             if (texture.Width != bakeWidth || texture.Height != bakeHeight)
             {
-                try { texture.ResizeNearestNeighbor(bakeWidth, bakeHeight); }
+                try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
                 catch (Exception ex) { }
             }
             DrawLayer(texture, false);
@@ -292,7 +292,7 @@ public class Baker
             	{
             		try
             		{ 
-            			texture.ResizeNearestNeighbor(bakeWidth, bakeHeight);
+            			texture.resizeNearestNeighbor(bakeWidth, bakeHeight);
             		}
             		catch (Exception ex) { };
             	}
@@ -463,7 +463,7 @@ public class Baker
 
         if (dest.Width != src.Width || dest.Height != src.Height)
         {
-            try { src.ResizeNearestNeighbor(dest.Width, dest.Height); }
+            try { src.resizeNearestNeighbor(dest.Width, dest.Height); }
             catch (Exception ex) { return false; }
         }
 
@@ -484,7 +484,7 @@ public class Baker
 
         if (dest.Width != src.Width || dest.Height != src.Height)
         {
-            try { src.ResizeNearestNeighbor(dest.Width, dest.Height); }
+            try { src.resizeNearestNeighbor(dest.Width, dest.Height); }
             catch (Exception ex) { return; }
         }
 

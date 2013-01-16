@@ -29,6 +29,10 @@
  */
 package libomv.imaging;
 
+import java.util.ArrayList;
+
+import libomv.types.Vector3;
+
 public class ManagedImage
 {
 	// [Flags]
@@ -172,13 +176,40 @@ public class ManagedImage
         Channels = channels;
     }
 
+    public ArrayList<ArrayList<Vector3>> toRows(boolean mirror)
+    {
+ 
+        ArrayList<ArrayList<Vector3>> rows = new ArrayList<ArrayList<Vector3>>(Height);
+
+        float pixScale = 1.0f / 255;
+
+        int rowNdx, colNdx;
+        int smNdx = 0;
+
+        for (rowNdx = 0; rowNdx < Height; rowNdx++)
+        {
+        	ArrayList<Vector3> row = new ArrayList<Vector3>(Width);
+            for (colNdx = 0; colNdx < Width; colNdx++)
+            {
+                if (mirror)
+                    row.add(new Vector3(-(Red[smNdx] * pixScale - 0.5f), (Green[smNdx] * pixScale - 0.5f), Blue[smNdx] * pixScale - 0.5f));
+                else
+                    row.add(new Vector3(Red[smNdx] * pixScale - 0.5f, Green[smNdx] * pixScale - 0.5f, Blue[smNdx] * pixScale - 0.5f));
+
+                ++smNdx;
+            }
+            rows.add(row);
+        }
+        return rows;
+    }
+
     /**
      * Resize or stretch the image using nearest neighbor (ugly) resampling
      *
      * @param width widt new width 
      * @param height new height
      */
-    public void ResizeNearestNeighbor(int width, int height)
+    public void resizeNearestNeighbor(int width, int height)
     {
         if (width == Width && height == Height)
             return;
