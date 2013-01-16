@@ -26,18 +26,18 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
-Based on the libsecondlife-java project (BSD License)
+Based on the libsecondlife-java project (BSD 3-clause License)
 Copyright © 2006, Lateral Arts Limited
 Simon Whiteside (http://www.larts.co.uk)
 - original Java port from libsecondlife
 
-Based on the libopenmetaverse project (BSD License)
+Based on the libopenmetaverse project (BSD 3-clause License)
 Copyright (c) 2007-2012, openmetaverse.org
 Copyright (c) 2009-2012, Frederick Martian <fredmartian@gmail.com>
 - bug fixing of libopenmetaverse-java code and adding ports of various
   newer openmetaverse.org libomv parts
 
-Includes ported code from the Radegast project (BSD License)
+Includes ported code from the Radegast project (BSD 3-clause License)
 Copyright (c) 2009-2011, Radegast Development Team
 
 Includes BVH code (Apache 2.0 License)
