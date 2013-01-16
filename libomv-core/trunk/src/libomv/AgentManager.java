@@ -2213,15 +2213,16 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 
 		// a bit more complicatated, agent sitting on a prim
-		Primitive p = null;
+		Primitive p, t;
 		Vector3 fullPosition = relativePosition;
 
 		Simulator sim = _Client.Network.getCurrentSim();
-		synchronized (sim.getObjectsPrimitives())
+		HashMap<Integer, Primitive> primitives = sim.getObjectsPrimitives();
+		synchronized (primitives)
 		{
-			if (sim.getObjectsPrimitives().containsKey(sittingOn))
+			p = primitives.get(sittingOn);
+			if (p != null)
 			{
-				p = sim.getObjectsPrimitives().get(sittingOn);
 				fullPosition.add(Vector3.add(p.Position, Vector3.multiply(relativePosition, p.Rotation)));
 			}
 		}
@@ -2229,17 +2230,21 @@ public class AgentManager implements PacketCallback, CapsCallback
 		// go up the hiearchy trying to find the root prim
 		while (p != null && p.ParentID != 0)
 		{
-			synchronized (sim.getObjectsPrimitives())
+			synchronized (primitives)
 			{
-				if (sim.getObjectsAvatars().containsKey(p.ParentID))
+				t = sim.getObjectsAvatars().get(p.ParentID);
+				if (t != null)
 				{
-					p = sim.getObjectsAvatars().get(p.ParentID);
-					fullPosition.add(p.Position);
+					fullPosition.add(t.Position);
+					t = p;
 				}
-				else if (sim.getObjectsPrimitives().containsKey(p.ParentID))
+				else
 				{
-					p = sim.getObjectsPrimitives().get(p.ParentID);
-					fullPosition.add(p.Position);
+					p = primitives.get(p.ParentID);
+					if (p != null)
+					{
+						fullPosition.add(p.Position);
+					}
 				}
 			}
 		}

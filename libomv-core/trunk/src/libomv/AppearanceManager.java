@@ -2056,10 +2056,9 @@ public class AppearanceManager implements PacketCallback
 
             if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
             {
-                Avatar me;
-                if (_Client.Network.getCurrentSim().getObjectsAvatars().containsKey(_Client.Self.getLocalID()))
+                Avatar me = _Client.Network.getCurrentSim().getObjectsAvatars().get(_Client.Self.getLocalID());
+                if (me != null)
                 {
-                    me = _Client.Network.getCurrentSim().getObjectsAvatars().get(_Client.Self.getLocalID());
                     me.Textures = MyTextures;
                     me.VisualParameters = MyVisualParameters;
                 }

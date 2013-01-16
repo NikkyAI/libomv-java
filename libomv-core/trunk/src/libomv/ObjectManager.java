@@ -33,6 +33,7 @@ package libomv;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -2637,8 +2638,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			// #region Relevance check
 			// Check if we are interested in this object
-			Primitive.PCode pcode;
-			pcode = PCode.setValue(block.PCode);
+			Primitive.PCode pcode = PCode.setValue(block.PCode);
 			if (!_Client.Settings.ALWAYS_DECODE_OBJECTS)
 			{
 				switch (pcode)
@@ -2654,7 +2654,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						break;
 					case Avatar:
 						// Make an exception for updates about our own agent
-						if (block.FullID != _Client.Self.getAgentID() && OnAvatarUpdate.count() == 0)
+						if (!block.FullID.equals(_Client.Self.getAgentID()) && OnAvatarUpdate.count() == 0)
 						{
 							continue;
 						}
@@ -2704,106 +2704,109 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// /#region Decode Additional packed parameters in ObjectData
 			ObjectMovementUpdate objectupdate = new ObjectMovementUpdate();
 			int pos = 0;
-			switch (block.getObjectData().length)
+			byte [] bytes = block.getObjectData();
+			switch (bytes.length)
 			{
 				case 76:
 					// Collision normal for avatar
-					objectupdate.CollisionPlane = new Vector4(block.getObjectData(), pos);
+					objectupdate.CollisionPlane = new Vector4(bytes, pos, true);
 					pos += 16;
 					// fall through
 				case 60:
 					// Position
-					objectupdate.Position = new Vector3(block.getObjectData(), pos);
+					objectupdate.Position = new Vector3(bytes, pos, true);
 					pos += 12;
 					// Velocity
-					objectupdate.Velocity = new Vector3(block.getObjectData(), pos);
+					objectupdate.Velocity = new Vector3(bytes, pos, true);
 					pos += 12;
 					// Acceleration
-					objectupdate.Acceleration = new Vector3(block.getObjectData(), pos);
+					objectupdate.Acceleration = new Vector3(bytes, pos, true);
 					pos += 12;
 					// Rotation (theta)
-					objectupdate.Rotation = new Quaternion(block.getObjectData(), pos, true);
+					objectupdate.Rotation = new Quaternion(bytes, pos, true, true);
 					pos += 12;
 					// Angular velocity (omega)
-					objectupdate.AngularVelocity = new Vector3(block.getObjectData(), pos);
+					objectupdate.AngularVelocity = new Vector3(bytes, pos, true);
 					pos += 12;
-
 					break;
 				case 48:
 					// Collision normal for avatar
-					objectupdate.CollisionPlane = new Vector4(block.getObjectData(), pos);
+					objectupdate.CollisionPlane = new Vector4(bytes, pos, true);
 					pos += 16;
 					// fall through
 				case 32:
-					// The data is an array of unsigned shorts
-
-					// Position
-					objectupdate.Position = new Vector3(Helpers.UInt16ToFloatL(block.getObjectData(), pos,
-							-0.5f * 256.0f, 1.5f * 256.0f), Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2,
-							-0.5f * 256.0f, 1.5f * 256.0f), Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4,
-							-256.0f, 3.0f * 256.0f));
-					pos += 6;
-					// Velocity
-					objectupdate.Velocity = new Vector3(Helpers.UInt16ToFloatL(block.getObjectData(), pos, -256.0f,
-							256.0f), Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
-							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
-					pos += 6;
-					// Acceleration
-					objectupdate.Acceleration = new Vector3(Helpers.UInt16ToFloatL(block.getObjectData(), pos, -256.0f,
-							256.0f), Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
-							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
-					pos += 6;
-					// Rotation (theta)
-					objectupdate.Rotation = new Quaternion(Helpers.UInt16ToFloatL(block.getObjectData(), pos, -1.0f,
-							1.0f), Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -1.0f, 1.0f),
-							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -1.0f, 1.0f),
-							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 6, -1.0f, 1.0f));
-					pos += 8;
-					// Angular velocity (omega)
-					objectupdate.AngularVelocity = new Vector3(Helpers.UInt16ToFloatL(block.getObjectData(), pos,
-							-256.0f, 256.0f), Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
-							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
-					pos += 6;
-
-					break;
-				case 16:
-					// The data is an array of single bytes (8-bit numbers)
+					// The bytes is an array of unsigned shorts
 
 					// Position
 					objectupdate.Position = new Vector3(
-							Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 1, -256.0f, 256.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 2, -256.0f, 256.0f));
+							Helpers.UInt16ToFloatL(bytes, pos, -0.5f * 256.0f, 1.5f * 256.0f), 
+							Helpers.UInt16ToFloatL(bytes, pos + 2, -0.5f * 256.0f, 1.5f * 256.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 3.0f * 256.0f));
+					pos += 6;
+					// Velocity
+					objectupdate.Velocity = new Vector3(
+							Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
+					pos += 6;
+					// Acceleration
+					objectupdate.Acceleration = new Vector3(
+							Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
+					pos += 6;
+					// Rotation (theta)
+					objectupdate.Rotation = new Quaternion(
+							Helpers.UInt16ToFloatL(bytes, pos, -1.0f, 1.0f), 
+							Helpers.UInt16ToFloatL(bytes, pos + 2, -1.0f, 1.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 4, -1.0f, 1.0f),
+							Helpers.UInt16ToFloatL(bytes, pos + 6, -1.0f, 1.0f));
+					pos += 8;
+					// Angular velocity (omega)
+					objectupdate.AngularVelocity = new Vector3(
+							Helpers.UInt16ToFloatL(block.getObjectData(), pos, -256.0f, 256.0f),
+							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
+							Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
+					pos += 6;
+					break;
+				case 16:
+					// The bytes is an array of single bytes (8-bit numbers)
+
+					// Position
+					objectupdate.Position = new Vector3(
+							Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 					pos += 3;
 					// Velocity
 					objectupdate.Velocity = new Vector3(
-							Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 1, -256.0f, 256.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 2, -256.0f, 256.0f));
+							Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 					pos += 3;
 					// Accleration
-					objectupdate.Acceleration = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f,
-							256.0f), Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+					objectupdate.Acceleration = new Vector3(
+							Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
 							Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 					pos += 3;
 					// Rotation
 					objectupdate.Rotation = new Quaternion(
-							Helpers.ByteToFloat(block.getObjectData(), pos, -1.0f, 1.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 1, -1.0f, 1.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 2, -1.0f, 1.0f), Helpers.ByteToFloat(
-									block.getObjectData(), pos + 3, -1.0f, 1.0f));
+							Helpers.ByteToFloat(block.getObjectData(), pos, -1.0f, 1.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 1, -1.0f, 1.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 2, -1.0f, 1.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 3, -1.0f, 1.0f));
 					pos += 4;
 					// Angular Velocity
-					objectupdate.AngularVelocity = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f,
-							256.0f), Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+					objectupdate.AngularVelocity = new Vector3(
+							Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+							Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
 							Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 					pos += 3;
-
 					break;
 				default:
 					Logger.Log("Got an ObjectUpdate block with ObjectUpdate field length of "
 							+ block.getObjectData().length, LogLevel.Warning, _Client);
-
 					continue;
 			}
 			// #endregion
@@ -3468,11 +3471,12 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, kill.ID[i]));
 		}
-
+	
 		ArrayList<Integer> removeAvatars = new ArrayList<Integer>();
 		ArrayList<Integer> removePrims = new ArrayList<Integer>();
 
-		synchronized (simulator.getObjectsPrimitives())
+		HashMap<Integer, Primitive> primitives = simulator.getObjectsPrimitives();
+		synchronized (primitives)
 		{
 			if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 			{
@@ -3496,18 +3500,19 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 			if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 			{
-				synchronized (simulator.getObjectsAvatars())
+				HashMap<Integer, Avatar> avatars = simulator.getObjectsAvatars();
+				synchronized (avatars)
 				{
 					for (int localID : kill.ID)
 					{
-						if (simulator.getObjectsAvatars().containsKey(localID))
+						if (avatars.containsKey(localID))
 						{
 							removeAvatars.add(localID);
 						}
 
 						ArrayList<Integer> rootPrims = new ArrayList<Integer>();
 
-						for (Entry<Integer, Primitive> e : simulator.getObjectsPrimitives().entrySet())
+						for (Entry<Integer, Primitive> e : primitives.entrySet())
 						{
 							if (e.getValue().ParentID == localID)
 							{
@@ -3517,7 +3522,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 							}
 						}
 
-						for (Entry<Integer, Primitive> e : simulator.getObjectsPrimitives().entrySet())
+						for (Entry<Integer, Primitive> e : primitives.entrySet())
 						{
 							if (rootPrims.contains(e.getValue().ParentID))
 							{
@@ -3527,20 +3532,18 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						}
 					}
 
-					// Do the actual removing outside of the loops but still
-					// inside the lock.
-					// This safely prevents the collection from being modified
-					// during a loop.
+					// Do the actual removing outside of the loops but still inside the lock.
+					// This safely prevents the collection from being modified during a loop.
 					for (int removeID : removeAvatars)
 					{
-						simulator.getObjectsAvatars().remove(removeID);
+						avatars.remove(removeID);
 					}
 				}
 			}
 
 			for (int removeID : removePrims)
 			{
-				simulator.getObjectsPrimitives().remove(removeID);
+				primitives.remove(removeID);
 			}
 		}
 	}
@@ -3900,9 +3903,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 		{
-			synchronized (simulator.getObjectsAvatars())
+			HashMap<Integer, Avatar> avatars = simulator.getObjectsAvatars();
+			synchronized (avatars)
 			{
-				Avatar avatar = simulator.getObjectsAvatars().get(localID);
+				Avatar avatar = avatars.get(localID);
 
 				if (avatar != null)
 				{
@@ -3924,7 +3928,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				avatar.LocalID = localID;
 
-				simulator.getObjectsAvatars().put(localID, avatar);
+				avatars.put(localID, avatar);
 
 				return avatar;
 			}
