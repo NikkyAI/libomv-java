@@ -440,7 +440,14 @@ public final class Vector2
 		return o != null && o.X == X && o.Y == Y;
 	}
 
-	public Vector2 negate()
+    public Vector2 flip()
+    {
+        X = 1.0f - X;
+        Y = 1.0f - Y;
+        return this;
+    }
+
+    public Vector2 negate()
 	{
 		X = -X;
 		Y = -Y;

@@ -590,6 +590,7 @@ public class Vector3
 
 	public Vector3 multiply(Quaternion rot)
 	{
+        // From http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/
 		X = rot.W * rot.W * X + 2f * rot.Y * rot.W * Z - 2f * rot.Z * rot.W * Y + rot.X * rot.X * X
 		  + 2f * rot.Y * rot.X * Y + 2f * rot.Z * rot.X * Z - rot.Z * rot.Z * X - rot.Y * rot.Y * X;
         Y = 2f * rot.X * rot.Y * X + rot.Y * rot.Y * Y + 2f * rot.Z * rot.Y * Z + 2f * rot.W * rot.Z * X
