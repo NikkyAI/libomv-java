@@ -240,7 +240,7 @@ public class Vector3d
 	@Override
 	public String toString()
 	{
-		return "" + X + " " + Y + " " + Z;
+		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", X, Y, Z);
 	}
 
 	public boolean equals(Vector3d val)

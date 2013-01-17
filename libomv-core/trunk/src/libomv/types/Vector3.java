@@ -212,7 +212,7 @@ public class Vector3
 	@Override
 	public String toString()
 	{
-		return X + " " + Y + " " + Z;
+		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", X, Y, Z);
 	}
 
 	@Override

@@ -213,7 +213,7 @@ public class Vector4
 	@Override
 	public String toString()
 	{
-		return "" + X + " " + Y + " " + Z + " " + S;
+		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f, %.3f>", X, Y, Z, S);
 	}
 
 	public boolean equals(Vector4 val)
