@@ -717,6 +717,14 @@ public class Simulator extends Thread
 	private DatagramSocket _Connection;
 	// The IP address and port of the server.
 	private InetSocketAddress ipEndPoint;
+	
+	private String simName;
+	
+	public void setSimName(String name)
+	{
+		simName = name;
+		setName(name + " (" + ipEndPoint.getHostName() + ")");
+	}
 
 	/* A non thread-safe dictionary containing avatars in a simulator */
 	private HashMap<Integer, Avatar> _ObjectsAvatars = new HashMap<Integer, Avatar>();

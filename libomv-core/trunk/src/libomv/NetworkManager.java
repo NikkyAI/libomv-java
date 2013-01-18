@@ -1331,7 +1331,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		simulator.ID = handshake.RegionInfo.CacheID;
 
 		simulator.IsEstateManager = handshake.RegionInfo.IsEstateManager;
-		simulator.setName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
+		simulator.setSimName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
 		simulator.SimOwner = handshake.RegionInfo.SimOwner;
 		simulator.TerrainBase0 = handshake.RegionInfo.TerrainBase0;
 		simulator.TerrainBase1 = handshake.RegionInfo.TerrainBase1;
