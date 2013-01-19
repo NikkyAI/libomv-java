@@ -165,7 +165,7 @@ public class FacetedMesh extends Mesh
                         		Helpers.UInt16ToFloatL(posBytes, i + 2, posMin.Y, posMax.Y),
                         		Helpers.UInt16ToFloatL(posBytes, i + 4, posMin.Z, posMax.Z));
 
-                        if (norBytes != null && norBytes.length >= i + 4)
+                        if (norBytes != null && norBytes.length >= i + 6)
                         {
                             vx.Normal = new Vector3(
                             		Helpers.UInt16ToFloatL(norBytes, i, posMin.X, posMax.X),
