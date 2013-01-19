@@ -101,7 +101,7 @@ public class AboutDialog extends JDialog
 
 			JTextArea jTxtVersion;
 			jTxtVersion = new JTextArea();
-			jTxtVersion.setText("Version 0.7.1");
+			jTxtVersion.setText("Version 0.7.1\n\nJava Version: " + System.getProperty("java.version"));
 			jTxtVersion.setFont(new Font("Tahoma", Font.BOLD, 16));
 			jTxtVersion.setEditable(false);
 			jTxtVersion.setColumns(10);
@@ -109,23 +109,24 @@ public class AboutDialog extends JDialog
 			JTextArea jTxtCopyright = new JTextArea();
 			jTxtCopyright.setFont(new Font("Tahoma", Font.PLAIN, 11));
 			jTxtCopyright.setEditable(false);
-			jTxtCopyright.setText("Written by Frederick Martian\nwith contributions from\n");
+			jTxtCopyright.setText("Copyright (C) 2009-2013 by Frederick Martian");
 			
 			GroupLayout gl_jContentPane = new GroupLayout(jContentPane);
 			gl_jContentPane.setHorizontalGroup(
-				gl_jContentPane.createSequentialGroup()
+				gl_jContentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(Alignment.TRAILING, gl_jContentPane.createSequentialGroup()
 						.addContainerGap()
 						.addGroup(gl_jContentPane.createParallelGroup(Alignment.TRAILING)
-							.addComponent(getJBtnClose(), GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getScrLicense(), Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+							.addComponent(getJBtnClose(), Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
 							.addGroup(Alignment.LEADING, gl_jContentPane.createSequentialGroup()
 								.addComponent(jPanImage, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED)
 								.addGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING)
 									.addComponent(jTxtCopyright, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
 									.addComponent(jTxtVersion, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)))
-							.addComponent(getScrCredits(), GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
-							.addComponent(getScrLicense(), GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE))
-						.addContainerGap()
+							.addComponent(getScrCredits(), Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE))
+						.addContainerGap())
 			);
 			gl_jContentPane.setVerticalGroup(
 				gl_jContentPane.createParallelGroup(Alignment.LEADING)
@@ -136,13 +137,13 @@ public class AboutDialog extends JDialog
 							.addGroup(gl_jContentPane.createSequentialGroup()
 								.addComponent(jTxtVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jTxtCopyright, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(getScrLicense(), GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
+								.addComponent(jTxtCopyright, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)))
+						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(getScrLicense(), GroupLayout.PREFERRED_SIZE, 172, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(getScrCredits(), GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(getJBtnClose(), GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+						.addComponent(getJBtnClose(), GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addContainerGap())
 			);
 			jContentPane.setLayout(gl_jContentPane);
