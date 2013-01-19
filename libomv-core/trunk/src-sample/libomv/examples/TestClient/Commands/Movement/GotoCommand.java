@@ -25,46 +25,74 @@
  */
 package libomv.examples.TestClient.Commands.Movement;
 
+import libomv.AgentManager.TeleportCallbackArgs;
+import libomv.AgentManager.TeleportStatus;
 import libomv.examples.TestClient.TestClient;
 import libomv.examples.TestClient.Command;
 import libomv.types.UUID;
+import libomv.types.Vector3;
+import libomv.utils.Callback;
+import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
-public class GotoLandmark extends Command
+public class GotoCommand extends Command
 {
-    public GotoLandmark(TestClient testClient)
+    private String message = null;
+
+    public GotoCommand(TestClient testClient)
     {
-        Name = "goto_landmark";
-        Description = "Teleports to a Landmark. Usage: goto_landmark [UUID]";
+		Name = "goto";
+		Description = "Teleport to a location (e.g. \"goto Hooper/100/100/30\")";
         Category = CommandCategory.Movement;
     }
 
     @Override
-	public String execute(String[] args, UUID fromAgentID)
+	public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length < 1)
         {
-            return "Usage: goto_landmark [UUID]";
+            return "Usage: goto sim/x/y/z";
         }
 
-        RefObject<UUID> landmark = new RefObject<UUID>(null);
-        if (UUID.TryParse(args[0], landmark))
+        String destination = Helpers.EmptyString;
+
+        // Handle multi-word sim names by combining the arguments
+        for (String arg : args)
         {
-        	System.out.println("Teleporting to " + landmark.argvalue.toString());
-
-            try
-			{
-				if (Client.Self.Teleport(landmark.argvalue))
-				{
-				    return "Teleport Succesful";
-				}
-			}
-			catch (Exception e)
-			{
-                return "Exception while trying to teleport to " + landmark.argvalue.toString();
-			}
-			return "Teleport Failed";
+            destination += arg + " ";
         }
-		return "Invalid LLUID";
-    }
+        destination = destination.trim();
+
+        String[] tokens = destination.split("/");
+        if (tokens.length != 4)
+            return "Usage: goto sim/x/y/z";
+
+        String sim = tokens[0];
+        float x, y, z;
+        try
+        {
+        	 x = Float.valueOf(tokens[1]);
+        	 y = Float.valueOf(tokens[2]);
+        	 z = Float.valueOf(tokens[3]);
+        }
+        catch (NumberFormatException ex)
+        {
+            return "Usage: goto sim/x/y/z";
+        }
+
+        Client.Self.OnTeleport.add(new Callback<TeleportCallbackArgs>()
+        {
+			@Override
+			public boolean callback(TeleportCallbackArgs params)
+			{
+				if (params.getStatus() == TeleportStatus.Failed)
+					message = params.getMessage();
+				return true;
+			}
+        }, true);
+        if (Client.Self.Teleport(sim, new Vector3(x, y, z)))
+            return "Teleported to " + Client.Network.getCurrentSim().getName();
+        else
+            return "Teleport failed: " + message;
+	}
 }
