@@ -1307,9 +1307,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 	public class TeleportCallbackArgs implements CallbackArgs
 	{
-		String message;
-		TeleportStatus status;
-		int flags;
+		private final String message;
+		private final TeleportStatus status;
+		private final int flags;
 
 		public String getMessage()
 		{
@@ -1319,6 +1319,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 		public TeleportStatus getStatus()
 		{
 			return status;
+		}
+
+		public int getFlags()
+		{
+			return flags;
 		}
 
 		public TeleportCallbackArgs(String message, TeleportStatus status, int flags)
