@@ -4228,19 +4228,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void RequestTeleport(long regionHandle, Vector3 position) throws Exception
 	{
-		RequestTeleport(regionHandle, position, new Vector3(0.0f, 1.0f, 0.0f));
+		RequestTeleport(regionHandle, position, Vector3.UnitY);
 	}
 
 	/**
 	 * Request teleport to a another simulator
 	 * 
-	 * @param regionHandle
-	 *            handle of region to teleport agent to
-	 * @param position
-	 *            {@link Vector3} position in destination sim to teleport to
-	 * @param lookAt
-	 *            {@link Vector3} direction in destination sim agent will look
-	 *            at
+	 * @param regionHandle handle of region to teleport agent to
+	 * @param position {@link Vector3} position in destination sim to teleport to
+	 * @param lookAt {@link Vector3} direction in destination sim agent will look at
 	 * @throws Exception
 	 */
 	public final void RequestTeleport(long regionHandle, Vector3 position, Vector3 lookAt) throws Exception
@@ -4270,34 +4266,44 @@ public class AgentManager implements PacketCallback, CapsCallback
 	/**
 	 * Teleport agent to another region
 	 * 
-	 * @param regionHandle
-	 *            handle of region to teleport agent to
-	 * @param position
-	 *            {@link Vector3} position in destination sim to teleport to
+	 * @param regionHandle handle of region to teleport agent to
+	 * @param position {@link Vector3} position in destination sim to teleport to
 	 * @return true on success, false on failure
 	 */
 	public boolean Teleport(long regionHandle, Vector3 position) throws Exception
 	{
-		return Teleport(regionHandle, position, new Vector3(0.0f, 1.0f, 0.0f));
+		return Teleport(regionHandle, position, Vector3.UnitY, _Client.Settings.TELEPORT_TIMEOUT);
 	}
 
 	/**
 	 * Teleport agent to another region
 	 * 
-	 * @param regionHandle
-	 *            handle of region to teleport agent to
-	 * @param position
-	 *            {@link Vector3} position in destination sim to teleport to
-	 * @param lookAt
+	 * @param regionHandle handle of region to teleport agent to
+	 * @param position {@link Vector3} position in destination sim to teleport to
+	 * @param timeout The maximum time to wait for the teleport to succeed 
 	 * @return true on success, false on failure
 	 */
-	public boolean Teleport(long regionHandle, Vector3 position, Vector3 lookAt) throws Exception
+	public boolean Teleport(long regionHandle, Vector3 position, long timeout) throws Exception
+	{
+		return Teleport(regionHandle, position, Vector3.UnitY, timeout);
+	}
+
+	/**
+	 * Teleport agent to another region
+	 * 
+	 * @param regionHandle handle of region to teleport agent to
+	 * @param position {@link Vector3} position in destination sim to teleport to
+	 * @param lookAt {@link Vector3} direction in destination sim agent will look at
+	 * @param timeout The maximum time to wait for the teleport to succeed 
+	 * @return true on success, false on failure
+	 */
+	public boolean Teleport(long regionHandle, Vector3 position, Vector3 lookAt, long timeout) throws Exception
 	{
 		// Start the timeout check
 		teleportTimeout.reset();
 		RequestTeleport(regionHandle, position, lookAt);
 
-		TeleportStatus teleportStat = teleportTimeout.waitOne(_Client.Settings.TELEPORT_TIMEOUT);
+		TeleportStatus teleportStat = teleportTimeout.waitOne(timeout);
 		if (teleportStat == null)
 		{
 			teleportStat = TeleportStatus.Failed;
@@ -4310,31 +4316,27 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * Attempt to look up a simulator name and teleport to the discovered
 	 * destination
 	 * 
-	 * @param simName
-	 *            Region name to look up
-	 * @param position
-	 *            Position to teleport to
+	 * @param simName Region name to look up
+	 * @param position {@link Vector3} position to teleport to
 	 * @return True if the lookup and teleport were successful, otherwise
 	 */
 	public boolean Teleport(String simName, Vector3 position) throws Exception
 	{
-		return Teleport(simName, position, new Vector3(0, 1.0F, 0));
+		return Teleport(simName, position, Vector3.UnitY, _Client.Settings.TELEPORT_TIMEOUT);
 	}
 
 	/**
 	 * Attempt to look up a simulator name and teleport to the discovered
 	 * destination
 	 * 
-	 * @param simName
-	 *            Region name to look up
-	 * @param position
-	 *            Position to teleport to
-	 * @param lookAt
-	 *            Target to look at
+	 * @param simName Region name to look up
+	 * @param position {@link Vector3} position to teleport to
+	 * @param lookAt {@link Vector3} direction in destination sim agent will look at
+	 * @param timeout The maximum time to wait for the teleport to succeed 
 	 * @return True if the lookup and teleport were successful, false otherwise
 	 * @throws Exception
 	 */
-	public boolean Teleport(String simName, Vector3 position, Vector3 lookAt) throws Exception
+	public boolean Teleport(String simName, Vector3 position, Vector3 lookAt, long timeout) throws Exception
 	{
 		if (_Client.Network.getCurrentSim() == null)
 		{
@@ -4347,7 +4349,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			GridRegion region = _Client.Grid.GetGridRegion(simName, GridLayerType.Objects);
 			if (region != null)
 			{
-				return Teleport(region.RegionHandle, position, lookAt);
+				return Teleport(region.RegionHandle, position, lookAt, timeout);
 			}
 
 			TeleportStatus teleportStat = TeleportStatus.Failed;
@@ -4356,20 +4358,19 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 
 		// Teleporting to the sim we're already in
-		return Teleport(_Client.getCurrentRegionHandle(), position, lookAt);
+		return Teleport(_Client.getCurrentRegionHandle(), position, lookAt, timeout);
 	}
 
 	/**
 	 * Send a teleport lure to another avatar with default "Join me in ..."
 	 * invitation message
 	 * 
-	 * @param targetID
-	 *            target avatars {@link UUID} to lure
+	 * @param targetID Target avatars {@link UUID} to lure
 	 * @throws Exception
 	 */
 	public final void SendTeleportLure(UUID targetID) throws Exception
 	{
-		SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().getName() + "!");
+		SendTeleportLure(targetID, "Join me in " + _Client.Network.getCurrentSim().getSimName() + "!");
 	}
 
 	/**

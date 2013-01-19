@@ -726,6 +726,11 @@ public class Simulator extends Thread
 		setName(name + " (" + ipEndPoint.getHostName() + ")");
 	}
 
+	public String getSimName()
+	{
+		return simName;
+	}
+
 	/* A non thread-safe dictionary containing avatars in a simulator */
 	private HashMap<Integer, Avatar> _ObjectsAvatars = new HashMap<Integer, Avatar>();
 
