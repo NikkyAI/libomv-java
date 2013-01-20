@@ -677,14 +677,266 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// /#region callback handlers
-	public CallbackHandler<EventInfoReplyCallbackArgs> OnEventInfo;
-	public CallbackHandler<DirEventsReplyCallbackArgs> OnDirEvents;
-	public CallbackHandler<PlacesReplyCallbackArgs> OnPlaces;
-	public CallbackHandler<DirPlacesReplyCallbackArgs> OnDirPlaces;
-	public CallbackHandler<DirClassifiedsReplyCallbackArgs> OnDirClassifieds;
-	public CallbackHandler<DirGroupsReplyCallbackArgs> OnDirGroups;
-	public CallbackHandler<DirPeopleReplyCallbackArgs> OnDirPeople;
-	public CallbackHandler<DirLandReplyCallbackArgs> OnDirLand;
+	/** Contains the "Event" detail data returned from the data server */
+	public class DirEventsReplyCallbackArgs implements CallbackArgs
+	{
+		private final UUID m_QueryID;
+
+		/** The ID returned by <see cref="DirectoryManager.StartEventsSearch"/> */
+		public final UUID getQueryID()
+		{
+			return m_QueryID;
+		}
+
+		private final ArrayList<DirectoryManager.EventsSearchData> m_matchedEvents;
+
+		/** A list of "Events" returned by the data server */
+		public final ArrayList<DirectoryManager.EventsSearchData> getMatchedEvents()
+		{
+			return m_matchedEvents;
+		}
+
+		/**
+		 * Construct a new instance of the DirEventsReplyEventArgs class
+		 * 
+		 * @param queryID
+		 *            The ID of the query returned by the data server. This will
+		 *            correlate to the ID returned by the <see
+		 *            cref="StartEventsSearch"/> method
+		 * @param matchedEvents
+		 *            A list containing the "Events" returned by the search
+		 *            query
+		 */
+		public DirEventsReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.EventsSearchData> matchedEvents)
+		{
+			this.m_QueryID = queryID;
+			this.m_matchedEvents = matchedEvents;
+		}
+	}
+	public CallbackHandler<DirEventsReplyCallbackArgs> OnDirEvents = new CallbackHandler<DirEventsReplyCallbackArgs>();
+
+	/** Contains the Event data returned from the data server from an EventInfoRequest */
+	public class EventInfoReplyCallbackArgs implements CallbackArgs
+	{
+		private final DirectoryManager.EventInfo m_MatchedEvent;
+
+		/** A single EventInfo object containing the details of an event */
+		public final DirectoryManager.EventInfo getMatchedEvent()
+		{
+			return m_MatchedEvent;
+		}
+
+		/**
+		 * Construct a new instance of the EventInfoReplyEventArgs class
+		 * 
+		 * @param matchedEvent
+		 *            A single EventInfo object containing the details of an
+		 *            event
+		 */
+		public EventInfoReplyCallbackArgs(DirectoryManager.EventInfo matchedEvent)
+		{
+			this.m_MatchedEvent = matchedEvent;
+		}
+	}
+	public CallbackHandler<EventInfoReplyCallbackArgs> OnEventInfo = new CallbackHandler<EventInfoReplyCallbackArgs>();
+
+	/** Contains the places data returned from the data server */
+	public class DirPlacesReplyCallbackArgs implements CallbackArgs
+	{
+		private final UUID m_QueryID;
+
+		// The ID returned by <see
+		// cref="DirectoryManager.StartDirPlacesSearch"/>
+		public final UUID getQueryID()
+		{
+			return m_QueryID;
+		}
+
+		private final ArrayList<DirectoryManager.DirectoryParcel> m_MatchedParcels;
+
+		// A list containing Places data returned by the data server
+		public final ArrayList<DirectoryManager.DirectoryParcel> getMatchedParcels()
+		{
+			return m_MatchedParcels;
+		}
+
+		/**
+		 * Construct a new instance of the DirPlacesReplyEventArgs class
+		 * 
+		 * @param queryID
+		 *            The ID of the query returned by the data server. This will
+		 *            correlate to the ID returned by the <see
+		 *            cref="StartDirPlacesSearch"/> method
+		 * @param matchedParcels
+		 *            A list containing land data returned by the data server
+		 */
+		public DirPlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.DirectoryParcel> matchedParcels)
+		{
+			this.m_QueryID = queryID;
+			this.m_MatchedParcels = matchedParcels;
+		}
+	}
+	public CallbackHandler<DirPlacesReplyCallbackArgs> OnDirPlaces = new CallbackHandler<DirPlacesReplyCallbackArgs>();
+
+	/** Contains the "Event" list data returned from the data server */
+	public class PlacesReplyCallbackArgs implements CallbackArgs
+	{
+		private final UUID m_QueryID;
+
+		// The ID returned by <see cref="DirectoryManager.StartPlacesSearch"/>
+		public final UUID getQueryID()
+		{
+			return m_QueryID;
+		}
+
+		private final ArrayList<DirectoryManager.PlacesSearchData> m_MatchedPlaces;
+
+		// A list of "Places" returned by the data server
+		public final ArrayList<DirectoryManager.PlacesSearchData> getMatchedPlaces()
+		{
+			return m_MatchedPlaces;
+		}
+
+		/**
+		 * Construct a new instance of PlacesReplyEventArgs class
+		 * 
+		 * @param queryID
+		 *            The ID of the query returned by the data server. This will
+		 *            correlate to the ID returned by the <see
+		 *            cref="StartPlacesSearch"/> method
+		 * @param matchedPlaces
+		 *            A list containing the "Places" returned by the data server
+		 *            query
+		 */
+		public PlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.PlacesSearchData> matchedPlaces)
+		{
+			this.m_QueryID = queryID;
+			this.m_MatchedPlaces = matchedPlaces;
+		}
+	}
+	public CallbackHandler<PlacesReplyCallbackArgs> OnPlaces = new CallbackHandler<PlacesReplyCallbackArgs>();
+
+	/** Contains the classified data returned from the data server */
+	public class DirClassifiedsReplyCallbackArgs implements CallbackArgs
+	{
+		private final ArrayList<DirectoryManager.Classified> m_Classifieds;
+
+		// A list containing Classified Ads returned by the data server
+		public final ArrayList<DirectoryManager.Classified> getClassifieds()
+		{
+			return m_Classifieds;
+		}
+
+		/**
+		 * Construct a new instance of the DirClassifiedsReplyEventArgs class
+		 * 
+		 * @param classifieds
+		 *            A list of classified ad data returned from the data server
+		 */
+		public DirClassifiedsReplyCallbackArgs(ArrayList<DirectoryManager.Classified> classifieds)
+		{
+			this.m_Classifieds = classifieds;
+		}
+	}
+	public CallbackHandler<DirClassifiedsReplyCallbackArgs> OnDirClassifieds = new CallbackHandler<DirClassifiedsReplyCallbackArgs>();
+
+	/** Contains the group data returned from the data server */
+	public class DirGroupsReplyCallbackArgs implements CallbackArgs
+	{
+		private final UUID m_QueryID;
+
+		// The ID returned by <see cref="DirectoryManager.StartGroupSearch"/>
+		public final UUID getQueryID()
+		{
+			return m_QueryID;
+		}
+
+		private final ArrayList<DirectoryManager.GroupSearchData> m_matchedGroups;
+
+		// A list containing Groups data returned by the data server
+		public final ArrayList<DirectoryManager.GroupSearchData> getMatchedGroups()
+		{
+			return m_matchedGroups;
+		}
+
+		/**
+		 * Construct a new instance of the DirGroupsReplyEventArgs class
+		 * 
+		 * @param queryID
+		 *            The ID of the query returned by the data server. This will
+		 *            correlate to the ID returned by the <see
+		 *            cref="StartGroupSearch"/> method
+		 * @param matchedGroups
+		 *            A list of groups data returned by the data server
+		 */
+		public DirGroupsReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.GroupSearchData> matchedGroups)
+		{
+			this.m_QueryID = queryID;
+			this.m_matchedGroups = matchedGroups;
+		}
+	}
+	public CallbackHandler<DirGroupsReplyCallbackArgs> OnDirGroups = new CallbackHandler<DirGroupsReplyCallbackArgs>();
+
+	/** Contains the people data returned from the data server */
+	public class DirPeopleReplyCallbackArgs implements CallbackArgs
+	{
+		private final UUID m_QueryID;
+
+		// The ID returned by <see cref="DirectoryManager.StartPeopleSearch"/>
+		public final UUID getQueryID()
+		{
+			return m_QueryID;
+		}
+
+		private final ArrayList<DirectoryManager.AgentSearchData> m_MatchedPeople;
+
+		// A list containing People data returned by the data server
+		public final ArrayList<DirectoryManager.AgentSearchData> getMatchedPeople()
+		{
+			return m_MatchedPeople;
+		}
+
+		/**
+		 * Construct a new instance of the DirPeopleReplyEventArgs class
+		 * 
+		 * @param queryID
+		 *            The ID of the query returned by the data server. This will
+		 *            correlate to the ID returned by the <see
+		 *            cref="StartPeopleSearch"/> method
+		 * @param matchedPeople
+		 *            A list of people data returned by the data server
+		 */
+		public DirPeopleReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.AgentSearchData> matchedPeople)
+		{
+			this.m_QueryID = queryID;
+			this.m_MatchedPeople = matchedPeople;
+		}
+	}
+	public CallbackHandler<DirPeopleReplyCallbackArgs> OnDirPeople = new CallbackHandler<DirPeopleReplyCallbackArgs>();
+
+	/** Contains the land sales data returned from the data server */
+	public class DirLandReplyCallbackArgs implements CallbackArgs
+	{
+		private final ArrayList<DirectoryManager.DirectoryParcel> m_DirParcels;
+
+		// A list containing land forsale data returned by the data server
+		public final ArrayList<DirectoryManager.DirectoryParcel> getDirParcels()
+		{
+			return m_DirParcels;
+		}
+
+		/**
+		 * Construct a new instance of the DirLandReplyEventArgs class
+		 * 
+		 * @param dirParcels
+		 *            A list of parcels for sale returned by the data server
+		 */
+		public DirLandReplyCallbackArgs(ArrayList<DirectoryManager.DirectoryParcel> dirParcels)
+		{
+			this.m_DirParcels = dirParcels;
+		}
+	}
+	public CallbackHandler<DirLandReplyCallbackArgs> OnDirLand = new CallbackHandler<DirLandReplyCallbackArgs>();
 
 	// /#region Private Members
 	private GridClient Client;
@@ -1674,264 +1926,6 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			}
 
 			OnDirPlaces.dispatch(new DirPlacesReplyCallbackArgs(reply.QueryID[0], result));
-		}
-	}
-
-	// /#region DirectoryManager EventArgs Classes
-
-	/**
-	 * Contains the Event data returned from the data server from an
-	 * EventInfoRequest
-	 */
-	public class EventInfoReplyCallbackArgs implements CallbackArgs
-	{
-		private final DirectoryManager.EventInfo m_MatchedEvent;
-
-		/** A single EventInfo object containing the details of an event */
-		public final DirectoryManager.EventInfo getMatchedEvent()
-		{
-			return m_MatchedEvent;
-		}
-
-		/**
-		 * Construct a new instance of the EventInfoReplyEventArgs class
-		 * 
-		 * @param matchedEvent
-		 *            A single EventInfo object containing the details of an
-		 *            event
-		 */
-		public EventInfoReplyCallbackArgs(DirectoryManager.EventInfo matchedEvent)
-		{
-			this.m_MatchedEvent = matchedEvent;
-		}
-	}
-
-	/** Contains the "Event" detail data returned from the data server */
-	public class DirEventsReplyCallbackArgs implements CallbackArgs
-	{
-		private final UUID m_QueryID;
-
-		/** The ID returned by <see cref="DirectoryManager.StartEventsSearch"/> */
-		public final UUID getQueryID()
-		{
-			return m_QueryID;
-		}
-
-		private final ArrayList<DirectoryManager.EventsSearchData> m_matchedEvents;
-
-		/** A list of "Events" returned by the data server */
-		public final ArrayList<DirectoryManager.EventsSearchData> getMatchedEvents()
-		{
-			return m_matchedEvents;
-		}
-
-		/**
-		 * Construct a new instance of the DirEventsReplyEventArgs class
-		 * 
-		 * @param queryID
-		 *            The ID of the query returned by the data server. This will
-		 *            correlate to the ID returned by the <see
-		 *            cref="StartEventsSearch"/> method
-		 * @param matchedEvents
-		 *            A list containing the "Events" returned by the search
-		 *            query
-		 */
-		public DirEventsReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.EventsSearchData> matchedEvents)
-		{
-			this.m_QueryID = queryID;
-			this.m_matchedEvents = matchedEvents;
-		}
-	}
-
-	// Contains the "Event" list data returned from the data server
-	public class PlacesReplyCallbackArgs implements CallbackArgs
-	{
-		private final UUID m_QueryID;
-
-		// The ID returned by <see cref="DirectoryManager.StartPlacesSearch"/>
-		public final UUID getQueryID()
-		{
-			return m_QueryID;
-		}
-
-		private final ArrayList<DirectoryManager.PlacesSearchData> m_MatchedPlaces;
-
-		// A list of "Places" returned by the data server
-		public final ArrayList<DirectoryManager.PlacesSearchData> getMatchedPlaces()
-		{
-			return m_MatchedPlaces;
-		}
-
-		/**
-		 * Construct a new instance of PlacesReplyEventArgs class
-		 * 
-		 * @param queryID
-		 *            The ID of the query returned by the data server. This will
-		 *            correlate to the ID returned by the <see
-		 *            cref="StartPlacesSearch"/> method
-		 * @param matchedPlaces
-		 *            A list containing the "Places" returned by the data server
-		 *            query
-		 */
-		public PlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.PlacesSearchData> matchedPlaces)
-		{
-			this.m_QueryID = queryID;
-			this.m_MatchedPlaces = matchedPlaces;
-		}
-	}
-
-	// Contains the places data returned from the data server
-	public class DirPlacesReplyCallbackArgs implements CallbackArgs
-	{
-		private final UUID m_QueryID;
-
-		// The ID returned by <see
-		// cref="DirectoryManager.StartDirPlacesSearch"/>
-		public final UUID getQueryID()
-		{
-			return m_QueryID;
-		}
-
-		private final ArrayList<DirectoryManager.DirectoryParcel> m_MatchedParcels;
-
-		// A list containing Places data returned by the data server
-		public final ArrayList<DirectoryManager.DirectoryParcel> getMatchedParcels()
-		{
-			return m_MatchedParcels;
-		}
-
-		/**
-		 * Construct a new instance of the DirPlacesReplyEventArgs class
-		 * 
-		 * @param queryID
-		 *            The ID of the query returned by the data server. This will
-		 *            correlate to the ID returned by the <see
-		 *            cref="StartDirPlacesSearch"/> method
-		 * @param matchedParcels
-		 *            A list containing land data returned by the data server
-		 */
-		public DirPlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.DirectoryParcel> matchedParcels)
-		{
-			this.m_QueryID = queryID;
-			this.m_MatchedParcels = matchedParcels;
-		}
-	}
-
-	// Contains the classified data returned from the data server
-	public class DirClassifiedsReplyCallbackArgs implements CallbackArgs
-	{
-		private final ArrayList<DirectoryManager.Classified> m_Classifieds;
-
-		// A list containing Classified Ads returned by the data server
-		public final ArrayList<DirectoryManager.Classified> getClassifieds()
-		{
-			return m_Classifieds;
-		}
-
-		/**
-		 * Construct a new instance of the DirClassifiedsReplyEventArgs class
-		 * 
-		 * @param classifieds
-		 *            A list of classified ad data returned from the data server
-		 */
-		public DirClassifiedsReplyCallbackArgs(ArrayList<DirectoryManager.Classified> classifieds)
-		{
-			this.m_Classifieds = classifieds;
-		}
-	}
-
-	// Contains the group data returned from the data server
-	public class DirGroupsReplyCallbackArgs implements CallbackArgs
-	{
-		private final UUID m_QueryID;
-
-		// The ID returned by <see cref="DirectoryManager.StartGroupSearch"/>
-		public final UUID getQueryID()
-		{
-			return m_QueryID;
-		}
-
-		private final ArrayList<DirectoryManager.GroupSearchData> m_matchedGroups;
-
-		// A list containing Groups data returned by the data server
-		public final ArrayList<DirectoryManager.GroupSearchData> getMatchedGroups()
-		{
-			return m_matchedGroups;
-		}
-
-		/**
-		 * Construct a new instance of the DirGroupsReplyEventArgs class
-		 * 
-		 * @param queryID
-		 *            The ID of the query returned by the data server. This will
-		 *            correlate to the ID returned by the <see
-		 *            cref="StartGroupSearch"/> method
-		 * @param matchedGroups
-		 *            A list of groups data returned by the data server
-		 */
-		public DirGroupsReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.GroupSearchData> matchedGroups)
-		{
-			this.m_QueryID = queryID;
-			this.m_matchedGroups = matchedGroups;
-		}
-	}
-
-	// Contains the people data returned from the data server
-	public class DirPeopleReplyCallbackArgs implements CallbackArgs
-	{
-		private final UUID m_QueryID;
-
-		// The ID returned by <see cref="DirectoryManager.StartPeopleSearch"/>
-		public final UUID getQueryID()
-		{
-			return m_QueryID;
-		}
-
-		private final ArrayList<DirectoryManager.AgentSearchData> m_MatchedPeople;
-
-		// A list containing People data returned by the data server
-		public final ArrayList<DirectoryManager.AgentSearchData> getMatchedPeople()
-		{
-			return m_MatchedPeople;
-		}
-
-		/**
-		 * Construct a new instance of the DirPeopleReplyEventArgs class
-		 * 
-		 * @param queryID
-		 *            The ID of the query returned by the data server. This will
-		 *            correlate to the ID returned by the <see
-		 *            cref="StartPeopleSearch"/> method
-		 * @param matchedPeople
-		 *            A list of people data returned by the data server
-		 */
-		public DirPeopleReplyCallbackArgs(UUID queryID, ArrayList<DirectoryManager.AgentSearchData> matchedPeople)
-		{
-			this.m_QueryID = queryID;
-			this.m_MatchedPeople = matchedPeople;
-		}
-	}
-
-	// Contains the land sales data returned from the data server
-	public class DirLandReplyCallbackArgs implements CallbackArgs
-	{
-		private final ArrayList<DirectoryManager.DirectoryParcel> m_DirParcels;
-
-		// A list containing land forsale data returned by the data server
-		public final ArrayList<DirectoryManager.DirectoryParcel> getDirParcels()
-		{
-			return m_DirParcels;
-		}
-
-		/**
-		 * Construct a new instance of the DirLandReplyEventArgs class
-		 * 
-		 * @param dirParcels
-		 *            A list of parcels for sale returned by the data server
-		 */
-		public DirLandReplyCallbackArgs(ArrayList<DirectoryManager.DirectoryParcel> dirParcels)
-		{
-			this.m_DirParcels = dirParcels;
 		}
 	}
 }
