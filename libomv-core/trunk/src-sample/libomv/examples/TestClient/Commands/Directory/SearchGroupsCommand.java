@@ -28,7 +28,8 @@ package libomv.examples.TestClient.Commands.Directory;
 import java.util.ArrayList;
 
 import libomv.DirectoryManager.DirEventsReplyCallbackArgs;
-import libomv.DirectoryManager.EventsSearchData;
+import libomv.DirectoryManager.DirGroupsReplyCallbackArgs;
+import libomv.DirectoryManager.GroupSearchData;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
@@ -36,15 +37,15 @@ import libomv.utils.Callback;
 import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
 
-public class SearchEventsCommand extends Command
+public class SearchGroupsCommand extends Command
 {
-    private static final String usage = "Usage: searchevents <search text>";
-    private TimeoutEvent<ArrayList<EventsSearchData>> waitQuery = new TimeoutEvent<ArrayList<EventsSearchData>>();
+    private static final String usage = "Usage: searchgroups <search text>";
+    private TimeoutEvent<ArrayList<GroupSearchData>> waitQuery = new TimeoutEvent<ArrayList<GroupSearchData>>();
     private UUID queryID;
 
-    public SearchEventsCommand(TestClient testClient)
+    public SearchGroupsCommand(TestClient testClient)
     {
-        Name = "searchevents";
+        Name = "searchgroups";
         Description = "Searches Events list. " + usage;
         Category = CommandCategory.Search;
     }
@@ -63,39 +64,39 @@ public class SearchEventsCommand extends Command
 
         waitQuery.reset();
         
-        Callback<DirEventsReplyCallbackArgs> callback = new Directory_DirEvents();
-        Client.Directory.OnDirEvents.add(callback);
+        Callback<DirGroupsReplyCallbackArgs> callback = new Directory_DirGroups();
+        Client.Directory.OnDirGroups.add(callback);
         
         // send the request to the directory manager
         queryID = Client.Directory.StartEventsSearch(searchText, 0);
-        ArrayList<EventsSearchData> events = waitQuery.waitOne(20000);
-        Client.Directory.OnDirEvents.remove(callback);
+        ArrayList<GroupSearchData> groups = waitQuery.waitOne(20000);
+        Client.Directory.OnDirGroups.remove(callback);
 
-        if (events == null)
+        if (groups == null)
         {
             return "Timeout waiting for simulator to respond.";
         }
-        else if (events.get(0).ID == 0 && events.size() == 1)
+        else if (groups.size() == 0)
         {
         	return "No Results matched your search string";
         }
         
         StringBuilder result = new StringBuilder();
-        result.append("Your query '" + searchText + "' matched " + events.size() + " events.\n");
-        for (EventsSearchData ev : events)
+        result.append("Your query '" + searchText + "' matched " + groups.size() + " groups.\n");
+        for (GroupSearchData ev : groups)
         {                    
-        	result.append("Event: " + ev.Name + " (" +  ev.ID + ") Date: " + ev.Date + "\n");
+        	result.append("Group: " + ev.GroupName + " (" +  ev.GroupID + ") has " + ev.Members + "members.\n");
         }
         return result.substring(0, result.length() - 1);
     }
 
-    private class Directory_DirEvents implements Callback<DirEventsReplyCallbackArgs>
+    private class Directory_DirGroups implements Callback<DirGroupsReplyCallbackArgs>
     {
-        public boolean callback(DirEventsReplyCallbackArgs e)
+        public boolean callback(DirGroupsReplyCallbackArgs e)
         {
             if (e.getQueryID().equals(queryID))
             {
-            	waitQuery.set(e.getMatchedEvents());
+            	waitQuery.set(e.getMatchedGroups());
         		return true;
         	}
             return false;
