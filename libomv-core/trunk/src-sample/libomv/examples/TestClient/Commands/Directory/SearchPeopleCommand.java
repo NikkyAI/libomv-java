@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.examples.TestClient.Commands.System;
+package libomv.examples.TestClient.Commands.Directory;
 
 import java.util.ArrayList;
 
@@ -33,62 +33,46 @@ import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class SetMasterCommand extends Command
+public class SearchPeopleCommand extends Command
 {
-    private static final String usage = "Usage: setmaster [<agent name>|<agent uuid>]";
+    private static final String usage = "Usage: searchpeople <search text>";
 
-    public SetMasterCommand(TestClient testClient)
-	{
-		Name = "setmaster";
-        Description = "Sets the master user who can IM to run commands. To clear the current master use without parameters. " + usage;
-        Category = CommandCategory.TestClient;
-	}
+    public SearchPeopleCommand(TestClient testClient)
+    {
+        Name = "searchpeople";
+        Description = "Searches for other avatars. " + usage;
+        Category = CommandCategory.Search;
+    }
 
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
-	{
+    {
+        // process command line arguments
         if (args.length < 1)
-        {
-        	Client.MasterKey = null;
-        	Client.MasterName = null;
-            return "Master cleared";
-        }
-
-        String master = Helpers.EmptyString;
-		for (int ct = 0; ct < args.length;ct++)
-			master = master + args[ct] + " ";
-        master = master.trim();
-
-        if (master.length() == 0)
             return usage;
-        
-        UUID uuid = UUID.parse(master);
-        if (uuid == null)
+
+        String searchText = Helpers.EmptyString;
+        for (int i = 0; i < args.length; i++)
+            searchText += args[i] + " ";
+        searchText = searchText.trim();
+
+        // send the request to the directory manager
+        ArrayList<AgentSearchData> agents = Client.findFromAgentName(searchText, 20000);
+        if (agents == null)
         {
-            ArrayList<AgentSearchData> uuids = Client.findFromAgentName(master, 10000);
-            if (uuids != null && uuids.size() == 1)
-            {
-            	uuid = uuids.get(0).AgentID;
-            	Client.MasterName = master;
-            }
+            return "Timeout waiting for simulator to respond.";
         }
-        else
+        else if (agents.size() == 0)
         {
-        	Client.MasterName = null;
+        	return "Didn't find any people that matched your query :(";
         }
 
-        if (uuid != null)
+        StringBuilder result = new StringBuilder();
+        result.append("Your query '" + searchText + "' matched " + agents.size() + " people.\n");
+        for (AgentSearchData agent : agents)
         {
-            Client.MasterKey = uuid;
+        	result.append(agent.FirstName + " " + agent.LastName + " (" + agent.AgentID + ")\n");                   
         }
-        else
-        {
-            return "Unable to obtain UUID for \"" + master + "\". Master unchanged.";
-        }
-        
-        // Send an Online-only IM to the new master
-        Client.Self.InstantMessage(Client.MasterKey, "You are now my master.  IM me with \"help\" for a command list.");
-
-        return String.format("Master set to %s (%s)", master, uuid);
-	}
+        return result.substring(0, result.length() - 1);
+    }
 }

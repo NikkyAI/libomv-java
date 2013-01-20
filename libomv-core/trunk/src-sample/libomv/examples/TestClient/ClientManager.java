@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import libomv.DirectoryManager.AgentSearchData;
 import libomv.GridClient;
 import libomv.LoginManager;
 import libomv.LoginManager.LoginParams;
@@ -181,6 +182,7 @@ public class ClientManager
 
 		LibSettings settings = new LibSettings();
 		settings.put(LibSettings.ENABLE_OBJECT_MANAGER, true);
+		settings.put(LibSettings.ENABLE_DIRECTORY_MANAGER, true);
 		final TestClient client = new TestClient(this, settings);
 
 		Callback<LoginProgressCallbackArgs> loginCallback = new Callback<LoginProgressCallbackArgs>()
@@ -197,13 +199,13 @@ public class ClientManager
 					/* if the MasterKey hasn't been provided and we do have a MasterName available then try to resolve it */
 					if ((client.MasterKey == null || client.MasterKey.equals(UUID.Zero)) && client.MasterName != null && !client.MasterName.isEmpty())
 					{
-						ArrayList<UUID> uuids = client.agentNameToUUID(client.MasterName, 10000);
+						ArrayList<AgentSearchData> uuids = client.findFromAgentName(client.MasterName, 10000);
 						if (uuids != null)
 						{
 							if (uuids.size() == 1)
 							{
 	                            Logger.Log("Master key resolved to " + client.MasterKey, LogLevel.Info, client);
-	                            client.MasterKey = uuids.get(0);
+	                            client.MasterKey = uuids.get(0).AgentID;
 							}
 							else
 							{
