@@ -412,6 +412,7 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
             new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
             new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
+            new DefaultSetting(ENABLE_DIRECTORY_MANAGER, false),
             new DefaultSetting(ENABLE_SOUND_MANAGER, true),
             new DefaultSetting(ENABLE_ASSET_MANAGER, false),
             new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
