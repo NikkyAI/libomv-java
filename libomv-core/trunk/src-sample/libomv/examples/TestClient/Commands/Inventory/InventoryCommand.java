@@ -39,7 +39,7 @@ public class InventoryCommand extends Command
     public InventoryCommand(TestClient testClient)
     {
         Name = "inv";
-        Description = "Prints out inventory.";
+        Description = "Prints out inventory. Usage: inv";
         Category = CommandCategory.Inventory;
     }
 

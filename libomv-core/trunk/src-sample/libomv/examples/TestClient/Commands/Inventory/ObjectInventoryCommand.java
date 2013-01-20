@@ -38,10 +38,12 @@ import libomv.utils.Helpers;
 
 public class ObjectInventoryCommand extends Command
 {
+    private static final String usage = "Usage: objectinventory <object uuid>";
+
     public ObjectInventoryCommand(TestClient testClient)
     {
         Name = "objectinventory";
-        Description = "Retrieves a listing of items inside an object (task inventory). Usage: objectinventory [objectID]";
+        Description = "Retrieves a listing of items inside an object (task inventory). " + usage;
         Category = CommandCategory.Inventory;
     }
 
@@ -49,18 +51,18 @@ public class ObjectInventoryCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 1)
-            return "Usage: objectinventory [objectID]";
+            return usage;
 
         int objectLocalID;
         UUID objectID = UUID.parse(args[0]);
         if (objectID == null)
-            return "Usage: objectinventory [objectID]";
+            return usage;
 
         Primitive found = Client.Network.getCurrentSim().findPrimitive(objectID, false);
         if (found != null)
             objectLocalID = found.LocalID;
         else
-            return "Couldn't find prim " + objectID.toString();
+            return "Couldn't find prim " + objectID;
 
         List<InventoryNode> items = Client.Inventory.GetTaskInventory(objectID, objectLocalID, 1000 * 30);
 

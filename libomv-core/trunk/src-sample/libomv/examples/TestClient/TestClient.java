@@ -41,6 +41,8 @@ import java.util.jar.JarFile;
 
 import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
+import libomv.DirectoryManager.AgentSearchData;
+import libomv.DirectoryManager.DirPeopleReplyCallbackArgs;
 import libomv.GridClient;
 import libomv.GroupManager.CurrentGroupsCallbackArgs;
 import libomv.GroupManager.Group;
@@ -140,26 +142,65 @@ public class TestClient extends GridClient implements PacketCallback
 		return GroupsCache;
 	}
 
+	public ArrayList<UUID> agentNameToUUID(final String name, long timeout)
+	{
+		if (Directory != null)
+		{
+		    final TimeoutEvent<ArrayList<UUID> > keyResolution = new TimeoutEvent<ArrayList<UUID>>();
+			final UUID query = new UUID();
+			
+			Callback<DirPeopleReplyCallbackArgs> peopleDirCallback = new Callback<DirPeopleReplyCallbackArgs>()
+			{
+				@Override
+				public boolean callback(DirPeopleReplyCallbackArgs dpe)
+				{
+					if (dpe.getQueryID().equals(query))
+					{
+						ArrayList<UUID> uuids = new ArrayList<UUID>(dpe.getMatchedPeople().size());
+						for (AgentSearchData data : dpe.getMatchedPeople())
+						{
+							uuids.add(data.AgentID);
+						}
+						keyResolution.set(uuids);
+					}
+					return true;
+				}
+			};
+
+			Directory.OnDirPeople.add(peopleDirCallback, true);
+			try
+			{
+				Directory.StartPeopleSearch(name, 0, query);
+				return keyResolution.waitOne(timeout);
+			}
+			catch (Exception ex)
+			{
+				Logger.Log("Exception when trying to do people search", LogLevel.Error, this, ex);
+			}
+		}
+		return null;
+	}
+
 	public UUID groupName2UUID(String groupName) throws Exception
     {
         UUID tryUUID = UUID.parse(groupName);
-        if (tryUUID != null)
-            return tryUUID;
-
-        if (null == GroupsCache)
+        if (tryUUID == null)
         {
-        	GroupsCache = ReloadCurrentGroups();
-            if (null == GroupsCache)
-                return UUID.Zero;
-        }
+            if (GroupsCache == null)
+            {
+            	GroupsCache = ReloadCurrentGroups();
+                if (null == GroupsCache)
+                    return null;
+            }
 
-        synchronized (GroupsCache)
-        {
-            for (Group currentGroup : GroupsCache.values())
-                if (currentGroup.getName().equalsIgnoreCase(groupName))
-                    return currentGroup.getID();
+            synchronized (GroupsCache)
+            {
+                for (Group currentGroup : GroupsCache.values())
+                    if (currentGroup.getName().equalsIgnoreCase(groupName))
+                        return currentGroup.getID();
+            }
         }
-        return UUID.Zero;
+        return tryUUID;
     }
 
 	@Override

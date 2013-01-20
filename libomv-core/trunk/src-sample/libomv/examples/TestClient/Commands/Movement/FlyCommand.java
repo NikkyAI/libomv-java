@@ -34,17 +34,14 @@ public class FlyCommand extends Command
     public FlyCommand(TestClient testClient)
     {
         Name = "fly";
-        Description = "Starts or stops flying. Usage: fly [start/stop]";
+        Description = "Starts or stops flying. Usage: fly [start|stop]";
         Category = CommandCategory.Movement;
     }
 
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        boolean start = true;
-
-        if (args.length == 1 && args[0].equalsIgnoreCase("stop"))
-            start = false;
+        boolean start = !(args.length == 1 && args[0] != null && args[0].equalsIgnoreCase("stop"));
 
         Client.Self.Fly(start);
         if (start)

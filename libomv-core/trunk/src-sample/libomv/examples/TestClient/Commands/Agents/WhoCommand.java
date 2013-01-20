@@ -36,7 +36,7 @@ public class WhoCommand extends Command
     public WhoCommand(TestClient testClient)
 	{
 		Name = "who";
-		Description = "Lists seen avatars.";
+		Description = "Lists seen avatars in all currentlly connected simulators.";
         Category = CommandCategory.Other;
 	}
 

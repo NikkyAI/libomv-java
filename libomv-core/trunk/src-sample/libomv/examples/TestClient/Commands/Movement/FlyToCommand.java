@@ -88,10 +88,12 @@ public class FlyToCommand extends Command
 	    }
     }
     
+    private static final String usage = "Usage: flyto <x> <y> <z> [<seconds>]";
+
     public FlyToCommand(TestClient Client)
     {
-        Name = "FlyTo";
-        Description = "Fly the avatar toward the specified position for a maximum of seconds. Usage: FlyTo x y z [seconds]";
+        Name = "flyto";
+        Description = "Fly the avatar toward the specified position for a maximum of seconds. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -99,7 +101,7 @@ public class FlyToCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length > 4 || args.length < 3)
-            return "Usage: FlyTo x y z [seconds]";
+            return usage;
 
         if (running)
             return "Already in progress, wait for the previous FlyTo to finish";
@@ -115,31 +117,25 @@ public class FlyToCommand extends Command
             target0.X = target.X;
             target0.Y = target.Y;
 
-            try
-            {
-            	duration = 10000;
-            	if (args.length == 4)
-            	{
-                    duration = 1000 * Integer.valueOf(args[3]);
-            	}
-            }
-            catch (NumberFormatException ex)
-            {
-            }
-
-            startTime = System.currentTimeMillis();
-            Client.Self.getMovement().setFly(true);
-            Client.Self.getMovement().setAtPos(true);
-            Client.Self.getMovement().setAtNeg(false);
-            ZMovement();
-            Client.Self.getMovement().TurnToward(target);
-
-            return String.format("flying to %s in %f seconds", target.toString(), duration / 1000);
+           	duration = 10000;
+           	if (args.length == 4)
+           	{
+                duration = 1000 * Integer.valueOf(args[3]);
+           	}
         }
         catch (NumberFormatException ex)
         {
-            return "Usage: FlyTo x y z [seconds]";
+            return usage;
         }
+
+        startTime = System.currentTimeMillis();
+        Client.Self.getMovement().setFly(true);
+        Client.Self.getMovement().setAtPos(true);
+        Client.Self.getMovement().setAtNeg(false);
+        ZMovement();
+        Client.Self.getMovement().TurnToward(target);
+
+        return String.format("flying to %s in %f seconds", target.toString(), duration / 1000);
     }
 
     private boolean XYMovement()

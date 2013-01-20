@@ -32,10 +32,12 @@ import libomv.types.Vector3;
 
 public class TurnToCommand extends Command
 {
+    private static final String usage = "Usage: turnto <x> <y> <z>";
+
     public TurnToCommand(TestClient client)
     {
         Name = "turnto";
-        Description = "Turns the avatar looking to a specified point. Usage: turnto x y z";
+        Description = "Turns the avatar looking to a specified point. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -43,22 +45,23 @@ public class TurnToCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 3)
-            return "Usage: turnto x y z";
+            return usage;
+        
+        Vector3 newDirection;
         try
         {
         	float x = Float.valueOf(args[0]),
                   y = Float.valueOf(args[1]),
                   z = Float.valueOf(args[2]);
-
-            Vector3 newDirection = new Vector3(x, y, z);
-            Client.Self.getMovement().TurnToward(newDirection);
-            Client.Self.getMovement().SendUpdate(false);
-            return "Turned to ";
+            newDirection = new Vector3(x, y, z);
         }
         catch (NumberFormatException ex)
         {
-            return "Usage: turnto x y z";
+            return usage;
         }
 
+        Client.Self.getMovement().TurnToward(newDirection);
+        Client.Self.getMovement().SendUpdate(false);
+        return "Turned to " + newDirection;
     }
 }

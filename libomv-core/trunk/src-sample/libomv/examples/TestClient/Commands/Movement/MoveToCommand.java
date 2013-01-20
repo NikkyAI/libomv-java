@@ -32,10 +32,12 @@ import libomv.utils.Helpers;
 
 public class MoveToCommand extends Command
 {
+    private static final String usage = "Usage: moveto <x> <y> <z>";
+
     public MoveToCommand(TestClient client)
     {
         Name = "moveto";
-        Description = "Moves the avatar to the specified global position using simulator autopilot. Usage: moveto x y z";
+        Description = "Moves the avatar to the specified global position using simulator autopilot. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -43,28 +45,30 @@ public class MoveToCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 3)
-            return "Usage: moveto x y z";
+            return usage;
 
-        int[] region = new int[2];
-        Helpers.LongToUInts(Client.Network.getCurrentSim().getHandle(), region);
+        double x, y, z;
 
         try
         {
-        	double x = Double.valueOf(args[0]),
-                   y = Double.valueOf(args[1]),
-                   z = Double.valueOf(args[2]);
-
-            // Convert the local coordinates to global ones by adding the region handle parts to x and y
-            x += region[0];
-            y += region[1];
-
-            Client.Self.AutoPilot(x, y, z);
-
-            return String.format("Attempting to move to <%.1f,%.1f,%.1f>", x, y, z);
+        	x = Double.valueOf(args[0]);
+            y = Double.valueOf(args[1]);
+            z = Double.valueOf(args[2]);
         }
         catch (NumberFormatException ex)
         {
-            return "Usage: moveto x y z";
+            return usage;
         }
+
+        // Convert the local coordinates to global ones by adding the region handle parts to x and y
+        int[] region = new int[2];
+        Helpers.LongToUInts(Client.Network.getCurrentSim().getHandle(), region);
+        x += region[0];
+        y += region[1];
+
+        Client.Self.AutoPilot(x, y, z);
+
+        return String.format("Attempting to move to <%.1f,%.1f,%.1f>", x, y, z);
+
     }
 }

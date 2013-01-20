@@ -36,10 +36,12 @@ import libomv.utils.Helpers;
 
 public class GiveItemCommand extends Command
 {
+    private static final String usage = "Usage: give <agent uuid> <itemname>";
+
     public GiveItemCommand(TestClient client)
     {
         Name = "give";
-        Description = "Gives items from the current working directory to an avatar.";
+        Description = "Gives items from the current working directory to an avatar. " + usage;
         Category = CommandCategory.Inventory;
     }
 
@@ -48,12 +50,12 @@ public class GiveItemCommand extends Command
     {
         if (args.length < 2)
         {
-            return "Usage: give <agent uuid> itemname";
+            return usage;
         }
         UUID dest = UUID.parse(args[0]);
         if (dest == null)
         {
-            return "First argument expected agent UUID.";
+            return "First argument expected agent UUID. " + usage;
         }
 
         String ret = "";

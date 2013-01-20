@@ -35,10 +35,12 @@ import libomv.types.UUID;
 
 public class ForwardCommand extends Command
 {
+    private static final String usage = "Usage: forward [<seconds>]";
+
     public ForwardCommand(TestClient client)
     {
         Name = "forward";
-        Description = "Sends the move forward command to the server for a single packet or a given number of seconds. Usage: forward [seconds]";
+        Description = "Sends the move forward command to the server for a single packet or a given number of seconds. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -46,7 +48,7 @@ public class ForwardCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length > 1)
-            return "Usage: forward [seconds]";
+            return usage;
 
         AgentMovement Movement = Client.Self.getMovement();
         if (args.length == 0)
@@ -65,10 +67,10 @@ public class ForwardCommand extends Command
             	duration = Long.valueOf(args[0]) * 1000;
             }
             catch (NumberFormatException ex)
-            {}
-            if (duration == 0)
-                return "Usage: forward [seconds]";
-
+            {
+            	return usage;
+            }
+ 
             long start = System.currentTimeMillis();
 
             Movement.setAtPos(true);

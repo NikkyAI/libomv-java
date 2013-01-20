@@ -36,32 +36,34 @@ import libomv.utils.Helpers;
 
 public class ChangeDirectoryCommand extends Command
 {
+    private static final String usage = "Usage: cd <path-to-folder>";
+
     public ChangeDirectoryCommand(TestClient client)
     {
         Name = "cd";
-        Description = "Changes the current working inventory folder. Usage: cd [path-to-folder]";
+        Description = "Changes the current working inventory folder. " + usage;
         Category = CommandCategory.Inventory;
     }
     
 	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        // parse the command line
+    	if (args.length == 0)
+    		return usage;
+
+    	// parse the command line
         String target = Helpers.EmptyString;
         for (int ct = 0; ct < args.length; ct++)
             target = target + args[ct] + " ";
         target = target.trim();
 
-        // Use '/' as a path separator.
-        String[] path = target.split("/");
-        InventoryFolder currentFolder;
-        if (target.startsWith("/"))
-            currentFolder = Client.Inventory.getRootNode(false);
-        else
-        	currentFolder = Client.CurrentDirectory;
-        	
+        /* When it is an absolute path we start at the root node, otherwise from the current directory */
+        InventoryFolder currentFolder = target.startsWith("/") ? Client.Inventory.getRootNode(false) : Client.CurrentDirectory;
         if (currentFolder == null) // We need this to be set to something. 
             return "Error: Client not logged in.";
+
+        // Use '/' as a path separator.
+        String[] path = target.split("/");
 
         // Traverse the path, looking for the 
         for (int i = 0; i < path.length; ++i)

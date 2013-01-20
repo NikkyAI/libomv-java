@@ -34,17 +34,14 @@ public class JumpCommand extends Command
     public JumpCommand(TestClient testClient)
 	{
 		Name = "jump";
-		Description = "Jumps or flies up";
+		Description = "Jumps or flies up. Usage: jump [start|stop]";
         Category = CommandCategory.Movement;
 	}
 
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
 	{
-        boolean start = true;
-
-        if (args.length == 1 && args[0].equalsIgnoreCase("stop"))
-            start = false;
+        boolean start = !(args.length == 1 && args[0] != null && args[0].equalsIgnoreCase("stop"));
 
         Client.Self.Jump(start);
         if (start)

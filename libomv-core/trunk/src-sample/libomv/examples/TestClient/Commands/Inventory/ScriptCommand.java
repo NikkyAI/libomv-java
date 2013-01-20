@@ -33,13 +33,16 @@ import libomv.examples.TestClient.ClientManager;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 public class ScriptCommand extends Command
 {
+    private static final String usage = "Usage: script <filename>";
+
     public ScriptCommand(TestClient testClient)
     {
         Name = "script";
-        Description = "Reads TestClient commands from a file. One command per line, arguments separated by spaces. Usage: script [filename]";
+        Description = "Reads TestClient commands from a file. One command per line, arguments separated by spaces. " + usage;
         Category = CommandCategory.TestClient;
     }
 
@@ -47,12 +50,20 @@ public class ScriptCommand extends Command
 	public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 1)
-            return "Usage: script [filename]";
+            return usage;
+
+        String filename = Helpers.EmptyString;
+		for (int ct = 0; ct < args.length;ct++)
+			filename += args[ct] + " ";
+		filename = filename.trim();
+
+        if (filename.length() == 0)
+            return usage;
 
         int lines = 0;
 
         // Load the file
-    	LineIterator reader = new LineIterator(new FileReader(args[0]));
+    	LineIterator reader = new LineIterator(new FileReader(filename));
 
     	// Execute all of the commands
         while (reader.hasNext())

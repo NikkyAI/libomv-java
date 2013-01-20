@@ -23,49 +23,62 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.examples.TestClient.Commands.Inventory;
+package libomv.examples.TestClient.Commands.System;
 
-import java.util.ArrayList;
-
-import libomv.assets.AssetItem.AssetType;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
-import libomv.inventory.InventoryNode;
+import libomv.packets.AgentPausePacket;
+import libomv.packets.AgentResumePacket;
 import libomv.types.UUID;
-import libomv.utils.Helpers;
 
-// Inventory Example, Moves a folder to the Trash folder
-public class DeleteFolderCommand extends Command
+public class SleepCommand extends Command
 {
-    public DeleteFolderCommand(TestClient testClient)
+    private static final String usage = "Usage: sleep <seconds>";
+    private int sleepSerialNum = 1;
+    
+    public SleepCommand(TestClient testClient)
     {
-        Name = "deleteFolder";
-        Description = "Moves a folder to the Trash Folder";
-        Category = CommandCategory.Inventory;
+        Name = "sleep";
+        Description = "Uses AgentPause/AgentResume and sleeps for a given number of seconds. " + usage;
+        Category = CommandCategory.TestClient;
     }
 
-	@Override
+    @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        // parse the command line
-        String target = Helpers.EmptyString;
-        for (int ct = 0; ct < args.length; ct++)
-            target = target + args[ct] + " ";
-        target = target.trim();
-
-        // initialize results list
-        ArrayList<InventoryNode> found = new ArrayList<InventoryNode>();
-
-        // find the folder
-        found = Client.Inventory.LocalFind(Client.Inventory.getRootNode(false).itemID, target.split("/"), 0, true);
+        int seconds;
         
-        if (found.size() == 1)
+    	if (args.length != 1)
+    	{
+            return usage;
+    	}
+    	
+        try
         {
-            // move the folder to the trash folder
-            Client.Inventory.MoveFolder(found.get(0).itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);
-            
-            return String.format("Moved folder %s to Trash", found.get(0).name);
+    		seconds = Integer.valueOf(args[0]);
         }
-        return Helpers.EmptyString;
+        catch (NumberFormatException ex)
+        {
+        	return usage;
+        }
+         
+        AgentPausePacket pause = new AgentPausePacket();
+        pause.AgentData.AgentID = Client.Self.getAgentID();
+        pause.AgentData.SessionID = Client.Self.getSessionID();
+        pause.AgentData.SerialNum = sleepSerialNum++;
+
+        Client.Network.sendPacket(pause);
+
+        // Sleep
+        Thread.sleep(seconds * 1000);
+
+        AgentResumePacket resume = new AgentResumePacket();
+        resume.AgentData.AgentID = Client.Self.getAgentID();
+        resume.AgentData.SessionID = Client.Self.getSessionID();
+        resume.AgentData.SerialNum = pause.AgentData.SerialNum;
+
+        Client.Network.sendPacket(resume);
+
+        return "Paused, slept for " + seconds + " second(s), and resumed";
     }
 }

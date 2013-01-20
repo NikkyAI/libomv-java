@@ -31,10 +31,12 @@ import libomv.types.UUID;
 
 public class GotoLandmarkCommand extends Command
 {
+    private static final String usage = "Usage: goto_landmark <landmark uuid>]";
+
     public GotoLandmarkCommand(TestClient testClient)
     {
         Name = "goto_landmark";
-        Description = "Teleports to a Landmark. Usage: goto_landmark [UUID]";
+        Description = "Teleports to a Landmark. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -43,13 +45,13 @@ public class GotoLandmarkCommand extends Command
     {
         if (args.length < 1)
         {
-            return "Usage: goto_landmark [UUID]";
+            return usage;
         }
 
         UUID landmark = UUID.parse(args[0]);
         if (landmark == null)
         {
-            return "Invalid LLUID";
+            return "Invalid UUID";
         }
         else
         {

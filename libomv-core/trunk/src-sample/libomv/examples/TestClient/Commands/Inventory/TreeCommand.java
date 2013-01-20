@@ -37,7 +37,7 @@ public class TreeCommand extends Command
     public TreeCommand(TestClient testClient)
 	{
 		Name = "tree";
-		Description = "Rez a tree. Usage: tree [treename]";
+		Description = "Rez a tree. " + usage();
         Category = CommandCategory.Objects;
 	}
 
@@ -62,12 +62,16 @@ public class TreeCommand extends Command
 	        catch (Exception ex)
 	        { }
 	    }
-
-	    StringBuilder usage = new StringBuilder("Usage: tree [");
-	    for (Tree value : Tree.values())
-	    {
-	        usage.append(value.name() + ", ");
-	    }
-	    return usage.replace(usage.length() - 2, usage.length(), "]").toString();
+	    return usage();
 	}
+    
+    private String usage()
+    {
+        StringBuilder usage = new StringBuilder("Usage: tree ");
+        for (Tree value : Tree.values())
+        {
+            usage.append(value.name() + "|");
+        }
+        return usage.toString();
+    }
 }

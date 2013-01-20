@@ -35,9 +35,7 @@ public class FriendsCommand extends Command
 {        
     public FriendsCommand(TestClient testClient)
     {
-        // The name of the command
         Name = "friends";
-        // A short description of the command with usage instructions
         Description = "List avatar friends. Usage: friends";
         Category = CommandCategory.Friends;
     }
@@ -54,7 +52,7 @@ public class FriendsCommand extends Command
         {
             // iterate over the InternalDictionary using a delegate to populate
             // our StringBuilder output string
-            sb.append("has " + count + " friends:\n");
+            sb.append("has " + count + (count == 1 ? " friend:\n" : " friends:\n"));
             for (FriendInfo friend : Client.Friends.getFriendList().values())
             {
                 // append the name of the friend to our output

@@ -34,10 +34,12 @@ import libomv.types.UUID;
 
 public class AvatarInfoCommand extends Command
 {
+    private static final String usage = "Usage: avatarinfo <firstname> <lastname>";
+
     public AvatarInfoCommand(TestClient testClient)
     {
         Name = "avatarinfo";
-        Description = "Print out information on a nearby avatar. Usage: avatarinfo [firstname] [lastname]";
+        Description = "Print out information on a nearby avatar. " + usage;
         Category = CommandCategory.Appearance;
     }
 
@@ -45,7 +47,7 @@ public class AvatarInfoCommand extends Command
     public String execute(String[] args, UUID fromAgentID)
     {
         if (args.length != 2)
-            return "Usage: avatarinfo [firstname] [lastname]";
+            return usage;
 
         String targetName = args[0] + " " + args[1];
 

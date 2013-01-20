@@ -35,10 +35,12 @@ import libomv.types.UUID;
 
 public class RightCommand extends Command
 {
+    private static final String usage = "Usage: right [<seconds>]";
+
     public RightCommand(TestClient client)
     {
         Name = "right";
-        Description = "Sends the move right command to the server for a single packet or a given number of seconds. Usage: right [seconds]";
+        Description = "Sends the move right command to the server for a single packet or a given number of seconds. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -46,7 +48,7 @@ public class RightCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length > 1)
-            return "Usage: right [seconds]";
+            return usage;
 
         AgentMovement Movement = Client.Self.getMovement();
         if (args.length == 0)
@@ -64,9 +66,9 @@ public class RightCommand extends Command
             	duration = Long.valueOf(args[0]) * 1000;
             }
             catch (NumberFormatException ex)
-            {}
-            if (duration == 0)
-                return "Usage: right [seconds]";
+            {
+                return usage;
+            }
 
             long start = System.currentTimeMillis();
 

@@ -26,6 +26,7 @@
 package libomv.examples.TestClient;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -33,7 +34,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import libomv.DirectoryManager.DirPeopleReplyCallbackArgs;
 import libomv.GridClient;
 import libomv.LoginManager;
 import libomv.LoginManager.LoginParams;
@@ -194,55 +194,33 @@ public class ClientManager
 				{
 					Clients.put(client.Self.getAgentID(), client);
 
-					/* if the MasterKey hasn't been provided and we do have the directory service
-					 * available then try to resolve it for our account name */
-					if (client.Directory != null && (client.MasterKey == null || client.MasterKey.equals(UUID.Zero)))
+					/* if the MasterKey hasn't been provided and we do have a MasterName available then try to resolve it */
+					if ((client.MasterKey == null || client.MasterKey.equals(UUID.Zero)) && client.MasterName != null && !client.MasterName.isEmpty())
 					{
-						final UUID query = new UUID();
-
-						Callback<DirPeopleReplyCallbackArgs> peopleDirCallback = new Callback<DirPeopleReplyCallbackArgs>()
+						ArrayList<UUID> uuids = client.agentNameToUUID(client.MasterName, 10000);
+						if (uuids != null)
 						{
-							@Override
-							public boolean callback(DirPeopleReplyCallbackArgs dpe)
+							if (uuids.size() == 1)
 							{
-								if (dpe.getQueryID().equals(query))
-								{
-									if (dpe.getMatchedPeople().size() != 1)
-									{
-										Logger.Log("Unable to resolve master key from " + client.MasterName,
-												LogLevel.Warning);
-									}
-									else
-									{
-										client.MasterKey = dpe.getMatchedPeople().get(0).AgentID;
-										Logger.Log("Master key resolved to " + client.MasterKey, LogLevel.Info);
-									}
-								}
-								return false;
+	                            Logger.Log("Master key resolved to " + client.MasterKey, LogLevel.Info, client);
+	                            client.MasterKey = uuids.get(0);
 							}
-						};
-
-						client.Directory.OnDirPeople.add(peopleDirCallback);
-						try
-						{
-							client.Directory.StartPeopleSearch(client.MasterName, 0, query);
-						}
-						catch (Exception ex)
-						{
-							Logger.Log("Exception when trying to do people search", LogLevel.Error, client, ex);
+							else
+							{
+								Logger.Log("Unable to resolve master key from " + client.MasterName, LogLevel.Warning, client);
+							}	
 						}
 					}
 					System.out.println("MOTD: " + e.getMessage());
 					printPrompt();
 
-					Logger.Log("Logged in " + client.toString(), LogLevel.Debug);
+					Logger.Log("Logged in " + client.toString(), LogLevel.Debug, client);
 					--PendingLogins;
 					return true;
 				}
 				else if (e.getStatus() == LoginStatus.Failed)
 				{
-					Logger.Log("Failed to login " + account.FirstName + " " + account.LastName + ": " + e.getMessage(),
-							LogLevel.Warning);
+					Logger.Log("Failed to login " + account.FirstName + " " + account.LastName + ": " + e.getMessage(), LogLevel.Warning, client);
 					--PendingLogins;
 					return true;
 				}
@@ -357,7 +335,7 @@ public class ClientManager
                 onlyAvatar = tokens[1] + " " + tokens[2];
                 for (TestClient client : Clients.values())
                 {
-                    if ((client.toString() == onlyAvatar) && (client.Network.getConnected()))
+                    if (client.toString().equals(onlyAvatar) && client.Network.getConnected())
                     {
                         found = true;
                         break;
@@ -467,7 +445,7 @@ public class ClientManager
                 Thread.sleep(50);
         }
     }
-
+	
 	/**
 	 * @throws IOException 
 	 * 

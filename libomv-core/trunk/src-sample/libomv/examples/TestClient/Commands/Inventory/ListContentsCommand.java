@@ -38,10 +38,12 @@ import libomv.utils.Helpers;
 
 public class ListContentsCommand extends Command
 {
+    private static final String usage = "Usage: ls [-l]";
+
     public ListContentsCommand(TestClient client)
     {
         Name = "ls";
-        Description = "Lists the contents of the current working inventory folder.";
+        Description = "Lists the contents of the current working inventory folder. " + usage;
         Category = CommandCategory.Inventory;
     }
 
@@ -49,7 +51,7 @@ public class ListContentsCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length > 1)
-            return "Usage: ls [-l]";
+            return usage;
 
         boolean longDisplay = false;
         if (args.length > 0 && args[0].equals("-l"))

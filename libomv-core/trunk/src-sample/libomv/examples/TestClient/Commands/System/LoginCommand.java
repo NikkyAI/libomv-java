@@ -34,7 +34,7 @@ public class LoginCommand extends Command
     public LoginCommand(TestClient testClient)
     {
         Name = "login";
-        Description = "Logs in another avatar. Usage: login firstname lastname password [simname] [loginuri]";
+        Description = "Logs in another avatar. Usage: login <firstname> <lastname> <password> [<simname>] [<loginuri>]";
         Category = CommandCategory.TestClient;
     }
 

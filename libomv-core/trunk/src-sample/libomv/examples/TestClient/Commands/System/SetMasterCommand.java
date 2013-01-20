@@ -25,6 +25,8 @@
  */
 package libomv.examples.TestClient.Commands.System;
 
+import java.util.ArrayList;
+
 import libomv.DirectoryManager.DirPeopleReplyCallbackArgs;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
@@ -35,13 +37,12 @@ import libomv.utils.TimeoutEvent;
 
 public class SetMasterCommand extends Command
 {
-    private TimeoutEvent<UUID> keyResolution = new TimeoutEvent<UUID>();
-    private UUID query = UUID.Zero;
+    private static final String usage = "Usage: setmaster [<agent name>|<agent uuid>]";
 
     public SetMasterCommand(TestClient testClient)
 	{
 		Name = "setmaster";
-        Description = "Sets the user name of the master user. The master user can IM to run commands. Usage: setmaster [uuid|name]";
+        Description = "Sets the master user who can IM to run commands. To clear the current master use without parameters. " + usage;
         Category = CommandCategory.TestClient;
 	}
 
@@ -51,6 +52,7 @@ public class SetMasterCommand extends Command
         if (args.length < 1)
         {
         	Client.MasterKey = null;
+            return "Master cleared";
         }
 
         String master = Helpers.EmptyString;
@@ -59,17 +61,16 @@ public class SetMasterCommand extends Command
         master = master.trim();
 
         if (master.length() == 0)
-            return "Usage: setmaster [uuid|name]";
+            return usage;
         
         UUID uuid = UUID.parse(master);
         if (uuid == null)
         {
-            keyResolution.reset();
-            Callback<DirPeopleReplyCallbackArgs> callback = new KeyResolveHandler();
-            Client.Directory.OnDirPeople.add(callback, true);
-
-            query = Client.Directory.StartPeopleSearch(master, 0);
-            uuid = keyResolution.waitOne(60000);
+            ArrayList<UUID> uuids = Client.agentNameToUUID(master, 10000);
+            if (uuids != null && uuids.size() > 0)
+            {
+            	uuid = uuids.get(0);
+            }
         }
 
         if (uuid != null)
@@ -86,17 +87,4 @@ public class SetMasterCommand extends Command
 
         return String.format("Master set to %s (%s)", master, uuid.toString());
 	}
-
-    private class KeyResolveHandler implements Callback<DirPeopleReplyCallbackArgs>
-    {
-    	public boolean callback(DirPeopleReplyCallbackArgs e)
-    	{
-            if (query.equals(e.getQueryID()))
-            {
-            	keyResolution.set(e.getMatchedPeople().get(0).AgentID);
-            	query = UUID.Zero;
-            }
-            return true;
-        }
-    }
 }

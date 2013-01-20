@@ -31,10 +31,12 @@ import libomv.types.UUID;
 
 public class PacketLogCommand extends Command
 {
+    private static final String usage = "Usage: packetlog <packets> <filename>";
+
     public PacketLogCommand(TestClient testClient)
     {
         Name = "packetlog";
-        Description = "Logs a given number of packets to an xml file. Usage: packetlog 10 tenpackets.xml";
+        Description = "Logs a given number of packets to an xml file. " + usage;
         Category = CommandCategory.TestClient;
     }
 
@@ -42,7 +44,7 @@ public class PacketLogCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 2)
-            return "Usage: packetlog 10 tenpackets.xml";
+            return usage;
 
         return "This function is currently unimplemented";
     }

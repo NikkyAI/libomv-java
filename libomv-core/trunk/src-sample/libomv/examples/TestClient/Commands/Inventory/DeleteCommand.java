@@ -31,40 +31,57 @@ import libomv.assets.AssetItem.AssetType;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.inventory.InventoryNode;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 public class DeleteCommand extends Command
 {
+    private static final String usage = "Usage: del <itemname-or-path>|<foldername-or-path>";
+
     public DeleteCommand(TestClient testClient)
     {
-        Name = "delete";
-        Description = "Moves an item to the Trash Folder. Usage: delete [itemname]";
+        Name = "del";
+        Description = "Moves a folder or item to the Trash Folder. " + usage;
         Category = CommandCategory.Inventory;
     }
 
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
+    	if (args.length == 0)
+    		return usage;
+    	
         // parse the command line
         String target = Helpers.EmptyString;
         for (int ct = 0; ct < args.length; ct++)
             target = target + args[ct] + " ";
         target = target.trim();
 
+        /* When it is an absolute path we start at the root node, otherwise from the current directory */
+        UUID start = target.startsWith("/") ? Client.Inventory.getRootNode(false).itemID : Client.CurrentDirectory.itemID;
+        
         // initialize results list
         ArrayList<InventoryNode> found = new ArrayList<InventoryNode>();
 
-        // find the folder
-        found = Client.Inventory.LocalFind(Client.CurrentDirectory.itemID, target.split("/"), 0, true);
-        
+        // find the item or folder
+        found = Client.Inventory.LocalFind(start, target.split("/"), 0, true);
         if (found.size() == 1)
         {
-            // move the folder to the trash folder
-            Client.Inventory.MoveFolder(found.get(0).itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);
-            
-            return String.format("Moved item %s to Trash", found.get(0).name);
+        	InventoryNode node = found.get(0);
+        	if (node.getType() == InventoryType.Folder)
+        	{
+                // move the folder to the trash folder
+                Client.Inventory.MoveFolder(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);  
+                return String.format("Moved folder %s to Trash", node.name);
+        	}
+        	else
+        	{
+        		// move the item to the trash folder
+        		Client.Inventory.MoveItem(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);
+                return String.format("Moved item %s to Trash", node.name);
+        	}
         }
-        return Helpers.EmptyString;
+        return String.format("Found %d items", found.size());
     }
 }

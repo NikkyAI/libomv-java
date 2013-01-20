@@ -35,10 +35,12 @@ import libomv.types.UUID;
 
 public class LeftCommand extends Command
 {
+    private static final String usage = "Usage: left [<seconds>]";
+
     public LeftCommand(TestClient client)
     {
         Name = "left";
-        Description = "Sends the move left command to the server for a single packet or a given number of seconds. Usage: left [seconds]";
+        Description = "Sends the move left command to the server for a single packet or a given number of seconds. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -46,7 +48,7 @@ public class LeftCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length > 1)
-            return "Usage: left [seconds]";
+            return usage;
 
         AgentMovement Movement = Client.Self.getMovement();
         if (args.length == 0)
@@ -64,9 +66,9 @@ public class LeftCommand extends Command
             	duration = Long.valueOf(args[0]) * 1000;
             }
             catch (NumberFormatException ex)
-            {}
-            if (duration == 0)
-                return "Usage: left [seconds]";
+            {
+            	return usage;
+            }
 
             long start = System.currentTimeMillis();
 

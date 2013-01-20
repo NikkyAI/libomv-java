@@ -33,10 +33,12 @@ import libomv.utils.Logger.LogLevel;
 
 public class DebugCommand extends Command
 {
+    private static final String usage = "Usage: debug None|Debug|Error|Info|Warn";
+
     public DebugCommand(TestClient testClient)
     {
         Name = "debug";
-        Description = "Turn debug messages on or off. Usage: debug [level] where level is one of None, Debug, Error, Info, Warn";
+        Description = "Turn debug messages on or off. " + usage;
         Category = CommandCategory.TestClient;
     }
 
@@ -44,7 +46,7 @@ public class DebugCommand extends Command
 	public String execute(String[] args, UUID fromAgentID)
     {
         if (args.length != 1)
-            return "Usage: debug [level] where level is one of None, Debug, Error, Info, Warn";
+            return usage;
 
         if (args[0].equalsIgnoreCase("debug"))
         {
@@ -73,7 +75,7 @@ public class DebugCommand extends Command
         }
         else
         {
-            return "Usage: debug [level] where level is one of None, Debug, Error, Info, Warn";
+            return usage;
         }
     }
 }

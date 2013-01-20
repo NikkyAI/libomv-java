@@ -37,7 +37,7 @@ public class BalanceCommand extends Command
     public BalanceCommand(TestClient testClient)
 	{
 		Name = "balance";
-		Description = "Shows the amount of L$.";
+		Description = "Shows the amount of L$. Usage: balance";
         Category = CommandCategory.Other;
 	}
 

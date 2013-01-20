@@ -41,7 +41,7 @@ public class GiveAllCommand extends Command
 	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
 	{
-		if (fromAgentID == UUID.Zero)
+		if (fromAgentID.equals(UUID.Zero))
 			return "Unable to send money to console.  This command only works when IMed.";
 
 	    int amount = Client.Self.getBalance();

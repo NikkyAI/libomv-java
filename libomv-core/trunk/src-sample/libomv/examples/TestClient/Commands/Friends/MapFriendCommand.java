@@ -26,6 +26,7 @@
 package libomv.examples.TestClient.Commands.Friends;
 
 import libomv.FriendsManager.FriendFoundReplyCallbackArgs;
+import libomv.FriendsManager.FriendInfo;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
@@ -34,12 +35,13 @@ import libomv.utils.TimeoutEvent;
 
 public class MapFriendCommand extends Command
 {
-    TimeoutEvent<Boolean> WaitforFriend = new TimeoutEvent<Boolean>();
+    private static final String usage = "Usage: mapfriend <agent uuid>|<agentname>";
+    private TimeoutEvent<Boolean> WaitforFriend = new TimeoutEvent<Boolean>();
 
     public MapFriendCommand(TestClient testClient)
     {
         Name = "mapfriend";
-        Description = "Show a friends location. Usage: mapfriend UUID";
+        Description = "Show a friends location. " + usage;
         Category = CommandCategory.Friends;
     }
 
@@ -47,12 +49,25 @@ public class MapFriendCommand extends Command
 	public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length != 1)
-            return Description;
+            return usage;
 
         UUID targetID = UUID.parse(args[0]);
         if (targetID == null)
-            return Description;
-
+        {
+        	for (FriendInfo friend : Client.Friends.getFriendList().values())
+        	{
+        		if (friend.getName().equals(args[0]))
+        		{
+        			targetID = friend.getID();
+        			break;
+        		}
+        	}
+        }
+        if (targetID == null)
+        {
+        	return usage;
+        }
+        
         final StringBuilder sb = new StringBuilder();
         
         class FriendFoundReplay implements Callback<FriendFoundReplyCallbackArgs>

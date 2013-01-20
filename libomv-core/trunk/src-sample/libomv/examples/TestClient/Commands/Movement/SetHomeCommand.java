@@ -34,7 +34,7 @@ public class SetHomeCommand extends Command
 	public SetHomeCommand(TestClient testClient)
     {
         Name = "sethome";
-        Description = "Sets home to the current location.";
+        Description = "Sets home to the current location. Usage: sethome";
         Category = CommandCategory.Movement;
     }
 

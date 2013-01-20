@@ -37,10 +37,12 @@ import libomv.types.UUID;
 
 public class AgentLocationsCommand extends Command
 {
+    private static final String usage = "Usage: agentlocations <regionhandle>";
+
     public AgentLocationsCommand(TestClient testClient)
     {
         Name = "agentlocations";
-        Description = "Downloads all of the agent locations in a specified region. Usage: agentlocations [regionhandle]";
+        Description = "Downloads all of the agent locations in the current or a specified region. " + usage;
         Category = CommandCategory.Simulator;
     }
 
@@ -61,14 +63,13 @@ public class AgentLocationsCommand extends Command
         	}
         	catch (NumberFormatException ex)
         	{
-                return "Usage: agentlocations [regionhandle]";        		
+                return usage;        		
         	}
         }
         else
-            return "Usage: agentlocations [regionhandle]";
+            return usage;
 
         List<MapItem> items = Client.Grid.MapItems(regionHandle, GridItemType.AgentLocations, GridLayerType.Objects, 1000 * 20);
-
         if (items != null)
         {
             StringBuilder ret = new StringBuilder();

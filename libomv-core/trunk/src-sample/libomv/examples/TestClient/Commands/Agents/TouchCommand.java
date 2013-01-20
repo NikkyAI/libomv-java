@@ -32,10 +32,12 @@ import libomv.types.UUID;
 
 public class TouchCommand extends Command
 {
+    private static final String usage = "Usage: touch <object uuid>";
+
     public TouchCommand(TestClient testClient)
 	{
 		Name = "touch";
-		Description = "Attempt to touch a prim with specified UUID";
+		Description = "Attempt to touch a prim with specified object uuid. " + usage;
         Category = CommandCategory.Objects;
 	}
 	
@@ -43,7 +45,8 @@ public class TouchCommand extends Command
 	public String execute(String[] args, UUID fromAgentID)
 	{
         if (args.length != 1)
-            return "Usage: touch UUID";
+            return usage;
+
         UUID target = UUID.parse(args[0]);
         if (target != null)
         {
@@ -65,7 +68,8 @@ public class TouchCommand extends Command
     				}
 				}
 			}
+            return "Couldn't find a prim to touch with UUID " + args[0];
         }
-        return "Couldn't find a prim to touch with UUID " + args[0];
+        return usage;
 	}
 }

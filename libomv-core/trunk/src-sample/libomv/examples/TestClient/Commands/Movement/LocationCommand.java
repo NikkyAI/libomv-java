@@ -34,14 +34,13 @@ public class LocationCommand extends Command
     public LocationCommand(TestClient testClient)
 	{
 		Name = "location";
-		Description = "Show current location of avatar.";
+		Description = "Show current location of avatar. Usage: location";
         Category = CommandCategory.Movement;
 	}
 
 	@Override
 	public String execute(String[] args, UUID fromAgentID)
 	{
-        return "CurrentSim: '" + Client.Network.getCurrentSim().getName() +
-               "' Position: " + Client.Self.getAgentPosition().toString();
+        return "CurrentSim: '" + Client.Network.getCurrentSim().getName() + "' Position: " + Client.Self.getAgentPosition();
 	}
 }

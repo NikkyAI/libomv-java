@@ -34,7 +34,7 @@ public class QuitCommand extends Command
     public QuitCommand(TestClient testClient)
 	{
 		Name = "quit";
-		Description = "Log all avatars out and shut down";
+		Description = "Log all avatars out and shut down. Usage: quit";
         Category = CommandCategory.TestClient;
 	}
 

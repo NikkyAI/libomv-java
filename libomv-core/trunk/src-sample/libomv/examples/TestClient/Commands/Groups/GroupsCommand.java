@@ -37,7 +37,7 @@ public class GroupsCommand extends Command
     public GroupsCommand(TestClient testClient)
     {
         Name = "groups";
-        Description = "List avatar groups. Usage: groups {reload}";
+        Description = "List avatar groups. Usage: groups [reload]";
         Category = CommandCategory.Groups;
     }
 
@@ -46,21 +46,20 @@ public class GroupsCommand extends Command
     {
 		boolean reload = (args.length > 0 && args[0] != null && args[0].equalsIgnoreCase("reload"));
         
-        return getGroupsString(Client.getCurrentGroups(reload));
-    }
-
-    String getGroupsString(HashMap<UUID, Group> groups)
-    {
-        if (null == groups)
-                return "getCurrentGroups failed.";
-        if (0 == groups.size())
-                return "No groups";
-        StringBuilder sb = new StringBuilder();
-        sb.append("got "+ groups.size() +" groups:\n");
-        for (Group group : groups.values())
+		HashMap<UUID, Group> groups = Client.getCurrentGroups(reload);
+        if (groups != null)
         {
-            sb.append(group.getID() + ", " + group.getName() + "\n");           
-        } 
-        return sb.toString();
+        	if (groups.size() == 0)
+        		return "No groups";
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("got "+ groups.size() +" groups:\n");
+            for (Group group : groups.values())
+            {
+                sb.append(group.getID() + ", " + group.getName() + "\n");           
+            } 
+            return sb.toString();	
+        }
+        return "Get CurrentGroups failed.";
     }
 }

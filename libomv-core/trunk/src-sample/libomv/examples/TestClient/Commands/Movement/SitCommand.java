@@ -36,7 +36,7 @@ public class SitCommand extends Command
     public SitCommand(TestClient testClient)
 	{
 		Name = "sit";
-		Description = "Attempt to sit on the closest prim";
+		Description = "Attempt to sit on the closest prim. Usage: sit";
         Category = CommandCategory.Movement;
 	}
 		

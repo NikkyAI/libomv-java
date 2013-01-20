@@ -34,7 +34,7 @@ public class GoHomeCommand extends Command
 	public GoHomeCommand(TestClient testClient)
     {
         Name = "gohome";
-        Description = "Teleports home";
+        Description = "Teleports home. Usage: gohome";
         Category = CommandCategory.Movement;
     }
 

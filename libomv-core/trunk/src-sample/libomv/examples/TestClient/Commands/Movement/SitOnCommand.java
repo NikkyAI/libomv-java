@@ -34,10 +34,12 @@ import libomv.utils.RefObject;
 
 public class SitOnCommand extends Command
 {
+    private static final String usage = "Usage: siton <object uuid>";
+
     public SitOnCommand(TestClient testClient)
     {
         Name = "siton";
-        Description = "Attempt to sit on a particular prim, with specified UUID";
+        Description = "Attempt to sit on a particular prim, with specified UUID. " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -45,12 +47,12 @@ public class SitOnCommand extends Command
 	public String execute(String[] args, UUID fromAgentID)
     {
         if (args.length != 1)
-            return "Usage: siton UUID";
-
-        RefObject<UUID> target = new RefObject<UUID>(null);
-        if (UUID.TryParse(args[0], target))
+            return usage;
+        
+        UUID target = UUID.parse(args[0]);
+        if (target != null)
         {
-            Primitive targetPrim = Client.Network.getCurrentSim().getObjectsPrimitives().get(target.argvalue);
+            Primitive targetPrim = Client.Network.getCurrentSim().getObjectsPrimitives().get(target);
             if (targetPrim != null)
             {
                 try
@@ -60,12 +62,13 @@ public class SitOnCommand extends Command
 				}
 				catch (Exception e)
 				{
-	                return "Exception while trying to sit on prim " + targetPrim.ID.toString() + " (" + targetPrim.LocalID + ")";
+	                return "Exception while trying to sit on prim " + targetPrim.ID + " (" + targetPrim.LocalID + ")";
 				}
-                return "Requested to sit on prim " + targetPrim.ID.toString() + " (" + targetPrim.LocalID + ")";
+                return "Requested to sit on prim " + targetPrim.ID + " (" + targetPrim.LocalID + ")";
             }
+            return "Couldn't find a prim to sit on with UUID " + args[0];
         }
-        return "Couldn't find a prim to sit on with UUID " + args[0];
+        return usage;
     }
 }
 

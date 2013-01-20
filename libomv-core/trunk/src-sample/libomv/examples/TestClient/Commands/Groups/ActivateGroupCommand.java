@@ -39,13 +39,14 @@ import libomv.utils.TimeoutEvent;
 /// Changes Avatars currently active group
 public class ActivateGroupCommand extends Command implements PacketCallback
 {
+    private static final String usage = "Usage: activategroup <groupname>|<group uuid>";
     private TimeoutEvent<Boolean> GroupsEvent = new TimeoutEvent<Boolean>();
     String activeGroup;
 
     public ActivateGroupCommand(TestClient testClient)
     {
         Name = "activategroup";
-        Description = "Set a group as active. Usage: activategroup GroupName";
+        Description = "Set a group as active. " + usage;
         Category = CommandCategory.Groups;
     }
 
@@ -53,7 +54,7 @@ public class ActivateGroupCommand extends Command implements PacketCallback
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         if (args.length < 1)
-            return Description;
+            return usage;
 
         activeGroup = Helpers.EmptyString;
 
@@ -63,7 +64,7 @@ public class ActivateGroupCommand extends Command implements PacketCallback
         groupName = groupName.trim();
 
         UUID groupUUID = Client.groupName2UUID(groupName);
-        if (!groupUUID.equals(UUID.Zero))
+        if (groupUUID != null)
         {
             Client.Network.RegisterCallback(PacketType.AgentDataUpdate, this);
 

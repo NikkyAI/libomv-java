@@ -34,17 +34,19 @@ import libomv.types.UUID;
  */
 public class AppearanceCommand extends Command
 {
- 	public AppearanceCommand(TestClient testClient)
+    private static final String usage = "Usage: appearance [rebake]";
+
+    public AppearanceCommand(TestClient testClient)
     {
         Name = "appearance";
-        Description = "Set your current appearance to your last saved appearance. Usage: appearance [rebake]";
+        Description = "Set your current appearance to your last saved appearance. " + usage;
         Category = CommandCategory.Appearance;
     }
 
 	@Override
     public String execute(String[] args, UUID fromAgentID)
     {
-        Client.Appearance.RequestSetAppearance((args.length > 0 && args[0].equals("rebake")));
+        Client.Appearance.RequestSetAppearance((args.length > 0 && args[0].equalsIgnoreCase("rebake")));
         return "Appearance sequence started";
     }
 }

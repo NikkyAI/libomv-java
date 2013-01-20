@@ -34,7 +34,7 @@ public class StandCommand extends Command
     public StandCommand(TestClient testClient)
     {
     	Name = "stand";
-    	Description = "Stand";
+    	Description = "Stand. Usage: stand";
         Category = CommandCategory.Movement;
     }
 

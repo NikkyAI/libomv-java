@@ -37,12 +37,13 @@ import libomv.utils.RefObject;
 
 public class GotoCommand extends Command
 {
+    private static final String usage = "Usage: goto <sim name>/<x>/<y>/<z>";
     private String message = null;
 
     public GotoCommand(TestClient testClient)
     {
 		Name = "goto";
-		Description = "Teleport to a location (e.g. \"goto Hooper/100/100/30\")";
+		Description = "Teleport to a location (e.g. \"goto Hooper Islands/100/100/30\") " + usage;
         Category = CommandCategory.Movement;
     }
 
@@ -51,7 +52,7 @@ public class GotoCommand extends Command
     {
         if (args.length < 1)
         {
-            return "Usage: goto sim/x/y/z";
+            return usage;
         }
 
         String destination = Helpers.EmptyString;
@@ -65,7 +66,7 @@ public class GotoCommand extends Command
 
         String[] tokens = destination.split("/");
         if (tokens.length != 4)
-            return "Usage: goto sim/x/y/z";
+            return usage;
 
         String sim = tokens[0];
         float x, y, z;
@@ -77,7 +78,7 @@ public class GotoCommand extends Command
         }
         catch (NumberFormatException ex)
         {
-            return "Usage: goto sim/x/y/z";
+            return usage;
         }
 
         Client.Self.OnTeleport.add(new Callback<TeleportCallbackArgs>()

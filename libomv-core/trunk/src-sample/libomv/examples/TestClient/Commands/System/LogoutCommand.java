@@ -36,7 +36,7 @@ public class LogoutCommand extends Command
     public LogoutCommand(TestClient testClient)
     {
         Name = "logout";
-        Description = "Log this avatar out";
+        Description = "Log this avatar out. Usage: logout";
         Category = CommandCategory.TestClient;
     }
 

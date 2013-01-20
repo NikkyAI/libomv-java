@@ -39,7 +39,7 @@ public class HelpCommand extends Command
     public HelpCommand(TestClient testClient)
 	{
 		Name = "help";
-		Description = "Lists available commands. usage: help [command] to display information on commands";
+		Description = "Lists available commands. Usage: help <command> to display information on a command";
         Category = CommandCategory.TestClient;
 	}
 
