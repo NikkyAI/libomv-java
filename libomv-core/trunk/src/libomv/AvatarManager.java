@@ -772,29 +772,43 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	 */
 	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception
 	{
-		// TODO: RequestAvatarNames is pretty bulky, rewrite a simple version
-		// here
-		ArrayList<UUID> ids = new ArrayList<UUID>();
-		ids.add(id);
-
-		RequestAvatarNames(ids, anc);
-	}
-
-	//
-	// <param name="ids"></param>
-	public void RequestAvatarNames(ArrayList<UUID> ids, Callback<AgentNamesCallbackArgs> anc) throws Exception
-	{
+		synchronized (_Avatars)
+		{
+			// Fire callbacks for the ones we already have cached
+			if (_Avatars.containsKey(id))
+			{
+				HashMap<UUID, String> map = new HashMap<UUID, String>(1);
+				map.put(id, _Avatars.get(id).getName());
+				anc.callback(new AgentNamesCallbackArgs(map));
+				return;
+			}
+		}
+			
 		if (anc != null)
 		{
-			OnAgentNames.add(anc);
+			OnAgentNames.add(anc, true);
 		}
+				
+		UUIDNameRequestPacket request = new UUIDNameRequestPacket();
+		request.ID = new UUID[1];
+		request.ID[0] = id;
+		_Client.Network.sendPacket(request);
+	}
 
+    /**
+	 * Request several name updates for a list of avatar uuids
+	 * 
+	 * @param ids The list of uuids of the avatars to get the names for
+	 * @param anc A callback being called when a name request is answered
+	 * @throws Exception
+	 */
+	public void RequestAvatarNames(ArrayList<UUID> ids, Callback<AgentNamesCallbackArgs> anc) throws Exception
+	{
 		HashMap<UUID, String> havenames = new HashMap<UUID, String>();
 		ArrayList<UUID> neednames = new ArrayList<UUID>();
 
 		synchronized (_Avatars)
 		{
-			// Fire callbacks for the ones we already have cached
 			Iterator<UUID> iter = ids.listIterator();
 			while (iter.hasNext())
 			{
@@ -810,26 +824,34 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			}
 		}
 		
+		// Fire callbacks for the ones we already have cached
 		if (havenames.size() > 0)
 		{
-			OnAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
+			if (anc != null)
+			{
+				anc.callback(new AgentNamesCallbackArgs(havenames));
+			}
+			else
+			{
+				OnAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
+			}
 		}
 
 		if (neednames.size() > 0)
 		{
+			if (anc != null)
+			{
+				OnAgentNames.add(anc, true);
+			}
+
 			UUIDNameRequestPacket request = new UUIDNameRequestPacket();
 
 			request.ID = new UUID[neednames.size()];
-
 			for (int i = 0; i < neednames.size(); i++)
 			{
 				request.ID[i] = neednames.get(i);
 			}
 			_Client.Network.sendPacket(request);
-		}
-		else
-		{
-			OnAgentNames.remove(anc);			
 		}
 	}
 
