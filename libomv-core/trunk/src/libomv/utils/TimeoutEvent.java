@@ -65,21 +65,29 @@ public class TimeoutEvent<T>
 		return this.object;
 	}
 
+	public T waitOne(long timeout) throws InterruptedException
+	{
+		return waitOne(timeout, false);
+	}
+
 	/**
 	 * Wait on the timeout to be triggered or until the timeout occurred
 	 * 
-	 * @param timeout
-	 *            The amount of milliseconds to wait. -1 will wait indefinitely
+	 * @param timeout The amount of milliseconds to wait. -1 will wait indefinitely
+	 * @param reset Reset the event just before returning
 	 * @return 
 	 * @throws InterruptedException
 	 */
-	public synchronized T waitOne(long timeout) throws InterruptedException
+	public synchronized T waitOne(long timeout, boolean reset) throws InterruptedException
 	{
 		if (!fired)
 			if (timeout >= 0)
 				wait(timeout);
 			else
 				wait();
-		return object;
+		T obj = object;
+		if (reset)
+			reset();
+		return obj;
 	}
 }
