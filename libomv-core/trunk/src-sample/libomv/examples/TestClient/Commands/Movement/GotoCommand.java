@@ -33,7 +33,6 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
-import libomv.utils.RefObject;
 
 public class GotoCommand extends Command
 {

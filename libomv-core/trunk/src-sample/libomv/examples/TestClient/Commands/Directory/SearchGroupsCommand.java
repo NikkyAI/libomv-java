@@ -27,7 +27,6 @@ package libomv.examples.TestClient.Commands.Directory;
 
 import java.util.ArrayList;
 
-import libomv.DirectoryManager.DirEventsReplyCallbackArgs;
 import libomv.DirectoryManager.DirGroupsReplyCallbackArgs;
 import libomv.DirectoryManager.GroupSearchData;
 import libomv.examples.TestClient.Command;

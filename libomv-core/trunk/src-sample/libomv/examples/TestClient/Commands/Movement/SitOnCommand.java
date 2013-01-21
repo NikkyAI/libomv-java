@@ -30,7 +30,6 @@ import libomv.examples.TestClient.Command;
 import libomv.primitives.Primitive;
 import libomv.types.UUID;
 import libomv.types.Vector3;
-import libomv.utils.RefObject;
 
 public class SitOnCommand extends Command
 {
