@@ -63,6 +63,8 @@ import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackArgs;
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 /* Access to the data server which allows searching for land, events, people, etc */
 public class DirectoryManager implements PacketCallback, CapsCallback
@@ -939,7 +941,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	public CallbackHandler<DirLandReplyCallbackArgs> OnDirLand = new CallbackHandler<DirLandReplyCallbackArgs>();
 
 	// /#region Private Members
-	private GridClient Client;
+	private GridClient _Client;
 
 	// /#region Constructors
 
@@ -951,20 +953,20 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	public DirectoryManager(GridClient client)
 	{
-		Client = client;
+		_Client = client;
 
-		Client.Network.RegisterCallback(PacketType.DirClassifiedReply, this);
+		_Client.Network.RegisterCallback(PacketType.DirClassifiedReply, this);
 		// Deprecated, replies come in over capabilities
-		Client.Network.RegisterCallback(PacketType.DirLandReply, this);
-		Client.Network.RegisterCallback(CapsEventType.DirLandReply, this);
-		Client.Network.RegisterCallback(PacketType.DirPeopleReply, this);
-		Client.Network.RegisterCallback(PacketType.DirGroupsReply, this);
+		_Client.Network.RegisterCallback(PacketType.DirLandReply, this);
+		_Client.Network.RegisterCallback(CapsEventType.DirLandReply, this);
+		_Client.Network.RegisterCallback(PacketType.DirPeopleReply, this);
+		_Client.Network.RegisterCallback(PacketType.DirGroupsReply, this);
 		// Deprecated as of viewer 1.2.3
-		Client.Network.RegisterCallback(PacketType.PlacesReply, this);
-		Client.Network.RegisterCallback(CapsEventType.PlacesReply, this);
-		Client.Network.RegisterCallback(PacketType.DirEventsReply, this);
-		Client.Network.RegisterCallback(PacketType.EventInfoReply, this);
-		Client.Network.RegisterCallback(PacketType.DirPlacesReply, this);
+		_Client.Network.RegisterCallback(PacketType.PlacesReply, this);
+		_Client.Network.RegisterCallback(CapsEventType.PlacesReply, this);
+		_Client.Network.RegisterCallback(PacketType.DirEventsReply, this);
+		_Client.Network.RegisterCallback(PacketType.EventInfoReply, this);
+		_Client.Network.RegisterCallback(PacketType.DirPlacesReply, this);
 	}
 
 	@Override
@@ -1016,13 +1018,6 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	// /#region Public Methods
-	/** Obsoleted due to new Adult search option */
-	@Deprecated
-	public final UUID StartClassifiedSearch(String searchText, ClassifiedCategories category, boolean mature)
-	{
-		return UUID.Zero;
-	}
-
 	/**
 	 * Query the data server for a list of classified ads containing the
 	 * specified string. Defaults to searching for classified placed in any
@@ -1082,15 +1077,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		DirClassifiedQueryPacket query = new DirClassifiedQueryPacket();
 		UUID queryID = UUID.GenerateUUID();
 
-		query.AgentData.AgentID = Client.Self.getAgentID();
-		query.AgentData.SessionID = Client.Self.getSessionID();
+		query.AgentData.AgentID = _Client.Self.getAgentID();
+		query.AgentData.SessionID = _Client.Self.getSessionID();
 
 		query.QueryData.Category = category.getValue();
 		query.QueryData.QueryFlags = queryFlags;
 		query.QueryData.QueryID = queryID;
 		query.QueryData.setQueryText(Helpers.StringToBytes(searchText));
 
-		Client.Network.sendPacket(query);
+		_Client.Network.sendPacket(query);
 
 		return queryID;
 	}
@@ -1155,8 +1150,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	{
 		DirPlacesQueryPacket query = new DirPlacesQueryPacket();
 
-		query.AgentData.AgentID = Client.Self.getAgentID();
-		query.AgentData.SessionID = Client.Self.getSessionID();
+		query.AgentData.AgentID = _Client.Self.getAgentID();
+		query.AgentData.SessionID = _Client.Self.getSessionID();
 
 		query.QueryData.Category = (byte) category.ordinal();
 		query.QueryData.QueryFlags = queryFlags;
@@ -1166,7 +1161,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		query.QueryData.QueryStart = queryStart;
 		query.QueryData.setSimName(Helpers.StringToBytes(Helpers.EmptyString));
 
-		Client.Network.sendPacket(query);
+		_Client.Network.sendPacket(query);
 
 		return query.QueryData.QueryID;
 
@@ -1285,8 +1280,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			throws Exception
 	{
 		DirLandQueryPacket query = new DirLandQueryPacket();
-		query.AgentData.AgentID = Client.Self.getAgentID();
-		query.AgentData.SessionID = Client.Self.getSessionID();
+		query.AgentData.AgentID = _Client.Self.getAgentID();
+		query.AgentData.SessionID = _Client.Self.getSessionID();
 		query.QueryData.Area = areaLimit;
 		query.QueryData.Price = priceLimit;
 		query.QueryData.QueryStart = queryStart;
@@ -1294,7 +1289,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		query.QueryData.QueryFlags = findFlags;
 		query.QueryData.QueryID = UUID.GenerateUUID();
 
-		Client.Network.sendPacket(query);
+		_Client.Network.sendPacket(query);
 	}
 
 	/**
@@ -1331,14 +1326,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	public final UUID StartGroupSearch(String searchText, int queryStart, int flags) throws Exception
 	{
 		DirFindQueryPacket find = new DirFindQueryPacket();
-		find.AgentData.AgentID = Client.Self.getAgentID();
-		find.AgentData.SessionID = Client.Self.getSessionID();
+		find.AgentData.AgentID = _Client.Self.getAgentID();
+		find.AgentData.SessionID = _Client.Self.getSessionID();
 		find.QueryData.QueryFlags = flags;
 		find.QueryData.setQueryText(Helpers.StringToBytes(searchText));
 		find.QueryData.QueryID = UUID.GenerateUUID();
 		find.QueryData.QueryStart = queryStart;
 
-		Client.Network.sendPacket(find);
+		_Client.Network.sendPacket(find);
 
 		return find.QueryData.QueryID;
 	}
@@ -1373,14 +1368,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	public final void StartPeopleSearch(String searchText, int queryStart, UUID uuid) throws Exception
 	{
 		DirFindQueryPacket find = new DirFindQueryPacket();
-		find.AgentData.AgentID = Client.Self.getAgentID();
-		find.AgentData.SessionID = Client.Self.getSessionID();
+		find.AgentData.AgentID = _Client.Self.getAgentID();
+		find.AgentData.SessionID = _Client.Self.getSessionID();
 		find.QueryData.QueryFlags = DirFindFlags.People;
 		find.QueryData.setQueryText(Helpers.StringToBytes(searchText));
 		find.QueryData.QueryID = uuid;
 		find.QueryData.QueryStart = queryStart;
 
-		Client.Network.sendPacket(find);
+		_Client.Network.sendPacket(find);
 	}
 
 	/**
@@ -1455,8 +1450,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			String simulatorName, UUID groupID, UUID transactionID) throws Exception
 	{
 		PlacesQueryPacket find = new PlacesQueryPacket();
-		find.AgentData.AgentID = Client.Self.getAgentID();
-		find.AgentData.SessionID = Client.Self.getSessionID();
+		find.AgentData.AgentID = _Client.Self.getAgentID();
+		find.AgentData.SessionID = _Client.Self.getSessionID();
 		find.AgentData.QueryID = groupID;
 
 		find.TransactionID = transactionID;
@@ -1466,7 +1461,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		find.QueryData.Category = (byte) searchCategory.ordinal();
 		find.QueryData.setSimName(Helpers.StringToBytes(simulatorName));
 
-		Client.Network.sendPacket(find);
+		_Client.Network.sendPacket(find);
 		return transactionID;
 	}
 
@@ -1524,15 +1519,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			EventCategories category) throws Exception, Exception
 	{
 		DirFindQueryPacket find = new DirFindQueryPacket();
-		find.AgentData.AgentID = Client.Self.getAgentID();
-		find.AgentData.SessionID = Client.Self.getSessionID();
+		find.AgentData.AgentID = _Client.Self.getAgentID();
+		find.AgentData.SessionID = _Client.Self.getSessionID();
 
 		find.QueryData.QueryID = UUID.GenerateUUID();
 		find.QueryData.setQueryText(Helpers.StringToBytes(eventDay + "|" + category.ordinal() + "|" + searchText));
 		find.QueryData.QueryFlags = queryFlags;
 		find.QueryData.QueryStart = queryStart;
 
-		Client.Network.sendPacket(find);
+		_Client.Network.sendPacket(find);
 		return find.QueryData.QueryID;
 	}
 
@@ -1548,12 +1543,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	public final void EventInfoRequest(int eventID) throws Exception
 	{
 		EventInfoRequestPacket find = new EventInfoRequestPacket();
-		find.AgentData.AgentID = Client.Self.getAgentID();
-		find.AgentData.SessionID = Client.Self.getSessionID();
+		find.AgentData.AgentID = _Client.Self.getAgentID();
+		find.AgentData.SessionID = _Client.Self.getSessionID();
 
 		find.EventID = eventID;
 
-		Client.Network.sendPacket(find);
+		_Client.Network.sendPacket(find);
 	}
 
 	// /#region Blocking Functions
@@ -1612,7 +1607,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	protected final void DirClassifiedReplyHandler(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
-		if (OnDirClassifieds != null)
+		if (OnDirClassifieds.count() > 0)
 		{
 			DirClassifiedReplyPacket reply = (DirClassifiedReplyPacket) packet;
 			ArrayList<Classified> classifieds = new ArrayList<Classified>();
@@ -1645,7 +1640,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void DirLandReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
-		if (OnDirLand != null)
+		if (OnDirLand.count() > 0)
 		{
 			ArrayList<DirectoryParcel> parcelsForSale = new ArrayList<DirectoryParcel>();
 			DirLandReplyPacket reply = (DirLandReplyPacket) packet;
@@ -1678,7 +1673,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void DirLandReplyEventHandler(IMessage message, Simulator simulator)
 	{
-		if (OnDirLand != null)
+		if (OnDirLand.count() > 0)
 		{
 			ArrayList<DirectoryParcel> parcelsForSale = new ArrayList<DirectoryParcel>();
 			DirLandReplyMessage reply = (DirLandReplyMessage) message;
@@ -1710,7 +1705,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void DirPeopleReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnDirPeople != null)
+		if (OnDirPeople.count() > 0)
 		{
 			DirPeopleReplyPacket peopleReply = (DirPeopleReplyPacket) ((packet instanceof DirPeopleReplyPacket) ? packet
 					: null);
@@ -1740,7 +1735,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void DirGroupsReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnDirGroups != null)
+		Logger.Log("Run through DirGroupsReply", LogLevel.Info, _Client);
+		if (OnDirGroups.count() > 0)
 		{
 			DirGroupsReplyPacket groupsReply = (DirGroupsReplyPacket) packet;
 			ArrayList<GroupSearchData> matches = new ArrayList<GroupSearchData>(groupsReply.QueryReplies.length);
@@ -1767,7 +1763,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void PlacesReplyEventHandler(IMessage message, Simulator simulator)
 	{
-		if (OnPlaces != null)
+		if (OnPlaces.count() > 0)
 		{
 			ArrayList<PlacesSearchData> places = new ArrayList<PlacesSearchData>();
 			PlacesReplyMessage replyMessage = (PlacesReplyMessage) message;
@@ -1805,7 +1801,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void PlacesReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnPlaces != null)
+		if (OnPlaces.count() > 0)
 		{
 			PlacesReplyPacket placesReply = (PlacesReplyPacket) ((packet instanceof PlacesReplyPacket) ? packet : null);
 			ArrayList<PlacesSearchData> places = new ArrayList<PlacesSearchData>();
@@ -1844,7 +1840,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void EventsReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnDirEvents != null)
+		if (OnDirEvents.count() > 0)
 		{
 			DirEventsReplyPacket eventsReply = (DirEventsReplyPacket) packet;
 			ArrayList<EventsSearchData> matches = new ArrayList<EventsSearchData>(eventsReply.QueryReplies.length);
@@ -1875,7 +1871,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void EventInfoReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnEventInfo != null)
+		if (OnEventInfo.count() > 0)
 		{
 			EventInfoReplyPacket eventReply = (EventInfoReplyPacket) packet;
 			EventInfo evinfo = new EventInfo();
@@ -1907,7 +1903,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void DirPlacesReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnDirPlaces != null)
+		if (OnDirPlaces.count() > 0)
 		{
 			DirPlacesReplyPacket reply = (DirPlacesReplyPacket) packet;
 			ArrayList<DirectoryParcel> result = new ArrayList<DirectoryParcel>();
