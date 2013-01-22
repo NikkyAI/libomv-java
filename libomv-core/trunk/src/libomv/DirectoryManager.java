@@ -1735,7 +1735,6 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 */
 	protected final void DirGroupsReplyHandler(Packet packet, Simulator simulator) throws Exception
 	{
-		Logger.Log("Run through DirGroupsReply", LogLevel.Info, _Client);
 		if (OnDirGroups.count() > 0)
 		{
 			DirGroupsReplyPacket groupsReply = (DirGroupsReplyPacket) packet;
