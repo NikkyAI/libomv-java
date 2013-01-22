@@ -221,6 +221,18 @@ public class TestClient extends GridClient implements PacketCallback
 		}
 	}
 	
+	public void printResponse(String response, UUID toAgent) throws Exception
+	{
+		if (toAgent != null && toAgent.equals(MasterKey))
+		{
+			Self.InstantMessage(toAgent, response);
+		}
+		else
+		{
+			System.out.println(response);
+		}
+	}
+	
 	private boolean cancel()
 	{
 		updateTimer.cancel();
@@ -273,7 +285,7 @@ public class TestClient extends GridClient implements PacketCallback
 			if (e.getIM().FromAgentID.equals(MasterKey) || (GroupCommands && groupIM))
 			{
 				// Received an IM from someone that is authenticated
-				System.out.println(String.format("<%s (%s)> %s: %s (@{4}:{5})", e.getIM().GroupIM ? "GroupIM" : "IM", e.getIM().Dialog,
+				System.out.println(String.format("<%s (%s)> %s: %s (@%s:%s)", e.getIM().GroupIM ? "GroupIM" : "IM", e.getIM().Dialog,
 						e.getIM().FromAgentName, e.getIM().Message, e.getIM().RegionID, e.getIM().Position));
 
 				try

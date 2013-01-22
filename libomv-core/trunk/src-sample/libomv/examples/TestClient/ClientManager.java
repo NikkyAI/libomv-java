@@ -376,7 +376,8 @@ public class ClientManager
                 for (TestClient client : Clients.values())
                 {
                     Command command = client.Commands.get("help");
-                    System.out.println(command.execute(args, UUID.Zero));
+                    String response = command.execute(args, fromAgentID);
+                    client.printResponse(response, fromAgentID);
                     break;
                 }
             }
@@ -420,22 +421,22 @@ public class ClientManager
                     {
                         if ((onlyAvatar.isEmpty()) || (testClient.toString().equals(onlyAvatar))) 
                         {
-                            if (testClient.Commands.containsKey(firstToken)) 
+                            try
                             {
-                                String result;
-                                try
-                                {
-                                    result = testClient.Commands.get(firstToken).execute(args, fromAgentID);
-                                    Logger.Log(result, LogLevel.Info, testClient);
+                            	String response;
+                            	if (testClient.Commands.containsKey(firstToken)) 
+                            	{
+                            		response = testClient.Commands.get(firstToken).execute(args, fromAgentID);
                                 }
-                                catch(Exception e)
+                                else
                                 {
-                                    Logger.Log(String.format("%s raised exception %s", firstToken, e), LogLevel.Error, testClient);
+                                    response = "Unknown command \"" + firstToken + "\"";
                                 }
+                                testClient.printResponse(response, fromAgentID);
                             }
-                            else
+                            catch(Exception e)
                             {
-                                Logger.Log("Unknown command " + firstToken, LogLevel.Warning);
+                                Logger.Log(String.format("%s raised exception %s", firstToken, e), LogLevel.Error, testClient);
                             }
                         }
                         completed.incrementAndGet();
