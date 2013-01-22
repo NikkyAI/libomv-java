@@ -25,10 +25,7 @@
  */
 package libomv.examples.TestClient.Commands.Communication;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import libomv.AvatarManager.AvatarPickerReplyCallbackArgs;
+import libomv.AgentManager.GroupChatJoinedCallbackArgs;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
@@ -36,29 +33,27 @@ import libomv.utils.Callback;
 import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
 
-public class IMCommand extends Command
+public class IMGroupCommand extends Command
 {
-    private static final String usage = "Usage: im <firstname> <lastname> <message>";
-    String ToAvatarName = Helpers.EmptyString;
-    TimeoutEvent<UUID> NameSearchEvent = new TimeoutEvent<UUID>();
-    HashMap<String, UUID> Name2Key = new HashMap<String, UUID>();
+    private static final String usage = "Usage: imgroup <group_uuid> <message>";
+    TimeoutEvent<Boolean>WaitForSessionStart = new TimeoutEvent<Boolean>();
 
-    public IMCommand(TestClient testClient)
+    public IMGroupCommand(TestClient testClient)
     {
-        testClient.Avatars.OnAvatarPickerReply.add(new Avatars_AvatarPickerReply());
-
-        Name = "im";
-        Description = "Instant message someone. " + usage;
+        Name = "imgroup";
+        Description = "Send an instant message to a group. " + usage;
         Category = CommandCategory.Communication;
     }
     
     @Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        if (args.length < 3)
+        if (args.length < 2)
             return usage;
 
-        ToAvatarName = args[0] + " " + args[1];
+        UUID ToGroupID = UUID.parse(args[0]);
+        if (ToGroupID == null)
+        	return "Invalid group uuid. " + usage;
 
         // Build the message
         String message = Helpers.EmptyString;
@@ -67,42 +62,45 @@ public class IMCommand extends Command
         message = message.trim();
         if (message.length() > 1023) message = message.substring(0, 1023);
 
-        if (!Name2Key.containsKey(ToAvatarName.toLowerCase()))
+        Callback<GroupChatJoinedCallbackArgs> handler = new Self_GroupChatJoined();
+        Client.Self.OnGroupChatJoined.add(handler);
+
+        if (!Client.Self.GroupChatSessions.containsKey(ToGroupID))
         {
-            // Send the Query
-            Client.Avatars.RequestAvatarNameSearch(ToAvatarName, new UUID());
-
-            UUID uuid = NameSearchEvent.waitOne(6000, true);
-            if (uuid != null)
-            {
-                Name2Key.put(ToAvatarName.toLowerCase(), uuid);            	
-            }
-        }
-
-        if (Name2Key.containsKey(ToAvatarName.toLowerCase()))
-        {
-            UUID id = Name2Key.get(ToAvatarName.toLowerCase());
-
-            Client.Self.InstantMessage(id, message);
-            return "Instant messaged " + ToAvatarName + " {" + id + "} with message: " + message;
+            WaitForSessionStart.reset();
+            Client.Self.RequestJoinGroupChat(ToGroupID);
         }
         else
         {
-            return "Name lookup for " + ToAvatarName + " failed";
+            WaitForSessionStart.set(true);
         }
+        
+        if (WaitForSessionStart.waitOne(20000, true))
+        {
+            Client.Self.InstantMessageGroup(ToGroupID, message);
+        }
+        else
+        {
+            return "Timeout waiting for group session start";
+        }
+
+        Client.Self.OnGroupChatJoined.remove(handler);
+        return "Instant Messaged group " + ToGroupID + " with message: " + message;
     }
 
-    private class Avatars_AvatarPickerReply implements Callback<AvatarPickerReplyCallbackArgs>
+    private class Self_GroupChatJoined implements Callback<GroupChatJoinedCallbackArgs>
     {
-    	public boolean callback(AvatarPickerReplyCallbackArgs e)
+    	public boolean callback(GroupChatJoinedCallbackArgs e)
     	{
-            for (Entry<UUID, String> kvp : e.getAvatars().entrySet())
+            if (e.getSucess())
             {
-                if (kvp.getValue().equalsIgnoreCase(ToAvatarName))
-                {
-                    NameSearchEvent.set(kvp.getKey());
-                }
+            	System.out.println("Joined " + e.getSessionName() + " Group Chat Success!");
             }
+            else
+            {
+            	System.out.println("Join Group Chat failed :(");
+            }
+            WaitForSessionStart.set(e.getSucess());
             return false;
     	}
     }

@@ -48,8 +48,8 @@ public class PlayAnimationCommand extends Command
         String usage = "Usage:\n" +
             "\tplay list - list the built in animations\n" +
             "\tplay show - show any currently playing animations\n" +
-            "\tplay UUID - play an animation asset\n" +
-            "\tplay ANIMATION - where ANIMATION is one of the values returned from \"play list\"\n";
+            "\tplay <uuid> - play an animation asset\n" +
+            "\tplay <animation> - where <animation> is one of the values returned from \"play list\"\n";
         return usage;
     }
 
