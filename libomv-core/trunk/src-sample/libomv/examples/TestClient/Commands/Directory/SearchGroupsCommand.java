@@ -67,15 +67,22 @@ public class SearchGroupsCommand extends Command
         Client.Directory.OnDirGroups.add(callback);
         
         // send the request to the directory manager
-        queryID = Client.Directory.StartEventsSearch(searchText, 0);
-        ArrayList<GroupSearchData> groups = waitQuery.waitOne(20000);
+        queryID = Client.Directory.StartGroupSearch(searchText, 0);
+        ArrayList<GroupSearchData> temp, groups = waitQuery.waitOne(20000, true);
+        while (groups != null)
+        {
+        	temp = waitQuery.waitOne(2000, true);
+        	if (temp == null)
+        		break;
+       		groups.addAll(temp);
+        }
         Client.Directory.OnDirGroups.remove(callback);
 
         if (groups == null)
         {
             return "Timeout waiting for simulator to respond.";
         }
-        else if (groups.size() == 0)
+        else if (groups.size() == 0 || (groups.size() == 1 && groups.get(0).GroupID.equals(UUID.Zero)))
         {
         	return "No Results matched your search string";
         }
@@ -96,7 +103,6 @@ public class SearchGroupsCommand extends Command
             if (e.getQueryID().equals(queryID))
             {
             	waitQuery.set(e.getMatchedGroups());
-        		return true;
         	}
             return false;
         }

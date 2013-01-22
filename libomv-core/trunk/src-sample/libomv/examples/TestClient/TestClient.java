@@ -156,21 +156,30 @@ public class TestClient extends GridClient implements PacketCallback
 				{
 					keyResolution.set(dpe.getMatchedPeople());
 				}
-				return true;
+				return false;
 			}
 		};
 
-		Directory.OnDirPeople.add(peopleDirCallback, true);
+		ArrayList<AgentSearchData> temp, agents = null;
+		Directory.OnDirPeople.add(peopleDirCallback);
 		try
 		{
 			Directory.StartPeopleSearch(name, 0, query);
-			return keyResolution.waitOne(timeout);
+			agents = keyResolution.waitOne(timeout, true);
+	        while (agents != null)
+	        {
+	        	temp = keyResolution.waitOne(2000, true);
+	        	if (temp == null)
+	        		break;
+	       		agents.addAll(temp);
+	        }
 		}
 		catch (Exception ex)
 		{
 			Logger.Log("Exception when trying to do people search", LogLevel.Error, this, ex);
 		}
-		return null;
+		Directory.OnDirPeople.remove(peopleDirCallback);
+		return agents;
 	}
 
 	public UUID groupName2UUID(String groupName) throws Exception

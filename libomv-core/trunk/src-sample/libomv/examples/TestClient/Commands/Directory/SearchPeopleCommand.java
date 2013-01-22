@@ -62,7 +62,7 @@ public class SearchPeopleCommand extends Command
         {
             return "Timeout waiting for simulator to respond.";
         }
-        else if (agents.size() == 0)
+        else if (agents.size() == 0 || (agents.size() == 1 && agents.get(0).AgentID.equals(UUID.Zero)))
         {
         	return "Didn't find any people that matched your query :(";
         }
