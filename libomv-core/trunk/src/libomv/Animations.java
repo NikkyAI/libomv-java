@@ -318,7 +318,7 @@ public class Animations
     
     private static HashMap<UUID, String> dict = null;
     
-    public HashMap<UUID, String> toDictionary()
+    public static HashMap<UUID, String> toDictionary()
     {
     	if (dict == null)
     	{
@@ -327,11 +327,11 @@ public class Animations
     		for (Field field : type.getDeclaredFields())
     		{
     			int flags = field.getModifiers();
-    			if (Modifier.isPublic(flags) || Modifier.isStatic(flags))
+    			if (Modifier.isPublic(flags) && Modifier.isStatic(flags))
     			{
     				try
 					{
-						dict.put((UUID)field.get(this), field.getName());
+						dict.put((UUID)field.get(null), field.getName());
 					}
 					catch (Exception e)
 					{
