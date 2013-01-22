@@ -973,30 +973,30 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		switch (packet.getType())
 		{
 			case DirClassifiedReply:
-				DirClassifiedReplyHandler(packet, simulator);
+				HandleDirClassifiedReply(packet, simulator);
 				break;
 			// Deprecated, replies come in over capabilities
 			case DirLandReply:
-				DirLandReplyHandler(packet, simulator);
+				HandleDirLandReply(packet, simulator);
 				break;
 			case DirPeopleReply:
-				DirPeopleReplyHandler(packet, simulator);
+				HandleDirPeopleReply(packet, simulator);
 				break;
 			case DirGroupsReply:
-				DirGroupsReplyHandler(packet, simulator);
+				HandleDirGroupsReply(packet, simulator);
 				break;
 			// Deprecated as of viewer 1.2.3
 			case PlacesReply:
-				PlacesReplyHandler(packet, simulator);
+				HandlePlacesReply(packet, simulator);
 				break;
 			case DirEventsReply:
-				EventsReplyHandler(packet, simulator);
+				HandleEventsReply(packet, simulator);
 				break;
 			case EventInfoReply:
-				EventInfoReplyHandler(packet, simulator);
+				HandleEventInfoReply(packet, simulator);
 				break;
 			case DirPlacesReply:
-				DirPlacesReplyHandler(packet, simulator);
+				HandleDirPlacesReply(packet, simulator);
 				break;
 		}
 	}
@@ -1007,10 +1007,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 		switch (message.getType())
 		{
 			case DirLandReply:
-				DirLandReplyEventHandler(message, simulator);
+				HandleDirLandReply(message, simulator);
 				break;
 			case PlacesReply:
-				PlacesReplyEventHandler(message, simulator);
+				HandlePlacesReply(message, simulator);
 				break;
 		}
 	}
@@ -1602,7 +1602,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which this packet originates
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void DirClassifiedReplyHandler(Packet packet, Simulator simulator)
+	private void HandleDirClassifiedReply(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException
 	{
 		if (OnDirClassifieds.count() > 0)
@@ -1636,7 +1636,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which the packet originates
 	 * @throws UnsupportedEncodingException
 	 */
-	protected final void DirLandReplyHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+	private void HandleDirLandReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
 	{
 		if (OnDirLand.count() > 0)
 		{
@@ -1669,7 +1669,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 * @param simulator
 	 *            The simulator the message originated from
 	 */
-	protected final void DirLandReplyEventHandler(IMessage message, Simulator simulator)
+	private void HandleDirLandReply(IMessage message, Simulator simulator)
 	{
 		if (OnDirLand.count() > 0)
 		{
@@ -1701,7 +1701,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which the packet originates
 	 * @throws Exception
 	 */
-	protected final void DirPeopleReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleDirPeopleReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnDirPeople.count() > 0)
 		{
@@ -1731,7 +1731,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which the packet originates
 	 * @throws Exception
 	 */
-	protected final void DirGroupsReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleDirGroupsReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnDirGroups.count() > 0)
 		{
@@ -1758,7 +1758,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 * @param simulator
 	 *            The simulator the message originated from
 	 */
-	protected final void PlacesReplyEventHandler(IMessage message, Simulator simulator)
+	private void HandlePlacesReply(IMessage message, Simulator simulator)
 	{
 		if (OnPlaces.count() > 0)
 		{
@@ -1796,7 +1796,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which the packet originates
 	 * @throws Exception
 	 */
-	protected final void PlacesReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandlePlacesReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnPlaces.count() > 0)
 		{
@@ -1835,7 +1835,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which the packet originates
 	 * @throws Exception
 	 */
-	protected final void EventsReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleEventsReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnDirEvents.count() > 0)
 		{
@@ -1866,7 +1866,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 *            The simulator from which the packet originates
 	 * @throws Exception
 	 */
-	protected final void EventInfoReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleEventInfoReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnEventInfo.count() > 0)
 		{
@@ -1898,7 +1898,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	protected final void DirPlacesReplyHandler(Packet packet, Simulator simulator) throws Exception
+	private void HandleDirPlacesReply(Packet packet, Simulator simulator) throws Exception
 	{
 		if (OnDirPlaces.count() > 0)
 		{

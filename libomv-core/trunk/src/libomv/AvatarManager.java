@@ -31,29 +31,39 @@
 package libomv;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.AgentManager.EffectType;
 import libomv.AppearanceManager.AppearanceFlags;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsCallback;
+import libomv.capabilities.CapsClient;
 import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.DisplayNameUpdateMessage;
+import libomv.capabilities.CapsMessage.GetDisplayNamesMessage;
 import libomv.capabilities.IMessage;
 import libomv.packets.AvatarAnimationPacket;
 import libomv.packets.AvatarAppearancePacket;
 import libomv.packets.AvatarGroupsReplyPacket;
 import libomv.packets.AvatarInterestsReplyPacket;
 import libomv.packets.AvatarPickerReplyPacket;
+import libomv.packets.AvatarPickerRequestPacket;
 import libomv.packets.AvatarPropertiesReplyPacket;
+import libomv.packets.AvatarPropertiesRequestPacket;
 import libomv.packets.GenericMessagePacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
+import libomv.packets.TrackAgentPacket;
 import libomv.packets.UUIDNameReplyPacket;
 import libomv.packets.UUIDNameRequestPacket;
 import libomv.packets.ViewerEffectPacket;
@@ -225,6 +235,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	/* HashMap containing all known avatars to this client */ 
 	private HashMap<UUID, Avatar> _Avatars;
 
+	// #region Event Callbacks
 	public class AgentNamesCallbackArgs implements CallbackArgs
 	{
 		private HashMap<UUID, String> names;
@@ -239,7 +250,6 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.names = names;
 		}
 	}
-
 	public CallbackHandler<AgentNamesCallbackArgs> OnAgentNames = new CallbackHandler<AgentNamesCallbackArgs>();
 
 	/**
@@ -266,9 +276,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.displayName = displayName;
 		}
 	}
-
 	public CallbackHandler<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandler<DisplayNameUpdateCallbackArgs>();
-
 
 	public class AvatarAnimationCallbackArgs implements CallbackArgs
 	{
@@ -291,11 +299,8 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.animations = animations;
 		}
 	}
-
 	public CallbackHandler<AvatarAnimationCallbackArgs> OnAvatarAnimation = new CallbackHandler<AvatarAnimationCallbackArgs>();
 
-	
-	
 	public class AvatarAppearanceCallbackArgs implements  CallbackArgs
 	{
 		private Simulator simulator;
@@ -368,9 +373,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	    	this.appearanceFlags = appearanceFlags;
 	    }
 	}
-	
 	public CallbackHandler<AvatarAppearanceCallbackArgs> OnAvatarAppearance = new CallbackHandler<AvatarAppearanceCallbackArgs>();
-	
 	
 	public class AvatarInterestsReplyCallbackArgs implements  CallbackArgs
 	{
@@ -386,9 +389,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.avatar = avatar;
 		}
 	}
-	
 	public CallbackHandler<AvatarInterestsReplyCallbackArgs> OnAvatarInterestsReply = new CallbackHandler<AvatarInterestsReplyCallbackArgs>();
-
 	
 	public class AvatarPropertiesReplyCallbackArgs implements  CallbackArgs
 	{
@@ -404,9 +405,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.avatar = avatar;
 		}
 	}
-	
 	public CallbackHandler<AvatarPropertiesReplyCallbackArgs> OnAvatarPropertiesReply = new CallbackHandler<AvatarPropertiesReplyCallbackArgs>();
-	
 	
 	public class AvatarGroupsReplyCallbackArgs implements CallbackArgs
 	{
@@ -428,10 +427,8 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.avatarID = avatarID;
 			this.avatarGroups = avatarGroups;
 		}
-	}
-	
+	}	
 	public CallbackHandler<AvatarGroupsReplyCallbackArgs> OnAvatarGroupsReply = new CallbackHandler<AvatarGroupsReplyCallbackArgs>();
-
 
 	public class AvatarPickerReplyCallbackArgs implements CallbackArgs
 	{
@@ -453,8 +450,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         	this.queryID = queryID;
         	this.avatars = avatars;
         }
-	}
-        
+	}        
 	public CallbackHandler<AvatarPickerReplyCallbackArgs> OnAvatarPickerReply = new CallbackHandler<AvatarPickerReplyCallbackArgs>();
 	
 	public class ViewerEffectCallbackArgs implements CallbackArgs
@@ -521,9 +517,40 @@ public class AvatarManager implements PacketCallback, CapsCallback
 			this.dataID = dataID;
 		}
 	}
-
 	public CallbackHandler<ViewerEffectCallbackArgs> OnViewerEffect = new CallbackHandler<ViewerEffectCallbackArgs>();
 
+	// #endregion Event Callbacks
+	
+    public class DisplayNamesCallbackArgs
+    {
+    	private boolean success;
+    	private AgentDisplayName[] names;
+    	private UUID[] badIDs;
+    	
+    	public boolean getSuccess()
+    	{
+    		return success;
+    	}
+    	
+    	public AgentDisplayName[] getNames()
+    	{
+    		return names;
+    	}
+    	
+    	public UUID[] getBadIDs()
+    	{
+    		return badIDs;
+    	}
+    	
+        public DisplayNamesCallbackArgs(boolean success, AgentDisplayName[] names, UUID[] badIDs)
+        {
+        	this.success = success;
+        	this.names = names;
+        	this.badIDs = badIDs;
+        }
+    }
+	
+    static final int MAX_UUIDS_PER_PACKET = 100;
 	
 	public AvatarManager(GridClient client)
 	{
@@ -664,6 +691,109 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		}
 		return Helpers.EmptyString;
 	}
+
+    /**
+     * Request retrieval of display names (max 90 names per request)
+     * 
+     * @param ids List of UUIDs to lookup
+     * @param callback Callback to report result of the operation
+     * @throws IOReactorException 
+     * @throws URISyntaxException 
+     */
+    public void GetDisplayNames(ArrayList<UUID> ids, final Callback<DisplayNamesCallbackArgs> callback) throws IOReactorException, URISyntaxException
+    {
+    	URI uri = _Client.Network.getCapabilityURI("GetDisplayNames");
+        if (uri == null || ids.size() == 0)
+        {
+            callback.callback(new DisplayNamesCallbackArgs(false, null, null));
+        }
+
+        StringBuilder query = new StringBuilder();
+        for (int i = 0; i < ids.size() && i < 90; i++)
+        {
+            query.append("ids=" + ids.get(i));
+            if (i < ids.size() - 1)
+            {
+                query.append("&");
+            }
+        }
+
+        class DisplayCapsCallback implements FutureCallback<OSD>
+        {
+			@Override
+			public void completed(OSD result)
+			{
+                GetDisplayNamesMessage msg = _Client.Messages.new GetDisplayNamesMessage();
+                msg.Deserialize((OSDMap)result);
+                callback.callback(new DisplayNamesCallbackArgs(true, msg.Agents, msg.BadIDs));
+			}
+
+			@Override
+			public void failed(Exception ex)
+			{
+	            callback.callback(new DisplayNamesCallbackArgs(false, null, null));
+			}
+
+			@Override
+			public void cancelled()
+			{
+	            callback.callback(new DisplayNamesCallbackArgs(false, null, null));
+			} 		
+        } 
+        CapsClient cap = new CapsClient("GetDisplayName");
+        cap.executeHttpGet(new URI(uri.toString() + "/?" + query), null, new DisplayCapsCallback(), _Client.Settings.CAPS_TIMEOUT);
+    }
+    
+    /**
+     * Tracks the specified avatar on your map
+     * 
+     * @param preyID Avatar ID to track
+     * @throws Exception 
+     */
+    public void RequestTrackAgent(UUID preyID) throws Exception
+    {
+        TrackAgentPacket p = new TrackAgentPacket();
+        p.AgentData.AgentID = _Client.Self.getAgentID();
+        p.AgentData.SessionID = _Client.Self.getSessionID();
+        p.PreyID = preyID;
+        _Client.Network.sendPacket(p);
+    }
+
+    /**
+     * Start a request for Avatar Properties
+     *
+     * @param avatarid
+     * @throws Exception 
+     */
+    public void RequestAvatarProperties(UUID avatarid) throws Exception
+    {
+        AvatarPropertiesRequestPacket aprp = new AvatarPropertiesRequestPacket();
+
+        aprp.AgentData.AgentID = _Client.Self.getAgentID();
+        aprp.AgentData.SessionID = _Client.Self.getSessionID();
+        aprp.AgentData.AvatarID = avatarid;
+
+        _Client.Network.sendPacket(aprp);
+    }
+
+    /**
+     * Search for an avatar (first name, last name)
+     * 
+     * @param name The name to search for
+     * @param queryID An ID to associate with this query
+     * @throws Exception 
+     */
+    public void RequestAvatarNameSearch(String name, UUID queryID) throws Exception
+    {
+        AvatarPickerRequestPacket aprp = new AvatarPickerRequestPacket();
+
+        aprp.AgentData.AgentID = _Client.Self.getAgentID();
+        aprp.AgentData.SessionID = _Client.Self.getSessionID();
+        aprp.AgentData.QueryID = queryID;
+        aprp.Data.setName(Helpers.StringToBytes(name));
+
+        _Client.Network.sendPacket(aprp);
+    }
 
     /**
      * Start a request for Avatar Picks
@@ -844,14 +974,31 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				OnAgentNames.add(anc, true);
 			}
 
+            int m = MAX_UUIDS_PER_PACKET;
+            int n = neednames.size() / m; // Number of full requests to make
+            int i = 0;
 			UUIDNameRequestPacket request = new UUIDNameRequestPacket();
 
-			request.ID = new UUID[neednames.size()];
-			for (int i = 0; i < neednames.size(); i++)
-			{
-				request.ID[i] = neednames.get(i);
-			}
-			_Client.Network.sendPacket(request);
+            for (int j = 0; j < n; j++)
+            {
+            	request.ID = new UUID[m];
+            	for (; i < neednames.size(); i++)
+            	{
+            		request.ID[i % m] = neednames.get(i);
+            	}
+            	_Client.Network.sendPacket(request);
+            }
+
+            // Get any remaining names after left after the full requests
+            if (neednames.size() > n * m)
+            {
+            	request.ID = new UUID[neednames.size() - n * m];
+                for (; i < neednames.size(); i++)
+                {
+            		request.ID[i % m] = neednames.get(i);
+                }
+            	_Client.Network.sendPacket(request);
+            }
 		}
 	}
 
