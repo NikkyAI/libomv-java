@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.examples.TestClient.Commands.Agents;
+package libomv.examples.TestClient.Commands.Agent;
 
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
