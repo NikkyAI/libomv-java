@@ -63,8 +63,6 @@ import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackArgs;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 /* Access to the data server which allows searching for land, events, people, etc */
 public class DirectoryManager implements PacketCallback, CapsCallback
