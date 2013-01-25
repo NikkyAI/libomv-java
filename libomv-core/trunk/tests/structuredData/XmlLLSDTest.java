@@ -378,6 +378,7 @@ public class XmlLLSDTest extends TestCase
         OSD theSD = null;
         OSDArray array = null;
         OSDBoolean tempBool = null;
+        OSDString tempStr = null;
 
         String testSD = "<?xml version='1.0' encoding='UTF-8'?>" +
         "<llsd>" +
@@ -387,6 +388,8 @@ public class XmlLLSDTest extends TestCase
         "        <boolean>0</boolean>" +
         "        <boolean>false</boolean>" +
         "        <boolean/>" +
+        "        <string>true</string>" +
+        "        <string>false</string>" +
         "    </array>" +
         "</llsd>";
         //Deserialize the string
@@ -415,6 +418,14 @@ public class XmlLLSDTest extends TestCase
         Assert.assertEquals(OSDType.Boolean, array.get(4).getType());
         tempBool = (OSDBoolean)array.get(4);
         Assert.assertEquals(false, tempBool.AsBoolean());
+
+        Assert.assertEquals(OSDType.String, array.get(5).getType());
+        tempStr = (OSDString)array.get(5);
+        Assert.assertEquals(true, tempStr.AsBoolean());
+
+        Assert.assertEquals(OSDType.String, array.get(6).getType());
+        tempStr = (OSDString)array.get(6);
+        Assert.assertEquals(false, tempStr.AsBoolean());
     }
 
     byte[] binary = {116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 

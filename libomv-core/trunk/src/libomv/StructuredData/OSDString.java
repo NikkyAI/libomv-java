@@ -63,12 +63,17 @@ public class OSDString extends OSD
 	@Override
 	public boolean AsBoolean()
 	{
-		if (value == null || value.isEmpty())
+		if (value == null || value.isEmpty() || value.equalsIgnoreCase("false"))
 			return false;
 
-		if (Double.parseDouble(value) == 0.0 || value.toLowerCase().equals("false"))
-			return false;
-
+		try
+		{
+			if (Double.parseDouble(value) == 0.0)
+				return false;
+		}
+		catch (NumberFormatException ex)
+		{}
+			
 		return true;
 	}
 
