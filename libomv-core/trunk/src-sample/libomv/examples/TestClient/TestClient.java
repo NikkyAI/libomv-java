@@ -355,16 +355,15 @@ public class TestClient extends GridClient implements PacketCallback
 		@Override
 		public boolean callback(InventoryObjectOfferedCallbackArgs e)
 		{
-			if (MasterKey != UUID.Zero)
+			if (!MasterKey.equals(UUID.Zero))
 			{
-				if (e.getOffer().FromAgentID != MasterKey)
+				if (!MasterKey.equals(e.getOffer().FromAgentID))
 					return false;
 			}
 			else if (GroupMembers != null && !GroupMembers.containsKey(e.getOffer().FromAgentID))
 			{
 				return false;
 			}
-
 			e.setAccept(true);
 			return false;
 		}

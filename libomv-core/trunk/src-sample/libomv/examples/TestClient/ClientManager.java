@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.DirectoryManager.AgentSearchData;
 import libomv.GridClient;
+import libomv.GridClient.GridInfo;
 import libomv.LoginManager;
 import libomv.LoginManager.LoginParams;
 import libomv.LoginManager.LoginProgressCallbackArgs;
@@ -116,7 +117,7 @@ public class ClientManager
 	{
 		if (args.length < 3)
 		{
-			System.out.println("Usage: login firstname lastname password [simname] [login server url]");
+			System.out.println("Usage: login <firstname> <lastname> <password> [<loginuri>|grid://<gridnick>] [<simname>[/<x>/<y>/<z>]]");
 			return null;
 		}
 		LoginDetails account = new LoginDetails();
@@ -126,17 +127,34 @@ public class ClientManager
 
 		if (args.length > 3)
 		{
-			// If it looks like a full starting position was specified, parse it
-			if (args[3].startsWith("http"))
+			String arg = args[3];
+			if (arg.startsWith("http"))
 			{
-				account.URI = args[3];
+				account.URI = arg;
+			}
+			else if (arg.startsWith("grid://"))
+			{
+				GridInfo info = new GridClient().getGrid(arg.substring(7));
+				if (info != null)
+					account.URI = info.loginuri;
+			}
+		}
+		
+		if (args.length > 4)
+		{
+			String arg = args[4];
+			
+			// If it looks like a full starting position was specified, parse it
+			if (arg.startsWith("http"))
+			{
+				account.URI = arg;
 			}
 			else
 			{
-				if (args[3].indexOf('/') >= 0)
+				if (arg.indexOf('/') >= 0)
 				{
 					String sep = "/";
-					String[] startbits = args[3].split(sep);
+					String[] startbits = arg.split(sep);
 					try
 					{
 						account.StartLocation = LoginManager.StartLocation(startbits[0],
@@ -147,16 +165,11 @@ public class ClientManager
 					{
 					}
 				}
-
 				// Otherwise, use the center of the named region
 				if (account.StartLocation == null)
-					account.StartLocation = LoginManager.StartLocation(args[3], 128, 128, 40);
+					account.StartLocation = LoginManager.StartLocation(arg, 128, 128, 40);
 			}
 		}
-
-		if (args.length > 4)
-			if (args[4].startsWith("http"))
-				account.URI = args[4];
 
 		if (account.URI == null || account.URI.isEmpty())
 			account.URI = Program.LoginURI;
@@ -183,6 +196,7 @@ public class ClientManager
 		LibSettings settings = new LibSettings();
 		settings.put(LibSettings.ENABLE_OBJECT_MANAGER, true);
 		settings.put(LibSettings.ENABLE_DIRECTORY_MANAGER, true);
+		settings.put(LibSettings.USE_LLSD_LOGIN, true);
 		final TestClient client = new TestClient(this, settings);
 
 		Callback<LoginProgressCallbackArgs> loginCallback = new Callback<LoginProgressCallbackArgs>()
@@ -360,7 +374,12 @@ public class ClientManager
         if (args.length > 0)
             System.arraycopy(tokens, 1, args, 0, args.length);
 
-        if (firstToken.equals("login"))
+        if (firstToken.equals("grids"))
+        {
+        	GridClient client = new GridClient();
+        	System.out.println(client.dumpGridlist());
+        }
+        else if (firstToken.equals("login"))
         {
             login(args);
         }
