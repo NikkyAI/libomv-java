@@ -66,22 +66,6 @@ public class ClientManager
 		public String URI;
 	}
 
-	public class StartPosition
-	{
-		public String sim;
-		public int x;
-		public int y;
-		public int z;
-
-		public StartPosition()
-		{
-			this.sim = null;
-			this.x = 0;
-			this.y = 0;
-			this.z = 0;
-		}
-	}
-
 	static final String VERSION = "1.0.0";
 
 	static class Singleton
