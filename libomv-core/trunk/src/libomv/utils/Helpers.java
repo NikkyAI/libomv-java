@@ -2404,7 +2404,7 @@ public class Helpers
 					}
 				}
 			}
-			return sb.toString();
+			return sb.toString().trim();
 		}
 		catch (SocketException ex)
 		{

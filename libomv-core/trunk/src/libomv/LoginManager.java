@@ -1072,8 +1072,6 @@ public class LoginManager
 
 	// #region Private Members
 	private GridClient _Client;
-
-	private Future<OSD> capsCallback = null;
 	private TimeoutEventQueue<LoginStatus> LoginEvents = new TimeoutEventQueue<LoginStatus>();
 
 	// #endregion
@@ -1421,7 +1419,7 @@ public class LoginManager
 
 				// Make the CAPS POST for login
 				CapsClient loginRequest = new CapsClient("RequestLogin");
-				capsCallback = loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml,
+				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml,
 						new LoginReplyLLSDHandler(loginParams), loginParams.Timeout);
 				// #endregion
 			}
@@ -1626,6 +1624,7 @@ public class LoginManager
 		@Override
 		public void failed(Exception ex)
 		{
+			Logger.Log(String.format("Login exception %s", ex.getMessage()), LogLevel.Error, _Client, ex);
 			// Connection error
 			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 		}

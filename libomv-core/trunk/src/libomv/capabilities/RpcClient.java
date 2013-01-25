@@ -85,13 +85,13 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(DATETIME_FORMAT);
 
-	public RpcClient() throws IOReactorException
+	public RpcClient(String name) throws IOReactorException
 	{
-		super("RpcClient");
+		super(name);
 	}
 
 	@Override
-	protected void finalize()
+	protected void finalize() throws Throwable
 	{
 		try
 		{
@@ -100,6 +100,10 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		catch (InterruptedException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			super.finalize();
 		}
 	}
 
@@ -149,7 +153,6 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		public OSDEntity(String method, OSDArray params) throws XmlPullParserException
 		{
 	        super();
-	        bytes = null;
 			this.method = method;
 			this.params = params;
 			serializer = XmlPullParserFactory.newInstance().newSerializer();
@@ -157,6 +160,18 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			setContentEncoding(Helpers.UTF8_ENCODING);
 		}
 
+		private byte[] getBytes() throws IllegalArgumentException, IllegalStateException, IOException
+		{
+			if (bytes == null)
+			{
+				ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+				serializer.setOutput(outstream, getContentEncoding().getValue());
+				methodCall(serializer, method, params);
+				bytes = outstream.toByteArray();
+			}
+			return bytes;
+		}
+		
 		@Override
 		public boolean isRepeatable()
 		{
@@ -166,20 +181,20 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		@Override
 		public long getContentLength()
 		{
+			try
+			{
+				return getBytes().length;
+			} 
+			catch (IOException e)
+			{
+			}
 			return -1;
 		}
 
 		@Override
 		public InputStream getContent() throws IOException, IllegalStateException
 		{
-			if (bytes == null)
-			{
-				ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-				serializer.setOutput(outstream, getContentEncoding().getValue());
-				methodCall(serializer, method, params);
-				bytes = outstream.toByteArray();
-			}
-			return new ByteArrayInputStream(bytes);
+			return new ByteArrayInputStream(getBytes());
 		}
 
 		@Override

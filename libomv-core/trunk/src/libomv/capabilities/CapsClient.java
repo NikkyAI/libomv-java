@@ -30,6 +30,8 @@
 package libomv.capabilities;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,7 +59,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	}
 	
 	@Override
-	protected void finalize()
+	protected void finalize() throws Throwable
 	{
 		try
 		{
@@ -66,6 +68,10 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		catch (InterruptedException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			super.finalize();
 		}
 	}
 
@@ -162,6 +168,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 * @param callback The callback to call for reporting of failure, success or cancel and returning a response to
 	 * @param timeout The timeout in ms to wait for a request
 	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
+	 * @throws IOException 
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
@@ -180,6 +187,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 * @param data The OSD data
 	 * @param format The OSD data format to serialize the data into
 	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
+	 * @throws IOException 
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format)
 	{
@@ -197,6 +205,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 * @param callback The callback to call for reporting of failure or success or null
 	 * @param timeout The timeout in ms to wait for a request
 	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
+	 * @throws IOException 
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, FutureCallback<OSD> callback, long timeout)
 	{
@@ -217,7 +226,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, String encoding,
-			                           FutureCallback<OSD> callback, long timeout) throws IOException
+			                           FutureCallback<OSD> callback, long timeout)
 	{
 		AbstractHttpEntity entity = new OSDEntity(data, format);
 		entity.setContentEncoding(encoding);
@@ -233,13 +242,19 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		public OSDEntity(OSD osd, OSDFormat format)
 		{
 			super();
-			bytes = null;
 			this.osd = osd;
 			this.format = format;
 			setContentType(OSDFormat.contentType(format));
 			setContentEncoding(OSDFormat.contentEncodingDefault(format));
 		}
 
+		private byte[] getBytes() throws IOException
+		{
+			if (bytes == null)
+				bytes = OSDParser.serializeToBytes(osd, format, false, getContentEncoding().getValue());
+			return bytes;
+		}
+		
 		@Override
 		public boolean isRepeatable()
 		{
@@ -249,25 +264,30 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		@Override
 		public long getContentLength()
 		{
+			try
+			{
+				return getBytes().length;
+			} 
+			catch (IOException e)
+			{
+			}
 			return -1;
 		}
 
 		@Override
-		public InputStream getContent() throws IOException, IllegalStateException
+		public InputStream getContent() throws IOException
 		{
-			if (bytes == null)
-				bytes = OSDParser.serializeToBytes(osd, format, true, getContentEncoding().getValue());
-			return new ByteArrayInputStream(bytes);
+			return new ByteArrayInputStream(getBytes());
 		}
 
 		@Override
-		public void writeTo(OutputStream outstream) throws IOException
+		public void writeTo(OutputStream outstream) throws IOException, IllegalArgumentException
 		{
 			if (outstream == null)
 			{
 				throw new IllegalArgumentException("Output stream may not be null");
 			}
-			OSDParser.serialize(outstream, osd, format);
+			outstream.write(getBytes());
 		}
 
 		@Override

@@ -972,7 +972,7 @@ public class GridClient
 		{
 			for (GridInfo info : gridlist.values())
 			{
-				string += info.dump(); 
+				string += info.dump() + "\n"; 
 			}
 			
 		}
