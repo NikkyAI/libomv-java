@@ -336,8 +336,7 @@ public class Avatar extends Primitive
 	// choices
 	public Interests ProfileInterests;
 	// Movement control flags for avatars. Typically not set or used by clients.
-	// To move your avatar,
-	// use Client.Self.Movement instead
+	// To move your avatar, use Client.Self.Movement instead
 	public int ControlFlags;
 
 	// Contains the visual parameters describing the deformation of the avatar

@@ -748,12 +748,14 @@ public class Simulator extends Thread
 	{
 		synchronized (_ObjectsAvatars)
 		{
-			for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
+			Iterator<Entry<Integer, Avatar>> iter = _ObjectsAvatars.entrySet().iterator();
+			while (iter.hasNext())
 			{
+				Entry<Integer, Avatar> e = iter.next();
 				if (e.getValue().ID.equals(id))
 				{
 					if (remove)
-						_ObjectsAvatars.remove(e.getKey());
+						iter.remove();
 					return e.getValue();
 				}
 			}
@@ -788,12 +790,14 @@ public class Simulator extends Thread
 	{
 		synchronized (_ObjectsPrimitives)
 		{
-			for (Entry<Integer, Primitive> e : _ObjectsPrimitives.entrySet())
+			Iterator<Entry<Integer, Primitive>> iter = _ObjectsPrimitives.entrySet().iterator();
+			while (iter.hasNext())
 			{
+				Entry<Integer, Primitive> e = iter.next();
 				if (e.getValue().ID.equals(id))
 				{
 					if (remove)
-						_ObjectsPrimitives.remove(e.getKey());
+						iter.remove();
 					return e.getValue();
 				}
 			}

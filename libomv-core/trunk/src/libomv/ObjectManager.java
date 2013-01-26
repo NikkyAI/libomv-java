@@ -1055,7 +1055,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						{
 							for (Avatar avatar : sim.getObjectsAvatars().values())
 							{
-								if (avatar.Acceleration != Vector3.Zero && avatar.Velocity == Vector3.Zero)
+								if (!avatar.Acceleration.equals(Vector3.Zero) && !avatar.Velocity.equals(Vector3.Zero))
 								{
 									// avatar.Position += (avatar.Velocity +
 									// avatar.Acceleration * (0.5f * (adjSeconds -
@@ -2820,14 +2820,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				case Tree:
 				case NewTree:
 				case Prim:
-
-					boolean isNewObject;
-					synchronized (simulator.getObjectsPrimitives())
-					{
-						isNewObject = !simulator.getObjectsPrimitives().containsKey(block.ID);
-					}
-
 					Primitive prim = GetPrimitive(simulator, block.ID, block.FullID);
+					boolean isNewObject = prim.ID == null;
+					if (isNewObject)
+						prim.ID = block.FullID;
+
 					data = CreateConstructionData(prim, pcode, block);
 					// Textures
 					try
@@ -2835,9 +2832,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						objectupdate.Textures = new TextureEntry(block.getTextureEntry(), 0,
 								block.getTextureEntry().length);
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
-						Logger.Log("Failed to create Texture for object update.", LogLevel.Warning, e);
+						Logger.Log("Failed to create Texture for object update.", LogLevel.Warning, ex);
 					}
 
 					OnObjectDataBlockUpdate.dispatch(new ObjectDataBlockUpdateCallbackArgs(simulator, prim, data,
@@ -2851,8 +2848,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						continue;
 					}
 
-					// Automatically request ObjectProperties for prim if it was
-					// rezzed selected.
+					// Automatically request ObjectProperties for prim if it was rezzed selected.
 					if ((prim.Flags & PrimFlags.CreateSelected) != 0)
 					{
 						try
@@ -2866,8 +2862,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 
 					prim.NameValues = nameValues;
-					prim.LocalID = block.ID;
-					prim.ID = block.FullID;
 					prim.ParentID = block.ParentID;
 					prim.RegionHandle = update.RegionData.RegionHandle;
 					prim.Scale = block.Scale;
@@ -2942,21 +2936,12 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					prim.AngularVelocity = objectupdate.AngularVelocity;
 					// #endregion
 
-					OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation,
-							isNewObject));
-
+					OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject));
 					break;
-				// #endregion Prim and Foliage
+				    // #endregion Prim and Foliage
 
-				// #region Avatar
+				    // #region Avatar
 				case Avatar:
-
-					boolean isNewAvatar;
-					synchronized (simulator.getObjectsAvatars())
-					{
-						isNewAvatar = !simulator.getObjectsAvatars().containsKey(block.ID);
-					}
-
 					// Update some internals if this is our avatar
 					if (block.FullID.equals(_Client.Self.getAgentID()) && simulator.equals(_Client.Network.getCurrentSim()))
 					{
@@ -2978,6 +2963,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					// #region Create an Avatar from the decoded data
 
 					Avatar avatar = GetAvatar(simulator, block.ID, block.FullID);
+					boolean isNewAvatar = avatar.ID == null;
+					if (isNewAvatar)
+						avatar.ID = block.FullID;
 					data = CreateConstructionData(avatar, pcode, block);
 
 					objectupdate.Avatar = true;
@@ -2987,9 +2975,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						objectupdate.Textures = new TextureEntry(block.getTextureEntry(), 0,
 								block.getTextureEntry().length);
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
-						Logger.Log("Failed to create Texture for avatar update.", LogLevel.Warning, e);
+						Logger.Log("Failed to create Texture for avatar update.", LogLevel.Warning, ex);
 					}
 
 					OnObjectDataBlockUpdate.dispatch(new ObjectDataBlockUpdateCallbackArgs(simulator, avatar, data,
@@ -2997,8 +2985,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 					int oldSeatID = avatar.ParentID;
 
-					avatar.ID = block.FullID;
-					avatar.LocalID = block.ID;
 					avatar.Scale = block.Scale;
 					avatar.CollisionPlane = objectupdate.CollisionPlane;
 					avatar.Position = objectupdate.Position;
@@ -3023,11 +3009,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 					// #endregion Create an Avatar from the decoded data
 
-					OnAvatarUpdate.dispatch(new AvatarUpdateCallbackArgs(simulator, avatar,
-							update.RegionData.TimeDilation, isNewAvatar));
-
+					OnAvatarUpdate.dispatch(new AvatarUpdateCallbackArgs(simulator, avatar, update.RegionData.TimeDilation, isNewAvatar));
 					break;
-				// #endregion Avatar
+				    // #endregion Avatar
 				case ParticleSystem:
 					DecodeParticleUpdate(block);
 					// TODO: Create a callback for particle updates
@@ -3090,6 +3074,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ImprovedTerseObjectUpdatePacket terse = (ImprovedTerseObjectUpdatePacket) packet;
 		UpdateDilation(simulator, terse.RegionData.TimeDilation);
+		boolean objectTracking = _Client.Settings.getBool(LibSettings.OBJECT_TRACKING);
 
 		for (int i = 0; i < terse.ObjectData.length; i++)
 		{
@@ -3156,13 +3141,21 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				// #endregion Decode update data
 
-				Primitive obj = !_Client.Settings.getBool(LibSettings.OBJECT_TRACKING) ? null : (update.Avatar) ? (Primitive) GetAvatar(
-						simulator, update.LocalID, UUID.Zero) : (Primitive) GetPrimitive(simulator, update.LocalID,
-						UUID.Zero);
+				Primitive obj = null;
+				if (objectTracking)
+				{
+					if (update.Avatar)
+					{
+						obj = (Primitive) GetAvatar(simulator, update.LocalID, UUID.Zero);
+					}
+					else
+					{
+						obj = (Primitive) GetPrimitive(simulator, update.LocalID, UUID.Zero);
+					}
+				}
 
 				// Fire the pre-emptive notice (before we stomp the object)
-				OnTerseObjectUpdate.dispatch(new TerseObjectUpdateCallbackArgs(simulator, obj, update,
-						terse.RegionData.TimeDilation));
+				OnTerseObjectUpdate.dispatch(new TerseObjectUpdateCallbackArgs(simulator, obj, update, terse.RegionData.TimeDilation));
 
 				// #region Update _Client.Self
 				if (update.LocalID == _Client.Self.getLocalID())
@@ -3175,7 +3168,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					_Client.Self.setAngularVelocity(update.AngularVelocity);
 				}
 				// #endregion Update _Client.Self
-				if (obj != null && _Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+				if (obj != null && objectTracking)
 				{
 					obj.Position = update.Position;
 					obj.Rotation = update.Rotation;
@@ -3187,7 +3180,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					obj.PrimData.State = update.State;
 					obj.Textures = update.Textures;
 				}
-
 			}
 			catch (Throwable ex)
 			{
@@ -3236,16 +3228,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			// /#endregion Relevance check
 
-			boolean isNew;
-			synchronized (simulator.getObjectsPrimitives())
-			{
-				isNew = !simulator.getObjectsPrimitives().containsKey(localid);
-			}
-
 			Primitive prim = GetPrimitive(simulator, localid, FullID);
+			boolean isNewObject = prim.ID == null;
+			if (isNewObject)
+				prim.ID = FullID;
 
-			prim.LocalID = localid;
-			prim.ID = FullID;
 			prim.Flags = PrimFlags.setValue(block.UpdateFlags);
 			prim.PrimData = prim.new ConstructionData();
 			prim.PrimData.PCode = pcode;
@@ -3428,7 +3415,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			// #endregion
 
-			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNew));
+			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject));
 		}
 	}
 
@@ -3834,22 +3821,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
 	{
-		return GetPrimitive(simulator, localID, fullID, true);
-	}
-	
-	/**
-	 * Find the object with localID in the simulator and add it with fullID if
-	 * it is not there
-	 * 
-	 * @param simulator The simulator in which the object is located
-	 * @param localID The simulator localID for this object
-	 * @param fullID The full object ID used to add a new object to the simulator
-	 *            list, when the object could not be found.
-	 * @param createIfMissing Create the item if it doesn't exist
-	 * @return the object that corresponds to the localID
-	 */
-	protected Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, boolean createIfMissing)
-	{
 		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
 			synchronized (simulator.getObjectsPrimitives())
@@ -3863,11 +3834,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim = simulator.findPrimitive(fullID, true);
 				if (prim == null)
 				{
-					if (!createIfMissing)
-					    return null;
-
 					prim = new Primitive();
-					prim.ID = fullID;
 					prim.RegionHandle = simulator.getHandle();
 				}
 				else
@@ -3890,12 +3857,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Find the avatar with localID in the simulator and add it with fullID if
 	 * it is not there
 	 * 
-	 * @param simulator
-	 *            The simulator in which the avatar is located
-	 * @param localID
-	 *            The simulator localID for this avatar
-	 * @param fullID
-	 *            The full avatar ID used to add a new avatar object to the
+	 * @param simulator The simulator in which the avatar is located
+	 * @param localID The simulator localID for this avatar
+	 * @param fullID The full avatar ID used to add a new avatar object to the
 	 *            simulator list, when the avatar could not be found.
 	 * @return the avatar object that corresponds to the localID
 	 */
@@ -3907,7 +3871,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			synchronized (avatars)
 			{
 				Avatar avatar = avatars.get(localID);
-
 				if (avatar != null)
 				{
 					return avatar;
@@ -3917,7 +3880,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				if (avatar == null)
 				{
 					avatar = new Avatar();
-					avatar.ID = fullID;
 					avatar.RegionHandle = simulator.getHandle();
 				}
 				else
@@ -3935,6 +3897,5 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		}
 		return new Avatar();
 	}
-
     // #endregion Object Tracking Link
 }
