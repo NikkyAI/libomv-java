@@ -38,7 +38,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
@@ -55,7 +54,9 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.assets.AssetItem.AssetType;
+import libomv.capabilities.AsyncHTTPClient;
 import libomv.capabilities.CapsClient;
+import libomv.capabilities.RpcClient;
 import libomv.inventory.InventoryFolder;
 import libomv.packets.EconomyDataRequestPacket;
 import libomv.types.UUID;
@@ -939,10 +940,9 @@ public class LoginManager
 					String[] list = (String[])value;
 					if (list.length == 3)
 					{
-						float x, y, z;
-						x = Helpers.TryParseFloat(list[0]);
-						y = Helpers.TryParseFloat(list[1]);
-						z = Helpers.TryParseFloat(list[2]);
+						float x = Helpers.TryParseFloat(list[0]),
+						      y = Helpers.TryParseFloat(list[1]),
+						      z = Helpers.TryParseFloat(list[2]);
 
 						return new Vector3(x, y, z);
 					}
@@ -1073,6 +1073,7 @@ public class LoginManager
 	// #region Private Members
 	private GridClient _Client;
 	private TimeoutEventQueue<LoginStatus> LoginEvents = new TimeoutEventQueue<LoginStatus>();
+	private AsyncHTTPClient<OSD> httpClient;
 
 	// #endregion
 
@@ -1368,10 +1369,9 @@ public class LoginManager
 
 		try
 		{
-			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
+			boolean llsd = _Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN);
+			if (llsd)
 			{
-				// #region LLSD Based Login
-
 				// Create the CAPS login structure
 				OSDMap loginLLSD = new OSDMap();
 				loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
@@ -1386,6 +1386,8 @@ public class LoginManager
 				loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
 				loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
 				loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
+				if (!llsd)
+					loginLLSD.put("last_exec_event", OSD.FromInteger(0));
 
 				OSDArray optionsOSD;
 				// Create the options LLSD array
@@ -1417,11 +1419,23 @@ public class LoginManager
 				}
 				loginLLSD.put("options", optionsOSD);
 
-				// Make the CAPS POST for login
-				CapsClient loginRequest = new CapsClient("RequestLogin");
-				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml,
-						new LoginReplyLLSDHandler(loginParams), loginParams.Timeout);
-				// #endregion
+				LoginReplyHandler handler = new LoginReplyHandler(loginParams); 
+				if (!_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
+				{
+					// Make the CAPS POST for login
+					CapsClient loginRequest = new CapsClient("RequestLogin");
+				    httpClient = loginRequest;
+				    loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
+				}
+				else
+				{
+					// Make the RPC call for login
+					OSDArray request = new OSDArray(1);
+					request.add(loginLLSD);
+				    RpcClient loginRequest = new RpcClient("RequestLogin");
+				    httpClient = loginRequest;
+				    loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
+				}
 			}
 			else
 			{
@@ -1574,11 +1588,11 @@ public class LoginManager
 	 * @param result
 	 * @param error
 	 */
-	private class LoginReplyLLSDHandler implements FutureCallback<OSD>
+	private class LoginReplyHandler implements FutureCallback<OSD>
 	{
 		private final LoginParams loginParams;
 
-		public LoginReplyLLSDHandler(LoginParams loginParams)
+		public LoginReplyHandler(LoginParams loginParams)
 		{
 			this.loginParams = loginParams;
 		}
@@ -1608,6 +1622,7 @@ public class LoginManager
 				try
 				{
 					HandleLoginResponse(reply, loginParams);
+					httpClient.shutdown(false);
 				}
 				catch (Exception ex)
 				{
@@ -1618,6 +1633,14 @@ public class LoginManager
 			{
 				// No LLSD response
 				UpdateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response", null);
+				try
+				{
+					httpClient.shutdown(false);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -1627,6 +1650,14 @@ public class LoginManager
 			Logger.Log(String.format("Login exception %s", ex.getMessage()), LogLevel.Error, _Client, ex);
 			// Connection error
 			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
+			try
+			{
+				httpClient.shutdown(false);
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -1634,6 +1665,14 @@ public class LoginManager
 		{
 			// Connection canceled
 			UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "canceled", null);
+			try
+			{
+				httpClient.shutdown(false);
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 

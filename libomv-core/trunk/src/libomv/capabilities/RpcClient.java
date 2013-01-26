@@ -30,6 +30,8 @@ package libomv.capabilities;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -168,6 +170,9 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				serializer.setOutput(outstream, getContentEncoding().getValue());
 				methodCall(serializer, method, params);
 				bytes = outstream.toByteArray();
+				OutputStream out = new FileOutputStream(new File("rpc2login.log"));
+				out.write(bytes);
+				out.close();
 			}
 			return bytes;
 		}
@@ -230,8 +235,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			pullParser.nextTag();
 			pullParser.require(XmlPullParser.START_TAG, null, METHOD_RESPONSE);
 
-			pullParser.nextTag(); // either Tag.PARAMS (<params>) or
-									// Tag.FAULT (<fault>)
+			pullParser.nextTag(); // either Tag.PARAMS (<params>) or Tag.FAULT (<fault>)
 			String tag = pullParser.getName();
 			if (tag.equals(PARAMS))
 			{
@@ -291,12 +295,15 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			case URI:
 			case UUID:
 				serializer.startTag(null, TYPE_STRING).text(data.AsString()).endTag(null, TYPE_STRING);
+			    break;
 			case Date:
 				String dateStr = dateFormat.format(data.AsDate());
 				serializer.startTag(null, TYPE_DATE_TIME_ISO8601).text(dateStr).endTag(null, TYPE_DATE_TIME_ISO8601);
+			    break;
 			case Binary:
 				String value = new String(Base64.encodeBase64(data.AsBinary()));
 				serializer.startTag(null, TYPE_BASE64).text(value).endTag(null, TYPE_BASE64);
+			    break;
 			case Array:
 				serializer.startTag(null, TYPE_ARRAY).startTag(null, TAG_DATA);
 				OSDArray array = (OSDArray)data;
@@ -307,6 +314,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 					serializer.endTag(null, TAG_VALUE);
 				}
 				serializer.endTag(null, TAG_DATA).endTag(null, TYPE_ARRAY);
+			    break;
 			case Map:
 				serializer.startTag(null, TYPE_STRUCT);
 				OSDMap map = (OSDMap) data;
@@ -322,6 +330,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 					serializer.endTag(null, TAG_MEMBER);
 				}
 				serializer.endTag(null, TYPE_STRUCT);
+			    break;
 		}
 	}
 
@@ -446,7 +455,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 						{
 							memberName = parser.nextText();
 						}
-						else if (name.equals(TAG_VALUE))
+						else if (key.equals(TAG_VALUE))
 						{
 							memberValue = deserialize(parser);
 						}

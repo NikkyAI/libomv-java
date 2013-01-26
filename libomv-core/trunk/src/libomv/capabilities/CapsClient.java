@@ -251,7 +251,12 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		private byte[] getBytes() throws IOException
 		{
 			if (bytes == null)
+			{
 				bytes = OSDParser.serializeToBytes(osd, format, false, getContentEncoding().getValue());
+				OutputStream out = new FileOutputStream(new File("llsdlogin.log"));
+				out.write(bytes);
+				out.close();
+			}
 			return bytes;
 		}
 		
