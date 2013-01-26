@@ -86,7 +86,7 @@ public class GridManager implements PacketCallback
 	/* Type of grid item, such as telehub, event, populator location, etc. */
 	public enum GridItemType
 	{
-		Nothing, Telehub, PgEvent, MatureEvent, Popular, AgentLocations, LandForSale, Classified, AdultEvent, AdultLandForSale;
+		Nothing, Telehub, PgEvent, MatureEvent, Popular, Unused1, AgentLocations, LandForSale, Classified, AdultEvent, AdultLandForSale;
 
 		public static GridItemType convert(int value)
 		{
@@ -174,85 +174,69 @@ public class GridManager implements PacketCallback
 		}
 	}
 
-	/** Base class for Map Items */
-	public abstract class MapItem
+	/** Map Items */
+	public class MapItem
 	{
-		/* The Global X position of the item */
-		public int GlobalX;
-		/* The Global Y position of the item */
-		public int GlobalY;
+		private UUID ID;
+		private String Name;
+		private Vector3 GlobalPos;
 
-		/* Get the Local X position of the item */
-		public final int getLocalX()
+		/* Represents an agent or group of agents location */ 
+		public int AvatarCount;
+
+		/* For adult and normal land for sale */
+		public int Size;
+		public int Price;
+		
+		public boolean isInfoHub;
+
+		/* For evnts */
+		public Date DateTime;
+
+		public final UUID getUUID()
 		{
-			return GlobalX % 256;
+			return ID;
+		}
+		
+		public final String getName()
+		{
+			return Name;
+		}
+		
+		/* Get the Local X position of the item */
+		public final float getLocalX()
+		{
+			return GlobalPos.X % 256;
 		}
 
 		/* Get the Local Y position of the item */
-		public final int getLocalY()
+		public final float getLocalY()
 		{
-			return GlobalY % 256;
+			return GlobalPos.Y % 256;
 		}
 
+		public final Vector3 getGlobalPosition()
+		{
+			return GlobalPos;
+		}
+		
+		public final void setEvelation(float z)
+		{
+			GlobalPos.Z = z;
+		}
+		
 		/* Get the Handle of the region */
 		public final long getRegionHandle()
 		{
-			return Helpers.IntsToLong((GlobalX - (GlobalX % 256)), (GlobalY - (GlobalY % 256)));
+			return Helpers.IntsToLong((int)(GlobalPos.X - (GlobalPos.X % 256)), (int)(GlobalPos.Y - (GlobalPos.Y % 256)));
 		}
-	}
-
-	/* Represents an agent or group of agents location */
-	public class MapAgentLocation extends MapItem
-	{
-		public int AvatarCount;
-		public String Identifier;
-	}
-
-	/* Represents a Telehub location */
-	public class MapTelehub extends MapItem
-	{
-	}
-
-	/* Represents a non-adult parcel of land for sale */
-	public class MapLandForSale extends MapItem
-	{
-		public int Size;
-		public int Price;
-		public String Name;
-		public UUID ID;
-	}
-
-	/* Represents an Adult parcel of land for sale */
-	public class MapAdultLandForSale extends MapItem
-	{
-		public int Size;
-		public int Price;
-		public String Name;
-		public UUID ID;
-	}
-
-	/* Represents a PG Event */
-	public class MapPGEvent extends MapItem
-	{
-		public DirectoryManager.EventFlags Flags; // Extra
-		public DirectoryManager.EventCategories Category; // Extra2
-		public String Description;
-	}
-
-	/* Represents a Mature event */
-	public class MapMatureEvent extends MapItem
-	{
-		public DirectoryManager.EventFlags Flags; // Extra
-		public DirectoryManager.EventCategories Category; // Extra2
-		public String Description;
-	}
-
-	/* Represents an Adult event */
-	public class MapAdultEvent extends MapItem
-	{
-		public DirectoryManager.EventFlags Flags; // Extra
-		public DirectoryManager.EventCategories Category; // Extra2
-		public String Description;
+		
+		public MapItem(float x, float y, UUID id, String name)
+		{
+			GlobalPos = new Vector3(x, y, 40);
+			ID = id;
+			Name = name;
+		}
 	}
 
 	/* Unknown */
@@ -296,7 +280,7 @@ public class GridManager implements PacketCallback
 	private Vector3 sunAngVelocity;
 	private long timeOfDay;
 
-	private GridClient Client;
+	private GridClient _Client;
 
 	public CallbackHandler<GridLayerCallbackArgs> OnGridLayer = new CallbackHandler<GridLayerCallbackArgs>();
 	public CallbackHandler<GridItemsCallbackArgs> OnGridItems = new CallbackHandler<GridItemsCallbackArgs>();
@@ -309,16 +293,16 @@ public class GridManager implements PacketCallback
 	// GridManager instance</param>
 	public GridManager(GridClient client)
 	{
-		Client = client;
+		_Client = client;
 		Regions = new HashMap<String, GridRegion>();
 		sunDirection = new Vector3(0.0f);
 
-		Client.Network.RegisterCallback(PacketType.MapLayerReply, this);
-		Client.Network.RegisterCallback(PacketType.MapBlockReply, this);
-		Client.Network.RegisterCallback(PacketType.MapItemReply, this);
-		Client.Network.RegisterCallback(PacketType.SimulatorViewerTimeMessage, this);
-		Client.Network.RegisterCallback(PacketType.CoarseLocationUpdate, this);
-		Client.Network.RegisterCallback(PacketType.RegionIDAndHandleReply, this);
+		_Client.Network.RegisterCallback(PacketType.MapLayerReply, this);
+		_Client.Network.RegisterCallback(PacketType.MapBlockReply, this);
+		_Client.Network.RegisterCallback(PacketType.MapItemReply, this);
+		_Client.Network.RegisterCallback(PacketType.SimulatorViewerTimeMessage, this);
+		_Client.Network.RegisterCallback(PacketType.CoarseLocationUpdate, this);
+		_Client.Network.RegisterCallback(PacketType.RegionIDAndHandleReply, this);
 	}
 
 	@Override
@@ -383,7 +367,7 @@ public class GridManager implements PacketCallback
 			@Override
 			public void failed(Exception ex)
 			{
-                Logger.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), LogLevel.Error, Client);
+                Logger.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), LogLevel.Error, _Client);
 			}
 
 			@Override
@@ -392,7 +376,7 @@ public class GridManager implements PacketCallback
 			}
 		}
 
-		URI url = Client.Network.getCapabilityURI("MapLayer");
+		URI url = _Client.Network.getCapabilityURI("MapLayer");
 		if (url != null)
 		{
 			OSDMap body = new OSDMap();
@@ -401,7 +385,7 @@ public class GridManager implements PacketCallback
 			try
 			{
 				CapsClient request = new CapsClient("RequestMapLayer");
-				request.executeHttpPost(url, body, OSDFormat.Xml, new MapLayerCallback(), Client.Settings.CAPS_TIMEOUT);
+				request.executeHttpPost(url, body, OSDFormat.Xml, new MapLayerCallback(), _Client.Settings.CAPS_TIMEOUT);
 			}
 			catch (Exception e)
 			{
@@ -423,14 +407,14 @@ public class GridManager implements PacketCallback
 	{
 		MapNameRequestPacket request = new MapNameRequestPacket();
 
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.AgentData.Flags = (layer != null) ? layer.ordinal() : 0;
 		request.AgentData.EstateID = 0; // Filled in on the sim
 		request.AgentData.Godlike = false; // Filled in on the sim
 		request.NameData.setName(Helpers.StringToBytes(regionName));
 
-		Client.Network.sendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -449,8 +433,8 @@ public class GridManager implements PacketCallback
 	{
 		MapBlockRequestPacket request = new MapBlockRequestPacket();
 
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.AgentData.Flags = layer.ordinal();
 		request.AgentData.Flags |= returnNonExistent ? 0x10000 : 0;
 		request.AgentData.EstateID = 0; // Filled in at the simulator
@@ -461,7 +445,7 @@ public class GridManager implements PacketCallback
 		request.PositionData.MaxX = (short) (maxX & 0xFFFF);
 		request.PositionData.MaxY = (short) (maxY & 0xFFFF);
 
-		Client.Network.sendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	// Fire off packet for Estate/Island sim data request.
@@ -469,13 +453,13 @@ public class GridManager implements PacketCallback
 	{
 		MapLayerRequestPacket request = new MapLayerRequestPacket();
 
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.AgentData.Flags = 0;
 		request.AgentData.EstateID = 0;
 		request.AgentData.Godlike = false;
 
-		Client.Network.sendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
     /**
@@ -526,8 +510,8 @@ public class GridManager implements PacketCallback
 	public final void RequestMapItems(long regionHandle, GridItemType item, GridLayerType layer) throws Exception
 	{
 		MapItemRequestPacket request = new MapItemRequestPacket();
-		request.AgentData.AgentID = Client.Self.getAgentID();
-		request.AgentData.SessionID = Client.Self.getSessionID();
+		request.AgentData.AgentID = _Client.Self.getAgentID();
+		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.AgentData.Flags = layer.ordinal();
 		request.AgentData.Godlike = false; // Filled in on the sim
 		request.AgentData.EstateID = 0; // Filled in on the sim
@@ -535,7 +519,7 @@ public class GridManager implements PacketCallback
 		request.RequestData.ItemType = item.ordinal();
 		request.RequestData.RegionHandle = regionHandle;
 
-		Client.Network.sendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	/* Request data for all mainland (Linden managed) simulators */
@@ -555,7 +539,7 @@ public class GridManager implements PacketCallback
 	{
 		RegionHandleRequestPacket request = new RegionHandleRequestPacket();
 		request.RegionID = regionID;
-		Client.Network.sendPacket(request);
+		_Client.Network.sendPacket(request);
 	}
 
 	/**
@@ -608,7 +592,7 @@ public class GridManager implements PacketCallback
 		Callback<GridRegionCallbackArgs> callback = new OnGridRegionCallback(name);
 		OnGridRegion.add(callback);
 		RequestMapRegion(name, type);
-		name.wait(Client.Settings.MAP_REQUEST_TIMEOUT);
+		name.wait(_Client.Settings.MAP_REQUEST_TIMEOUT);
 		OnGridRegion.remove(callback);
 
 		region = Regions.get(name);
@@ -722,7 +706,7 @@ public class GridManager implements PacketCallback
 	 */
 	private void HandleMapItemReply(Packet packet, Simulator simulator) throws Exception
 	{
-		if (OnGridItems != null)
+		if (OnGridItems.count() > 0)
 		{
 			MapItemReplyPacket reply = (MapItemReplyPacket) packet;
 			GridItemType type = GridItemType.convert(reply.ItemType);
@@ -731,77 +715,41 @@ public class GridManager implements PacketCallback
 			for (int i = 0; i < reply.Data.length; i++)
 			{
 				String name = Helpers.BytesToString(reply.Data[i].getName());
+				MapItem item = new MapItem(reply.Data[i].X & 0xFFFFFFFFL, reply.Data[i].Y & 0xFFFFFFFFL, reply.Data[i].ID, name);
 
 				switch (type)
 				{
-					case AgentLocations:
-						MapAgentLocation location = new MapAgentLocation();
-						location.GlobalX = reply.Data[i].X;
-						location.GlobalY = reply.Data[i].Y;
-						location.Identifier = name;
-						location.AvatarCount = reply.Data[i].Extra;
-						items.add(location);
+					case Telehub:
+						item.isInfoHub = reply.Data[i].Extra2 != 0;
+						items.add(item);
 						break;
-					case Classified:
-						// FIXME:
-						Logger.Log("FIXME: Classified MapItem", LogLevel.Error);
+					case AgentLocations:
+						item.AvatarCount = reply.Data[i].Extra;
+						items.add(item);
 						break;
 					case LandForSale:
-						MapLandForSale landsale = new MapLandForSale();
-						landsale.GlobalX = reply.Data[i].X;
-						landsale.GlobalY = reply.Data[i].Y;
-						landsale.ID = reply.Data[i].ID;
-						landsale.Name = name;
-						landsale.Size = reply.Data[i].Extra;
-						landsale.Price = reply.Data[i].Extra2;
-						items.add(landsale);
-						break;
-					case MatureEvent:
-						MapMatureEvent matureEvent = new MapMatureEvent();
-						matureEvent.GlobalX = reply.Data[i].X;
-						matureEvent.GlobalY = reply.Data[i].Y;
-						matureEvent.Description = name;
-						matureEvent.Flags = DirectoryManager.EventFlags.setValue(reply.Data[i].Extra2);
-						items.add(matureEvent);
+					case AdultLandForSale:
+						item.Size = reply.Data[i].Extra;
+						item.Price = reply.Data[i].Extra2;
+						items.add(item);
 						break;
 					case PgEvent:
-						MapPGEvent PGEvent = new MapPGEvent();
-						PGEvent.GlobalX = reply.Data[i].X;
-						PGEvent.GlobalY = reply.Data[i].Y;
-						PGEvent.Description = name;
-						PGEvent.Flags = DirectoryManager.EventFlags.setValue(reply.Data[i].Extra2);
-						items.add(PGEvent);
+					case MatureEvent:
+					case AdultEvent:
+						item.DateTime = Helpers.UnixTimeToDateTime(reply.Data[i].Extra);
+						item.setEvelation(reply.Data[i].Extra2);
+						items.add(item);
+						break;
+					case Classified:
+						// DEPRECATED: not used anymore
+						Logger.Log("FIXME: Classified MapItem", LogLevel.Error, _Client);
 						break;
 					case Popular:
 						// FIXME:
-						Logger.Log("FIXME: Popular MapItem", LogLevel.Error);
-						break;
-					case Telehub:
-						MapTelehub teleHubItem = new MapTelehub();
-						teleHubItem.GlobalX = reply.Data[i].X;
-						teleHubItem.GlobalY = reply.Data[i].Y;
-						items.add(teleHubItem);
-						break;
-					case AdultLandForSale:
-						MapAdultLandForSale adultLandsale = new MapAdultLandForSale();
-						adultLandsale.GlobalX = reply.Data[i].X;
-						adultLandsale.GlobalY = reply.Data[i].Y;
-						adultLandsale.ID = reply.Data[i].ID;
-						adultLandsale.Name = name;
-						adultLandsale.Size = reply.Data[i].Extra;
-						adultLandsale.Price = reply.Data[i].Extra2;
-						items.add(adultLandsale);
-						break;
-					case AdultEvent:
-						MapAdultEvent adultEvent = new MapAdultEvent();
-						adultEvent.GlobalX = reply.Data[i].X;
-						adultEvent.GlobalY = reply.Data[i].Y;
-						adultEvent.Description = name;
-						adultEvent.Flags = DirectoryManager.EventFlags.setValue(reply.Data[i].Extra2);
-						items.add(adultEvent);
+						Logger.Log("FIXME: Popular MapItem", LogLevel.Error, _Client);
 						break;
 					default:
-						Logger.Log("Unknown map item type " + type, LogLevel.Warning);
+						Logger.Log("Unknown map item type " + type, LogLevel.Warning, _Client);
 						break;
 				}
 			}
