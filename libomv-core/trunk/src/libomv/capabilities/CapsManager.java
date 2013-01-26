@@ -72,7 +72,6 @@ public class CapsManager extends Thread
 	{
 		return _SeedCapsURI;
 	}
-
 	
 	private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
 
@@ -115,11 +114,11 @@ public class CapsManager extends Thread
 	{
 		synchronized (_Running)
 		{
-			return _Running != CapsState.Closed;
+			return _Running == CapsState.Closed;
 		}
 	}
 	
-	private final boolean isActive()
+	private final boolean isActiveAndClose()
 	{
 		synchronized (_Running)
 		{
@@ -174,7 +173,7 @@ public class CapsManager extends Thread
 
 	public final void disconnect(boolean immediate) throws InterruptedException
 	{
-		if (isActive())
+		if (isActiveAndClose())
 		{
 			Logger.Log("Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"), LogLevel.Info, _Simulator.getClient());
 			if (_Client != null)
@@ -340,7 +339,7 @@ public class CapsManager extends Thread
 		OSDArray events = null;
 		int errorCount = 0;
 
-		while (isClosed())
+		while (!isClosed())
 		{
 			osdRequest.put("done", OSD.FromBoolean(isClosing()));
 
