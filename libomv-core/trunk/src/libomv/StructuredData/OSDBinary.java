@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 public class OSDBinary extends OSD
@@ -94,6 +95,12 @@ public class OSDBinary extends OSD
 		{
 			return null;
 		}
+	}
+
+	@Override
+	public UUID AsUUID()
+	{
+		return new UUID(value);
 	}
 
 	@Override

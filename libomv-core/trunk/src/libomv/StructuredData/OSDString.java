@@ -38,7 +38,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import libomv.types.Color4;
+import libomv.types.Quaternion;
 import libomv.types.UUID;
+import libomv.types.Vector2;
+import libomv.types.Vector3;
+import libomv.types.Vector3d;
+import libomv.types.Vector4;
 import libomv.utils.Helpers;
 
 public class OSDString extends OSD
@@ -135,6 +141,84 @@ public class OSDString extends OSD
 		return Helpers.TryParseDouble(value);
 	}
 
+	@Override
+	public Vector2 AsVector2()
+	{
+		try
+		{
+		    return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector2();
+	    }
+		catch (Exception ex)
+		{
+			return Vector2.Zero;
+		}
+	}
+
+	@Override
+	public Vector3 AsVector3()
+	{
+		try
+		{
+		    return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector3();
+	    }
+		catch (Exception ex)
+		{
+			return Vector3.Zero;
+		}
+	}
+
+	@Override
+	public Vector3d AsVector3d()
+	{
+		try
+		{
+		    return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector3d();
+	    }
+		catch (Exception ex)
+		{
+			return Vector3d.Zero;
+		}
+	}
+
+	@Override
+	public Vector4 AsVector4()
+	{
+		try
+		{
+		    return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector4();
+	    }
+		catch (Exception ex)
+		{
+			return Vector4.Zero;
+		}
+	}
+
+	@Override
+	public Quaternion AsQuaternion()
+	{
+		try
+		{
+		    return OSDParser.deserialize(this.value, OSDFormat.Notation).AsQuaternion();
+	    }
+		catch (Exception ex)
+		{
+			return Quaternion.Identity;
+		}
+	}
+
+	@Override
+	public Color4 AsColor4()
+	{
+		try
+		{
+		    return OSDParser.deserialize(this.value, OSDFormat.Notation).AsColor4();
+	    }
+		catch (Exception ex)
+		{
+			return Color4.Black;
+		}
+	}
+	
 	@Override
 	public String AsString()
 	{
