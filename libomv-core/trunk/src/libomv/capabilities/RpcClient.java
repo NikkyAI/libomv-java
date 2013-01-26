@@ -30,8 +30,6 @@ package libomv.capabilities;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -170,9 +168,6 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				serializer.setOutput(outstream, getContentEncoding().getValue());
 				methodCall(serializer, method, params);
 				bytes = outstream.toByteArray();
-				OutputStream out = new FileOutputStream(new File("rpc2login.log"));
-				out.write(bytes);
-				out.close();
 			}
 			return bytes;
 		}

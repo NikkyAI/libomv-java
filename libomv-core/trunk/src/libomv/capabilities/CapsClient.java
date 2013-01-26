@@ -30,8 +30,6 @@
 package libomv.capabilities;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -253,9 +251,6 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 			if (bytes == null)
 			{
 				bytes = OSDParser.serializeToBytes(osd, format, false, getContentEncoding().getValue());
-				OutputStream out = new FileOutputStream(new File("llsdlogin.log"));
-				out.write(bytes);
-				out.close();
 			}
 			return bytes;
 		}
