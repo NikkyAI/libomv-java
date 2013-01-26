@@ -32,18 +32,10 @@ package libomv;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
-import java.security.KeyStore;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.nio.concurrent.FutureCallback;
-
-import net.xmlrpc.XMLRPCClient;
 
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
@@ -457,159 +449,6 @@ public class LoginManager
             return this;
 		}
 
-		private LoginResponseData ParseLoginReply(Map<String, Object> reply)
-		{
-			if (reply.containsKey("login"))
-			{
-				Login = ParseString("login", reply);
-			}
-			Success = Login != null && Login.equals("true");
-			Message = ParseString("message", reply);
-			if (!Success)
-			{
-				if (Login != null && Login.equals("indeterminate"))
-				{
-					// Parse redirect options
-					NextUrl = ParseString("next_url", reply);
-					NextMethod = ParseString("next_method", reply);
-					NextDuration = ParseUInt("next_duration", reply);
-					NextOptions = ParseArray("next_options", reply);
-				}
-				else
-				{
-					// login failed
-					// Reason can be: tos, critical, key, update, optional, presence
-					Reason = ParseString("reason", reply);
-				}
-				return this;
-			}
-
-			// UDP Blacklist
-			if (reply.containsKey("udp_blacklist"))
-			{
-				UDPBlacklist = ParseString("udp_blacklist", reply);
-			}
-
-			AgentID = ParseUUID("agent_id", reply);
-			SessionID = ParseUUID("session_id", reply);
-			SecureSessionID = ParseUUID("secure_session_id", reply);
-			FirstName = ParseString("first_name", reply);
-			if (FirstName.startsWith("\""))
-			{
-				FirstName.substring(1);
-			}
-			if (FirstName.endsWith("\""))
-			{
-				FirstName.substring(0, FirstName.length() - 1);
-			}
-			LastName = ParseString("last_name", reply);
-			if (LastName.startsWith("\""))
-			{
-				LastName.substring(1);
-			}
-			if (LastName.endsWith("\""))
-			{
-				LastName.substring(0, LastName.length() - 1);
-			}
-			// "first_login" for brand new accounts
-			AgentAccessMax = ParseString("agent_access_max", reply);
-			if (AgentAccessMax.isEmpty())
-			{
-				// we're on an older sim version (probably an opensim)
-				AgentAccessMax = ParseString("agent_access", reply);
-			}
-			AgentAccessPref = ParseString("agent_region_access", reply);
-			AOTransition = ParseUInt("ao_transition", reply) == 1;
-			StartLocation = ParseString("start_location", reply);
-
-			CircuitCode = ParseUInt("circuit_code", reply);
-			try
-			{
-				SimIP = InetAddress.getByName(ParseString("sim_ip", reply));
-			}
-			catch (UnknownHostException e)
-			{
-				SimIP = null;
-			}
-			SimPort = (short) ParseUInt("sim_port", reply);
-			Region = Helpers.UIntsToLong(ParseUInt("region_x", reply), ParseUInt("region_y", reply));
-			RegionSize = new Vector2(ParseUInt("region_size_x", reply), ParseUInt("region_size_y", reply));
-
-			SeedCapability = ParseString("seed_capability", reply);
-			SecondsSinceEpoch = ParseUInt("seconds_since_epoch", reply);
-
-			// Home
-			HomeRegion = 0;
-			HomePosition = Vector3.Zero;
-			HomeLookAt = Vector3.Zero;
-			try
-			{
-				if (reply.containsKey("home"))
-				{
-					ParseHome(reply.get("home").toString());
-				}
-				LookAt = ParseVector3("look_at", reply);
-			}
-			catch (Exception ex)
-			{
-				Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
-			}
-
-			// TODO: add options parsing
-
-			// Buddy list
-			if (reply.containsKey("buddy-list") && reply.get("buddy-list") instanceof Object[])
-			{
-				Object[] buddyArray = (Object[]) reply.get("buddy-list");
-				BuddyList = new BuddyListEntry[buddyArray.length];
-				for (int i = 0; i < buddyArray.length; i++)
-				{
-					if (buddyArray[i] instanceof Map)
-					{
-						@SuppressWarnings("unchecked")
-						Map<String, Object> buddy = (Map<String, Object>) buddyArray[i];
-						BuddyList[i] = new BuddyListEntry();
-						BuddyList[i].buddy_id = ParseString("buddy_id", buddy);
-						BuddyList[i].buddy_rights_given = ParseUInt("buddy_rights_given", buddy);
-						BuddyList[i].buddy_rights_has = ParseUInt("buddy_rights_has", buddy);
-					}
-				}
-			}
-
-			InventoryRoot = ParseMappedUUID("inventory-root", "folder_id", reply);
-			InventorySkeleton = ParseInventorySkeleton("inventory-skeleton", reply);
-
-			LibraryOwner = ParseMappedUUID("inventory-lib-owner", "agent_id", reply);
-			LibraryRoot = ParseMappedUUID("inventory-lib-root", "folder_id", reply);
-			LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
-
-			Grid = ParseGridInfo(reply);
-			
-			if (reply.containsKey("max-agent-groups"))
-            {
-                MaxAgentGroups = ParseUInt("max-agent-groups", reply);
-            }
-            else
-            {
-            	// OpenSIM
-    			if (reply.containsKey("max_groups"))
-                    MaxAgentGroups = ParseUInt("max_groups", reply);
-            }
-			
-			MapServerUrl = ParseString("map_server_url", reply);
-
-            if (reply.containsKey("openid_url"))
-            {
-                OpenIDUrl = ParseString("openid_url", reply);
-            }
-
-            if (reply.containsKey("agent_appearance_service"))
-            {
-            	AgentAppearanceServiceURL = ParseString("agent_appearance_service", reply);
-            }
-            return this;
-		}
-
 		private void ParseHome(String value) throws ParseException, IOException
 		{
 			OSD osdHome = OSDParser.deserialize(value, OSDFormat.Notation);
@@ -724,100 +563,6 @@ public class LoginManager
 			return null;
 		}
 		
-		private GridInfo ParseGridInfo(Map<String, Object> reply)
-		{
-			GridInfo grid = _Client.new GridInfo();
-			boolean update = false;
-			if (reply.containsKey("gridname"))
-			{
-				grid.gridname = ParseString("gridname", reply);
-				update = true;
-			}
-			if (reply.containsKey("loginuri"))
-			{
-				grid.loginuri = ParseString("loginuri", reply);
-				update = true;
-			}
-			if (reply.containsKey("welcome"))
-			{
-				grid.loginpage = ParseString("welcome", reply);
-				update = true;
-			}
-			if (reply.containsKey("loginpage"))
-			{
-				grid.loginpage = ParseString("loginpage", reply);
-				update = true;
-			}
-			if (reply.containsKey("economy"))
-			{
-				grid.helperuri = ParseString("economy", reply);
-				update = true;
-			}
-			if (reply.containsKey("helperuri"))
-			{
-				grid.helperuri = ParseString("helperuri", reply);
-				update = true;
-			}
-			if (reply.containsKey("about"))
-			{
-				grid.website = ParseString("about", reply);
-				update = true;
-			}
-			if (reply.containsKey("website"))
-			{
-				grid.website = ParseString("website", reply);
-				update = true;
-			}
-			if (reply.containsKey("help"))
-			{
-				grid.support = ParseString("help", reply);
-				update = true;
-			}
-			if (reply.containsKey("support"))
-			{
-				grid.support = ParseString("support", reply);
-				update = true;
-			}
-			if (reply.containsKey("register"))
-			{
-				grid.register = ParseString("register", reply);
-				update = true;
-			}
-			if (reply.containsKey("account"))
-			{
-				grid.register = ParseString("account", reply);
-				update = true;
-			}
-			if (reply.containsKey("password"))
-			{
-				grid.passworduri = ParseString("password", reply);
-				update = true;
-			}
-			if (reply.containsKey("search"))
-			{
-				grid.searchurl = ParseString("search", reply);
-				update = true;
-			}
-			if (reply.containsKey("currency"))
-			{
-				grid.currencySym = ParseString("currency", reply);
-				update = true;
-			}
-			if (reply.containsKey("real_currency"))
-			{
-				grid.realCurrencySym = ParseString("real_currency", reply);
-				update = true;
-			}
-			if (reply.containsKey("directory_fee"))
-			{
-				grid.directoryFee = ParseString("directory_fee", reply);
-				update = true;
-			}
-			if (update)
-				return grid;
-			return null;
-		}
-		
 		private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply)
 		{
 			UUID ownerID;
@@ -851,108 +596,11 @@ public class LoginManager
 			return null;
 		}
 
-		private InventoryFolder[] ParseInventorySkeleton(String key, Map<String, Object> reply)
-		{
-			UUID ownerID;
-			if (key.equals("inventory-skel-lib"))
-			{
-				ownerID = LibraryOwner;
-			}
-			else
-			{
-				ownerID = AgentID;
-			}
-
-			if (reply.containsKey(key) && reply.get(key) instanceof Object[])
-			{
-				Object[] array = (Object[]) reply.get(key);
-				InventoryFolder[] folders = new InventoryFolder[array.length];
-				for (int i = 0; i < array.length; i++)
-				{
-					if (array[i] instanceof Map)
-					{
-						@SuppressWarnings("unchecked")
-						Map<String, Object> map = (Map<String, Object>) array[i];
-						folders[i] = new InventoryFolder(ParseUUID("folder_id", map), ParseUUID("parent_id", map), ownerID);
-						folders[i].name = ParseString("name", map);
-						folders[i].preferredType = AssetType.setValue(ParseUInt("type_default", map));
-						folders[i].version = ParseUInt("version", map);
-					}
-				}
-				return folders;
-			}
-			return null;
-		}
-		// #region Parsing Helpers
-		private int ParseUInt(String key, Map<String, Object> reply)
-		{
-			if (reply.containsKey(key))
-			{
-				Object value = reply.get(key);
-				if (value instanceof Integer)
-				{
-					return (Integer) value;
-				}
-			}
-			return 0;
-		}
-
-		private UUID ParseUUID(String key, Map<String, Object> reply)
-		{
-			if (reply.containsKey(key))
-			{
-				return new UUID(reply.get(key).toString());
-			}
-			return UUID.Zero;
-		}
-
-		private String ParseString(String key, Map<String, Object> reply)
-		{
-			if (reply.containsKey(key))
-			{
-				return reply.get(key).toString();
-			}
-			return Helpers.EmptyString;
-		}
-
 		private Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException
 		{
 			if (reply.containsKey(key))
 			{
-				OSD osd = reply.get(key);
-				if (osd.getType().equals(OSDType.String))
-				{
-					osd = OSDParser.deserialize(osd.AsString(), OSDFormat.Notation);
-				}
-				return osd.AsVector3();
-			}
-			return Vector3.Zero;
-		}
-
-		private Vector3 ParseVector3(String key, Map<String, Object> reply) throws ParseException, IOException
-		{
-			if (reply.containsKey(key))
-			{
-				Object value = reply.get(key);
-
-				if (value instanceof Object[])
-				{
-					String[] list = (String[])value;
-					if (list.length == 3)
-					{
-						float x = Helpers.TryParseFloat(list[0]),
-						      y = Helpers.TryParseFloat(list[1]),
-						      z = Helpers.TryParseFloat(list[2]);
-
-						return new Vector3(x, y, z);
-					}
-				}
-				else if (value instanceof String)
-				{
-					OSD osd = OSDParser.deserialize((String) value, OSDFormat.Notation);
-					if (osd != null && osd.getType().equals(OSDType.Array))
-						return ((OSDArray) osd).AsVector3();
-				}
+				return reply.get(key).AsVector3();
 			}
 			return Vector3.Zero;
 		}
@@ -975,39 +623,7 @@ public class LoginManager
 			}
 			return UUID.Zero;
 		}
-
-		private UUID ParseMappedUUID(String key, String key2, Map<String, Object> reply)
-		{
-			if (reply.containsKey(key) && reply.get(key) instanceof Object[])
-			{
-				Object[] array = (Object[])reply.get(key);
-				if (array.length == 1 && array[0] instanceof Map)
-				{
-					@SuppressWarnings("unchecked")
-					Map<String, Object> map = (Map<String, Object>) array[0];
-					return ParseUUID(key2, map);
-				}
-			}
-			return UUID.Zero;
-		}
-
-		private String[] ParseArray(String key, Map<String, Object> reply)
-		{
-			Object o = reply.get(key);
-			if (o instanceof Object[])
-			{
-				Object[] array = (Object[]) o;
-				String[] strings = new String[array.length];
-				for (int i = 0; i < array.length; i++)
-				{
-					strings[i] = array[i].toString();
-				}
-			}
-			return null;
-		}
-		// #endregion Parsing Helpers
 	}
-
 	// #endregion Structs
 
 	// #region Callback handlers
@@ -1370,154 +986,71 @@ public class LoginManager
 		try
 		{
 			boolean llsd = _Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN);
-			if (llsd)
+
+			// Create the CAPS login structure
+			OSDMap loginLLSD = new OSDMap();
+			loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
+			loginLLSD.put("last", OSD.FromString(loginParams.LastName));
+			loginLLSD.put("passwd", OSD.FromString(loginParams.Password));
+			loginLLSD.put("start", OSD.FromString(loginParams.Start));
+			loginLLSD.put("channel", OSD.FromString(loginParams.Channel));
+			loginLLSD.put("version", OSD.FromString(loginParams.Version));
+			loginLLSD.put("platform", OSD.FromString(loginParams.Platform));
+			loginLLSD.put("mac", OSD.FromString(loginParams.MAC));
+			loginLLSD.put("agree_to_tos", OSD.FromBoolean(loginParams.AgreeToTos));
+			loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
+			loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
+			loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
+			if (!llsd)
+				loginLLSD.put("last_exec_event", OSD.FromInteger(0));
+
+			OSDArray optionsOSD;
+			// Create the options LLSD array
+			if (loginParams.Options != null && loginParams.Options.length > 0)
 			{
-				// Create the CAPS login structure
-				OSDMap loginLLSD = new OSDMap();
-				loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
-				loginLLSD.put("last", OSD.FromString(loginParams.LastName));
-				loginLLSD.put("passwd", OSD.FromString(loginParams.Password));
-				loginLLSD.put("start", OSD.FromString(loginParams.Start));
-				loginLLSD.put("channel", OSD.FromString(loginParams.Channel));
-				loginLLSD.put("version", OSD.FromString(loginParams.Version));
-				loginLLSD.put("platform", OSD.FromString(loginParams.Platform));
-				loginLLSD.put("mac", OSD.FromString(loginParams.MAC));
-				loginLLSD.put("agree_to_tos", OSD.FromBoolean(loginParams.AgreeToTos));
-				loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
-				loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
-				loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
-				if (!llsd)
-					loginLLSD.put("last_exec_event", OSD.FromInteger(0));
-
-				OSDArray optionsOSD;
-				// Create the options LLSD array
-				if (loginParams.Options != null && loginParams.Options.length > 0)
+				optionsOSD = new OSDArray(loginParams.Options.length);
+				for (int i = 0; i < loginParams.Options.length; i++)
 				{
-					optionsOSD = new OSDArray(loginParams.Options.length);
-					for (int i = 0; i < loginParams.Options.length; i++)
-					{
-						optionsOSD.add(OSD.FromString(loginParams.Options[i]));
-					}
+					optionsOSD.add(OSD.FromString(loginParams.Options[i]));
+				}
 
-					for (String[] callbackOpts : CallbackOptions.values())
+				for (String[] callbackOpts : CallbackOptions.values())
+				{
+					if (callbackOpts != null)
 					{
-						if (callbackOpts != null)
+						for (int i = 0; i < callbackOpts.length; i++)
 						{
-							for (int i = 0; i < callbackOpts.length; i++)
+							if (!optionsOSD.contains(callbackOpts[i]))
 							{
-								if (!optionsOSD.contains(callbackOpts[i]))
-								{
-									optionsOSD.add(OSD.FromString(callbackOpts[i]));
-								}
+								optionsOSD.add(OSD.FromString(callbackOpts[i]));
 							}
 						}
 					}
-				}
-				else
-				{
-					optionsOSD = new OSDArray();					
-				}
-				loginLLSD.put("options", optionsOSD);
-
-				LoginReplyHandler handler = new LoginReplyHandler(loginParams); 
-				if (!_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
-				{
-					// Make the CAPS POST for login
-					CapsClient loginRequest = new CapsClient("RequestLogin");
-				    httpClient = loginRequest;
-				    loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
-				}
-				else
-				{
-					// Make the RPC call for login
-					OSDArray request = new OSDArray(1);
-					request.add(loginLLSD);
-				    RpcClient loginRequest = new RpcClient("RequestLogin");
-				    httpClient = loginRequest;
-				    loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
 				}
 			}
 			else
 			{
-				// #region XML-RPC Based Login Code
-
-				// Create the Hashtable for XmlRpcCs
-				HashMap<String, Object> loginXmlRpc = new HashMap<String, Object>();
-				loginXmlRpc.put("first", loginParams.FirstName);
-				loginXmlRpc.put("last", loginParams.LastName);
-				loginXmlRpc.put("passwd", loginParams.Password);
-				loginXmlRpc.put("start", loginParams.Start);
-				loginXmlRpc.put("channel", loginParams.Channel);
-				loginXmlRpc.put("version", loginParams.Version);
-				loginXmlRpc.put("platform", loginParams.Platform);
-				loginXmlRpc.put("mac", loginParams.MAC);
-				if (loginParams.AgreeToTos)
-				{
-					loginXmlRpc.put("agree_to_tos", "true");
-				}
-				if (loginParams.ReadCritical)
-				{
-					loginXmlRpc.put("read_critical", "true");
-				}
-				loginXmlRpc.put("id0", loginParams.ID0 != null ? loginParams.ID0 : Helpers.EmptyString);
-				loginXmlRpc.put("last_exec_event", 0);
-
-				ArrayList<String> options = new ArrayList<String>();
-				// Create the options array
-				if (loginParams.Options != null && loginParams.Options.length > 0)
-				{
-					for (int i = 0; i < loginParams.Options.length; i++)
-					{
-						options.add(loginParams.Options[i]);
-					}
-
-					for (String[] callbackOpts : CallbackOptions.values())
-					{
-						if (callbackOpts != null)
-						{
-							for (int i = 0; i < callbackOpts.length; i++)
-							{
-								if (!options.contains(callbackOpts[i]))
-								{
-									options.add(callbackOpts[i]);
-								}
-							}
-						}
-					}
-				}
-				loginXmlRpc.put("options", options);
-
-				final XMLRPCClient client = new XMLRPCClient(loginUri);
-				final Object[] request = new Object[] { loginXmlRpc };
-
-				if (loginUri.getScheme().equals("https"))
-				{
-					KeyStore ks = Helpers.getExtendedKeyStore();
-					ks.setCertificateEntry(loginUri.getHost(), Helpers.getCertificate(loginUri.getHost()));
-					client.register(new Scheme("https", 443, new SSLSocketFactory(ks)));
-				}
-
-				// Start the request
-				Thread requestThread = new Thread()
-				{
-					@Override
-					public void run()
-					{
-						try
-						{
-							Object data = client.callEx(loginParams.MethodName, request);
-							HandleLoginReplyXmlRpc(data, loginParams);
-						}
-						catch (Exception ex)
-						{
-							UpdateLoginStatus(LoginStatus.Failed, ex.toString(), ex.getClass().toString(), null);
-						}
-					}
-				};
-				requestThread.setName("XML-RPC Login");
-				requestThread.start();
+				optionsOSD = new OSDArray();					
 			}
-			// #endregion
+			loginLLSD.put("options", optionsOSD);
+
+			LoginReplyHandler handler = new LoginReplyHandler(loginParams); 
+			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
+			{
+				// Make the CAPS POST for login
+				CapsClient loginRequest = new CapsClient("RequestLogin");
+			    httpClient = loginRequest;
+			    loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
+			}
+			else
+			{
+				// Make the RPC call for login
+				OSDArray request = new OSDArray(1);
+				request.add(loginLLSD);
+			    RpcClient loginRequest = new RpcClient("RequestLogin");
+			    httpClient = loginRequest;
+			    loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -1539,46 +1072,6 @@ public class LoginManager
 		}
 		// Fire the login status callback
 		OnLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, reason, reply));
-	}
-
-	/**
-	 * Handles response from XML-RPC login replies
-	 * 
-	 * @param response
-	 *            the response object
-	 * @param the
-	 *            login params, used to start the next round on redirects
-	 * @throws Exception
-	 */
-	private void HandleLoginReplyXmlRpc(Object response, LoginParams loginParams) throws Exception
-	{
-		// Fetch the login response
-		if (response != null && response instanceof Map)
-		{
-			UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
-
-			@SuppressWarnings("unchecked")
-			Map<String, Object> result = (Map<String, Object>) response;
-			LoginResponseData reply = new LoginResponseData().ParseLoginReply(result);
-
-			if (reply.Success)
-			{
-				// Remove the quotes around our first name.
-				if (reply.FirstName.charAt(0) == '"')
-				{
-					reply.FirstName = reply.FirstName.substring(1);
-				}
-				if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"')
-				{
-					reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
-				}
-			}
-			HandleLoginResponse(reply, loginParams);
-		}
-		else
-		{
-			UpdateLoginStatus(LoginStatus.Failed, "Invalid or missing login response from the server", "bad response", null);
-		}
 	}
 
 	/**
