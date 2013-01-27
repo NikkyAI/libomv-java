@@ -118,6 +118,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.RefObject;
 
 // Handles all network traffic related to prims and avatar positions and
 // movement.
@@ -2813,6 +2814,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 			// Determine the object type and create the appropriate class
 			ConstructionData data;
+			RefObject<Boolean> isNewObject = new RefObject<Boolean>(false);
 			switch (pcode)
 			{
 				// #region Prim and Foliage
@@ -2820,11 +2822,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				case Tree:
 				case NewTree:
 				case Prim:
-					Primitive prim = GetPrimitive(simulator, block.ID, block.FullID);
-					boolean isNewObject = prim.ID == null;
-					if (isNewObject)
-						prim.ID = block.FullID;
-
+					Primitive prim = GetPrimitive(simulator, block.ID, block.FullID, isNewObject);
 					data = CreateConstructionData(prim, pcode, block);
 					// Textures
 					try
@@ -2936,7 +2934,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					prim.AngularVelocity = objectupdate.AngularVelocity;
 					// #endregion
 
-					OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject));
+					OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
 					break;
 				    // #endregion Prim and Foliage
 
@@ -2962,10 +2960,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 					// #region Create an Avatar from the decoded data
 
-					Avatar avatar = GetAvatar(simulator, block.ID, block.FullID);
-					boolean isNewAvatar = avatar.ID == null;
-					if (isNewAvatar)
-						avatar.ID = block.FullID;
+					Avatar avatar = GetAvatar(simulator, block.ID, block.FullID, isNewObject);
 					data = CreateConstructionData(avatar, pcode, block);
 
 					objectupdate.Avatar = true;
@@ -3009,7 +3004,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 					// #endregion Create an Avatar from the decoded data
 
-					OnAvatarUpdate.dispatch(new AvatarUpdateCallbackArgs(simulator, avatar, update.RegionData.TimeDilation, isNewAvatar));
+					OnAvatarUpdate.dispatch(new AvatarUpdateCallbackArgs(simulator, avatar, update.RegionData.TimeDilation, isNewObject.argvalue));
 					break;
 				    // #endregion Avatar
 				case ParticleSystem:
@@ -3146,11 +3141,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				{
 					if (update.Avatar)
 					{
-						obj = (Primitive) GetAvatar(simulator, update.LocalID, UUID.Zero);
+						obj = (Primitive) GetAvatar(simulator, update.LocalID, UUID.Zero, null);
 					}
 					else
 					{
-						obj = (Primitive) GetPrimitive(simulator, update.LocalID, UUID.Zero);
+						obj = (Primitive) GetPrimitive(simulator, update.LocalID, UUID.Zero, null);
 					}
 				}
 
@@ -3227,11 +3222,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 			}
 			// /#endregion Relevance check
-
-			Primitive prim = GetPrimitive(simulator, localid, FullID);
-			boolean isNewObject = prim.ID == null;
-			if (isNewObject)
-				prim.ID = FullID;
+			RefObject<Boolean> isNewObject = new RefObject<Boolean>(false);
+			Primitive prim = GetPrimitive(simulator, localid, FullID, isNewObject);
 
 			prim.Flags = PrimFlags.setValue(block.UpdateFlags);
 			prim.PrimData = prim.new ConstructionData();
@@ -3415,7 +3407,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			// #endregion
 
-			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject));
+			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
 		}
 	}
 
@@ -3819,7 +3811,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *            list, when the object could not be found.
 	 * @return the object that corresponds to the localID
 	 */
-	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID)
+	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
 		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
 		{
@@ -3835,7 +3827,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				if (prim == null)
 				{
 					prim = new Primitive();
+					prim.ID = fullID;
 					prim.RegionHandle = simulator.getHandle();
+					if (created != null)
+						created.argvalue = true;
 				}
 				else
 				{
@@ -3863,7 +3858,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *            simulator list, when the avatar could not be found.
 	 * @return the avatar object that corresponds to the localID
 	 */
-	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID)
+	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
 		if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 		{
@@ -3880,7 +3875,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				if (avatar == null)
 				{
 					avatar = new Avatar();
+					avatar.ID = fullID;
 					avatar.RegionHandle = simulator.getHandle();
+					if (created != null)
+						created.argvalue = true;
 				}
 				else
 				{
