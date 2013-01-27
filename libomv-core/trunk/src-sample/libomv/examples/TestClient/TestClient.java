@@ -223,12 +223,18 @@ public class TestClient extends GridClient implements PacketCallback
 	
 	public void printResponse(String response, UUID toAgent) throws Exception
 	{
+		int length = response.length() - 1;
+
 		if (toAgent != null && toAgent.equals(MasterKey))
 		{
+			if (response.charAt(length) == '\n')
+				response = response.substring(0, length);
 			Self.InstantMessage(toAgent, response);
 		}
 		else
 		{
+			if (response.charAt(length) != '\n')
+				response += "\n";
 			System.out.println(response);
 		}
 	}

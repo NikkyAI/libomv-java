@@ -29,7 +29,6 @@ import java.util.List;
 
 import libomv.GridManager.GridItemType;
 import libomv.GridManager.GridLayerType;
-import libomv.GridManager.MapAgentLocation;
 import libomv.GridManager.MapItem;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
@@ -77,10 +76,9 @@ public class AgentLocationsCommand extends Command
 
             for (int i = 0; i < items.size(); i++)
             {
-                MapAgentLocation location = (MapAgentLocation)items.get(i);
+                MapItem location = items.get(i);
 
-                ret.append(String.format("%d avatar(s) at %d,%d", location.AvatarCount, location.getLocalX(),
-                    location.getLocalY()));
+                ret.append(String.format("%d avatar(s) at %.1f/%.1f\n", location.AvatarCount, location.getLocalX(), location.getLocalY()));
             }
             return ret.toString();
         }

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2009, openmetaverse.org
- * Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2012, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
@@ -23,49 +23,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.examples.TestClient.Commands.Friends;
+package libomv.examples.TestClient.Commands.Stats;
 
-import libomv.FriendsManager.FriendInfo;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
 
-// Shows a list of friends
-public class FriendsCommand extends Command
-{        
-    public FriendsCommand(TestClient testClient)
+public class DilationCommand extends Command
+{
+	public DilationCommand(TestClient testClient)
     {
-        Name = "friends";
-        Description = "List avatar friends. Usage: friends";
-        Category = CommandCategory.Friends;
+        Name = "dilation";
+        Description = "Shows time dilation for current sim. Usage: dilation";
+        Category = CommandCategory.Simulator;
     }
 
-    @Override
+	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        // initialize a StringBuilder object used to return the results
-        StringBuilder sb = new StringBuilder(Client.Self.getName() + "has ");
-
-        // Only iterate the Friends dictionary if we actually have friends!
-        int count = Client.Friends.getFriendList().size();
-        if (count > 0)
-        {
-            // iterate over the InternalDictionary using a delegate to populate
-            // our StringBuilder output string
-            sb.append(count + (count == 1 ? " friend:\n" : " friends:\n"));
-            for (FriendInfo friend : Client.Friends.getFriendList().values())
-            {
-                // append the name of the friend to our output
-                sb.append(friend.getID() + ", " + friend.getName() + "\n");
-            }
-        }
-        else
-        {
-            // we have no friends :(
-            sb.append("no friends\n");   
-        }
-
-        // return the result
-        return sb.toString();
+        return String.format("Dilation is %f", Client.Network.getCurrentSim().Statistics.Dilation);
     }
 }

@@ -31,6 +31,7 @@ import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
 import libomv.utils.Callback;
+import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
 
 public class MapFriendCommand extends Command
@@ -48,15 +49,20 @@ public class MapFriendCommand extends Command
     @Override
 	public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        if (args.length != 1)
+        if (args.length < 1)
             return usage;
 
         UUID targetID = UUID.parse(args[0]);
         if (targetID == null)
         {
-        	for (FriendInfo friend : Client.Friends.getFriendList().values())
+            String friendName = Helpers.EmptyString;
+            for (int i = 0; i < args.length; i++)
+            	friendName += args[i] + " ";
+            friendName = friendName.trim();
+
+            for (FriendInfo friend : Client.Friends.getFriendList().values())
         	{
-        		if (friend.getName().equals(args[0]))
+        		if (friend.getName().equals(friendName))
         		{
         			targetID = friend.getID();
         			break;
