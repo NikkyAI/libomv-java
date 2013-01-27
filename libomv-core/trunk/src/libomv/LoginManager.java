@@ -1065,13 +1065,18 @@ public class LoginManager
 
 	private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply)
 	{
-		// If we reached a login resolution trigger the event
-		if (status == LoginStatus.Success || status == LoginStatus.Failed)
-		{
-			LoginEvents.set(status);
-		}
 		// Fire the login status callback
 		OnLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, reason, reply));
+
+		// If we reached a login resolution
+		if (status == LoginStatus.Success || status == LoginStatus.Failed)
+		{
+			// trigger the event
+			LoginEvents.set(status);
+			// register our client for cleanup
+			_Client.Network.addClosableClient(httpClient);
+			httpClient = null;
+		}
 	}
 
 	/**
@@ -1115,7 +1120,6 @@ public class LoginManager
 				try
 				{
 					HandleLoginResponse(reply, loginParams);
-					httpClient.shutdown(false);
 				}
 				catch (Exception ex)
 				{
@@ -1126,14 +1130,6 @@ public class LoginManager
 			{
 				// No LLSD response
 				UpdateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response", null);
-				try
-				{
-					httpClient.shutdown(false);
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
 			}
 		}
 
@@ -1143,14 +1139,6 @@ public class LoginManager
 			Logger.Log(String.format("Login exception %s", ex.getMessage()), LogLevel.Error, _Client, ex);
 			// Connection error
 			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
-			try
-			{
-				httpClient.shutdown(false);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
 		}
 
 		@Override
@@ -1158,14 +1146,6 @@ public class LoginManager
 		{
 			// Connection canceled
 			UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "canceled", null);
-			try
-			{
-				httpClient.shutdown(false);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -1235,9 +1215,5 @@ public class LoginManager
 			UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason, reply);
 		}
 	}
-
 	// #endregion
-
-	// #region CallbackArgs
-
 }

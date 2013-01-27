@@ -51,6 +51,8 @@ import libomv.Simulator.RegionFlags;
 import libomv.Simulator.RegionProtocols;
 import libomv.Simulator.SimAccess;
 import libomv.Simulator.SimStatType;
+import libomv.StructuredData.OSD;
+import libomv.capabilities.AsyncHTTPClient;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.EnableSimulatorMessage;
@@ -405,7 +407,35 @@ public class NetworkManager implements PacketCallback, CapsCallback
     	return AgentAppearanceServiceURL;
     }
 
-    private ArrayList<Simulator> _Simulators;
+	private ArrayList<AsyncHTTPClient<OSD>> closableClients = new ArrayList<AsyncHTTPClient<OSD>>();
+	
+	public void addClosableClient(AsyncHTTPClient<OSD> client)
+	{
+		synchronized (closableClients)
+		{
+			closableClients.add(client);
+		}
+	}
+
+	private void cleanClosableClients() throws InterruptedException
+	{
+		synchronized (closableClients)
+		{
+			long time = System.currentTimeMillis();
+			for (AsyncHTTPClient<OSD> client : closableClients)
+			{
+				client.shutdown(false);
+			}
+
+			if (closableClients.size() > 0)
+			{
+				Logger.Log("Closing " + closableClients.size() + " clients in " + (System.currentTimeMillis() - time) + " ms.", LogLevel.Info, _Client);
+				closableClients.clear();
+			}
+		}
+	}
+
+	private ArrayList<Simulator> _Simulators;
 
 	/**
 	 * Get the array with all currently known simulators. This list must be
@@ -445,6 +475,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		public void run()
 		{
 			long lastTime = System.currentTimeMillis();
+			int count = 0;
 
 			while (_Connected)
 			{
@@ -453,8 +484,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 					OutgoingPacket outgoingPacket = _PacketOutbox.poll(100, TimeUnit.MILLISECONDS);
 					if (outgoingPacket != null)
 					{
-						// Very primitive rate limiting, keeps a fixed buffer of
-						// time between each packet
+						// Very primitive rate limiting, keeps a fixed minimum buffer of time between each packet
 						long newTime = System.currentTimeMillis();
 						long remains = 10 + lastTime - newTime;
 						lastTime = newTime;
@@ -465,10 +495,22 @@ public class NetworkManager implements PacketCallback, CapsCallback
 							Thread.sleep(remains);
 						}
 						outgoingPacket.Simulator.sendPacketFinal(outgoingPacket);
+						count++;
 					}
+					else
+					{
+						count += 10;
+					}
+
+					if (count > 200)
+					{	
+						cleanClosableClients();
+						count = 0;
+					}	
 				}
 				catch (InterruptedException ex)
 				{
+					Logger.DebugLog("Call interrupted", _Client, ex);
 				}
 			}
 		}
@@ -746,7 +788,12 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	//
+	/**
+	 * Constructor for this manager
+	 * 
+	 * @param client The GridClient which controls this manager
+	 * @throws Exception
+	 */
 	// <param name="client"></param>
 	public NetworkManager(GridClient client) throws Exception
 	{
