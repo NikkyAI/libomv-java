@@ -67,9 +67,11 @@ import libomv.primitives.Primitive;
 import libomv.types.UUID;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
+import libomv.utils.Callback;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.RefObject;
 
 // Simulator is a wrapper for a network connection to a simulator and the
@@ -853,6 +855,32 @@ public class Simulator extends Thread
 		_DisconnectCandidate = val;
 	}
 
+	private boolean trackUtilization;
+	private boolean throttleOutgoingPackets;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+				trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+				throttleOutgoingPackets = _Client.Settings.getBool(LibSettings.THROTTLE_OUTGOING_PACKETS);
+			}
+			else if (key.equals(LibSettings.TRACK_UTILIZATION))
+			{
+				trackUtilization = params.getValue().AsBoolean();
+			}
+			else if (key.equals(LibSettings.THROTTLE_OUTGOING_PACKETS))
+			{
+				throttleOutgoingPackets = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+
 	private BoundedLongArray _InBytes;
 	private BoundedLongArray _OutBytes;
 	private Timer _StatsTimer;
@@ -875,6 +903,10 @@ public class Simulator extends Thread
 	{
 		super("Simulator: " + endPoint.getHostName());
 		_Client = client;
+
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+		throttleOutgoingPackets = _Client.Settings.getBool(LibSettings.THROTTLE_OUTGOING_PACKETS);
 
 		ipEndPoint = endPoint;
 		_Connection = new DatagramSocket();
@@ -1371,7 +1403,7 @@ public class Simulator extends Thread
 				// Let the network manager distribute the packet to the callbacks
 				_Client.Network.DistributePacket(this, packet);
 
-				if (_Client.Settings.TRACK_UTILIZATION)
+				if (trackUtilization)
 				{
 					_Client.Stats.Update(packet.getType().toString(), libomv.Statistics.Type.Packet, 0, numBytes);
 				}
@@ -1452,7 +1484,7 @@ public class Simulator extends Thread
 
 		// Send ACK and logout packets directly, everything else goes through
 		// the queue
-		if (_Client.Settings.THROTTLE_OUTGOING_PACKETS == false || type == PacketType.PacketAck
+		if (!throttleOutgoingPackets || type == PacketType.PacketAck
 				|| type == PacketType.LogoutRequest)
 		{
 			sendPacketFinal(outgoingPacket);
@@ -1464,7 +1496,7 @@ public class Simulator extends Thread
 		// #endregion Queue or Send
 
 		// #region Stats Tracking
-		if (_Client.Settings.TRACK_UTILIZATION)
+		if (trackUtilization)
 		{
 			_Client.Stats.Update(type.toString(), libomv.Statistics.Type.Packet, data.capacity(), 0);
 		}

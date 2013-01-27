@@ -45,14 +45,17 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.reactor.IOReactorException;
 
+import libomv.LibSettings;
 import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.packets.Packet;
+import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 /**
  * Capabilities is the name of the bi-directional HTTP REST protocol used to
@@ -155,6 +158,26 @@ public class CapsManager extends Thread
 		}
 	}
 
+	private boolean trackUtilization;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+				trackUtilization = _Simulator.getClient().Settings.getBool(LibSettings.TRACK_UTILIZATION);
+			}
+			else if (key.equals(LibSettings.TRACK_UTILIZATION))
+			{
+				trackUtilization = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * Default constructor
 	 * 
@@ -166,8 +189,13 @@ public class CapsManager extends Thread
 	{
 		super("CapsManager");
 		_Simulator = simulator;
+
+		simulator.getClient().Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		trackUtilization = simulator.getClient().Settings.getBool(LibSettings.TRACK_UTILIZATION);
+		
 		_SeedCapsURI = seedcaps;
 		_Client = new CapsClient("CapsManager Client");
+		
 		start();
 	}
 
@@ -366,7 +394,7 @@ public class CapsManager extends Thread
 							_Simulator.getClient().Network.DistributeCaps(_Simulator, message);
 
 							// #region Stats Tracking
-							if (_Simulator.getClient().Settings.TRACK_UTILIZATION)
+							if (trackUtilization)
 							{
 								/* TODO add Stats support to Client manager */
 								// Simulator.getClient().Stats.Update(eventName,

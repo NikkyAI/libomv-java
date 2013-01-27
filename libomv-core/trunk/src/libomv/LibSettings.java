@@ -318,7 +318,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * If true, utilization statistics will be tracked. There is a minor penalty
 	 * in CPU time for enabling this option.
 	 */
-	public boolean TRACK_UTILIZATION = false;
+	public static final String TRACK_UTILIZATION = "trackUtilization";
 	// #region Parcel Tracking
 
 	/*
@@ -362,7 +362,7 @@ public class LibSettings extends Settings implements PacketCallback
 	public int MAX_RESEND_COUNT = 3;
 
 	/* Throttle outgoing packet rate */
-	public boolean THROTTLE_OUTGOING_PACKETS = true;
+	public static final String THROTTLE_OUTGOING_PACKETS = "throttleOutgoingPackets";
 
 	/* UUID of a texture used by some viewers to identify type of client used */
 	public UUID CLIENT_IDENTIFICATION_TAG = UUID.Zero;
@@ -437,6 +437,8 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(AVATAR_TRACKING, true),
             new DefaultSetting(OBJECT_TRACKING, true),
             new DefaultSetting(USE_INTERPOLATION_TIMER, true),
+            new DefaultSetting(TRACK_UTILIZATION, false),
+            new DefaultSetting(THROTTLE_OUTGOING_PACKETS, true),
 	};
 	/**
 	 * Starts the settings update

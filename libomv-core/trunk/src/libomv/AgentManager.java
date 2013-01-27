@@ -2429,15 +2429,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		_Client = client;
 
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+
 		_Movement = new AgentMovement(client);
 		teleportTimeout = new TimeoutEvent<TeleportStatus>();
 		_ThreadPool = Executors.newCachedThreadPool();
 		
 		homePosition = null;
 		firstBalance = true;
-
-		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), true);
 		// Login
