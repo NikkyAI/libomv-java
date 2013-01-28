@@ -172,7 +172,7 @@ public class UpdateChecker
     {
         if (client == null)
         {
-            client = new CapsClient("startCheck");
+            client = new CapsClient(null, "startCheck");
             client.executeHttpGet(updateCheckUri, null, new OnDownloadCallback(), 60000);
         }
     }

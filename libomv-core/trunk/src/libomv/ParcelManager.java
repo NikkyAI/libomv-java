@@ -851,7 +851,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				req.UserLocation = this.UserLocation;
 				req.UserLookAt = this.UserLookAt;
 
-				new CapsClient("UpdateParcel").executeHttpPost(url, req, null, simulator.getClient().Settings.CAPS_TIMEOUT);
+				new CapsClient(_Client, "UpdateParcel").executeHttpPost(url, req, null, simulator.getClient().Settings.CAPS_TIMEOUT);
 			}
 			else
 			{
@@ -2243,9 +2243,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 			try
 			{
-				OSD result = new CapsClient("RequestRemoteParcelID").getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
-				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages.DecodeEvent(
-						CapsEventType.RemoteParcelRequest, (OSDMap) result);
+				OSD result = new CapsClient(_Client, "RequestRemoteParcelID").getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
+				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages.DecodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap) result);
 				return ((RemoteParcelRequestReply) response.Request).ParcelID;
 			}
 			catch (Throwable t)
@@ -2277,8 +2276,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	{
 		try
 		{
-			URI url = _Client.Network.getCapabilityURI("LandResources");
-			CapsClient request = new CapsClient("GetParcelResouces");
+			URI url = _Client.Network.getCapabilityURI(CapsEventType.LandResources.toString());
+			CapsClient request = new CapsClient(_Client, CapsEventType.LandResources.toString());
 			LandResourcesRequest req = _Client.Messages.new LandResourcesRequest();
 			req.ParcelID = parcelID;
 			request.executeHttpPost(url, req, new LandResourcesMessageHandler(getDetails, callback), _Client.Settings.CAPS_TIMEOUT);
@@ -2315,13 +2314,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				}
 				LandResourcesMessage response = _Client.Messages.new LandResourcesMessage();
 				response.Deserialize((OSDMap) result);
-				OSD osd = new CapsClient("getLandResourcesInfo").getResponse(response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+				OSD osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 
 				LandResourcesInfo info = _Client.Messages.new LandResourcesInfo();
 				info.Deserialize((OSDMap)osd);
 				if (response.ScriptResourceDetails != null && getDetails)
 				{
-					osd = new CapsClient("getLandResourcesScriptDetails").getResponse(response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+					osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 					info.Deserialize((OSDMap)osd);
 				}
 				callback.callback(true, info);

@@ -95,6 +95,8 @@ public abstract class AsyncHTTPClient<T>
 	private FutureCallback<T> resultCb;
 	private ProgressCallback progressCb;
 
+	protected String name;
+
 	public void setProgressCallback(ProgressCallback callback)
 	{
 		progressCb = callback;
@@ -158,6 +160,7 @@ public abstract class AsyncHTTPClient<T>
 
 	public AsyncHTTPClient(String name) throws IOReactorException
 	{
+		this.name = name;
 		asyncClient = new DefaultHttpAsyncClient();
 		asyncClient.start();
 	}

@@ -442,11 +442,11 @@ public class AssetPrim extends AssetItem
 			{
 				obj.Velocity = new Vector3(parser);
 			}
-			else if (name.equals("RotationalVelocity"))
+/*			else if (name.equals("RotationalVelocity"))
 			{
 				Vector3 rotationalVelocity = new Vector3(parser);
 			}
-			else if (name.equals("AngularVelocity"))
+*/			else if (name.equals("AngularVelocity"))
 			{
 				obj.AngularVelocity = new Vector3(parser);
 			}
@@ -518,11 +518,11 @@ public class AssetPrim extends AssetItem
 			{
 				obj.CreationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(parser.nextText().trim()));
 			}
-			else if (name.equals("Category"))
+/*			else if (name.equals("Category"))
 			{
 				int category = Helpers.TryParseInt(parser.nextText().trim());
 			}
-			else if (name.equals("SalePrice"))
+*/			else if (name.equals("SalePrice"))
 			{
 				obj.SalePrice = Helpers.TryParseInt(parser.nextText().trim());
 			}
@@ -530,11 +530,11 @@ public class AssetPrim extends AssetItem
 			{
 				obj.SaleType = Helpers.TryParseInt(parser.nextText().trim());
 			}
-			else if (name.equals("OwnershipCost"))
+/*			else if (name.equals("OwnershipCost"))
 			{
 				int ownershipCost = Helpers.TryParseInt(parser.nextText().trim());
 			}
-			else if (name.equals("GroupID"))
+*/			else if (name.equals("GroupID"))
 			{
 				obj.GroupID = new UUID(parser);
 			}

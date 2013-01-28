@@ -666,7 +666,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         try
         {
-            CapsClient request = new CapsClient("RequestFolderContents");
+        	String cap = CapsEventType.FetchInventoryDescendents.toString();
+            CapsClient request = new CapsClient(_Client, cap);
             
             final class CapsCallback implements FutureCallback<OSD>
             {
@@ -1640,7 +1641,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			InventoryType invType, UUID folderID, Permissions permissions,
 			Callback<ItemCreatedFromAssetCallbackArgs> callback) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("NewFileAgentInventory");
+		String cap = CapsEventType.NewFileAgentInventory.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			OSDMap query = new OSDMap();
@@ -1655,7 +1657,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			query.put("expected_upload_cost", OSD.FromInteger(_Client.Settings.getUploadPrice()));
 
 			// Make the request
-			CapsClient request = new CapsClient("RequestCreateItemFromAsset");
+			CapsClient request = new CapsClient(_Client, cap);
 			FutureCallback<OSD> cb = new CreateItemFromAssetResponse(callback, data, _Client.Settings.CAPS_TIMEOUT, query);
 			request.executeHttpPost(url, query, OSDFormat.Xml, cb, _Client.Settings.CAPS_TIMEOUT);
 		}
@@ -1926,7 +1928,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	{
 		_ItemCopiedCallbacks.put(0, callback); // Notecards always use callback ID 0
 
-		URI url = _Client.Network.getCapabilityURI("CopyInventoryFromNotecard");
+		String cap = CapsEventType.CopyInventoryFromNotecard.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			CopyInventoryFromNotecardMessage message = _Client.Messages.new CopyInventoryFromNotecardMessage();
@@ -1936,7 +1939,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			message.NotecardID = notecardID;
 			message.ObjectID = objectID;
 
-			new CapsClient("RequestCopyItemFromNotecard").executeHttpPost(url, message, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient(_Client, cap).executeHttpPost(url, message, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -2045,14 +2048,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestUpdateNotecardAgentInventory(byte[] data, UUID notecardID,
 			Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("UpdateNotecardAgentInventory");
+		String cap = CapsEventType.UpdateNotecardAgentInventory.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			OSDMap query = new OSDMap();
 			query.put("item_id", OSD.FromUUID(notecardID));
 
 			// Make the request
-			CapsClient request = new CapsClient("RequestUpdateNotecardAgentInventory");
+			CapsClient request = new CapsClient(_Client, cap);
 			request.executeHttpPost(url, query, OSDFormat.Xml,
 					new UploadInventoryAssetComplete(callback, data, notecardID), _Client.Settings.CAPS_TIMEOUT);
 		}
@@ -2078,7 +2082,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestUpdateNotecardTaskInventory(byte[] data, UUID notecardID, UUID taskID,
 			Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("UpdateNotecardTaskInventory");
+		String cap = CapsEventType.UpdateNotecardTaskInventory.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			OSDMap query = new OSDMap();
@@ -2086,9 +2091,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			query.put("task_id", OSD.FromUUID(taskID));
 
 			// Make the request
-			CapsClient request = new CapsClient("RequestUpdateNotecardTaskInventory");
-			request.executeHttpPost(url, query, OSDFormat.Xml,
-					new UploadInventoryAssetComplete(callback, data, notecardID), _Client.Settings.CAPS_TIMEOUT);		
+			CapsClient request = new CapsClient(_Client, cap);
+			request.executeHttpPost(url, query, OSDFormat.Xml,  new UploadInventoryAssetComplete(callback, data, notecardID), _Client.Settings.CAPS_TIMEOUT);		
 		}
 		else
 		{
@@ -2110,16 +2114,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestUpdateGestureAgentInventory(byte[] data, UUID gestureID,
 			Callback<InventoryUploadedAssetCallbackArgs> callback) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("UpdateGestureAgentInventory");
+		String cap = CapsEventType.UpdateGestureAgentInventory.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			OSDMap query = new OSDMap();
 			query.put("item_id", OSD.FromUUID(gestureID));
 
 			// Make the request
-			CapsClient request = new CapsClient("RequestUpdateGestureAgentInventory");
-			request.executeHttpPost(url, query, OSDFormat.Xml,
-					new UploadInventoryAssetComplete(callback, data, gestureID), _Client.Settings.CAPS_TIMEOUT);				
+			CapsClient request = new CapsClient(_Client, cap);
+			request.executeHttpPost(url, query, OSDFormat.Xml, new UploadInventoryAssetComplete(callback, data, gestureID), _Client.Settings.CAPS_TIMEOUT);				
 		}
 		else
 		{
@@ -2143,16 +2147,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestUpdateScriptAgent(byte[] data, UUID itemID, boolean mono,
 			Callback<ScriptUpdatedCallbackArgs> callback) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("UpdateScriptAgent");
+		String cap = CapsEventType.UpdateScriptAgent.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			OSDMap map = new OSDMap(2);
 			map.put("item_id", OSD.FromUUID(itemID));
 			map.put("target", OSD.FromString(mono ? "mono" : "lsl2"));
 
-			CapsClient request = new CapsClient("RequestUpdateGestureAgentInventory");
-			request.executeHttpPost(url, map, OSDFormat.Xml, 
-					new UpdateScriptAgentInventoryResponse(callback, data, itemID), _Client.Settings.CAPS_TIMEOUT);
+			CapsClient request = new CapsClient(_Client, cap);
+			request.executeHttpPost(url, map, OSDFormat.Xml, new UpdateScriptAgentInventoryResponse(callback, data, itemID), _Client.Settings.CAPS_TIMEOUT);
 					
 		}
 		else
@@ -2181,7 +2185,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestUpdateScriptTask(byte[] data, UUID itemID, UUID taskID, boolean mono, boolean running,
 			Callback<ScriptUpdatedCallbackArgs> callback) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("UpdateScriptTask");
+		String cap = CapsEventType.UpdateScriptTask.toString();
+		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null)
 		{
 			UpdateScriptTaskUpdateMessage msg = _Client.Messages.new UpdateScriptTaskUpdateMessage();
@@ -2190,9 +2195,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			msg.ScriptRunning = running;
 			msg.Target = mono ? "mono" : "lsl2";
 
-			CapsClient request = new CapsClient("RequestUpdateScriptTask");
-			request.executeHttpPost(url, msg,
-					new UpdateScriptAgentInventoryResponse(callback, data, itemID), _Client.Settings.CAPS_TIMEOUT);
+			CapsClient request = new CapsClient(_Client, cap);
+			request.executeHttpPost(url, msg, new UpdateScriptAgentInventoryResponse(callback, data, itemID), _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -3480,7 +3484,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				// about simulators
 				try
 				{
-					CapsClient upload = new CapsClient("CreateItemFromAssetResponse");
+					CapsClient upload = new CapsClient(_Client, CapsEventType.UploadObjectAsset.toString());
 					upload.executeHttpPost(new URI(uploadURL), itemData, "application/octet-stream", null,
 							new CreateItemFromAssetResponse(callback, itemData, timeout, request), timeout);
 				}
@@ -3634,7 +3638,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 						// not knowing anything about simulators
 						try
 						{
-							CapsClient upload = new CapsClient("UploadInventoryAssetComplete");
+							CapsClient upload = new CapsClient(_Client, CapsEventType.UploadObjectAsset.toString());
 							upload.executeHttpPost(uploadURL, itemData, "application/octet-stream", null,
 									new UploadInventoryAssetComplete(callback, itemData, assetID), _Client.Settings.CAPS_TIMEOUT);
 						}
@@ -3760,7 +3764,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 				try
 				{
-					CapsClient upload = new CapsClient("UpdateScriptAgentInventoryResponse");
+					CapsClient upload = new CapsClient(_Client, CapsEventType.UpdateScriptAgent.toString());
 					upload.executeHttpPost(new URI(uploadURL), itemData, "application/octet-stream", null,
 							new UpdateScriptAgentInventoryResponse(callback, itemData, scriptID), _Client.Settings.CAPS_TIMEOUT);		
 				}

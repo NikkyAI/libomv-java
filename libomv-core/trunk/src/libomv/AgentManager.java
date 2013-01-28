@@ -2935,20 +2935,19 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Accept invite for to a chatterbox session
+	 * Accept invite for a chatterbox session
 	 * 
-	 * @param session_id
-	 *            {@link UUID} of session to accept invite to
+	 * @param session_id {@link UUID} of session to accept invite to
 	 * @throws Exception
 	 */
 	public final void ChatterBoxAcceptInvite(UUID session_id) throws Exception
 	{
-		URI uri = _Client.Network.getCapabilityURI("ChatSessionRequest");
+		URI uri = _Client.Network.getCapabilityURI(CapsEventType.ChatSessionRequest.toString());
 		if (uri != null)
 		{
 			ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
 			acceptInvite.SessionID = session_id;
-			new CapsClient("ChatterBoxAcceptInvite").executeHttpPost(uri, acceptInvite, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient(_Client, CapsEventType.ChatSessionAcceptInvitation.toString()).executeHttpPost(uri, acceptInvite, null, _Client.Settings.CAPS_TIMEOUT);
 
 			synchronized (GroupChatSessions)
 			{
@@ -2977,7 +2976,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public final void StartIMConference(UUID[] participants, UUID tmp_session_id) throws Exception
 	{
-		URI url = _Client.Network.getCapabilityURI("ChatSessionRequest");
+		URI url = _Client.Network.getCapabilityURI(CapsEventType.ChatSessionRequest.toString());
 		if (url != null)
 		{
 			ChatSessionRequestStartConference startConference = _Client.Messages.new ChatSessionRequestStartConference();
@@ -2988,7 +2987,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				startConference.AgentsBlock[i] = participants[i];
 			}
 			startConference.SessionID = tmp_session_id;
-			new CapsClient("StartIMConference").executeHttpPost(url, startConference, null, _Client.Settings.CAPS_TIMEOUT);
+			new CapsClient(_Client, CapsEventType.ChatSessionRequestStartConference.toString()).executeHttpPost(url, startConference, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
@@ -4590,10 +4589,10 @@ public class AgentManager implements PacketCallback, CapsCallback
     		}    		
     	}
     	
-		URI url = _Client.Network.getCapabilityURI("HomeLocation");
+		URI url = _Client.Network.getCapabilityURI(CapsEventType.HomeLocation.toString());
 		if (url != null)
 		{
-			CapsClient request = new CapsClient("SetHome");
+			CapsClient request = new CapsClient(_Client, CapsEventType.HomeLocation.toString());
 			OSDMap map = new OSDMap(2);
 			map.put("LocationId", OSD.FromInteger(id));
 			map.put("LocationPos", OSD.FromVector3(pos));
@@ -4920,10 +4919,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public final void GetAttachmentResources(final Callback<AttachmentResourcesCallbackArgs> callback)
 			throws IOException
 	{
-		URI url = _Client.Network.getCapabilityURI("AttachmentResources");
+		URI url = _Client.Network.getCapabilityURI(CapsEventType.AttachmentResources.toString());
 		if (url != null)
 		{
-			CapsClient request = new CapsClient("GetAttachmentResources");
+			CapsClient request = new CapsClient(_Client, CapsEventType.AttachmentResources.toString());
 			request.executeHttpGet(url, Helpers.EmptyString, new AttachmentResourceReplyHandler(callback), _Client.Settings.CAPS_TIMEOUT);
 		}
 	}
@@ -4939,7 +4938,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 */
 	public void SetDisplayName(String oldName, String newName) throws IOException
 	{
-		URI url = _Client.Network.getCapabilityURI("SetDisplayName");
+		URI url = _Client.Network.getCapabilityURI(CapsEventType.SetDisplayName.toString());
 		if (url == null)
 		{
 			Logger.Log("Unable to invoke SetDisplyName capability at this time", LogLevel.Warning, _Client);
@@ -4950,7 +4949,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		msg.OldDisplayName = oldName;
 		msg.NewDisplayName = newName;
 
-		new CapsClient("SetDisplayName").executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
+		new CapsClient(_Client, CapsEventType.SetDisplayName.toString()).executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
 	}
 
 	/**
@@ -4970,8 +4969,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 			msg.Language = language;
 			msg.LanguagePublic = isPublic;
 
-			URI url = _Client.Network.getCapabilityURI("UpdateAgentLanguage");
-			new CapsClient("UpdateAgentLanguage").executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
+			URI url = _Client.Network.getCapabilityURI(CapsEventType.UpdateAgentLanguage.toString());
+			new CapsClient(_Client, CapsEventType.UpdateAgentLanguage.toString()).executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
 		}
 		catch (Exception ex)
 		{
@@ -5702,7 +5701,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      */
     public void ModerateChatSessions(UUID sessionID, UUID memberID, String key, boolean moderate) throws Exception
     {
-        URI url = _Client.Network.getCapabilityURI("ChatSessionRequest");
+        URI url = _Client.Network.getCapabilityURI(CapsEventType.ChatSessionRequest.toString());
         if (url != null)
         {
             ChatSessionRequestMuteUpdate req = _Client.Messages.new ChatSessionRequestMuteUpdate();
@@ -5712,7 +5711,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             req.SessionID = sessionID;
             req.AgentID = memberID;
 
-            CapsClient request = new CapsClient("ModerateChatSessions");
+            CapsClient request = new CapsClient(_Client, CapsEventType.ChatSessionRequest.toString());
             request.getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
         }
         else

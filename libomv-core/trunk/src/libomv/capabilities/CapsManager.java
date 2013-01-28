@@ -47,10 +47,12 @@ import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.LibSettings;
 import libomv.Simulator;
+import libomv.Statistics.Type;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.packets.Packet;
 import libomv.utils.Callback;
 import libomv.utils.Logger;
@@ -194,7 +196,7 @@ public class CapsManager extends Thread
 		trackUtilization = simulator.getClient().Settings.getBool(LibSettings.TRACK_UTILIZATION);
 		
 		_SeedCapsURI = seedcaps;
-		_Client = new CapsClient("CapsManager Client");
+		_Client = new CapsClient(simulator.getClient(), CapsEventType.EventQueueGet.toString());
 		
 		start();
 	}
@@ -386,31 +388,30 @@ public class CapsManager extends Thread
 					if (osd.getType().equals(OSDType.Map))
 					{
 						OSDMap body = (OSDMap) osd;
-						String name = evt.get("message").AsString();
-						IMessage message = _Simulator.getClient().Messages.DecodeEvent(name, body);
+						String eventName = evt.get("message").AsString();
+
+						// #region Stats Tracking
+						if (trackUtilization)
+						{
+		                    _Simulator.getClient().Stats.updateNetStats(eventName, Type.Message, 0, body.toString().length());
+						}
+						// #endregion
+						
+						IMessage message = _Simulator.getClient().Messages.DecodeEvent(eventName, body);
 						if (message != null)
 						{
-							Logger.Log("Caps message: " + name + ".", LogLevel.Debug, _Simulator.getClient());
+							Logger.Log("Caps message: " + eventName + ".", LogLevel.Debug, _Simulator.getClient());
 							_Simulator.getClient().Network.DistributeCaps(_Simulator, message);
-
-							// #region Stats Tracking
-							if (trackUtilization)
-							{
-								/* TODO add Stats support to Client manager */
-								// Simulator.getClient().Stats.Update(eventName,
-								// libomv.Stats.Type.Message, 0,
-								// body.ToString().Length);
-							}
 						}
 						else
 						{
-							Logger.Log("No Message handler exists for event " + name + ". Unable to decode. Will try Generic Handler next",
+							Logger.Log("No Message handler exists for event " + eventName + ". Unable to decode. Will try Generic Handler next",
 									   LogLevel.Warning, _Simulator.getClient());
 							Logger.Log("Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
 									   LogLevel.Debug, _Simulator.getClient());
 
 							// try generic decoder next which takes a caps event and tries to match it to an existing packet
-							Packet packet = CapsToPacket.BuildPacket(name, body);
+							Packet packet = CapsToPacket.BuildPacket(eventName, body);
 							if (packet != null)
 							{
 								Logger.Log("Serializing " + packet.getType() + " capability with generic handler", LogLevel.Debug, _Simulator.getClient());
@@ -418,7 +419,7 @@ public class CapsManager extends Thread
 							}
 							else
 							{
-								Logger.Log("No Packet or Message handler exists for " + name, LogLevel.Warning, _Simulator.getClient());
+								Logger.Log("No Packet or Message handler exists for " + eventName, LogLevel.Warning, _Simulator.getClient());
 							}
 						}
 					}

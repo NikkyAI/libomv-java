@@ -125,7 +125,7 @@ public class RegistrationApi
 
     public RegistrationApi(String firstName, String lastName, String password) throws IOReactorException, UnsupportedEncodingException, URISyntaxException, InterruptedException, ExecutionException, TimeoutException
     {
-        _initializing = -2;
+    	_initializing = -2;
 
         _userInfo = new UserInfo();
 
@@ -152,7 +152,7 @@ public class RegistrationApi
         // build post data
         String postData = String.format("first_name=%s&last_name=%s&password=%s", _userInfo.FirstName, _userInfo.LastName, _userInfo.Password);
 
-        Future<OSD> future = new CapsClient("get_reg_capabilities").executeHttpPost(getRegistrationApiCaps(), postData, "application/x-www-form-urlencoded", Helpers.UTF8_ENCODING);
+        Future<OSD> future = new CapsClient(null, "get_reg_capabilities").executeHttpPost(getRegistrationApiCaps(), postData, "application/x-www-form-urlencoded", Helpers.UTF8_ENCODING);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {
@@ -183,7 +183,7 @@ public class RegistrationApi
     {
         final Map<Integer, ErrorCode> errorCodes = new HashMap<Integer, ErrorCode>();
 
-        Future<OSD> future = new CapsClient("getErrorCodes").executeHttpGet(capability);
+        Future<OSD> future = new CapsClient(null, "getErrorCodes").executeHttpGet(capability);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDArray)
         {
@@ -212,7 +212,7 @@ public class RegistrationApi
     {
         final SortedMap<String, Integer> lastNames = new TreeMap<String, Integer>();
         
-        Future<OSD> future = new CapsClient("getLastNames").executeHttpGet(capability);
+        Future<OSD> future = new CapsClient(null, "getLastNames").executeHttpGet(capability);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {
@@ -267,7 +267,7 @@ public class RegistrationApi
         query.put("username", OSD.FromString(firstName));
         query.put("last_name_id", OSD.FromInteger(lastNameID));
 
-        Future<OSD> future = new CapsClient("checkName").executeHttpPost(_caps.GetLastNames, query, OSDFormat.Xml);
+        Future<OSD> future = new CapsClient(null, "checkName").executeHttpPost(_caps.GetLastNames, query, OSDFormat.Xml);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response.getType() != OSDType.Boolean)
         	throw new Exception("check_name did not return a boolean as the only element inside the <llsd> tag.");
@@ -319,7 +319,7 @@ public class RegistrationApi
         }
 
         // Make the request
-        Future<OSD> future = new CapsClient("createUser").executeHttpPost(_caps.CreateUser, query, OSDFormat.Xml);
+        Future<OSD> future = new CapsClient(null, "createUser").executeHttpPost(_caps.CreateUser, query, OSDFormat.Xml);
         OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
         if (response instanceof OSDMap)
         {

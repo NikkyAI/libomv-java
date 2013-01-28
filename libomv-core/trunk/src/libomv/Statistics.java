@@ -30,7 +30,6 @@
 package libomv;
 
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Statistics
 {
@@ -42,18 +41,18 @@ public class Statistics
 	public class Stat
 	{
 		public Type Type;
-		public AtomicLong TxCount;
-		public AtomicLong RxCount;
-		public AtomicLong TxBytes;
-		public AtomicLong RxBytes;
+		public long TxCount;
+		public long RxCount;
+		public long TxBytes;
+		public long RxBytes;
 
 		public Stat(Type type, long txCount, long rxCount, long txBytes, long rxBytes)
 		{
 			this.Type = type;
-			this.TxCount.set(txCount);
-			this.RxCount.set(rxCount);
-			this.TxBytes.set(txBytes);
-			this.RxBytes.set(rxBytes);
+			this.TxCount = txCount;
+			this.RxCount = rxCount;
+			this.TxBytes = txBytes;
+			this.RxBytes = rxBytes;
 		}
 	}
 
@@ -64,29 +63,28 @@ public class Statistics
 		m_StatsCollection = new HashMap<String, Stat>();
 	}
 
-	void Update(String key, Type Type, long txBytes, long rxBytes)
+	public void updateNetStats(String key, Type Type, long txBytes, long rxBytes)
 	{
 		synchronized (m_StatsCollection)
 		{
-			if (m_StatsCollection.containsKey(key))
-			{
-				Stat stat = m_StatsCollection.get(key);
+			Stat stat = m_StatsCollection.get(key);
+			if (stat != null)
+			{			
 				if (rxBytes > 0)
 				{
-					stat.RxCount.incrementAndGet();
-					stat.RxBytes.addAndGet(rxBytes);
+					stat.RxCount++;
+					stat.RxBytes += rxBytes;
 				}
 
 				if (txBytes > 0)
 				{
-					stat.TxCount.incrementAndGet();
-					stat.TxBytes.addAndGet(txBytes);
+					stat.TxCount++;
+					stat.TxBytes += txBytes;
 				}
 
 			}
 			else
 			{
-				Stat stat;
 				if (txBytes > 0)
 					stat = new Stat(Type, 1, 0, txBytes, 0);
 				else
@@ -97,7 +95,7 @@ public class Statistics
 		}
 	}
 
-	public HashMap<String, Stat> GetStatistics()
+	public HashMap<String, Stat> getStatistics()
     {
         synchronized(m_StatsCollection)
         {

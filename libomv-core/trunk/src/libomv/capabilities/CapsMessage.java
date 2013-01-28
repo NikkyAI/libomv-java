@@ -91,6 +91,7 @@ public class CapsMessage implements IMessage
 		ChatterBoxSessionEventReply,
 		ChatterBoxSessionStartReply,
 		ChatterBoxSessionAgentListUpdates,
+		HomeLocation,
 		RequiredVoiceVersion,
 		MapLayer,
 		ChatSessionRequest,

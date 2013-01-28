@@ -52,6 +52,7 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import libomv.ParcelManager.Parcel;
+import libomv.Statistics.Type;
 import libomv.TerrainManager.TerrainPatch;
 import libomv.capabilities.CapsManager;
 import libomv.packets.AgentPausePacket;
@@ -1405,7 +1406,7 @@ public class Simulator extends Thread
 
 				if (trackUtilization)
 				{
-					_Client.Stats.Update(packet.getType().toString(), libomv.Statistics.Type.Packet, 0, numBytes);
+					_Client.Stats.updateNetStats(packet.getType().toString(), Type.Packet, 0, numBytes);
 				}
 			}
 			catch (IOException ex)
@@ -1472,9 +1473,8 @@ public class Simulator extends Thread
 			}
 			else
 			{
-				// Zero encoding actually grew the buffer beyond the original
-				// size
-				data.put(0, (byte) (data.get(0) & ~Helpers.MSG_ZEROCODED));
+				// Zero encoding actually grew the buffer beyond the original size
+				data.put(0, (byte) (data.get(0) & Helpers.MSG_ZEROCODED));
 				data.position(0);
 			}
 		}
@@ -1484,8 +1484,7 @@ public class Simulator extends Thread
 
 		// Send ACK and logout packets directly, everything else goes through
 		// the queue
-		if (!throttleOutgoingPackets || type == PacketType.PacketAck
-				|| type == PacketType.LogoutRequest)
+		if (!throttleOutgoingPackets || type == PacketType.PacketAck || type == PacketType.LogoutRequest)
 		{
 			sendPacketFinal(outgoingPacket);
 		}
@@ -1498,7 +1497,7 @@ public class Simulator extends Thread
 		// #region Stats Tracking
 		if (trackUtilization)
 		{
-			_Client.Stats.Update(type.toString(), libomv.Statistics.Type.Packet, data.capacity(), 0);
+			_Client.Stats.updateNetStats(type.toString(), Type.Packet, data.capacity(), 0);
 		}
 	}
 

@@ -1834,7 +1834,7 @@ public class AppearanceManager implements PacketCallback
             return false;
         }
             
-        CapsClient capsRequest = new CapsClient("UpdateAvatarAppearance");
+        CapsClient capsRequest = new CapsClient(_Client, "UpdateAvatarAppearance");
         OSDMap request = new OSDMap(1);
         request.put("cof_version", OSD.FromInteger(COF.version));
 
@@ -2094,7 +2094,6 @@ public class AppearanceManager implements PacketCallback
         synchronized (Wearables)
         {
             // #region Test if anything changed in this update
-
             for (int i = 0; i < update.WearableData.length; i++)
             {
                 AgentWearablesUpdatePacket.WearableDataBlock block = update.WearableData[i];
@@ -2125,7 +2124,6 @@ public class AppearanceManager implements PacketCallback
                     break;
                 }
             }
-
             // #endregion Test if anything changed in this update
 
             if (changed)
@@ -2214,7 +2212,7 @@ public class AppearanceManager implements PacketCallback
         @Override
         public boolean callback(EventQueueRunningCallbackArgs e)
         {
-            if (e.getSimulator() == _Client.Network.getCurrentSim() && sendAppearanceUpdates)
+            if (sendAppearanceUpdates && e.getSimulator().equals(_Client.Network.getCurrentSim()))
             {
                 // Update appearance each time we enter a new sim and capabilities have been retrieved
                 RequestSetAppearance();
@@ -2245,7 +2243,6 @@ public class AppearanceManager implements PacketCallback
             return true;
         }
     }
-
     // #endregion Callbacks
 
     // #region Static Helpers

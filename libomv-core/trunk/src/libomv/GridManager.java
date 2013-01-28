@@ -45,6 +45,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsClient;
+import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.packets.CoarseLocationUpdatePacket;
 import libomv.packets.MapBlockReplyPacket;
 import libomv.packets.MapBlockRequestPacket;
@@ -376,7 +377,7 @@ public class GridManager implements PacketCallback
 			}
 		}
 
-		URI url = _Client.Network.getCapabilityURI("MapLayer");
+		URI url = _Client.Network.getCapabilityURI(CapsEventType.MapLayer.toString());
 		if (url != null)
 		{
 			OSDMap body = new OSDMap();
@@ -384,7 +385,7 @@ public class GridManager implements PacketCallback
 
 			try
 			{
-				CapsClient request = new CapsClient("RequestMapLayer");
+				CapsClient request = new CapsClient(_Client, CapsEventType.MapLayer.toString());
 				request.executeHttpPost(url, body, OSDFormat.Xml, new MapLayerCallback(), _Client.Settings.CAPS_TIMEOUT);
 			}
 			catch (Exception e)

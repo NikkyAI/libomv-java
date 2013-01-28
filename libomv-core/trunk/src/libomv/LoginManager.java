@@ -1038,16 +1038,16 @@ public class LoginManager
 			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
 			{
 				// Make the CAPS POST for login
-				CapsClient loginRequest = new CapsClient("RequestLogin");
-			    httpClient = loginRequest;
-			    loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
+				CapsClient loginRequest = new CapsClient(_Client, "LoginAgent");
+				httpClient = loginRequest;
+				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
 			}
 			else
 			{
 				// Make the RPC call for login
 				OSDArray request = new OSDArray(1);
 				request.add(loginLLSD);
-			    RpcClient loginRequest = new RpcClient("RequestLogin");
+			    RpcClient loginRequest = new RpcClient("LoginAgent");
 			    httpClient = loginRequest;
 			    loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
 			}

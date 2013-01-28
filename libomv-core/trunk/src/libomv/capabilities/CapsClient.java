@@ -44,16 +44,50 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
 
+import libomv.GridClient;
+import libomv.LibSettings;
+import libomv.Statistics.Type;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDParser;
+import libomv.utils.Callback;
 import libomv.utils.Logger;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 public class CapsClient extends AsyncHTTPClient<OSD>
 {
-	public CapsClient(String name) throws IOReactorException
+	private GridClient _Client;
+	
+	private boolean trackUtilization;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+				trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+			}
+			else if (key.equals(LibSettings.TRACK_UTILIZATION))
+			{
+				trackUtilization = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+
+	public CapsClient(GridClient client, String name) throws IOReactorException
 	{
 		super(name);
+		_Client = client;
+
+		if (client != null)
+		{
+			client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+			trackUtilization = client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+		}
 	}
 	
 	@Override
@@ -109,7 +143,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	public OSD getResponse(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
 			throws InterruptedException, ExecutionException, TimeoutException
 	{
-		Future<OSD> result = executeHttpPost(address, message, null, TIMEOUT_INFINITE);
+		Future<OSD> result = executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, null, TIMEOUT_INFINITE);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
@@ -130,7 +164,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	public OSD getResponse(URI address, OSD data, OSD.OSDFormat format, long timeout)
 				throws InterruptedException, ExecutionException, TimeoutException, IOException
 	{
-		Future<OSD> result = executeHttpPost(address, data, format, null, TIMEOUT_INFINITE);
+		Future<OSD> result = executeHttpPost(address, data, format, null, null, TIMEOUT_INFINITE);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
@@ -173,7 +207,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 */
 	public Future<OSD> executeHttpPost(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
 	{
-		return executeHttpPost(address, new OSDEntity(message.Serialize(), OSD.OSDFormat.Xml), callback, timeout);
+		return executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, callback, timeout);
 	}
 
 	/**
@@ -189,7 +223,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format)
 	{
-		return executeHttpPost(address, new OSDEntity(data, format), null, TIMEOUT_INFINITE);
+		return executeHttpPost(address, data, format, null, null, TIMEOUT_INFINITE);
 	}
 
 	/**
@@ -207,7 +241,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, FutureCallback<OSD> callback, long timeout)
 	{
-		return executeHttpPost(address, new OSDEntity(data, format), callback, timeout);
+		return executeHttpPost(address, data, format, null, callback, timeout);
 	}
 
 	/**
@@ -227,7 +261,15 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 			                           FutureCallback<OSD> callback, long timeout)
 	{
 		AbstractHttpEntity entity = new OSDEntity(data, format);
-		entity.setContentEncoding(encoding);
+		if (encoding != null)
+			entity.setContentEncoding(encoding);
+
+		// #region Stats Tracking
+		if (_Client != null && trackUtilization)
+		{
+			_Client.Stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
+		}
+		// #endregion
 		return executeHttpPost(address, entity, callback, timeout);
 	}
 	

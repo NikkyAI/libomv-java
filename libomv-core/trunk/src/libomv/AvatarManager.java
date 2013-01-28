@@ -702,7 +702,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
      */
     public void GetDisplayNames(ArrayList<UUID> ids, final Callback<DisplayNamesCallbackArgs> callback) throws IOReactorException, URISyntaxException
     {
-    	URI uri = _Client.Network.getCapabilityURI("GetDisplayNames");
+    	URI uri = _Client.Network.getCapabilityURI(CapsEventType.GetDisplayNames.toString());
         if (uri == null || ids.size() == 0)
         {
             callback.callback(new DisplayNamesCallbackArgs(false, null, null));
@@ -740,7 +740,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 	            callback.callback(new DisplayNamesCallbackArgs(false, null, null));
 			} 		
         } 
-        CapsClient cap = new CapsClient("GetDisplayName");
+        CapsClient cap = new CapsClient(_Client, CapsEventType.GetDisplayNames.toString());
         cap.executeHttpGet(new URI(uri.toString() + "/?" + query), null, new DisplayCapsCallback(), _Client.Settings.CAPS_TIMEOUT);
     }
     

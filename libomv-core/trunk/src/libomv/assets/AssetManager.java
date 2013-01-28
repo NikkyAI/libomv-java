@@ -56,6 +56,7 @@ import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
 import libomv.capabilities.AsyncHTTPClient;
 import libomv.capabilities.CapsClient;
+import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.UploadBakedTextureMessage;
 import libomv.capabilities.CapsMessage.UploaderRequestComplete;
 import libomv.capabilities.CapsMessage.UploaderRequestUpload;
@@ -1098,11 +1099,11 @@ public class AssetManager implements PacketCallback
 	public final void RequestUploadBakedTexture(final byte[] textureData, final BakedTextureUploadedCallback callback)
 			throws IOException
 	{
-		URI url = _Client.Network.getCapabilityURI("UploadBakedTexture");
+		URI url = _Client.Network.getCapabilityURI(CapsEventType.UploadBakedTexture.toString());
 		if (url != null)
 		{
 			// Fetch the uploader capability
-			CapsClient request = new CapsClient("RequestUploadBakedTexture");
+			CapsClient request = new CapsClient(_Client, CapsEventType.UploadBakedTexture.toString());
 
 			class RequestUploadBakedTextureComplete implements FutureCallback<OSD>
 			{
@@ -1126,7 +1127,7 @@ public class AssetManager implements PacketCallback
 								try
 								{
 									// POST the asset data
-									CapsClient upload = new CapsClient("UploadBakedTexture");
+									CapsClient upload = new CapsClient(_Client, CapsEventType.UploadBakedTexture.toString());
 									upload.executeHttpPost(uploadUrl, textureData, "application/octet-stream", null,
 											new RequestUploadBakedTextureComplete(), _Client.Settings.CAPS_TIMEOUT);
 								}
@@ -1157,8 +1158,7 @@ public class AssetManager implements PacketCallback
 					callback.callback(UUID.Zero);
 				}
 			}
-			request.executeHttpPost(url, new OSDMap(), OSDFormat.Xml, 
-					new RequestUploadBakedTextureComplete(), _Client.Settings.CAPS_TIMEOUT);
+			request.executeHttpPost(url, new OSDMap(), OSDFormat.Xml, new RequestUploadBakedTextureComplete(), _Client.Settings.CAPS_TIMEOUT);
 		}
 		else
 		{
