@@ -103,7 +103,6 @@ public class Settings
 			for (DefaultSetting setting : defaults)
 			{
 				this.defaults.put(setting.key, OSD.FromObject(setting.value));
-				this.settings.put(setting.key, OSD.FromObject(setting.value));
 			}
 		}
 	}
@@ -271,7 +270,18 @@ public class Settings
 
 	private OSD put(String name, OSD value)
 	{
-		OSD osd = settings.put(name, value);
+		OSD osd = null;
+		if (defaults != null)
+		{
+			/* if the default value is equal to the new value, remove a possible settings value */
+			osd = defaults.get(name);
+			if (osd != null && osd.equals(value))
+				osd = settings.remove(name);
+		}
+
+		if (osd == null)
+			osd = settings.put(name, value);
+
 		OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
 		return osd;
 	}
