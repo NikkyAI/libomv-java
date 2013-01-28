@@ -68,28 +68,28 @@ public class NetStatsCommand extends Command
         long capsBytesSent = 0;
         long capsBytesRecv = 0;
 
-        for (Entry<String, Statistics.Stat> kvp : Client.Stats.GetStatistics().entrySet())
+        for (Entry<String, Statistics.Stat> kvp : Client.Stats.getStatistics().entrySet())
         {
         	Stat value = kvp.getValue();
             if (value.Type == Statistics.Type.Message)
             {                              
                 capsOutput.append(String.format("%-30s|%s|%s|%10s|%10s|\n", kvp.getKey(), value.TxCount, value.RxCount,
-                    formatBytes(value.TxBytes.get()), formatBytes(value.RxBytes.get())));
+                    formatBytes(value.TxBytes), formatBytes(value.RxBytes)));
 
-                capsSentCount += value.TxCount.get();
-                capsRecvCount += value.RxCount.get();
-                capsBytesSent += value.TxBytes.get();
-                capsBytesRecv += value.RxBytes.get();
+                capsSentCount += value.TxCount;
+                capsRecvCount += value.RxCount;
+                capsBytesSent += value.TxBytes;
+                capsBytesRecv += value.RxBytes;
             }
             else if (value.Type == Statistics.Type.Packet)
             {
                 packetOutput.append(String.format("%-30s|%s|%s|%10s|%10s|\n", kvp.getKey(), value.TxCount, value.RxCount, 
-                    formatBytes(value.TxBytes.get()), formatBytes(value.RxBytes.get())));
+                    formatBytes(value.TxBytes), formatBytes(value.RxBytes)));
 
-                packetsSentCount += value.TxCount.get();
-                packetsRecvCount += value.RxCount.get();
-                packetBytesSent += value.TxBytes.get();
-                packetBytesRecv += value.RxBytes.get();
+                packetsSentCount += value.TxCount;
+                packetsRecvCount += value.RxCount;
+                packetBytesSent += value.TxBytes;
+                packetBytesRecv += value.RxBytes;
             }
         }
 
