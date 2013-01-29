@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import libomv.StructuredData.OSD.OSDType;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
@@ -119,6 +120,23 @@ public class OSDBinary extends OSD
 	public long AsULong()
 	{
 		return Helpers.BytesToUInt64B(value);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.getType() == OSDType.Binary && ((OSDBinary)osd).value.equals(value);
 	}
 
 	@Override

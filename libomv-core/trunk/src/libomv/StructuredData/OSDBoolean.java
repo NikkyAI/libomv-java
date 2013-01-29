@@ -78,6 +78,23 @@ public class OSDBoolean extends OSD
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return value ? 1 : 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.AsBoolean() == value;
+	}
+
+	@Override
 	public String toString()
 	{
 		return AsString();

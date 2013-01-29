@@ -95,6 +95,23 @@ public class OSDInteger extends OSD
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return value;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.AsInteger() == value;
+	}
+
+	@Override
 	public String toString()
 	{
 		return AsString();

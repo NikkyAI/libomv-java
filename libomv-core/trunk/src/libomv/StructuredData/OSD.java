@@ -183,6 +183,23 @@ public class OSD
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.getType() == OSDType.Unknown;
+	}
+
+	@Override
 	public String toString()
 	{
 		return "undef";

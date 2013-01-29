@@ -67,6 +67,23 @@ public class OSDUri extends OSD
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.AsUri().equals(value);
+	}
+
+	@Override
 	public String toString()
 	{
 		return AsString();

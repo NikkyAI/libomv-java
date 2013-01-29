@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import libomv.StructuredData.OSD.OSDType;
 import libomv.types.Quaternion;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
@@ -164,6 +165,23 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.getType() == OSDType.Map && ((OSDMap)osd).value.equals(value);
+	}
+
+	@Override
 	public String toString()
 	{
 		try
@@ -214,14 +232,14 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	}
 
 	@Override
-	public final OSD put(String key, OSD osd)
+	public final OSD put(String key, OSD val)
 	{
-		return value.put(key, osd);
+		return value.put(key, val);
 	}
 
-	public final void put(Entry<String, OSD> kvp)
+	public final OSD put(Entry<String, OSD> kvp)
 	{
-		value.put(kvp.getKey(), kvp.getValue());
+		return value.put(kvp.getKey(), kvp.getValue());
 	}
 
 	@Override

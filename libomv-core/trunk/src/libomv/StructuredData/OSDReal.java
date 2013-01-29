@@ -151,6 +151,24 @@ public class OSDReal extends OSD
 	}
 
 	@Override
+	public int hashCode()
+	{
+		long v = Double.doubleToLongBits(value);
+		return (int)(v ^ (v >>> 32));
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && Double.doubleToLongBits(osd.AsReal()) == Double.doubleToLongBits(value);
+	}
+
+	@Override
 	public String toString()
 	{
 		return AsString();

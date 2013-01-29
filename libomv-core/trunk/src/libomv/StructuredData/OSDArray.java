@@ -360,6 +360,23 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	}
+
+	public boolean equals(OSD osd)
+	{
+		return osd != null && osd.getType() == OSDType.Array && ((OSDArray)osd).value.equals(value);
+	}
+
+	@Override
 	public String toString()
 	{
 		try
