@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import libomv.StructuredData.OSD.OSDType;
 import libomv.types.Quaternion;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
