@@ -36,17 +36,34 @@ import libomv.types.UUID;
 
 public class NetStatsCommand extends Command
 {
+    private static final String usage = "Usage: netstats        ; display the netstats\n" +
+    		                            "       netstats on|off ; enable or disable netstats tracking\n" + 
+    		                            "       netstats ?      ; displays if tracking is currently on\n";
+
     public NetStatsCommand(TestClient testClient)
     {
         Name = "netstats";
-        Description = "Provide packet and capabilities utilization statistics";
+        Description = "Provide packet and capabilities utilization statistics. " + usage;
         Category = CommandCategory.Simulator;
     }
 
 	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
-        if (!Client.Settings.getBool(LibSettings.TRACK_UTILIZATION))
+		boolean tracking = Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+		if (args.length > 0)
+		{
+			if (args[0].equals("?"))
+			{
+				return "NetStats tracking is currently " + (tracking ? "on." : "off.");
+			}
+
+			boolean on = args[0].equalsIgnoreCase("on");
+			Client.Settings.put(LibSettings.TRACK_UTILIZATION, on);
+			return "NetStats tracking has been " + (on ? "enabled!" : "disabled!");
+		}
+		
+        if (!tracking)
         {
             return "TRACK_UTILIZATION is not enabled in Settings, statistics not available";
         }
@@ -73,7 +90,7 @@ public class NetStatsCommand extends Command
         	Stat value = kvp.getValue();
             if (value.Type == Statistics.Type.Message)
             {                              
-                capsOutput.append(String.format("%-30s|%s|%s|%10s|%10s|\n", kvp.getKey(), value.TxCount, value.RxCount,
+                capsOutput.append(String.format("%-30s|%4s|%4s|%10s|%10s|\n", kvp.getKey(), value.TxCount, value.RxCount,
                     formatBytes(value.TxBytes), formatBytes(value.RxBytes)));
 
                 capsSentCount += value.TxCount;
@@ -83,7 +100,7 @@ public class NetStatsCommand extends Command
             }
             else if (value.Type == Statistics.Type.Packet)
             {
-                packetOutput.append(String.format("%-30s|%s|%s|%10s|%10s|\n", kvp.getKey(), value.TxCount, value.RxCount, 
+                packetOutput.append(String.format("%-30s|%4s|%4s|%10s|%10s|\n", kvp.getKey(), value.TxCount, value.RxCount, 
                     formatBytes(value.TxBytes), formatBytes(value.RxBytes)));
 
                 packetsSentCount += value.TxCount;
@@ -93,10 +110,10 @@ public class NetStatsCommand extends Command
             }
         }
 
-        capsOutput.append(String.format("%-30s|%s|%s|%10s|%10s|\n", "Capabilities Totals", capsSentCount, capsRecvCount,
+        capsOutput.append(String.format("%-30s|%4s|%4s|%10s|%10s|\n", "Capabilities Totals", capsSentCount, capsRecvCount,
                     formatBytes(capsBytesSent), formatBytes(capsBytesRecv)));
 
-        packetOutput.append(String.format("%-30s|%s|%s|%10s|%10s|\n", "Packet Totals", packetsSentCount, packetsRecvCount,
+        packetOutput.append(String.format("%-30s|%4s|%4s|%10s|%10s|\n", "Packet Totals", packetsSentCount, packetsRecvCount,
                     formatBytes(packetBytesSent), formatBytes(packetBytesRecv)));
 
         return capsOutput.toString() + "\n" + packetOutput.toString();

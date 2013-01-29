@@ -101,10 +101,10 @@ public class RegionInfoCommand extends Command
         output.append("TerrainDetail2: " + sim.TerrainDetail2 + "\n");
         output.append("TerrainDetail3: " + sim.TerrainDetail3 + "\n");
         output.append("Water Height: " + sim.WaterHeight + "\n");
-        output.append("Datacenter:" + sim.ColoLocation + "\n");
-        output.append("CPU Ratio:" + sim.CPURatio + "\n");
-        output.append("CPU Class:" + sim.CPUClass + "\n");
-        output.append("Region SKU/Type:" + sim.ProductSku + " " + sim.ProductName + "\n");
+        output.append("Datacenter: " + sim.ColoLocation + "\n");
+        output.append("CPU Ratio: " + sim.CPURatio + "\n");
+        output.append("CPU Class: " + sim.CPUClass + "\n");
+        output.append("Region SKU/Type: " + sim.ProductSku + " " + sim.ProductName + "\n");
 
         return output.toString();
     }
