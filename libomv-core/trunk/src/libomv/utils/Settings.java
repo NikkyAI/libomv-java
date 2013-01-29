@@ -40,6 +40,7 @@ import java.util.Map.Entry;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
+import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.utils.CallbackArgs;
@@ -167,7 +168,7 @@ public class Settings
 	public OSD get(String name)
 	{
 		OSD osd = settings.get(name);
-		if (osd == null && defaults != null)
+		if (osd.getType() == OSDType.Unknown && defaults != null)
 			osd = defaults.get(name);
 		return osd;
 	}
@@ -245,7 +246,7 @@ public class Settings
 			defaults = new OSDMap();
 		
 		OSD osd = defaults.put(name, value);
-		return osd;
+		return osd == null ? new OSD() : osd;
 	}
 
 	public boolean put(String name, boolean value)
@@ -270,19 +271,21 @@ public class Settings
 
 	private OSD put(String name, OSD value)
 	{
-		OSD osd = null;
+		OSD def = null, osd = null;
 		if (defaults != null)
 		{
 			/* if the default value is equal to the new value, remove a possible settings value */
-			osd = defaults.get(name);
-			if (osd != null && osd.equals(value))
+			def = defaults.get(name);
+			if (def != null && def.getType() != OSDType.Unknown && def.equals(value))
 				osd = settings.remove(name);
+			else
+				def = null;
 		}
 
-		if (osd == null)
+		if (def == null)
 			osd = settings.put(name, value);
 
 		OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
-		return osd;
+		return osd == null ? new OSD() : osd;
 	}
 }
