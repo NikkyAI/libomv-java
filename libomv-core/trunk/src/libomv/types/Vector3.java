@@ -224,12 +224,9 @@ public class Vector3
 	/**
 	 * Initializes a vector from a flaot array
 	 * 
-	 * @param vec
-	 *           the vector to intialize
-	 * @param arr
-	 *            is the float array
-	 * @param pos
-	 *            Beginning position in the float array
+	 * @param vec The vector to intialize
+	 * @param arr Is the float array
+	 * @param pos Beginning position in the float array
 	 */
 	public static Vector3 fromArray(Vector3 vec, float[] arr, int pos)
 	{
@@ -245,12 +242,9 @@ public class Vector3
 	/**
 	 * Builds a vector from a byte array
 	 * 
-	 * @param byteArray
-	 *            Byte array containing a 12 byte vector
-	 * @param pos
-	 *            Beginning position in the byte array
-	 * @param le
-	 *            is the byte array in little endian format
+	 * @param byteArray Byte array containing a 12 byte vector
+	 * @param pos Beginning position in the byte array
+	 * @param le Is the byte array in little endian format
 	 */
 	public void fromBytes(byte[] bytes, int pos, boolean le)
 	{
@@ -272,8 +266,7 @@ public class Vector3
 	/**
 	 * Builds a vector from a data stream
 	 * 
-	 * @param is
-	 *            DataInputStream to read the vector from
+	 * @param is DataInputStream to read the vector from
 	 * @throws IOException 
 	 */
 	public void fromBytes(DataInputStream is) throws IOException

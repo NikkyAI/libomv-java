@@ -30,9 +30,11 @@
  */
 package libomv.types;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.apache.commons.io.input.SwappedDataInputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -115,35 +117,16 @@ public class Vector4
         while (parser.nextTag() == XmlPullParser.START_TAG);
     }
 
-	public Vector4(byte[] objectData, int pos)
+	public Vector4(byte[] dest, int pos)
 	{
-		this(objectData, pos, false);
+		X = Y = Z = S = 0;
+		fromBytes(dest, pos, false);
 	}
 
-	public Vector4(byte[] objectData, int pos, boolean bigEndian)
+	public Vector4(byte[] dest, int pos, boolean le)
 	{
-		if (objectData.length >= (pos + 16))
-		{
-			if (bigEndian)
-			{
-				X = Helpers.BytesToFloatB(objectData, pos);
-				Y = Helpers.BytesToFloatB(objectData, pos + 4);
-				Z = Helpers.BytesToFloatB(objectData, pos + 8);
-				S = Helpers.BytesToFloatB(objectData, pos + 12);
-			}
-			else
-			{
-				X = Helpers.BytesToFloatL(objectData, pos);
-				Y = Helpers.BytesToFloatL(objectData, pos + 4);
-				Z = Helpers.BytesToFloatL(objectData, pos + 8);
-				S = Helpers.BytesToFloatL(objectData, pos + 12);
-			}
-		}
-		else
-		{
-			X = Y = Z = S = 0.0F;
-		}
-
+		X = Y = Z = S = 0;
+		fromBytes(dest, pos, le);
 	}
 
 	public Vector4(Vector4 v)
@@ -155,7 +138,7 @@ public class Vector4
 	}
 
 	// <returns></returns>
-	public void GetBytes(ByteBuffer byteArray)
+	public void getBytes(ByteBuffer byteArray)
 	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
@@ -164,7 +147,79 @@ public class Vector4
 	}
 
 	/**
-	 * Serializes this color into four bytes in a byte array
+	 * Initializes a vector from a flaot array
+	 * 
+	 * @param vec
+	 *           the vector to intialize
+	 * @param arr
+	 *            is the float array
+	 * @param pos
+	 *            Beginning position in the float array
+	 */
+	public static Vector4 fromArray(Vector4 vec, float[] arr, int pos)
+	{
+		if (arr.length >= (pos + 4))
+		{		
+			vec.X = arr[pos + 0];
+			vec.Y = arr[pos + 1];
+			vec.Z = arr[pos + 2];
+			vec.S = arr[pos + 3];
+		}
+		return vec;
+	}
+
+	/**
+	 * Builds a vector from a byte array
+	 * 
+	 * @param byteArray
+	 *            Byte array containing a 12 byte vector
+	 * @param pos
+	 *            Beginning position in the byte array
+	 * @param le
+	 *            is the byte array in little endian format
+	 */
+	public void fromBytes(byte[] bytes, int pos, boolean le)
+	{
+		if (le)
+		{
+			/* Little endian architecture */
+			X = Helpers.BytesToFloatL(bytes, pos + 0);
+			Y = Helpers.BytesToFloatL(bytes, pos + 4);
+			Z = Helpers.BytesToFloatL(bytes, pos + 8);
+			S = Helpers.BytesToFloatL(bytes, pos + 12);
+		}
+		else
+		{
+			X = Helpers.BytesToFloatB(bytes, pos + 0);
+			Y = Helpers.BytesToFloatB(bytes, pos + 4);
+			Z = Helpers.BytesToFloatB(bytes, pos + 8);
+			S = Helpers.BytesToFloatB(bytes, pos + 12);
+		}
+	}
+
+	/**
+	 * Builds a vector from a data stream
+	 * 
+	 * @param is
+	 *            DataInputStream to read the vector from
+	 * @throws IOException 
+	 */
+	public void fromBytes(DataInputStream is) throws IOException
+	{
+		X = is.readFloat();
+		Y = is.readFloat();
+		Z = is.readFloat();
+	}
+
+	public void fromBytes(SwappedDataInputStream is) throws IOException
+	{
+		X = is.readFloat();
+		Y = is.readFloat();
+		Z = is.readFloat();
+	}
+
+	/**
+	 * Serializes this vector into four bytes in a byte array
 	 * 
 	 * @param dest
 	 *            Destination byte array
@@ -173,27 +228,48 @@ public class Vector4
 	 *            least 4 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int ToBytes(byte[] bytes)
+	public int toBytes(byte[] dest)
 	{
-		return ToBytes(bytes, 0);
+		return toBytes(dest, 0, false);
 	}
 
 	/**
 	 * Serializes this color into four bytes in a byte array
 	 * 
-	 * @param dest
-	 *            Destination byte array
-	 * @param pos
-	 *            Position in the destination array to start writing. Must be at
+	 * @param dest Destination byte array
+	 * @param pos Position in the destination array to start writing. Must be at
 	 *            least 4 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int ToBytes(byte[] dest, int pos)
+	public int toBytes(byte[] dest, int pos)
 	{
-		pos += Helpers.FloatToBytesL(X, dest, pos);
-		pos += Helpers.FloatToBytesL(Y, dest, pos);
-		pos += Helpers.FloatToBytesL(Z, dest, pos);
-		pos += Helpers.FloatToBytesL(S, dest, pos);
+		return toBytes(dest, pos, false);
+	}
+	
+	/**
+	 * Serializes this color into four bytes in a byte array
+	 * 
+	 * @param dest Destination byte array
+	 * @param pos Position in the destination array to start writing. Must be at
+	 *            least 4 bytes before the end of the array
+	 * @return number of bytes filled to the byte array
+	 */
+	public int toBytes(byte[] dest, int pos, boolean le)
+	{
+		if (le)
+		{
+			pos += Helpers.FloatToBytesL(X, dest, pos);
+			pos += Helpers.FloatToBytesL(Y, dest, pos);
+			pos += Helpers.FloatToBytesL(Z, dest, pos);
+			pos += Helpers.FloatToBytesL(S, dest, pos);
+		}
+		else
+		{
+			pos += Helpers.FloatToBytesB(X, dest, pos);
+			pos += Helpers.FloatToBytesB(Y, dest, pos);
+			pos += Helpers.FloatToBytesB(Z, dest, pos);
+			pos += Helpers.FloatToBytesB(S, dest, pos);
+		}
 		return 16;
 	}
 
