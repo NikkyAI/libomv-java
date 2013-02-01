@@ -44,7 +44,7 @@ public class FriendsCommand extends Command
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
         // initialize a StringBuilder object used to return the results
-        StringBuilder sb = new StringBuilder(Client.Self.getName() + "has ");
+        StringBuilder sb = new StringBuilder(Client.Self.getName() + " has ");
 
         // Only iterate the Friends dictionary if we actually have friends!
         int count = Client.Friends.getFriendList().size();
