@@ -134,7 +134,7 @@ public abstract class AsyncHTTPClient<T>
 		return asyncClient.getConnectionManager().getSchemeRegistry().register(scheme);
 	}
 	
-	private synchronized void cancel(boolean mayInterruptIfRunning)
+	protected synchronized void cancel(boolean mayInterruptIfRunning)
 	{
 		if (timeout != null)
 		{

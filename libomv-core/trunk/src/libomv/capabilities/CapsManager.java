@@ -45,19 +45,15 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.reactor.IOReactorException;
 
-import libomv.LibSettings;
 import libomv.Simulator;
-import libomv.Statistics.Type;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.packets.Packet;
-import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
-import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 /**
  * Capabilities is the name of the bi-directional HTTP REST protocol used to
@@ -98,10 +94,10 @@ public class CapsManager extends Thread
 
 	private enum CapsState
 	{
-		Closed,
 		Seeding,
 		Running,
-		Closing;
+		Closing,
+		Closed;
 	}
 	
 	/* Whether the capabilities event queue is connected and listening for incoming events */
@@ -123,14 +119,25 @@ public class CapsManager extends Thread
 		}
 	}
 	
-	private final boolean isActiveAndClose()
+	private final boolean isActiveAndMakeClosing()
 	{
 		synchronized (_Running)
 		{
-			boolean active = _Running != CapsState.Closed && _Running != CapsState.Closing;
+			boolean active = _Running == CapsState.Seeding || _Running == CapsState.Running;
 			if (active)
 				_Running = CapsState.Closing;
 			return active;
+		}
+	}
+
+	private final boolean isSeedingAndMakeRun()
+	{
+		synchronized (_Running)
+		{
+			boolean seeding = _Running == CapsState.Seeding;
+			if (seeding)
+				_Running = CapsState.Running;
+			return seeding;
 		}
 	}
 
@@ -138,9 +145,7 @@ public class CapsManager extends Thread
 	{
 		synchronized (_Running)
 		{
-			boolean seed =  _Running == CapsState.Seeding;
-			_Running = CapsState.Running;
-			return seed;
+			return _Running == CapsState.Seeding;
 		}
 	}
 
@@ -160,26 +165,6 @@ public class CapsManager extends Thread
 		}
 	}
 
-	private boolean trackUtilization;
-	
-	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
-	{
-		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params)
-		{
-			String key = params.getName();
-			if (key == null)
-			{
-				trackUtilization = _Simulator.getClient().Settings.getBool(LibSettings.TRACK_UTILIZATION);
-			}
-			else if (key.equals(LibSettings.TRACK_UTILIZATION))
-			{
-				trackUtilization = params.getValue().AsBoolean();
-			}
-			return false;
-		}
-	}
-
 	/**
 	 * Default constructor
 	 * 
@@ -192,9 +177,6 @@ public class CapsManager extends Thread
 		super("CapsManager");
 		_Simulator = simulator;
 
-		simulator.getClient().Settings.OnSettingsUpdate.add(new SettingsUpdate());
-		trackUtilization = simulator.getClient().Settings.getBool(LibSettings.TRACK_UTILIZATION);
-		
 		_SeedCapsURI = seedcaps;
 		_Client = new CapsClient(simulator.getClient(), CapsEventType.EventQueueGet.toString());
 		
@@ -203,13 +185,10 @@ public class CapsManager extends Thread
 
 	public final void disconnect(boolean immediate) throws InterruptedException
 	{
-		if (isActiveAndClose())
+		if (isActiveAndMakeClosing())
 		{
+			_Client.cancel(immediate);
 			Logger.Log("Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"), LogLevel.Info, _Simulator.getClient());
-			if (_Client != null)
-			{
-				_Client.shutdown(immediate);
-			}
 		}
 	}
 
@@ -233,7 +212,20 @@ public class CapsManager extends Thread
 			Logger.Log("Couldn't startup capability system", LogLevel.Error, _Simulator.getClient(), ex);
 			setState(CapsState.Closed);
 		}
-		_Client = null;
+		finally
+		{
+			try
+			{
+				_Client.shutdown(true);
+			}
+			catch (InterruptedException ex)
+			{				
+			}
+			finally
+			{
+				_Client = null;
+			}
+		}	
 	}
 
 	private URI makeSeedRequest() throws InterruptedException, ExecutionException, TimeoutException, IOException, URISyntaxException
@@ -390,13 +382,6 @@ public class CapsManager extends Thread
 						OSDMap body = (OSDMap) osd;
 						String eventName = evt.get("message").AsString();
 
-						// #region Stats Tracking
-						if (trackUtilization)
-						{
-		                    _Simulator.getClient().Stats.updateNetStats(eventName, Type.Message, 0, body.toString().length());
-						}
-						// #endregion
-						
 						IMessage message = _Simulator.getClient().Messages.DecodeEvent(eventName, body);
 						if (message != null)
 						{
@@ -440,7 +425,7 @@ public class CapsManager extends Thread
 					else if (result instanceof OSDMap)
 					{
 						errorCount = 0;
-						if (isSeeding())
+						if (isSeedingAndMakeRun())
 						{
 							_Simulator.getClient().Network.raiseConnectedEvent(_Simulator);
 						}
