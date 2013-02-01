@@ -3101,31 +3101,32 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				// Collision normal for avatar
 				if (update.Avatar)
 				{
-					update.CollisionPlane = new Vector4(data, pos);
+					update.CollisionPlane = new Vector4(data, pos, true);
 					pos += 16;
 				}
 				// Position
-				update.Position = new Vector3(data, pos);
+				update.Position = new Vector3(data, pos, true);
 				pos += 12;
 				// Velocity
 				update.Velocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -128.0f, 128.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -128.0f, 128.0f), Helpers.UInt16ToFloatL(data, pos + 4,
-								-128.0f, 128.0f));
+						                      Helpers.UInt16ToFloatL(data, pos + 2, -128.0f, 128.0f), 
+						                      Helpers.UInt16ToFloatL(data, pos + 4, -128.0f, 128.0f));
 				pos += 6;
 				// Acceleration
 				update.Acceleration = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f), Helpers.UInt16ToFloatL(data, pos + 4,
-								-64.0f, 64.0f));
+						                          Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f),
+						                          Helpers.UInt16ToFloatL(data, pos + 4, -64.0f, 64.0f));
 				pos += 6;
 				// Rotation (theta)
 				update.Rotation = new Quaternion(Helpers.UInt16ToFloatL(data, pos, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -1.0f, 1.0f), Helpers.UInt16ToFloatL(data, pos + 4,
-								-1.0f, 1.0f), Helpers.UInt16ToFloatL(data, pos + 6, -1.0f, 1.0f));
+						                         Helpers.UInt16ToFloatL(data, pos + 2, -1.0f, 1.0f),
+						                         Helpers.UInt16ToFloatL(data, pos + 4, -1.0f, 1.0f),
+						                         Helpers.UInt16ToFloatL(data, pos + 6, -1.0f, 1.0f));
 				pos += 8;
 				// Angular velocity (omega)
 				update.AngularVelocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f), Helpers.UInt16ToFloatL(data, pos + 4,
-								-64.0f, 64.0f));
+						                             Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f),
+						                             Helpers.UInt16ToFloatL(data, pos + 4, -64.0f, 64.0f));
 				pos += 6;
 
 				// Textures
@@ -3240,11 +3241,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Click action
 			prim.clickAction = ClickAction.setValue(data[i++]);
 			// Scale
-			prim.Scale = new Vector3(data, i); i += 12;
+			prim.Scale = new Vector3(data, i, true); i += 12;
 			// Position
-			prim.Position = new Vector3(data, i); i += 12;
+			prim.Position = new Vector3(data, i, true); i += 12;
 			// Rotation
-			prim.Rotation = new Quaternion(data, i, true); i += 12;
+			prim.Rotation = new Quaternion(data, i, true, true); i += 12;
 			// Compressed flags
 			int flags = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 
@@ -3253,7 +3254,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Angular velocity
 			if ((flags & CompressedFlags.HasAngularVelocity) != 0)
 			{
-				prim.AngularVelocity = new Vector3(data, i); i += 12;
+				prim.AngularVelocity = new Vector3(data, i, true); i += 12;
 			}
 
 			// Parent ID
@@ -3303,7 +3304,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim.Text = text;
 
 				// Text color
-				prim.TextColor = new Color4(data, i, false); i += 4;
+				prim.TextColor = new Color4(data, i, false, true); i += 4;
 			}
 			else
 			{
@@ -3832,12 +3833,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					if (created != null)
 						created.argvalue = true;
 				}
-				else
-				{
-					Logger.Log("GetObject(): Object with UUID {" + fullID.toString() + "}, old localID: "
-				               + Helpers.LocalIDToString(prim.LocalID) + " new localID: "
-							   + Helpers.LocalIDToString(localID) + " found!", LogLevel.Warning, _Client);
-				}
 				prim.LocalID = localID;
 
 				simulator.getObjectsPrimitives().put(localID, prim);
@@ -3882,9 +3877,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					Logger.Log("GetAvatar(): Avatar with UUID {" + fullID.toString() + "}, old localID: "
-				               + Helpers.LocalIDToString(avatar.LocalID) + " new localID: "
-							   + Helpers.LocalIDToString(localID) + " found!", LogLevel.Warning, _Client);
+					if (avatar.LocalID == _Client.Self.getLocalID())
+					{
+						_Client.Self.setLocalID(localID);
+					}
 				}
 				avatar.LocalID = localID;
 
