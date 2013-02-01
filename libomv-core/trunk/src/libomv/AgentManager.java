@@ -291,9 +291,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		DenyTeleport, // 24
 		/* Only useful if you have Linden permissions */
 		GodLikeRequestTeleport, // 25
-		/* A placeholder type for future expansion, currently not used */
-		CurrentlyUnused, // 26
+		/* Request a teleport lure */
+		RequestLure, // 26
 		/* Notification of a new group election, this is depreciated */
+		@Deprecated
 		Deprecated_GroupElection, // 27
 		/* IM to tell the user to go to an URL. Put a text message in the message field, and put the
 		 * url with a trailing \0 in the binary bucket. */
