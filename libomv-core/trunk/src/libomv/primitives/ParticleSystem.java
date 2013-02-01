@@ -368,8 +368,8 @@ public class ParticleSystem
 		pos += Target.ToBytes(bytes, pos);
 		pos += Helpers.UInt32ToBytesL(PartDataFlags, bytes, pos);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartMaxAge, false, 8, 8);
-		pos += PartStartColor.ToBytes(bytes, pos);
-		pos += PartEndColor.ToBytes(bytes, pos);
+		pos += PartStartColor.toBytes(bytes, pos);
+		pos += PartEndColor.toBytes(bytes, pos);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartStartScaleX, false, 3, 5);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartStartScaleY, false, 3, 5);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartEndScaleX, false, 3, 5);

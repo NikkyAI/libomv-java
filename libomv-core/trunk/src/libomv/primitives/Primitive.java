@@ -1174,7 +1174,7 @@ public class Primitive
 			// Alpha channel in color is intensity
 			Color4 tmpColor = Color;
 			tmpColor.A = Intensity;
-			tmpColor.ToBytes(data, 0);
+			tmpColor.toBytes(data, 0);
 			Helpers.FloatToBytesL(Radius, data, 4);
 			Helpers.FloatToBytesL(Cutoff, data, 8);
 			Helpers.FloatToBytesL(Falloff, data, 12);

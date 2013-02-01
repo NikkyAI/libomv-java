@@ -138,7 +138,7 @@ public class Vector4
 	}
 
 	// <returns></returns>
-	public void getBytes(ByteBuffer byteArray)
+	public void GetBytes(ByteBuffer byteArray)
 	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);

@@ -151,7 +151,7 @@ public final class Color4
 	public Color4(byte[] byteArray, int pos, boolean inverted)
 	{
 		R = G = B = A = 0f;
-		FromBytes(byteArray, pos, inverted);
+		fromBytes(byteArray, pos, inverted);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public final class Color4
 	public Color4(byte[] byteArray, int pos, boolean inverted, boolean alphaInverted)
 	{
 		R = G = B = A = 0f;
-		FromBytes(byteArray, pos, inverted, alphaInverted);
+		fromBytes(byteArray, pos, inverted, alphaInverted);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public final class Color4
 		return ((Float) thisHue).compareTo(thatHue);
 	}
 
-	public void FromBytes(byte[] byteArray, int pos, boolean inverted)
+	public void fromBytes(byte[] byteArray, int pos, boolean inverted)
 	{
 		final float quanta = 1.0f / 255.0f;
 
@@ -263,9 +263,9 @@ public final class Color4
 	 *            alphaInverted true will flip the alpha value back to
 	 *            non-inverted, but keep the other color bytes inverted
 	 */
-	public void FromBytes(byte[] byteArray, int pos, boolean inverted, boolean alphaInverted)
+	public void fromBytes(byte[] byteArray, int pos, boolean inverted, boolean alphaInverted)
 	{
-		FromBytes(byteArray, pos, inverted);
+		fromBytes(byteArray, pos, inverted);
 
 		if (alphaInverted)
 		{
@@ -275,20 +275,22 @@ public final class Color4
 
 	public byte[] GetBytes()
 	{
-		return GetBytes(false);
+		byte[] byteArray = new byte[4];
+		toBytes(byteArray, 0, false);
+		return byteArray;
 	}
 
 	public byte[] GetBytes(boolean inverted)
 	{
 		byte[] byteArray = new byte[4];
-		ToBytes(byteArray, 0, inverted);
+		toBytes(byteArray, 0, inverted);
 		return byteArray;
 	}
 
-	public byte[] GetFloatBytes()
+	public byte[] getFloatBytes()
 	{
 		byte[] bytes = new byte[16];
-		ToFloatBytesL(bytes, 0);
+		toFloatBytesL(bytes, 0);
 		return bytes;
 	}
 
@@ -302,9 +304,9 @@ public final class Color4
 	 *            least 16 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int ToBytes(byte[] dest, int pos)
+	public int toBytes(byte[] dest, int pos)
 	{
-		return ToBytes(dest, pos, false);
+		return toBytes(dest, pos, false);
 	}
 
 	/**
@@ -319,7 +321,7 @@ public final class Color4
 	 *            True to invert the output (1.0 becomes 0 instead of 255)
 	 * @return number of bytes filled to the byte array
 	 */
-	public int ToBytes(byte[] dest, int pos, boolean inverted)
+	public int toBytes(byte[] dest, int pos, boolean inverted)
 	{
 		dest[pos + 0] = Helpers.FloatToByte(R, 0f, 1f);
 		dest[pos + 1] = Helpers.FloatToByte(G, 0f, 1f);
@@ -347,7 +349,7 @@ public final class Color4
 	 *            least 16 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int ToFloatBytesL(byte[] dest, int pos)
+	public int toFloatBytesL(byte[] dest, int pos)
 	{
 		Helpers.FloatToBytesL(R, dest, pos + 0);
 		Helpers.FloatToBytesL(G, dest, pos + 4);
