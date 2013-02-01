@@ -1957,12 +1957,9 @@ public class Helpers
 	/**
 	 * Convert a float value to an unsigned byte value given a minimum and maximum range
 	 * 
-	 * @param val
-	 *            Value to convert to a byte
-	 * @param lower
-	 *            Minimum value range
-	 * @param upper
-	 *            Maximum value range
+	 * @param val Value to convert to a byte
+	 * @param lower Minimum value range
+	 * @param upper Maximum value range
 	 * @return A single byte representing the original float value
 	 */
 	public static byte FloatToByte(float val, float lower, float upper)
@@ -1976,16 +1973,12 @@ public class Helpers
 	}
 
 	/**
-	 * Convert a byte to a float value given a minimum and maximum range
+	 * Convert an unsigned byte to a float value given a minimum and maximum range
 	 * 
-	 * @param bytes
-	 *            Byte array to get the byte from
-	 * @param pos
-	 *            Position in the byte array the desired byte is at
-	 * @param lower
-	 *            Minimum value range
-	 * @param upper
-	 *            Maximum value range
+	 * @param bytes Byte array to get the unsigned byte from
+	 * @param pos Position in the byte array the desired byte is at
+	 * @param lower Minimum value range
+	 * @param upper Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
 	public static float ByteToFloat(byte[] bytes, int pos, float lower, float upper)
@@ -1994,31 +1987,26 @@ public class Helpers
 		{
 			return 0;
 		}
-		return ByteToFloat(bytes[pos], lower, upper);
+		return ByteToFloat(bytes[pos] & 0xFF, lower, upper);
 	}
 
 	/**
-	 * Convert a byte to a float value given a minimum and maximum range
+	 * Convert a unsigned byte to a float value given a minimum and maximum range
 	 * 
-	 * @param val
-	 *            Byte to convert to a float value
-	 * @param lower
-	 *            Minimum value range
-	 * @param upper
-	 *            Maximum value range
+	 * @param val Unsigned byte to convert to a float value
+	 * @param lower Minimum value range
+	 * @param upper Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float ByteToFloat(byte val, float lower, float upper)
+	public static float ByteToFloat(int val, float lower, float upper)
 	{
-		final float ONE_OVER_BYTEMAX = 1.0f / Byte.MAX_VALUE;
-
-		float fval = val * ONE_OVER_BYTEMAX;
+		float fval = val / 255.0f;
 		float delta = (upper - lower);
 		fval *= delta;
 		fval += lower;
 
 		// Test for values very close to zero
-		float error = delta * ONE_OVER_BYTEMAX;
+		float error = delta / 255.0f;
 		if (Math.abs(fval) < error)
 		{
 			fval = 0.0f;
@@ -2027,28 +2015,41 @@ public class Helpers
 		return fval;
 	}
 
+	/**
+	 * Convert an unsigned short to a float value given a minimum and maximum range
+	 * 
+	 * @param bytes Byte array to get the unsigned short from
+	 * @param lower Minimum value range
+	 * @param upper Maximum value range
+	 * @return A float value inclusively between lower and upper
+	 */
 	public static float UInt16ToFloatL(byte[] bytes, int pos, float lower, float upper)
 	{
 		int val = BytesToUInt16L(bytes, pos);
 		return UInt16ToFloat(val, lower, upper);
 	}
 
+	/**
+	 * Convert a unsigned short to a float value given a minimum and maximum range
+	 * 
+	 * @param val Unsigned short to convert to a float value
+	 * @param lower Minimum value range
+	 * @param upper Maximum value range
+	 * @return A float value inclusively between lower and upper
+	 */
 	public static float UInt16ToFloat(int val, float lower, float upper)
 	{
-		final float ONE_OVER_U16_MAX = 1.0f / (2 ^ 16 - 1);
-
-		float fval = val * ONE_OVER_U16_MAX;
+		float fval = val / 65535.0f;
 		float delta = upper - lower;
 		fval *= delta;
 		fval += lower;
 
 		// Make sure zeroes come through as zero
-		float maxError = delta * ONE_OVER_U16_MAX;
+		float maxError = delta / 65535.0f;
 		if (Math.abs(fval) < maxError)
 		{
 			fval = 0.0f;
 		}
-
 		return fval;
 	}
 
@@ -2057,8 +2058,7 @@ public class Helpers
 		float delta = upper - lower;
 		value -= lower;
 		value /= delta;
-		value *= (2 ^ 16 - 1);
-
+		value *= 65535.0f;
 		return (int) value;
 	}
 
