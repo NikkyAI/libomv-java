@@ -34,7 +34,7 @@ import libomv.types.UUID;
  */
 public class AppearanceCommand extends Command
 {
-    private static final String usage = "Usage: appearance [rebake]";
+    private static final String usage = "Usage: appearance [force] // without \"force\" baking will be skipped if it was alrady done";
 
     public AppearanceCommand(TestClient testClient)
     {
@@ -46,7 +46,10 @@ public class AppearanceCommand extends Command
 	@Override
     public String execute(String[] args, UUID fromAgentID)
     {
-        Client.Appearance.RequestSetAppearance((args.length > 0 && args[0].equalsIgnoreCase("rebake")));
+		if (Client.Appearance == null)
+			return "Appearance manager not enabled";
+		
+        Client.Appearance.RequestSetAppearance((args.length > 0 && args[0].equalsIgnoreCase("force")));
         return "Appearance sequence started";
     }
 }
