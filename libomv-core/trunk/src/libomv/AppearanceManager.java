@@ -396,6 +396,9 @@ public class AppearanceManager implements PacketCallback
         sendAppearanceUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
         _Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 
+        if (_Client.Assets == null)
+        	Logger.Log("AppearanceManager requires a working AssetManager!", LogLevel.Error, _Client);
+        
         _Client.Network.RegisterCallback(PacketType.AgentWearablesUpdate, this);
         _Client.Network.RegisterCallback(PacketType.AgentCachedTextureResponse, this);
         _Client.Network.RegisterCallback(PacketType.RebakeAvatarTextures, this);
