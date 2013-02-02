@@ -1449,16 +1449,10 @@ public class AssetManager implements PacketCallback
      */
     public void RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName, final TextureDownloadCallback callback) throws URISyntaxException
     {
-        if (avatarID == UUID.Zero || textureID == UUID.Zero || callback == null)
+        if (avatarID == null || avatarID.equals(UUID.Zero) ||
+        	textureID == null || textureID.equals(UUID.Zero) || callback == null)
             return;
         
-        String appearenceUri = _Client.Network.getAgentAppearanceServiceURL();
-        if (appearenceUri == null || appearenceUri.isEmpty())
-        {
-            callback.callback(TextureRequestState.NotFound, null);
-            return;
-        }
-
         byte[] assetData;
 
         // Do we have this image in the cache?
@@ -1479,6 +1473,12 @@ public class AssetManager implements PacketCallback
             return;
         }
 
+        String appearenceUri = _Client.Network.getAgentAppearanceServiceURL();
+        if (appearenceUri == null || appearenceUri.isEmpty())
+        {
+            callback.callback(TextureRequestState.NotFound, null);
+            return;
+        }
         URI url = new URI(appearenceUri + "texture/" + avatarID + "/" + bakeName + "/" + textureID);
         DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", null, new FutureCallback<byte[]>()
         {
