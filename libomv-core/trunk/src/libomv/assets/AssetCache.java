@@ -49,6 +49,7 @@ import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // Class that handles the local asset cache
 public class AssetCache
@@ -56,13 +57,13 @@ public class AssetCache
 	// User can plug in a routine to compute the asset cache location
 	public interface ComputeAssetCacheFilenameDelegate
 	{
-		public String callback(String cacheDir, UUID assetID);
+		public File callback(String cacheDir, UUID assetID);
 	}
 
 	public ComputeAssetCacheFilenameDelegate ComputeAssetCacheFilename = null;
 
-	private GridClient Client;
-	private AssetManager Manager;
+	private GridClient _Client;
+	private AssetManager _Manager;
 	private Thread cleanerThread;
 	private Timer cleanerTimer;
 	private long pruneInterval = 1000 * 60 * 5;
@@ -102,19 +103,88 @@ public class AssetCache
 		return pruneInterval;
 	}
 
-	/**
+	/* Checks whether caching is enabled */
+    private boolean useAssetCache;
+    /* Name of the cache directory */
+    private String cacheAssetDir;
+    /* Maximum asset cache size */
+    private long cacheAssetMaxSize;
+    
+    private File resourcePath;
+    private File settingsPath;
+    private File cacheAssetPath;
+    private File cacheStaticPath;
+    
+    private void setResourcePath(String path)
+    {
+    	resourcePath = new File(path).getAbsoluteFile();
+    	cacheStaticPath = new File(resourcePath, "static_assets");
+    	
+    	settingsPath = new File(System.getenv("user.home"), "_" + path);
+    	settingsPath.mkdir();    	
+    }
+    
+    private void setAssetPath(String path)
+    {
+    	if (path != null)
+    		cacheAssetDir = path;
+    	cacheAssetPath = new File(settingsPath, cacheAssetDir); // &(APPDATA)/_libomv/cache
+   		cacheAssetPath.mkdir();
+    }
+    
+    private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+    {
+        @Override
+        public boolean callback(SettingsUpdateCallbackArgs params)
+        {
+            String key = params.getName();
+            if (key == null)
+            {
+            	useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
+            	cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+            	setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
+            	setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
+            }
+            else if (key.equals(LibSettings.USE_ASSET_CACHE))
+            {
+            	useAssetCache = params.getValue().AsBoolean();
+            }
+            else if (key.equals(LibSettings.USE_ASSET_CACHE))
+            {
+            	cacheAssetMaxSize = params.getValue().AsLong();
+            }
+            else if (key.equals(LibSettings.ASSET_CACHE_DIR))
+            {
+            	setAssetPath(params.getValue().AsString());
+            }
+            else if (key.equals(LibSettings.RESOURCE_DIR))
+            {
+            	setResourcePath(params.getValue().AsString());
+            	setAssetPath(null);
+            }
+            return false;
+        }
+    }
+
+    /**
 	 * Default constructor
 	 * 
-	 * 
-	 * @param client
-	 *            A reference to the GridClient object
+	 * @param client A reference to the GridClient object
+	 * @param manager A reference to the AssetManager
 	 */
 	public AssetCache(GridClient client, AssetManager manager)
 	{
-		Client = client;
-		Manager = manager;
-		Client.Login.OnLoginProgress.add(new Network_LoginProgress(), false);
-		Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
+		_Client = client;
+		_Manager = manager;
+
+        _Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+    	useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
+    	cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+    	setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
+    	setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
+
+        _Client.Login.OnLoginProgress.add(new Network_LoginProgress(), false);
+		_Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
 	}
 
 	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs>
@@ -153,7 +223,7 @@ public class AssetCache
 	// Only create timer when needed
 	private void SetupTimer()
 	{
-		if (Operational() && autoPruneEnabled && Client.Network.getConnected())
+		if (useAssetCache && autoPruneEnabled && _Client.Network.getConnected())
 		{
 			cleanerTimer = new Timer();
 			cleanerTimer.schedule(new TimerTask()
@@ -176,41 +246,45 @@ public class AssetCache
 	 */
 	public final byte[] GetCachedAssetBytes(UUID assetID)
 	{
-		if (!Operational())
+		if (useAssetCache)
 		{
-			return null;
-		}
-		try
-		{
-			String fileName = FileName(assetID);
-			File file = new File(fileName);
-			if (file.exists())
-			{
-				Logger.DebugLog("Reading " + fileName + " from asset cache.");
-			}
-			else
-			{
-				fileName = StaticFileName(assetID);
-				file = new File(fileName);
-                Logger.DebugLog("Reading " + fileName + " from static asset cache.");
-			}
-			byte[] assetData = new byte[(int) file.length()];
-			FileInputStream fis = new FileInputStream(file);
 			try
 			{
-				fis.read(assetData);
+				File file = cachedAssetFile(assetID);
+				boolean exists = file.exists();
+				if (!exists)
+				{
+					file = getStaticAssetFile(assetID);
+					exists = file.exists();
+	                if (exists)
+	                	Logger.DebugLog("Reading " + file + " from static asset cache.", _Client);
+				}
+				else
+				{
+					Logger.DebugLog("Reading " + file + " from asset cache.", _Client);
+				}
+				
+				if (exists)
+				{
+					byte[] assetData = new byte[(int) file.length()];
+					FileInputStream fis = new FileInputStream(file);
+					try
+					{
+						fis.read(assetData);
+					}
+					finally
+					{
+						fis.close();
+					}
+					return assetData;
+				}
 			}
-			finally
+			catch (Throwable ex)
 			{
-				fis.close();
+				Logger.Log("Failed reading asset from cache (" + ex.getMessage() + ")", LogLevel.Warning, _Client, ex);
 			}
-			return assetData;
 		}
-		catch (Throwable ex)
-		{
-			Logger.Log("Failed reading asset from cache (" + ex.getMessage() + ")", LogLevel.Warning, Client);
-			return null;
-		}
+		return null;
 	}
 
 	/**
@@ -223,25 +297,23 @@ public class AssetCache
 	 */
 	public final ImageDownload get(UUID imageID)
 	{
-		if (!Operational())
+		if (useAssetCache)
 		{
-			return null;
+			byte[] imageData = GetCachedAssetBytes(imageID);
+			if (imageData != null)
+			{
+				ImageDownload transfer = _Manager.new ImageDownload();
+				transfer.AssetType = AssetType.Texture;
+				transfer.ID = imageID;
+				transfer.AssetData = imageData;
+				transfer.Size = imageData.length;
+				transfer.Transferred = imageData.length;
+				transfer.Success = true;
+				transfer.Simulator = _Client.Network.getCurrentSim();
+				return transfer;
+			}
 		}
-
-		byte[] imageData = GetCachedAssetBytes(imageID);
-		if (imageData == null)
-		{
-			return null;
-		}
-		ImageDownload transfer = Manager.new ImageDownload();
-		transfer.AssetType = AssetType.Texture;
-		transfer.ID = imageID;
-		transfer.AssetData = imageData;
-		transfer.Size = imageData.length;
-		transfer.Transferred = imageData.length;
-		transfer.Success = true;
-		transfer.Simulator = Client.Network.getCurrentSim();
-		return transfer;
+		return null;
 	}
 
 	/**
@@ -251,13 +323,13 @@ public class AssetCache
 	 *            UUID of the asset
 	 * @return String with the file name of the cached asset
 	 */
-	private String FileName(UUID assetID)
+	private File cachedAssetFile(UUID assetID)
 	{
 		if (ComputeAssetCacheFilename != null)
 		{
-			return ComputeAssetCacheFilename.callback(Client.Settings.ASSET_CACHE_DIR, assetID);
+			return ComputeAssetCacheFilename.callback(cacheAssetDir, assetID);
 		}
-		return Client.Settings.ASSET_CACHE_DIR + File.separatorChar + assetID.toString();
+		return new File(cacheAssetPath, assetID.toString());
 	}
 
     /**
@@ -267,9 +339,9 @@ public class AssetCache
 	 *            UUID of the asset
 	 * @return String with the file name of the static cached asset
      */
-    private String StaticFileName(UUID assetID)
+    private File getStaticAssetFile(UUID assetID)
     {
-        return LibSettings.RESOURCE_DIR + File.separatorChar + "static_assets" + File.separatorChar + assetID.toString();
+        return new File(cacheStaticPath, assetID.toString());
     }
 
     /**
@@ -283,60 +355,29 @@ public class AssetCache
 	 */
 	public final boolean SaveAssetToCache(UUID assetID, byte[] assetData)
 	{
-		if (!Operational())
+		if (useAssetCache)
 		{
-			return false;
-		}
-
-		try
-		{
-			Logger.DebugLog("Saving " + FileName(assetID) + " to asset cache.", Client);
-			File di = new File(Client.Settings.ASSET_CACHE_DIR);
-			if (!di.exists())
-			{
-				di.mkdirs();
-			}
-			FileOutputStream fos = new FileOutputStream(new File(FileName(assetID)));
 			try
 			{
-				fos.write(assetData);
+				File file = cachedAssetFile(assetID);
+				Logger.DebugLog("Saving " + file + " to asset cache.", _Client);
+				FileOutputStream fos = new FileOutputStream(file);
+				try
+				{
+					fos.write(assetData);
+				}
+				finally
+				{
+					fos.close();
+				}
+				return true;
 			}
-			finally
+			catch (Throwable ex)
 			{
-				fos.close();
+				Logger.Log("Failed saving asset to cache (" + ex.getMessage() + ")", LogLevel.Warning, _Client, ex);
 			}
 		}
-		catch (Throwable ex)
-		{
-			Logger.Log("Failed saving asset to cache (" + ex.getMessage() + ")", LogLevel.Warning, Client);
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Get the file name of the asset stored with given UUID
-	 * 
-	 * @param assetID
-	 *            UUID of the asset
-	 * @return Null if we don't have that UUID cached on disk, file name if
-	 *         found in the cache folder
-	 */
-	public final String AssetFileName(UUID assetID)
-	{
-		if (!Operational())
-		{
-			return null;
-		}
-
-		String fileName = FileName(assetID);
-		File file = new File(fileName);
-		if (file.exists())
-		{
-			return fileName;
-		}
-		return null;
+		return false;
 	}
 
 	/**
@@ -349,26 +390,21 @@ public class AssetCache
 	 */
 	public final boolean containsKey(UUID assetID)
 	{
-		if (!Operational())
+		if (useAssetCache)
 		{
-			return false;
+			File file = cachedAssetFile(assetID);
+			if (!file.exists())
+			{
+				file = getStaticAssetFile(assetID);
+			}
+			return file.exists();
 		}
-
-		String fileName = FileName(assetID);
-		File file = new File(fileName);
-		if (file.exists())
-		{
-			return true;
-		}
-		file = new File(StaticFileName(assetID));
-		return file.exists();
+		return false;
 	}
 
 	private File[] ListCacheFiles()
 	{
-		String cacheDir = Client.Settings.ASSET_CACHE_DIR;
-		File di = new File(cacheDir);
-		if (!di.exists() || !di.isDirectory())
+		if (!cacheAssetPath.exists() || !cacheAssetPath.isDirectory())
 		{
 			return null;
 		}
@@ -383,7 +419,7 @@ public class AssetCache
 		}
 
 		// We save file with UUID as file name, only count those
-		return di.listFiles(new CacheNameFilter());
+		return cacheAssetPath.listFiles(new CacheNameFilter());
 	}
 
 	/**
@@ -393,14 +429,16 @@ public class AssetCache
 	public final void Clear()
 	{
 		File[] files = ListCacheFiles();
-
-		int num = 0;
-		for (File file : files)
+		if (files != null)
 		{
-			file.delete();
-			++num;
+			int num = 0;
+			for (File file : files)
+			{
+				file.delete();
+				++num;
+			}
+			Logger.Log("Wiped out " + num + " files from the cache directory.", LogLevel.Debug, _Client);
 		}
-		Logger.Log("Wiped out " + num + " files from the cache directory.", LogLevel.Debug);
 	}
 
 	/**
@@ -412,10 +450,10 @@ public class AssetCache
 		File[] files = ListCacheFiles();
 		long size = GetFileSize(files);
 
-		if (size > Client.Settings.ASSET_CACHE_MAX_SIZE)
+		if (size > cacheAssetMaxSize)
 		{
 			Arrays.sort(files, new SortFilesByModTimeHelper());
-			long targetSize = (long) (Client.Settings.ASSET_CACHE_MAX_SIZE * 0.9);
+			long targetSize = (long)(cacheAssetMaxSize * 0.9);
 			int num = 0;
 			for (File file : files)
 			{
@@ -427,11 +465,11 @@ public class AssetCache
 					break;
 				}
 			}
-			Logger.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size), LogLevel.Debug);
+			Logger.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size), LogLevel.Debug, _Client);
 		}
 		else
 		{
-			Logger.Log("Cache size is " + NiceFileSize(size) + ", file deletion not needed", LogLevel.Debug);
+			Logger.Log("Cache size is " + NiceFileSize(size) + ", file deletion not needed", LogLevel.Debug, _Client);
 		}
 
 	}
@@ -464,7 +502,7 @@ public class AssetCache
 	}
 
 	/**
-	 * Adds up file sizes passes in a FileInfo array
+	 * Adds up file sizes passed in a File array
 	 */
 	private long GetFileSize(File[] files)
 	{
@@ -474,15 +512,6 @@ public class AssetCache
 			ret += file.length();
 		}
 		return ret;
-	}
-
-	/**
-	 * Checks whether caching is enabled
-	 * 
-	 */
-	private boolean Operational()
-	{
-		return Client.Settings.USE_ASSET_CACHE;
 	}
 
 	/**

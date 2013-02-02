@@ -63,11 +63,14 @@ public class LibSettings extends Settings implements PacketCallback
 	public static final String LIBRARY_NAME = "libomv-java library";
 
 	/* Application Version */
-	public static final String LIBRARY_VERSION = "0.6.2";
+	public static final String LIBRARY_VERSION = "0.7.2";
 	
-	/* The relative directory where external resources are kept */
+	/* The relative directory where external avatar resources are kept, default "character" */
+	public static final String CHARACTER_DIR = "characterDir";
+
+	/* The relative directory where cached data are kept, default "libomv" */
 	public static final String RESOURCE_DIR = "resourceDir";
-	
+
 	// #region manager control
 	
 	/* Initialize Appearncew Manager */
@@ -345,13 +348,13 @@ public class LibSettings extends Settings implements PacketCallback
 	 * If true, images, and other assets downloaded from the server will be
 	 * cached in a local directory
 	 */
-	public boolean USE_ASSET_CACHE = true;
+	public static final String USE_ASSET_CACHE = "useAssetCache";
 
 	/* Path to store cached texture data */
-	public String ASSET_CACHE_DIR = RESOURCE_DIR + "/cache";
+	public static final String ASSET_CACHE_DIR = "assetCacheDir";
 
 	/* Maximum size cached files are allowed to take on disk (bytes) */
-	public long ASSET_CACHE_MAX_SIZE = 1024 * 1024 * 1024; // 1GB
+	public static final String ASSET_CACHE_MAX_SIZE = "assetCacheMaxSize";
 
 	// #region Misc
 
@@ -423,7 +426,8 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(SEND_AGENT_THROTTLE, true),
             new DefaultSetting(ENABLE_CAPS, true),
             new DefaultSetting(ENABLE_SIMSTATS, true),
-            new DefaultSetting(RESOURCE_DIR, "character"),
+            new DefaultSetting(RESOURCE_DIR, "libomv"),
+            new DefaultSetting(CHARACTER_DIR, "character"),
             new DefaultSetting(USE_LLSD_LOGIN, false),
             new DefaultSetting(USE_HTTP_TEXTURES, true),
             new DefaultSetting(SEND_AGENT_UPDATES, true),
@@ -439,6 +443,10 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(USE_INTERPOLATION_TIMER, true),
             new DefaultSetting(TRACK_UTILIZATION, false),
             new DefaultSetting(THROTTLE_OUTGOING_PACKETS, true),
+            new DefaultSetting(USE_ASSET_CACHE, true),
+            new DefaultSetting(ASSET_CACHE_DIR, "cache"),
+            new DefaultSetting(ASSET_CACHE_MAX_SIZE, (long)1024 * 1024 * 1024), // 1GB
+
 	};
 	/**
 	 * Starts the settings update

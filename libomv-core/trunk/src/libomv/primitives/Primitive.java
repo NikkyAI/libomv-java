@@ -524,6 +524,19 @@ public class Primitive
 			return Default;
 		}
 
+		public static byte getValue(AttachmentPoint att, boolean replace)
+		{
+			return att.getValue(replace);
+		}
+		
+		public byte getValue(boolean replace)
+		{
+			byte value = (byte) ordinal();
+			if (!replace)
+				value |= 0x80;
+			return value;
+		}
+
 		public byte getValue()
 		{
 			return (byte) ordinal();

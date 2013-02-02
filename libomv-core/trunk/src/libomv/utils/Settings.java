@@ -183,6 +183,11 @@ public class Settings
 		return get(name).AsInteger();
 	}
 
+	public long getLong(String name)
+	{
+		return get(name).AsLong();
+	}
+
 	public String getString(String name)
 	{
 		return get(name).AsString();
@@ -257,6 +262,11 @@ public class Settings
 	public int put(String name, int value)
 	{
 		return put(name, OSD.FromInteger(value)).AsInteger();
+	}
+
+	public long put(String name, long value)
+	{
+		return put(name, OSD.FromLong(value)).AsLong();
 	}
 
 	public String put(String name, String value)

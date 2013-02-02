@@ -48,11 +48,14 @@ public abstract class AssetWearable extends AssetItem
 		Unknown, HeadBodypaint, UpperShirt, LowerPants, EyesIris, Hair,	UpperBodypaint, LowerBodypaint,
 		LowerShoes, HeadBaked, UpperBaked, LowerBaked, EyesBaked, LowerSocks, UpperJacket, LowerJacket,
 		UpperGloves, UpperUndershirt, LowerUnderpants, Skirt, SkirtBaked, HairBaked,
-        LowerAlpha, UpperAlpha, HeadAlpha, EyesAlpha, HairAlpha, HeadTattoo, UpperTattoo, LowerTattoo, NumberOfEntries;
+        LowerAlpha, UpperAlpha, HeadAlpha, EyesAlpha, HairAlpha, HeadTattoo, UpperTattoo, LowerTattoo;
 
 		public static AvatarTextureIndex setValue(int value)
 		{
-			return values()[value + 1];
+			value++;
+			if (value > 0 && value < values().length )
+				return values()[value];
+			return Unknown;
 		}
 
 		public static byte getValue(AvatarTextureIndex value)
@@ -60,6 +63,11 @@ public abstract class AssetWearable extends AssetItem
 			return (byte) (value.ordinal() - 1);
 		}
 
+		public static int getNumValues()
+		{
+			return values().length - 1;
+		}
+		
 		public byte getValue()
 		{
 			return (byte) (ordinal() - 1);
@@ -119,6 +127,11 @@ public abstract class AssetWearable extends AssetItem
 		public byte getValue()
 		{
 			return (byte)(ordinal() - 1);
+		}
+		
+		public static int getNumValues()
+		{
+			return values().length - 1;
 		}
 	}
 

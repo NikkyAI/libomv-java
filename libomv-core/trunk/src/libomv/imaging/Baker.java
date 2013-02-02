@@ -31,12 +31,15 @@ package libomv.imaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import libomv.AppearanceManager;
 import libomv.AppearanceManager.BakeType;
+import libomv.AppearanceManager.TextureData;
+import libomv.GridClient;
 import libomv.LibSettings;
 import libomv.VisualParams.VisualAlphaParam;
 import libomv.assets.AssetTexture;
@@ -62,7 +65,7 @@ public class Baker
     // Bake type
     public BakeType getBakeType()  { return bakeType; }
     // Is this one of the 3 skin bakes
-    private boolean IsSkin() { return bakeType == BakeType.Head || bakeType == BakeType.LowerBody || bakeType == BakeType.UpperBody; }
+    private boolean IsSkin() { return bakeType == BakeType.Head || bakeType == BakeType.Lower || bakeType == BakeType.Upper; }
     // #endregion
 
     // #region Private fields
@@ -76,17 +79,22 @@ public class Baker
     private int bakeHeight;
     // Bake type
     private BakeType bakeType;
+    // Directory from where to load static resource layers
+    private File charDir;
     // #endregion
 
+    
     // #region Constructor
     /** 
      * Default constructor
      * 
      * @param bakeType Bake type
+     * @throws URISyntaxException 
      */
-    public Baker(BakeType bakeType)
+    public Baker(GridClient client, BakeType bakeType) throws URISyntaxException
     {
         this.bakeType = bakeType;
+        this.charDir = new File(Helpers.getBaseDirectory(this.getClass()), client.Settings.getString(LibSettings.CHARACTER_DIR));
 
         if (bakeType == BakeType.Eyes)
         {
@@ -139,12 +147,12 @@ public class Baker
             MultiplyLayerFromAlpha(bakedTexture.Image, LoadResourceLayer("head_skingrain.tga"));
         }
 
-        if (!SkinTexture && bakeType == BakeType.UpperBody)
+        if (!SkinTexture && bakeType == BakeType.Upper)
         {
             DrawLayer(LoadResourceLayer("upperbody_color.tga"), false);
         }
 
-        if (!SkinTexture && bakeType == BakeType.LowerBody)
+        if (!SkinTexture && bakeType == BakeType.Lower)
         {
             DrawLayer(LoadResourceLayer("lowerbody_color.tga"), false);
         }
@@ -154,16 +162,17 @@ public class Baker
         // Layer each texture on top of one other, applying alpha masks as we go
         for (int i = 0; i < textures.size(); i++)
         {
+        	TextureData tex = textures.get(i);
             // Skip if we have no texture on this layer
-            if (textures.get(i).Texture == null) continue;
+            if (tex.Texture == null) continue;
 
             // Is this Alpha wearable and does it have an alpha channel?
-            if (textures.get(i).TextureIndex.getValue() >= AvatarTextureIndex.LowerAlpha.getValue() &&
-                textures.get(i).TextureIndex.getValue() <= AvatarTextureIndex.HairAlpha.getValue())
+            if (AvatarTextureIndex.LowerAlpha.compareTo(tex.TextureIndex) <= 0 &&
+                AvatarTextureIndex.HairAlpha.compareTo(tex.TextureIndex) >= 0)
             {
-                if (textures.get(i).Texture.Image.Alpha != null)
+                if (tex.Texture.Image.Alpha != null)
                 {
-                    alphaWearableTexture = textures.get(i).Texture.Image.clone();
+                    alphaWearableTexture = tex.Texture.Image.clone();
                 }
                 continue;
             }
@@ -172,7 +181,7 @@ public class Baker
             // For head bake the skin and texture are drawn last, go figure
             if (bakeType == BakeType.Head && (i == 0 || i == 1)) continue;
 
-            ManagedImage texture = textures.get(i).Texture.Image.clone();
+            ManagedImage texture = tex.Texture.Image.clone();
             //File.WriteAllBytes(bakeType + "-texture-layer-" + i + ".tga", texture.ExportTGA());
 
             // Resize texture to the size of baked layer
@@ -199,7 +208,7 @@ public class Baker
             // on layer 0 which always overrides other skin settings
             if (!(IsSkin() && i == 0))
             {
-                ApplyTint(texture, textures.get(i).Color);
+                ApplyTint(texture, tex.Color);
 
                 // For hair bake, we skip all alpha masks
                 // and use one from the texture, for both
@@ -216,7 +225,7 @@ public class Baker
                     }
                 }
                 // Apply parametrized alpha masks
-                else if (textures.get(i).AlphaMasks != null && textures.get(i).AlphaMasks.size() > 0)
+                else if (tex.AlphaMasks != null && tex.AlphaMasks.size() > 0)
                 {
                     // Combined mask for the layer, fully transparent to begin with
                     ManagedImage combinedMask = new ManagedImage(bakeWidth, bakeHeight, ManagedImage.ImageChannels.Alpha);
@@ -224,7 +233,7 @@ public class Baker
                     int addedMasks = 0;
 
                     // First add mask in normal blend mode
-                    for (Entry<VisualAlphaParam, Float> kvp : textures.get(i).AlphaMasks.entrySet())
+                    for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet())
                     {
                         if (!MaskBelongsToBake(kvp.getKey().TGAFile)) continue;
 
@@ -240,7 +249,7 @@ public class Baker
                     if (addedMasks == 0) for (int l = 0; l < combinedMask.Alpha.length; l++) combinedMask.Alpha[l] = (byte)255;
 
                     // Add masks in multiply blend mode
-                    for (Entry<VisualAlphaParam, Float> kvp : textures.get(i).AlphaMasks.entrySet())
+                    for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet())
                     {
                         if (!MaskBelongsToBake(kvp.getKey().TGAFile)) continue;
 
@@ -259,7 +268,7 @@ public class Baker
 
                         // Is this layer used for morph mask? If it is, use its
                         // alpha as the morth for the whole bake
-                        if (textures.get(i).TextureIndex == AppearanceManager.MorphLayerForBakeType(bakeType))
+                        if (tex.TextureIndex == AppearanceManager.MorphLayerForBakeType(bakeType))
                         {
                             bakedTexture.Image.Bump = combinedMask.Alpha;
                         }
@@ -311,11 +320,11 @@ public class Baker
         //File.WriteAllBytes(bakeType + ".tga", bakedTexture.Image.ExportTGA());
     }
 
-    public static ManagedImage LoadResourceLayer(String fileName)
+    public ManagedImage LoadResourceLayer(String fileName)
     {
         try
         {
-            return new TGAImage(new File(LibSettings.RESOURCE_DIR + "/" + fileName));
+            return new TGAImage(new File(charDir, fileName));
         }
         catch (IOException ex)
         {
@@ -334,6 +343,9 @@ public class Baker
         switch (index)
         {
             case HeadBodypaint:
+            case HeadTattoo:
+            case HeadAlpha:
+            case HeadBaked:
                 return BakeType.Head;
 
             case UpperBodypaint:
@@ -341,7 +353,10 @@ public class Baker
             case UpperUndershirt:
             case UpperShirt:
             case UpperJacket:
-                return BakeType.UpperBody;
+            case UpperTattoo:
+            case UpperAlpha:
+            case UpperBaked:
+                return BakeType.Upper;
 
             case LowerBodypaint:
             case LowerUnderpants:
@@ -349,15 +364,20 @@ public class Baker
             case LowerShoes:
             case LowerPants:
             case LowerJacket:
-                return BakeType.LowerBody;
+            case LowerTattoo:
+            case LowerAlpha:
+            case LowerBaked:
+                return BakeType.Lower;
 
             case EyesIris:
+            case EyesAlpha:
                 return BakeType.Eyes;
 
             case Skirt:
                 return BakeType.Skirt;
 
             case Hair:
+            case HairAlpha:
                 return BakeType.Hair;
 
             default:
@@ -370,9 +390,9 @@ public class Baker
 
     private boolean MaskBelongsToBake(String mask)
     {
-        if ((bakeType == BakeType.LowerBody && mask.contains("upper")) ||
-            (bakeType == BakeType.LowerBody && mask.contains("shirt")) ||
-            (bakeType == BakeType.UpperBody && mask.contains("lower")))
+        if ((bakeType == BakeType.Lower && mask.contains("upper")) ||
+            (bakeType == BakeType.Lower && mask.contains("shirt")) ||
+            (bakeType == BakeType.Upper && mask.contains("lower")))
         {
             return false;
         }
