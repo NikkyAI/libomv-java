@@ -75,8 +75,8 @@ public class TestClient extends GridClient implements PacketCallback
 	public HashMap<UUID, AvatarAppearancePacket> Appearances = new HashMap<UUID, AvatarAppearancePacket>();
 	public HashMap<String, Command> Commands = new HashMap<String, Command>();
 	public boolean GroupCommands = false;
-	public String MasterName = Helpers.EmptyString;
-	public UUID MasterKey = UUID.Zero;
+	public String MasterName;
+	public UUID MasterKey;
 	public boolean AllowObjectMaster = false;
 	public ClientManager _ClientManager;
 //	public VoiceManager _VoiceManager;
@@ -360,7 +360,7 @@ public class TestClient extends GridClient implements PacketCallback
 		@Override
 		public boolean callback(InventoryObjectOfferedCallbackArgs e)
 		{
-			if (!MasterKey.equals(UUID.Zero))
+			if (MasterKey == null || !MasterKey.equals(UUID.Zero))
 			{
 				if (!MasterKey.equals(e.getOffer().FromAgentID))
 					return false;
