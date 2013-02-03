@@ -125,16 +125,13 @@ public class TexturePipeline implements PacketCallback
 	 */
 
 	// #if DEBUG_TIMING // Timing globals
-	// The combined time it has taken for all textures requested sofar. This
-	// includes the amount of time the
-	// texture spent waiting for a download slot, and the time spent retrieving
-	// the actual texture from the Grid
+	// The combined time it has taken for all textures requested sofar. This includes the amount of
+	// time the texture spent waiting for a download slot, and the time spent retrieving the actual
+	// texture from the Grid
 	public static long TotalTime;
-	// The amount of time the request spent in the <see
-	// cref="TextureRequestState.Progress"/> state
+	// The amount of time the request spent in the <see cref="TextureRequestState.Progress"/> state
 	public static long NetworkTime;
-	// The total number of bytes transferred since the TexturePipeline was
-	// started
+	// The total number of bytes transferred since the TexturePipeline was started
 	public static int TotalBytes;
 
 	// #endif
@@ -258,7 +255,7 @@ public class TexturePipeline implements PacketCallback
 		{
 			if (e.getStatus() == LoginStatus.Success)
 			{
-				Startup();
+				startup();
 			}
 			return false;
 		}
@@ -269,7 +266,7 @@ public class TexturePipeline implements PacketCallback
 		@Override
 		public boolean callback(DisconnectedCallbackArgs e)
 		{
-			Shutdown();
+			shutdown();
 			return false;
 		}
 	}
@@ -278,7 +275,7 @@ public class TexturePipeline implements PacketCallback
 	 * Initialize callbacks required for the TexturePipeline to operate
 	 * 
 	 */
-	public final void Startup()
+	public final void startup()
 	{
 		if (_Running)
 		{
@@ -310,7 +307,7 @@ public class TexturePipeline implements PacketCallback
 	/**
 	 * Shutdown the TexturePipeline and cleanup any callbacks or transfers
 	 */
-	public final void Shutdown()
+	public final void shutdown()
 	{
 		if (!_Running)
 		{
@@ -319,7 +316,7 @@ public class TexturePipeline implements PacketCallback
 		// #if DEBUG_TIMING
 		Logger.Log(String.format(
 				"Combined Execution Time: %d, Network Execution Time %d, Network %d k/sec, Image Size %d", TotalTime,
-				NetworkTime, Math.round(TotalBytes / NetworkTime / 60), TotalBytes), LogLevel.Debug);
+				NetworkTime, getNetworkThroughput(TotalBytes, NetworkTime), TotalBytes), LogLevel.Debug, _Client);
 		// #endif
 		if (null != RefreshDownloadsTimer)
 		{
@@ -688,7 +685,7 @@ public class TexturePipeline implements PacketCallback
 				{
 				}
 			}
-			Logger.Log("Texture pipeline shutting down", LogLevel.Info);
+			Logger.Log("Texture pipeline download thread shutting down", LogLevel.Info, _Client);
 		}
 	}
 
@@ -909,8 +906,8 @@ public class TexturePipeline implements PacketCallback
 						String.format(
 								"Transfer Complete %s [%d] Total Request Time: %d, Download Time %d, Network %d kb/sec, Image Size %d bytes",
 								task.RequestID.toString(), task.RequestSlot, requestDuration, networkDuration,
-								Math.round(task.Transfer.Size / networkDuration / 60), task.Transfer.Size),
-						LogLevel.Debug);
+								getNetworkThroughput(task.Transfer.Size, networkDuration), task.Transfer.Size),
+						LogLevel.Debug, _Client);
 				// #endif
 
 				task.Transfer.Success = true;
@@ -987,8 +984,8 @@ public class TexturePipeline implements PacketCallback
 						String.format(
 								"Transfer Complete %s [%d] Total Request Time: %d, Download Time %d, Network %d kb/sec, Image Size %d bytes",
 								task.RequestID, task.RequestSlot, requestDuration, networkDuration,
-								Math.round(task.Transfer.Size / networkDuration / 60), task.Transfer.Size),
-						LogLevel.Debug);
+								getNetworkThroughput(task.Transfer.Size, networkDuration), task.Transfer.Size),
+						LogLevel.Debug, _Client);
 				// #endif
 				task.Transfer.Success = true;
 				RemoveTransfer(task.RequestID);
@@ -1014,6 +1011,11 @@ public class TexturePipeline implements PacketCallback
 		}
 	}
 
+	private int getNetworkThroughput(long bytes, long duration)
+	{
+		return duration != 0 ? Math.round(bytes / duration) : 0;
+	}
+	
 	// #endregion
 
 	private TaskInfo GetTransferValue(UUID textureID)
@@ -1035,5 +1037,4 @@ public class TexturePipeline implements PacketCallback
 			return _Transfers.remove(textureID) != null;
 		}
 	}
-
 }

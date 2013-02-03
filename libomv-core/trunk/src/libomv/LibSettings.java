@@ -60,10 +60,10 @@ public class LibSettings extends Settings implements PacketCallback
     // #region Application Settings
 
 	/* Application name */
-	public static final String LIBRARY_NAME = "libomv-java library";
+	public static final String LIBRARY_NAME = "libomv-java";
 
 	/* Application Version */
-	public static final String LIBRARY_VERSION = "0.7.2";
+	public static final String LIBRARY_VERSION = "0.7.0 alpha 1";
 	
 	/* The relative directory where external avatar resources are kept, default "character" */
 	public static final String CHARACTER_DIR = "characterDir";

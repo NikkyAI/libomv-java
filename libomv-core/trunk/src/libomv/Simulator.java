@@ -1134,7 +1134,6 @@ public class Simulator extends Thread
 			{
 				Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
 			}
-			_Client = null;
 		}
 	}
 

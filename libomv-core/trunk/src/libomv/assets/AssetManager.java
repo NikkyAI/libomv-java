@@ -1758,85 +1758,86 @@ public class AssetManager implements PacketCallback
 	{
 		TransferInfoPacket info = (TransferInfoPacket) packet;
 
-		if (_Transfers.containsKey(info.TransferInfo.TransferID))
+		AssetDownload download = (AssetDownload) _Transfers.get(info.TransferInfo.TransferID);
+		if (download == null)
 		{
-			AssetDownload download = (AssetDownload) _Transfers.get(info.TransferInfo.TransferID);
-			if (download == null || download.Callback == null)
+			Logger.Log("Received a TransferInfo packet for an asset we didn't request, TransferID: "
+					+ info.TransferInfo.TransferID, LogLevel.Warning, _Client);			
+			return;
+		}
+
+		if (download.Callback == null)
+		{
+			Logger.Log("Received a TransferInfo packet for an asset but no callback to report to, TransferID: "
+					+ info.TransferInfo.TransferID, LogLevel.Warning, _Client);			
+			return;
+		}
+
+		download.Channel = ChannelType.setValue(info.TransferInfo.ChannelType);
+		download.Status = StatusCode.setValue(info.TransferInfo.Status);
+		download.Target = TargetType.setValue(info.TransferInfo.TargetType);
+		download.Size = info.TransferInfo.Size;
+
+		// TODO: Once we support mid-transfer status checking and aborting
+		// this will need to become smarter
+		if (download.Status != StatusCode.OK)
+		{
+			Logger.Log("Transfer failed with status code " + download.Status, LogLevel.Warning, _Client);
+
+			synchronized (_Transfers)
 			{
-				return;
+				_Transfers.remove(download.ID);
 			}
 
-			download.Channel = ChannelType.setValue(info.TransferInfo.ChannelType);
-			download.Status = StatusCode.setValue(info.TransferInfo.Status);
-			download.Target = TargetType.setValue(info.TransferInfo.TargetType);
-			download.Size = info.TransferInfo.Size;
+			// No data could have been received before the TransferInfo packet
+			download.AssetData = null;
 
-			// TODO: Once we support mid-transfer status checking and aborting
-			// this will need to become smarter
-			if (download.Status != StatusCode.OK)
+			// Fire the event with our transfer that contains Success = false;
+			try
 			{
-				Logger.Log("Transfer failed with status code " + download.Status, LogLevel.Warning, _Client);
-
-				synchronized (_Transfers)
-				{
-					_Transfers.remove(download.ID);
-				}
-
-				// No data could have been received before the TransferInfo packet
-				download.AssetData = null;
-
-				// Fire the event with our transfer that contains Success = false;
-				try
-				{
-					download.Callback.callback(download, null);
-				}
-				catch (Throwable ex)
-				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-				}
+				download.Callback.callback(download, null);
 			}
-			else
+			catch (Throwable ex)
 			{
-				download.AssetData = new byte[download.Size];
-				byte[] data = info.TransferInfo.getParams();
-
-				if (download.Source == SourceType.Asset && data.length == 20)
-				{
-					download.AssetID = new UUID(data);
-					download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 16));
-
-					Logger.DebugLog(String.format("TransferInfo packet received. AssetID: %s Type: %s",
-							download.AssetID, download.AssetType));
-				}
-				else if (download.Source == SourceType.SimInventoryItem && data.length == 100)
-				{
-					// TODO: Can we use these?
-					UUID agentID = new UUID(data, 0);
-					UUID sessionID = new UUID(data, 16);
-					UUID ownerID = new UUID(data, 32);
-					UUID taskID = new UUID(data, 48);
-					UUID itemID = new UUID(data, 64);
-					download.AssetID = new UUID(data, 80);
-					download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 96));
-
-					Logger.DebugLog(String
-							.format("TransferInfo packet received. AgentID: %s SessionID: %s OwnerID: %s TaskID: %s ItemID: %s AssetID: %s Type: %s",
-									agentID, sessionID, ownerID, taskID, itemID, download.AssetID, download.AssetType));
-				}
-				else
-				{
-					Logger.Log(String.format(
-							"Received a TransferInfo packet with a SourceType of %s and a Params field length of %d",
-							download.Source, data.length), LogLevel.Warning, _Client);
-				}
+				Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 			}
-			download.HeaderReceivedEvent.set(true);
 		}
 		else
 		{
-			Logger.Log("Received a TransferInfo packet for an asset we didn't request, TransferID: "
-					+ info.TransferInfo.TransferID, LogLevel.Warning, _Client);
+			download.AssetData = new byte[download.Size];
+			byte[] data = info.TransferInfo.getParams();
+
+			if (download.Source == SourceType.Asset && data.length == 20)
+			{
+				download.AssetID = new UUID(data);
+				download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 16));
+
+				Logger.DebugLog(String.format("TransferInfo packet received. AssetID: %s Type: %s",
+						download.AssetID, download.AssetType));
+			}
+			else if (download.Source == SourceType.SimInventoryItem && data.length == 100)
+			{
+				// TODO: Can we use these?
+				UUID agentID = new UUID(data, 0);
+				UUID sessionID = new UUID(data, 16);
+				UUID ownerID = new UUID(data, 32);
+				UUID taskID = new UUID(data, 48);
+				UUID itemID = new UUID(data, 64);
+				download.AssetID = new UUID(data, 80);
+				download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 96));
+
+				Logger.DebugLog(String
+						.format("TransferInfo packet received. AgentID: %s SessionID: %s OwnerID: %s TaskID: %s ItemID: %s AssetID: %s Type: %s",
+								agentID, sessionID, ownerID, taskID, itemID, download.AssetID, download.AssetType));
+			}
+			else
+			{
+				Logger.Log(String.format(
+						"Received a TransferInfo packet with a SourceType of %s and a Params field length of %d",
+						download.Source, data.length), LogLevel.Warning, _Client);
+			}
 		}
+		download.HeaderReceivedEvent.set(true);
 	}
 
 	/**
@@ -1847,9 +1848,9 @@ public class AssetManager implements PacketCallback
 	private final void HandleTransferPacket(Packet packet, Simulator simulator) throws Exception
 	{
 		TransferPacketPacket asset = (TransferPacketPacket) packet;
-		if (_Transfers.containsKey(asset.TransferData.TransferID))
+		AssetDownload download = (AssetDownload) _Transfers.get(asset.TransferData.TransferID);
+		if (download != null)
 		{
-			AssetDownload download = (AssetDownload) _Transfers.get(asset.TransferData.TransferID);
 			if (download.Size == 0)
 			{
 				Logger.DebugLog("TransferPacket received ahead of the transfer header, blocking...", _Client);
@@ -1859,9 +1860,7 @@ public class AssetManager implements PacketCallback
 
 				if (download.Size == 0)
 				{
-					Logger.Log(
-							"Timed out while waiting for the asset header to download for " + download.ID.toString(),
-							LogLevel.Warning, _Client);
+					Logger.Log("Timed out while waiting for the asset header to download for " + download.ID.toString(), LogLevel.Warning, _Client);
 
 					// Abort the transfer
 					TransferAbortPacket abort = new TransferAbortPacket();

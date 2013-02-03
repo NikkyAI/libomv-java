@@ -966,12 +966,15 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		// try CurrentSim, however directly after login this will be null, so if it is, we'll
 		// try to find the first simulator we're connected to in order to send the packet.
 		Simulator simulator = _CurrentSim;
-		synchronized (_Simulators)
+		if (simulator == null)
 		{
-			if (simulator == null && _Simulators.size() >= 1)
+			synchronized (_Simulators)
 			{
-				Logger.DebugLog("CurrentSim object was null, using first found connected simulator", _Client);
-				simulator = _Simulators.get(0);
+				if (_Simulators.size() >= 1)
+				{
+					Logger.DebugLog("CurrentSim object was null, using first found connected simulator", _Client);
+					simulator = _Simulators.get(0);
+				}
 			}
 		}
 
