@@ -232,8 +232,10 @@ public class AssetManager implements PacketCallback
 	{
 		// Normal in-world object texture
 		Normal,
-		// Local or Server baked avatar texture
-		Baked;
+		// Local baked avatar texture
+		Baked,
+		// Server baked avatar texture
+		ServerBaked;
 
 		public static ImageType setValue(int value)
 		{
@@ -1464,7 +1466,7 @@ public class AssetManager implements PacketCallback
             image.AssetData = assetData;
             image.Size = image.AssetData.length;
             image.Transferred = image.AssetData.length;
-            image.ImageType = ImageType.Baked;
+            image.ImageType = ImageType.ServerBaked;
             image.AssetType = AssetType.Texture;
             image.Success = true;
 
@@ -1492,7 +1494,7 @@ public class AssetManager implements PacketCallback
                     image.AssetData = response;
                     image.Size = image.AssetData.length;
                     image.Transferred = image.AssetData.length;
-                    image.ImageType = ImageType.Baked;
+                    image.ImageType = ImageType.ServerBaked;
                     image.AssetType = AssetType.Texture;
                     image.Success = true;
 
