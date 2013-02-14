@@ -196,7 +196,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * The maximum size of the sequence number archive, used to check for resent
 	 * and/or duplicate packets
 	 */
-	public static final int PACKET_ARCHIVE_SIZE = 200;
+	public static final String PACKET_ARCHIVE_SIZE = "packetArchiveSize";
 	/*
 	 * Maximum number of queued ACKs to be sent before SendAcks() is forced
 	 */
@@ -446,6 +446,7 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(USE_ASSET_CACHE, true),
             new DefaultSetting(ASSET_CACHE_DIR, "cache"),
             new DefaultSetting(ASSET_CACHE_MAX_SIZE, (long)1024 * 1024 * 1024), // 1GB
+            new DefaultSetting(PACKET_ARCHIVE_SIZE, 1000),
 
 	};
 	/**

@@ -927,7 +927,7 @@ public class Simulator extends Thread
 		_NeedAck = new TreeMap<Integer, NetworkManager.OutgoingPacket>();
 
 		// Initialize the lists of sequence numbers we've received so far
-		_PacketArchive = new IncomingPacketIDCollection(LibSettings.PACKET_ARCHIVE_SIZE);
+		_PacketArchive = new IncomingPacketIDCollection(_Client.Settings.getInt(LibSettings.PACKET_ARCHIVE_SIZE));
 		_PendingAcks = new TreeSet<Integer>();
 
 		if (client.Settings.getBool(LibSettings.STORE_LAND_PATCHES))
