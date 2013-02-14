@@ -122,10 +122,11 @@ public class FacetedMesh extends Mesh
                     Vector3 posMin;
 
                     // If PositionDomain is not specified, the default is from -0.5 to 0.5
-                    if (subMeshMap.containsKey("PositionDomain"))
+                    OSD osd = subMeshMap.get("PositionDomain");
+                    if (osd != null)
                     {
-                        posMax = ((OSDMap)subMeshMap.get("PositionDomain")).get("Max").AsVector3();
-                        posMin = ((OSDMap)subMeshMap.get("PositionDomain")).get("Min").AsVector3();
+                        posMax = ((OSDMap)osd).get("Max").AsVector3();
+                        posMin = ((OSDMap)osd).get("Min").AsVector3();
                     }
                     else
                     {
@@ -147,11 +148,13 @@ public class FacetedMesh extends Mesh
                     Vector2 texPosMax = Vector2.Zero;
                     Vector2 texPosMin = Vector2.Zero;
                     byte[] texBytes = null;
-                    if (subMeshMap.containsKey("TexCoord0"))
+                    osd = subMeshMap.get("TexCoord0");
+                    if (osd != null)
                     {
-                        texBytes = subMeshMap.get("TexCoord0").AsBinary();
-                        texPosMax = ((OSDMap)subMeshMap.get("TexCoord0Domain")).get("Max").AsVector2();
-                        texPosMin = ((OSDMap)subMeshMap.get("TexCoord0Domain")).get("Min").AsVector2();
+                        texBytes = osd.AsBinary();
+                        osd = subMeshMap.get("TexCoord0Domain");
+                        texPosMax = ((OSDMap)osd).get("Max").AsVector2();
+                        texPosMin = ((OSDMap)osd).get("Min").AsVector2();
                     }
 
                     // Extract the vertex position data
