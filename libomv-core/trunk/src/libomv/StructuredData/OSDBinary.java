@@ -33,7 +33,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import libomv.StructuredData.OSD.OSDType;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
