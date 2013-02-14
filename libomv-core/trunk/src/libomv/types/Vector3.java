@@ -32,6 +32,7 @@ package libomv.types;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
@@ -183,18 +184,48 @@ public class Vector3
 	 * 
 	 * @return An eight-byte array containing X and Y
 	 */
-	public byte[] GetBytes()
+	public byte[] getBytes()
 	{
 		byte[] byteArray = new byte[12];
 		toBytes(byteArray, 0, false);
 		return byteArray;
 	}
 
-	public void GetBytes(ByteBuffer byteArray)
+	/**
+	 * Writes the raw data for this vector to a ByteBuffer
+	 * 
+	 * @param byteArray buffer to copy the 12 bytes for X, Y, and Z
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(ByteBuffer byteArray)
 	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
 		byteArray.putFloat(Z);
+	}
+
+	/**
+	 * Writes the raw data for this vector to a OutputStream
+	 * 
+	 * @param stream OutputStream to copy the 12 bytes for X, Y, and Z
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(OutputStream stream, boolean le) throws IOException
+	{
+		if (le)
+		{
+			stream.write(Helpers.FloatToBytesL(X));
+			stream.write(Helpers.FloatToBytesL(Y));
+			stream.write(Helpers.FloatToBytesL(Z));
+		}
+		else
+		{
+			stream.write(Helpers.FloatToBytesB(X));
+			stream.write(Helpers.FloatToBytesB(Y));
+			stream.write(Helpers.FloatToBytesB(Z));
+		}
 	}
 
 	static public Vector3 parse(XmlPullParser parser) throws XmlPullParserException, IOException

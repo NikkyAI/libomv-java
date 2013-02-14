@@ -1843,7 +1843,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		image.ObjectData = new ObjectImagePacket.ObjectDataBlock[1];
 		image.ObjectData[0] = image.new ObjectDataBlock();
 		image.ObjectData[0].ObjectLocalID = localID;
-		image.ObjectData[0].setTextureEntry(textures.GetBytes());
+		image.ObjectData[0].setTextureEntry(textures.getBytes());
 		image.ObjectData[0].setMediaURL(Helpers.StringToBytes(mediaUrl));
 
 		simulator.sendPacket(image);
@@ -2412,7 +2412,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		multiObjectUpdate.ObjectData[0] = multiObjectUpdate.new ObjectDataBlock();
 		multiObjectUpdate.ObjectData[0].Type = type;
 		multiObjectUpdate.ObjectData[0].ObjectLocalID = localID;
-		multiObjectUpdate.ObjectData[0].setData(data.GetBytes());
+		multiObjectUpdate.ObjectData[0].setData(data.getBytes());
 
 		simulator.sendPacket(multiObjectUpdate);
 	}

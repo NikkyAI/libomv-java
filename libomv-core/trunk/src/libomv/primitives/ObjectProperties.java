@@ -132,7 +132,7 @@ public class ObjectProperties
 
 		byte[] bytes = new byte[16 * TextureIDs.length];
 		for (int i = 0; i < TextureIDs.length; i++)
-			TextureIDs[i].ToBytes(bytes, 16 * i);
+			TextureIDs[i].toBytes(bytes, 16 * i);
 
 		return bytes;
 	}

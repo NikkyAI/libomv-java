@@ -2718,7 +2718,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 			for (int i = 0; i < conferenceIDs.length; ++i)
 			{
-				System.arraycopy(conferenceIDs[i].getData(), 0, binaryBucket, i * 16, 16);
+				conferenceIDs[i].toBytes(binaryBucket, i * 16);
 			}
 		}
 
@@ -3033,13 +3033,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 		byte[] typeData = new byte[57];
 		if (!sourceAvatar.equals(UUID.Zero))
 		{
-			sourceAvatar.ToBytes(typeData, 0);
+			sourceAvatar.toBytes(typeData, 0);
 		}
 		if (!targetObject.equals(UUID.Zero))
 		{
-			targetObject.ToBytes(typeData, 16);
+			targetObject.toBytes(typeData, 16);
 		}
-		globalOffset.ToBytes(typeData, 32);
+		globalOffset.toBytes(typeData, 32);
 		typeData[56] = type.getValue();
 
 		effect.Effect[0].setTypeData(typeData);
@@ -3112,9 +3112,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 		effect.Effect[0].Type = EffectType.LookAt.getValue();
 
 		byte[] typeData = new byte[57];
-		sourceAvatar.ToBytes(typeData, 0);
-		targetObject.ToBytes(typeData, 16);
-		globalOffset.ToBytes(typeData, 32);
+		sourceAvatar.toBytes(typeData, 0);
+		targetObject.toBytes(typeData, 16);
+		globalOffset.toBytes(typeData, 32);
 		typeData[56] = type.getValue();
 
 		effect.Effect[0].setTypeData(typeData);
@@ -3151,15 +3151,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 		effect.Effect = new ViewerEffectPacket.EffectBlock[1];
 		effect.Effect[0] = effect.new EffectBlock();
 		effect.Effect[0].AgentID = _Client.Self.getAgentID();
-		effect.Effect[0].Color = color.GetBytes();
+		effect.Effect[0].Color = color.getBytes();
 		effect.Effect[0].Duration = duration;
 		effect.Effect[0].ID = effectID;
 		effect.Effect[0].Type = EffectType.Beam.getValue();
 
 		byte[] typeData = new byte[56];
-		sourceAvatar.ToBytes(typeData, 0);
-		targetObject.ToBytes(typeData, 16);
-		globalOffset.ToBytes(typeData, 32);
+		sourceAvatar.toBytes(typeData, 0);
+		targetObject.toBytes(typeData, 16);
+		globalOffset.toBytes(typeData, 32);
 
 		effect.Effect[0].setTypeData(typeData);
 
@@ -3191,15 +3191,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 		effect.Effect = new ViewerEffectPacket.EffectBlock[1];
 		effect.Effect[0] = effect.new EffectBlock();
 		effect.Effect[0].AgentID = _Client.Self.getAgentID();
-		effect.Effect[0].Color = color.GetBytes();
+		effect.Effect[0].Color = color.getBytes();
 		effect.Effect[0].Duration = duration;
 		effect.Effect[0].ID = effectID;
 		effect.Effect[0].Type = EffectType.Sphere.getValue();
 
 		byte[] typeData = new byte[56];
-		UUID.Zero.ToBytes(typeData, 0);
-		UUID.Zero.ToBytes(typeData, 16);
-		globalOffset.ToBytes(typeData, 32);
+		UUID.Zero.toBytes(typeData, 0);
+		UUID.Zero.toBytes(typeData, 16);
+		globalOffset.toBytes(typeData, 32);
 
 		effect.Effect[0].setTypeData(typeData);
 

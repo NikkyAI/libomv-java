@@ -218,7 +218,7 @@ public class AssetPrim extends AssetItem
         writer.startTag(null, "Shape");
 
         writeInt(writer, "ProfileCurve", prim.Shape.ProfileCurve);
-        writeText(writer, "TextureEntry", Base64.encodeBase64String(prim.Textures != null ? prim.Textures.GetBytes() : Helpers.EmptyBytes));
+        writeText(writer, "TextureEntry", Base64.encodeBase64String(prim.Textures != null ? prim.Textures.getBytes() : Helpers.EmptyBytes));
 
         // FIXME: ExtraParams
         writeText(writer, "ExtraParams", Helpers.EmptyString);

@@ -67,7 +67,7 @@ public class OSDUUID extends OSD
 	@Override
 	public byte[] AsBinary()
 	{
-		return value.GetBytes();
+		return value.getBytes();
 	}
 
 	@Override

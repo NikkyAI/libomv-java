@@ -32,6 +32,7 @@ package libomv.types;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
@@ -137,8 +138,14 @@ public class Vector4
 		S = v.S;
 	}
 
-	// <returns></returns>
-	public void GetBytes(ByteBuffer byteArray)
+	/**
+	 * Writes the raw data for this vector to a ByteBuffer
+	 * 
+	 * @param byteArray buffer to copy the 16 bytes for X, Y, Z, and S
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(ByteBuffer byteArray)
 	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
@@ -147,7 +154,32 @@ public class Vector4
 	}
 
 	/**
-	 * Initializes a vector from a flaot array
+	 * Writes the raw data for this vector to a OutputStream
+	 * 
+	 * @param stream OutputStream to copy the 16 bytes for X, Y, Z, and S
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(OutputStream stream, boolean le) throws IOException
+	{
+		if (le)
+		{
+			stream.write(Helpers.FloatToBytesL(X));
+			stream.write(Helpers.FloatToBytesL(Y));
+			stream.write(Helpers.FloatToBytesL(Z));
+			stream.write(Helpers.FloatToBytesL(S));
+		}
+		else
+		{
+			stream.write(Helpers.FloatToBytesB(X));
+			stream.write(Helpers.FloatToBytesB(Y));
+			stream.write(Helpers.FloatToBytesB(Z));
+			stream.write(Helpers.FloatToBytesB(S));
+		}
+	}
+
+	/**
+	 * Initializes a vector from a float array
 	 * 
 	 * @param vec
 	 *           the vector to intialize

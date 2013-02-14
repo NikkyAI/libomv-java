@@ -114,7 +114,7 @@ public class FacetedMesh extends Mesh
                     oface.ID = faceNr;
                     oface.Vertices = new ArrayList<Vertex>();
                     oface.Indices = new ArrayList<Integer>();
-                    oface.TextureFace = prim.Textures.GetFace(faceNr);
+                    oface.TextureFace = prim.Textures.getFace(faceNr);
 
                     OSDMap subMeshMap = (OSDMap)subMeshOsd;
 

@@ -181,7 +181,7 @@ public class PrimObjectTests extends TestCase
             face.setTexMapType(MappingType.Planar);
             face.setTextureID(new UUID("5ec326dc-1a85-4b0e-9384-6f4d6a2c3bbc"));
 
-            byte[] teBytes = te.GetBytes();
+            byte[] teBytes = te.getBytes();
 
             Assert.assertTrue(teBytes.length == teTest.length);
 
@@ -192,7 +192,7 @@ public class PrimObjectTests extends TestCase
 
             TextureEntry te2 = new TextureEntry(teBytes, 0, teBytes.length);
 
-            byte[] teBytes2 = te2.GetBytes();
+            byte[] teBytes2 = te2.getBytes();
 
             Assert.assertTrue(teBytes.length == teBytes2.length);
 

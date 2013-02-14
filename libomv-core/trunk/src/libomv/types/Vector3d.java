@@ -31,6 +31,7 @@
 package libomv.types;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -121,11 +122,41 @@ public class Vector3d
         while (parser.nextTag() == XmlPullParser.START_TAG);
     }
 
-	public void GetBytes(ByteBuffer byteArray)
+	/**
+	 * Writes the raw data for this vector to a ByteBuffer
+	 * 
+	 * @param byteArray buffer to copy the 24 bytes for X, Y, and Z
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(ByteBuffer byteArray)
 	{
 		byteArray.putDouble(X);
 		byteArray.putDouble(Y);
 		byteArray.putDouble(Z);
+	}
+
+	/**
+	 * Writes the raw data for this vector to a OutputStream
+	 * 
+	 * @param stream OutputStream to copy the 12 bytes for X, Y, and Z
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(OutputStream stream, boolean le) throws IOException
+	{
+		if (le)
+		{
+			stream.write(Helpers.DoubleToBytesL(X));
+			stream.write(Helpers.DoubleToBytesL(Y));
+			stream.write(Helpers.DoubleToBytesL(Z));
+		}
+		else
+		{
+			stream.write(Helpers.DoubleToBytesB(X));
+			stream.write(Helpers.DoubleToBytesB(Y));
+			stream.write(Helpers.DoubleToBytesB(Z));
+		}
 	}
 
 	public static double distance(Vector3d value1, Vector3d value2)
@@ -203,12 +234,12 @@ public class Vector3d
 	 *            Position in the destination array to start writeing. Must be
 	 *            at least 16 bytes before the end of the array
 	 */
-	public int ToBytes(byte[] dest, int pos)
+	public int toBytes(byte[] dest, int pos)
 	{
-		return ToBytes(dest, pos, false);
+		return toBytes(dest, pos, false);
 	}
 
-	public int ToBytes(byte[] dest, int pos, boolean le)
+	public int toBytes(byte[] dest, int pos, boolean le)
 	{
 		if (le)
 		{

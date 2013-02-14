@@ -2442,7 +2442,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		bucket = new byte[17];
 		bucket[0] = assetType.getValue();
-		itemID.ToBytes(bucket, 1);
+		itemID.toBytes(bucket, 1);
 
 		_Client.Self.InstantMessage(_Client.Self.getName(), recipient, itemName, new UUID(),
 				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, null, null, 0, bucket);
@@ -2485,13 +2485,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		// Add parent folder (first item in bucket)
 		bucket[0] = assetType.getValue();
-		folderID.ToBytes(bucket, 1);
+		folderID.toBytes(bucket, 1);
 
 		// Add contents to bucket after folder
 		for (int i = 1; i <= folderContents.size(); ++i)
 		{
 			bucket[i * 17] = folderContents.get(i - 1).assetType.getValue();
-			folderContents.get(i - 1).itemID.ToBytes(bucket, i * 17 + 1);
+			folderContents.get(i - 1).itemID.toBytes(bucket, i * 17 + 1);
 		}
 		_Client.Self.InstantMessage(_Client.Self.getName(), recipient, folderName, new UUID(),
 				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, null, null, 0, bucket);
@@ -3414,7 +3414,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								imp.MessageBlock.Dialog = InstantMessageDialog.GroupNoticeInventoryAccepted.getValue();
 								break;
 						}
-						imp.MessageBlock.setBinaryBucket(args.getFolderID().GetBytes());
+						imp.MessageBlock.setBinaryBucket(args.getFolderID().getBytes());
 					}
 					else
 					{

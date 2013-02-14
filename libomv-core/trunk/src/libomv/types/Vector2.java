@@ -31,6 +31,7 @@ package libomv.types;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
@@ -161,7 +162,7 @@ public final class Vector2
 	 * 
 	 * @return An eight-byte array containing X and Y
 	 */
-	public byte[] GetBytes()
+	public byte[] getBytes()
 	{
 		byte[] byteArray = new byte[8];
 		toBytes(byteArray, 0, false);
@@ -169,15 +170,35 @@ public final class Vector2
 	}
 
 	/**
-	 * Returns a ByteBuffer for this vector
+	 * Writes the raw data for this vector to a ByteBuffer
 	 * 
-	 * @param byteArray
-	 *            buffer to copye the 8 bytes for X, Y, and Z
+	 * @param byteArray Buffer to copy the 8 bytes for X and Y
 	 */
-	public void GetBytes(ByteBuffer byteArray)
+	public void write(ByteBuffer byteArray)
 	{
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
+	}
+
+	/**
+	 * Writes the raw data for this vector to a ByteBuffer
+	 * 
+	 * @param stream OutputStream to copy the 8 bytes for X and Y
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(OutputStream stream, boolean le) throws IOException
+	{
+		if (le)
+		{
+			stream.write(Helpers.FloatToBytesL(X));
+			stream.write(Helpers.FloatToBytesL(Y));
+		}
+		else
+		{
+			stream.write(Helpers.FloatToBytesB(X));
+			stream.write(Helpers.FloatToBytesB(Y));
+		}
 	}
 
 	static public Vector2 parse(XmlPullParser parser) throws XmlPullParserException, IOException

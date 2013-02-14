@@ -30,6 +30,7 @@
 package libomv.types;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.IllegalArgumentException;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -273,18 +274,41 @@ public final class Color4
 		}
 	}
 
-	public byte[] GetBytes()
+	public byte[] getBytes()
 	{
 		byte[] byteArray = new byte[4];
 		toBytes(byteArray, 0, false);
 		return byteArray;
 	}
 
-	public byte[] GetBytes(boolean inverted)
+	public byte[] getBytes(boolean inverted)
 	{
 		byte[] byteArray = new byte[4];
 		toBytes(byteArray, 0, inverted);
 		return byteArray;
+	}
+	
+	public void write(OutputStream stream, boolean inverted) throws IOException
+	{
+		byte R = Helpers.FloatToByte(this.R, 0f, 1f);
+		byte G = Helpers.FloatToByte(this.G, 0f, 1f);
+		byte B = Helpers.FloatToByte(this.B, 0f, 1f);
+		byte A = Helpers.FloatToByte(this.A, 0f, 1f);
+
+		if (inverted)
+		{
+			stream.write((byte) (255 - (R & 0xFF)));
+			stream.write((byte) (255 - (G & 0xFF)));
+			stream.write((byte) (255 - (B & 0xFF)));
+			stream.write((byte) (255 - (A & 0xFF)));
+		}
+		else
+		{
+			stream.write(R);
+			stream.write(G);
+			stream.write(B);
+			stream.write(A);
+		}
 	}
 
 	public byte[] getFloatBytes()

@@ -31,6 +31,7 @@
 package libomv.types;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -49,12 +50,6 @@ import libomv.utils.RefObject;
 public class UUID implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-
-	// Get a byte array of the 16 raw bytes making up the UUID
-	public byte[] getData()
-	{
-		return data;
-	}
 
 	private byte[] data;
 
@@ -254,7 +249,7 @@ public class UUID implements Serializable
 	 * 
 	 * @return A 16 byte array containing this UUID
 	 */
-	public byte[] GetBytes()
+	public byte[] getBytes()
 	{
 		return data;
 	}
@@ -265,11 +260,21 @@ public class UUID implements Serializable
 	 * @param bytes
 	 *            The ByteBuffer in which the 16 byte of this UUID are copied
 	 */
-	public void GetBytes(ByteBuffer bytes)
+	public void write(ByteBuffer bytes)
 	{
 		bytes.put(data);
 	}
 
+	/**
+	 * Copies the raw bytes for this UUID into an OutputStreaam
+	 * 
+	 * @param stream
+	 *            The OutputStream in which the 16 byte of this UUID are copied
+	 */
+	public void write(OutputStream stream) throws IOException
+	{
+		stream.write(data);
+	}
 	/**
 	 * Writes the raw bytes for this UUID to a byte array
 	 * 
@@ -279,7 +284,7 @@ public class UUID implements Serializable
 	 *            Position in the destination array to start writeing. Must be
 	 *            at least 16 bytes before the end of the array
 	 */
-	public int ToBytes(byte[] dest, int pos)
+	public int toBytes(byte[] dest, int pos)
 	{
 		System.arraycopy(data, 0, dest, pos, data.length);
 		return data.length;
@@ -443,8 +448,8 @@ public class UUID implements Serializable
 
 		// Construct the buffer that MD5ed
 		byte[] input = new byte[32];
-		first.ToBytes(input, 0);
-		second.ToBytes(input, 16);
+		first.toBytes(input, 0);
+		second.toBytes(input, 16);
 		return new UUID(md.digest(input));
 	}
 
@@ -457,7 +462,7 @@ public class UUID implements Serializable
 	public void XOr(UUID uuid)
 	{
 		int i = 0;
-		for (byte b : uuid.GetBytes())
+		for (byte b : uuid.getBytes())
 		{
 			data[i++] ^= b;
 		}
@@ -465,15 +470,9 @@ public class UUID implements Serializable
 
 	public static UUID XOr(UUID first, UUID second)
 	{
-		byte[] res = new byte[16];
-		byte[] sec = second.GetBytes();
-		int i = 0;
-		for (byte b : first.GetBytes())
-		{
-			res[i] = (byte) (b ^ sec[i]);
-			i++;
-		}
-		return new UUID(res);
+		UUID uuid = new UUID(first);
+		uuid.XOr(second);
+		return uuid;
 	}
 
 	/**

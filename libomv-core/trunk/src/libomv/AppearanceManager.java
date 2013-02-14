@@ -2004,7 +2004,7 @@ public class AppearanceManager implements PacketCallback
                 }
             }
 
-            set.ObjectData.setTextureEntry(te.GetBytes());
+            set.ObjectData.setTextureEntry(te.getBytes());
             MyTextures = te;
 
             // #endregion TextureEntry

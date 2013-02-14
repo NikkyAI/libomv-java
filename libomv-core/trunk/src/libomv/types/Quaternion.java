@@ -31,6 +31,7 @@
 package libomv.types;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -244,13 +245,13 @@ public class Quaternion
 	}
 
 	/**
-	 * Returns a ByteBuffer for this vector
+	 * Writes the normalized data for this quaternion to a ByteBuffer
 	 * 
-	 * @param byteArray
-	 *            buffer to copye the 12 bytes for X, Y, and Z
-	 * @throws Exception
+	 * @param bytes The ByteBuffer to copy the 12 bytes for X, Y, and Z
+	 * @param le True for writing little endian data
+	 * @throws IOException 
 	 */
-	public void GetBytes(ByteBuffer bytes) throws Exception
+	public void write(ByteBuffer bytes) throws Exception
 	{
 		float norm = (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
 
@@ -278,6 +279,31 @@ public class Quaternion
 		else
 		{
 			throw new Exception("Quaternion <" + X + "," + Y + "," + Z + "," + W + "> normalized to zero");
+		}
+	}
+
+	/**
+	 * Writes the raw data for this vector to a OutputStream
+	 * 
+	 * @param stream OutputStream to copy the 16 bytes for X, Y, Z, and W
+	 * @param le True for writing little endian data
+	 * @throws IOException 
+	 */
+	public void write(OutputStream stream, boolean le) throws IOException
+	{
+		if (le)
+		{
+			stream.write(Helpers.FloatToBytesL(X));
+			stream.write(Helpers.FloatToBytesL(Y));
+			stream.write(Helpers.FloatToBytesL(Z));
+			stream.write(Helpers.FloatToBytesL(W));
+		}
+		else
+		{
+			stream.write(Helpers.FloatToBytesB(X));
+			stream.write(Helpers.FloatToBytesB(Y));
+			stream.write(Helpers.FloatToBytesB(Z));
+			stream.write(Helpers.FloatToBytesB(W));
 		}
 	}
 

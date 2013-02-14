@@ -262,7 +262,7 @@ public class mapgenerator
 			case FieldType.Quaternion:
 			case FieldType.Vector3:
 			case FieldType.Vector3d:
-				writer.println(fieldName + index + ".GetBytes(bytes);");
+				writer.println(fieldName + index + ".write(bytes);");
 				break;
 			case FieldType.U8:
 			case FieldType.I8:

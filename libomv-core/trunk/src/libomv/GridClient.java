@@ -438,6 +438,9 @@ public class GridClient
 		 * manager as it registers a packetCallback */
 		settings.startup(this);
 
+		if (Settings.getBool(LibSettings.ENABLE_ASSET_MANAGER))
+			Assets = new AssetManager(this);
+
 		if (Settings.getBool(LibSettings.ENABLE_APPEARANCE_MANAGER))
 			Appearance = new AppearanceManager(this);
 
@@ -446,9 +449,6 @@ public class GridClient
 
 		if (Settings.getBool(LibSettings.ENABLE_AVATAR_MANAGER))
 		    Avatars = new AvatarManager(this);
-
-		if (Settings.getBool(LibSettings.ENABLE_ASSET_MANAGER))
-			Assets = new AssetManager(this);
 
 		if (Settings.getBool(LibSettings.ENABLE_INVENTORY_MANAGER))
 			Inventory = new InventoryManager(this);

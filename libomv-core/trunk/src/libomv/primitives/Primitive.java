@@ -1303,7 +1303,7 @@ public class Primitive
 		{
 			byte[] data = new byte[17];
 
-			SculptTexture.ToBytes(data, 0);
+			SculptTexture.toBytes(data, 0);
 			data[16] = type;
 
 			return data;

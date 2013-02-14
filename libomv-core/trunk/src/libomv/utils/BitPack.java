@@ -162,7 +162,7 @@ public class BitPack
     		bitPos = 0;
     		bytePos++;
     	}
-        PackBitArray(data.GetBytes(), 128);
+        PackBitArray(data.getBytes(), 128);
     }
 
     public void PackString(String str) throws UnsupportedEncodingException
@@ -182,7 +182,7 @@ public class BitPack
      */
     public void PackColor(Color4 data)
     {
-        PackBitArray(data.GetBytes(), 32);
+        PackBitArray(data.getBytes(), 32);
     }
 
     /**

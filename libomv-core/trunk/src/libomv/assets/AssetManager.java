@@ -789,7 +789,7 @@ public class AssetManager implements PacketCallback
 		request.TransferInfo.TransferID = transfer.ID;
 
 		byte[] paramField = new byte[20];
-		System.arraycopy(assetID.GetBytes(), 0, paramField, 0, 16);
+		assetID.toBytes(paramField, 0);
 		System.arraycopy(Helpers.Int32ToBytesL(type.getValue()), 0, paramField, 16, 4);
 		request.TransferInfo.setParams(paramField);
 
@@ -922,13 +922,13 @@ public class AssetManager implements PacketCallback
 		request.TransferInfo.TransferID = transfer.ID;
 
 		byte[] paramField = new byte[100];
-		System.arraycopy(_Client.Self.getAgentID().GetBytes(), 0, paramField, 0, 16);
-		System.arraycopy(_Client.Self.getSessionID().GetBytes(), 0, paramField, 16, 16);
-		System.arraycopy(ownerID.GetBytes(), 0, paramField, 32, 16);
-		System.arraycopy(taskID.GetBytes(), 0, paramField, 48, 16);
-		System.arraycopy(itemID.GetBytes(), 0, paramField, 64, 16);
-		System.arraycopy(assetID.GetBytes(), 0, paramField, 80, 16);
-		System.arraycopy(Helpers.Int32ToBytesL(type.getValue()), 0, paramField, 96, 4);
+		_Client.Self.getAgentID().toBytes(paramField, 0);
+		_Client.Self.getSessionID().toBytes(paramField, 16);
+		ownerID.toBytes(paramField, 32);
+		taskID.toBytes(paramField, 48);
+		itemID.toBytes(paramField, 64);
+		assetID.toBytes(paramField, 80);
+		Helpers.Int32ToBytesL(type.getValue(), paramField, 96);
 		request.TransferInfo.setParams(paramField);
 
 		transfer.Simulator.sendPacket(request);
