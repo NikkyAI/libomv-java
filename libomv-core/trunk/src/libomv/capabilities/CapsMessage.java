@@ -1931,15 +1931,15 @@ public class CapsMessage implements IMessage
 		public class Preferences
 		{
 			public int godLevel;
-			public boolean langPublic;
+			public boolean languageIsPublic;
 			public String maxAccess;
 			public String language;
-			public boolean alterPerm;
-			public boolean alterNavMesh;
+			public boolean alterPermanentObjects;
+			public boolean alterNavmeshObjects;
 		}
 
-		public boolean hasModNavMesh;
-		public boolean canModNavMesh;
+		public boolean hasModifiedNavmesh;
+		public boolean canModifyNavmesh;
 
 		public Preferences preferences;
 
@@ -1955,25 +1955,25 @@ public class CapsMessage implements IMessage
 		/**
 		 * Serialize the object
 		 * 
-		 * @return An <see cref="OSDMap"/> containing the objects data
+		 * @return An <see cref="OSDMap" containing the objects data
 		 */
 		@Override
 		public OSDMap Serialize()
 		{
-			OSDMap access = new OSDMap(4);
+			OSDMap access = new OSDMap(1);
 			access.put("max", OSD.FromString(preferences.maxAccess));
-			access.put("language", OSD.FromString(preferences.language));
-			access.put("alter_permanent_objects", OSD.FromBoolean(preferences.alterPerm));			
-			access.put("alter_navmesh_objects", OSD.FromBoolean(preferences.alterNavMesh));			
 
-			OSDMap prefs = new OSDMap(3);
+			OSDMap prefs = new OSDMap(6);
 			prefs.put("god_level", OSD.FromInteger(preferences.godLevel));
-			prefs.put("language_is_public", OSD.FromBoolean(preferences.langPublic));
+			prefs.put("language_is_public", OSD.FromBoolean(preferences.languageIsPublic));
+			prefs.put("language", OSD.FromString(preferences.language));
+			prefs.put("alter_permanent_objects", OSD.FromBoolean(preferences.alterPermanentObjects));			
+			prefs.put("alter_navmesh_objects", OSD.FromBoolean(preferences.alterNavmeshObjects));			
 			prefs.put("access_prefs", access);
 			
 			OSDMap map = new OSDMap(3);
-			map.put("has_modified_navmesh", OSD.FromBoolean(hasModNavMesh));
-			map.put("can_modify_navmesh", OSD.FromBoolean(canModNavMesh));
+			map.put("has_modified_navmesh", OSD.FromBoolean(hasModifiedNavmesh));
+			map.put("can_modify_navmesh", OSD.FromBoolean(canModifyNavmesh));
 			map.put("preferences", prefs);
 
 			return map;
@@ -1982,25 +1982,27 @@ public class CapsMessage implements IMessage
 		/**
 		 * Deserialize the message
 		 * 
-		 * @param map
-		 *            An <see cref="OSDMap"/> containing the data
+		 * @param map An <see cref="OSDMap" containing the data
 		 */
 		@Override
 		public void Deserialize(OSDMap map)
 		{
-			hasModNavMesh = map.get("has_modified_navmesh").AsBoolean();
-			canModNavMesh = map.get("can_modify_navmesh").AsBoolean();
+			hasModifiedNavmesh = map.get("has_modified_navmesh").AsBoolean();
+			canModifyNavmesh = map.get("can_modify_navmesh").AsBoolean();
+			preferences = new Preferences();
 
 			OSDMap prefs = (OSDMap)map.get("preferences");
-			preferences = new Preferences();
-			preferences.godLevel = prefs.get("god_level").AsInteger();
-			preferences.langPublic = prefs.get("language_is_public").AsBoolean();
+			if (prefs != null)
+			{
+				preferences.godLevel = prefs.get("god_level").AsInteger();
+				preferences.languageIsPublic = prefs.get("language_is_public").AsBoolean();
+				preferences.language = prefs.get("language").AsString();
+				preferences.alterPermanentObjects = prefs.get("alter_permanent_objects").AsBoolean();			
+				preferences.alterNavmeshObjects = prefs.get("alter_navmesh_objects").AsBoolean();			
 
-			OSDMap access = (OSDMap)prefs.get("access_prefs");
-			preferences.maxAccess = access.get("max").AsString();
-			preferences.language = access.get("language").AsString();
-			preferences.alterPerm = access.get("alter_permanent_objects").AsBoolean();			
-			preferences.alterNavMesh = access.get("alter_navmesh_objects").AsBoolean();			
+				OSDMap access = (OSDMap)prefs.get("access_prefs");
+				preferences.maxAccess = access.get("max").AsString();
+			}
 		}
 	}
 
@@ -6193,11 +6195,11 @@ public class CapsMessage implements IMessage
 			case AgentGroupDataUpdate:
 				message = new AgentGroupDataUpdateMessage();
 				break;
-			case AgentStateUpdate:
-				message = new AgentStateUpdateMessage();
-				break;
 			case AvatarGroupsReply: // OpenSim sends the above with the wrong key
 				message = new AgentGroupDataUpdateMessage();
+				break;
+			case AgentStateUpdate:
+				message = new AgentStateUpdateMessage();
 				break;
 			case ParcelProperties:
 				message = new ParcelPropertiesMessage();

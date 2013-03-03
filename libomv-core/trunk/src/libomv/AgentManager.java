@@ -74,6 +74,7 @@ import libomv.assets.AssetManager.AssetReceivedCallback;
 import libomv.assets.AssetManager.XferReceivedCallbackArgs;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
+import libomv.capabilities.CapsMessage.AgentStateUpdateMessage;
 import libomv.capabilities.CapsMessage.AttachmentResourcesMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ChatSessionAcceptInvitation;
@@ -1986,8 +1987,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	private Vector3 acceleration;
 	private Vector3 angularVelocity;
 	private long sittingOn;
+	
+	// Various abilities and preferences sent by the grid
+    public AgentStateUpdateMessage AgentStateStatus;
 
-	/*
+    /*
 	 * Your (client) avatars <see cref="UUID"/> "client", "agent", and "avatar"
 	 * all represent the same thing
 	 */
@@ -5360,7 +5364,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     private void HandleAgentStateUpdate(IMessage message, Simulator simulator)
     {
-    	
+        AgentStateStatus = (AgentStateUpdateMessage)message;
     }
     
     /**
