@@ -275,6 +275,7 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("ProductInfoRequest"));
 			req.add(OSD.FromString("ProvisionVoiceAccountRequest"));
 			req.add(OSD.FromString("RemoteParcelRequest"));
+			req.add(OSD.FromString("RenderMaterials"));
 			req.add(OSD.FromString("RequestTextureDownload"));
 			req.add(OSD.FromString("ResourceCostSelected"));
 			req.add(OSD.FromString("RetrieveNavMeshSrc"));
