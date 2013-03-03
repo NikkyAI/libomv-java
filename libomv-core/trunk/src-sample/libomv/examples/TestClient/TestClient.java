@@ -52,16 +52,21 @@ import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.LibSettings;
+import libomv.NetworkManager.SimChangedCallbackArgs;
+import libomv.ObjectManager.AvatarUpdateCallbackArgs;
+import libomv.ObjectManager.TerseObjectUpdateCallbackArgs;
 import libomv.Simulator;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryManager.InventoryObjectOfferedCallbackArgs;
 import libomv.packets.AgentDataUpdatePacket;
+import libomv.packets.AgentFOVPacket;
 import libomv.packets.AlertMessagePacket;
 import libomv.packets.AvatarAppearancePacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
+import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
@@ -109,6 +114,9 @@ public class TestClient extends GridClient implements PacketCallback
 
 		Network.OnDisconnected.add(new Network_OnDisconnected(), true);
 		Login.OnLoginProgress.add(new Network_OnLoginProgress(), false);
+		Objects.OnAvatarUpdate.add(new Objects_AvatarUpdate(), false);
+		Objects.OnTerseObjectUpdate.add(new Objects_TerseObjectUpdate(), false);
+        Network.OnSimChanged.add(new Network_SimChanged(), false);
 		Self.OnInstantMessage.add(new Self_IM(), false);
 		Groups.OnGroupMembersReply.add(new GroupMembersHandler(), false);
 		Inventory.OnInventoryObjectOffered.add(new Inventory_OnInventoryObjectReceived(), false);
@@ -278,7 +286,62 @@ public class TestClient extends GridClient implements PacketCallback
 			return false;
 		}
 	}
-				
+			
+	private class Objects_TerseObjectUpdate implements Callback<TerseObjectUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(TerseObjectUpdateCallbackArgs e)
+		{
+			if (e.getPrim().LocalID == Self.getLocalID())
+			{
+				SetDefaultCamera();
+			}
+			return false;
+		}
+	}
+
+	private class Objects_AvatarUpdate implements Callback<AvatarUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(AvatarUpdateCallbackArgs e)
+		{
+			if (e.getAvatar().LocalID == Self.getLocalID())
+			{
+				SetDefaultCamera();
+			}
+			return false;
+		}
+    }
+
+	private class Network_SimChanged implements Callback<SimChangedCallbackArgs>
+	{
+		@Override
+		public boolean callback(SimChangedCallbackArgs e)
+		{
+			AgentFOVPacket msg = new AgentFOVPacket();
+			msg.AgentData.AgentID = Self.getAgentID();
+			msg.AgentData.SessionID = Self.getSessionID();
+			msg.AgentData.CircuitCode = Network.getCircuitCode();
+			msg.FOVBlock.GenCounter = 0;
+			msg.FOVBlock.VerticalAngle = Helpers.TWO_PI - 0.05f;
+			try
+			{
+				Network.sendPacket(msg);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+			return false;
+		}
+    }
+
+    public void SetDefaultCamera()
+    {
+    	/* Set camera 5m behind the avatar */
+        Self.getMovement().Camera.LookAt(new Vector3(-5, 0, 0).multiply(Self.getMovement().BodyRotation).add(Self.getAgentPosition()), Self.getAgentPosition());
+    }
+	
 	private class Self_IM implements Callback<InstantMessageCallbackArgs>
 	{
 		@Override
