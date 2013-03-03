@@ -71,7 +71,24 @@ public class LoginManager
 		None, Failed, ConnectingToLogin, ReadingResponse, Redirecting, ConnectingToSim, Success;
 	}
 
-	// #endregion Enums
+    // Status of the last application run.
+    // Used for error reporting to the grid login service for statistical purposes.
+    public enum LastExecStatus
+    {
+        // Application exited normally
+        Normal,
+        // Application froze
+        Froze,
+        // Application detected error and exited abnormally
+        ForcedCrash,
+        // Other crash
+        OtherCrash,
+        // Application froze during logout
+        LogoutFroze,
+        // Application crashed during logout
+        LogoutCrash;
+    }
+    // #endregion Enums
 
 	// #region Structs
 	/** Login Request Parameters */
@@ -144,6 +161,8 @@ public class LoginManager
 		public boolean AgreeToTos;
 		/** Unknown */
 		public boolean ReadCritical;
+		/** Status of the last application run sent to the grid login server for statistical purposes */
+        public LastExecStatus LastExecEvent = LastExecStatus.Normal;
 		/**
 		 * An array of string sent to the login server to enable various options
 		 */
@@ -168,6 +187,7 @@ public class LoginManager
 			this.ReadCritical = true;
 			this.Channel = LibSettings.LIBRARY_NAME;
 			this.Version = LibSettings.LIBRARY_VERSION;
+			this.LastExecEvent = LastExecStatus.Normal;
 		}
 
 
@@ -985,8 +1005,6 @@ public class LoginManager
 
 		try
 		{
-			boolean llsd = _Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN);
-
 			// Create the CAPS login structure
 			OSDMap loginLLSD = new OSDMap();
 			loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
@@ -1001,8 +1019,7 @@ public class LoginManager
 			loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
 			loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
 			loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
-			if (!llsd)
-				loginLLSD.put("last_exec_event", OSD.FromInteger(0));
+			loginLLSD.put("last_exec_event", OSD.FromInteger(loginParams.LastExecEvent.ordinal()));
 
 			OSDArray optionsOSD;
 			// Create the options LLSD array
