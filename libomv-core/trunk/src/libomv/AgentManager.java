@@ -6917,8 +6917,8 @@ public class AgentManager implements PacketCallback, CapsCallback
                 return;
 
 			Vector3 origin = Camera.getPosition();
-			Vector3 xAxis = Camera.getLeftAxis();
-			Vector3 yAxis = Camera.getAtAxis();
+			Vector3 xAxis = Camera.getAtAxis();
+			Vector3 yAxis = Camera.getLeftAxis();
 			Vector3 zAxis = Camera.getUpAxis();
 
 			// Attempted to sort these in a rough order of how often they might change
@@ -6938,14 +6938,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 				// Store the current state to do duplicate checking
 				LastHeadRotation = HeadRotation;
 				LastBodyRotation = BodyRotation;
-				LastCameraYAxis = yAxis;
 				LastCameraCenter = origin;
 				LastCameraXAxis = xAxis;
+				LastCameraYAxis = yAxis;
 				LastCameraZAxis = zAxis;
 				LastFar = Camera.Far;
 				lastState = State;
 
-				SendUpdate(simulator, agentControls, origin, yAxis, xAxis, zAxis, BodyRotation, HeadRotation, Camera.Far, Flags, State, reliable);
+				SendUpdate(simulator, agentControls, origin, xAxis, yAxis, zAxis, BodyRotation, HeadRotation, Camera.Far, Flags, State, reliable);
 
 				if (autoResetControls)
 				{
@@ -6959,7 +6959,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 * touch the state of Self.Movement or Self.Movement.Camera in any way
 		 * 
 		 * @param controlFlags
-		 * @param position
+		 * @param origin
 		 * @param forwardAxis
 		 * @param leftAxis
 		 * @param upAxis
@@ -6971,7 +6971,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 * @param reliable
 		 * @throws Exception
 		 */
-		public final void SendManualUpdate(int controlFlags, Vector3 position, Vector3 forwardAxis, Vector3 leftAxis,
+		public final void SendManualUpdate(int controlFlags, Vector3 origin, Vector3 forwardAxis, Vector3 leftAxis,
 				Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags,
 				byte state, boolean reliable) throws Exception
 		{
@@ -6983,10 +6983,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
 				return;
 			}
-			SendUpdate(simulator, controlFlags, position, forwardAxis, leftAxis, upAxis, bodyRotation, headRotation, farClip, flags, state, reliable);
+			SendUpdate(simulator, controlFlags, origin, forwardAxis, leftAxis, upAxis, bodyRotation, headRotation, farClip, flags, state, reliable);
 		}
 
-		private final void SendUpdate(Simulator simulator, int controlFlags, Vector3 position, Vector3 forwardAxis, Vector3 leftAxis,
+		private final void SendUpdate(Simulator simulator, int controlFlags, Vector3 origin, Vector3 forwardAxis, Vector3 leftAxis,
 				Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags,
 				byte state, boolean reliable) throws Exception
 		{
@@ -6996,7 +6996,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			update.AgentData.SessionID = _Client.Self.getSessionID();
 			update.AgentData.BodyRotation = bodyRotation;
 			update.AgentData.HeadRotation = headRotation;
-			update.AgentData.CameraCenter = position;
+			update.AgentData.CameraCenter = origin;
 			update.AgentData.CameraAtAxis = forwardAxis;
 			update.AgentData.CameraLeftAxis = leftAxis;
 			update.AgentData.CameraUpAxis = upAxis;
