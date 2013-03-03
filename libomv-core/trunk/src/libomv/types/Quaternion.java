@@ -390,11 +390,11 @@ public class Quaternion
 	 */
 	public void ToBytes(byte[] dest, int pos, boolean le) throws Exception
 	{
-		float norm = (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
+		float norm = X * X + Y * Y + Z * Z + W * W;
 
-		if (norm != 0f)
+		if (norm >= 0.001f)
 		{
-			norm = 1f / norm;
+			norm = (float)(1 / Math.sqrt(norm));
 
 			float x, y, z;
 			if (W >= 0f)
@@ -432,14 +432,11 @@ public class Quaternion
 	/**
 	 * Convert this quaternion to euler angles
 	 * 
-	 * @param roll
-	 *            X euler angle
-	 * @param pitch
-	 *            Y euler angle
-	 * @param yaw
-	 *            Z euler angle
+	 * Note: according to http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+	 * 
+	 * @return a Vector with the 3 angles roll, pitch, yaw in this order
 	 */
-	public void getEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
+	public Vector3 toEuler()
 	{
 		float sqx = X * X;
 		float sqy = Y * Y;
@@ -448,28 +445,23 @@ public class Quaternion
 
 		// Unit will be a correction factor if the quaternion is not normalized
 		float unit = sqx + sqy + sqz + sqw;
-		double test = X * Y + Z * W;
+        if (unit < 0.001)
+        	return Vector3.Zero;
+        double test = X * Y + Z * W;
 
 		if (test > 0.499f * unit)
 		{
 			// Singularity at north pole
-			yaw.argvalue = 2f * (float) Math.atan2(X, W);
-			pitch.argvalue = (float) Math.PI / 2f;
-			roll.argvalue = 0f;
+			return new Vector3(0f, (float) (Math.PI / 2.0), 2f * (float)Math.atan2(X, W));
 		}
 		else if (test < -0.499f * unit)
 		{
 			// Singularity at south pole
-			yaw.argvalue = -2f * (float) Math.atan2(X, W);
-			pitch.argvalue = -(float) Math.PI / 2f;
-			roll.argvalue = 0f;
+			return new Vector3(0f, -(float)(Math.PI / 2.0), -2f * (float)Math.atan2(X, W));
 		}
-		else
-		{
-			yaw.argvalue = (float) Math.atan2(2f * Y * W - 2f * X * Z, sqx - sqy - sqz + sqw);
-			pitch.argvalue = (float) Math.asin(2f * test / unit);
-			roll.argvalue = (float) Math.atan2(2f * X * W - 2f * Y * Z, -sqx + sqy - sqz + sqw);
-		}
+		return new Vector3((float)Math.atan2(2f * X * W - 2f * Y * Z, -sqx + sqy - sqz + sqw),
+					       (float)Math.asin(2f * test / unit),
+					       (float)Math.atan2(2f * Y * W - 2f * X * Z, sqx - sqy - sqz + sqw));
 	}
 
 	/**
@@ -540,8 +532,7 @@ public class Quaternion
 	 * Creates a quaternion from a vector containing roll, pitch, and yaw in
 	 * radians
 	 * 
-	 * @param eulers
-	 *            Vector representation of the euler angles in radians
+	 * @param eulers Vector representation of the euler angles in radians
 	 * @return Quaternion representation of the euler angles
 	 * @throws Exception
 	 */
