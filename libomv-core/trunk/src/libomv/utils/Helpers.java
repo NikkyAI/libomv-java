@@ -1747,7 +1747,7 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes) throws UnsupportedEncodingException
 	{
-		return BytesToString(bytes, 0, bytes.length);
+		return BytesToString(bytes, 0, bytes.length, UTF8_ENCODING);
 	}
 
 	/**
@@ -1765,6 +1765,11 @@ public class Helpers
 	 */
 	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
 	{
+		return BytesToString(bytes, offset, length, UTF8_ENCODING);
+	}
+	
+	public static String BytesToString(byte[] bytes, int offset, int length, String encoding) throws UnsupportedEncodingException
+	{
 		if (length < 0)
 		{
 			/* Search for the null terminating byte */
@@ -1780,7 +1785,7 @@ public class Helpers
 		if (length == 0)
 			return EmptyString;
 
-		return new String(bytes, offset, length, UTF8_ENCODING);
+		return new String(bytes, offset, length, encoding);
 	}
 
 	/**
