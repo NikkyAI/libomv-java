@@ -513,19 +513,12 @@ public class Quaternion
 	 */
 	public static Quaternion createFromAxisAngle(Vector3 axis, float angle)
 	{
-		Quaternion q = new Quaternion();
 		axis = Vector3.normalize(axis);
 
-		angle *= 0.5f;
-		float c = (float) Math.cos(angle);
+		angle *= 0.5;
 		float s = (float) Math.sin(angle);
 
-		q.X = axis.X * s;
-		q.Y = axis.Y * s;
-		q.Z = axis.Z * s;
-		q.W = c;
-
-		return normalize(q);
+		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float) Math.cos(angle)).normalize();
 	}
 
 	/**

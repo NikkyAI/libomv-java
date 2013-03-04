@@ -615,13 +615,15 @@ public class Vector3
 	public Vector3 multiply(Quaternion rot)
 	{
         // From http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/
-		X = rot.W * rot.W * X + 2f * rot.Y * rot.W * Z - 2f * rot.Z * rot.W * Y + rot.X * rot.X * X
+		float x = rot.W * rot.W * X + 2f * rot.Y * rot.W * Z - 2f * rot.Z * rot.W * Y + rot.X * rot.X * X
 		  + 2f * rot.Y * rot.X * Y + 2f * rot.Z * rot.X * Z - rot.Z * rot.Z * X - rot.Y * rot.Y * X;
-        Y = 2f * rot.X * rot.Y * X + rot.Y * rot.Y * Y + 2f * rot.Z * rot.Y * Z + 2f * rot.W * rot.Z * X
+        float y = 2f * rot.X * rot.Y * X + rot.Y * rot.Y * Y + 2f * rot.Z * rot.Y * Z + 2f * rot.W * rot.Z * X
           - rot.Z * rot.Z * Y + rot.W * rot.W * Y - 2f * rot.X * rot.W * Z - rot.X * rot.X * Y;
         Z = 2f * rot.X * rot.Z * X + 2f * rot.Y * rot.Z * Y + rot.Z * rot.Z * Z - 2f * rot.W * rot.Y * X
 		  - rot.Y * rot.Y * Z + 2f * rot.W * rot.X * Y - rot.X * rot.X * Z + rot.W * rot.W * Z;
-		return this;
+		X = x;
+		Y = y;
+        return this;
 	}
 
 	public Vector3 divide(Vector3 value)
