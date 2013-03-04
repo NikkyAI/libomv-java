@@ -118,6 +118,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.RefObject;
 
 // Handles all network traffic related to prims and avatar positions and
@@ -1047,27 +1048,26 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						float adjSeconds = seconds * sim.Statistics.Dilation;
 
 						// Iterate through all of this sims avatars
-
-						// #region Linear Motion
-						// Only do movement interpolation (extrapolation) when
-						// there is a non-zero velocity but no acceleration
-						// #endregion Linear Motion
 						synchronized (sim.getObjectsAvatars())
 						{
 							for (Avatar avatar : sim.getObjectsAvatars().values())
 							{
-								if (!avatar.Acceleration.equals(Vector3.Zero) && !avatar.Velocity.equals(Vector3.Zero))
+								// #region Linear Motion
+	                            // Only do movement interpolation (extrapolation) when there is a non-zero velocity and/or acceleration
+								if (!avatar.Acceleration.equals(Vector3.Zero))
 								{
-									// avatar.Position += (avatar.Velocity +
-									// avatar.Acceleration * (0.5f * (adjSeconds -
-									// HAVOK_TIMESTEP))) * adjSeconds;
-									// avatar.Velocity += avatar.Acceleration *
-									// adjSeconds;
+									// avatar.Position += (avatar.Velocity + (avatar.Acceleration * (0.5f * (adjSeconds - HAVOK_TIMESTEP)))) * adjSeconds;
+									// avatar.Velocity += avatar.Acceleration * adjSeconds;
 									avatar.Position.add(Vector3.multiply(Vector3.add(avatar.Velocity,
-											Vector3.multiply(avatar.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
-											adjSeconds));
+											Vector3.multiply(avatar.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))), adjSeconds));
 									avatar.Velocity.add(Vector3.multiply(avatar.Acceleration, adjSeconds));
 								}
+								else if (!avatar.Velocity.equals(Vector3.Zero))
+								{
+                                    // avatar.Position += avatar.Velocity * adjSeconds;
+									avatar.Position.add(Vector3.multiply(avatar.Velocity, adjSeconds));											
+								}
+								// #endregion Linear Motion
 							}
 						}
 						
@@ -1089,25 +1089,27 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		                            		{
 		                            			omega = (float) Math.sqrt(omega);
 		                            			float angle = omega * adjSeconds;
-		                            			angVel = Vector3.multiply(angVel, 1.0f / omega);
+		                            			angVel.multiply(1.0f / omega);
 		                            			Quaternion dQ = Quaternion.createFromAxisAngle(angVel, angle);
-		                            			prim.Rotation = Quaternion.multiply(prim.Rotation, dQ);
+		                            			prim.Rotation.multiply(dQ);
 		                            		}
-		                            	}
-		                            	else
-		                            	{
-											Logger.Log("null angular velocity " + prim.toString(), LogLevel.Warning, _Client);		                            		
 		                            	}
 										// #endregion Angular Velocity
 										
 			                            // #region Linear Motion
-			                            // Only do movement interpolation (extrapolation) when there is a non-zero velocity but 
-			                            // no acceleration
-										if (prim.Acceleration != Vector3.Zero && prim.Velocity == Vector3.Zero)
+			                            // Only do movement interpolation (extrapolation) when there is a non-zero velocity and/or acceleration
+										if (!prim.Acceleration.equals(Vector3.Zero))
 										{
+		                                    // prim.Position += (prim.Velocity + (prim.Acceleration * (0.5f * (adjSeconds - HAVOK_TIMESTEP)))) * adjSeconds;
+		                                    // prim.Velocity += prim.Acceleration * adjSeconds;
 											prim.Position.add(Vector3.multiply(Vector3.add(prim.Velocity, Vector3.multiply(
 															  prim.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))), adjSeconds));
 										    prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
+										}
+										else if (!prim.Velocity.equals(Vector3.Zero))
+										{
+		                                    // prim.Position += prim.Velocity * adjSeconds;
+											prim.Position.add(Vector3.multiply(prim.Velocity, adjSeconds));											
 										}
 	                                    // #endregion Linear Motion
 		                            }
@@ -1152,9 +1154,46 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	private Timer _InterpolationTimer;
 	private long lastInterpolation;
 
+	private boolean objectTracking;
+	private boolean alwaysDecodeObjects;
+	private boolean alwaysRequestObjects;
+	
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+				objectTracking = _Client.Settings.getBool(LibSettings.OBJECT_TRACKING);
+				alwaysDecodeObjects = _Client.Settings.getBool(LibSettings.ALWAYS_DECODE_OBJECTS);
+				alwaysRequestObjects = _Client.Settings.getBool(LibSettings.ALWAYS_REQUEST_OBJECTS);
+			}
+			else if (key.equals(LibSettings.OBJECT_TRACKING))
+			{
+				objectTracking = params.getValue().AsBoolean();
+			}
+			else if (key.equals(LibSettings.ALWAYS_DECODE_OBJECTS))
+			{
+				alwaysDecodeObjects = params.getValue().AsBoolean();
+			}
+			else if (key.equals(LibSettings.ALWAYS_REQUEST_OBJECTS))
+			{
+				alwaysRequestObjects = params.getValue().AsBoolean();
+			}
+			return false;
+		}
+	}
+
 	public ObjectManager(GridClient client)
 	{
 		_Client = client;
+
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		objectTracking = _Client.Settings.getBool(LibSettings.OBJECT_TRACKING);
+		alwaysDecodeObjects = _Client.Settings.getBool(LibSettings.ALWAYS_DECODE_OBJECTS);
+		alwaysRequestObjects = _Client.Settings.getBool(LibSettings.ALWAYS_REQUEST_OBJECTS);
 
 		_Client.Login.OnLoginProgress.add(new Network_OnLoginProgress());
 		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), true);
@@ -2640,7 +2679,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// #region Relevance check
 			// Check if we are interested in this object
 			Primitive.PCode pcode = PCode.setValue(block.PCode);
-			if (!_Client.Settings.ALWAYS_DECODE_OBJECTS)
+			if (!alwaysDecodeObjects)
 			{
 				switch (pcode)
 				{
@@ -3069,7 +3108,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ImprovedTerseObjectUpdatePacket terse = (ImprovedTerseObjectUpdatePacket) packet;
 		UpdateDilation(simulator, terse.RegionData.TimeDilation);
-		boolean objectTracking = _Client.Settings.getBool(LibSettings.OBJECT_TRACKING);
 
 		for (int i = 0; i < terse.ObjectData.length; i++)
 		{
@@ -3082,8 +3120,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				int localid = Helpers.BytesToInt32L(data, 0);
 
 				// Check if we are interested in this update
-				if (!_Client.Settings.ALWAYS_DECODE_OBJECTS && localid != _Client.Self.getLocalID()
-						&& OnTerseObjectUpdate.count() > 0)
+				if (!alwaysDecodeObjects && localid != _Client.Self.getLocalID() && OnTerseObjectUpdate.count() > 0)
 				{
 					continue;
 				}
@@ -3207,7 +3244,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			PCode pcode = PCode.setValue(data[i++]);
 
 			// /#region Relevance check
-			if (!_Client.Settings.ALWAYS_DECODE_OBJECTS)
+			if (!alwaysDecodeObjects)
 			{
 				switch (pcode)
 				{
@@ -3267,42 +3304,38 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim.ParentID = 0;
 			}
 
+			prim.ScratchPad = Helpers.EmptyBytes;
 			// Tree data
 			if ((flags & CompressedFlags.Tree) != 0)
 			{
 				prim.TreeSpecies = Tree.setValue(data[i++]);
-				prim.ScratchPad = Helpers.EmptyBytes;
 			}
 			// Scratch pad
-			else if ((flags & CompressedFlags.ScratchPad) != 0)
-			{
-				prim.TreeSpecies = Tree.setValue((byte) 0);
-
-				int size = data[i++];
-				prim.ScratchPad = new byte[size];
-				System.arraycopy(data, i, prim.ScratchPad, 0, size);
-				i += size;
-			}
 			else
 			{
 				prim.TreeSpecies = Tree.setValue((byte) 0);
-				prim.ScratchPad = Helpers.EmptyBytes;
+
+				if ((flags & CompressedFlags.ScratchPad) != 0)
+				{
+					int size = data[i++];
+					prim.ScratchPad = new byte[size];
+					System.arraycopy(data, i, prim.ScratchPad, 0, size);
+					i += size;
+				}
 			}
 			
 
 			// Floating text
 			if ((flags & CompressedFlags.HasText) != 0)
 			{
-				String text = Helpers.EmptyString;
-				while (data[i] != 0)
-				{
-					text += (char) data[i++];
-				}
-				i++;
-
 				// Floating text
-				prim.Text = text;
-
+				try
+				{
+					prim.Text = Helpers.BytesToString(data, i, -1, Helpers.ASCII_ENCODING);
+				}
+				catch (UnsupportedEncodingException e)
+				{ }
+				i += prim.Text.length() + 1;
 				// Text color
 				prim.TextColor = new Color4(data, i, false, true); i += 4;
 			}
@@ -3349,11 +3382,13 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if ((flags & CompressedFlags.HasNameValues) != 0)
 			{
 				String text = Helpers.EmptyString;
-				while (data[i] != 0)
+				try
 				{
-					text += (char) data[i++];
+					text = Helpers.BytesToString(data, i, -1, Helpers.ASCII_ENCODING);
 				}
-				i++;
+				catch (UnsupportedEncodingException e)
+				{ }
+				i += text.length() + 1;
 
 				// Parse the name values
 				if (text.length() > 0)
@@ -3417,7 +3452,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	private final void HandleObjectUpdateCached(Packet packet, Simulator simulator)
 	{
-		if (_Client.Settings.ALWAYS_REQUEST_OBJECTS)
+		if (alwaysRequestObjects)
 		{
 			ObjectUpdateCachedPacket update = (ObjectUpdateCachedPacket) packet;
 			int[] ids = new int[update.ObjectData.length];
@@ -3458,7 +3493,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		HashMap<Integer, Primitive> primitives = simulator.getObjectsPrimitives();
 		synchronized (primitives)
 		{
-			if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+			if (objectTracking)
 			{
 				for (int localID : kill.ID)
 				{
@@ -3581,7 +3616,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				props.TextureIDs[j] = new UUID(objectData.getTextureID(), j * 16);
 			}
 
-			if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+			if (objectTracking)
 			{
 				synchronized (simulator.getObjectsPrimitives())
 				{
@@ -3635,7 +3670,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			return;
 		}
 
-		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+		if (objectTracking)
 		{
 			synchronized (simulator.getObjectsPrimitives())
 			{
@@ -3684,7 +3719,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	{
 		ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage) message;
 
-		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+		if (objectTracking)
 		{
 			for (int i = 0; i < msg.ObjectPhysicsProperties.length; i++)
 			{
@@ -3814,7 +3849,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 */
 	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
-		if (_Client.Settings.getBool(LibSettings.OBJECT_TRACKING))
+		if (objectTracking)
 		{
 			synchronized (simulator.getObjectsPrimitives())
 			{

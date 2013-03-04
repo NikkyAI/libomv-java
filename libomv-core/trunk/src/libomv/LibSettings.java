@@ -257,13 +257,13 @@ public class LibSettings extends Settings implements PacketCallback
 	 * this is disabled the object tracking will have missing or partial prim
 	 * and avatar information
 	 */
-	public boolean ALWAYS_DECODE_OBJECTS = true;
+	public static final String ALWAYS_DECODE_OBJECTS = "alwaysDecodeObjects";
 
 	/*
 	 * If true, when a cached object check is received from the server the full
 	 * object info will automatically be requested
 	 */
-	public boolean ALWAYS_REQUEST_OBJECTS = true;
+	public static final String ALWAYS_REQUEST_OBJECTS = "alwaysRequestObjects";
 
 	/*
 	 * Whether to establish connections to HTTP capabilities servers for
@@ -439,6 +439,8 @@ public class LibSettings extends Settings implements PacketCallback
             new DefaultSetting(ENABLE_LIBRARY_STORE, true),
             new DefaultSetting(HTTP_INVENTORY, true),
             new DefaultSetting(AVATAR_TRACKING, true),
+            new DefaultSetting(ALWAYS_DECODE_OBJECTS, true),
+            new DefaultSetting(ALWAYS_REQUEST_OBJECTS, true),
             new DefaultSetting(OBJECT_TRACKING, true),
             new DefaultSetting(USE_INTERPOLATION_TIMER, true),
             new DefaultSetting(TRACK_UTILIZATION, false),
