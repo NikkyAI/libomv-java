@@ -696,6 +696,24 @@ public class Vector3
 		return new Vector3(value).divide(divider);
 	}
 
+	public static boolean isZero(Vector3 v)
+	{
+		if (v != null)
+		{
+			return v.equals(Zero);
+		}
+		return false;
+	}
+	
+	public static boolean isZeroOrNull(Vector3 v)
+	{
+		if (v != null)
+		{
+			return v.equals(Zero);
+		}
+		return true;
+	}
+
 	/** A vector with a value of 0,0,0 */
 	public final static Vector3 Zero = new Vector3(0f);
 	/** A vector with a value of 1,1,1 */
