@@ -30,6 +30,9 @@
  */
 package libomv.primitives;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDMap;
@@ -292,10 +295,8 @@ public class Primitive
 		}
 	}
 
-	// Extra parameters for primitives, these flags are for features that have
-	// been
-	// added after the original ObjectFlags that has all eight bits reserved
-	// already
+	// Extra parameters for primitives, these flags are for features that have been
+	// added after the original ObjectFlags that has all eight bits reserved already
 	public enum ExtraParamType
 	{
 		// Whether this object has flexible parameters
@@ -304,8 +305,10 @@ public class Primitive
 		Light(0x20),
 		// Whether this object is a sculpted prim
 		Sculpt(0x30),
-        // Whether this object is a mesh
-        Mesh(0x60);
+		// Wether this object is a light map
+		LightImage(0x40),
+		// Whether this object is a mesh
+		Mesh(0x60);
 
 		public static ExtraParamType setValue(int value)
 		{
@@ -314,7 +317,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
-			Logger.Log(String.format("Unknown ExtraParamType value %x" + value), LogLevel.Warning);
+			Logger.Log(String.format("Unknown ExtraParamType value %x", value), LogLevel.Warning);
 			return null;
 		}
 
@@ -344,6 +347,7 @@ public class Primitive
 		{
 			if (value >= 0 && value < values().length)
 				return values()[value];
+			Logger.Log(String.format("Unknown JointType value %x", value), LogLevel.Warning);
 			return null;
 		}
 
@@ -364,6 +368,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
+			Logger.Log(String.format("Unknown SculptType value %x", value), LogLevel.Warning);
 			return null;
 		}
 
@@ -391,6 +396,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
+			Logger.Log(String.format("Unknown ObjectCategory value %x", value), LogLevel.Warning);
 			return null;
 		}
 
@@ -1032,34 +1038,35 @@ public class Primitive
 		// Default constructor
 		public FlexibleData()
 		{
+			Softness = 2;
+			Gravity = 0.3f;
+			Drag = 2.0f;
+			Wind = 0.0f;
+			Tension = 1.0f;
+			Force = Vector3.Zero;
 		}
 
 		public FlexibleData(OSD osd)
 		{
+			this();
 			fromOSD(osd);
 		}
 
 		public FlexibleData(byte[] data, int pos, int length)
 		{
-			if (length >= 16 && data.length >= pos + 16)
+			this();
+			if (length >= 4 && data.length >= pos + 4)
 			{
 				Softness = ((data[pos] & 0x80) >> 6) | ((data[pos + 1] & 0x80) >> 7);
 
 				Tension = (data[pos++] & 0x7F) / 10.0f;
 				Drag = (data[pos++] & 0x7F) / 10.0f;
-				Gravity = (data[pos++] / 10.0f) - 10.0f;
+				Gravity = data[pos++] / 10.0f;
 				Wind = data[pos++] / 10.0f;
-				Force = new Vector3(data, pos);
-			}
-			else
-			{
-				Softness = 0;
-
-				Tension = 0.0f;
-				Drag = 0.0f;
-				Gravity = 0.0f;
-				Wind = 0.0f;
-				Force = Vector3.Zero;
+				if (length >= 16 && data.length >= pos + 12)
+				{
+					Force = new Vector3(data, pos);
+				}
 			}
 		}
 
@@ -1078,14 +1085,10 @@ public class Primitive
 		{
 			byte[] data = new byte[16];
 			int i = 0;
-
 			// Softness is packed in the upper bits of tension and drag
-			data[i] = (byte) ((Softness & 2) << 6);
-			data[i + 1] = (byte) ((Softness & 1) << 7);
-
-			data[i++] |= (byte) ((byte) (Tension * 10.01f) & 0x7F);
-			data[i++] |= (byte) ((byte) (Drag * 10.01f) & 0x7F);
-			data[i++] = (byte) ((Gravity + 10.0f) * 10.01f);
+			data[i++] = (byte) (((int)(Tension * 10.01f) & 0x7F) | ((Softness & 2) << 6));
+			data[i++] = (byte) (((int)(Drag * 10.01f) & 0x7F) | ((Softness & 1) << 7));
+			data[i++] = (byte) (Gravity * 10.01f);
 			data[i++] = (byte) (Wind * 10.01f);
 
 			Force.toBytes(data, i);
@@ -1125,7 +1128,18 @@ public class Primitive
 		@Override
 		public int hashCode()
 		{
-			return Softness ^ (int) Gravity ^ (int) Drag ^ (int) Wind ^ (int) Tension ^ Force.hashCode();
+			return Softness ^ ((Float)Gravity).hashCode() ^ ((Float)Drag).hashCode() ^ ((Float)Wind).hashCode() ^ ((Float)Tension).hashCode() ^ (Force == null ? 0 : Force.hashCode());
+		}
+		@Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && (obj instanceof FlexibleData) && equals((FlexibleData)obj);			
+		}
+
+		public boolean equals(FlexibleData obj)
+		{
+			return obj != null && Softness == obj.Softness && Gravity == obj.Gravity && Drag == obj.Drag
+					           && Wind == obj.Wind && Tension == obj.Tension && Force == obj.Force;
 		}
 	}
 
@@ -1141,15 +1155,21 @@ public class Primitive
 		// Default constructor
 		public LightData()
 		{
+			Color = Color4.White;
+			Radius = 10.0f;
+			Cutoff = 0.0f;
+			Falloff = 0.75f;
 		}
 
 		public LightData(OSD osd)
 		{
+			this();
 			fromOSD(osd);
 		}
 
 		public LightData(byte[] data, int pos, int length)
 		{
+			this();
 			if (length >= 16 && data.length >= 16 + pos)
 			{
 				Color = new Color4(data, pos, false);
@@ -1160,14 +1180,6 @@ public class Primitive
 				// Alpha in color is actually intensity
 				Intensity = Color.A;
 				Color.A = 1f;
-			}
-			else
-			{
-				Color = Color4.Black;
-				Radius = 0f;
-				Cutoff = 0f;
-				Falloff = 0f;
-				Intensity = 0f;
 			}
 		}
 
@@ -1225,14 +1237,25 @@ public class Primitive
 		@Override
 		public int hashCode()
 		{
-			return Color.hashCode() ^ (int) Intensity ^ (int) Radius ^ (int) Cutoff ^ (int) Falloff;
+			return (Color != null ? Color.hashCode() : 0) ^ ((Float)Intensity).hashCode() ^ ((Float)Radius).hashCode() ^ ((Float)Cutoff).hashCode() ^ ((Float)Falloff).hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && (obj instanceof LightData) && equals((LightData)obj);			
+		}
+
+		public boolean equals(LightData obj)
+		{
+			return obj != null && Color == null ? (Color == obj.Color) : (Color.equals(obj.Color)) 
+					           && Intensity == obj.Intensity && Radius == obj.Radius && Cutoff == obj.Cutoff && Falloff == obj.Falloff;
 		}
 
 		@Override
 		public String toString()
 		{
-			return String.format("Color: %s Intensity: %s Radius: %f Cutoff: %f Falloff: %f", Color, Intensity, Radius,
-					Cutoff, Falloff);
+			return String.format("Color: %s Intensity: %f Radius: %f Cutoff: %f Falloff: %f", Color, Intensity, Radius, Cutoff, Falloff);
 		}
 	}
 
@@ -1333,10 +1356,110 @@ public class Primitive
 		@Override
 		public int hashCode()
 		{
-			return SculptTexture.hashCode() ^ type;
+			return (SculptTexture == null ? 0 : SculptTexture.hashCode()) ^ type;
+		}
+
+		@Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && (obj instanceof SculptData) && equals((SculptData)obj);			
+		}
+
+		public boolean equals(SculptData obj)
+		{
+			return obj != null && (SculptTexture == null ? (SculptTexture == obj.SculptTexture) : (SculptTexture.equals(obj.SculptTexture))) && type == obj.type;
 		}
 	}
 
+	// Information on the sculpt properties of a sculpted primitive
+	public class LightImage
+	{
+		public UUID LightTexture;
+		public Vector3 Params;
+
+		// Default constructor
+		public LightImage()
+		{
+		}
+
+		public LightImage(OSD osd)
+		{
+			fromOSD(osd);
+		}
+
+		public LightImage(byte[] data, int pos, int length)
+		{
+			if (length >= 28 && data.length >= 28 + pos)
+			{
+				LightTexture = new UUID(data, pos);
+				Params = new Vector3(data, pos + 16, true);
+			}
+			else
+			{
+				LightTexture = UUID.Zero;
+				Params = new Vector3(Helpers.PI_OVER_TWO, 0.f, 0.f);
+			}
+		}
+
+		public LightImage(LightImage value)
+		{
+			LightTexture = value.LightTexture;
+			Params = value.Params;
+		}
+
+		public byte[] GetBytes()
+		{
+			byte[] data = new byte[28];
+
+			LightTexture.toBytes(data, 0);
+			Params.toBytes(data, 16, true);
+			return data;
+		}
+
+		public OSD Serialize()
+		{
+			OSDMap map = new OSDMap();
+
+			map.put("texture", OSD.FromUUID(LightTexture));
+			map.put("params", OSD.FromVector3(Params));
+
+			return map;
+		}
+
+		public void fromOSD(OSD osd)
+		{
+			if (osd.getType() == OSDType.Map)
+			{
+				OSDMap map = (OSDMap) osd;
+
+				LightTexture = map.get("texture").AsUUID();
+				Params = map.get("params").AsVector3();
+			}
+		}
+
+		public boolean isLightSpotlight()
+		{
+			return LightTexture != null && !LightTexture.equals(UUID.Zero);
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return (LightTexture == null ? 0 : LightTexture.hashCode()) ^ (Params == null ? 0 : Params.hashCode());
+		}
+		
+		@Override
+		public boolean equals(Object obj)
+		{
+			return obj != null && (obj instanceof LightImage) && equals((LightImage)obj);			
+		}
+
+		public boolean equals(LightImage obj)
+		{
+			return obj != null && LightTexture == null ? (LightTexture == obj.LightTexture) : (LightTexture.equals(obj.LightTexture)) 
+					           && Params == null ? (Params == obj.Params) : (Params.equals(obj.Params));
+		}
+	}
 	// #endregion Subclasses
 
 	// #region Public Members
@@ -1363,6 +1486,7 @@ public class Primitive
 	public Vector4 CollisionPlane;
 	public FlexibleData Flexible;
 	public LightData Light;
+	public LightImage LightMap;
 	public SculptData Sculpt;
 	public ClickAction clickAction;
 	public UUID SoundID;
@@ -1572,6 +1696,9 @@ public class Primitive
 		if (Light != null)
 			prim.put("light", Light.Serialize());
 
+		if (LightMap != null)
+			prim.put("light_image", LightMap.Serialize());
+
 		if (Flexible != null)
 			prim.put("flex", Flexible.Serialize());
 
@@ -1604,6 +1731,7 @@ public class Primitive
 			PrimData = new ConstructionData(map.get("volume"));
 			Flexible = new FlexibleData(map.get("flex"));
 			Light = new LightData(map.get("light"));
+			LightMap = new LightImage(map.get("light_image"));
 			Sculpt = new SculptData(map.get("sculpt"));
 			Textures = new TextureEntry(map.get("textures"));
 			Properties = new ObjectProperties();
@@ -1648,6 +1776,9 @@ public class Primitive
 				case Light:
 					Light = new LightData(data, i, paramLength);
 					break;
+				case LightImage:
+					LightMap = new LightImage(data, i, paramLength);
+					break;
 				case Sculpt:
 				case Mesh:
 					Sculpt = new SculptData(data, i, paramLength);
@@ -1659,79 +1790,58 @@ public class Primitive
 		return totalLength;
 	}
 
-	public byte[] GetExtraParamsBytes()
+	public byte[] GetExtraParamsBytes() throws IOException
 	{
-		byte[] _Flexible = null;
-		byte[] _Light = null;
-		byte[] _Sculpt = null;
-		byte[] buffer = null;
-		int size = 1;
-		int pos = 0;
+		ByteArrayOutputStream data = new ByteArrayOutputStream();
+		byte buffer[];
 		byte count = 0;
 
+		data.write(0);
 		if (Flexible != null)
 		{
-			_Flexible = Flexible.GetBytes();
-			size += _Flexible.length + 6;
+			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()));
+			buffer = Flexible.GetBytes();
+			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(buffer);
 			++count;
 		}
+	
 		if (Light != null)
 		{
-			_Light = Light.GetBytes();
-			size += _Light.length + 6;
+			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()));
+			buffer = Light.GetBytes();
+			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(buffer);
 			++count;
 		}
+		
+		if (LightMap != null)
+		{
+			data.write(Helpers.UInt16ToBytesL(ExtraParamType.LightImage.getValue()));
+			buffer = LightMap.GetBytes();
+			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(buffer);
+			++count;
+		}
+		
 		if (Sculpt != null)
-		{
-			_Sculpt = Sculpt.GetBytes();
-			size += _Sculpt.length + 6;
-			++count;
-		}
-
-		buffer = new byte[size];
-		buffer[0] = count;
-		++pos;
-
-		if (_Flexible != null)
-		{
-			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()), 0, buffer, pos, 2);
-			pos += 2;
-
-			System.arraycopy(Helpers.UInt32ToBytesL(_Flexible.length), 0, buffer, pos, 4);
-			pos += 4;
-
-			System.arraycopy(_Flexible, 0, buffer, pos, _Flexible.length);
-			pos += _Flexible.length;
-		}
-		if (_Light != null)
-		{
-			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Light.getValue()), 0, buffer, pos, 2);
-			pos += 2;
-
-			System.arraycopy(Helpers.UInt32ToBytesL(_Light.length), 0, buffer, pos, 4);
-			pos += 4;
-
-			System.arraycopy(_Light, 0, buffer, pos, _Light.length);
-			pos += _Light.length;
-		}
-		if (_Sculpt != null)
 		{
             if (Sculpt.getType() == SculptType.Mesh)
             {
-    			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Mesh.getValue()), 0, buffer, pos, 2);
+    			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Mesh.getValue()));
             }
             else
             {
-    			System.arraycopy(Helpers.UInt16ToBytesL(ExtraParamType.Sculpt.getValue()), 0, buffer, pos, 2);
+    			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Sculpt.getValue()));
             }
-			pos += 2;
-
-			System.arraycopy(Helpers.UInt32ToBytesL(_Sculpt.length), 0, buffer, pos, 4);
-			pos += 4;
-
-			System.arraycopy(_Sculpt, 0, buffer, pos, _Sculpt.length);
-			pos += _Sculpt.length;
+			buffer = Sculpt.GetBytes();
+			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(buffer);
+			++count;
 		}
+
+		buffer = data.toByteArray();
+		buffer[0] = count;
 		return buffer;
 	}
 
