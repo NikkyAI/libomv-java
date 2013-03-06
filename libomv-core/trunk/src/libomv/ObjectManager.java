@@ -1054,7 +1054,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 							{
 								// #region Linear Motion
 	                            // Only do movement interpolation (extrapolation) when there is a non-zero velocity and/or acceleration
-								if (!avatar.Acceleration.equals(Vector3.Zero))
+								if (!Vector3.isZeroOrNull(avatar.Acceleration))
 								{
 									// avatar.Position += (avatar.Velocity + (avatar.Acceleration * (0.5f * (adjSeconds - HAVOK_TIMESTEP)))) * adjSeconds;
 									// avatar.Velocity += avatar.Acceleration * adjSeconds;
@@ -1062,7 +1062,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 											Vector3.multiply(avatar.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))), adjSeconds));
 									avatar.Velocity.add(Vector3.multiply(avatar.Acceleration, adjSeconds));
 								}
-								else if (!avatar.Velocity.equals(Vector3.Zero))
+								else if (!Vector3.isZeroOrNull(avatar.Velocity))
 								{
                                     // avatar.Position += avatar.Velocity * adjSeconds;
 									avatar.Position.add(Vector3.multiply(avatar.Velocity, adjSeconds));											
@@ -1098,7 +1098,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 										
 			                            // #region Linear Motion
 			                            // Only do movement interpolation (extrapolation) when there is a non-zero velocity and/or acceleration
-										if (!prim.Acceleration.equals(Vector3.Zero))
+										if (!Vector3.isZeroOrNull(prim.Acceleration))
 										{
 		                                    // prim.Position += (prim.Velocity + (prim.Acceleration * (0.5f * (adjSeconds - HAVOK_TIMESTEP)))) * adjSeconds;
 		                                    // prim.Velocity += prim.Acceleration * adjSeconds;
@@ -1106,7 +1106,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 															  prim.Acceleration, (0.5f * (adjSeconds - HAVOK_TIMESTEP)))), adjSeconds));
 										    prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
 										}
-										else if (!prim.Velocity.equals(Vector3.Zero))
+										else if (!Vector3.isZeroOrNull(prim.Velocity))
 										{
 		                                    // prim.Position += prim.Velocity * adjSeconds;
 											prim.Position.add(Vector3.multiply(prim.Velocity, adjSeconds));											
