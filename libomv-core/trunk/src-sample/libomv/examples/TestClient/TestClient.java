@@ -108,9 +108,6 @@ public class TestClient extends GridClient implements PacketCallback
 
 		Settings.LOG_RESENDS = false;
 		Settings.put(LibSettings.STORE_LAND_PATCHES, true);
-		Settings.put(LibSettings.SEND_AGENT_UPDATES, true);
-		Settings.ALWAYS_DECODE_OBJECTS = true;
-		Settings.ALWAYS_REQUEST_OBJECTS = true;
 
 		Network.OnDisconnected.add(new Network_OnDisconnected(), true);
 		Login.OnLoginProgress.add(new Network_OnLoginProgress(), false);
