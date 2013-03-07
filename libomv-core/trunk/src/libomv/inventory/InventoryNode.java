@@ -219,7 +219,7 @@ public abstract class InventoryNode implements Serializable
 		return map;
 	}
 
-	public static InventoryNode fromOSD(OSD osd)
+	protected static InventoryNode fromOSD(OSD osd)
 	{
 		if (osd instanceof OSDMap)
 		{
