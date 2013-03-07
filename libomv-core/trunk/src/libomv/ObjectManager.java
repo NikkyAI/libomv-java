@@ -809,11 +809,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	// Provides notification when an Avatar, Object or Attachment is DeRezzed or
 	// moves out of the avatars view for the
 	// <see cref="ObjectManager.KillObject"/> event
-	public class KillObjectCallbackArgs implements CallbackArgs
+	public class KillObjectsCallbackArgs implements CallbackArgs
 	{
 		private final Simulator m_Simulator;
 
-		private final int m_ObjectLocalID;
+		private final int[] m_ObjectLocalIDs;
 
 		// Get the simulator the object is located
 		public final Simulator getSimulator()
@@ -822,21 +822,21 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		}
 
 		// The LocalID of the object
-		public final int getObjectLocalID()
+		public final int[] getObjectLocalIDs()
 		{
-			return m_ObjectLocalID;
+			return m_ObjectLocalIDs;
 		}
 
-		public KillObjectCallbackArgs(Simulator simulator, int objectID)
+		public KillObjectsCallbackArgs(Simulator simulator, int[] objectIDs)
 		{
 			this.m_Simulator = simulator;
-			this.m_ObjectLocalID = objectID;
+			this.m_ObjectLocalIDs = objectIDs;
 		}
 	}
 
 	// Raised when the simulator informs us an <see cref="Primitive"/> or <see
 	// cref="Avatar"/> is no longer within view
-	public CallbackHandler<KillObjectCallbackArgs> OnKillObject = new CallbackHandler<KillObjectCallbackArgs>();
+	public CallbackHandler<KillObjectsCallbackArgs> OnKillObject = new CallbackHandler<KillObjectsCallbackArgs>();
 
 	// Provides updates sit position data
 	public class AvatarSitChangedCallbackArgs implements CallbackArgs
@@ -3482,10 +3482,12 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		// Notify first, so that handler has a chance to get a
 		// reference from the ObjectTracker to the object being killed
+		int[] killed = new int[kill.ID.length];
 		for (int i = 0; i < kill.ID.length; i++)
 		{
-			OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, kill.ID[i]));
+			killed[i] = kill.ID[i];
 		}
+		OnKillObject.dispatch(new KillObjectsCallbackArgs(simulator, killed));
 	
 		ArrayList<Integer> removeAvatars = new ArrayList<Integer>();
 		ArrayList<Integer> removePrims = new ArrayList<Integer>();
@@ -3506,7 +3508,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					{
 						if (e.getValue().ParentID == localID)
 						{
-							OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, e.getKey()));
 							removePrims.add(e.getKey());
 						}
 					}
@@ -3531,7 +3532,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						{
 							if (e.getValue().ParentID == localID)
 							{
-								OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, e.getKey()));
 								removePrims.add(e.getKey());
 								rootPrims.add(e.getKey());
 							}
@@ -3541,7 +3541,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						{
 							if (rootPrims.contains(e.getValue().ParentID))
 							{
-								OnKillObject.dispatch(new KillObjectCallbackArgs(simulator, e.getKey()));
 								removePrims.add(e.getKey());
 							}
 						}
@@ -3555,6 +3554,14 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 				}
 			}
+			
+			int i = 0;
+			killed = new int[removePrims.size()];
+			for (int removeID : removePrims)
+			{
+				killed[i++] = removeID;
+			}
+			OnKillObject.dispatch(new KillObjectsCallbackArgs(simulator, killed));
 
 			for (int removeID : removePrims)
 			{
