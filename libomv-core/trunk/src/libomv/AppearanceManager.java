@@ -671,13 +671,14 @@ public class AppearanceManager implements PacketCallback
      * Add a wearable to the current outfit and set appearance
      *
      * @param wearableItem Wearable to be added to the outfit
+     * @param replace Should existing item on the same point or of the same type be replaced
      * @throws Exception 
      */
-    public void AddToOutfit(InventoryItem wearableItem) throws Exception
+    public void AddToOutfit(InventoryItem wearableItem, boolean replace) throws Exception
     {
         List<InventoryItem> wearableItems = new ArrayList<InventoryItem>();
         wearableItems.add(wearableItem);
-        AddToOutfit(wearableItems);
+        AddToOutfit(wearableItems, replace);
     }
 
     /**
@@ -687,6 +688,18 @@ public class AppearanceManager implements PacketCallback
      * @throws Exception 
      */
     public void AddToOutfit(List<InventoryItem> wearableItems) throws Exception
+    {
+    	AddToOutfit(wearableItems, true);
+    }
+    
+    /**
+     * Add a list of wearables to the current outfit and set appearance
+     *
+     * @param wearableItems List of wearable inventory items to be added to the outfit
+     * @param replace Should existing item on the same point or of the same type be replaced
+     * @throws Exception 
+     */
+    public void AddToOutfit(List<InventoryItem> wearableItems, boolean replace) throws Exception
     {
         List<InventoryWearable> wearables = new ArrayList<InventoryWearable>();
         List<InventoryItem> attachments = new ArrayList<InventoryItem>();
@@ -720,7 +733,7 @@ public class AppearanceManager implements PacketCallback
 
         if (attachments.size() > 0)
         {
-            AddAttachments(attachments, false, false);
+            AddAttachments(attachments, false, replace);
         }
 
         if (wearables.size() > 0)
@@ -1307,11 +1320,11 @@ public class AppearanceManager implements PacketCallback
 
         RequestAgentWearables();
 
-        Boolean success = wearablesEvent.waitOne(WEARABLE_TIMEOUT);
+        boolean success = wearablesEvent.waitOne(WEARABLE_TIMEOUT);
 
         OnAgentWearablesReply.remove(wearablesCallback);
 
-        return success != null ? success : false;
+        return success;
     }
 
     /**
