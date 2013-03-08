@@ -166,17 +166,17 @@ public class AssetManager implements PacketCallback
 
 		public static ChannelType setValue(int value)
 		{
-			return values()[value + 1];
+			return values()[value];
 		}
 
 		public static byte getValue(ChannelType value)
 		{
-			return (byte) (value.ordinal() - 1);
+			return (byte)value.ordinal();
 		}
 
 		public byte getValue()
 		{
-			return (byte) (ordinal() - 1);
+			return (byte)ordinal();
 		}
 	}
 
@@ -184,6 +184,8 @@ public class AssetManager implements PacketCallback
 	{
 		//
 		Unknown,
+		//
+		Unused,
 		// Asset from the asset server
 		Asset,
 		// Inventory item
@@ -193,17 +195,17 @@ public class AssetManager implements PacketCallback
 
 		public static SourceType setValue(int value)
 		{
-			return values()[value + 1];
+			return values()[value];
 		}
 
 		public static byte getValue(SourceType value)
 		{
-			return (byte) (value.ordinal() - 1);
+			return (byte)value.ordinal();
 		}
 
 		public byte getValue()
 		{
-			return (byte) (ordinal() - 1);
+			return (byte)ordinal();
 		}
 	}
 
@@ -213,17 +215,17 @@ public class AssetManager implements PacketCallback
 
 		public static TargetType setValue(int value)
 		{
-			return values()[value + 1];
+			return values()[value];
 		}
 
 		public static byte getValue(TargetType value)
 		{
-			return (byte) (value.ordinal() - 1);
+			return (byte)value.ordinal();
 		}
 
 		public byte getValue()
 		{
-			return (byte) (ordinal() - 1);
+			return (byte)ordinal();
 		}
 	}
 
@@ -239,17 +241,17 @@ public class AssetManager implements PacketCallback
 
 		public static ImageType setValue(int value)
 		{
-			return values()[value + 1];
+			return values()[value];
 		}
 
 		public static byte getValue(ImageType value)
 		{
-			return (byte) (value.ordinal() - 1);
+			return (byte)value.ordinal();
 		}
 
 		public byte getValue()
 		{
-			return (byte) (ordinal() - 1);
+			return (byte)ordinal();
 		}
 	}
 
@@ -259,17 +261,17 @@ public class AssetManager implements PacketCallback
 
 		public static ImageCodec setValue(int value)
 		{
-			return values()[value + 1];
+			return values()[value];
 		}
 
 		public static byte getValue(ImageCodec value)
 		{
-			return (byte) (value.ordinal() - 1);
+			return (byte)value.ordinal();
 		}
 
 		public byte getValue()
 		{
-			return (byte) (ordinal() - 1);
+			return (byte)ordinal();
 		}
 	}
 
@@ -450,12 +452,12 @@ public class AssetManager implements PacketCallback
 		abstract public void callback(UUID newAssetID);
 	}
 
-    public abstract class MeshDownloadCallback
-    {
-    	abstract public void callback(boolean success, AssetMesh assetMesh);
-    }
+	public abstract class MeshDownloadCallback
+	{
+		abstract public void callback(boolean success, AssetMesh assetMesh);
+	}
 
-    // #endregion Callback
+	// #endregion Callback
 
 	// #region Callback
 
@@ -681,15 +683,11 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset download
-	 * 
-	 * @param assetID
-	 *            Asset UUID
-	 * @param type
-	 *            Asset type, must be correct for the transfer to succeed
-	 * @param priority
-	 *            Whether to give this transfer an elevated priority
-	 * @param callback
-	 *            The callback to fire when the simulator responds with the
+	 *
+	 * @param assetID Asset UUID
+	 * @param type Asset type, must be correct for the transfer to succeed
+	 * @param priority Whether to give this transfer an elevated priority
+	 * @param callback The callback to fire when the simulator responds with the
 	 *            asset data
 	 * @throws Exception
 	 */
@@ -701,17 +699,12 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset download
-	 * 
-	 * @param assetID
-	 *            Asset UUID
-	 * @param type
-	 *            Asset type, must be correct for the transfer to succeed
-	 * @param priority
-	 *            Whether to give this transfer an elevated priority
-	 * @param sourceType
-	 *            Source location of the requested asset
-	 * @param callback
-	 *            The callback to fire when the simulator responds with the
+	 *
+	 * @param assetID Asset UUID
+	 * @param type Asset type, must be correct for the transfer to succeed
+	 * @param priority Whether to give this transfer an elevated priority
+	 * @param sourceType Source location of the requested asset
+	 * @param callback The callback to fire when the simulator responds with the
 	 *            asset data
 	 * @throws Exception
 	 */
@@ -723,19 +716,13 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset download
-	 * 
-	 * @param assetID
-	 *            Asset UUID
-	 * @param type
-	 *            Asset type, must be correct for the transfer to succeed
-	 * @param priority
-	 *            Whether to give this transfer an elevated priority
-	 * @param sourceType
-	 *            Source location of the requested asset
-	 * @param transactionID
-	 *            UUID of the transaction
-	 * @param callback
-	 *            The callback to fire when the simulator responds with the
+	 *
+	 * @param assetID Asset UUID
+	 * @param type Asset type, must be correct for the transfer to succeed
+	 * @param priority Whether to give this transfer an elevated priority
+	 * @param sourceType Source location of the requested asset
+	 * @param transactionID UUID of the transaction
+	 * @param callback The callback to fire when the simulator responds with the
 	 *            asset data
 	 * @throws Exception
 	 */
@@ -798,21 +785,15 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset download through the almost deprecated Xfer system
-	 * 
-	 * @param filename
-	 *            Filename of the asset to request
-	 * @param deleteOnCompletion
-	 *            Whether or not to delete the asset off the server after it is
+	 *
+	 * @param filename Filename of the asset to request
+	 * @param deleteOnCompletion Whether or not to delete the asset off the server after it is
 	 *            retrieved
-	 * @param useBigPackets
-	 *            Use large transfer packets or not
-	 * @param vFileID
-	 *            UUID of the file to request, if filename is left empty
-	 * @param vFileType
-	 *            Asset type of <code>vFileID</code>, or
+	 * @param useBigPackets Use large transfer packets or not
+	 * @param vFileID UUID of the file to request, if filename is left empty
+	 * @param vFileType Asset type of <code>vFileID</code>, or
 	 *            <code>AssetType.Unknown</code> if filename is not empty
-	 * @param fromCache
-	 *            Sets the FilePath in the request to Cache (4) if true,
+	 * @param fromCache Sets the FilePath in the request to Cache (4) if true,
 	 *            otherwise Unknown (0) is used
 	 * @return
 	 * @throws Exception
@@ -852,22 +833,16 @@ public class AssetManager implements PacketCallback
 	}
 
 	/**
-	 * 
-	 * 
-	 * @param assetID
-	 *            Use UUID.Zero if you do not have the asset ID but have all the
+	 * Request an asset download for the inventory
+	 *
+	 * @param assetID Use UUID.Zero if you do not have the asset ID but have all the
 	 *            necessary permissions
-	 * @param itemID
-	 *            The item ID of this asset in the inventory
-	 * @param taskID
-	 *            Use UUID.Zero if you are not requesting an asset from an
+	 * @param itemID The item ID of this asset in the inventory
+	 * @param taskID Use UUID.Zero if you are not requesting an asset from an
 	 *            object inventory
-	 * @param ownerID
-	 *            The owner of this asset
-	 * @param type
-	 *            Asset type
-	 * @param priority
-	 *            Whether to prioritize this asset download or not
+	 * @param ownerID The owner of this asset
+	 * @param type Asset type
+	 * @param priority Whether to prioritize this asset download or not
 	 * @param callback
 	 * @throws Exception
 	 */
@@ -947,11 +922,9 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset be uploaded to the simulator
-	 * 
-	 * @param asset
-	 *            The {@link Asset} Object containing the asset data
-	 * @param storeLocal
-	 *            If True, the asset once uploaded will be stored on the
+	 *
+	 * @param asset The {@link Asset} Object containing the asset data
+	 * @param storeLocal If True, the asset once uploaded will be stored on the
 	 *            simulator in which the client was connected in addition to
 	 *            being stored on the asset server
 	 * @return The {@link UUID} of the transfer, can be used to correlate the
@@ -970,13 +943,10 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset be uploaded to the simulator
-	 * 
-	 * @param type
-	 *            The {@link AssetType} of the asset being uploaded
-	 * @param data
-	 *            A byte array containing the encoded asset data
-	 * @param storeLocal
-	 *            If True, the asset once uploaded will be stored on the
+	 *
+	 * @param type The {@link AssetType} of the asset being uploaded
+	 * @param data A byte array containing the encoded asset data
+	 * @param storeLocal If True, the asset once uploaded will be stored on the
 	 *            simulator in which the client was connected in addition to
 	 *            being stored on the asset server
 	 * @return The {@link UUID} of the transfer, can be used to correlate the
@@ -990,14 +960,11 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Request an asset be uploaded to the simulator
-	 * 
+	 *
 	 * @param assetID
-	 * @param type
-	 *            Asset type to upload this data as
-	 * @param data
-	 *            A byte array containing the encoded asset data
-	 * @param storeLocal
-	 *            If True, the asset once uploaded will be stored on the
+	 * @param type Asset type to upload this data as
+	 * @param data A byte array containing the encoded asset data
+	 * @param storeLocal If True, the asset once uploaded will be stored on the
 	 *            simulator in which the client was connected in addition to
 	 *            being stored on the asset server
 	 * @return The {@link UUID} of the transfer, can be used to correlate the
@@ -1012,18 +979,13 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Initiate an asset upload
-	 * 
-	 * @param assetID
-	 *            The ID this asset will have if the upload succeeds
-	 * @param type
-	 *            Asset type to upload this data as
-	 * @param data
-	 *            Raw asset data to upload
-	 * @param storeLocal
-	 *            Whether to store this asset on the local simulator or the
+	 *
+	 * @param assetID The ID this asset will have if the upload succeeds
+	 * @param type Asset type to upload this data as
+	 * @param data Raw asset data to upload
+	 * @param storeLocal Whether to store this asset on the local simulator or the
 	 *            grid-wide asset server
-	 * @param transactionID
-	 *            The tranaction id for the upload <see
+	 * @param transactionID The tranaction id for the upload <see
 	 *            cref="RequestCreateItem"/>
 	 * @return The transaction ID of this transfer
 	 * @throws Exception
@@ -1213,41 +1175,34 @@ public class AssetManager implements PacketCallback
 	 * Request a texture asset from the simulator using the <see
 	 * cref="TexturePipeline"/> system to manage the requests and re-assemble
 	 * the image from the packets received from the simulator
-	 * 
-	 * @param textureID
-	 *            The <see cref="UUID"/> of the texture asset to download
-	 * @param imageType
-	 *            The <see cref="ImageType"/> of the texture asset. Use <see
+	 *
+	 * @param textureID The <see cref="UUID"/> of the texture asset to download
+	 * @param imageType The <see cref="ImageType"/> of the texture asset. Use <see
 	 *            cref="ImageType.Normal"/> for most textures, or <see
 	 *            cref="ImageType.Baked"/> for baked layer texture assets
-	 * @param priority
-	 *            A float indicating the requested priority for the transfer.
+	 * @param priority A float indicating the requested priority for the transfer.
 	 *            Higher priority values tell the simulator to prioritize the
 	 *            request before lower valued requests. An image already being
 	 *            transferred using the <see cref="TexturePipeline"/> can have
 	 *            its priority changed by resending the request with the new
 	 *            priority value
-	 * @param discardLevel
-	 *            Number of quality layers to discard. This controls the end
+	 * @param discardLevel Number of quality layers to discard. This controls the end
 	 *            marker of the data sent. Sending with value -1 combined with
 	 *            priority of 0 cancels an in-progress transfer. A bug exists in
 	 *            the Linden Simulator where a -1 will occasionally be sent with
 	 *            a non-zero priority indicating an off-by-one error.
-	 * @param packetStart
-	 *            The packet number to begin the request at. A value of 0 begins
+	 * @param packetStart The packet number to begin the request at. A value of 0 begins
 	 *            the request from the start of the asset texture
-	 * @param callback
-	 *            The <see cref="TextureDownloadCallback"/> callback to fire
+	 * @param callback The <see cref="TextureDownloadCallback"/> callback to fire
 	 *            when the image is retrieved. The callback will contain the
 	 *            result of the request and the texture asset data
-	 * @param progress
-	 *            If true, the callback will be fired for each chunk of the
+	 * @param progress If true, the callback will be fired for each chunk of the
 	 *            downloaded image. The callback asset parameter will contain
 	 *            all previously received chunks of the texture asset starting
 	 *            from the beginning of the request <example> Request an image
 	 *            and fire a callback when the request is complete <code>
 	 * _Client.Assets.RequestImage(UUID.Parse("c307629f-e3a1-4487-5e88-0d96ac9d4965"), ImageType.Normal, TextureDownloader_OnDownloadFinished);
-	 * 
+	 *
 	 * private void TextureDownloader_OnDownloadFinished(TextureRequestState state, AssetTexture asset)
 	 * {
 	 *     if(state == TextureRequestState.Finished)
@@ -1270,14 +1225,14 @@ public class AssetManager implements PacketCallback
 	 * </code> Request a texture, decode the texture to a bitmap image and apply
 	 *            it to a imagebox <code>
 	 * _Client.Assets.RequestImage(UUID.Parse("c307629f-e3a1-4487-5e88-0d96ac9d4965"), ImageType.Normal, TextureDownloader_OnDownloadFinished);
-	 * 
+	 *
 	 * private void TextureDownloader_OnDownloadFinished(TextureRequestState state, AssetTexture asset)
 	 * {
 	 *     if(state == TextureRequestState.Finished)
 	 *     {
 	 *         ManagedImage imgData;
 	 *         Image bitmap;
-	 * 
+	 *
 	 *         if (state == TextureRequestState.Finished)
 	 *         {
 	 *             OpenJPEG.DecodeToImage(assetTexture.AssetData, out imgData, out bitmap);
@@ -1290,25 +1245,23 @@ public class AssetManager implements PacketCallback
 	public final void RequestImage(UUID textureID, ImageType imageType, float priority, int discardLevel,
 			int packetStart, TextureDownloadCallback callback, boolean progress)
 	{
-        if (_Client.Settings.getBool(LibSettings.USE_HTTP_TEXTURES) && _Client.Network.getCapabilityURI("GetTexture") != null)
-        {
-            HttpRequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
-        }
-        else
-        {
-            _Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
-        }
+		if (_Client.Settings.getBool(LibSettings.USE_HTTP_TEXTURES) && _Client.Network.getCapabilityURI("GetTexture") != null)
+		{
+			HttpRequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
+		}
+		else
+		{
+			_Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
+		}
 	}
 
 	/**
 	 * Overload: Request a texture asset from the simulator using the <see
 	 * cref="TexturePipeline"/> system to manage the requests and re-assemble
 	 * the image from the packets received from the simulator
-	 * 
-	 * @param textureID
-	 *            The <see cref="UUID"/> of the texture asset to download
-	 * @param callback
-	 *            The <see cref="TextureDownloadCallback"/> callback to fire
+	 *
+	 * @param textureID The <see cref="UUID"/> of the texture asset to download
+	 * @param callback The <see cref="TextureDownloadCallback"/> callback to fire
 	 *            when the image is retrieved. The callback will contain the
 	 *            result of the request and the texture asset data
 	 */
@@ -1321,15 +1274,12 @@ public class AssetManager implements PacketCallback
 	 * Overload: Request a texture asset from the simulator using the <see
 	 * cref="TexturePipeline"/> system to manage the requests and re-assemble
 	 * the image from the packets received from the simulator
-	 * 
-	 * @param textureID
-	 *            The <see cref="UUID"/> of the texture asset to download
-	 * @param imageType
-	 *            The <see cref="ImageType"/> of the texture asset. Use <see
+	 *
+	 * @param textureID The <see cref="UUID"/> of the texture asset to download
+	 * @param imageType The <see cref="ImageType"/> of the texture asset. Use <see
 	 *            cref="ImageType.Normal"/> for most textures, or <see
 	 *            cref="ImageType.Baked"/> for baked layer texture assets
-	 * @param callback
-	 *            The <see cref="TextureDownloadCallback"/> callback to fire
+	 * @param callback The <see cref="TextureDownloadCallback"/> callback to fire
 	 *            when the image is retrieved. The callback will contain the
 	 *            result of the request and the texture asset data
 	 */
@@ -1342,19 +1292,15 @@ public class AssetManager implements PacketCallback
 	 * Overload: Request a texture asset from the simulator using the <see
 	 * cref="TexturePipeline"/> system to manage the requests and re-assemble
 	 * the image from the packets received from the simulator
-	 * 
-	 * @param textureID
-	 *            The <see cref="UUID"/> of the texture asset to download
-	 * @param imageType
-	 *            The <see cref="ImageType"/> of the texture asset. Use <see
+	 *
+	 * @param textureID The <see cref="UUID"/> of the texture asset to download
+	 * @param imageType The <see cref="ImageType"/> of the texture asset. Use <see
 	 *            cref="ImageType.Normal"/> for most textures, or <see
 	 *            cref="ImageType.Baked"/> for baked layer texture assets
-	 * @param callback
-	 *            The <see cref="TextureDownloadCallback"/> callback to fire
+	 * @param callback The <see cref="TextureDownloadCallback"/> callback to fire
 	 *            when the image is retrieved. The callback will contain the
 	 *            result of the request and the texture asset data
-	 * @param progress
-	 *            If true, the callback will be fired for each chunk of the
+	 * @param progress If true, the callback will be fired for each chunk of the
 	 *            downloaded image. The callback asset parameter will contain
 	 *            all previously received chunks of the texture asset starting
 	 *            from the beginning of the request
@@ -1367,9 +1313,8 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Cancel a texture request
-	 * 
-	 * @param textureID
-	 *            The texture assets <see cref="UUID"/>
+	 *
+	 * @param textureID The texture assets <see cref="UUID"/>
 	 * @throws Exception
 	 */
 	public final void RequestImageCancel(UUID textureID) throws Exception
@@ -1377,162 +1322,159 @@ public class AssetManager implements PacketCallback
 		_Texture.AbortTextureRequest(textureID);
 	}
 
-    /**
-     * Requests download of a mesh asset
-     * 
-     * @param meshID UUID of the mesh asset
-     * @param callback Callback when the request completes
-     */
-    public void RequestMesh(final UUID meshID, final MeshDownloadCallback callback)
-    {
-        if (meshID == null || meshID.equals(UUID.Zero) || callback == null)
-            return;
+	/**
+	 * Requests download of a mesh asset
+	 *
+	 * @param meshID UUID of the mesh asset
+	 * @param callback Callback when the request completes
+	 */
+	public void RequestMesh(final UUID meshID, final MeshDownloadCallback callback)
+	{
+		if (meshID == null || meshID.equals(UUID.Zero) || callback == null)
+			return;
 
-        // Do we have this mesh asset in the cache?
-        if (_Client.Assets.getCache().containsKey(meshID))
-        {
-            callback.callback(true, new AssetMesh(meshID, _Client.Assets.getCache().GetCachedAssetBytes(meshID)));
-            return;
-        }
+		// Do we have this mesh asset in the cache?
+		if (_Client.Assets.getCache().containsKey(meshID))
+		{
+			callback.callback(true, new AssetMesh(meshID, _Client.Assets.getCache().GetCachedAssetBytes(meshID)));
+			return;
+		}
 
-        if (_Client.Network.getCapabilityURI("GetMesh") != null)
-        {
-        	try
-        	{
-        		URI url = new URI(String.format("{%s}/?mesh_id={%s}", _Client.Network.getCapabilityURI("GetMesh"), meshID));
-        		DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, null, null, new FutureCallback<byte[]>()
-                {		
-                    @Override
+		if (_Client.Network.getCapabilityURI("GetMesh") != null)
+		{
+			try
+			{
+				URI url = new URI(String.format("{%s}/?mesh_id={%s}", _Client.Network.getCapabilityURI("GetMesh"), meshID));
+				DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, null, null, new FutureCallback<byte[]>()
+				{
+					@Override
 					public void completed(byte[] response)
-                    {
-                        if (response != null) // success
-                        {
-                        	callback.callback(true, new AssetMesh(meshID, response));
-                            _Client.Assets.getCache().SaveAssetToCache(meshID, response);
-                        }
-                    }
-                    
-                    @Override
+					{
+						if (response != null) // success
+						{
+							callback.callback(true, new AssetMesh(meshID, response));
+							_Client.Assets.getCache().SaveAssetToCache(meshID, response);
+						}
+					}
+
+					@Override
 					public void failed(Exception ex)
-                    {
-                        Logger.Log("Failed to fetch mesh asset {" + meshID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
-                        callback.callback(false, null);
-                    }
-                    
-                    @Override
+					{
+						Logger.Log("Failed to fetch mesh asset {" + meshID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
+						callback.callback(false, null);
+					}
+
+					@Override
 					public void cancelled()
-                    {
-                        callback.callback(false, null);
-                    }
-                });
-        		_HttpDownloads.enque(req);
-        	}
-    		catch (URISyntaxException ex)
-    		{
-                Logger.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), LogLevel.Warning, _Client);
-                callback.callback(false, null);
-    		}
-        }
-        else
-        {
-            Logger.Log("GetMesh capability not available", LogLevel.Error, _Client);
-            callback.callback(false, null);
-        }
-    }
+					{
+						callback.callback(false, null);
+					}
+				});
+				_HttpDownloads.enque(req);
+			}
+			catch (URISyntaxException ex)
+			{
+				Logger.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), LogLevel.Warning, _Client);
+				callback.callback(false, null);
+			}
+		}
+		else
+		{
+			Logger.Log("GetMesh capability not available", LogLevel.Error, _Client);
+			callback.callback(false, null);
+		}
+	}
 
-    /**
-     * Fetch avatar texture on a grid capable of server side baking
-     * 
-     * @param avatarID ID of the avatar
+	/**
+	 * Fetch avatar texture on a grid capable of server side baking
+	 *
+	 * @param avatarID ID of the avatar
 	 * @param textureID ID of the texture
-     * @param bakeName Name of the part of the avatar texture applies to
-     * @param callback Callback invoked on operation completion
-     * @throws URISyntaxException 
-     */
-    public void RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName, final TextureDownloadCallback callback) throws URISyntaxException
-    {
-        if (avatarID == null || avatarID.equals(UUID.Zero) ||
-        	textureID == null || textureID.equals(UUID.Zero) || callback == null)
-            return;
-        
-        byte[] assetData;
+	 * @param bakeName Name of the part of the avatar texture applies to
+	 * @param callback Callback invoked on operation completion
+	 * @throws URISyntaxException 
+	 */
+	public void RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName, final TextureDownloadCallback callback) throws URISyntaxException
+	{
+		if (avatarID == null || avatarID.equals(UUID.Zero) ||
+			textureID == null || textureID.equals(UUID.Zero) || callback == null)
+			return;
 
-        // Do we have this image in the cache?
-        if (_Client.Assets.getCache().containsKey(textureID)
-            && (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
-        {
-            ImageDownload image = new ImageDownload();
-            image.ID = textureID;
-            image.AssetData = assetData;
-            image.Size = image.AssetData.length;
-            image.Transferred = image.AssetData.length;
-            image.ImageType = ImageType.ServerBaked;
-            image.AssetType = AssetType.Texture;
-            image.Success = true;
+		byte[] assetData;
 
-            callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-            FireImageProgressEvent(image.ID, image.Transferred, image.Size);
-            return;
-        }
+		// Do we have this image in the cache?
+		if (_Client.Assets.getCache().containsKey(textureID)
+			&& (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
+		{
+			ImageDownload image = new ImageDownload();
+			image.ID = textureID;
+			image.AssetData = assetData;
+			image.Size = image.AssetData.length;
+			image.Transferred = image.AssetData.length;
+			image.ImageType = ImageType.ServerBaked;
+			image.AssetType = AssetType.Texture;
+			image.Success = true;
 
-        String appearenceUri = _Client.Network.getAgentAppearanceServiceURL();
-        if (appearenceUri == null || appearenceUri.isEmpty())
-        {
-            callback.callback(TextureRequestState.NotFound, null);
-            return;
-        }
-        URI url = new URI(appearenceUri + "texture/" + avatarID + "/" + bakeName + "/" + textureID);
-        DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", null, new FutureCallback<byte[]>()
-        {
-            @Override
+			callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
+			FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+			return;
+		}
+
+		String appearenceUri = _Client.Network.getAgentAppearanceServiceURL();
+		if (appearenceUri == null || appearenceUri.isEmpty())
+		{
+			callback.callback(TextureRequestState.NotFound, null);
+			return;
+		}
+		URI url = new URI(appearenceUri + "texture/" + avatarID + "/" + bakeName + "/" + textureID);
+		DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", null, new FutureCallback<byte[]>()
+		{
+			@Override
 			public void completed(byte[] response)
-            {
-                if (response != null) // success
-                {
-                    ImageDownload image = new ImageDownload();
-                    image.ID = textureID;
-                    image.AssetData = response;
-                    image.Size = image.AssetData.length;
-                    image.Transferred = image.AssetData.length;
-                    image.ImageType = ImageType.ServerBaked;
-                    image.AssetType = AssetType.Texture;
-                    image.Success = true;
+			{
+				if (response != null) // success
+				{
+					ImageDownload image = new ImageDownload();
+					image.ID = textureID;
+					image.AssetData = response;
+					image.Size = image.AssetData.length;
+					image.Transferred = image.AssetData.length;
+					image.ImageType = ImageType.ServerBaked;
+					image.AssetType = AssetType.Texture;
+					image.Success = true;
 
-                    callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-                    _Client.Assets.getCache().SaveAssetToCache(textureID, response);
-                }
-                else // download failed
-                {
-                    Logger.Log("Failed to fetch server bake {" + textureID + "}: empty data", LogLevel.Warning, _Client);
-                    callback.callback(TextureRequestState.Timeout, null);
-                }
-            }
-            
-            @Override
+					callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
+					_Client.Assets.getCache().SaveAssetToCache(textureID, response);
+				}
+				else // download failed
+				{
+					Logger.Log("Failed to fetch server bake {" + textureID + "}: empty data", LogLevel.Warning, _Client);
+					callback.callback(TextureRequestState.Timeout, null);
+				}
+			}
+
+			@Override
 			public void failed(Exception ex)
-            {
-                Logger.Log("Failed to fetch server bake {" + textureID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
-                callback.callback(TextureRequestState.Timeout, null);
-            }
-            
-            @Override
-			public void cancelled()
-            {
-                callback.callback(TextureRequestState.Aborted, null);
-            }
-        });
-		_HttpDownloads.enque(req);
-    }
+			{
+				Logger.Log("Failed to fetch server bake {" + textureID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
+				callback.callback(TextureRequestState.Timeout, null);
+			}
 
-    /**
+			@Override
+			public void cancelled()
+			{
+				callback.callback(TextureRequestState.Aborted, null);
+			}
+		});
+		_HttpDownloads.enque(req);
+	}
+
+	/**
 	 * Lets TexturePipeline class fire the progress event
-	 * 
-	 * @param texureID
-	 *            The texture ID currently being downloaded
-	 * @param transferredBytes
-	 *            the number of bytes transferred
-	 * @param totalBytes
-	 *            the total number of bytes expected
+	 *
+	 * @param texureID The texture ID currently being downloaded
+	 * @param transferredBytes The number of bytes transferred
+	 * @param totalBytes The total number of bytes expected
 	 */
 	public final void FireImageProgressEvent(UUID texureID, long transferredBytes, long totalBytes)
 	{
@@ -1545,108 +1487,108 @@ public class AssetManager implements PacketCallback
 			Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 		}
 	}
-	
-    /**
-     * Helper method for downloading textures via GetTexture cap
-     * Same signature as the UDP variant since we need all the params to pass to the UDP TexturePipeline
-     * in case we need to fall back to it Linden servers currently (1.42) don't support bakes downloads via HTTP)
-     * 
-     * @param textureID
-     * @param imageType
-     * @param priority
-     * @param discardLevel
-     * @param packetStart
-     * @param callback
-     * @param progress
-     */
-    private void HttpRequestTexture(final UUID textureID, final ImageType imageType, final float priority,
-    		final int discardLevel, final int packetStart, final TextureDownloadCallback callback, final boolean progress)
-    {
-        if (textureID == UUID.Zero || callback == null)
-            return;
 
-        byte[] assetData;
-        // Do we have this image in the cache?
-        if (_Client.Assets.getCache().containsKey(textureID)
-            && (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
-        {
-            ImageDownload image = new ImageDownload();
-            image.ID = textureID;
-            image.AssetData = assetData;
-            image.Size = assetData.length;
-            image.Transferred = assetData.length;
-            image.ImageType = imageType;
-            image.AssetType = AssetType.Texture;
-            image.Success = true;
+	/**
+	 * Helper method for downloading textures via GetTexture cap
+	 * Same signature as the UDP variant since we need all the params to pass to the UDP TexturePipeline
+	 * in case we need to fall back to it Linden servers currently (1.42) don't support bakes downloads via HTTP)
+	 *
+	 * @param textureID
+	 * @param imageType
+	 * @param priority
+	 * @param discardLevel
+	 * @param packetStart
+	 * @param callback
+	 * @param progress
+	 */
+	private void HttpRequestTexture(final UUID textureID, final ImageType imageType, final float priority,
+			final int discardLevel, final int packetStart, final TextureDownloadCallback callback, final boolean progress)
+	{
+		if (textureID == UUID.Zero || callback == null)
+			return;
 
-            callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-            FireImageProgressEvent(image.ID, image.Transferred, image.Size);
-            return;
-        }
+		byte[] assetData;
+		// Do we have this image in the cache?
+		if (_Client.Assets.getCache().containsKey(textureID)
+			&& (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
+		{
+			ImageDownload image = new ImageDownload();
+			image.ID = textureID;
+			image.AssetData = assetData;
+			image.Size = assetData.length;
+			image.Transferred = assetData.length;
+			image.ImageType = imageType;
+			image.AssetType = AssetType.Texture;
+			image.Success = true;
 
-        AsyncHTTPClient.ProgressCallback progressHandler = null;
-        if (progress)
-        {
-            progressHandler = new AsyncHTTPClient.ProgressCallback()
-            {
-            	@Override
+			callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
+			FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+			return;
+		}
+
+		AsyncHTTPClient.ProgressCallback progressHandler = null;
+		if (progress)
+		{
+			progressHandler = new AsyncHTTPClient.ProgressCallback()
+			{
+				@Override
 				public void progress(long bytesReceived, long totalBytesToReceive)
-                {
-                    FireImageProgressEvent(textureID, bytesReceived, totalBytesToReceive);
-                }
-            };
-        }
+				{
+					FireImageProgressEvent(textureID, bytesReceived, totalBytesToReceive);
+				}
+			};
+		}
 
 		try
 		{
 			URI url = new URI(String.format("{%s}/?texture_id={%s}", _Client.Network.getCapabilityURI("GetTexture"), textureID));
-	        DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", progressHandler, new FutureCallback<byte[]>()
-	        {
-            	@Override
-    			public void completed(byte[] response)
-            	{
-                	if (response != null) // success
-                	{
-                		ImageDownload image = new ImageDownload();
-                		image.ID = textureID;
-                		image.AssetData = response;
-                		image.Size = response.length;
-                		image.Transferred = response.length;
-                		image.ImageType = imageType;
-                		image.AssetType = AssetType.Texture;
-                		image.Success = true;
+			DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", progressHandler, new FutureCallback<byte[]>()
+			{
+				@Override
+				public void completed(byte[] response)
+				{
+					if (response != null) // success
+					{
+						ImageDownload image = new ImageDownload();
+						image.ID = textureID;
+						image.AssetData = response;
+						image.Size = response.length;
+						image.Transferred = response.length;
+						image.ImageType = imageType;
+						image.AssetType = AssetType.Texture;
+						image.Success = true;
 
-                		callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-                		FireImageProgressEvent(image.ID, image.Transferred, image.Size);
-                		_Client.Assets.getCache().SaveAssetToCache(image.ID, image.AssetData);
-                	}
-            	}
-            	
-            	@Override
-    			public void failed(Exception ex)
-            	{
-                    callback.callback(TextureRequestState.Pending, null);
-                    Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}",
-                            textureID, (ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
+						callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
+						FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+						_Client.Assets.getCache().SaveAssetToCache(image.ID, image.AssetData);
+					}
+				}
 
-                    _Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
-                }
-            	
-            	@Override
-    			public void cancelled()
-            	{
-                    callback.callback(TextureRequestState.Aborted, null);
-            	}
-            });
-	        _HttpDownloads.enque(req);
+				@Override
+				public void failed(Exception ex)
+				{
+					callback.callback(TextureRequestState.Pending, null);
+					Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}",
+							textureID, (ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
+
+					_Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
+				}
+
+				@Override
+				public void cancelled()
+				{
+					callback.callback(TextureRequestState.Aborted, null);
+				}
+			});
+			_HttpDownloads.enque(req);
 		}
 		catch (URISyntaxException ex)
 		{
-            callback.callback(TextureRequestState.Pending, null);
-            Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}", textureID, ex.getMessage()), LogLevel.Warning, _Client);
-            _Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
+			callback.callback(TextureRequestState.Pending, null);
+			Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}", textureID, ex.getMessage()), LogLevel.Warning, _Client);
+			_Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
 		}
-    }
+	}
 	// #region Helpers
 
 	public AssetItem CreateAssetWrapper(AssetType type)
@@ -1675,8 +1617,8 @@ public class AssetManager implements PacketCallback
 				return new AssetLandmark();
 			case Gesture:
 				return new AssetGesture();
-            case CallingCard:
-              	return new AssetCallingCard();
+			case CallingCard:
+				return new AssetCallingCard();
 			default:
 				Logger.Log("Unimplemented asset type: " + type, LogLevel.Error, _Client);
 		}
@@ -1844,7 +1786,7 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private final void HandleTransferPacket(Packet packet, Simulator simulator) throws Exception
@@ -1970,7 +1912,7 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private final void HandleRequestXfer(Packet packet, Simulator simulator) throws Exception
@@ -1997,7 +1939,7 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private final void HandleConfirmXferPacket(Packet packet, Simulator simulator) throws Exception
@@ -2093,7 +2035,7 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private final void HandleSendXferPacket(Packet packet, Simulator simulator) throws Exception
