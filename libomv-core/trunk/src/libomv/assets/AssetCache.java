@@ -69,8 +69,7 @@ public class AssetCache
 	private long pruneInterval = 1000 * 60 * 5;
 	private boolean autoPruneEnabled = true;
 
-	// Allows setting weather to periodically prune the cache if it grows too
-	// big
+	// Allows setting weather to periodically prune the cache if it grows too big
 	// Default is enabled, when caching is enabled
 	public final void setAutoPruneEnabled(boolean value)
 	{
@@ -104,69 +103,69 @@ public class AssetCache
 	}
 
 	/* Checks whether caching is enabled */
-    private boolean useAssetCache;
-    /* Name of the cache directory */
-    private String cacheAssetDir;
-    /* Maximum asset cache size */
-    private long cacheAssetMaxSize;
-    
-    private File resourcePath;
-    private File settingsPath;
-    private File cacheAssetPath;
-    private File cacheStaticPath;
-    
-    private void setResourcePath(String path)
-    {
-    	resourcePath = new File(path).getAbsoluteFile();
-    	cacheStaticPath = new File(resourcePath, "static_assets");
-    	
-    	settingsPath = new File(System.getenv("user.home"), "_" + path);
-    	settingsPath.mkdir();    	
-    }
-    
-    private void setAssetPath(String path)
-    {
-    	if (path != null)
-    		cacheAssetDir = path;
-    	cacheAssetPath = new File(settingsPath, cacheAssetDir); // &(APPDATA)/_libomv/cache
-   		cacheAssetPath.mkdir();
-    }
-    
-    private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
-    {
-        @Override
-        public boolean callback(SettingsUpdateCallbackArgs params)
-        {
-            String key = params.getName();
-            if (key == null)
-            {
-            	useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
-            	cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
-            	setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
-            	setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
-            }
-            else if (key.equals(LibSettings.USE_ASSET_CACHE))
-            {
-            	useAssetCache = params.getValue().AsBoolean();
-            }
-            else if (key.equals(LibSettings.USE_ASSET_CACHE))
-            {
-            	cacheAssetMaxSize = params.getValue().AsLong();
-            }
-            else if (key.equals(LibSettings.ASSET_CACHE_DIR))
-            {
-            	setAssetPath(params.getValue().AsString());
-            }
-            else if (key.equals(LibSettings.RESOURCE_DIR))
-            {
-            	setResourcePath(params.getValue().AsString());
-            	setAssetPath(null);
-            }
-            return false;
-        }
-    }
+	private boolean useAssetCache;
+	/* Name of the cache directory */
+	private String cacheAssetDir;
+	/* Maximum asset cache size */
+	private long cacheAssetMaxSize;
 
-    /**
+	private File resourcePath;
+	private File settingsPath;
+	private File cacheAssetPath;
+	private File cacheStaticPath;
+
+	private void setResourcePath(String path)
+	{
+		resourcePath = new File(path).getAbsoluteFile();
+		cacheStaticPath = new File(resourcePath, "static_assets");
+		
+		settingsPath = new File(System.getProperty("user.home"), "." + path);
+		settingsPath.mkdir();
+	}
+
+	private void setAssetPath(String path)
+	{
+		if (path != null)
+			cacheAssetDir = path;
+		cacheAssetPath = new File(settingsPath, cacheAssetDir); // &(APPDATA)/_libomv/cache
+		cacheAssetPath.mkdir();
+	}
+
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
+	{
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params)
+		{
+			String key = params.getName();
+			if (key == null)
+			{
+				useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
+				cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+				setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
+				setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
+			}
+			else if (key.equals(LibSettings.USE_ASSET_CACHE))
+			{
+				useAssetCache = params.getValue().AsBoolean();
+			}
+			else if (key.equals(LibSettings.USE_ASSET_CACHE))
+			{
+				cacheAssetMaxSize = params.getValue().AsLong();
+			}
+			else if (key.equals(LibSettings.ASSET_CACHE_DIR))
+			{
+				setAssetPath(params.getValue().AsString());
+			}
+			else if (key.equals(LibSettings.RESOURCE_DIR))
+			{
+				setResourcePath(params.getValue().AsString());
+			 	setAssetPath(null);
+			}
+			return false;
+		}
+	}
+
+	/**
 	 * Default constructor
 	 * 
 	 * @param client A reference to the GridClient object
@@ -177,13 +176,13 @@ public class AssetCache
 		_Client = client;
 		_Manager = manager;
 
-        _Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
-    	useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
-    	cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
-    	setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
-    	setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
+		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
+		cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+		setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
+		setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
 
-        _Client.Login.OnLoginProgress.add(new Network_LoginProgress(), false);
+		_Client.Login.OnLoginProgress.add(new Network_LoginProgress(), false);
 		_Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
 	}
 
@@ -256,8 +255,8 @@ public class AssetCache
 				{
 					file = getStaticAssetFile(assetID);
 					exists = file.exists();
-	                if (exists)
-	                	Logger.DebugLog("Reading " + file + " from static asset cache.", _Client);
+					if (exists)
+						Logger.DebugLog("Reading " + file + " from static asset cache.", _Client);
 				}
 				else
 				{
@@ -319,8 +318,7 @@ public class AssetCache
 	/**
 	 * Constructs a file name of the cached asset
 	 * 
-	 * @param assetID
-	 *            UUID of the asset
+	 * @param assetID UUID of the asset
 	 * @return String with the file name of the cached asset
 	 */
 	private File cachedAssetFile(UUID assetID)
@@ -332,19 +330,19 @@ public class AssetCache
 		return new File(cacheAssetPath, assetID.toString());
 	}
 
-    /**
-     * Constructs a file name of the static cached asset
-     *
+	/**
+	 * Constructs a file name of the static cached asset
+	 *
 	 * @param assetID
 	 *            UUID of the asset
 	 * @return String with the file name of the static cached asset
-     */
-    private File getStaticAssetFile(UUID assetID)
-    {
-        return new File(cacheStaticPath, assetID.toString());
-    }
+	 */
+	private File getStaticAssetFile(UUID assetID)
+	{
+		return new File(cacheStaticPath, assetID.toString());
+	}
 
-    /**
+	/**
 	 * Saves an asset to the local cache
 	 * 
 	 * @param assetID
