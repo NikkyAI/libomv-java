@@ -59,7 +59,6 @@ import libomv.Simulator;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryManager.InventoryObjectOfferedCallbackArgs;
 import libomv.packets.AgentDataUpdatePacket;
-import libomv.packets.AgentFOVPacket;
 import libomv.packets.AlertMessagePacket;
 import libomv.packets.AvatarAppearancePacket;
 import libomv.packets.Packet;
@@ -315,15 +314,9 @@ public class TestClient extends GridClient implements PacketCallback
 		@Override
 		public boolean callback(SimChangedCallbackArgs e)
 		{
-			AgentFOVPacket msg = new AgentFOVPacket();
-			msg.AgentData.AgentID = Self.getAgentID();
-			msg.AgentData.SessionID = Self.getSessionID();
-			msg.AgentData.CircuitCode = Network.getCircuitCode();
-			msg.FOVBlock.GenCounter = 0;
-			msg.FOVBlock.VerticalAngle = Helpers.TWO_PI - 0.05f;
 			try
 			{
-				Network.sendPacket(msg);
+				Self.getMovement().setFOVVerticalAngle(Helpers.TWO_PI - 0.05f);
 			}
 			catch (Exception ex)
 			{

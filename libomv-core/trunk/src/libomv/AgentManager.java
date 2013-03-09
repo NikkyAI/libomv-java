@@ -95,6 +95,7 @@ import libomv.capabilities.IMessage;
 import libomv.packets.ActivateGesturesPacket;
 import libomv.packets.AgentAnimationPacket;
 import libomv.packets.AgentDataUpdatePacket;
+import libomv.packets.AgentFOVPacket;
 import libomv.packets.AgentHeightWidthPacket;
 import libomv.packets.AgentMovementCompletePacket;
 import libomv.packets.AgentRequestSitPacket;
@@ -7035,6 +7036,23 @@ public class AgentManager implements PacketCallback, CapsCallback
 			agentControls &= (ControlFlags.AGENT_CONTROL_AWAY & ControlFlags.AGENT_CONTROL_FLY
 					& ControlFlags.AGENT_CONTROL_MOUSELOOK & ControlFlags.AGENT_CONTROL_UP_NEG);
 		}
+
+		/**
+		 * Sends update of Field of Vision vertical angle to the simulator
+		 * 
+		 * @param angle Angle in radians
+		 * @throws Exception 
+		 */
+		public void setFOVVerticalAngle(float angle) throws Exception
+		{
+			AgentFOVPacket msg = new AgentFOVPacket();
+			msg.AgentData.AgentID = Client.Self.getAgentID();
+			msg.AgentData.SessionID = Client.Self.getSessionID();
+			msg.AgentData.CircuitCode = Client.Network.getCircuitCode();
+			msg.FOVBlock.GenCounter = 0;
+			msg.FOVBlock.VerticalAngle = angle;
+			Client.Network.sendPacket(msg);
+       }
 
 		/*
 		 * Camera controls for the agent, mostly a thin wrapper around
