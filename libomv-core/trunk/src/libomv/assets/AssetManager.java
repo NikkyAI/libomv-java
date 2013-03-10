@@ -784,6 +784,47 @@ public class AssetManager implements PacketCallback
 	}
 
 	/**
+	 * Abort an asset download
+	 *
+	 * @param tranferID Transfer UUID
+	 * @throws Exception
+	 */
+	public final boolean AbortAssetTransfer(UUID transferID) throws Exception
+	{
+		AssetDownload download;
+		synchronized (_Transfers)
+		{
+			download = (AssetDownload)_Transfers.remove(transferID);
+		}
+		
+		if (download != null)
+		{
+			// Abort the transfer
+			TransferAbortPacket abort = new TransferAbortPacket();
+			abort.TransferInfo.ChannelType = download.Channel.getValue();
+			abort.TransferInfo.TransferID = download.ID;
+			download.Simulator.sendPacket(abort);
+
+			download.Success = false;
+
+			// Fire the event with our transfer that contains Success = false
+			if (download.Callback != null)
+			{
+				try
+				{
+					download.Callback.callback(download, null);
+					return true;
+				}
+				catch (Throwable ex)
+				{
+					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Request an asset download through the almost deprecated Xfer system
 	 *
 	 * @param filename Filename of the asset to request
@@ -1697,8 +1738,9 @@ public class AssetManager implements PacketCallback
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
+	 * @throws Exception 
 	 */
-	private final void HandleTransferInfo(Packet packet, Simulator simulator)
+	private final void HandleTransferInfo(Packet packet, Simulator simulator) throws Exception
 	{
 		TransferInfoPacket info = (TransferInfoPacket) packet;
 
@@ -1714,6 +1756,9 @@ public class AssetManager implements PacketCallback
 		{
 			Logger.Log("Received a TransferInfo packet for an asset but no callback to report to, TransferID: "
 					+ info.TransferInfo.TransferID, LogLevel.Warning, _Client);			
+
+			// Abandon the request
+			AbortAssetTransfer(download.ID);
 			return;
 		}
 
@@ -1795,43 +1840,19 @@ public class AssetManager implements PacketCallback
 		AssetDownload download = (AssetDownload) _Transfers.get(asset.TransferData.TransferID);
 		if (download != null)
 		{
+			download.Status = StatusCode.setValue(asset.TransferData.Status);
+			if (download.Status != StatusCode.OK)
+			{
+				
+			}
+			
 			if (download.Size == 0)
 			{
-				Logger.DebugLog("TransferPacket received ahead of the transfer header, blocking...", _Client);
+				Logger.DebugLog("TransferPacket received ahead of the transfer header", _Client);
 
-				// We haven't received the header yet, block until it's received or times out
-				download.HeaderReceivedEvent.waitOne(TRANSFER_HEADER_TIMEOUT);
-
-				if (download.Size == 0)
-				{
-					Logger.Log("Timed out while waiting for the asset header to download for " + download.ID.toString(), LogLevel.Warning, _Client);
-
-					// Abort the transfer
-					TransferAbortPacket abort = new TransferAbortPacket();
-					abort.TransferInfo.ChannelType = download.Channel.getValue();
-					abort.TransferInfo.TransferID = download.ID;
-					download.Simulator.sendPacket(abort);
-
-					download.Success = false;
-					synchronized (_Transfers)
-					{
-						_Transfers.remove(download.ID);
-					}
-
-					// Fire the event with our transfer that contains Success = false
-					if (download.Callback != null)
-					{
-						try
-						{
-							download.Callback.callback(download, null);
-						}
-						catch (Throwable ex)
-						{
-							Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-						}
-					}
-					return;
-				}
+				/* We haven't received the header yet, put it in the out of order hashlist */
+				download.delayed.put(asset.TransferData.Packet, asset.TransferData.getData());
+				return;
 			}
 
 			/* If the received packet is in order, then add it and try to add already received packets that follow
