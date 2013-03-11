@@ -316,22 +316,34 @@ public class AssetManager implements PacketCallback
 	// #endregion Enums
 
 	// #region Transfer Classes
-
+	private class DelayedTransfer
+	{
+		public StatusCode Status;
+		public byte[] Data;
+		
+		public DelayedTransfer(StatusCode status, byte[] data)
+		{
+			this.Status = status;
+			this.Data = data;
+		}
+	}
+	
 	public class Transfer
 	{
 		public UUID ID;
 		public int Size;
-		public int Packet;
+		public int PacketNum;
 		public byte[] AssetData;
 		public int Transferred;
 		public boolean Success;
-		public libomv.assets.AssetItem.AssetType AssetType;
-		public HashMap<Integer, byte[]> delayed;
+		public AssetType AssetType;
+		public long TimeSinceLastPacket;
+		public HashMap<Integer, DelayedTransfer> delayed;
 
 		public Transfer()
 		{
 			AssetData = Helpers.EmptyBytes;
-			delayed = new HashMap<Integer, byte[]>();
+			delayed = new HashMap<Integer, DelayedTransfer>();
 		}
 	}
 
@@ -345,12 +357,15 @@ public class AssetManager implements PacketCallback
 		public float Priority;
 		public Simulator Simulator;
 		public AssetReceivedCallback Callback;
-		private TimeoutEvent<Boolean> HeaderReceivedEvent;
 
 		public AssetDownload()
 		{
 			super();
-			HeaderReceivedEvent = new TimeoutEvent<Boolean>();
+		}
+		
+		public boolean gotInfo()
+		{
+			return Size > 0;
 		}
 	}
 
@@ -378,9 +393,6 @@ public class AssetManager implements PacketCallback
 		public int DiscardLevel;
 		public float Priority;
 		int InitialDataSize;
-		// #if Debug_Timing
-		long TimeSinceLastPacket;
-		// #endif
 		TimeoutEvent<Boolean> HeaderReceivedEvent;
 
 		public ImageDownload()
@@ -393,9 +405,7 @@ public class AssetManager implements PacketCallback
 	public class AssetUpload extends Transfer
 	{
 		public UUID AssetID;
-		public libomv.assets.AssetItem.AssetType Type;
 		public long XferID;
-		public int PacketNum;
 
 		public AssetUpload()
 		{
@@ -421,10 +431,6 @@ public class AssetManager implements PacketCallback
 	}
 
 	// #endregion Transfer Classes
-
-	// Number of milliseconds to wait for a transfer header packet if out of
-	// order data was received
-	private static final int TRANSFER_HEADER_TIMEOUT = 1000 * 15;
 
 	// #region Callbacks
 
@@ -744,16 +750,13 @@ public class AssetManager implements PacketCallback
 		{
 			byte[] data = _Cache.GetCachedAssetBytes(assetID);
 			transfer.AssetData = data;
+			transfer.AssetType = type;
 			transfer.Success = true;
 			transfer.Status = StatusCode.OK;
 
-			AssetItem asset = CreateAssetWrapper(type);
-			asset.AssetData = data;
-			asset.setAssetID(assetID);
-
 			try
 			{
-				callback.callback(transfer, asset);
+				callback.callback(transfer, CreateAssetItem(transfer));
 			}
 			catch (Throwable ex)
 			{
@@ -810,16 +813,9 @@ public class AssetManager implements PacketCallback
 			// Fire the event with our transfer that contains Success = false
 			if (download.Callback != null)
 			{
-				try
-				{
-					download.Callback.callback(download, null);
-					return true;
-				}
-				catch (Throwable ex)
-				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-				}
+				download.Callback.callback(download, null);
 			}
+			return true;
 		}
 		return false;
 	}
@@ -908,7 +904,7 @@ public class AssetManager implements PacketCallback
 			transfer.Success = true;
 			transfer.Status = StatusCode.OK;
 
-			AssetItem asset = CreateAssetWrapper(type);
+			AssetItem asset = CreateAssetItem(type);
 			asset.AssetData = data;
 			asset.setAssetID(assetID);
 
@@ -1632,7 +1628,7 @@ public class AssetManager implements PacketCallback
 	}
 	// #region Helpers
 
-	public AssetItem CreateAssetWrapper(AssetType type)
+	public AssetItem CreateAssetItem(AssetType type)
 	{
 		switch (type)
 		{
@@ -1666,9 +1662,9 @@ public class AssetManager implements PacketCallback
 		return new AssetMutable(type);
 	}
 
-	private AssetItem WrapAsset(AssetDownload download)
+	private AssetItem CreateAssetItem(AssetDownload download)
 	{
-		AssetItem asset = CreateAssetWrapper(download.AssetType);
+		AssetItem asset = CreateAssetItem(download.AssetType);
 		if (asset != null)
 		{
 			asset.setAssetID(download.AssetID);
@@ -1736,6 +1732,54 @@ public class AssetManager implements PacketCallback
 
 	// #region Transfer Callbacks
 
+	private boolean processDelayedData(AssetDownload download, DelayedTransfer data)
+	{
+		while (data != null)
+		{
+			System.arraycopy(data.Data, 0, download.AssetData, download.Transferred, data.Data.length);
+			download.Transferred += data.Data.length;
+			if (data.Status == StatusCode.OK && download.Transferred >= download.Size)
+			{
+				download.Status = StatusCode.Done;
+			}
+			else
+			{
+				download.Status = data.Status;
+			}
+			
+			if (download.Status != StatusCode.OK)
+			{
+				AssetItem assetItem = null;
+
+				synchronized (_Transfers)
+				{
+					_Transfers.remove(download.ID);
+				}
+				download.delayed.clear();
+
+				download.Success = download.Status == StatusCode.Done;
+				if (download.Success)
+				{
+					Logger.DebugLog("Transfer for asset " + download.AssetID.toString() + " completed", _Client);
+
+					// Cache successful asset download
+					_Cache.SaveAssetToCache(download.AssetID, download.AssetData);
+					assetItem = CreateAssetItem(download);
+				}
+				else
+				{
+					Logger.Log("Transfer failed with status code " + download.Status, LogLevel.Warning, _Client);
+				}
+					
+				download.Callback.callback(download, assetItem);
+				return true;
+			}
+			download.PacketNum++;
+			data = download.delayed.remove(download.PacketNum);
+		}
+		return false;
+	}
+	
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 * @throws Exception 
@@ -1767,8 +1811,6 @@ public class AssetManager implements PacketCallback
 		download.Target = TargetType.setValue(info.TransferInfo.TargetType);
 		download.Size = info.TransferInfo.Size;
 
-		// TODO: Once we support mid-transfer status checking and aborting
-		// this will need to become smarter
 		if (download.Status != StatusCode.OK)
 		{
 			Logger.Log("Transfer failed with status code " + download.Status, LogLevel.Warning, _Client);
@@ -1777,19 +1819,13 @@ public class AssetManager implements PacketCallback
 			{
 				_Transfers.remove(download.ID);
 			}
+			download.delayed.clear();
 
-			// No data could have been received before the TransferInfo packet
+			// No valid data could have been received before the TransferInfo packet
 			download.AssetData = null;
 
 			// Fire the event with our transfer that contains Success = false;
-			try
-			{
-				download.Callback.callback(download, null);
-			}
-			catch (Throwable ex)
-			{
-				Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-			}
+			download.Callback.callback(download, null);
 		}
 		else
 		{
@@ -1825,8 +1861,8 @@ public class AssetManager implements PacketCallback
 						"Received a TransferInfo packet with a SourceType of %s and a Params field length of %d",
 						download.Source, data.length), LogLevel.Warning, _Client);
 			}
+			processDelayedData(download, download.delayed.remove(download.PacketNum));
 		}
-		download.HeaderReceivedEvent.set(true);
 	}
 
 	/**
@@ -1840,72 +1876,18 @@ public class AssetManager implements PacketCallback
 		AssetDownload download = (AssetDownload) _Transfers.get(asset.TransferData.TransferID);
 		if (download != null)
 		{
-			download.Status = StatusCode.setValue(asset.TransferData.Status);
-			if (download.Status != StatusCode.OK)
-			{
-				
-			}
+			StatusCode status = StatusCode.setValue(asset.TransferData.Status);
+			DelayedTransfer info = new DelayedTransfer(status, asset.TransferData.getData());
 			
-			if (download.Size == 0)
+			if (!download.gotInfo() || asset.TransferData.Packet != download.PacketNum)
 			{
-				Logger.DebugLog("TransferPacket received ahead of the transfer header", _Client);
-
-				/* We haven't received the header yet, put it in the out of order hashlist */
-				download.delayed.put(asset.TransferData.Packet, asset.TransferData.getData());
-				return;
+				/* We haven't received the header yet, or the packet number is higher than the currently
+				 * expected packet. Put it in the out of order hashlist */
+				download.delayed.put(asset.TransferData.Packet, info);
 			}
-
-			/* If the received packet is in order, then add it and try to add already received packets that follow
-			 * directly this packet, otherwise add the packet to the delayed hashmap to be added later.
-			 */
-			if (asset.TransferData.Packet == download.Packet)
+			else
 			{
-				byte[] data = asset.TransferData.getData();
-				do
-				{
-					System.arraycopy(data, 0, download.AssetData, download.Transferred, data.length);
-					download.Transferred += data.length;
-					download.Packet++;
-					data = download.delayed.remove(download.Packet);
-				}
-				while (data != null);
-			}
-			else if (asset.TransferData.Packet > download.Packet)
-			{
-				/* The packet number is higher than the currently expected packet.
-				 * Add it to our out of order hashlist */
-				download.delayed.put(asset.TransferData.Packet, asset.TransferData.getData());
-			}
-
-			Logger.DebugLog(String.format("Transfer packet %d, received %d/%d/%d bytes for asset %s",
-			                              asset.TransferData.Packet, asset.TransferData.getData().length,
-			                              download.Transferred, download.Size, download.AssetID));
-
-			// Check if we downloaded the full asset
-			if (download.Transferred >= download.Size)
-			{
-				Logger.DebugLog("Transfer for asset " + download.AssetID.toString() + " completed", _Client);
-
-				download.Success = true;
-				synchronized (_Transfers)
-				{
-					_Transfers.remove(download.ID);
-				}
-
-				// Cache successful asset download
-				_Cache.SaveAssetToCache(download.AssetID, download.AssetData);
-
-				if (download.Callback != null)
-				{
-					try
-					{
-						download.Callback.callback(download, WrapAsset(download));
-					}
-					catch (Throwable ex)
-					{
-						Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-					}
-				}
+				processDelayedData(download, info);
 			}
 		}
 	}
@@ -1925,7 +1907,7 @@ public class AssetManager implements PacketCallback
 			OnInitiateDownload.dispatch(new InitiateDownloadCallbackArgs(Helpers.BytesToString(request.FileData
 					.getSimFilename()), Helpers.BytesToString(request.FileData.getViewerFilename())));
 		}
-		catch (Throwable ex)
+		catch (Exception ex)
 		{
 			Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
 		}
@@ -1949,7 +1931,7 @@ public class AssetManager implements PacketCallback
 		WaitingForUploadConfirm = false;
 
 		upload.XferID = request.XferID.ID;
-		upload.Type = AssetType.setValue(request.XferID.VFileType);
+		upload.AssetType = AssetType.setValue(request.XferID.VFileType);
 
 		UUID transferID = new UUID(upload.XferID);
 		_Transfers.put(transferID, upload);
@@ -1974,17 +1956,10 @@ public class AssetManager implements PacketCallback
 		{
 			AssetUpload upload = (AssetUpload) _Transfers.get(transferID);
 
-			Logger.DebugLog(String.format("ACK for upload %s of asset type %s (%d/%d)", upload.AssetID, upload.Type,
+			Logger.DebugLog(String.format("ACK for upload %s of asset type %s (%d/%d)", upload.AssetID, upload.AssetType,
 					upload.Transferred, upload.Size));
 
-			try
-			{
-				OnUploadProgress.dispatch(new AssetUploadCallbackArgs(upload));
-			}
-			catch (Throwable ex)
-			{
-				Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-			}
+			OnUploadProgress.dispatch(new AssetUploadCallbackArgs(upload));
 
 			if (upload.Transferred < upload.Size)
 			{
@@ -2021,7 +1996,7 @@ public class AssetManager implements PacketCallback
 						{
 							foundTransfer = transfer;
 							upload.Success = complete.AssetBlock.Success;
-							upload.Type = AssetType.setValue(complete.AssetBlock.Type);
+							upload.AssetType = AssetType.setValue(complete.AssetBlock.Type);
 							break;
 						}
 					}
@@ -2034,15 +2009,7 @@ public class AssetManager implements PacketCallback
 				{
 					_Transfers.remove(foundTransfer.getKey());
 				}
-
-				try
-				{
-					OnAssetUploaded.dispatch(new AssetUploadCallbackArgs((AssetUpload) foundTransfer.getValue()));
-				}
-				catch (Throwable ex)
-				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-				}
+				OnAssetUploaded.dispatch(new AssetUploadCallbackArgs((AssetUpload) foundTransfer.getValue()));
 			}
 			else
 			{
@@ -2134,15 +2101,7 @@ public class AssetManager implements PacketCallback
 				{
 					_Transfers.remove(download.ID);
 				}
-
-				try
-				{
-					OnXferReceived.dispatch(new XferReceivedCallbackArgs(download));
-				}
-				catch (Throwable ex)
-				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-				}
+				OnXferReceived.dispatch(new XferReceivedCallbackArgs(download));
 			}
 		}
 	}
@@ -2172,14 +2131,7 @@ public class AssetManager implements PacketCallback
 			download.Success = false;
 			download.Error = TransferError.setValue(abort.XferID.Result);
 
-			try
-			{
-				OnXferReceived.dispatch(new XferReceivedCallbackArgs(download));
-			}
-			catch (Throwable ex)
-			{
-				Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
-			}
+			OnXferReceived.dispatch(new XferReceivedCallbackArgs(download));
 		}
 	}
 	// #endregion Xfer Callbacks

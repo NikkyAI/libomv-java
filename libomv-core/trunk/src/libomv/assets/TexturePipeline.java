@@ -1022,12 +1022,8 @@ public class TexturePipeline implements PacketCallback
 	{
 		synchronized (_Transfers)
 		{
-			if (_Transfers.containsKey(textureID))
-			{
-				return _Transfers.get(textureID);
-			}
+			return _Transfers.get(textureID);
 		}
-		return null;
 	}
 
 	private boolean RemoveTransfer(UUID textureID)
