@@ -45,6 +45,7 @@ import org.apache.http.nio.reactor.IOReactorException;
 import libomv.capabilities.AsyncHTTPClient;
 import libomv.capabilities.AsyncHTTPClient.ProgressCallback;
 import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 /// Manages async HTTP downloads with a limit on maximum concurrent downloads
 public class DownloadManager
@@ -58,6 +59,10 @@ public class DownloadManager
         public int millisecondsTimeout;
         // Accept the following content type
         public String contentType;
+        // How many times will this request be retried
+        public int retries;
+        // Current fetch attempt
+        public int attempt;
         // Progress callback
         public ProgressCallback progressCallback;
         // Download callback
@@ -66,12 +71,15 @@ public class DownloadManager
         // Default constructor
         public DownloadRequest()
         {
+            this.retries = 5;
+            this.attempt = 0;
         }
 
         // Constructor
         public DownloadRequest(URI address, int millisecondsTimeout, String contentType,
         		               ProgressCallback progressCallback, FutureCallback<byte[]> downloadCallback)
         {
+        	this();
             this.address = address;
             this.millisecondsTimeout = millisecondsTimeout;
             this.contentType = contentType;
@@ -113,7 +121,7 @@ public class DownloadManager
     Queue<DownloadRequest> queue = new LinkedBlockingQueue<DownloadRequest>();
     HashMap<String, ActiveDownload> activeDownloads = new HashMap<String, ActiveDownload>();
 
-    int m_ParallelDownloads = 20;
+    int m_ParallelDownloads = 8;
     X509Certificate m_ClientCert;
 
     // Maximum number of parallel downloads from a single endpoint
@@ -168,9 +176,11 @@ public class DownloadManager
                     nr = activeDownloads.size();
                 }
 
+                Logger.DebugLog(nr + " active downloads. Queued textures: " + queue.size());
+                
                 for (int i = nr; i < m_ParallelDownloads && queue.size() > 0; i++)
                 {
-                    DownloadRequest item = queue.poll();
+                    final DownloadRequest item = queue.poll();
                     synchronized (activeDownloads)
                     {
                         final String addr = item.address.toString();
@@ -193,7 +203,7 @@ public class DownloadManager
 	                            }
 	                            activeDownload.downloadHandlers.add(item.downloadCallback);
 
-	                            Logger.DebugLog("Requesting " + item.address);
+	                            Logger.DebugLog("Requesting " + addr);
 	                            
 	                            activeDownload.setProgressCallback(new ProgressCallback()
 	                            {
@@ -229,9 +239,22 @@ public class DownloadManager
 	                                    {
 	                                    	activeDownloads.remove(addr);
 	                                    }
-	                                    for (FutureCallback<byte[]> handler : activeDownload.downloadHandlers)
+	                                    if (item.attempt >= item.retries)
 	                                    {
-	                                        handler.failed(ex);
+	                                    	for (FutureCallback<byte[]> handler : activeDownload.downloadHandlers)
+	                                    	{
+	                                    		handler.failed(ex);
+	                                    	}
+	                                    }
+	                                    else
+	                                    {
+	                                        item.attempt++;
+                                            Logger.Log(String.format("Texture %s HTTP download failed, trying again retry %d/%d",
+                                                    item.address, item.attempt, item.retries), LogLevel.Warning);
+                                            synchronized(queue)
+                                            {
+                                            	enque(item);
+                                            }
 	                                    }
 	                                    enquePending();
 	                                }
