@@ -453,6 +453,16 @@ public class AppearanceManager implements PacketCallback
     // #region Publics Methods
 
     /**
+	 * Check if current region supports server side baking
+     *
+     * @returns True if server side baking support is detected
+     */
+    public boolean isServerBakingRegion()
+    {
+         return _Client.Network.getCurrentSim() != null && ((_Client.Network.getCurrentSim().Protocols & RegionProtocols.AgentAppearanceService) != 0);
+    }
+
+    /**
      * Starts the appearance setting thread
      */ 
     public void RequestSetAppearance()
@@ -499,21 +509,18 @@ public class AppearanceManager implements PacketCallback
                         }
                     }
 
-                    if (!GotWearables)
+                    // Is this server side baking enabled sim
+                    if (isServerBakingRegion())
                     {
-                        // Fetch a list of the current agent wearables
-                        if (!GetAgentWearables())
-                        {
-                            Logger.Log("Failed to retrieve a list of current agent wearables, appearance cannot be set",
-                                LogLevel.Error, _Client);
-                            throw new Exception("Failed to retrieve a list of current agent wearables, appearance cannot be set");
-                        }
-                        GotWearables = true;
-                    }
+                    	if (!GotWearables)
+                    	{
+                    		// Fetch a list of the current agent wearables
+                    		if (GetAgentWearables())
+                    		{
+                    			GotWearables = true;
+                    		}
+                    	}
 
-                    // Is this a server side baking enabled sim
-                    if ((_Client.Network.getCurrentSim().Protocols & RegionProtocols.AgentAppearanceService) != 0)
-                    {
                         if (!ServerBakingDone || forceRebake)
                         {
                             success = UpdateAvatarAppearance();
@@ -525,6 +532,17 @@ public class AppearanceManager implements PacketCallback
                     }
                     else // Classic client side baking
                     {
+                    	if (!GotWearables)
+                    	{
+                    		// Fetch a list of the current agent wearables
+                    		if (!GetAgentWearables())
+                    		{
+                    			Logger.Log("Failed to retrieve a list of current agent wearables, appearance cannot be set", LogLevel.Error, _Client);
+                    			throw new Exception("Failed to retrieve a list of current agent wearables, appearance cannot be set");
+                    		}
+                    		GotWearables = true;
+                    	}
+                    	
                         // If we get back to server side baking region re-request server bake
                         ServerBakingDone = false;
 
@@ -1849,7 +1867,7 @@ public class AppearanceManager implements PacketCallback
         InventoryFolder COF = _Client.Inventory.FindFolderForType(AssetType.CurrentOutfitFolder);
         if (COF == null)
         {
-        	_Client.Inventory.FolderContents(_Client.Inventory.getRootNode(false).itemID, _Client.Self.getAgentID(), true, true, InventorySortOrder.ByDate, _Client.Settings.CAPS_TIMEOUT);
+        	_Client.Inventory.FolderContents(_Client.Inventory.getRootNode(false).itemID, _Client.Self.getAgentID(), true, true, InventorySortOrder.ByDate, true, _Client.Settings.CAPS_TIMEOUT);
         	COF = _Client.Inventory.FindFolderForType(AssetType.CurrentOutfitFolder);
         }
 
