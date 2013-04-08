@@ -566,24 +566,37 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * InventoryFolder.DescendentCount will only be accurate if both folders and
 	 * items are requested
 	 * 
-	 * @param folder
-	 *            The {@link UUID} of the folder to search
-	 * @param owner
-	 *            The {@link UUID} of the folders owner
-	 * @param folders
-	 *            true to retrieve folders
-	 * @param items
-	 *            true to retrieve items
-	 * @param order
-	 *            sort order to return results in
-	 * @param timeout
-	 *            a integer representing the number of milliseconds to wait for
-	 *            results
+	 * @param folder The {@link UUID} of the folder to search
+	 * @param owner The {@link UUID} of the folders owner
+	 * @param folders true to retrieve folders
+	 * @param items true to retrieve items
+	 * @param order sort order to return results in
+	 * @param timeout a integer representing the number of milliseconds to wait for results
 	 * @return A list of inventory items matching search criteria within folder
 	 * @throws Exception
 	 */
 	public final ArrayList<InventoryNode> FolderContents(final UUID folderID, UUID ownerID, boolean folders, boolean items,
 			byte order, int timeout) throws Exception
+	{
+		return FolderContents(folderID, ownerID, folders, items, order, false, timeout);
+	}
+	/**
+	 * Get contents of a folder {@link InventoryManager.OnRequestFolderContents}
+	 * InventoryFolder.DescendentCount will only be accurate if both folders and
+	 * items are requested
+	 * 
+	 * @param folder The {@link UUID} of the folder to search
+	 * @param owner The {@link UUID} of the folders owner
+	 * @param folders true to retrieve folders
+	 * @param items true to retrieve items
+	 * @param order sort order to return results in
+	 * @param httpOnly only use HTTP download
+	 * @param timeout a integer representing the number of milliseconds to wait for results
+	 * @return A list of inventory items matching search criteria within folder
+	 * @throws Exception
+	 */
+	public final ArrayList<InventoryNode> FolderContents(final UUID folderID, UUID ownerID, boolean folders, boolean items,
+			byte order, boolean httpOnly, int timeout) throws Exception
 	{
 		final TimeoutEvent<ArrayList<InventoryNode>> fetchEvent = new TimeoutEvent<ArrayList<InventoryNode>>();
 
@@ -603,9 +616,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			}
 		};
 
+		ArrayList<InventoryNode> contents = null;
 		OnFolderUpdated.add(callback, true);
-		RequestFolderContents(folderID, ownerID, folders, items, order);
-		ArrayList<InventoryNode> contents = fetchEvent.waitOne(timeout);
+		if (RequestFolderContents(folderID, ownerID, folders, items, order, httpOnly))
+		{
+			 contents = fetchEvent.waitOne(timeout);
+		}
 		OnFolderUpdated.remove(callback);
 		return contents;
 	}
@@ -619,9 +635,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @param fetchFolders true to return {@link InventoryManager.InventoryFolder}'s contained in folder
 	 * @param fetchItems true to return {@link InventoryManager.InventoryItem}'s contained in folder
 	 * @param order the sort order to return items in {@link InventoryManager.InventorySortOrder}
+	 * @return True if the request could be sent off
 	 * @throws Exception
 	 */
-	public final void RequestFolderContents(UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
+	public final boolean RequestFolderContents(UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order, boolean httpOnly)
 			throws Exception
 	{
 		if (_Client.Settings.getBool(LibSettings.HTTP_INVENTORY))
@@ -630,20 +647,25 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			if (url != null)
 			{
 				RequestFolderContents(url, folderID, ownerID, fetchFolders, fetchItems, order);
-				return;
+				return true;
 			}	
 		}
-		FetchInventoryDescendentsPacket fetch = new FetchInventoryDescendentsPacket();
-		fetch.AgentData.AgentID = _Client.Self.getAgentID();
-		fetch.AgentData.SessionID = _Client.Self.getSessionID();
+		if (!httpOnly)
+		{
+			FetchInventoryDescendentsPacket fetch = new FetchInventoryDescendentsPacket();
+			fetch.AgentData.AgentID = _Client.Self.getAgentID();
+			fetch.AgentData.SessionID = _Client.Self.getSessionID();
 
-		fetch.InventoryData.FetchFolders = fetchFolders;
-		fetch.InventoryData.FetchItems = fetchItems;
-		fetch.InventoryData.FolderID = folderID;
-		fetch.InventoryData.OwnerID = ownerID;
-		fetch.InventoryData.SortOrder = order;
+			fetch.InventoryData.FetchFolders = fetchFolders;
+			fetch.InventoryData.FetchItems = fetchItems;
+			fetch.InventoryData.FolderID = folderID;
+			fetch.InventoryData.OwnerID = ownerID;
+			fetch.InventoryData.SortOrder = order;
 
-		_Client.Network.sendPacket(fetch);
+			_Client.Network.sendPacket(fetch);
+			return true;
+		}
+		return false;
 	}
 
     /**
@@ -916,7 +938,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		}
 
 		// Start the search
-		RequestFolderContents(baseFolder, inventoryOwner, true, true, InventorySortOrder.ByName);
+		RequestFolderContents(baseFolder, inventoryOwner, true, true, InventorySortOrder.ByName, false);
 	}
 
 	/**
@@ -2476,7 +2498,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		ArrayList<InventoryItem> folderContents = new ArrayList<InventoryItem>();
 		ArrayList<InventoryNode> ibl = FolderContents(folderID, _Client.Self.getAgentID(), false, true,
-				InventorySortOrder.ByDate, 1000 * 15);
+				InventorySortOrder.ByDate, false, 1000 * 15);
 		for (InventoryNode ib : ibl)
 		{
 			folderContents.add(FetchItem(ib.itemID, _Client.Self.getAgentID(), 1000 * 10));
@@ -3974,8 +3996,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 									// This is the last node in the path, fire
 									// the callback and clean up
-									OnFindObjectByPathReply.dispatch(new FindObjectByPathReplyCallbackArgs(string,
-											folderContents.get(j).itemID));
+									OnFindObjectByPathReply.dispatch(new FindObjectByPathReplyCallbackArgs(string, folderContents.get(j).itemID));
 									break;
 								}
 
@@ -3988,8 +4009,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								search.Level++;
 								remaining.add(search);
 
-								RequestFolderContents(search.Folder, search.Owner, true, true,
-										InventorySortOrder.ByName);
+								RequestFolderContents(search.Folder, search.Owner, true, true, InventorySortOrder.ByName, false);
 							}
 						}
 					}
