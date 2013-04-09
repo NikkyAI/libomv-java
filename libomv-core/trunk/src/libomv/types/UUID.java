@@ -503,6 +503,24 @@ public class UUID implements Serializable
 		return uuid.toString();
 	}
 
+	public static boolean isZero(UUID uuid)
+	{
+		if (uuid != null)
+		{
+			return uuid.equals(Zero);
+		}
+		return false;
+	}
+	
+	public static boolean isZeroOrNull(UUID uuid)
+	{
+		if (uuid != null)
+		{
+			return uuid.equals(Zero);
+		}
+		return true;
+	}
+
 	/** An UUID with a value of all zeroes */
 	public final static UUID Zero = new UUID(false);
 
