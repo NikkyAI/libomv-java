@@ -29,6 +29,8 @@
  */
 package libomv.capabilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.zip.InflaterInputStream;
 
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
@@ -49,9 +52,11 @@ import libomv.ParcelManager.ParcelCategory;
 import libomv.ParcelManager.ParcelResult;
 import libomv.Simulator.SimAccess;
 import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDParser;
 import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
 import libomv.inventory.InventoryItem;
@@ -143,6 +148,7 @@ public class CapsMessage implements IMessage
 		MapLayerGod,
 		NewFileAgentInventory,
 		BulkUpdateInventory,
+		RenderMaterials,
 		RequestTextureDownload,
 		SearchStatTracking,
 		SendUserReport,
@@ -5576,6 +5582,52 @@ public class CapsMessage implements IMessage
 		}
 	}
 
+	public class RenderMaterialsMessage implements IMessage
+	{
+	    public OSD MaterialData;
+	
+		/**
+		 * @return the type of message
+		 */
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.ObjectMedia;
+		}
+
+		/**
+		 * Serialize the object
+		 * 
+		 * @return An <see cref="OSDMap"/> containing the objects data
+		 */
+		@Override
+	    public OSDMap Serialize()
+	    {
+	        return new OSDMap();
+	    }
+
+		/**
+		 * Deserialize the message
+		 * 
+		 * @param map
+		 *            An <see cref="OSDMap"/> containing the data
+		 */
+		@Override
+		public void Deserialize(OSDMap map)
+	    {
+	        try
+	        {
+	        	InputStream in = new InflaterInputStream(new ByteArrayInputStream(map.get("Zipped").AsBinary()));
+                MaterialData = OSDParser.deserialize(in, OSDFormat.Binary);
+	            in.close();
+	        }
+	        catch (Exception ex)
+	        {
+	            Logger.Log("Failed to decode RenderMaterials message:", LogLevel.Warning, ex);
+	            MaterialData = new OSDMap();
+	        }
+	    }
+	} 
 	// #endregion Object Media Messages
 
 	// #region Resource usage
@@ -6364,7 +6416,10 @@ public class CapsMessage implements IMessage
 				break;
 			case BulkUpdateInventory:
 				message = new BulkUpdateInventoryMessage();
-				break; 
+				break;
+			case RenderMaterials:
+				message = new RenderMaterialsMessage();
+				break;
 
 			// Capabilities TODO:
 			case DispatchRegionInfo:
