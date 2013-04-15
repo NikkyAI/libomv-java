@@ -130,6 +130,7 @@ public class TextureEntry
 		public static final int Material = 1 << 7;
 		public static final int Media = 1 << 8;
 		public static final int Glow = 1 << 9;
+		public static final int MaterialID = 1 << 10; 
 		public static final int All = 0xFFFFFFFF;
 
 		public static int setValue(int value)
@@ -212,6 +213,7 @@ public class TextureEntry
 		private byte media;
 		private int hasAttribute;
 		private UUID textureID;
+		private UUID materialID;
 		private TextureEntryFace defaultTexture;
 
 		// #region Properties
@@ -431,6 +433,18 @@ public class TextureEntry
 			hasAttribute |= TextureAttributes.TextureID;
 		}
 
+		public UUID getMaterialID()
+		{
+			if ((hasAttribute & TextureAttributes.MaterialID) != 0)
+				return materialID;
+			return defaultTexture.materialID;
+		}
+
+		public void setMaterialID(UUID value)
+		{
+			materialID = value;
+			hasAttribute |= TextureAttributes.MaterialID;
+		}
 		// #endregion Properties
 
 		/**
@@ -481,6 +495,8 @@ public class TextureEntry
 			else
 				tex.put("imageid", OSD.FromUUID(UUID.Zero));
 
+			tex.put("materialid", OSD.FromUUID(materialID));
+
 			return tex;
 		}
 
@@ -504,6 +520,7 @@ public class TextureEntry
 				setTexMapType(MappingType.setValue(map.get("mapping").AsInteger()));
 				setGlow((float) map.get("glow").AsReal());
 				setTextureID(map.get("imageid").AsUUID());
+				setMaterialID(map.get("materialid").AsUUID());
 			}
 		}
 
@@ -523,6 +540,7 @@ public class TextureEntry
             ret.media = media;
             ret.hasAttribute = hasAttribute;
             ret.textureID = textureID;
+            ret.materialID = materialID;
             return ret;
 		}
 
@@ -532,16 +550,16 @@ public class TextureEntry
 			return getRGBA().hashCode() ^ (int) getRepeatU() ^ (int) getRepeatV() ^ (int) getOffsetU()
 					^ (int) getOffsetV() ^ (int) getRotation() ^ (int) getGlow() ^ getBump().getValue()
 					^ getShiny().getValue() ^ (getFullbright() ? 1 : 0) ^ (getMediaFlags() ? 1 : 0)
-					^ getTexMapType().getValue() ^ getTextureID().hashCode();
+					^ getTexMapType().getValue() ^ getTextureID().hashCode() ^ getMaterialID().hashCode();
 		}
 
 		@Override
 		public String toString()
 		{
 			return String.format("Color: %s RepeatU: %f RepeatV: %f OffsetU: %f OffsetV: %f "
-					+ "Rotation: %f Bump: %s Shiny: %s Fullbright: %s Mapping: %s Media: %s Glow: %f ID: %s",
+					+ "Rotation: %f Bump: %s Shiny: %s Fullbright: %s Mapping: %s Media: %s Glow: %f ID: %s MaterialID: %s",
 					getRGBA(), getRepeatU(), getRepeatV(), getOffsetU(), getOffsetV(), getRotation(), getBump(),
-					getShiny(), getFullbright(), getTexMapType(), getMediaFlags(), getGlow(), getTextureID());
+					getShiny(), getFullbright(), getTexMapType(), getMediaFlags(), getGlow(), getTextureID(), getMaterialID());
 		}
 	}
 
@@ -711,6 +729,7 @@ public class TextureEntry
 		defaultTexture.setShiny(defaultFace.getShiny());
 		defaultTexture.setTexMapType(defaultFace.getTexMapType());
 		defaultTexture.setTextureID(defaultFace.getTextureID());
+		defaultTexture.setMaterialID(defaultFace.getMaterialID());		
 	}
 
 	/**
@@ -829,16 +848,15 @@ public class TextureEntry
 
 			if (array.size() > 0)
 			{
-				Integer faceNumber = 0;
-				RefObject<Integer> numref = new RefObject<Integer>(0);
+				RefObject<Integer> faceNumber = new RefObject<Integer>(0);
 				OSDMap faceSD = (OSDMap) array.get(0);
-				defaultTexture = new TextureEntryFace(faceSD, null, numref);
+				defaultTexture = new TextureEntryFace(faceSD, null, faceNumber);
 
 				for (int i = 1; i < array.size(); i++)
 				{
-					TextureEntryFace tex = new TextureEntryFace(array.get(i), defaultTexture, numref);
-					if (faceNumber >= 0 && faceNumber < faceTextures.length)
-						faceTextures[faceNumber] = tex;
+					TextureEntryFace tex = new TextureEntryFace(array.get(i), defaultTexture, faceNumber);
+					if (faceNumber.argvalue >= 0 && faceNumber.argvalue < faceTextures.length)
+						faceTextures[faceNumber.argvalue] = tex;
 				}
 			}
 		}
@@ -1007,6 +1025,21 @@ public class TextureEntry
 					CreateFace(face).setGlow(tmpFloat);
 		}
 		// #endregion Glow
+
+		// #region MaterialID
+		defaultTexture.setMaterialID(new UUID(data, off.i));
+		off.i += 16;
+
+		while (ReadFaceBitfield(data, off))
+		{
+			UUID tmpUUID = new UUID(data, off.i);
+			off.i += 16;
+
+			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
+				if ((off.faceBits & bit) != 0)
+					CreateFace(face).setMaterialID(tmpUUID);
+		}
+		// #endregion MaterialID
 	}
 
 	public byte[] getBytes() throws IOException
@@ -1147,6 +1180,18 @@ public class TextureEntry
 		}
 		// #endregion Glow
 
+		// #region MaterialID
+		defaultTexture.getMaterialID().write(memStream);
+		for (int i = 0; i < faceTextures.length; i++)
+		{
+			if (faceTextures[i] != null && !defaultTexture.getMaterialID().equals(faceTextures[i].getMaterialID()))
+			{
+				memStream.write(getFaceBitfieldBytes(1 << i));
+				faceTextures[i].getMaterialID().write(memStream);
+			}
+		}
+		memStream.write((byte) 0);
+		// #endregion MaterialID
 		return memStream.toByteArray();
 	}
 
