@@ -261,6 +261,7 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("GroupMemberData"));
 			req.add(OSD.FromString("GroupProposalBallot"));
 			req.add(OSD.FromString("HomeLocation"));
+			req.add(OSD.FromString("IncrementCOFVersion")); 
 			req.add(OSD.FromString("LandResources"));
 			req.add(OSD.FromString("MapLayer"));
 			req.add(OSD.FromString("MapLayerGod"));
