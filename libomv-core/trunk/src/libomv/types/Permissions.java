@@ -44,15 +44,11 @@ public class Permissions implements Serializable
 		public static final int Transfer = 1 << 13;
 		public static final int Modify = 1 << 14;
 		public static final int Copy = 1 << 15;
-		// [Obsolete]
-		// public static final int EnterParcel = 1 << 16,
-		// [Obsolete]
-		// public static final int Terraform = 1 << 17,
-		// [Obsolete]
-		// public static final int OwnerDebit = 1 << 18,
+		public static final int Export = 1 << 16;
 		public static final int Move = 1 << 19;
 		public static final int Damage = 1 << 20;
-		public static final int All = 0x7FFFFFFF;
+		// All does not contain Export, which is special and must be explicitly given
+		public static final int All = (1 << 13) | (1 << 14) | (1 << 15) | (1 << 19) | (1 << 20);
 
 		public static int setValue(int value)
 		{
