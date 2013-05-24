@@ -1893,8 +1893,6 @@ public class GroupManager implements PacketCallback, CapsCallback
 			// If nothing is registered to receive this RequestID drop the data
 			if (GroupRolesRequests.contains(roles.GroupData.RequestID))
 			{
-				GroupRolesRequests.remove(roles.GroupData.RequestID);
-
 				synchronized (TempGroupRoles)
 				{
 					if (TempGroupRoles.containsKey(roles.GroupData.RequestID))
