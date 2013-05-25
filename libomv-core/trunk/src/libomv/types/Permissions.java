@@ -47,8 +47,9 @@ public class Permissions implements Serializable
 		public static final int Export = 1 << 16;
 		public static final int Move = 1 << 19;
 		public static final int Damage = 1 << 20;
+		
 		// All does not contain Export, which is special and must be explicitly given
-		public static final int All = (1 << 13) | (1 << 14) | (1 << 15) | (1 << 19) | (1 << 20);
+		public static final int All = Transfer | Modify | Copy | Move | Damage;
 
 		public static int setValue(int value)
 		{
@@ -60,7 +61,7 @@ public class Permissions implements Serializable
 			return value;
 		}
 
-		private static final int _mask = All;
+		private static final int _mask =  Transfer | Modify | Copy | Export | Move | Damage;
 	}
 
 	// [Flags]
