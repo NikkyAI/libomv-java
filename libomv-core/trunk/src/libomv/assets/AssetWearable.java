@@ -234,7 +234,7 @@ public abstract class AssetWearable extends AssetItem
 					if (fields.length == 1)
 					{
 						fields = line.split(" ");
-						if (fields[0] == "parameters")
+						if (fields[0].equals("parameters"))
 						{
 							int count = Integer.parseInt(fields[1]) + stri;
 							for (; stri < count;)
@@ -259,7 +259,7 @@ public abstract class AssetWearable extends AssetItem
 								Params.put(id, weight);
 							}
 						}
-						else if (fields[0] == "textures")
+						else if (fields[0].equals("textures"))
 						{
 							int count = Integer.parseInt(fields[1]) + stri;
 							for (; stri < count;)
@@ -274,7 +274,7 @@ public abstract class AssetWearable extends AssetItem
 								Textures.put(id, texture);
 							}
 						}
-						else if (fields[0] == "type")
+						else if (fields[0].equals("type"))
 						{
 							wearableType = WearableType.setValue(Helpers.TryParseInt(fields[1]));
 						}
@@ -334,7 +334,6 @@ public abstract class AssetWearable extends AssetItem
 						else if (fields[0].equals("sale_price"))
 						{
 							SalePrice = Integer.parseInt(fields[1]);
-							break;
 						}
 						else if (fields[0].equals("sale_info"))
 						{
@@ -344,7 +343,6 @@ public abstract class AssetWearable extends AssetItem
 						{
 							// Deprecated, apply this as the next owner mask
 							Permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
-							break;
 						}
 						else
 							return false;
@@ -357,7 +355,6 @@ public abstract class AssetWearable extends AssetItem
 			Logger.Log("Failed decoding wearable asset " + AssetID + ": " + ex.getMessage(), LogLevel.Warning);
 			return false;
 		}
-
 		return true;
 	}
 
