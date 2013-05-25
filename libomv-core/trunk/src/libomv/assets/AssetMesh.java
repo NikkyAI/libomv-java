@@ -29,6 +29,7 @@
  */
 package libomv.assets;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.util.zip.InflaterInputStream;
@@ -84,11 +85,10 @@ public class AssetMesh extends AssetItem
 	@Override
 	public boolean Decode()
     {
+        MeshData = new OSDMap();
+        InputStream data = new ByteArrayInputStream(AssetData);
         try
         {
-            MeshData = new OSDMap();
-
-            InputStream data = new ByteArrayInputStream(AssetData);
             OSDMap header = (OSDMap)OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
             data.mark(AssetData.length);
 
@@ -110,12 +110,24 @@ public class AssetMesh extends AssetItem
                 data.reset();
                 data.skip(partInfo.get("offset").AsInteger());
                 InflaterInputStream inflate = new InflaterInputStream(data);
-                MeshData.put(partName, OSDParser.deserialize(inflate, Helpers.UTF8_ENCODING)); 
+                try
+                {
+                	MeshData.put(partName, OSDParser.deserialize(inflate, Helpers.UTF8_ENCODING));
+                }
+                finally
+                {
+                	inflate.close();
+                }
             }
             return true;
         }
         catch (Exception ex)
         {
+        	try
+        	{
+				data.close();
+			}
+        	catch (IOException e) {}
             Logger.Log("Failed to decode mesh asset", LogLevel.Error, ex);
             return false;
         }
