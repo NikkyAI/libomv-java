@@ -363,76 +363,38 @@ public abstract class AssetWearable extends AssetItem
 	@Override
 	public void Encode()
 	{
-		final String NL = "\n";
-
 		StringBuilder data = new StringBuilder("LLWearable version 22\n");
-		data.append(Name);
-		data.append(NL);
-		data.append(NL);
+		data.append(Name + "\n\n");
 		data.append("\tpermissions 0\n\t{\n");
-		data.append("\t\tbase_mask\t");
-		data.append(Helpers.UInt32ToHexString(Permissions.BaseMask));
-		data.append(NL);
-		data.append("\t\towner_mask\t");
-		data.append(Helpers.UInt32ToHexString(Permissions.OwnerMask));
-		data.append(NL);
-		data.append("\t\tgroup_mask\t");
-		data.append(Helpers.UInt32ToHexString(Permissions.GroupMask));
-		data.append(NL);
-		data.append("\t\teveryone_mask\t");
-		data.append(Helpers.UInt32ToHexString(Permissions.EveryoneMask));
-		data.append(NL);
-		data.append("\t\tnext_owner_mask\t");
-		data.append(Helpers.UInt32ToHexString(Permissions.NextOwnerMask));
-		data.append(NL);
-		data.append("\t\tcreator_id\t");
-		data.append(Creator.toString());
-		data.append(NL);
-		data.append("\t\towner_id\t");
-		data.append(Owner.toString());
-		data.append(NL);
-		data.append("\t\tlast_owner_id\t");
-		data.append(LastOwner.toString());
-		data.append(NL);
-		data.append("\t\tgroup_id\t");
-		data.append(Group.toString());
-		data.append(NL);
+		data.append("\t\tbase_mask\t" + Helpers.UInt32ToHexString(Permissions.BaseMask) + "\n");
+		data.append("\t\towner_mask\t" + Helpers.UInt32ToHexString(Permissions.OwnerMask) + "\n");
+		data.append("\t\tgroup_mask\t" + Helpers.UInt32ToHexString(Permissions.GroupMask) + "\n");
+		data.append("\t\teveryone_mask\t" + Helpers.UInt32ToHexString(Permissions.EveryoneMask) + "\n");
+		data.append("\t\tnext_owner_mask\t" + Helpers.UInt32ToHexString(Permissions.NextOwnerMask) + "\n");
+		data.append("\t\tcreator_id\t" + Creator.toString() + "\n");
+		data.append("\t\towner_id\t" + Owner.toString() + "\n");
+		data.append("\t\tlast_owner_id\t" + LastOwner.toString() + "\n");
+		data.append("\t\tgroup_id\t" + Group.toString() + "\n");
 		if (GroupOwned)
 			data.append("\t\tgroup_owned\t1\n");
 		data.append("\t}\n");
 		data.append("\tsale_info\t0\n");
 		data.append("\t{\n");
-		data.append("\t\tsale_type\t");
-		data.append(ForSale.toString());
-		data.append(NL);
-		data.append("\t\tsale_price\t");
-		data.append(SalePrice);
-		data.append(NL);
+		data.append("\t\tsale_type\t" + ForSale.toString() + "\n");
+		data.append("\t\tsale_price\t" + SalePrice + "\n");
 		data.append("\t}\n");
-		data.append("type ");
-		data.append(WearableType.getValue(wearableType));
-		data.append(NL);
+		data.append("type " + WearableType.getValue(wearableType) + "\n");
 
-		data.append("parameters ");
-		data.append(Params.size());
-		data.append(NL);
+		data.append("parameters " + Params.size() + "\n");
 		for (Entry<Integer, Float> param : Params.entrySet())
 		{
-			data.append(param.getKey());
-			data.append(" ");
-			data.append(Helpers.FloatToTerseString(param.getValue()));
-			data.append(NL);
+			data.append(param.getKey() + " " + Helpers.FloatToTerseString(param.getValue()) + "\n");
 		}
 
-		data.append("textures ");
-		data.append(Textures.size());
-		data.append(NL);
+		data.append("textures " + Textures.size() + "\n");
 		for (Entry<AvatarTextureIndex, UUID> texture : Textures.entrySet())
 		{
-			data.append(texture.getKey().getValue());
-			data.append(" ");
-			data.append(texture.getValue().toString());
-			data.append(NL);
+			data.append(texture.getKey().getValue() + " " + texture.getValue().toString() + "\n");
 		}
 
 		AssetData = Helpers.StringToBytes(data.toString());
