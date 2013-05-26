@@ -65,7 +65,7 @@ public class AssetLandmark extends AssetItem
 	public AssetLandmark(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		Decode();
+		decode();
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class AssetLandmark extends AssetItem
 	{
 		RegionID = regionID;
 		Position = pos;
-		Encode();
+		encode();
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class AssetLandmark extends AssetItem
 	 * 
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		String temp = "Landmark version 2\n";
 		temp += "region_id " + RegionID + "\n";
@@ -103,7 +103,7 @@ public class AssetLandmark extends AssetItem
 	 *         Vector
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		try
 		{

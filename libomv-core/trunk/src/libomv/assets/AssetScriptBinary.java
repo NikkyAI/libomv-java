@@ -57,14 +57,13 @@ public class AssetScriptBinary extends AssetItem
 	public AssetScriptBinary(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		AssetData = assetData;
 	}
 
 	/**
 	 * TODO: Encodes a scripts contents into a LSO Bytecode file
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 	}
 
@@ -74,7 +73,7 @@ public class AssetScriptBinary extends AssetItem
 	 * @return true
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		return true;
 	}

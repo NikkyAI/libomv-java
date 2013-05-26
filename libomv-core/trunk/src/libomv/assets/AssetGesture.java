@@ -223,14 +223,14 @@ public class AssetGesture extends AssetItem
 	public AssetGesture(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		Decode();
+		decode();
 	}
 
 	/**
 	 * Encodes gesture asset suitable for upload
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("2\n");
@@ -313,7 +313,7 @@ public class AssetGesture extends AssetItem
 	 * @return true if the asset data was decoded successfully
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		try
 		{

@@ -446,14 +446,12 @@ public class TexturePipeline implements PacketCallback
 
 		if (callback != null)
 		{
-			if (_Cache.containsKey(textureID))
+			if (_Cache.containsKey(textureID, "tex"))
 			{
-				ImageDownload image = _Cache.get(textureID);
-				image.ImageType = imageType;
+				byte[] assetData = _Cache.GetCachedAssetBytes(textureID, "tex");
 
-				callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-
-				_Client.Assets.FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+				callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
+				_Client.Assets.FireImageProgressEvent(textureID, assetData.length, assetData.length);
 			}
 			else
 			{
@@ -467,6 +465,7 @@ public class TexturePipeline implements PacketCallback
 					{
 						TaskInfo request = new TaskInfo();
 						request.State = TextureRequestState.Pending;
+						request.TimeoutEvent = new TimeoutEvent<Boolean>();
 						request.RequestID = textureID;
 						request.ReportProgress = progressive;
 						request.RequestSlot = -1;
@@ -480,11 +479,10 @@ public class TexturePipeline implements PacketCallback
 						downloadParams.Priority = priority;
 						downloadParams.ImageType = imageType;
 						downloadParams.DiscardLevel = discardLevel;
-
+						downloadParams.suffix = "tex";
+						
 						request.Transfer = downloadParams;
-						// #if DEBUG_TIMING
 						request.StartTime = Calendar.getInstance().getTime();
-						// #endif
 						_Transfers.put(textureID, request);
 					}
 				}
@@ -875,8 +873,7 @@ public class TexturePipeline implements PacketCallback
 				}
 			}
 
-			// The header is downloaded, we can insert this data in to the
-			// proper position
+			// The header is downloaded, we can insert this data in to the proper position
 			// Only insert if we haven't seen this packet before
 			synchronized (task.Transfer)
 			{
@@ -913,7 +910,7 @@ public class TexturePipeline implements PacketCallback
 				task.Transfer.Success = true;
 				RemoveTransfer(task.Transfer.ID);
 				task.TimeoutEvent.set(true); // free up request slot
-				_Cache.SaveAssetToCache(task.RequestID, task.Transfer.AssetData);
+				_Cache.SaveAssetToCache(task.RequestID, task.Transfer.AssetData, "tex");
 
 				task.CallCallback(TextureRequestState.Finished, new AssetTexture(task.RequestID,
 						task.Transfer.AssetData));
@@ -991,7 +988,7 @@ public class TexturePipeline implements PacketCallback
 				RemoveTransfer(task.RequestID);
 				task.TimeoutEvent.set(true);
 
-				_Cache.SaveAssetToCache(task.RequestID, task.Transfer.AssetData);
+				_Cache.SaveAssetToCache(task.RequestID, task.Transfer.AssetData, task.Transfer.suffix);
 
 				for (TextureDownloadCallback callback : task.Callbacks)
 				{

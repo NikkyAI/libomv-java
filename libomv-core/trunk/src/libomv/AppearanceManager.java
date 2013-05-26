@@ -1461,13 +1461,13 @@ public class AppearanceManager implements PacketCallback
             _Textures[i].Color = wearableColor;
 
             // If this texture changed, update the TextureID and clear out the old cached texture asset
-            if (!_Textures[i].TextureID.equals(entry.getValue()))
+            if (_Textures[i].TextureID == null || !_Textures[i].TextureID.equals(entry.getValue()))
             {
                 // Treat DEFAULT_AVATAR_TEXTURE as null
-                if (!entry.getValue().equals(DEFAULT_AVATAR_TEXTURE))
-                    _Textures[i].TextureID = entry.getValue();
-                else
+                if (entry.getValue().equals(DEFAULT_AVATAR_TEXTURE))
                     _Textures[i].TextureID = UUID.Zero;
+                else
+                    _Textures[i].TextureID = entry.getValue();
                 Logger.DebugLog("Set " + entry.getKey() + " to " + _Textures[i].TextureID, _Client);
 
                 _Textures[i].Texture = null;
@@ -1493,7 +1493,7 @@ public class AppearanceManager implements PacketCallback
                 // Update this wearable with the freshly downloaded asset 
                 wearable.Asset = (AssetWearable)asset;
 
-                if (wearable.Asset.Decode())
+                if (wearable.Asset.decode())
                 {
                     DecodeWearableParams(wearable);
                     Logger.DebugLog("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
@@ -1675,7 +1675,7 @@ public class AppearanceManager implements PacketCallback
                         {
                             if (state == TextureRequestState.Finished)
                             {
-                                assetTexture.Decode();
+                                assetTexture.decode();
 
                                 for (int i = 0; i < _Textures.length; i++)
                                 {
@@ -1717,7 +1717,7 @@ public class AppearanceManager implements PacketCallback
             if (type != BakeType.Unknown)
             {
             	UUID uuid = _Textures[BakeTypeToAgentTextureIndex(type).getValue()].TextureID;
-                if (uuid == null || uuid.equals(UUID.Zero))
+                if (UUID.isZeroOrNull(uuid))
                 {
                     // If this is the skirt layer and we're not wearing a skirt then skip it
                     if (type == BakeType.Skirt && !_Wearables.containsKey(WearableType.Skirt))
@@ -2250,6 +2250,7 @@ public class AppearanceManager implements PacketCallback
             if (sendAppearanceUpdates && e.getSimulator().equals(_Client.Network.getCurrentSim()))
             {
                 // Update appearance each time we enter a new sim and capabilities have been retrieved
+                Logger.Log("Starting AppearanceRequest from server " + e.getSimulator().getSimName(), LogLevel.Warning, _Client);
                 RequestSetAppearance(false);
             }
             return false;

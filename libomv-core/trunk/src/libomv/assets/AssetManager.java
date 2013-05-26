@@ -339,6 +339,7 @@ public class AssetManager implements PacketCallback
 		public AssetType AssetType;
 		public long TimeSinceLastPacket;
 		public HashMap<Integer, DelayedTransfer> delayed;
+		public String suffix;
 
 		public Transfer()
 		{
@@ -744,11 +745,12 @@ public class AssetManager implements PacketCallback
 		transfer.Source = sourceType;
 		transfer.Simulator = _Client.Network.getCurrentSim();
 		transfer.Callback = callback;
-
+		transfer.suffix = "asset";
+		
 		// Check asset cache first
-		if (callback != null && _Cache.containsKey(assetID))
+		if (callback != null && _Cache.containsKey(assetID, transfer.suffix))
 		{
-			byte[] data = _Cache.GetCachedAssetBytes(assetID);
+			byte[] data = _Cache.GetCachedAssetBytes(assetID, transfer.suffix);
 			transfer.AssetData = data;
 			transfer.AssetType = type;
 			transfer.Success = true;
@@ -895,11 +897,12 @@ public class AssetManager implements PacketCallback
 		transfer.Source = SourceType.SimInventoryItem;
 		transfer.Simulator = _Client.Network.getCurrentSim();
 		transfer.Callback = callback;
+		transfer.suffix = "inv";
 
 		// Check asset cache first
-		if (callback != null && _Cache.containsKey(assetID))
+		if (callback != null && _Cache.containsKey(assetID, transfer.suffix))
 		{
-			byte[] data = _Cache.GetCachedAssetBytes(assetID);
+			byte[] data = _Cache.GetCachedAssetBytes(assetID, transfer.suffix);
 			transfer.AssetData = data;
 			transfer.Success = true;
 			transfer.Status = StatusCode.OK;
@@ -1371,9 +1374,9 @@ public class AssetManager implements PacketCallback
 			return;
 
 		// Do we have this mesh asset in the cache?
-		if (_Client.Assets.getCache().containsKey(meshID))
+		if (_Cache.containsKey(meshID, "mesh"))
 		{
-			callback.callback(true, new AssetMesh(meshID, _Client.Assets.getCache().GetCachedAssetBytes(meshID)));
+			callback.callback(true, new AssetMesh(meshID, _Cache.GetCachedAssetBytes(meshID, "mesh")));
 			return;
 		}
 
@@ -1389,8 +1392,8 @@ public class AssetManager implements PacketCallback
 					{
 						if (response != null) // success
 						{
+							_Cache.SaveAssetToCache(meshID, response, "mesh");
 							callback.callback(true, new AssetMesh(meshID, response));
-							_Client.Assets.getCache().SaveAssetToCache(meshID, response);
 						}
 					}
 
@@ -1440,20 +1443,11 @@ public class AssetManager implements PacketCallback
 		byte[] assetData;
 
 		// Do we have this image in the cache?
-		if (_Client.Assets.getCache().containsKey(textureID)
-			&& (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
+		if (_Cache.containsKey(textureID, "tex")
+			&& (assetData = _Cache.GetCachedAssetBytes(textureID, "tex")) != null)
 		{
-			ImageDownload image = new ImageDownload();
-			image.ID = textureID;
-			image.AssetData = assetData;
-			image.Size = image.AssetData.length;
-			image.Transferred = image.AssetData.length;
-			image.ImageType = ImageType.ServerBaked;
-			image.AssetType = AssetType.Texture;
-			image.Success = true;
-
-			callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-			FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+			callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
+			FireImageProgressEvent(textureID, assetData.length, assetData.length);
 			return;
 		}
 
@@ -1471,17 +1465,9 @@ public class AssetManager implements PacketCallback
 			{
 				if (response != null) // success
 				{
-					ImageDownload image = new ImageDownload();
-					image.ID = textureID;
-					image.AssetData = response;
-					image.Size = image.AssetData.length;
-					image.Transferred = image.AssetData.length;
-					image.ImageType = ImageType.ServerBaked;
-					image.AssetType = AssetType.Texture;
-					image.Success = true;
-
-					callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-					_Client.Assets.getCache().SaveAssetToCache(textureID, response);
+					_Cache.SaveAssetToCache(textureID, response, "tex");
+					callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, response));
+					FireImageProgressEvent(textureID, response.length, response.length);
 				}
 				else // download failed
 				{
@@ -1546,20 +1532,11 @@ public class AssetManager implements PacketCallback
 
 		byte[] assetData;
 		// Do we have this image in the cache?
-		if (_Client.Assets.getCache().containsKey(textureID)
-			&& (assetData = _Client.Assets.getCache().GetCachedAssetBytes(textureID)) != null)
+		if (_Cache.containsKey(textureID, "tex")
+			&& (assetData = _Cache.GetCachedAssetBytes(textureID, "tex")) != null)
 		{
-			ImageDownload image = new ImageDownload();
-			image.ID = textureID;
-			image.AssetData = assetData;
-			image.Size = assetData.length;
-			image.Transferred = assetData.length;
-			image.ImageType = imageType;
-			image.AssetType = AssetType.Texture;
-			image.Success = true;
-
-			callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-			FireImageProgressEvent(image.ID, image.Transferred, image.Size);
+			callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
+			FireImageProgressEvent(textureID, assetData.length, assetData.length);
 			return;
 		}
 
@@ -1586,18 +1563,9 @@ public class AssetManager implements PacketCallback
 				{
 					if (response != null) // success
 					{
-						ImageDownload image = new ImageDownload();
-						image.ID = textureID;
-						image.AssetData = response;
-						image.Size = response.length;
-						image.Transferred = response.length;
-						image.ImageType = imageType;
-						image.AssetType = AssetType.Texture;
-						image.Success = true;
-
-						callback.callback(TextureRequestState.Finished, new AssetTexture(image.ID, image.AssetData));
-						FireImageProgressEvent(image.ID, image.Transferred, image.Size);
-						_Client.Assets.getCache().SaveAssetToCache(image.ID, image.AssetData);
+						_Cache.SaveAssetToCache(textureID, response, "tex");
+						callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, response));
+						FireImageProgressEvent(textureID, response.length, response.length);
 					}
 				}
 
@@ -1763,7 +1731,7 @@ public class AssetManager implements PacketCallback
 					Logger.DebugLog("Transfer for asset " + download.AssetID.toString() + " completed", _Client);
 
 					// Cache successful asset download
-					_Cache.SaveAssetToCache(download.AssetID, download.AssetData);
+					_Cache.SaveAssetToCache(download.AssetID, download.AssetData, download.suffix);
 					assetItem = CreateAssetItem(download);
 				}
 				else

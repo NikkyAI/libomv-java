@@ -316,7 +316,7 @@ public class Baker
         }
 
         // We are done, encode asset for finalized bake
-        bakedTexture.Encode();
+        bakedTexture.encode();
         //File.WriteAllBytes(bakeType + ".tga", bakedTexture.Image.ExportTGA());
     }
 

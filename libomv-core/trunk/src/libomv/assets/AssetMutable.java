@@ -62,12 +62,12 @@ public class AssetMutable extends AssetItem
 	}
 
 	@Override
-	public void Encode()
+	public void encode()
 	{
 	}
 
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		return true;
 	}

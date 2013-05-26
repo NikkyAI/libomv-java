@@ -42,14 +42,14 @@ public class AssetClothing extends AssetWearable
 	}
 
 	/**
-	 * Initializes a new instance of an AssetScriptBinary object
+	 * Initializes a new instance of an AssetClothing object
 	 */
 	public AssetClothing()
 	{
 	}
 
 	/**
-	 * Initializes a new instance of an AssetScriptBinary object with parameters
+	 * Initializes a new instance of an AssetClothing object with parameters
 	 * 
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset

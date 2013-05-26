@@ -59,7 +59,7 @@ public class AssetCallingCard extends AssetItem
 	public AssetCallingCard(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-        Decode();
+        decode();
     }
 	
 	/**
@@ -70,14 +70,14 @@ public class AssetCallingCard extends AssetItem
 	public AssetCallingCard(UUID avatarID)
 	{
 		AvatarID = avatarID;
-		Encode();
+		encode();
     }
 
 	/**
 	 * Encode the raw contents of a string with the specific Callingcard format
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		String temp = "Callingcard version 2\n" + "avatar_id " + AvatarID.toString() + "\n";
 		AssetData = Helpers.StringToBytes(temp);
@@ -89,7 +89,7 @@ public class AssetCallingCard extends AssetItem
 	 * @return True if the AssetData was successfully decoded to a UUID and Vector
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		try
 		{

@@ -72,7 +72,7 @@ public class AssetMesh extends AssetItem
 
     // TODO: Encodes Collada file into LLMesh format
 	@Override
-	public void Encode()
+	public void encode()
 	{
 	}
 
@@ -83,7 +83,7 @@ public class AssetMesh extends AssetItem
      * @returns true
      */
 	@Override
-	public boolean Decode()
+	public boolean decode()
     {
         MeshData = new OSDMap();
         InputStream data = new ByteArrayInputStream(AssetData);

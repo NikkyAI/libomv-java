@@ -100,7 +100,7 @@ public class AssetTexture extends AssetItem
 	 * created from the data in {@link Image}
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();		
 		J2KImage.encode(bos, Image);
@@ -115,7 +115,7 @@ public class AssetTexture extends AssetItem
 	 * @throws IOException 
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		Components = 0;
 

@@ -83,7 +83,7 @@ public class AssetNotecard extends AssetItem
 	public AssetNotecard(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		Decode();
+		decode();
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class AssetNotecard extends AssetItem
 	public AssetNotecard(String text)
 	{
 		BodyText = text;
-		Encode();
+		encode();
 	}
 
 	/*
@@ -103,7 +103,7 @@ public class AssetNotecard extends AssetItem
 	 * properties
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		String body = BodyText;
 
@@ -208,7 +208,7 @@ public class AssetNotecard extends AssetItem
 	}
 
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		EmbeddedItems = new ArrayList<InventoryItem>();
 		BodyText = Helpers.EmptyString;

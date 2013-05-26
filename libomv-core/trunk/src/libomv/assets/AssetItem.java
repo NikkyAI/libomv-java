@@ -272,7 +272,7 @@ public abstract class AssetItem
 	 * Regenerates the <code>AssetData</code> byte array from the properties of
 	 * the derived class.
 	 */
-	public abstract void Encode();
+	public abstract void encode();
 
 	/**
 	 * Decodes the AssetData, placing it in appropriate properties of the
@@ -280,5 +280,5 @@ public abstract class AssetItem
 	 * 
 	 * @return True if the asset decoding succeeded, otherwise false
 	 */
-	public abstract boolean Decode();
+	public abstract boolean decode();
 }

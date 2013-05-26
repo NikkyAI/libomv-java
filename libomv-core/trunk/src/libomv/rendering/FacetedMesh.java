@@ -61,7 +61,7 @@ public class FacetedMesh extends Mesh
     {
         try
         {
-            if (!meshAsset.Decode())
+            if (!meshAsset.decode())
             {
                 return null;
             }

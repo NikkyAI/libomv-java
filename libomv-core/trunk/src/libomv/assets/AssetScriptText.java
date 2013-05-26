@@ -82,7 +82,7 @@ public class AssetScriptText extends AssetItem
 	 * 
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		AssetData = Helpers.StringToBytes(Source);
 	}
@@ -93,7 +93,7 @@ public class AssetScriptText extends AssetItem
 	 * @return true if decoding is successful
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		try
 		{

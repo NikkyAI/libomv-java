@@ -86,7 +86,7 @@ public class AssetPrim extends AssetItem
 
 	public AssetPrim(String xmlData) throws XmlPullParserException, IOException
 	{
-		DecodeXml(xmlData);
+		decodeXml(xmlData);
 	}
 	
 	public AssetPrim(PrimObject parent, ArrayList<PrimObject> children)
@@ -99,11 +99,11 @@ public class AssetPrim extends AssetItem
 	}
 
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		try
 		{
-			AssetData = EncodeXml().getBytes(Helpers.UTF8_ENCODING);
+			AssetData = encodeXml().getBytes(Helpers.UTF8_ENCODING);
 		}
 		catch (Exception e)
 		{
@@ -112,7 +112,7 @@ public class AssetPrim extends AssetItem
 	}
 
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		try
 		{
@@ -127,26 +127,26 @@ public class AssetPrim extends AssetItem
 		}
 	}
 
-	public String EncodeXml() throws XmlPullParserException, IllegalArgumentException, IllegalStateException,
+	public String encodeXml() throws XmlPullParserException, IllegalArgumentException, IllegalStateException,
 			IOException
 	{
 		StringWriter textWriter = new StringWriter();
 		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 		xmlWriter.setOutput(textWriter);
 
-		EncodeXml(xmlWriter);
+		encodeXml(xmlWriter);
 		xmlWriter.flush();
 		return textWriter.toString();
 	}
 
-	public boolean DecodeXml(String xmlData) throws XmlPullParserException, IOException
+	public boolean decodeXml(String xmlData) throws XmlPullParserException, IOException
 	{
 		XmlPullParser reader = XmlPullParserFactory.newInstance().newPullParser();
 		reader.setInput(new StringReader(xmlData));
 		return DecodeXml(reader);
 	}
 
-	private void EncodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
 	{
         writer.startTag(null, "SceneObjectGroup");
         writePrim(writer, Parent, null);

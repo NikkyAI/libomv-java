@@ -57,7 +57,7 @@ public class AssetCache
 	// User can plug in a routine to compute the asset cache location
 	public interface ComputeAssetCacheFilenameDelegate
 	{
-		public File callback(String cacheDir, UUID assetID);
+		public File callback(String cacheDir, UUID assetID, String suffix);
 	}
 
 	public ComputeAssetCacheFilenameDelegate ComputeAssetCacheFilename = null;
@@ -243,13 +243,13 @@ public class AssetCache
 	 *            UUID of the asset we want to get
 	 * @return Raw bytes of the asset, or null on failure
 	 */
-	public final byte[] GetCachedAssetBytes(UUID assetID)
+	public final byte[] GetCachedAssetBytes(UUID assetID, String suffix)
 	{
 		if (useAssetCache)
 		{
 			try
 			{
-				File file = cachedAssetFile(assetID);
+				File file = cachedAssetFile(assetID, suffix);
 				boolean exists = file.exists();
 				if (!exists)
 				{
@@ -294,11 +294,11 @@ public class AssetCache
 	 *            UUID of the image we want to get
 	 * @return ImageDownload object containing the image, or null on failure
 	 */
-	public final ImageDownload get(UUID imageID)
+	public final ImageDownload get(UUID imageID, String suffix)
 	{
 		if (useAssetCache)
 		{
-			byte[] imageData = GetCachedAssetBytes(imageID);
+			byte[] imageData = GetCachedAssetBytes(imageID, suffix);
 			if (imageData != null)
 			{
 				ImageDownload transfer = _Manager.new ImageDownload();
@@ -321,13 +321,18 @@ public class AssetCache
 	 * @param assetID UUID of the asset
 	 * @return String with the file name of the cached asset
 	 */
-	private File cachedAssetFile(UUID assetID)
+	private File cachedAssetFile(UUID assetID, String suffix)
 	{
 		if (ComputeAssetCacheFilename != null)
 		{
-			return ComputeAssetCacheFilename.callback(cacheAssetDir, assetID);
+			return ComputeAssetCacheFilename.callback(cacheAssetDir, assetID, suffix);
 		}
-		return new File(cacheAssetPath, assetID.toString());
+		String filename = assetID.toString();
+		if (suffix != null)
+		{
+			filename = filename + "." + suffix;
+		}
+		return new File(cacheAssetPath, filename);
 	}
 
 	/**
@@ -351,13 +356,13 @@ public class AssetCache
 	 *            Raw bytes the asset consists of
 	 * @return Weather the operation was successfull
 	 */
-	public final boolean SaveAssetToCache(UUID assetID, byte[] assetData)
+	public final boolean SaveAssetToCache(UUID assetID, byte[] assetData, String suffix)
 	{
 		if (useAssetCache)
 		{
 			try
 			{
-				File file = cachedAssetFile(assetID);
+				File file = cachedAssetFile(assetID, suffix);
 				Logger.DebugLog("Saving " + file + " to asset cache.", _Client);
 				FileOutputStream fos = new FileOutputStream(file);
 				try
@@ -386,11 +391,11 @@ public class AssetCache
 	 *            UUID of the asset
 	 * @return True is the asset is stored in the cache, otherwise false
 	 */
-	public final boolean containsKey(UUID assetID)
+	public final boolean containsKey(UUID assetID, String suffix)
 	{
 		if (useAssetCache)
 		{
-			File file = cachedAssetFile(assetID);
+			File file = cachedAssetFile(assetID, suffix);
 			if (!file.exists())
 			{
 				file = getStaticAssetFile(assetID);

@@ -198,7 +198,7 @@ public abstract class AssetWearable extends AssetItem
 	 * @return true if the asset data was decoded successfully
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		int version = -1;
 		Permissions = new Permissions();
@@ -361,7 +361,7 @@ public abstract class AssetWearable extends AssetItem
 	// Encode the assets string represantion into a format consumable by the
 	// asset server
 	@Override
-	public void Encode()
+	public void encode()
 	{
 		StringBuilder data = new StringBuilder("LLWearable version 22\n");
 		data.append(Name + "\n\n");

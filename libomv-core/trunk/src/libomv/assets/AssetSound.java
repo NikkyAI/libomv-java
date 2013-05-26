@@ -59,14 +59,13 @@ public class AssetSound extends AssetItem
 	public AssetSound(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		AssetData = assetData;
 	}
 
 	/**
 	 * TODO: Encodes a sound file
 	 */
 	@Override
-	public void Encode()
+	public void encode()
 	{
 	}
 
@@ -76,7 +75,7 @@ public class AssetSound extends AssetItem
 	 * @return true
 	 */
 	@Override
-	public boolean Decode()
+	public boolean decode()
 	{
 		return true;
 	}
