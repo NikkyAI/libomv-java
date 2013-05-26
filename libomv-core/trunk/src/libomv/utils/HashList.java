@@ -99,7 +99,8 @@ public class HashList<K,V> extends HashMap<K,V>
      * 
      * @return Adds the as HashList
      */
-    public HashList<K, V> add(Object[][] t)
+    @SuppressWarnings("unchecked")
+	public HashList<K, V> add(Object[][] t)
     {
         if (t != null)
         {
@@ -219,7 +220,8 @@ public class HashList<K,V> extends HashMap<K,V>
         return this;
     }
 
-    @Override
+	@Override
+    @SuppressWarnings("unchecked")
     public V remove(Object o)
     {
   		return this.removeValue((K)o);
