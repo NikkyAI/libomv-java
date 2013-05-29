@@ -1679,7 +1679,7 @@ public class AppearanceManager implements PacketCallback
 
                                 for (int i = 0; i < _Textures.length; i++)
                                 {
-                                    if (_Textures[i].TextureID.equals(textureID))
+                                    if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(textureID))
                                         _Textures[i].Texture = assetTexture;
                                 }
                             }
