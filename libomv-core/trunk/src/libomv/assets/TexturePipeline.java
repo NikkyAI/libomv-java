@@ -448,7 +448,7 @@ public class TexturePipeline implements PacketCallback
 		{
 			if (_Cache.containsKey(textureID, "tex"))
 			{
-				byte[] assetData = _Cache.GetCachedAssetBytes(textureID, "tex");
+				byte[] assetData = _Cache.get(textureID, "tex");
 
 				callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
 				_Client.Assets.FireImageProgressEvent(textureID, assetData.length, assetData.length);
@@ -910,7 +910,7 @@ public class TexturePipeline implements PacketCallback
 				task.Transfer.Success = true;
 				RemoveTransfer(task.Transfer.ID);
 				task.TimeoutEvent.set(true); // free up request slot
-				_Cache.SaveAssetToCache(task.RequestID, task.Transfer.AssetData, "tex");
+				_Cache.put(task.RequestID, task.Transfer.AssetData, "tex");
 
 				task.CallCallback(TextureRequestState.Finished, new AssetTexture(task.RequestID,
 						task.Transfer.AssetData));
@@ -988,7 +988,7 @@ public class TexturePipeline implements PacketCallback
 				RemoveTransfer(task.RequestID);
 				task.TimeoutEvent.set(true);
 
-				_Cache.SaveAssetToCache(task.RequestID, task.Transfer.AssetData, task.Transfer.suffix);
+				_Cache.put(task.RequestID, task.Transfer.AssetData, task.Transfer.suffix);
 
 				for (TextureDownloadCallback callback : task.Callbacks)
 				{

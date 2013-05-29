@@ -750,7 +750,7 @@ public class AssetManager implements PacketCallback
 		// Check asset cache first
 		if (callback != null && _Cache.containsKey(assetID, transfer.suffix))
 		{
-			byte[] data = _Cache.GetCachedAssetBytes(assetID, transfer.suffix);
+			byte[] data = _Cache.get(assetID, transfer.suffix);
 			transfer.AssetData = data;
 			transfer.AssetType = type;
 			transfer.Success = true;
@@ -902,7 +902,7 @@ public class AssetManager implements PacketCallback
 		// Check asset cache first
 		if (callback != null && _Cache.containsKey(assetID, transfer.suffix))
 		{
-			byte[] data = _Cache.GetCachedAssetBytes(assetID, transfer.suffix);
+			byte[] data = _Cache.get(assetID, transfer.suffix);
 			transfer.AssetData = data;
 			transfer.Success = true;
 			transfer.Status = StatusCode.OK;
@@ -1376,7 +1376,7 @@ public class AssetManager implements PacketCallback
 		// Do we have this mesh asset in the cache?
 		if (_Cache.containsKey(meshID, "mesh"))
 		{
-			callback.callback(true, new AssetMesh(meshID, _Cache.GetCachedAssetBytes(meshID, "mesh")));
+			callback.callback(true, new AssetMesh(meshID, _Cache.get(meshID, "mesh")));
 			return;
 		}
 
@@ -1392,7 +1392,7 @@ public class AssetManager implements PacketCallback
 					{
 						if (response != null) // success
 						{
-							_Cache.SaveAssetToCache(meshID, response, "mesh");
+							_Cache.put(meshID, response, "mesh");
 							callback.callback(true, new AssetMesh(meshID, response));
 						}
 					}
@@ -1444,7 +1444,7 @@ public class AssetManager implements PacketCallback
 
 		// Do we have this image in the cache?
 		if (_Cache.containsKey(textureID, "tex")
-			&& (assetData = _Cache.GetCachedAssetBytes(textureID, "tex")) != null)
+			&& (assetData = _Cache.get(textureID, "tex")) != null)
 		{
 			callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
 			FireImageProgressEvent(textureID, assetData.length, assetData.length);
@@ -1465,7 +1465,7 @@ public class AssetManager implements PacketCallback
 			{
 				if (response != null) // success
 				{
-					_Cache.SaveAssetToCache(textureID, response, "tex");
+					_Cache.put(textureID, response, "tex");
 					callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, response));
 					FireImageProgressEvent(textureID, response.length, response.length);
 				}
@@ -1533,7 +1533,7 @@ public class AssetManager implements PacketCallback
 		byte[] assetData;
 		// Do we have this image in the cache?
 		if (_Cache.containsKey(textureID, "tex")
-			&& (assetData = _Cache.GetCachedAssetBytes(textureID, "tex")) != null)
+			&& (assetData = _Cache.get(textureID, "tex")) != null)
 		{
 			callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
 			FireImageProgressEvent(textureID, assetData.length, assetData.length);
@@ -1555,7 +1555,7 @@ public class AssetManager implements PacketCallback
 
 		try
 		{
-			URI url = new URI(String.format("{%s}/?texture_id={%s}", _Client.Network.getCapabilityURI("GetTexture"), textureID));
+			URI url = new URI(String.format("%s/?texture_id=%s", _Client.Network.getCapabilityURI("GetTexture"), textureID));
 			DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", progressHandler, new FutureCallback<byte[]>()
 			{
 				@Override
@@ -1563,7 +1563,7 @@ public class AssetManager implements PacketCallback
 				{
 					if (response != null) // success
 					{
-						_Cache.SaveAssetToCache(textureID, response, "tex");
+						_Cache.put(textureID, response, "tex");
 						callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, response));
 						FireImageProgressEvent(textureID, response.length, response.length);
 					}
@@ -1731,7 +1731,7 @@ public class AssetManager implements PacketCallback
 					Logger.DebugLog("Transfer for asset " + download.AssetID.toString() + " completed", _Client);
 
 					// Cache successful asset download
-					_Cache.SaveAssetToCache(download.AssetID, download.AssetData, download.suffix);
+					_Cache.put(download.AssetID, download.AssetData, download.suffix);
 					assetItem = CreateAssetItem(download);
 				}
 				else

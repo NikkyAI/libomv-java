@@ -243,7 +243,7 @@ public class AssetCache
 	 *            UUID of the asset we want to get
 	 * @return Raw bytes of the asset, or null on failure
 	 */
-	public final byte[] GetCachedAssetBytes(UUID assetID, String suffix)
+	public final byte[] get(UUID assetID, String suffix)
 	{
 		if (useAssetCache)
 		{
@@ -281,35 +281,6 @@ public class AssetCache
 			catch (Throwable ex)
 			{
 				Logger.Log("Failed reading asset from cache (" + ex.getMessage() + ")", LogLevel.Warning, _Client, ex);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns ImageDownload object of the image from the local image cache,
-	 * null if it does not exist
-	 * 
-	 * @param imageID
-	 *            UUID of the image we want to get
-	 * @return ImageDownload object containing the image, or null on failure
-	 */
-	public final ImageDownload get(UUID imageID, String suffix)
-	{
-		if (useAssetCache)
-		{
-			byte[] imageData = GetCachedAssetBytes(imageID, suffix);
-			if (imageData != null)
-			{
-				ImageDownload transfer = _Manager.new ImageDownload();
-				transfer.AssetType = AssetType.Texture;
-				transfer.ID = imageID;
-				transfer.AssetData = imageData;
-				transfer.Size = imageData.length;
-				transfer.Transferred = imageData.length;
-				transfer.Success = true;
-				transfer.Simulator = _Client.Network.getCurrentSim();
-				return transfer;
 			}
 		}
 		return null;
@@ -356,7 +327,7 @@ public class AssetCache
 	 *            Raw bytes the asset consists of
 	 * @return Weather the operation was successfull
 	 */
-	public final boolean SaveAssetToCache(UUID assetID, byte[] assetData, String suffix)
+	public final boolean put(UUID assetID, byte[] assetData, String suffix)
 	{
 		if (useAssetCache)
 		{
@@ -429,7 +400,7 @@ public class AssetCache
 	 * Wipes out entire cache
 	 * 
 	 */
-	public final void Clear()
+	public final void clear()
 	{
 		File[] files = ListCacheFiles();
 		if (files != null)
