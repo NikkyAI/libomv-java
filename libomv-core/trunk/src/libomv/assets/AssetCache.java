@@ -43,8 +43,6 @@ import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.LibSettings;
-import libomv.assets.AssetItem.AssetType;
-import libomv.assets.AssetManager.ImageDownload;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Logger;
@@ -63,7 +61,6 @@ public class AssetCache
 	public ComputeAssetCacheFilenameDelegate ComputeAssetCacheFilename = null;
 
 	private GridClient _Client;
-	private AssetManager _Manager;
 	private Thread cleanerThread;
 	private Timer cleanerTimer;
 	private long pruneInterval = 1000 * 60 * 5;
@@ -171,10 +168,9 @@ public class AssetCache
 	 * @param client A reference to the GridClient object
 	 * @param manager A reference to the AssetManager
 	 */
-	public AssetCache(GridClient client, AssetManager manager)
+	public AssetCache(GridClient client)
 	{
 		_Client = client;
-		_Manager = manager;
 
 		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 		useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);

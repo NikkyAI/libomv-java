@@ -601,7 +601,7 @@ public class AssetManager implements PacketCallback
 	public AssetManager(GridClient client)
 	{
 		_Client = client;
-		_Cache = new AssetCache(client, this);
+		_Cache = new AssetCache(client);
 		_Transfers = new HashMap<UUID, Transfer>();
 		_Texture = new TexturePipeline(client, _Cache);
 
