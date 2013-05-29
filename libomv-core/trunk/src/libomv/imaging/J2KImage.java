@@ -88,6 +88,7 @@ public class J2KImage extends ManagedImage
 		
 		for (int i = 0; i < ncomps; i++)
 		{
+			scale[i] = new PixelScale();
 			scale[i].ls = 1 << (dataSrc.getNomRangeBits(i) - 1);
 			scale[i].mv = (1 << dataSrc.getNomRangeBits(i)) - 1;
 			scale[i].fb = dataSrc.getFixedPoint(i);
@@ -205,11 +206,8 @@ public class J2KImage extends ManagedImage
      */
     public static int encode(OutputStream os, ManagedImage image, boolean lossless)
     {
-        if (((image.Channels & ManagedImage.ImageChannels.Gray) != 0 && 
-             ((image.Channels & ManagedImage.ImageChannels.Color) != 0) ||
-             ((image.Channels & ManagedImage.ImageChannels.Bump) != 0))||
-        	((image.Channels & ManagedImage.ImageChannels.Bump) != 0 && 
-        	 (image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
+        if (((image.Channels & ManagedImage.ImageChannels.Gray) != 0) && ((image.Channels & ManagedImage.ImageChannels.Color) != 0) ||
+        	((image.Channels & ManagedImage.ImageChannels.Bump) != 0) && ((image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
             throw new IllegalArgumentException("JPEG2000 encoding is not supported for this channel combination");
 
         int components = 1;
@@ -228,7 +226,7 @@ public class J2KImage extends ManagedImage
         {
         	if (param[i][3] != null)
         	{
-        		defpl.put(param[i][0],param[i][3]);
+        		defpl.put(param[i][0], param[i][3]);
             }
         }
 
@@ -238,7 +236,7 @@ public class J2KImage extends ManagedImage
         boolean[] imsigned = new boolean[components];
 //		BlkImgDataSrc imgsrc = new ImgReaderMI(image);
 
-//  	enc.encode(imgsrc, imsigned, components, false, os, true, false);
+//		enc.encode(imgsrc, imsigned, components, false, os, true, false);
 
         
         
