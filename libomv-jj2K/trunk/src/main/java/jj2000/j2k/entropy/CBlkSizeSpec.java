@@ -369,6 +369,7 @@ public class CBlkSizeSpec extends ModuleSpec
 				break;
 			case SPEC_TILE_COMP:
 				dim = (Integer[]) getTileCompVal(t, c);
+				break;
 			default:
 				return 0;
 		}
