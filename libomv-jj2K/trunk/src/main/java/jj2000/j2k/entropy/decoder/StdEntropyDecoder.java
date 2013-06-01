@@ -429,8 +429,8 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 * The mask to isolate the bits necessary to identify RLC coding state
 	 * (significant, visited and non-zero context, for row 1 and 2).
 	 */
-	private static final int RLC_MASK_R1R2 = STATE_SIG_R1 | STATE_SIG_R2 | STATE_VISITED_R1 | STATE_VISITED_R2
-			| STATE_NZ_CTXT_R1 | STATE_NZ_CTXT_R2;
+//	private static final int RLC_MASK_R1R2 = STATE_SIG_R1 | STATE_SIG_R2 | STATE_VISITED_R1 | STATE_VISITED_R2
+//			| STATE_NZ_CTXT_R1 | STATE_NZ_CTXT_R2;
 
 	/** The mask to obtain the ZC_LUT index from the 'state' information */
 	// This is needed because of the STATE_V_D_SIGN, STATE_V_U_SIGN,

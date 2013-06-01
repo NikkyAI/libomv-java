@@ -834,6 +834,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 	 * 
 	 * @return True if specified output rate or EOF is reached.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean readPktHead(int l, int r, int c, int p, CBlkInfo[][][] cbI, int[] nb) throws IOException
 	{
 
@@ -844,7 +845,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 		int passtype; // coding pass type
 		TagTreeDecoder tdIncl, tdBD;
 		int tmp, tmp2, totnewtp, lblockCur, tpidx;
-		int sumtotnewtp = 0;
+//		int sumtotnewtp = 0;
 		Coord cbc;
 		int startPktHead = ehs.getPos();
 		if (startPktHead >= ehs.length())
@@ -1055,7 +1056,7 @@ public class PktDecoder implements StdEntropyCoderOptions
 							}
 						}
 						ccb.addNTP(l, totnewtp);
-						sumtotnewtp += totnewtp;
+//						sumtotnewtp += totnewtp;
 						cblks[s].addElement(prec.cblk[s][m][n]);
 
 						// Code-block length

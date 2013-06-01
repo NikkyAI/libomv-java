@@ -91,7 +91,7 @@ public class StdDequantizer extends Dequantizer
 	private QuantStepSizeSpec qsss;
 
 	/** The number of guard bits spec */
-	private GuardBitsSpec gbs;
+//	private GuardBitsSpec gbs;
 
 	/** The decoding parameters of the dequantizer */
 	// private StdDequantizerParams params;
@@ -141,7 +141,7 @@ public class StdDequantizer extends Dequantizer
 		}
 		this.qsss = decSpec.qsss;
 		this.qts = decSpec.qts;
-		this.gbs = decSpec.gbs;
+//		this.gbs = decSpec.gbs;
 	}
 
 	/**

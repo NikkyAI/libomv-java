@@ -89,7 +89,7 @@ public class CodestreamManipulator
 	private static int TP_HEAD_LEN = 14;
 
 	/** The maximum number of a tile part index (TPsot) */
-	private static int MAX_TPSOT = 16;
+//	private static int MAX_TPSOT = 16;
 
 	/** The maximum number of tile parts in any tile */
 	private int maxtp;
@@ -219,7 +219,7 @@ public class CodestreamManipulator
 	 */
 	private void parseAndFind(BufferedRandomAccessFile fi) throws IOException
 	{
-		int length, pos, i, t, sop = 0, eph = 0;
+		int length, pos, i, t /*, sop = 0, eph = 0*/;
 		short marker;
 		int halfMarker;
 		int tileEnd;
@@ -288,8 +288,8 @@ public class CodestreamManipulator
 			}
 
 			// Find all SOP and EPH markers in tile
-			sop = 0;
-			eph = 0;
+//			sop = 0;
+//			eph = 0;
 
 			i = fi.getPos();
 			while (i < tileEnd)
@@ -303,7 +303,7 @@ public class CodestreamManipulator
 					{
 						markPos.addElement(new Integer(fi.getPos()));
 						ppt[t]++;
-						sop++;
+//						sop++;
 						fi.skipBytes(4);
 						i += 4;
 					}
@@ -311,7 +311,7 @@ public class CodestreamManipulator
 					if (marker == Markers.EPH)
 					{
 						markPos.addElement(new Integer(fi.getPos()));
-						eph++;
+//						eph++;
 					}
 				}
 				i++;

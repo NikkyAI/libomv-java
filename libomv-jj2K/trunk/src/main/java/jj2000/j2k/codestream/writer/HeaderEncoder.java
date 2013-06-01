@@ -407,6 +407,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @see #writeCOC
 	 */
+	@SuppressWarnings("unchecked")
 	protected void writeCOD(boolean mh, int tileIdx) throws IOException
 	{
 		AnWTFilter[][] filt;
@@ -696,6 +697,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * 
 	 * @see #writeCOD
 	 */
+	@SuppressWarnings("unchecked")
 	protected void writeCOC(boolean mh, int tileIdx, int compIdx) throws IOException
 	{
 		AnWTFilter[][] filt;

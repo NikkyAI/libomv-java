@@ -140,6 +140,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 
 		// Set precinct sizes to default i.e. 2^15 =
 		// Markers.PRECINCT_PARTITION_DEF_SIZE
+		@SuppressWarnings("unchecked")
 		Vector<Integer> tmpv[] = new Vector[2];
 		tmpv[0] = new Vector<Integer>(); // ppx
 		tmpv[0].addElement(new Integer(Markers.PRECINCT_PARTITION_DEF_SIZE));
@@ -170,6 +171,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 		while ((stk.hasMoreTokens() || wasReadingPrecinctSize) && !endOfParamList)
 		{
 
+			@SuppressWarnings("unchecked")
 			Vector<Integer> v[] = new Vector[2]; // v[0] : ppx, v[1] : ppy
 
 			// We do not read the next token if we were reading a precinct's
@@ -388,6 +390,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * @return The precinct partition width in component 'c' and tile 't' at
 	 *         resolution level 'rl'.
 	 */
+	@SuppressWarnings("unchecked")
 	public int getPPX(int t, int c, int rl)
 	{
 		int mrl, idx;
@@ -446,6 +449,7 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * @return The precinct partition width in component 'n' and tile 't' at
 	 *         resolution level 'rl'.
 	 */
+	@SuppressWarnings("unchecked")
 	public int getPPY(int t, int c, int rl)
 	{
 		int mrl, idx;

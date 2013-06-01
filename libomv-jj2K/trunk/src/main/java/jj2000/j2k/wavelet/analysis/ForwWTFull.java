@@ -842,7 +842,7 @@ public class ForwWTFull extends ForwardWT
 	{
 
 		int ulx, uly, w, h;
-		int band_w, band_h;
+		int band_w /*, band_h*/;
 
 		// If subband is empty (i.e. zero size) nothing to do
 		if (subband.w == 0 || subband.h == 0)
@@ -855,7 +855,7 @@ public class ForwWTFull extends ForwardWT
 		w = subband.w;
 		h = subband.h;
 		band_w = getTileCompWidth(tIdx, c);
-		band_h = getTileCompHeight(tIdx, c);
+//		band_h = getTileCompHeight(tIdx, c);
 
 		if (intData)
 		{

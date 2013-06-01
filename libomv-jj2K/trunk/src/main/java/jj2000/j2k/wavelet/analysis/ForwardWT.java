@@ -147,7 +147,7 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 */
 	public static ForwardWT createInstance(BlkImgDataSrc src, ParameterList pl, EncoderSpecs encSpec)
 	{
-		int deflev = ((Integer) encSpec.dls.getDefault()).intValue();
+//		int deflev = ((Integer) encSpec.dls.getDefault()).intValue();
 
 		// Check parameters
 		pl.checkList(OPT_PREFIX, ParameterList.toNameArray(pinfo));

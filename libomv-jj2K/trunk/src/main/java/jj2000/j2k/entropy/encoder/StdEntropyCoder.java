@@ -536,8 +536,8 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * The mask to isolate the bits necessary to identify RLC coding state
 	 * (significant, visited and non-zero context, for row 1 and 2).
 	 */
-	private static final int RLC_MASK_R1R2 = STATE_SIG_R1 | STATE_SIG_R2 | STATE_VISITED_R1 | STATE_VISITED_R2
-			| STATE_NZ_CTXT_R1 | STATE_NZ_CTXT_R2;
+//	private static final int RLC_MASK_R1R2 = STATE_SIG_R1 | STATE_SIG_R2 | STATE_VISITED_R1 | STATE_VISITED_R2
+//			| STATE_NZ_CTXT_R1 | STATE_NZ_CTXT_R2;
 
 	/** The mask to obtain the ZC_LUT index from the state information */
 	// This is needed because of the STATE_V_D_SIGN_R1, STATE_V_U_SIGN_R1,
@@ -1060,6 +1060,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @see MQCoder
 	 */
+	@SuppressWarnings("unchecked")
 	public StdEntropyCoder(CBlkQuantDataSrcEnc src, CBlkSizeSpec cblks, PrecinctSizeSpec pss, StringSpec bms,
 			StringSpec mqrs, StringSpec rts, StringSpec css, StringSpec sss, StringSpec lcs, StringSpec tts)
 	{
@@ -2239,7 +2240,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		int stopsk; // The loop limit on the variable sk
 		int csj; // Local copy (i.e. cached) of 'state[j]'
 		int mask; // The mask for the current bit-plane
-		int nsym = 0; // Number of symbol
+//		int nsym = 0; // Number of symbol
 		int sym; // The symbol to code
 		int data[]; // The data buffer
 		int dist; // The distortion reduction for this pass
@@ -2301,14 +2302,14 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 						// Apply zero coding
 						sym = (data[k] & mask) >>> bp;
 						bout.writeBit(sym);
-						nsym++;
+//						nsym++;
 						if (sym != 0)
 						{
 							// Became significant
 							// Apply sign coding
 							sym = data[k] >>> 31;
 							bout.writeBit(sym);
-							nsym++;
+//							nsym++;
 							// Update state information (significant bit,
 							// visited bit, neighbor significant bit of
 							// neighbors, non zero context of neighbors, sign
@@ -2369,14 +2370,14 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 						// Apply zero coding
 						sym = (data[k] & mask) >>> bp;
 						bout.writeBit(sym);
-						nsym++;
+//						nsym++;
 						if (sym != 0)
 						{
 							// Became significant
 							// Apply sign coding
 							sym = data[k] >>> 31;
 							bout.writeBit(sym);
-							nsym++;
+//							nsym++;
 							// Update state information (significant bit,
 							// visited bit, neighbor significant bit of
 							// neighbors, non zero context of neighbors, sign
@@ -2428,14 +2429,14 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 					{
 						sym = (data[k] & mask) >>> bp;
 						bout.writeBit(sym);
-						nsym++;
+//						nsym++;
 						if (sym != 0)
 						{
 							// Became significant
 							// Apply sign coding
 							sym = data[k] >>> 31;
 							bout.writeBit(sym);
-							nsym++;
+//							nsym++;
 							// Update state information (significant bit,
 							// visited bit, neighbor significant bit of
 							// neighbors, non zero context of neighbors, sign
@@ -2480,14 +2481,14 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 						// Apply zero coding
 						sym = (data[k] & mask) >>> bp;
 						bout.writeBit(sym);
-						nsym++;
+//						nsym++;
 						if (sym != 0)
 						{
 							// Became significant
 							// Apply sign coding
 							sym = data[k] >>> 31;
 							bout.writeBit(sym);
-							nsym++;
+//							nsym++;
 							// Update state information (significant bit,
 							// visited bit, neighbor significant bit of
 							// neighbors, non zero context of neighbors, sign
@@ -2837,7 +2838,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 		int s; // The stripe index
 		int nstripes; // The number of stripes in the code-block
 		int sheight; // Height of the current stripe
-		int nsym = 0;
+//		int nsym = 0;
 
 		// Initialize local variables
 		dscanw = srcblk.scanw;
@@ -2877,7 +2878,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 					{
 						// Code bit "raw"
 						bout.writeBit((data[k] & mask) >>> bp);
-						nsym++;
+//						nsym++;
 						// No need to set STATE_PREV_MR_R1 since all magnitude
 						// refinement passes to follow are "raw"
 						// Update distortion
@@ -2892,7 +2893,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 						k += dscanw;
 						// Code bit "raw"
 						bout.writeBit((data[k] & mask) >>> bp);
-						nsym++;
+//						nsym++;
 						// No need to set STATE_PREV_MR_R2 since all magnitude
 						// refinement passes to follow are "raw"
 						// Update distortion
@@ -2915,7 +2916,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 					{
 						// Code bit "raw"
 						bout.writeBit((data[k] & mask) >>> bp);
-						nsym++;
+//						nsym++;
 						// No need to set STATE_PREV_MR_R1 since all magnitude
 						// refinement passes to follow are "raw"
 						// Update distortion
@@ -2930,7 +2931,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 						k += dscanw;
 						// Code bit "raw"
 						bout.writeBit((data[k] & mask) >>> bp);
-						nsym++;
+//						nsym++;
 						// No need to set STATE_PREV_MR_R2 since all magnitude
 						// refinement passes to follow are "raw"
 						// Update distortion

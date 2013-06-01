@@ -56,7 +56,7 @@ public class ROI
 	/** ImgReaderPGM object with the arbrtrary ROI */
 	public ImgReaderPGM maskPGM = null;
 
-	/** Where or not the ROI shape is arbitrary */
+	/** Whether or not the ROI shape is arbitrary */
 	public boolean arbShape;
 
 	/** Flag indicating whether the ROI is rectangular or not */

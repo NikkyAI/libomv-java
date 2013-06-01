@@ -137,7 +137,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 	private int[] totTileHeadLen;
 
 	/** First tile part header length */
-	private int firstTilePartHeadLen;
+//	private int firstTilePartHeadLen;
 
 	/** Total length of all tile parts in all tiles */
 	private double totAllTileLen;
@@ -346,7 +346,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 		baknBytes = new int[nt];
 		hd.nTileParts = new int[nt];
 
-		int t = 0, pos, tp = 0, tptot = 0;
+		int t = 0, pos, tp = 0 /*, tptot = 0 */;
 
 		// Keeps main header's length, takes file format overhead into account
 		int cdstreamStart = hd.mainHeadOff; // Codestream offset in the file
@@ -377,7 +377,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 		int mdl;
 		totAllTileLen = 0;
 		remainingTileParts = nt; // at least as many tile-parts as tiles
-		int maxTP = nt; // If maximum 1 tile part per tile specified
+//		int maxTP = nt; // If maximum 1 tile part per tile specified
 
 		try
 		{
@@ -459,15 +459,15 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent implements Ma
 				}
 
 				// If this is first tile-part, remember header length
-				if (tptot == 0)
-					firstTilePartHeadLen = tilePartHeadLen[t][tp];
+//				if (tptot == 0)
+//					firstTilePartHeadLen = tilePartHeadLen[t][tp];
 
 				// Go to the beginning of next tile part
 				tilePartsRead[t]++;
 				in.seek(tilePartStart + tilePartLen[t][tp]);
 				remainingTileParts--;
-				maxTP--;
-				tptot++;
+//				maxTP--;
+//				tptot++;
 
 				// If Psot of the current tile-part was equal to zero, it is
 				// assumed that it contains all data until the EOC marker

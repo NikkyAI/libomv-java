@@ -353,7 +353,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 	{
 		ROI roi;
 		StringTokenizer stok;
-		int nrOfROIs = 0;
+//		int nrOfROIs = 0;
 		int ulx, uly, w, h, x, y, rad;
 		boolean[] roiInComp = null;
 
@@ -370,7 +370,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 					roiInComp = ModuleSpec.parseIdx(word, nc);
 					break;
 				case 'R': // Rectangular ROI to be read
-					nrOfROIs++;
+//					nrOfROIs++;
 					try
 					{
 						word = stok.nextToken();
@@ -411,7 +411,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 					}
 					break;
 				case 'C': // Circular ROI to be read
-					nrOfROIs++;
+//					nrOfROIs++;
 
 					try
 					{
@@ -451,7 +451,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc
 					}
 					break;
 				case 'A': // ROI wth arbitrary shape
-					nrOfROIs++;
+//					nrOfROIs++;
 
 					String filename;
 					ImgReaderPGM maskPGM = null;

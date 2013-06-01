@@ -415,6 +415,7 @@ public class ParameterList extends Properties
 	 *                If there's a parameter name starting with 'prfx' which is
 	 *                not in the valid list of parameter names.
 	 */
+	@SuppressWarnings("unchecked")
 	public void checkList(char prfx, String plist[])
 	{
 		Enumeration<String> args;
@@ -467,6 +468,7 @@ public class ParameterList extends Properties
 	 *                If there's a parameter name not starting with 'prfx' which
 	 *                is not in the valid list of parameter names.
 	 */
+	@SuppressWarnings("unchecked")
 	public void checkList(char prfxs[], String plist[])
 	{
 		Enumeration<String> args;

@@ -186,7 +186,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	private static final int SOT_FOUND = 1 << 6;
 
 	/** Flag bit for PLT marker segment found */
-	private static final int PLT_FOUND = 1 << 7;
+//	private static final int PLT_FOUND = 1 << 7;
 
 	/** Flag bit for QCC marker segment found */
 	private static final int QCC_FOUND = 1 << 8;
@@ -213,7 +213,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	public static final int CRG_FOUND = 1 << 16;
 
 	/** The reset mask for new tiles */
-	private static final int TILE_RESET = ~(PLM_FOUND | SIZ_FOUND | RGN_FOUND);
+//	private static final int TILE_RESET = ~(PLM_FOUND | SIZ_FOUND | RGN_FOUND);
 
 	/** HashTable used to store temporary marker segment byte buffers */
 	private Hashtable<String, byte[]> ht = null;
@@ -1406,6 +1406,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		hvfilters[1] = vfilters;
 
 		// Get precinct partition sizes
+		@SuppressWarnings("unchecked")
 		Vector<Integer> v[] = new Vector[2];
 		v[0] = new Vector<Integer>();
 		v[1] = new Vector<Integer>();
@@ -1585,6 +1586,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		hvfilters[1] = vfilters;
 
 		// Get precinct partition sizes
+		@SuppressWarnings("unchecked")
 		Vector<Integer> v[] = new Vector[2];
 		v[0] = new Vector<Integer>();
 		v[1] = new Vector<Integer>();
@@ -1802,6 +1804,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		}
 	}
 
+
 	/**
 	 * Reads TLM marker segment and realigns the codestream where the next
 	 * marker should be found. Informations stored in these fields are currently
@@ -1814,7 +1817,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
 	 */
-	private void readTLM(DataInputStream ehs) throws IOException
+/*	private void readTLM(DataInputStream ehs) throws IOException
 	{
 		int length;
 
@@ -1824,7 +1827,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.INFO, "Skipping unsupported TLM marker");
 	}
-
+*/
 	/**
 	 * Reads PLM marker segment and realigns the codestream where the next
 	 * marker should be found. Informations stored in these fields are currently
@@ -1837,7 +1840,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
 	 */
-	private void readPLM(DataInputStream ehs) throws IOException
+/*	private void readPLM(DataInputStream ehs) throws IOException
 	{
 		int length;
 
@@ -1847,7 +1850,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.INFO, "Skipping unsupported PLM marker");
 	}
-
+*/
 	/**
 	 * Reads the PLT fields and realigns the codestream where the next marker
 	 * should be found. Informations stored in these fields are currently NOT
@@ -1860,7 +1863,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 	 *                If an I/O error occurs while reading from the encoder
 	 *                header stream
 	 */
-	private void readPLTFields(DataInputStream ehs) throws IOException
+/*	private void readPLTFields(DataInputStream ehs) throws IOException
 	{
 		int length;
 
@@ -1870,7 +1873,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 
 		FacilityManager.getMsgLogger().printmsg(MsgLogger.INFO, "Skipping unsupported PLT marker");
 	}
-
+*/
 	/**
 	 * Reads the RGN marker segment of the codestream header.
 	 * 
