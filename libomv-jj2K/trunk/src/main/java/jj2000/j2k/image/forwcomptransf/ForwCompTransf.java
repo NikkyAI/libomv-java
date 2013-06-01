@@ -42,7 +42,6 @@
  */
 package jj2000.j2k.image.forwcomptransf;
 
-import jj2000.j2k.wavelet.analysis.*;
 import jj2000.j2k.encoder.*;
 import jj2000.j2k.image.*;
 import jj2000.j2k.util.*;
@@ -82,7 +81,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	private CompTransfSpec cts;
 
 	/** The wavelet filter specifications */
-	private AnWTFilterSpec wfs;
+//	private AnWTFilterSpec wfs;
 
 	/**
 	 * The type of the current component transformation. JPEG 2000 part 1
@@ -124,7 +123,7 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	{
 		super(imgSrc);
 		this.cts = encSpec.cts;
-		this.wfs = encSpec.wfs;
+//		this.wfs = encSpec.wfs;
 		src = imgSrc;
 	}
 

@@ -210,6 +210,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator
 	 * 
 	 * @see ProgressionType
 	 */
+	@SuppressWarnings("deprecation")
 	public EBCOTRateAllocator(CodedCBlkDataSrcEnc src, LayersInfo lyrs, CodestreamWriter writer, EncoderSpecs encSpec,
 			ParameterList pl)
 	{

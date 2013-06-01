@@ -1060,7 +1060,7 @@ public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOpti
 	 * 
 	 * @see MQCoder
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public StdEntropyCoder(CBlkQuantDataSrcEnc src, CBlkSizeSpec cblks, PrecinctSizeSpec pss, StringSpec bms,
 			StringSpec mqrs, StringSpec rts, StringSpec css, StringSpec sss, StringSpec lcs, StringSpec tts)
 	{

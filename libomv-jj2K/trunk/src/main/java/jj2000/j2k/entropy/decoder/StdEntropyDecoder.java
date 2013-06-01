@@ -720,6 +720,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 	 *            the maximum number of bit planes to decode according to the m
 	 *            quit condition
 	 */
+	@SuppressWarnings("deprecation")
 	public StdEntropyDecoder(CodedCBlkDataSrcDec src, DecoderSpecs decSpec, boolean doer, boolean verber, int mQuit)
 	{
 		super(src);
