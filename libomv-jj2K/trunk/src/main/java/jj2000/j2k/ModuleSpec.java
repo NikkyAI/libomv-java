@@ -132,7 +132,10 @@ public class ModuleSpec implements Cloneable
 	 */
 	protected Hashtable<String, Object> tileCompVal;
 
-	public ModuleSpec getCopy()
+    /** The specified value in string format */
+    protected String specified;
+
+    public ModuleSpec getCopy()
 	{
 		return (ModuleSpec) this.clone();
 	}

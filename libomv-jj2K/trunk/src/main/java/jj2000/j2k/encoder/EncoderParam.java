@@ -44,6 +44,9 @@ package jj2000.j2k.encoder;
 import java.util.Locale;
 import javax.imageio.ImageWriteParam;
 
+import jj2000.j2k.ModuleSpec;
+import jj2000.j2k.roi.MaxShiftSpec;
+
 /**
  * A subclass of <code>ImageWriteParam</code> for writing images in
  * the JPEG 2000 format.
@@ -152,6 +155,22 @@ public class EncoderParam extends ImageWriteParam {
     private int numDecompositionLevels = 5;
 
     /**
+     * Indicates that the packet headers are packed in the tiles' headers.
+     */
+    private boolean packPacketHeaderInTile = false;
+
+    /**
+     * Indicates that the packet headers are packed in the main header.
+     */
+    private boolean packPacketHeaderInMain = false;
+
+    /**
+     * Specifies the maximum number of packets to be put into one tile-part.
+     * Zero means include all packets in first tile-part of each tile.
+     */
+    private int packetPerTilePart = 0;
+
+    /**
      * The bitrate in bits-per-pixel for encoding.  Should be set when lossy
      * compression scheme is used.  The default is
      * <code>Double.MAX_VALUE</code>.
@@ -188,7 +207,32 @@ public class EncoderParam extends ImageWriteParam {
      */
     private String progressionType = "layer";
 
-    /** Specifies whether end of packet header (EPH) markers should be used.
+    /**
+     * The specified (tile-component) progression.  Will be used to generate
+     * the progression type.
+     */
+    private String progressionName = null;
+
+    /** Explicitly specifies the codestream layer formation parameters.
+     *  The rate (double) parameter specifies the bitrate to which the first
+     *  layer should be optimized.  The layers (int) parameter, if present,
+     *  specifies the number of extra layers that should be added for
+     *  scalability.  These extra layers are not optimized.  Any extra rate
+     *  and layers parameters add more layers, in the same way.  An
+     *  additional layer is always added at the end, which is optimized
+     *  to the overall target bitrate of the bit stream. Any layers
+     *  (optimized or not) whose target bitrate is higher that the
+     *  overall target bitrate are silently ignored. The bitrates of
+     *  the extra layers that are added through the layers parameter
+     *  are approximately log-spaced between the other target bitrates.
+     *  If several (rate, layers) constructs appear the rate parameters
+     *  must appear in increasing order. The rate allocation algorithm
+     *  ensures that all coded layers have a minimal reasonable size,
+     *  if not these layers are silently ignored.  Default: 0.015 +20 2.0 +10.
+     */
+     private String layers = "0.015 +20 2.0 +10";
+
+     /** Specifies whether end of packet header (EPH) markers should be used.
      *  true enables, false disables it.  Default: false.
      */
      private boolean EPH = false;
@@ -202,6 +246,35 @@ public class EncoderParam extends ImageWriteParam {
      *  box is written.  The default value is false.
      */
     private boolean writeCodeStreamOnly = false;
+
+    /** This parameter defines the lowest resolution levels to belong to
+     *  the ROI.  By doing this, it is possible to avoid only getting
+     *  information for the ROI at an early stage of transmission.
+     *  startLevelROI = 0 means the lowest resolution level belongs to
+     *  the ROI, 1 means the second lowest etc.  The default values, -1,
+     *  deactivates this parameter.
+     */
+    private int startLevelROI = -1;
+
+    /** By specifying this parameter, the ROI mask will be limited to
+     *  covering only entire code-blocks. The ROI coding can then be
+     *  performed without any actual scaling of the coefficients but
+     *  by instead scaling the distortion estimates.
+     */
+    private boolean alignROI = false;
+
+    /** Specifies ROIs shape and location. The component index specifies
+     *  which components contain the ROI.  If this parameter is used, the
+     *  codestream is layer progressive by default unless it is
+     *  overridden by the <code>progressionType</code>.
+     */
+    private MaxShiftSpec ROIs = null;
+
+    private int numTiles;
+    private int numComponents;
+
+    private int minX;
+    private int minY;
 
     /**
      * Constructor which sets the <code>Locale</code>.
@@ -410,6 +483,16 @@ public class EncoderParam extends ImageWriteParam {
         return EPH;
     }
 
+    /** Sets <code>progressionName</code> */
+    public void setProgressionName(String values) {
+        progressionName = values;
+    }
+
+    /** Gets <code>progressionType</code> */
+    public String getProgressionName() {
+        return progressionName;
+    }
+
     /**
      * Sets <code>progressionType</code>.
      *
@@ -450,5 +533,113 @@ public class EncoderParam extends ImageWriteParam {
      */
     public boolean  getWriteCodeStreamOnly() {
         return writeCodeStreamOnly;
+    }
+
+    /** Sets the <code>startLevelROI</code> */
+    public void setStartLevelROI(int value) {
+        startLevelROI = value;
+    }
+
+    /** Gets <code>startLevel</code> */
+    public int getStartLevelROI() {
+        return startLevelROI;
+    }
+
+    /** Sets the <code>layers</code> */
+    public void setLayers(String value) {
+        layers = value;
+    }
+
+    /** Gets <code>layers</code> */
+    public String getLayers() {
+        return layers;
+    }
+
+    /** Sets <code>minX</code> */
+    public void setMinX(int minX) {
+        this.minX = minX;
+    }
+
+    /** Gets <code>minX</code> */
+    public int getMinX() {
+        return minX;
+    }
+
+    /** Sets <code>minY</code> */
+    public void setMinY(int minY) {
+        this.minY = minY;
+    }
+
+    /** Gets <code>minY</code> */
+    public int getMinY() {
+        return minY;
+    }
+
+    /** Sets <code>packetPerTilePart</code> */
+    public void setPacketPerTilePart(int packetPerTilePart) {
+        if (packetPerTilePart < 0)
+            throw new IllegalArgumentException("packetPerTilePart");
+
+        this.packetPerTilePart = packetPerTilePart;
+        if (packetPerTilePart > 0)
+        {
+            setSOP(true);
+            setEPH(true);
+        }
+    }
+
+    /** Gets <code>packetPerTilePart</code> */
+    public int getPacketPerTilePart() {
+        return packetPerTilePart;
+    }
+
+    /** Sets <code>packPacketHeaderInTile</code> */
+    public void setPackPacketHeaderInTile(boolean packPacketHeaderInTile) {
+        this.packPacketHeaderInTile = packPacketHeaderInTile;
+        if (packPacketHeaderInTile)
+        {
+            setSOP(true);
+            setEPH(true);
+        }
+    }
+
+    /** Gets <code>packPacketHeaderInTile</code> */
+    public boolean getPackPacketHeaderInTile() {
+        return packPacketHeaderInTile;
+    }
+
+    /** Sets <code>packPacketHeaderInMain</code> */
+    public void setPackPacketHeaderInMain(boolean packPacketHeaderInMain) {
+        this.packPacketHeaderInMain = packPacketHeaderInMain;
+        if (packPacketHeaderInMain)
+        {
+            setSOP(true);
+            setEPH(true);
+        }
+    }
+
+    /** Gets <code>packPacketHeaderInMain</code> */
+    public boolean getPackPacketHeaderInMain() {
+        return packPacketHeaderInMain;
+    }
+
+    /** Sets <code>alignROI</code> */
+    public void setAlignROI(boolean align) {
+        alignROI = align;
+    }
+
+    /** Gets <code>alignROI</code> */
+    public boolean getAlignROI() {
+        return alignROI;
+    }
+
+    /** Sets <code>ROIs</code> */
+    public void setROIs(String values) {
+        ROIs = new MaxShiftSpec(numTiles, numComponents, ModuleSpec.SPEC_TYPE_TILE_COMP, values);
+    }
+
+    /** Gets <code>ROIs</code> */
+    public MaxShiftSpec getROIs() {
+        return ROIs;
     }
 }

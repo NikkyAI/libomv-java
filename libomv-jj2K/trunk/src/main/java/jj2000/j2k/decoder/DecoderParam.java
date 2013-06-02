@@ -55,12 +55,13 @@ import javax.imageio.ImageReadParam;
  * <p><table border=1>
  * <caption><b>JPEG 2000 Plugin Decoding Parameters</b></caption>
  * <tr><th>Parameter Name</th> <th>Description</th></tr>
- * <tr>
+* <tr>
  *    <td>decodingRate</td>
  *    <td>Specifies the decoding rate in bits per pixel (bpp) where the
  *    number of pixels is related to the image's original size (Note:
- *    this parameter is not affected by <code>resolution</code>).
- *    The default is <code>Double.MAX_VALUE</code>.
+ *    this parameter is not affected by <code>resolution</code>).  The
+ *    codestream is either parsed (default) or truncated depending
+ *    <code>parsingEnabled</code>.  The default is <code>Double.MAX_VALUE</code>.
  *    It means decoding with the encoding rate.
  *    </td>
  * </tr>
@@ -74,7 +75,21 @@ import javax.imageio.ImageReadParam;
  *    resolution (among all tile-components).  This parameter affects only
  *    the inverse wavelet transform and not the number of bytes read by the
  *    codestream parser, which depends only on <code>decodingRate</code>.
- *    The default value, -1, means to use the resolution level at encoding.
+ *    </td>
+ * </tr>
+ * <tr>
+ *    <td>noROIDescaling</td>
+ *    <td>Ensures that no ROI de-scaling is performed.  Decompression is done
+ *    like there is no ROI in the image.
+ *    </td>
+ * </tr>
+ * <tr>
+ *    <td>parsingEnabled</td>
+ *    <td>Enable the parsing mode or not when the decoding rate is specified.
+ *    If it is false, the codestream is decoded as if it were truncated to
+ *    the given rate.  If it is true, the decoder creates, truncates and
+ *    decodes a virtual layer progressive codestream with the same
+ *    truncation points in each code-block.
  *    </td>
  * </tr>
  * </table>
@@ -97,6 +112,19 @@ public class DecoderParam extends ImageReadParam {
      *  depends only on <code>decodingRate</code>.
      */
     private int resolution = -1;
+
+    /** Ensures that no ROI de-scaling is performed.  Decompression
+     *  is done like there is no ROI in the image.
+     */
+    private boolean noROIDescaling = true;
+
+    /** Enable the parsing mode or not when the decoding rate is specified .
+     *  If it is false, the codestream is decoded as if it were truncated to
+     *  the given rate.  If it is true, the decoder creates, truncates and
+     *  decodes a virtual layer progressive codestream with the same
+     *  truncation points in each code-block.
+     */
+    private boolean parsingEnabled = true;
 
     /** Constructs a default instance of <code>J2KImageReadParam</code>. */
     public DecoderParam() {
@@ -143,5 +171,25 @@ public class DecoderParam extends ImageReadParam {
      */
     public int getResolution() {
         return resolution;
+    }
+
+    /** Sets <code>noROIDescaling</code> */
+    public void setNoROIDescaling(boolean value) {
+        this.noROIDescaling = value;
+    }
+
+    /** Gets <code>noROIDescaling</code> */
+    public boolean getNoROIDescaling() {
+        return noROIDescaling;
+    }
+
+    /** Sets <code>parsingEnabled</code> */
+    public void setParsingEnabled(boolean value) {
+        this.parsingEnabled = value;
+    }
+
+    /** Gets <code>parsingEnabled</code> */
+    public boolean getParsingEnabled() {
+        return parsingEnabled;
     }
 }

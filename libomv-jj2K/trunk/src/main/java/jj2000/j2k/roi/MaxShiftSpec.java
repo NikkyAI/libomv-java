@@ -70,4 +70,13 @@ public class MaxShiftSpec extends ModuleSpec
 	{
 		super(nt, nc, type);
 	}
+
+	public MaxShiftSpec(int nt, int nc, byte type, String values) {
+        super(nt, nc, type);
+        specified = values;
+    }
+
+    public String getSpecified() {
+        return specified;
+    }
 }

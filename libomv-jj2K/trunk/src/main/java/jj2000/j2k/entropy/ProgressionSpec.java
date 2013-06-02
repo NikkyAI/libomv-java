@@ -44,6 +44,7 @@ package jj2000.j2k.entropy;
 import java.util.*;
 
 import jj2000.j2k.codestream.*;
+import jj2000.j2k.encoder.EncoderParam;
 import jj2000.j2k.util.*;
 import jj2000.j2k.*;
 
@@ -103,20 +104,54 @@ public class ProgressionSpec extends ModuleSpec
 	 *            class should only be used only with the type
 	 *            ModuleSpec.SPEC_TYPE_TILE.
 	 * 
+	 * @param ep
+	 *            The Parameters
+	 */
+	public ProgressionSpec(int nt, int nc, int nl, IntegerSpec dls, byte type, EncoderParam ep, String params)
+	{
+		super(nt, nc, type);
+		initialize(nt, nc, nl, dls, type, ep.getROIs() == null, params);
+	}
+	
+	/**
+	 * Creates a new ProgressionSpec object for the specified number of tiles,
+	 * components and the ParameterList instance.
+	 * 
+	 * @param nt
+	 *            The number of tiles
+	 * 
+	 * @param nc
+	 *            The number of components
+	 * 
+	 * @param nl
+	 *            The number of layer
+	 * 
+	 * @param dls
+	 *            The number of decomposition levels specifications
+	 * 
+	 * @param type
+	 *            the type of the specification module. The ProgressionSpec
+	 *            class should only be used only with the type
+	 *            ModuleSpec.SPEC_TYPE_TILE.
+	 * 
 	 * @param pl
 	 *            The ParameterList instance
 	 */
 	public ProgressionSpec(int nt, int nc, int nl, IntegerSpec dls, byte type, ParameterList pl)
 	{
 		super(nt, nc, type);
+		initialize(nt, nc, nl, dls, type, pl.getParameter("rois") == null, pl.getParameter("Aptype"));
+	}
 
-		String param = pl.getParameter("Aptype");
+	private void initialize(int nt, int nc, int nl, IntegerSpec dls, byte type, boolean nr, String params)
+	{
+
 		Progression[] prog;
 		int mode = -1;
 
-		if (param == null)
+		if (params == null)
 		{ // No parameter specified
-			if (pl.getParameter("Rroi") == null)
+			if (nr)
 			{
 				mode = checkProgMode("res");
 			}
@@ -127,7 +162,7 @@ public class ProgressionSpec extends ModuleSpec
 
 			if (mode == -1)
 			{
-				String errMsg = "Unknown progression type : '" + param + "'";
+				String errMsg = "Unknown progression type : '" + params + "'";
 				throw new IllegalArgumentException(errMsg);
 			}
 			prog = new Progression[1];
@@ -136,7 +171,7 @@ public class ProgressionSpec extends ModuleSpec
 			return;
 		}
 
-		StringTokenizer stk = new StringTokenizer(param);
+		StringTokenizer stk = new StringTokenizer(params);
 		byte curSpecType = SPEC_DEF; // Specification type of the
 										// current parameter
 		boolean[] tileSpec = null; // Tiles concerned by the specification
@@ -202,7 +237,7 @@ public class ProgressionSpec extends ModuleSpec
 						{
 							// Progression has missing parameters
 							throw new IllegalArgumentException("Progression order specification "
-									+ "has missing parameters: " + param);
+									+ "has missing parameters: " + params);
 						}
 
 						switch (intType)
@@ -262,7 +297,7 @@ public class ProgressionSpec extends ModuleSpec
 						}
 						else
 						{
-							throw new Error("Error in usage of 'Aptype' option: " + param);
+							throw new Error("Error in usage of 'Aptype' option: " + params);
 						}
 					}
 
@@ -291,7 +326,7 @@ public class ProgressionSpec extends ModuleSpec
 
 		if (progression.size() == 0)
 		{ // No progression defined
-			if (pl.getParameter("Rroi") == null)
+			if (nr)
 			{
 				mode = checkProgMode("res");
 			}
@@ -301,7 +336,7 @@ public class ProgressionSpec extends ModuleSpec
 			}
 			if (mode == -1)
 			{
-				errMsg = "Unknown progression type : '" + param + "'";
+				errMsg = "Unknown progression type : '" + params + "'";
 				throw new IllegalArgumentException(errMsg);
 			}
 			prog = new Progression[1];
@@ -351,7 +386,7 @@ public class ProgressionSpec extends ModuleSpec
 			// receive the default progressiveness.
 			if (ndefspec != 0)
 			{
-				if (pl.getParameter("Rroi") == null)
+				if (nr)
 				{
 					mode = checkProgMode("res");
 				}
@@ -361,7 +396,7 @@ public class ProgressionSpec extends ModuleSpec
 				}
 				if (mode == -1)
 				{
-					errMsg = "Unknown progression type : '" + param + "'";
+					errMsg = "Unknown progression type : '" + params + "'";
 					throw new IllegalArgumentException(errMsg);
 				}
 				prog = new Progression[1];
