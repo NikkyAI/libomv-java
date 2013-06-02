@@ -238,11 +238,6 @@ public class ImgDecoder
 		ROIDeScaler roids;
 		Dequantizer deq;
 		InverseWT invWT;
-		InvCompTransf ictransf;
-		ImgDataConverter converter;
-		BlkImgDataSrc palettized;
-		BlkImgDataSrc channels;
-		BlkImgDataSrc resampled;
 		BlkImgDataSrc color;
 		int i;
 
@@ -309,8 +304,7 @@ public class ImgDecoder
 		}
 		catch (IllegalArgumentException e)
 		{
-			error("Cannot instantiate bit stream reader" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
-					2, e);
+			error("Cannot instantiate bit stream reader" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
 			return null;
 		}
 
@@ -365,10 +359,10 @@ public class ImgDecoder
 		invWT.setImgResLevel(breader.getImgRes());
 
 		// **** Data converter **** (after inverse transform module)
-		converter = new ImgDataConverter(invWT, 0);
+		ImgDataConverter converter = new ImgDataConverter(invWT, 0);
 
 		// **** Inverse component transformation ****
-		ictransf = new InvCompTransf(converter, decSpec, depth, pl);
+		InvCompTransf ictransf = new InvCompTransf(converter, decSpec, depth, pl);
 
 		// **** Color space mapping ****
 		if (ff.JP2FFUsed && pl.getParameter("nocolorspace").equals("off"))
@@ -376,9 +370,9 @@ public class ImgDecoder
 			try
 			{
 				csMap = new ColorSpace(in, hd, pl);
-				channels = hd.createChannelDefinitionMapper(ictransf, csMap);
-				resampled = hd.createResampler(channels, csMap);
-				palettized = hd.createPalettizedColorSpaceMapper(resampled, csMap);
+				BlkImgDataSrc channels = hd.createChannelDefinitionMapper(ictransf, csMap);
+				BlkImgDataSrc resampled = hd.createResampler(channels, csMap);
+				BlkImgDataSrc palettized = hd.createPalettizedColorSpaceMapper(resampled, csMap);
 				color = hd.createColorSpaceMapper(palettized, csMap);
 
 				if (csMap.debugging())
@@ -392,8 +386,7 @@ public class ImgDecoder
 			}
 			catch (IllegalArgumentException e)
 			{
-				error("Could not instantiate ICC profiler" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
-						1, e);
+				error("Could not instantiate ICC profiler" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 1, e);
 				return null;
 			}
 			catch (ColorSpaceException e)
