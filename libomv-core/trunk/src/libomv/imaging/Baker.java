@@ -285,14 +285,18 @@ public class Baker
         // For head and tattoo, we add skin last
         if (SkinTexture && bakeType == BakeType.Head)
         {
-            ManagedImage texture = textures.get(0).Texture.Image.clone();
-            if (texture.Width != bakeWidth || texture.Height != bakeHeight)
-            {
-                try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
-                catch (Exception ex) { }
-            }
-            DrawLayer(texture, false);
+            ManagedImage texture;
             
+            if (textures.get(0).Texture != null)
+            {
+            	texture = textures.get(0).Texture.Image.clone();
+            	if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            	{
+            		try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
+            		catch (Exception ex) { }
+            	}
+            	DrawLayer(texture, false);
+            }
             // Add head tattoo here (if available, order dependant)
             if (textures.size() > 1 && textures.get(1).Texture != null)
             {

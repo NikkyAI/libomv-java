@@ -1380,7 +1380,7 @@ public class AppearanceManager implements PacketCallback
      *
      * @param wearable Wearable to decode
      */
-    private void DecodeWearableParams(WearableData wearable)
+    private void DecodeWearableParams(WearableData wearable, TextureData[] textures)
     {
         HashMap<VisualAlphaParam, Float> alphaMasks = new HashMap<VisualAlphaParam, Float>();
         List<ColorParamInfo> colorParams = new ArrayList<ColorParamInfo>();
@@ -1401,13 +1401,35 @@ public class AppearanceManager implements PacketCallback
             if (p.ColorParams != null)
             {
                 colorInfo.VisualColorParam = p.ColorParams;
-
-                // If this is not skin, just add params directly
-                if (wearable.WearableType != WearableType.Skin)
+                int key = kvp.getKey();
+                		
+                if (wearable.WearableType == WearableType.Tattoo)
                 {
                     colorParams.add(colorInfo);
+                    if (key == 1062 || key == 1063 || key == 1064)
+                    {
+                        colorParams.add(colorInfo);
+                    }
                 }
-                else
+                else if (wearable.WearableType == WearableType.Jacket)
+                {
+                    if (key == 809 || key == 810 || key == 811)
+                    {
+                        colorParams.add(colorInfo);
+                    }
+                }
+                else if (wearable.WearableType == WearableType.Hair)
+                {
+                    // Param 112 - Rainbow
+                    // Param 113 - Red
+                    // Param 114 - Blonde
+                    // Param 115 - White
+                    if (key == 112 || key == 113 || key == 114 || key == 115)
+                    {
+                        colorParams.add(colorInfo);
+                    }
+                }
+                else if (wearable.WearableType == WearableType.Skin)
                 {
                     // For skin we skip makeup params for now and use only the 3
                     // that are used to determine base skin tone
@@ -1419,12 +1441,16 @@ public class AppearanceManager implements PacketCallback
                         colorParams.add(colorInfo);
                     }
                 }
+                else
+                {
+                    colorParams.add(colorInfo);
+                }
             }
 
             // Add alpha mask
             if (p.AlphaParams != null && !p.AlphaParams.TGAFile.isEmpty() && !p.IsBumpAttribute && !alphaMasks.containsKey(p.AlphaParams))
             {
-                alphaMasks.put(p.AlphaParams, kvp.getValue());
+                alphaMasks.put(p.AlphaParams, kvp.getValue() == 0 ? 0.01f : kvp.getValue());
             }
 
             // Alhpa masks can also be specified in sub "driver" params
@@ -1437,7 +1463,7 @@ public class AppearanceManager implements PacketCallback
                         VisualParam driver = VisualParams.Params.get(p.Drivers[i]);
                         if (driver.AlphaParams != null && !driver.AlphaParams.TGAFile.isEmpty() && !driver.IsBumpAttribute && !alphaMasks.containsKey(driver.AlphaParams))
                         {
-                            alphaMasks.put(driver.AlphaParams, kvp.getValue());
+                            alphaMasks.put(driver.AlphaParams, kvp.getValue() == 0 ? 0.01f : kvp.getValue());
                         }
                     }
                 }
@@ -1457,20 +1483,20 @@ public class AppearanceManager implements PacketCallback
             int i = AvatarTextureIndex.getValue(entry.getKey());
 
             // Update information about color and alpha masks for this texture
-            _Textures[i].AlphaMasks = alphaMasks;
-            _Textures[i].Color = wearableColor;
+            textures[i].AlphaMasks = alphaMasks;
+            textures[i].Color = wearableColor;
 
             // If this texture changed, update the TextureID and clear out the old cached texture asset
-            if (_Textures[i].TextureID == null || !_Textures[i].TextureID.equals(entry.getValue()))
+            if (textures[i].TextureID == null || !textures[i].TextureID.equals(entry.getValue()))
             {
                 // Treat DEFAULT_AVATAR_TEXTURE as null
                 if (entry.getValue().equals(DEFAULT_AVATAR_TEXTURE))
-                    _Textures[i].TextureID = UUID.Zero;
+                    textures[i].TextureID = UUID.Zero;
                 else
-                    _Textures[i].TextureID = entry.getValue();
-                Logger.DebugLog("Set " + entry.getKey() + " to " + _Textures[i].TextureID, _Client);
+                    textures[i].TextureID = entry.getValue();
+                Logger.DebugLog("Set " + entry.getKey() + " to " + textures[i].TextureID, _Client);
 
-                _Textures[i].Texture = null;
+                textures[i].Texture = null;
             }
         }
     }
@@ -1495,7 +1521,7 @@ public class AppearanceManager implements PacketCallback
 
                 if (wearable.Asset.decode())
                 {
-                    DecodeWearableParams(wearable);
+                    DecodeWearableParams(wearable, _Textures);
                     Logger.DebugLog("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
                         " visual params and " + wearable.Asset.Textures.size() + " textures", _Client);
 
@@ -1559,7 +1585,7 @@ public class AppearanceManager implements PacketCallback
         {
             if (wearable.Asset != null)
             {
-                DecodeWearableParams(wearable);
+                DecodeWearableParams(wearable, _Textures);
                 latch.countDown();
             }
         }
