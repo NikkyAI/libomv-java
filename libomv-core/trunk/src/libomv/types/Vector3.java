@@ -561,15 +561,20 @@ public class Vector3
 		}
 	}
 
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && ((obj instanceof Vector3) && equals((Vector3)obj) || (obj instanceof Vector3d) && equals((Vector3d)obj));
+	}
+
 	public boolean equals(Vector3 val)
 	{
 		return val != null && X == val.X && Y == val.Y && Z == val.Z;
 	}
 
-	@Override
-	public boolean equals(Object obj)
+	public boolean equals(Vector3d val)
 	{
-		return obj != null && (obj instanceof Vector3) && equals((Vector3)obj);
+		return val != null && X == val.X && Y == val.Y && Z == val.Z;
 	}
 
 	public Vector3 negate()

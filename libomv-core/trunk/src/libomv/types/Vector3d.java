@@ -274,15 +274,20 @@ public class Vector3d
 		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", X, Y, Z);
 	}
 
-	public boolean equals(Vector3d val)
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj != null && ((obj instanceof Vector3) && equals((Vector3)obj) || (obj instanceof Vector3d) && equals((Vector3d)obj));
+	}
+
+	public boolean equals(Vector3 val)
 	{
 		return val != null && X == val.X && Y == val.Y && Z == val.Z;
 	}
 
-	@Override
-	public boolean equals(Object obj)
+	public boolean equals(Vector3d val)
 	{
-		return obj != null && (obj instanceof Vector3d) && equals((Vector3d)obj);
+		return val != null && X == val.X && Y == val.Y && Z == val.Z;
 	}
 
 	@Override
