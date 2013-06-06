@@ -53,6 +53,13 @@ public class Vector3d
 		X = Y = Z = val;
 	}
 
+	public Vector3d(Vector3 vec)
+	{
+		X = vec.X;
+		Y = vec.Y;
+		Z = vec.Z;
+	}
+
 	public Vector3d(Vector3d vec)
 	{
 		X = vec.X;
