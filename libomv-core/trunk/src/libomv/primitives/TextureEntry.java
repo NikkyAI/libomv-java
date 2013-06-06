@@ -1053,10 +1053,11 @@ public class TextureEntry
 		defaultTexture.getTextureID().write(memStream);
 		for (int i = 0; i < faceTextures.length; i++)
 		{
-			if (faceTextures[i] != null && !defaultTexture.getTextureID().equals(faceTextures[i].getTextureID()))
+			UUID textureID = faceTextures[i].getTextureID();
+			if (faceTextures[i] != null && textureID != null && !defaultTexture.getTextureID().equals(textureID))
 			{
 				memStream.write(getFaceBitfieldBytes(1 << i));
-				faceTextures[i].getTextureID().write(memStream);
+				textureID.write(memStream);
 			}
 		}
 		memStream.write((byte) 0);
