@@ -381,7 +381,7 @@ public class Vector3
 	 */
 	public boolean approxEquals(Vector3 vec, float tolerance)
 	{
-		Vector3 diff = this.subtract(vec);
+		Vector3 diff = subtract(this, vec);
 		return (diff.lengthSquared() <= tolerance * tolerance);
 	}
 
