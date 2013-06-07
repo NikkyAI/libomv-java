@@ -798,10 +798,11 @@ public class Quaternion
 
 	public Quaternion multiply(Quaternion quaternion)
 	{
-		X = (W * quaternion.X) + (X * quaternion.W) + (Y * quaternion.Z) - (Z * quaternion.Y);
-	    Y = (W * quaternion.Y) - (X * quaternion.Z) + (Y * quaternion.W) + (Z * quaternion.X); 
-	    Z = (W * quaternion.Z) + (X * quaternion.Y) - (Y * quaternion.X) + (Z * quaternion.W);
-	    W = (W * quaternion.W) - (X * quaternion.X) - (Y * quaternion.Y) - (Z * quaternion.Z);
+		float x = (W * quaternion.X) + (X * quaternion.W) + (Y * quaternion.Z) - (Z * quaternion.Y);
+	    float y = (W * quaternion.Y) - (X * quaternion.Z) + (Y * quaternion.W) + (Z * quaternion.X); 
+	    float z = (W * quaternion.Z) + (X * quaternion.Y) - (Y * quaternion.X) + (Z * quaternion.W);
+	    float w = (W * quaternion.W) - (X * quaternion.X) - (Y * quaternion.Y) - (Z * quaternion.Z);
+	    X = x; Y = y; Z = z; W = w; 
         return this;
 	}
 
@@ -862,10 +863,11 @@ public class Quaternion
 		float z2 = quaternion.Z / q2lensq;
 		float w2 = quaternion.W / q2lensq;
 
-		X = (X * w2) - (W * x2) - (Y * z2) + (Z * y2);
-		Y =	(Y * w2) - (W * y2) - (Z * x2) + (X * z2);
-		Z = (Z * w2) - (W * z2) - (X * y2) + (Y * x2); 
-		W = (W * w2) + (X * x2) + (Y * y2) + (Z * z2);
+		float x = (X * w2) - (W * x2) - (Y * z2) + (Z * y2);
+		float y =	(Y * w2) - (W * y2) - (Z * x2) + (X * z2);
+		float z = (Z * w2) - (W * z2) - (X * y2) + (Y * x2); 
+		float w = (W * w2) + (X * x2) + (Y * y2) + (Z * z2);
+	    X = x; Y = y; Z = z; W = w; 
 		return this;
 	}
 

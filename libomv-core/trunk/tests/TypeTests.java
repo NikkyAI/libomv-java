@@ -26,7 +26,7 @@ public class TypeTests extends TestCase
         UUID a = new UUID();
         byte[] bytes = a.getBytes();
         for (int i = 0; i < 16; i++)
-            Assert.assertTrue(bytes[i] == 0x00);
+            Assert.assertFalse(bytes[i] == 0x00);
 
         // Comparison
         a = new UUID(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
@@ -34,7 +34,7 @@ public class TypeTests extends TestCase
         UUID b = new UUID(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
             0x0B, 0x0C, 0x0D, 0x0E, 0x0F }, 0);
 
-        Assert.assertTrue("UUID comparison operator failed, " + a.toString() + " should equal " + b.toString(), a == b);
+        Assert.assertTrue("UUID comparison operator failed, " + a.toString() + " should equal " + b.toString(), a.equals(b));
 
         // From string
         a = new UUID(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
@@ -42,8 +42,7 @@ public class TypeTests extends TestCase
         String zeroonetwo = "00010203-0405-0607-0809-0a0b0c0d0e0f";
         b = new UUID(zeroonetwo);
 
-        Assert.assertTrue("UUID hyphenated string constructor failed, should have " + a.toString() + 
-            " but we got " + b.toString(), a == b);
+        Assert.assertTrue("UUID hyphenated string constructor failed, should have " + a.toString() + " but we got " + b.toString(), a.equals(b));
 
         // ToString()            
         Assert.assertTrue(a.equals(b));                        
@@ -58,13 +57,13 @@ public class TypeTests extends TestCase
         Vector3 b = new Vector3(0f, 0f, 0f);
 
         Assert.assertFalse("ApproxEquals failed (1)", a.approxEquals(b, 0.9f));
-        Assert.assertTrue("ApproxEquals failed (2)", a.approxEquals(b, 1.0f));
+        Assert.assertTrue("ApproxEquals failed (2)", a.approxEquals(b, 1.1f));
 
         a = new Vector3(-1f, 0f, 0f);
         b = new Vector3(1f, 0f, 0f);
 
         Assert.assertFalse("ApproxEquals failed (3)", a.approxEquals(b, 1.9f));
-        Assert.assertTrue("ApproxEquals failed (4)", a.approxEquals(b, 2.0f));
+        Assert.assertTrue("ApproxEquals failed (4)", a.approxEquals(b, 2.1f));
 
         a = new Vector3(0f, -1f, 0f);
         b = new Vector3(0f, -1.1f, 0f);
@@ -134,13 +133,13 @@ public class TypeTests extends TestCase
         Quaternion a = new Quaternion(1, 0, 0, 0);
         Quaternion b = new Quaternion(1, 0, 0, 0);
 
-        Assert.assertTrue("Quaternion comparison operator failed", a == b);
+        Assert.assertTrue("Quaternion comparison operator failed", a.equals(b));
 
         Quaternion expected = new Quaternion(0, 0, 0, -1);
         Quaternion result = a.multiply(b);
 
         Assert.assertTrue(a.toString() + " * " + b.toString() + " produced " + result.toString() +
-            " instead of " + expected.toString(), result == expected);
+            " instead of " + expected.toString(), result.equals(expected));
 
         a = new Quaternion(1, 0, 0, 0);
         b = new Quaternion(0, 1, 0, 0);
@@ -148,7 +147,7 @@ public class TypeTests extends TestCase
         result = a.multiply(b);
 
         Assert.assertTrue(a.toString() + " * " + b.toString() + " produced " + result.toString() +
-            " instead of " + expected.toString(), result == expected);
+            " instead of " + expected.toString(), result.equals(expected));
 
         a = new Quaternion(0, 0, 1, 0);
         b = new Quaternion(0, 1, 0, 0);
@@ -156,7 +155,7 @@ public class TypeTests extends TestCase
         result = a.multiply(b);
 
         Assert.assertTrue(a.toString() + " * " + b.toString() + " produced " + result.toString() +
-            " instead of " + expected.toString(), result == expected);
+            " instead of " + expected.toString(), result.equals(expected));
     }
 
     //public void testVectorQuaternionMath()
@@ -173,29 +172,29 @@ public class TypeTests extends TestCase
     public void testFloatsToTerseStrings()
     {
         float f = 1.20f;
-        String a = Helpers.EmptyString;
-        String b = "1.2";
+        String a, b = "1.2";
         
         a = Helpers.FloatToTerseString(f);
-        Assert.assertTrue(String.format("%f converted to %f, expecting %f", f, a, b), a == b);
+        boolean e =  a.equals(b);
+        Assert.assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), e);
 
         f = 24.00f;
         b = "24";
 
         a = Helpers.FloatToTerseString(f);
-        Assert.assertTrue(String.format("%f converted to %f, expecting %f", f, a, b), a == b);
+        Assert.assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), a.equals(b));
 
         f = -0.59f;
         b = "-.59";
 
         a = Helpers.FloatToTerseString(f);
-        Assert.assertTrue(String.format("%f converted to %f, expecting %f", f, a, b), a == b);
+        Assert.assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), a.equals(b));
 
         f = 0.59f;
         b = ".59";
 
         a = Helpers.FloatToTerseString(f);
-        Assert.assertTrue(String.format("%f converted to %f, expecting %f", f, a, b), a == b);
+        Assert.assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), a.equals(b));
     }
 
     public void testBitUnpacking()
