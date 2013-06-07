@@ -101,7 +101,7 @@ public class PhysicsProperties
 	 * 
 	 * @returns OSDMap with serialized PhysicsProperties data
 	 */
-	public OSDMap GetOSD()
+	public OSDMap getOSD()
 	{
 		OSDMap map = new OSDMap(6);
 		map.put("LocalID", OSD.FromUInteger(LocalID));

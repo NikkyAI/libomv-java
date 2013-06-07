@@ -341,7 +341,7 @@ public class ParticleSystem
 	 * 
 	 * @return Byte array
 	 */
-	public byte[] GetBytes()
+	public byte[] getBytes()
 	{
 		int pos = 0;
 		byte[] bytes = new byte[88];

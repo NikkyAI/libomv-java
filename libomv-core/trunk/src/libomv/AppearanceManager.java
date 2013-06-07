@@ -2047,7 +2047,7 @@ public class AppearanceManager implements PacketCallback
 
             for (int i = 0; i < _Textures.length; i++)
             {
-                TextureEntry.TextureEntryFace face = te.CreateFace(i);
+                TextureEntry.TextureEntryFace face = te.createFace(i);
                 if ((i == 0 || i == 5 || i == 6) && !_Client.Settings.CLIENT_IDENTIFICATION_TAG.equals(UUID.Zero))
                 {
                     face.setTextureID(_Client.Settings.CLIENT_IDENTIFICATION_TAG);

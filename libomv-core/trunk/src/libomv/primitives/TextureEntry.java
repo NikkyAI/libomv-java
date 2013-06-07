@@ -213,7 +213,6 @@ public class TextureEntry
 		private byte media;
 		private int hasAttribute;
 		private UUID textureID;
-		private UUID materialID;
 		private TextureEntryFace defaultTexture;
 
 		// #region Properties
@@ -433,20 +432,6 @@ public class TextureEntry
 			hasAttribute |= TextureAttributes.TextureID;
 		}
 
-		public UUID getMaterialID()
-		{
-			if ((hasAttribute & TextureAttributes.MaterialID) != 0)
-				return materialID;
-			return defaultTexture.materialID;
-		}
-
-		public void setMaterialID(UUID value)
-		{
-			materialID = value;
-			hasAttribute |= TextureAttributes.MaterialID;
-		}
-		// #endregion Properties
-
 		/**
 		 * Contains the definition for individual faces
 		 * 
@@ -457,7 +442,7 @@ public class TextureEntry
 			rgba = Color4.White;
 			repeatU = 1.0f;
 			repeatV = 1.0f;
-
+			
 			defaultTexture = defaultText;
 			// FIXME: Is this really correct or should this be reversed?
 			if (defaultTexture == null)
@@ -484,18 +469,16 @@ public class TextureEntry
 			tex.put("offsett", OSD.FromReal(getOffsetV()));
 			tex.put("imagerot", OSD.FromReal(getRotation()));
 			tex.put("bump", OSD.FromInteger(getBump().getValue()));
-			tex.put("shiny", OSD.FromInteger(getShiny().getValue()));
+//			tex.put("shiny", OSD.FromInteger(getShiny().getValue()));
 			tex.put("fullbright", OSD.FromBoolean(getFullbright()));
 			tex.put("media_flags", OSD.FromInteger(getMediaFlags() ? 1 : 0));
-			tex.put("mapping", OSD.FromInteger(getTexMapType().getValue()));
+//			tex.put("mapping", OSD.FromInteger(getTexMapType().getValue()));
 			tex.put("glow", OSD.FromReal(getGlow()));
 
-			if (getTextureID() != TextureEntry.WHITE_TEXTURE)
-				tex.put("imageid", OSD.FromUUID(getTextureID()));
-			else
+			if (getTextureID().equals(TextureEntry.WHITE_TEXTURE))
 				tex.put("imageid", OSD.FromUUID(UUID.Zero));
-
-			tex.put("materialid", OSD.FromUUID(materialID));
+			else
+				tex.put("imageid", OSD.FromUUID(getTextureID()));
 
 			return tex;
 		}
@@ -514,13 +497,12 @@ public class TextureEntry
 				setOffsetV((float) map.get("offsett").AsReal());
 				setRotation((float) map.get("imagerot").AsReal());
 				setBump(Bumpiness.setValue(map.get("bump").AsInteger()));
-				setShiny(Shininess.setValue(map.get("shiny").AsInteger()));
+//				setShiny(Shininess.setValue(map.get("shiny").AsInteger()));
 				setFullbright(map.get("fullbright").AsBoolean());
 				setMediaFlags(map.get("media_flags").AsBoolean());
-				setTexMapType(MappingType.setValue(map.get("mapping").AsInteger()));
+//				setTexMapType(MappingType.setValue(map.get("mapping").AsInteger()));
 				setGlow((float) map.get("glow").AsReal());
 				setTextureID(map.get("imageid").AsUUID());
-				setMaterialID(map.get("materialid").AsUUID());
 			}
 		}
 
@@ -540,7 +522,6 @@ public class TextureEntry
             ret.media = media;
             ret.hasAttribute = hasAttribute;
             ret.textureID = textureID;
-            ret.materialID = materialID;
             return ret;
 		}
 
@@ -550,7 +531,7 @@ public class TextureEntry
 			return getRGBA().hashCode() ^ (int) getRepeatU() ^ (int) getRepeatV() ^ (int) getOffsetU()
 					^ (int) getOffsetV() ^ (int) getRotation() ^ (int) getGlow() ^ getBump().getValue()
 					^ getShiny().getValue() ^ (getFullbright() ? 1 : 0) ^ (getMediaFlags() ? 1 : 0)
-					^ getTexMapType().getValue() ^ getTextureID().hashCode() ^ getMaterialID().hashCode();
+					^ getTexMapType().getValue() ^ getTextureID().hashCode();
 		}
 
 		@Override
@@ -559,7 +540,7 @@ public class TextureEntry
 			return String.format("Color: %s RepeatU: %f RepeatV: %f OffsetU: %f OffsetV: %f "
 					+ "Rotation: %f Bump: %s Shiny: %s Fullbright: %s Mapping: %s Media: %s Glow: %f ID: %s MaterialID: %s",
 					getRGBA(), getRepeatU(), getRepeatV(), getOffsetU(), getOffsetV(), getRotation(), getBump(),
-					getShiny(), getFullbright(), getTexMapType(), getMediaFlags(), getGlow(), getTextureID(), getMaterialID());
+					getShiny(), getFullbright(), getTexMapType(), getMediaFlags(), getGlow(), getTextureID());
 		}
 	}
 
@@ -626,7 +607,7 @@ public class TextureEntry
 			Rate = 0.0f;
 		}
 
-		public byte[] GetBytes()
+		public byte[] getBytes()
 		{
 			byte[] data = new byte[16];
 			int pos = 0;
@@ -694,6 +675,18 @@ public class TextureEntry
 	public TextureEntryFace defaultTexture;
 	public TextureEntryFace[] faceTextures = new TextureEntryFace[MAX_FACES];
 
+	private int numTextures = MAX_FACES;
+	
+	public int getNumTextures()
+	{
+		return numTextures;
+	}
+	
+	public void setNumTextures(int value)
+	{
+		numTextures = value <= MAX_FACES ? value : MAX_FACES;
+	}
+
 	/**
 	 * Constructor that takes a default texture UUID
 	 * 
@@ -729,7 +722,6 @@ public class TextureEntry
 		defaultTexture.setShiny(defaultFace.getShiny());
 		defaultTexture.setTexMapType(defaultFace.getTexMapType());
 		defaultTexture.setTextureID(defaultFace.getTextureID());
-		defaultTexture.setMaterialID(defaultFace.getMaterialID());		
 	}
 
 	/**
@@ -741,7 +733,8 @@ public class TextureEntry
 	public TextureEntry(TextureEntry texture)
 	{
 		defaultTexture = new TextureEntryFace(null);
-		for (int i = 0; i < texture.faceTextures.length; i++)
+		numTextures = texture.getNumTextures();
+		for (int i = 0; i < numTextures; i++)
 		{
 			faceTextures[i] = texture.faceTextures[i];
 			if (faceTextures[i] != null)
@@ -777,12 +770,12 @@ public class TextureEntry
 	 */
 	public TextureEntry(byte[] data, int pos, int length)
 	{
-		FromBytes(data, pos, length);
+		fromBytes(data, pos, length);
 	}
 
 	public TextureEntry(byte[] data)
 	{
-		FromBytes(data, 0, data.length);
+		fromBytes(data, 0, data.length);
 	}
 
 	public TextureEntry(OSD osd)
@@ -800,9 +793,9 @@ public class TextureEntry
 	 * @return A TextureEntryFace containing all the properties for that
 	 * @throws Exception
 	 */
-	public TextureEntryFace CreateFace(int index)
+	public TextureEntryFace createFace(int index)
 	{
-		if (index >= MAX_FACES)
+		if (index >= numTextures)
 			return null;
 
 		if (faceTextures[index] == null)
@@ -813,7 +806,7 @@ public class TextureEntry
 
 	public TextureEntryFace getFace(int index) throws Exception
 	{
-		if (index >= MAX_FACES)
+		if (index >= numTextures)
 			throw new Exception(index + " is outside the range of MAX_FACES");
 
 		if (faceTextures[index] != null)
@@ -862,7 +855,7 @@ public class TextureEntry
 		}
 	}
 
-	private void FromBytes(byte[] data, int pos, int length)
+	private void fromBytes(byte[] data, int pos, int length)
 	{
 		Values off = new Values();
 
@@ -880,14 +873,14 @@ public class TextureEntry
 		defaultTexture.setTextureID(new UUID(data, off.i));
 		off.i += 16;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			UUID tmpUUID = new UUID(data, off.i);
 			off.i += 16;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setTextureID(tmpUUID);
+					createFace(face).setTextureID(tmpUUID);
 		}
 		// #endregion Texture
 
@@ -895,14 +888,14 @@ public class TextureEntry
 		defaultTexture.setRGBA(new Color4(data, off.i, true));
 		off.i += 4;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			Color4 tmpColor = new Color4(data, off.i, true);
 			off.i += 4;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setRGBA(tmpColor);
+					createFace(face).setRGBA(tmpColor);
 		}
 		// #endregion Color
 
@@ -910,14 +903,14 @@ public class TextureEntry
 		defaultTexture.setRepeatU(Helpers.BytesToFloatL(data, off.i));
 		off.i += 4;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			float tmpFloat = Helpers.BytesToFloatL(data, off.i);
 			off.i += 4;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setRepeatU(tmpFloat);
+					createFace(face).setRepeatU(tmpFloat);
 		}
 		// #endregion RepeatU
 
@@ -925,14 +918,14 @@ public class TextureEntry
 		defaultTexture.setRepeatV(Helpers.BytesToFloatL(data, off.i));
 		off.i += 4;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			float tmpFloat = Helpers.BytesToFloatL(data, off.i);
 			off.i += 4;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setRepeatV(tmpFloat);
+					createFace(face).setRepeatV(tmpFloat);
 		}
 		// #endregion RepeatV
 
@@ -940,14 +933,14 @@ public class TextureEntry
 		defaultTexture.setOffsetU(Helpers.TEOffsetFloat(data, off.i));
 		off.i += 2;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			float tmpFloat = Helpers.TEOffsetFloat(data, off.i);
 			off.i += 2;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setOffsetU(tmpFloat);
+					createFace(face).setOffsetU(tmpFloat);
 		}
 		// #endregion OffsetU
 
@@ -955,14 +948,14 @@ public class TextureEntry
 		defaultTexture.setOffsetV(Helpers.TEOffsetFloat(data, off.i));
 		off.i += 2;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			float tmpFloat = Helpers.TEOffsetFloat(data, off.i);
 			off.i += 2;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setOffsetV(tmpFloat);
+					createFace(face).setOffsetV(tmpFloat);
 		}
 		// #endregion OffsetV
 
@@ -970,14 +963,14 @@ public class TextureEntry
 		defaultTexture.setRotation(Helpers.TERotationFloat(data, off.i));
 		off.i += 2;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			float tmpFloat = Helpers.TERotationFloat(data, off.i);
 			off.i += 2;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setRotation(tmpFloat);
+					createFace(face).setRotation(tmpFloat);
 		}
 		// #endregion Rotation
 
@@ -985,14 +978,14 @@ public class TextureEntry
 		defaultTexture.material = data[off.i];
 		off.i++;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			byte tmpByte = data[off.i];
 			off.i++;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).material = tmpByte;
+					createFace(face).material = tmpByte;
 		}
 		// #endregion Material
 
@@ -1000,14 +993,14 @@ public class TextureEntry
 		defaultTexture.media = data[off.i];
 		off.i++;
 
-		while (off.i - pos < length && ReadFaceBitfield(data, off))
+		while (off.i - pos < length && readFaceBitfield(data, off))
 		{
 			byte tmpByte = data[off.i];
 			off.i++;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).media = tmpByte;
+					createFace(face).media = tmpByte;
 		}
 		// #endregion Media
 
@@ -1015,31 +1008,31 @@ public class TextureEntry
 		defaultTexture.setGlow(Helpers.TEGlowFloat(data, off.i));
 		off.i++;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			float tmpFloat = Helpers.TEGlowFloat(data, off.i);
 			off.i++;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setGlow(tmpFloat);
+					createFace(face).setGlow(tmpFloat);
 		}
 		// #endregion Glow
 
 		// #region MaterialID
-		defaultTexture.setMaterialID(new UUID(data, off.i));
+/*		defaultTexture.setMaterialID(new UUID(data, off.i));
 		off.i += 16;
 
-		while (ReadFaceBitfield(data, off))
+		while (readFaceBitfield(data, off))
 		{
 			UUID tmpUUID = new UUID(data, off.i);
 			off.i += 16;
 
 			for (int face = 0, bit = 1; face < off.bitfieldSize; face++, bit <<= 1)
 				if ((off.faceBits & bit) != 0)
-					CreateFace(face).setMaterialID(tmpUUID);
+					createFace(face).setMaterialID(tmpUUID);
 		}
-		// #endregion MaterialID
+*/		// #endregion MaterialID
 	}
 
 	public byte[] getBytes() throws IOException
@@ -1048,151 +1041,350 @@ public class TextureEntry
 			return Helpers.EmptyBytes;
 
 		ByteArrayOutputStream memStream = new ByteArrayOutputStream();
+		boolean alreadySent;
+		int i, j;
+		long bitfield;
 
 		// #region Texture
-		defaultTexture.getTextureID().write(memStream);
-		for (int i = 0; i < faceTextures.length; i++)
+		UUID tempID, defID = defaultTexture.getTextureID();
+		defID.write(memStream);
+		for (i = 0; i < numTextures; i++)
 		{
-			UUID textureID = faceTextures[i].getTextureID();
-			if (faceTextures[i] != null && textureID != null && !defaultTexture.getTextureID().equals(textureID))
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				textureID.write(memStream);
+				tempID = faceTextures[i].getTextureID();
+				if (tempID != null && !tempID.equals(defID))
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempID.equals(faceTextures[j].getTextureID());
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempID.equals(faceTextures[j].getTextureID()))
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						tempID.write(memStream);
+					}
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion Texture
 
 		// #region Color
 		// Serialize the color bytes inverted to optimize for zerocoding
-		defaultTexture.getRGBA().write(memStream, true);
-		for (int i = 0; i < faceTextures.length; i++)
+		Color4 tempCol, defCol = defaultTexture.getRGBA();
+		defCol.write(memStream, true);
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && !faceTextures[i].getRGBA().equals(defaultTexture.getRGBA()))
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				// Serialize the color bytes inverted to optimize for zerocoding
-				faceTextures[i].getRGBA().write(memStream, true);
+				tempCol = faceTextures[i].getRGBA();
+				if (tempCol != null && !tempCol.equals(defCol))
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempCol.equals(faceTextures[j].getRGBA());
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempCol.equals(faceTextures[j].getRGBA()))
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						// Serialize the color bytes inverted to optimize for zerocoding
+						tempCol.write(memStream, true);
+					}
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion Color
 
 		// #region RepeatU
-		memStream.write(Helpers.FloatToBytesL(defaultTexture.getRepeatU()));
-		for (int i = 0; i < faceTextures.length; i++)
+		float tempFloat, defFloat = defaultTexture.getRepeatU();
+		memStream.write(Helpers.FloatToBytesL(defFloat));
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && faceTextures[i].getRepeatU() != defaultTexture.getRepeatU())
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(Helpers.FloatToBytesL(faceTextures[i].getRepeatU()));
+				tempFloat = faceTextures[i].getRepeatU();
+				if (tempFloat != defFloat)
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempFloat == faceTextures[j].getRepeatU();
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempFloat == faceTextures[j].getRepeatU())
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						memStream.write(Helpers.FloatToBytesL(tempFloat));
+					}
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion RepeatU
 
 		// #region RepeatV
-		memStream.write(Helpers.FloatToBytesL(defaultTexture.getRepeatV()));
-		for (int i = 0; i < faceTextures.length; i++)
+		defFloat = defaultTexture.getRepeatV();
+		memStream.write(Helpers.FloatToBytesL(defFloat));
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && faceTextures[i].getRepeatV() != defaultTexture.getRepeatV())
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(Helpers.FloatToBytesL(faceTextures[i].getRepeatV()));
+				tempFloat = faceTextures[i].getRepeatV();
+				if (tempFloat != defFloat)
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempFloat == faceTextures[j].getRepeatV();
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempFloat == faceTextures[j].getRepeatV())
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						memStream.write(Helpers.FloatToBytesL(tempFloat));
+					}
+				}
 			}
 		}
 		memStream.write((byte) 0);
 		// #endregion RepeatV
 
 		// #region OffsetU
-		memStream.write(Helpers.TEOffsetShort(defaultTexture.getOffsetU()));
-		for (int i = 0; i < faceTextures.length; i++)
+		defFloat = defaultTexture.getOffsetU();
+		memStream.write(Helpers.TEOffsetShort(defFloat));
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && !Helpers.TEOffsetShort(faceTextures[i].getOffsetU()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetU())))
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(Helpers.TEOffsetShort(faceTextures[i].getOffsetU()));
+				tempFloat = faceTextures[i].getOffsetU();
+				if (tempFloat != defFloat)
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempFloat == faceTextures[j].getOffsetU();
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempFloat == faceTextures[j].getOffsetU())
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						memStream.write(Helpers.TEOffsetShort(tempFloat));
+					}
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion OffsetU
 
 		// #region OffsetV
-		memStream.write(Helpers.TEOffsetShort(defaultTexture.getOffsetV()));
-		for (int i = 0; i < faceTextures.length; i++)
+		defFloat = defaultTexture.getOffsetV();
+		memStream.write(Helpers.TEOffsetShort(defFloat));
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && !Helpers.TEOffsetShort(faceTextures[i].getOffsetV()).equals(Helpers.TEOffsetShort(defaultTexture.getOffsetV())))
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(Helpers.TEOffsetShort(faceTextures[i].getOffsetV()));
+				tempFloat = faceTextures[i].getOffsetV();
+				if (tempFloat != defFloat)
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempFloat == faceTextures[j].getOffsetV();
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempFloat == faceTextures[j].getOffsetV())
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						memStream.write(Helpers.TEOffsetShort(tempFloat));
+					}
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion OffsetV
 
 		// #region Rotation
-		memStream.write(Helpers.TERotationShort(defaultTexture.getRotation()));
-		for (int i = 0; i < faceTextures.length; i++)
+		defFloat = defaultTexture.getRotation();
+		memStream.write(Helpers.TERotationShort(defFloat));
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && !Helpers.TERotationShort(faceTextures[i].getRotation()).equals(Helpers.TERotationShort(defaultTexture.getRotation())))
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(Helpers.TERotationShort(faceTextures[i].getRotation()));
+				tempFloat = faceTextures[i].getRotation();
+				if (tempFloat != defFloat)
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempFloat == faceTextures[j].getRotation();
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempFloat == faceTextures[j].getRotation())
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						memStream.write(Helpers.TERotationShort(tempFloat));
+					}
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion Rotation
 
 		// #region Material
 		memStream.write(defaultTexture.material);
-		for (int i = 0; i < faceTextures.length; i++)
+		for (i = 0; i < numTextures; i++)
 		{
 			if (faceTextures[i] != null && faceTextures[i].material != defaultTexture.material)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(faceTextures[i].material);
+				alreadySent = false;
+				j = 0;
+				while (!alreadySent && j < i)
+				{
+					alreadySent = faceTextures[j] != null && faceTextures[i].material == faceTextures[j].material;
+					j++;
+				}
+				if (!alreadySent)
+				{
+					bitfield = 1 << j++;
+					while (j < numTextures)
+					{
+						if (faceTextures[j] != null && faceTextures[i].material == faceTextures[j].material)
+							bitfield = 1 << j;
+						j++;
+					}
+					writeFaceBitfieldBytes(memStream, bitfield);
+					memStream.write(faceTextures[i].material);
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion Material
 
 		// #region Media
 		memStream.write(defaultTexture.media);
-		for (int i = 0; i < faceTextures.length; i++)
+		for (i = 0; i < numTextures; i++)
 		{
 			if (faceTextures[i] != null && faceTextures[i].media != defaultTexture.media)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(faceTextures[i].media);
+				alreadySent = false;
+				j = 0;
+				while (!alreadySent && j < i)
+				{
+					alreadySent = faceTextures[j] != null && faceTextures[i].media == faceTextures[j].media;
+					j++;
+				}
+				if (!alreadySent)
+				{
+					bitfield = 1 << j++;
+					while (j < numTextures)
+					{
+						if (faceTextures[j] != null && faceTextures[i].media == faceTextures[j].media)
+							bitfield = 1 << j;
+						j++;
+					}
+					writeFaceBitfieldBytes(memStream, bitfield);
+					memStream.write(faceTextures[i].media);
+				}
 			}
 		}
-		memStream.write((byte) 0);
+		memStream.write(0);
 		// #endregion Media
 
 		// #region Glow
-		memStream.write(Helpers.TEGlowByte(defaultTexture.getGlow()));
-		for (int i = 0; i < faceTextures.length; i++)
+		byte tempByte, defByte = Helpers.TEGlowByte(defaultTexture.getGlow());
+		memStream.write(defByte);
+		for (i = 0; i < numTextures; i++)
 		{
-			if (faceTextures[i] != null && Helpers.TEGlowByte(faceTextures[i].getGlow()) != Helpers.TEGlowByte(defaultTexture.getGlow()))
+			if (faceTextures[i] != null)
 			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				memStream.write(Helpers.TEGlowByte(faceTextures[i].getGlow()));
+				tempByte = Helpers.TEGlowByte(faceTextures[i].getGlow());
+				if (tempByte != defByte)
+				{
+					alreadySent = false;
+					j = 0;
+					while (!alreadySent && j < i)
+					{
+						alreadySent = faceTextures[j] != null && tempByte == Helpers.TEGlowByte(faceTextures[j].getGlow());
+						j++;
+					}
+					if (!alreadySent)
+					{
+						bitfield = 1 << j++;
+						while (j < numTextures)
+						{
+							if (faceTextures[j] != null && tempByte == Helpers.TEGlowByte(faceTextures[j].getGlow()))
+								bitfield = 1 << j;
+							j++;
+						}
+						writeFaceBitfieldBytes(memStream, bitfield);
+						memStream.write(tempByte);
+					}
+				}
 			}
 		}
 		// #endregion Glow
-
-		// #region MaterialID
-		defaultTexture.getMaterialID().write(memStream);
-		for (int i = 0; i < faceTextures.length; i++)
-		{
-			if (faceTextures[i] != null && !defaultTexture.getMaterialID().equals(faceTextures[i].getMaterialID()))
-			{
-				memStream.write(getFaceBitfieldBytes(1 << i));
-				faceTextures[i].getMaterialID().write(memStream);
-			}
-		}
-		memStream.write((byte) 0);
-		// #endregion MaterialID
 		return memStream.toByteArray();
 	}
 
@@ -1232,7 +1424,7 @@ public class TextureEntry
 		long faceBits;
 	}
 
-	private boolean ReadFaceBitfield(byte[] data, Values pos)
+	private boolean readFaceBitfield(byte[] data, Values pos)
 	{
 		pos.faceBits = 0;
 		pos.bitfieldSize = 0;
@@ -1252,7 +1444,7 @@ public class TextureEntry
 		return (pos.faceBits != 0);
 	}
 
-	private byte[] getFaceBitfieldBytes(long bitfield)
+	private int writeFaceBitfieldBytes(ByteArrayOutputStream memStream, long bitfield)
 	{
 		int byteLength = 0;
 		long tmpBitfield = bitfield;
@@ -1262,16 +1454,19 @@ public class TextureEntry
 			byteLength++;
 		}
 
-		if (byteLength == 0)
-			return new byte[] { 0 };
-
-		byte[] bytes = new byte[byteLength];
-		for (int i = 0; i < byteLength; i++)
+		if (byteLength > 0)
 		{
-			bytes[i] = (byte) ((bitfield >> (7 * (byteLength - i - 1))) & 0x7F);
-			if (i < byteLength - 1)
-				bytes[i] |= 0x80;
+			int value;
+			for (int i = 1; i <= byteLength; i++)
+			{
+				value = (int)((bitfield >> (7 * (byteLength - i))) & 0x7F);
+				if (i < byteLength)
+					value |= 0x80;
+				memStream.write(value);
+			}
+			return byteLength;
 		}
-		return bytes;
+		memStream.write(0);
+		return 1;
 	}
 }

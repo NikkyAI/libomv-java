@@ -5232,7 +5232,7 @@ public class CapsMessage implements IMessage
 
 			for (int i = 0; i < ObjectPhysicsProperties.length; i++)
 			{
-				array.add(ObjectPhysicsProperties[i].GetOSD());
+				array.add(ObjectPhysicsProperties[i].getOSD());
 			}
 			ret.put("ObjectData", array);
 			return ret;
