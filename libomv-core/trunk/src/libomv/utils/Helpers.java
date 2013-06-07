@@ -43,7 +43,6 @@ import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.ByteBuffer;
 import java.security.CodeSource;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -73,18 +72,6 @@ import libomv.types.Vector3d;
 
 public class Helpers
 {
-	// This header flag signals that ACKs are appended to the packet
-	public final static byte MSG_APPENDED_ACKS = 0x10;
-
-	// This header flag signals that this packet has been sent before
-	public final static byte MSG_RESENT = 0x20;
-
-	// This header flags signals that an ACK is expected for this packet
-	public final static byte MSG_RELIABLE = 0x40;
-
-	// This header flag signals that the message is compressed using zerocoding
-	public final static byte MSG_ZEROCODED = (byte) 0x80;
-
 	public static final double DOUBLE_MAG_THRESHOLD = 1E-14f;
 	public static final float FLOAT_MAG_THRESHOLD = 1E-7f;
 //	public static final float E = (float) Math.E;
@@ -608,77 +595,6 @@ public class Helpers
 			}
 		}
 		return Helpers.Epoch;
-	}
-
-	/**
-	 * Encode a byte array with zerocoding. Used to compress packets marked with
-	 * the zerocoded flag. Any zeroes in the array are compressed down to a
-	 * single zero byte followed by a count of how many zeroes to expand out. A
-	 * single zero becomes 0x00 0x01, two zeroes becomes 0x00 0x02, three zeroes
-	 * becomes 0x00 0x03, etc. The first four bytes are copied directly to the
-	 * output buffer.
-	 * 
-	 * @param src
-	 *            The byte buffer to encode
-	 * @param dest
-	 *            The output byte array to encode to
-	 * @return The length of the output buffer
-	 */
-	public static int ZeroEncode(ByteBuffer src, byte[] dest)
-	{
-		int bodylen, zerolen = 6 + src.get(5);
-		byte zerocount = 0;
-		int srclen = src.position();
-
-		src.position(0);
-		src.get(dest, 0, zerolen);
-
-		if ((src.get(0) & MSG_APPENDED_ACKS) == 0)
-		{
-			bodylen = srclen;
-		}
-		else
-		{
-			bodylen = srclen - src.get(srclen - 1) * 4 - 1;
-		}
-
-		int i;
-		for (i = zerolen; i < bodylen; i++)
-		{
-			if (src.get(i) == 0x00)
-			{
-				zerocount++;
-
-				if (zerocount == 0)
-				{
-					dest[zerolen++] = 0x00;
-					dest[zerolen++] = (byte) 0xff;
-					zerocount++;
-				}
-			}
-			else
-			{
-				if (zerocount != 0)
-				{
-					dest[zerolen++] = 0x00;
-					dest[zerolen++] = zerocount;
-					zerocount = 0;
-				}
-				dest[zerolen++] = src.get(i);
-			}
-		}
-
-		if (zerocount != 0)
-		{
-			dest[zerolen++] = 0x00;
-			dest[zerolen++] = zerocount;
-		}
-		// copy appended ACKs
-		for (; i < srclen; i++)
-		{
-			dest[zerolen++] = src.get(i);
-		}
-		return zerolen;
 	}
 
 	/**

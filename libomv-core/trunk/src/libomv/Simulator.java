@@ -65,6 +65,7 @@ import libomv.packets.StartPingCheckPacket;
 import libomv.packets.UseCircuitCodePacket;
 import libomv.primitives.Avatar;
 import libomv.primitives.Primitive;
+import libomv.types.PacketHeader;
 import libomv.types.UUID;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
@@ -1286,10 +1287,10 @@ public class Simulator extends Thread
 							DumpBuffer(byteBuffer, numBytes, "<=============== Received packet, length = ", LogLevel.Debug);
 						}
 
-						if ((RecvBuffer[0] & Helpers.MSG_ZEROCODED) != 0)
+						if ((RecvBuffer[0] & PacketHeader.MSG_ZEROCODED) != 0)
 						{
 							int bodylen = numBytes;
-							if ((RecvBuffer[0] & Helpers.MSG_APPENDED_ACKS) != 0)
+							if ((RecvBuffer[0] & PacketHeader.MSG_APPENDED_ACKS) != 0)
 							{
 								bodylen -= (RecvBuffer[numBytes - 1] * 4 + 1);
 							}
@@ -1464,7 +1465,7 @@ public class Simulator extends Thread
 		if (doZerocode)
 		{
 			byte[] zeroBuffer = new byte[2000];
-			int bytes = Helpers.ZeroEncode(data, zeroBuffer);
+			int bytes = PacketHeader.zeroEncode(data, zeroBuffer);
 			if (bytes <= data.capacity())
 			{
 				data = ByteBuffer.wrap(zeroBuffer, 0, bytes);
@@ -1473,7 +1474,7 @@ public class Simulator extends Thread
 			else
 			{
 				// Zero encoding actually grew the buffer beyond the original size
-				data.put(0, (byte) (data.get(0) & Helpers.MSG_ZEROCODED));
+				data.put(0, (byte) (data.get(0) & PacketHeader.MSG_ZEROCODED));
 				data.position(0);
 			}
 		}
@@ -1568,7 +1569,7 @@ public class Simulator extends Thread
 						outgoing.TickCount = 0;
 
 						// Set the resent flag
-						outgoing.Buffer.array()[0] |= Helpers.MSG_RESENT;
+						outgoing.Buffer.array()[0] |= PacketHeader.MSG_RESENT;
 
 						// Stats tracking
 						outgoing.ResendCount++;
@@ -1596,8 +1597,8 @@ public class Simulator extends Thread
 		ByteBuffer buffer = outgoingPacket.Buffer;
 		byte[] bytes = buffer.array();
 		byte flags = buffer.get(0);
-		boolean isResend = (flags & Helpers.MSG_RESENT) != 0;
-		boolean isReliable = (flags & Helpers.MSG_RELIABLE) != 0;
+		boolean isResend = (flags & PacketHeader.MSG_RESENT) != 0;
+		boolean isReliable = (flags & PacketHeader.MSG_RELIABLE) != 0;
 
 		// Keep track of when this packet was sent out (right now)
 		outgoingPacket.TickCount = System.currentTimeMillis();
@@ -1623,7 +1624,7 @@ public class Simulator extends Thread
 			// ACKs
 			bytes[dataLength++] = (byte) ackCount;
 			// Set the appended ACKs flag on this packet
-			bytes[0] = (byte) (flags | Helpers.MSG_APPENDED_ACKS);
+			bytes[0] = (byte) (flags | PacketHeader.MSG_APPENDED_ACKS);
 			// Increase the byte buffer limit to the new length
 			buffer.limit(dataLength);
 		}

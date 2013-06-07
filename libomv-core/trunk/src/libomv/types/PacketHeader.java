@@ -36,6 +36,18 @@ import libomv.utils.Helpers;
 
 public class PacketHeader
 {
+	// This header flag signals that ACKs are appended to the packet
+	public final static byte MSG_APPENDED_ACKS = 0x10;
+
+	// This header flag signals that this packet has been sent before
+	public final static byte MSG_RESENT = 0x20;
+
+	// This header flags signals that an ACK is expected for this packet
+	public final static byte MSG_RELIABLE = 0x40;
+
+	// This header flag signals that the message is compressed using zerocoding
+	public final static byte MSG_ZEROCODED = (byte) 0x80;
+
 	public byte[] Data = null;
 	public byte[] Extra = null;
 	private final byte fixedLen = 6;
@@ -54,58 +66,70 @@ public class PacketHeader
 
 	public boolean getReliable()
 	{
-		return (Data[0] & Helpers.MSG_RELIABLE) != 0;
+		return (Data[0] & MSG_RELIABLE) != 0;
 	}
 
 	public void setReliable(boolean value)
 	{
 		if (value)
 		{
-			Data[0] |= Helpers.MSG_RELIABLE;
+			Data[0] |= MSG_RELIABLE;
 		}
 		else
 		{
-			Data[0] -= Helpers.MSG_RELIABLE;
+			Data[0] -= MSG_RELIABLE;
 		}
 	}
 
 	public boolean getResent()
 	{
-		return (Data[0] & Helpers.MSG_RESENT) != 0;
+		return (Data[0] & MSG_RESENT) != 0;
 	}
 
 	public void setResent(boolean value)
 	{
 		if (value)
 		{
-			Data[0] |= Helpers.MSG_RESENT;
+			Data[0] |= MSG_RESENT;
 		}
 		else
 		{
-			Data[0] -= Helpers.MSG_RESENT;
+			Data[0] -= MSG_RESENT;
 		}
 	}
 
 	public boolean getZerocoded()
 	{
-		return (Data[0] & Helpers.MSG_ZEROCODED) != 0;
+		return (Data[0] & MSG_ZEROCODED) != 0;
 	}
 
 	public void setZerocoded(boolean value)
 	{
 		if (value)
 		{
-			Data[0] |= Helpers.MSG_ZEROCODED;
+			Data[0] |= MSG_ZEROCODED;
 		}
 		else
 		{
-			Data[0] -= Helpers.MSG_ZEROCODED;
+			Data[0] -= MSG_ZEROCODED;
 		}
 	}
 
 	public boolean getAppendedAcks()
 	{
-		return (Data[0] & Helpers.MSG_APPENDED_ACKS) != 0;
+		return (Data[0] & MSG_APPENDED_ACKS) != 0;
+	}
+
+	public void setAppendedAcks(boolean value)
+	{
+		if (value)
+		{
+			Data[0] |= MSG_APPENDED_ACKS;
+		}
+		else
+		{
+			Data[0] -= MSG_APPENDED_ACKS;
+		}
 	}
 
 	public int getSequence()
@@ -250,6 +274,77 @@ public class PacketHeader
 			bytes.put(Extra);
 		}
 		bytes.put(Data, fixedLen, getLength() - fixedLen);
+	}
+
+	/**
+	 * Encode a byte array with zerocoding. Used to compress packets marked with
+	 * the zerocoded flag. Any zeroes in the array are compressed down to a
+	 * single zero byte followed by a count of how many zeroes to expand out. A
+	 * single zero becomes 0x00 0x01, two zeroes becomes 0x00 0x02, three zeroes
+	 * becomes 0x00 0x03, etc. The first four bytes are copied directly to the
+	 * output buffer.
+	 * 
+	 * @param src
+	 *            The byte buffer to encode
+	 * @param dest
+	 *            The output byte array to encode to
+	 * @return The length of the output buffer
+	 */
+	public static int zeroEncode(ByteBuffer src, byte[] dest)
+	{
+		int bodylen, zerolen = 6 + src.get(5);
+		byte zerocount = 0;
+		int srclen = src.position();
+
+		src.position(0);
+		src.get(dest, 0, zerolen);
+
+		if ((src.get(0) & MSG_APPENDED_ACKS) == 0)
+		{
+			bodylen = srclen;
+		}
+		else
+		{
+			bodylen = srclen - src.get(srclen - 1) * 4 - 1;
+		}
+
+		int i;
+		for (i = zerolen; i < bodylen; i++)
+		{
+			if (src.get(i) == 0x00)
+			{
+				zerocount++;
+
+				if (zerocount == 0)
+				{
+					dest[zerolen++] = 0x00;
+					dest[zerolen++] = (byte) 0xff;
+					zerocount++;
+				}
+			}
+			else
+			{
+				if (zerocount != 0)
+				{
+					dest[zerolen++] = 0x00;
+					dest[zerolen++] = zerocount;
+					zerocount = 0;
+				}
+				dest[zerolen++] = src.get(i);
+			}
+		}
+
+		if (zerocount != 0)
+		{
+			dest[zerolen++] = 0x00;
+			dest[zerolen++] = zerocount;
+		}
+		// copy appended ACKs
+		for (; i < srclen; i++)
+		{
+			dest[zerolen++] = src.get(i);
+		}
+		return zerolen;
 	}
 
 	public int[] AckList = null;
