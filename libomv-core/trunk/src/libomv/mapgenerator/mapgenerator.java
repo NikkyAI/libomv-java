@@ -513,16 +513,13 @@ public class mapgenerator
 		writer.println("import libomv.types.PacketHeader;");
 		writer.println("import libomv.types.PacketFrequency;");
 
-		for (int i = 0; i < packet.Blocks.size(); i++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(i);
-
 			if (block.count == -1)
 				hasVariableBlocks = true;
 
-			for (int k = 0; k < block.Fields.size(); k++)
+			for (MapField field : block.Fields)
 			{
-				MapField field = block.Fields.get(k);
 				if (!variableField[field.type])
 				{
 					switch (field.type)
@@ -559,9 +556,8 @@ public class mapgenerator
 		writer.println("\npublic class " + packet.Name + "Packet extends Packet\n{");
 
 		// Write out each block class
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				WriteBlockClass(writer, protocol, block);
@@ -580,9 +576,8 @@ public class mapgenerator
 		writer.println("    public PacketType getType() { return PacketType." + packet.Name + "; }");
 
 		// Block members
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 
 			// TODO: More thorough name blacklisting
@@ -622,9 +617,8 @@ public class mapgenerator
 		{
 			writer.println("        header.setZerocoded(true);");
 		}
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
@@ -682,9 +676,8 @@ public class mapgenerator
 		writer.println("    public " + packet.Name + "Packet(ByteBuffer bytes) throws Exception");
 		writer.println("    {");
 		writer.println("        header = new PacketHeader(bytes, PacketFrequency." + PacketFrequency.Names[packet.Frequency] + ");");
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
@@ -773,9 +766,8 @@ public class mapgenerator
 		writer.println("    public " + packet.Name + "Packet(PacketHeader head, ByteBuffer bytes)");
 		writer.println("    {");
 		writer.println("        header = head;");
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
@@ -867,9 +859,8 @@ public class mapgenerator
 
 		writer.println("        int length = header.getLength();");
 
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
@@ -898,9 +889,8 @@ public class mapgenerator
 			}
 		}
 
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
@@ -947,17 +937,28 @@ public class mapgenerator
 
 		writer.println("        return length;\n    }\n");
 
-		// ToBytes() function
+		WriteToBytes(writer, protocol, packet);
+//		WriteToBytesMultiple(writer, protocol, packet);
+		WriteToString(writer, protocol, packet);
+
+		// Closing function bracket
+		writer.println("}");
+		writer.close();
+	}
+
+	static void WriteToBytes(PrintWriter writer, ProtocolManager protocol, MapPacket packet)
+	{
+		String sanitizedName, blockName;
+		
 		writer.println("    @Override");
 		writer.println("    public ByteBuffer ToBytes() throws Exception");
 		writer.println("    {");
 		writer.println("        ByteBuffer bytes = ByteBuffer.allocate(getLength());");
 		writer.println("        header.ToBytes(bytes);");
 		writer.println("        bytes.order(ByteOrder.LITTLE_ENDIAN);");
-		for (int k = 0; k < packet.Blocks.size(); k++)
+		for (MapBlock block : packet.Blocks)
 		{
-			MapBlock block = packet.Blocks.get(k);
-			String blockName = protocol.keywordPosition(block.keywordIndex);
+			blockName = protocol.keywordPosition(block.keywordIndex);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
@@ -1036,10 +1037,276 @@ public class mapgenerator
 				}
 			}
 		}
-
 		writer.println("        return bytes;\n    }\n");
+	}
 
-		// toString() function
+	static void WriteToBytesMultiple(PrintWriter writer, ProtocolManager protocol, MapPacket packet)
+    {
+		String sanitizedName, blockName;
+ 
+        // Check if there are any variable blocks
+        boolean hasVariable = false;
+        boolean cannotSplit = false;
+        for (MapBlock block : packet.Blocks)
+        {
+            if (block.count == -1)
+            {
+                hasVariable = true;
+            }
+            else if (hasVariable)
+            {
+                // A fixed or single block showed up after a variable count block.
+                // Our automatic splitting algorithm won't work for this packet
+                cannotSplit = true;
+                break;
+            }
+        }
+
+        if (hasVariable && !cannotSplit)
+        {
+    		writer.println("    @Override");
+    		writer.println("    public ByteBuffer[] ToBytesMultiple() throws Exception\n    {");
+            writer.println("        ArrayList<ByteBuffer> packets = new ArrayList<ByteBuffer>();");
+            writer.println("        int i = 0;");
+            writer.print("        int fixedLength = ");
+            if (packet.Frequency == PacketFrequency.Low)
+            {
+            	writer.print("10;");
+            }
+            else if (packet.Frequency == PacketFrequency.Medium)
+            {
+            	writer.print("8;");
+            }
+            else
+            {
+            	writer.print("7;");
+            }
+            writer.println("\n");
+
+            // ACK serialization
+            writer.println("        byte[] ackBytes = null;");
+            writer.println("        int acksLength = 0;");
+            writer.println("        if (header.AckList != null && header.AckList.length > 0)\n        {");
+            writer.println("            header.setAppendedAcks(true);");
+            writer.println("            ackBytes = new byte[header.AckList.length * 4 + 1];");
+            writer.println("            acksLength = header.AcksToBytes(ackBytes);");
+            writer.println("        }\n");
+
+            // Count fixed blocks
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == 1)
+                {
+                    // Single count block
+                    writer.println("        fixedLength += " + sanitizedName + ".getLength();");
+                }
+                else if (block.count > 0)
+                {
+                    // Fixed count block
+                    writer.println("        for (int j = 0; j < " + block.count + "; j++)");
+                    writer.println("        {");
+                    writer.println("            fixedLength += " + sanitizedName + "[j].getLength();");
+                    writer.println("        }");
+                }
+            }
+
+            // Serialize fixed blocks
+            writer.println("        byte[] fixedBytes = new byte[fixedLength];");
+            writer.println("        header.ToBytes(fixedBytes, ref i);");
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == 1)
+                {
+                    // Single count block
+                    writer.println("        " + sanitizedName + ".ToBytes(fixedBytes, ref i);");
+                }
+                else if (block.count > 0)
+                {
+                    // Fixed count block
+                    writer.println("        for (int j = 0; j < " + block.count + "; j++)");
+                    writer.println("        {");
+                    writer.println("            " + sanitizedName + "[j].ToBytes(fixedBytes, ref i);");
+                    writer.println("        }");
+                }
+            }
+
+            int variableCountBlock = 0;
+            for (MapBlock block : packet.Blocks)
+            {
+                if (block.count == -1)
+                {
+                    // Variable count block
+                    ++variableCountBlock;
+                }
+            }
+            writer.println("        fixedLength += " + variableCountBlock + ";\n");
+
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == -1)
+                {
+                    // Variable count block
+                    writer.println("        int " + sanitizedName + "Start = 0;");
+                }
+            }
+
+            writer.println("        do");
+            writer.println("        {");
+
+            // Count how many variable blocks can go in this packet
+            writer.println("            int variableLength = 0;");
+
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == -1)
+                {
+                    // Variable count block
+                    writer.println("            int " + sanitizedName + "Count = 0;");
+                }
+            }
+            writer.println();
+
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == -1)
+                {
+                    // Variable count block
+                    writer.println("                i = " + sanitizedName + "Start;");
+                    writer.println("                while (fixedLength + variableLength + acksLength < Packet.MTU && i < " + sanitizedName + ".Length) {");
+                    writer.println("                    int blockLength = " + sanitizedName + "[i].Length;");
+                    writer.println("                    if (fixedLength + variableLength + blockLength + acksLength <= MTU) {");
+                    writer.println("                        variableLength += blockLength;");
+                    writer.println("                        ++" + sanitizedName + "Count;");
+                    writer.println("                    }");
+                    writer.println("                    else { break; }");
+                    writer.println("                    ++i;");
+                    writer.println("                }");
+                    writer.println();
+                }
+            }
+
+            // Create the packet
+            writer.println("                byte[] packet = new byte[fixedLength + variableLength + acksLength];");
+            writer.println("                int length = fixedBytes.Length;");
+            writer.println("                Buffer.BlockCopy(fixedBytes, 0, packet, 0, length);");
+            // Remove the appended ACKs flag from subsequent packets
+            writer.println("                if (packets.Count > 0) { packet[0] = (byte)(packet[0] & ~0x10); }");
+            writer.println();
+
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == -1)
+                {
+                    writer.println("                packet[length++] = (byte)" + sanitizedName + "Count;");
+                    writer.println("                for (i = " + sanitizedName + "Start; i < " + sanitizedName + "Start + "
+                        + sanitizedName + "Count; i++) { " + sanitizedName + "[i].ToBytes(packet, ref length); }");
+                    writer.println("                " + sanitizedName + "Start += " + sanitizedName + "Count;");
+                    writer.println();
+                }
+            }
+
+            // ACK appending
+            writer.println("                if (acksLength > 0) {");
+            writer.println("                    Buffer.BlockCopy(ackBytes, 0, packet, length, acksLength);");
+            writer.println("                    acksLength = 0;");
+            writer.println("                }");
+            writer.println();
+
+            writer.println("                packets.Add(packet);");
+            
+            writer.println("            } while (");
+            boolean first = true;
+            for (MapBlock block : packet.Blocks)
+            {
+    			blockName = protocol.keywordPosition(block.keywordIndex);
+                if (blockName.equals("Header"))
+                {
+                	sanitizedName = "_" + blockName;
+                }
+                else
+                {
+                	sanitizedName = blockName;
+                }
+
+                if (block.count == -1)
+                {
+                    if (first) first = false;
+                    else writer.println(" ||");
+
+                    // Variable count block
+                    writer.print("                " + sanitizedName + "Start < " + sanitizedName + ".Length");
+                }
+            }
+            writer.println(");\n");
+            writer.println("        return packets.ToArray();");
+            writer.println("    }\n");
+        }
+    }
+    
+	static public void WriteToString(PrintWriter writer, ProtocolManager protocol, MapPacket packet)
+	{
+		String blockName, sanitizedName;
+		
 		writer.println("    @Override");
 		writer.println("    public String toString()\n    {");
 		writer.println("        String output = \"--- " + packet.Name + " ---\\n\";");
@@ -1047,7 +1314,7 @@ public class mapgenerator
 		for (int k = 0; k < packet.Blocks.size(); k++)
 		{
 			MapBlock block = packet.Blocks.get(k);
-			String blockName = protocol.keywordPosition(block.keywordIndex);
+			blockName = protocol.keywordPosition(block.keywordIndex);
 			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
 			{
 				if (blockName.equals("Header"))
@@ -1107,12 +1374,8 @@ public class mapgenerator
 		}
 
 		writer.println("        return output;\n    }");
-
-		// Closing function bracket
-		writer.println("}");
-		writer.close();
 	}
-
+	
 	static public void main(String[] args)
 	{
 		ProtocolManager protocol = null;
@@ -1181,8 +1444,15 @@ public class mapgenerator
 					+ "    // Serializes the packet in to a byte array\n"
 					+ "    // return A byte array containing the serialized packet payload, ready to be sent across the wire\n"
 					+ "    public abstract ByteBuffer ToBytes() throws Exception;\n\n"
-					+ "    public ByteBuffer[] ToBytesMultiple()\n    {\n"
-					+ "         throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n    }\n\n"
+					+ "    public ByteBuffer[] ToBytesMultiple() throws Exception\n    {\n"
+					+ "        if (getLength() > MTU)\n"
+					+ "            throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n"
+					+ "        else\n"
+					+ "        {\n"
+		            + "            ByteBuffer[] buffer = new ByteBuffer[1];\n"
+		            + "            buffer[0] = ToBytes();\n"
+		            + "            return buffer;\n"
+		            + "	       }\n    }\n\n"
 					+ "    //Get the PacketType for a given packet id and packet frequency\n"
 					+ "    //<param name=\"id\">The packet ID from the header</param>\n"
 					+ "    //<param name=\"frequency\">Frequency of this packet</param>\n"
