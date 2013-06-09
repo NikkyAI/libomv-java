@@ -506,7 +506,7 @@ public abstract class OSDParser
 						}
 						else
 						{
-							throw new ParseException("Json LLSD parsing: Unexpected end of data in parsing hex string numeric", reader.getBytePosition());
+							throw new ParseException("LLSD parsing: Unexpected end of data in parsing hex string numeric", reader.getBytePosition());
 						}
 						break;
 					default:
@@ -526,7 +526,7 @@ public abstract class OSDParser
 		if (character < 0)
 		{
 			throw new ParseException(
-					"Json LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
+					"LLSD parsing: Can't parse text because unexpected end of stream while expecting a '"
 							+ delimiter + "' character.", reader.getBytePosition());
 		}
 		return s.toString();
