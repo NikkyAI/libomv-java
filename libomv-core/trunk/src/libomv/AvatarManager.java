@@ -1104,6 +1104,10 @@ public class AvatarManager implements PacketCallback, CapsCallback
             Avatar av = simulator.findAvatar(reply.AgentData.AvatarID);
             if (av == null)
             	av = _Avatars.get(reply.AgentData.AvatarID);
+            if (av == null)
+            {
+               	av = new Avatar(reply.AgentData.AvatarID);
+            }
             av.ProfileProperties = av.new AvatarProperties();
 
             av.ProfileProperties.ProfileImage = reply.PropertiesData.ImageID;
