@@ -1002,6 +1002,25 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		}
 	}
 
+
+	private Avatar findAvatar(Simulator simulator, UUID uuid)
+	{
+		Avatar av = simulator.findAvatar(uuid);
+		synchronized (_Avatars)
+		{
+		    if (av == null)
+		    {
+		    	av = _Avatars.get(uuid);
+		    }
+		    if (av == null)
+		    {
+		       	av = new Avatar(uuid);
+		       	_Avatars.put(uuid, av);
+		    }
+		}
+	    return av;
+	}
+
 	/**
 	 * Process an incoming UUIDNameReply Packet and insert Full Names into the
 	 * 
@@ -1101,13 +1120,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         if (OnAvatarPropertiesReply.count() > 0)
         {
             AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)packet;
-            Avatar av = simulator.findAvatar(reply.AgentData.AvatarID);
-            if (av == null)
-            	av = _Avatars.get(reply.AgentData.AvatarID);
-            if (av == null)
-            {
-               	av = new Avatar(reply.AgentData.AvatarID);
-            }
+            Avatar av = findAvatar(simulator, reply.AgentData.AvatarID);
             av.ProfileProperties = av.new AvatarProperties();
 
             av.ProfileProperties.ProfileImage = reply.PropertiesData.ImageID;
@@ -1145,9 +1158,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
         if (OnAvatarInterestsReply.count() > 0)
         {
             AvatarInterestsReplyPacket airp = (AvatarInterestsReplyPacket)packet;
-            Avatar av = simulator.findAvatar(airp.AgentData.AvatarID);
-            if (av == null)
-            	av = _Avatars.get(airp.AgentData.AvatarID);
+            Avatar av = findAvatar(simulator, airp.AgentData.AvatarID);
             av.ProfileInterests = av.new Interests();
 
             av.ProfileInterests.WantToMask = airp.PropertiesData.WantToMask;
