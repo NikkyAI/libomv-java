@@ -289,6 +289,18 @@ public class TGAImage extends ManagedImage
         }
     }
 
+    public TGAImage(ManagedImage image) throws IOException
+	{
+    	Width = image.Width;
+    	Height = image.Height;
+    	Channels = image.Channels;
+    	Red = image.Red;
+    	Green = image.Green;
+    	Blue = image.Blue;   			
+    	Alpha = image.Alpha;
+    	Bump = image.Bump;
+	}
+    
     public TGAImage(File file) throws IOException
 	{
 		SwappedDataInputStream bis = new SwappedDataInputStream(new FileInputStream(file));
@@ -473,32 +485,32 @@ public class TGAImage extends ManagedImage
 	        decodePlain(is, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
 	}
 	
-	public int encode(OutputStream os, ManagedImage image) throws IOException
+	public int encode(OutputStream os) throws IOException
 	{
-		TGAHeader header = new TGAHeader(image);
+		TGAHeader header = new TGAHeader(this);
 		header.writeHeader(os);
 		
-        int len = 18, n = image.Width * image.Height;
+        int len = 18, n = Width * Height;
 
-        if ((image.Channels & ImageChannels.Alpha) != 0)
+        if ((Channels & ImageChannels.Alpha) != 0)
         {
-            if ((image.Channels & ImageChannels.Color) != 0)
+            if ((Channels & ImageChannels.Color) != 0)
             {
                 // RGBA
                 for (int i = 0; i < n; i++)
                 {
-                	os.write(image.Blue[i]);
-                	os.write(image.Green[i]);
-                	os.write(image.Red[i]);
-                	os.write(image.Alpha[i]);
+                	os.write(Blue[i]);
+                	os.write(Green[i]);
+                	os.write(Red[i]);
+                	os.write(Alpha[i]);
                 }
             }
-            else if ((image.Channels & ImageChannels.Gray) != 0)
+            else if ((Channels & ImageChannels.Gray) != 0)
             {
                 for (int i = 0; i < n; i++)
                 {
-                	os.write(image.Red[i]);
-                	os.write(image.Alpha[i]);
+                	os.write(Red[i]);
+                	os.write(Alpha[i]);
                 }
             }
             else
@@ -506,28 +518,28 @@ public class TGAImage extends ManagedImage
                 // Alpha only
                 for (int i = 0; i < n; i++)
                 {
-                	os.write(image.Alpha[i]);
+                	os.write(Alpha[i]);
                 }
             }
             len += n * 4;
         }
         else
         {
-            if ((image.Channels & ImageChannels.Color) != 0)
+            if ((Channels & ImageChannels.Color) != 0)
             {
             	// RGB
             	for (int i = 0; i < n; i++)
             	{
-            		os.write(image.Blue[i]);
-            		os.write(image.Green[i]);
-            		os.write(image.Red[i]);
+            		os.write(Blue[i]);
+            		os.write(Green[i]);
+            		os.write(Red[i]);
             	}
             }
-            else if ((image.Channels & ImageChannels.Gray) != 0)
+            else if ((Channels & ImageChannels.Gray) != 0)
             {
             	for (int i = 0; i < n; i++)
             	{
-            		os.write(image.Red[i]);
+            		os.write(Red[i]);
             	}            	
             }
             len += n * 3;
