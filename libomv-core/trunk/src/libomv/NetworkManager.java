@@ -491,7 +491,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 						if (remains > 0)
 						{
-							Logger.DebugLog(String.format("Rate limiting, last packet was %d ms ago", remains), _Client);
+//							Logger.DebugLog(String.format("Rate limiting, last packet was %d ms ago", remains), _Client);
 							Thread.sleep(remains);
 						}
 						outgoingPacket.Simulator.sendPacketFinal(outgoingPacket);
@@ -1461,13 +1461,18 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
 		simulator.Statistics.ReceivedPongs++;
-		String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.LastLag + "ms";
-		if ((pong.PingID - simulator.Statistics.LastPingID + 1) != 0)
-		{
-			retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";
-		}
 
-		Logger.Log(retval, LogLevel.Debug, _Client);
+ 		if (_Client.Settings.OUTPUT_TIMING_STATS)
+ 		{
+ 			String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.LastLag + "ms";
+ 
+ 			if ((pong.PingID - simulator.Statistics.LastPingID + 1) != 0)
+ 			{
+ 				retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";
+ 			}
+
+ 			Logger.Log(retval, LogLevel.Debug, _Client);
+		}
 	}
 
 	/**

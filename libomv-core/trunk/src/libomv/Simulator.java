@@ -971,7 +971,7 @@ public class Simulator extends Thread
 		_AckTimer.schedule(new AckTimer_Elapsed(), LibSettings.NETWORK_TICK_INTERVAL);
 
 		// Timer for recording simulator connection statistics
-		if (_StatsTimer == null)
+  		if (_Client.Settings.OUTPUT_TIMING_STATS && _StatsTimer == null)
 		{
 			_StatsTimer = new Timer("Simulator Statistics");
 			_StatsTimer.scheduleAtFixedRate(new StatsTimer_Elapsed(), 1000, 1000);
