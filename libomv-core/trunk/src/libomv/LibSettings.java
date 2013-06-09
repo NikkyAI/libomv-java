@@ -180,7 +180,7 @@ public class LibSettings extends Settings implements PacketCallback
 
 	// /#region Sizes
 
-	public final boolean OUTPUT_TIMING_STATS = false;
+	public static boolean OUTPUT_TIMING_STATS = false;
 	/*
 	 * The initial size of the packet inbox, where packets are stored before
 	 * processing
