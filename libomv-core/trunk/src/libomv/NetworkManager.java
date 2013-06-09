@@ -1462,7 +1462,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
 		simulator.Statistics.ReceivedPongs++;
 
- 		if (_Client.Settings.OUTPUT_TIMING_STATS)
+ 		if (LibSettings.OUTPUT_TIMING_STATS)
  		{
  			String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.LastLag + "ms";
  
