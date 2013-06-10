@@ -3172,10 +3172,6 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				{
 					update.Textures = new TextureEntry(block.getTextureEntry(), 4, block.getTextureEntry().length - 4);
 				}
-				else
-				{
-					Logger.DebugLog("Received TerseObjectUpdate with empty TextureEntry", _Client);
-				}
 				// #endregion Decode update data
 
 				Primitive obj = null;
