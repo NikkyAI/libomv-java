@@ -101,13 +101,12 @@ public final class LLSDJson extends OSDParser
 	 * object
 	 * 
 	 * @param stream The JSON reader to parse from
-	 * @param header The possible header used to detect the format
 	 * @param encoding The text encoding to use (not used)
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	protected OSD unflatten(Reader reader, String header, String encoding) throws ParseException, IOException
+	protected OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
 	{
 		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
 		int marker = skipWhiteSpace(push);
@@ -133,13 +132,12 @@ public final class LLSDJson extends OSDParser
 	 * object
 	 * 
 	 * @param stream The JSON byte stream to parse
-	 * @param header The possible header used to detect the format
 	 * @param encoding The text encoding to use when converting the stream to text
 	 * @return hierarchical OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	protected OSD unflatten(InputStream stream, byte[] header, String encoding) throws ParseException, IOException
+	protected OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
 		if (encoding == null)
 			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Json);

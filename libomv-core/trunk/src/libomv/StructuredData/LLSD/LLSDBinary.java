@@ -116,30 +116,28 @@ public final class LLSDBinary extends OSDParser
 	 * Creates an OSD (object structured data) object from a LLSD binary data stream
 	 * 
 	 * @param reader The reader to read from
-	 * @param header The possible header used to detect the format
 	 * @param encoding The encoding to use when reading the reader
 	 * @return and OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	protected OSD unflatten(Reader reader, String header, String encoding) throws IOException, ParseException
+	protected OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
 		if (encoding == null)
 			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Binary);
-		return unflatten(new ReaderInputStream(reader, encoding), header.getBytes(encoding), encoding);
+		return unflatten(new ReaderInputStream(reader, encoding), encoding);
 	}
 
 	/**
 	 * Creates an OSD (object structured data) object from a LLSD binary data stream
 	 * 
 	 * @param stream The byte stream to read from
-	 * @param header The possible header used to detect the format
 	 * @param encoding The encoding to use (not used)
 	 * @return and OSD object
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	protected OSD unflatten(InputStream stream, byte[] header, String encoding) throws IOException, ParseException
+	protected OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
 	{
 		PushbackInputStream push = stream instanceof PushbackInputStream ? (PushbackInputStream)stream : new PushbackInputStream(stream);
 		int marker = skipWhiteSpace(push);

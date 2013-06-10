@@ -115,7 +115,7 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(Reader reader, String header, String encoding) throws IOException, ParseException
+	public OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
 		try
 		{
@@ -137,7 +137,7 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(InputStream stream, byte[] header, String encoding) throws IOException, ParseException
+	public OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
 	{
 		try
 		{

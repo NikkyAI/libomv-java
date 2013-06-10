@@ -109,14 +109,14 @@ public abstract class OSDParser
 		return new LLSDJson();			
 	}
 	
-	protected abstract OSD unflatten(Reader reader, String header, String encoding) throws IOException, ParseException;
+	protected abstract OSD unflatten(Reader reader, String encoding) throws IOException, ParseException;
 
 	private static OSD deserialize(OSDParser parser, String string, String encoding) throws IOException, ParseException
 	{
 		PushbackReader push = new PushbackReader(new StringReader(string));
 		try
 		{
-			 return parser.unflatten(push, null, encoding);
+			 return parser.unflatten(push, encoding);
 		}
 		finally
 		{
@@ -192,7 +192,7 @@ public abstract class OSDParser
 		if (header != null)
 		{
 			OSDParser parser = createInstance(header, null);
-			return parser.unflatten(new PushbackReader(reader, header.length()), header, null);
+			return parser.unflatten(new PushbackReader(reader, header.length()), null);
 		}
 		return null;
 	}
@@ -203,7 +203,7 @@ public abstract class OSDParser
 		if (header != null)
 		{
 			OSDParser parser = createInstance(header, encoding);
-			return parser.unflatten(new PushbackReader(reader, header.length()), header, encoding);
+			return parser.unflatten(new PushbackReader(reader, header.length()), encoding);
 		}
 		return null;
 	}
@@ -211,23 +211,23 @@ public abstract class OSDParser
 	public static OSD deserialize(Reader reader, OSDFormat format) throws IOException, ParseException
 	{
 		OSDParser parser = createInstance(format);
-		return parser.unflatten(reader, null, null);
+		return parser.unflatten(reader, null);
 	}
 
 	public static OSD deserialize(Reader reader, OSDFormat format, String encoding) throws IOException, ParseException
 	{
 		OSDParser parser = createInstance(format);
-		return parser.unflatten(reader, null, encoding);
+		return parser.unflatten(reader, encoding);
 	}
 
-	protected abstract OSD unflatten(InputStream reader, byte[] header, String encoding) throws IOException, ParseException;
+	protected abstract OSD unflatten(InputStream reader, String encoding) throws IOException, ParseException;
 	
 	private static OSD deserialize(OSDParser parser, byte[] bytes, String encoding) throws IOException, ParseException
 	{
 		PushbackInputStream push = new PushbackInputStream(new ByteArrayInputStream(bytes));
 		try
 		{
-			 return parser.unflatten(push, null, encoding);
+			 return parser.unflatten(push, encoding);
 		}
 		finally
 		{
@@ -303,7 +303,7 @@ public abstract class OSDParser
 		if (header != null)
 		{
 			OSDParser parser = createInstance(header, null);
-			return parser.unflatten(new PushbackInputStream(stream, header.length), header, null);
+			return parser.unflatten(new PushbackInputStream(stream, header.length), null);
 		}
 		return null;
 	}
@@ -314,7 +314,7 @@ public abstract class OSDParser
 		if (header != null)
 		{
 			OSDParser parser = createInstance(header, encoding);
-			return parser.unflatten(new PushbackInputStream(stream, header.length), header, encoding);
+			return parser.unflatten(new PushbackInputStream(stream, header.length), encoding);
 		}
 		return null;
 	}
@@ -322,13 +322,13 @@ public abstract class OSDParser
 	public static OSD deserialize(InputStream stream, OSDFormat format) throws IOException, ParseException
 	{
 		OSDParser parser = createInstance(format);
-		return parser.unflatten(stream, null, null);
+		return parser.unflatten(stream, null);
 	}
 
 	public static OSD deserialize(InputStream stream, OSDFormat format, String encoding) throws IOException, ParseException
 	{
 		OSDParser parser = createInstance(format);
-		return parser.unflatten(stream, null, encoding);
+		return parser.unflatten(stream, encoding);
 	}
 
 	protected abstract void flatten(Writer writer, OSD osd, boolean prependHeader, String encoding) throws IOException;
