@@ -280,7 +280,7 @@ public class NotationLLSDTests extends TestCase
         Assert.assertEquals(OSDType.String, llsdOne.getType());
         Assert.assertEquals("", llsdOne.AsString());
 
-        // This is double escaping. Once for the encoding, and once for csharp.  
+        // This is double escaping. Once for the encoding, and once for java.  
         String sTwo = "'test\\'\"test'";
         OSD llsdTwo = OSDParser.deserialize(sTwo, OSDFormat.Notation);
         Assert.assertEquals(OSDType.String, llsdTwo.getType());
@@ -321,6 +321,12 @@ public class NotationLLSDTests extends TestCase
         OSD llsdEight = OSDParser.deserialize(sEight, OSDFormat.Notation);
         Assert.assertEquals(OSDType.String, llsdEight.getType());
         Assert.assertEquals("aouAOUhsdjklfghskldjfghqeiurtzwieortzaslxfjkgh", llsdEight.AsString());
+
+        String sNine = "\"A" + "\u00ea" + "\u00f1" + "\u00fc" + "C\"";
+        byte[] bytes = sNine.getBytes(Helpers.UTF8_ENCODING);
+        OSD llsdNine = OSDParser.deserialize(bytes, OSDFormat.Notation);
+        Assert.assertEquals(OSDType.String, llsdNine.getType());
+        Assert.assertEquals("A" + "\u00ea" + "\u00f1" + "\u00fc" + "C", llsdNine.AsString());
     }
 
     private void DoSomeStringSerializingActionsAndAsserts(String s) throws IOException, ParseException
