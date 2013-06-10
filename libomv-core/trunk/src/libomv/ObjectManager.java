@@ -3384,7 +3384,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				String text = Helpers.EmptyString;
 				try
 				{
-					text = Helpers.BytesToString(data, i, -1, Helpers.ASCII_ENCODING);
+					text = Helpers.BytesToString(data, i, -1);
 				}
 				catch (UnsupportedEncodingException e)
 				{ }
