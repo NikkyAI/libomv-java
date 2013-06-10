@@ -1527,7 +1527,7 @@ public class AssetManager implements PacketCallback
 	private void HttpRequestTexture(final UUID textureID, final ImageType imageType, final float priority,
 			final int discardLevel, final int packetStart, final TextureDownloadCallback callback, final boolean progress)
 	{
-		if (textureID == UUID.Zero || callback == null)
+		if (UUID.isZeroOrNull(textureID) || callback == null)
 			return;
 
 		byte[] assetData;

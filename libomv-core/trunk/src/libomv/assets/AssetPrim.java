@@ -1359,6 +1359,7 @@ public class AssetPrim extends AssetItem
 		{
 			Primitive prim = new Primitive();
 			prim.Properties = new ObjectProperties();
+			prim.PrimData = prim.new ConstructionData();
 
 			prim.Acceleration = this.Acceleration;
 			prim.AngularVelocity = this.AngularVelocity;
@@ -1400,7 +1401,7 @@ public class AssetPrim extends AssetItem
 				prim.Flags |= PrimFlags.Temporary;
 			prim.Text = this.Text;
 			prim.TextColor = this.TextColor;
-			prim.Textures = this.Textures;
+			prim.Textures = new TextureEntry(this.Textures);
 			if (this.UsePhysics)
 				prim.Flags |= PrimFlags.Physics;
 			prim.Velocity = this.Velocity;
