@@ -750,17 +750,20 @@ public class Simulator extends Thread
 	
 	public Avatar findAvatar(UUID id, boolean remove)
 	{
-		synchronized (_ObjectsAvatars)
+		if (!UUID.isZeroOrNull(id))
 		{
-			Iterator<Entry<Integer, Avatar>> iter = _ObjectsAvatars.entrySet().iterator();
-			while (iter.hasNext())
+			synchronized (_ObjectsAvatars)
 			{
-				Entry<Integer, Avatar> e = iter.next();
-				if (e.getValue().ID.equals(id))
+				Iterator<Entry<Integer, Avatar>> iter = _ObjectsAvatars.entrySet().iterator();
+				while (iter.hasNext())
 				{
-					if (remove)
-						iter.remove();
-					return e.getValue();
+					Entry<Integer, Avatar> e = iter.next();
+					if (e.getValue().ID.equals(id))
+					{
+						if (remove)
+							iter.remove();
+						return e.getValue();
+					}
 				}
 			}
 		}
@@ -769,13 +772,16 @@ public class Simulator extends Thread
 	
 	public Avatar findAvatar(String name)
 	{
-		synchronized (_ObjectsAvatars)
+		if (name != null && !name.isEmpty())
 		{
-			for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
+			synchronized (_ObjectsAvatars)
 			{
-				if (e.getValue().getName().equals(name))
+				for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
 				{
-					return e.getValue();
+					if (e.getValue().getName().equals(name))
+					{
+						return e.getValue();
+					}
 				}
 			}
 		}
@@ -792,17 +798,20 @@ public class Simulator extends Thread
 
 	public Primitive findPrimitive(UUID id, boolean remove)
 	{
-		synchronized (_ObjectsPrimitives)
+		if (!UUID.isZeroOrNull(id))
 		{
-			Iterator<Entry<Integer, Primitive>> iter = _ObjectsPrimitives.entrySet().iterator();
-			while (iter.hasNext())
+			synchronized (_ObjectsPrimitives)
 			{
-				Entry<Integer, Primitive> e = iter.next();
-				if (e.getValue().ID.equals(id))
+				Iterator<Entry<Integer, Primitive>> iter = _ObjectsPrimitives.entrySet().iterator();
+				while (iter.hasNext())
 				{
-					if (remove)
-						iter.remove();
-					return e.getValue();
+					Entry<Integer, Primitive> e = iter.next();
+					if (e.getValue().ID.equals(id))
+					{
+						if (remove)
+							iter.remove();
+						return e.getValue();
+					}
 				}
 			}
 		}

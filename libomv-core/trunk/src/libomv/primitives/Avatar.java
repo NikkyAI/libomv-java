@@ -515,7 +515,7 @@ public class Avatar extends Primitive
 		Avi.put("visual_parameters", vp);
 		Avi.put("first_name", OSD.FromString(getFirstName()));
 		Avi.put("last_name", OSD.FromString(getLastName()));
-		Avi.put("group_name", OSD.FromString(groupName));
+		Avi.put("group_name", OSD.FromString(getGroupName()));
 
 		return Avi;
 

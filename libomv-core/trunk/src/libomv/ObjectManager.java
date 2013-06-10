@@ -2861,7 +2861,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				case Tree:
 				case NewTree:
 				case Prim:
-					Primitive prim = GetPrimitive(simulator, block.ID, block.FullID, isNewObject);
+					Primitive prim = getPrimitive(simulator, block.ID, block.FullID, isNewObject);
 					data = CreateConstructionData(prim, pcode, block);
 					// Textures
 					try
@@ -2999,7 +2999,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 					// #region Create an Avatar from the decoded data
 
-					Avatar avatar = GetAvatar(simulator, block.ID, block.FullID, isNewObject);
+					Avatar avatar = getAvatar(simulator, block.ID, block.FullID, isNewObject);
 					data = CreateConstructionData(avatar, pcode, block);
 
 					objectupdate.Avatar = true;
@@ -3168,9 +3168,13 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 				// Textures
 				// FIXME: Why are we ignoring the first four bytes here?
-				if (block.getTextureEntry().length != 0)
+				if (block.getTextureEntry().length > 4)
 				{
 					update.Textures = new TextureEntry(block.getTextureEntry(), 4, block.getTextureEntry().length - 4);
+				}
+				else
+				{
+					Logger.DebugLog("Received TerseObjectUpdate with empty TextureEntry", _Client);
 				}
 				// #endregion Decode update data
 
@@ -3179,11 +3183,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				{
 					if (update.Avatar)
 					{
-						obj = (Primitive) GetAvatar(simulator, update.LocalID, UUID.Zero, null);
+						obj = (Primitive) getAvatar(simulator, update.LocalID, null, null);
 					}
 					else
 					{
-						obj = (Primitive) GetPrimitive(simulator, update.LocalID, UUID.Zero, null);
+						obj = (Primitive) getPrimitive(simulator, update.LocalID, null, null);
 					}
 				}
 
@@ -3211,7 +3215,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					obj.AngularVelocity = update.AngularVelocity;
 					obj.PrimData = obj.new ConstructionData();
 					obj.PrimData.State = update.State;
-					obj.Textures = update.Textures;
+					if (update.Textures != null)
+						obj.Textures = update.Textures;
 				}
 			}
 			catch (Throwable ex)
@@ -3237,7 +3242,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			byte[] data = block.getData();
 
 			// UUID
-			UUID FullID = new UUID(data, 0); i += 16;
+			UUID fullID = new UUID(data, 0); i += 16;
 			// Local ID
 			int localid = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 			// PCode
@@ -3261,7 +3266,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			// /#endregion Relevance check
 			RefObject<Boolean> isNewObject = new RefObject<Boolean>(false);
-			Primitive prim = GetPrimitive(simulator, localid, FullID, isNewObject);
+			Primitive prim = getPrimitive(simulator, localid, fullID, isNewObject);
 
 			prim.Flags = PrimFlags.setValue(block.UpdateFlags);
 			prim.PrimData = prim.new ConstructionData();
@@ -3854,7 +3859,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *            list, when the object could not be found.
 	 * @return the object that corresponds to the localID
 	 */
-	protected final Primitive GetPrimitive(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
+	protected final Primitive getPrimitive(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
 		if (objectTracking)
 		{
@@ -3895,7 +3900,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *            simulator list, when the avatar could not be found.
 	 * @return the avatar object that corresponds to the localID
 	 */
-	protected final Avatar GetAvatar(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
+	protected final Avatar getAvatar(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
 		if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 		{
