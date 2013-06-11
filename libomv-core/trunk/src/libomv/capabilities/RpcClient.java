@@ -238,20 +238,18 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				pullParser.nextTag(); // Tag.PARAM (<param>)
 				pullParser.require(XmlPullParser.START_TAG, null, PARAM);
 				pullParser.nextTag(); // Tag.VALUE (<value>)
-				// no parser.require() here since its called in
-				// XMLRPCSerializer.deserialize() below
 
 				// deserialize result
+				pullParser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 				return deserialize(pullParser);
 			}
 			else if (tag.equals(FAULT))
 			{
 				// fault response
 				pullParser.nextTag(); // Tag.VALUE (<value>)
-				// no parser.require() here since its called in
-				// XMLRPCSerializer.deserialize() below
 
 				// deserialize fault result
+				pullParser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 				return deserialize(pullParser);
 			}
 			else
@@ -331,8 +329,6 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 
 	private OSD deserialize(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		parser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
-
 		if (parser.isEmptyElementTag())
 		{
 			// degenerated <value />, return empty string
@@ -426,6 +422,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				OSDArray list = new OSDArray();
 				while (parser.getName().equals(TAG_VALUE))
 				{
+					parser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 					list.add(deserialize(parser));
 					parser.nextTag();
 				}
@@ -452,6 +449,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 						}
 						else if (key.equals(TAG_VALUE))
 						{
+							parser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 							memberValue = deserialize(parser);
 						}
 						else
