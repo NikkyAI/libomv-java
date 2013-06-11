@@ -1685,38 +1685,30 @@ public class AppearanceManager implements PacketCallback
 
         Logger.DebugLog("Downloading " + textureIDs.size() + " textures for baking");
 
-        ExecutorService executor = Executors.newFixedThreadPool(MAX_CONCURRENT_DOWNLOADS);
         final CountDownLatch latch = new CountDownLatch(textureIDs.size());
-        for (final UUID textureID : textureIDs)
+        for (UUID textureID : textureIDs)
         {
-            executor.submit(new Runnable()
+            _Client.Assets.RequestImage(textureID, new TextureDownloadCallback()
             {
                 @Override
-                public void run()
+                public void callback(TextureRequestState state, AssetTexture assetTexture)
                 {
-                    _Client.Assets.RequestImage(textureID, new TextureDownloadCallback()
-                    {
-                        @Override
-                        public void callback(TextureRequestState state, AssetTexture assetTexture)
-                        {
-                        	if (state == TextureRequestState.Finished && assetTexture != null)
-                        	{
-                                Logger.Log("Texture " + assetTexture.getAssetID() + " downloaded", LogLevel.Debug, _Client);
-                            	assetTexture.decode();
+                	if (state == TextureRequestState.Finished && assetTexture != null)
+                	{
+                        Logger.Log("Texture " + assetTexture.getAssetID() + " downloaded", LogLevel.Debug, _Client);
+                    	assetTexture.decode();
 
-                                for (int i = 0; i < _Textures.length; i++)
-                                {
-                                    if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(assetTexture.getAssetID()))
-                                        _Textures[i].Texture = assetTexture;
-                                }
-                            }
-                            else
-                            {
-                                Logger.Log("Texture " + assetTexture.getAssetID() + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
-                            }
-                            latch.countDown();
+                        for (int i = 0; i < _Textures.length; i++)
+                        {
+                            if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(assetTexture.getAssetID()))
+                                _Textures[i].Texture = assetTexture;
                         }
-                    });
+                    }
+                    else
+                    {
+                        Logger.Log("Texture " + assetTexture.getAssetID() + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
+                    }
+                    latch.countDown();
                 }
             });
         }
@@ -1726,7 +1718,6 @@ public class AppearanceManager implements PacketCallback
             latch.await(TEXTURE_TIMEOUT, TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {}
-        executor.shutdown();
     }
 
     /**
