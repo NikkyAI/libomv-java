@@ -758,7 +758,7 @@ public class Simulator extends Thread
 				while (iter.hasNext())
 				{
 					Entry<Integer, Avatar> e = iter.next();
-					if (e.getValue().ID.equals(id))
+					if (id.equals(e.getValue().ID))
 					{
 						if (remove)
 							iter.remove();
@@ -778,7 +778,7 @@ public class Simulator extends Thread
 			{
 				for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
 				{
-					if (e.getValue().getName().equals(name))
+					if (name.equals(e.getValue().getName()))
 					{
 						return e.getValue();
 					}
@@ -806,7 +806,7 @@ public class Simulator extends Thread
 				while (iter.hasNext())
 				{
 					Entry<Integer, Primitive> e = iter.next();
-					if (e.getValue().ID.equals(id))
+					if (id.equals(e.getValue().ID))
 					{
 						if (remove)
 							iter.remove();
