@@ -288,7 +288,7 @@ public class AssetCache
 	 * @param assetID UUID of the asset
 	 * @return String with the file name of the cached asset
 	 */
-	private File cachedAssetFile(UUID assetID, String suffix)
+	public File cachedAssetFile(UUID assetID, String suffix)
 	{
 		if (ComputeAssetCacheFilename != null)
 		{

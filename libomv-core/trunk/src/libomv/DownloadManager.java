@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2009, openmetaverse.org
- * Copyright (c) 2009-2012, Frederick Martian
+ * Copyright (c) 2009-2013, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,276 +29,200 @@
  */
 package libomv;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Hashtable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
-import org.apache.http.nio.concurrent.FutureCallback;
-import org.apache.http.nio.reactor.IOReactorException;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.HttpsURLConnection;
 
-import libomv.capabilities.AsyncHTTPClient;
-import libomv.capabilities.AsyncHTTPClient.ProgressCallback;
+import libomv.utils.Callback;
+import libomv.utils.CallbackHandler;
+import libomv.utils.Helpers;
 import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
-/// Manages async HTTP downloads with a limit on maximum concurrent downloads
+/// Manages HTTP texture downloads with a limit on maximum concurrent downloads
 public class DownloadManager
 {
-    // Represents individual HTTP Download request
-    public class DownloadRequest
+     public class DownloadResult
+    {
+        public boolean result;
+        public int current;
+        public int full;
+        public byte[] data;
+        
+        public DownloadResult(int current, int full)
+        {
+        	result = false;
+        	this.current = current;
+        	this.full = full;
+        }
+        
+        public DownloadResult(byte[] data)
+        {
+        	result = true;
+        	this.data = data;
+        }
+    }
+
+    private class ActiveDownload implements Runnable
     {
         // URI of the item to fetch 
-        public URI address;
+        private URI address;
         // Timout specified in milliseconds 
-        public int millisecondsTimeout;
+        private int millisecondsTimeout;
         // Accept the following content type
-        public String contentType;
+        private String contentType;
         // How many times will this request be retried
-        public int retries;
+        private int retries;
         // Current fetch attempt
-        public int attempt;
-        // Progress callback
-        public ProgressCallback progressCallback;
-        // Download callback
-        public FutureCallback<byte[]> downloadCallback;
-
+        private int attempt;
+        
+        private OutputStream outputStream;
+        
+        private CallbackHandler<DownloadResult> callbacks = new CallbackHandler<DownloadResult>();
+    	
         // Default constructor
-        public DownloadRequest()
+        public ActiveDownload()
         {
             this.retries = 5;
             this.attempt = 0;
         }
 
-        // Constructor
-        public DownloadRequest(URI address, int millisecondsTimeout, String contentType,
-        		               ProgressCallback progressCallback, FutureCallback<byte[]> downloadCallback)
-        {
+        public ActiveDownload(URI address, int millisecondsTimeout, String contentType, OutputStream outputStream, Callback<DownloadResult> callback)
+		{
         	this();
             this.address = address;
             this.millisecondsTimeout = millisecondsTimeout;
             this.contentType = contentType;
-            this.progressCallback = progressCallback;
-            this.downloadCallback = downloadCallback;
-        }
-    }
-
-    private class ActiveDownload extends AsyncHTTPClient<byte[]>
-    {
-		public List<FutureCallback<byte[]>> downloadHandlers = new ArrayList<FutureCallback<byte[]>>();
-		public List<ProgressCallback> progressHandlers = new ArrayList<ProgressCallback>();
-
-        public ActiveDownload() throws IOReactorException
-		{
-			super("ActiveDownload");
+            this.outputStream = outputStream;
+            this.callbacks.add(callback, false);
 		}
         
+        public void addCallback(Callback<DownloadResult> callback)
+        {
+            this.callbacks.add(callback, false);        	
+        }
+        
 		@Override
-		protected byte[] convertContent(InputStream in, String encoding) throws IOException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    }
-
-    private ActiveDownload createActiveDownload(FutureCallback<byte[]> callback)
-    {
-    	try
-    	{
-    		return new ActiveDownload();
-		}
-		catch (IOReactorException ex)
+		public void run()
 		{
-			callback.failed(ex);
+			while (attempt++ < retries)
+			{
+				try
+				{
+					HttpURLConnection con = (HttpURLConnection)address.toURL().openConnection();
+					try
+					{
+						con.setRequestProperty("Accept-Encoding", "identity");
+						if (contentType != null)
+						    con.setRequestProperty("Content-Type", contentType);
+						con.setReadTimeout(millisecondsTimeout > 0 ? millisecondsTimeout : 0);
+		                Logger.DebugLog("Requesting " + address);
+						if (address.getScheme().equals("https"))
+						{
+							try
+							{
+								String hostname = address.getHost();
+								X509Certificate	certificate = Helpers.getCertificate(hostname);
+								if (certificate != null)
+								{
+									KeyStore keyStore = Helpers.getExtendedKeyStore();
+									keyStore.setCertificateEntry(hostname, certificate);
+									KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+									kmf.init(keyStore, null);
+									SSLContext context = SSLContext.getInstance("TLS");
+									context.init(kmf.getKeyManagers(), null, null);
+									((HttpsURLConnection)con).setSSLSocketFactory(context.getSocketFactory());
+								}
+							}
+							catch (Exception e)
+							{
+								/* Ignore any exceptions here and let the connection fail if the security manager has a problem */
+							}
+						}
+						int len, total = con.getContentLength();
+						ByteArrayOutputStream os = new ByteArrayOutputStream(total > 0 ? total : 10000);
+						InputStream is = con.getInputStream();
+						byte b[] = new byte[10000];
+						while ((len = is.read(b)) >= 0)
+						{
+							callbacks.dispatch(new DownloadResult(len, total));
+							if (outputStream != null)
+								outputStream.write(b, 0, len);
+							os.write(b, 0, len);
+						}
+						callbacks.dispatch(new DownloadResult(os.toByteArray()));
+						return;
+					}
+					catch (MalformedURLException e)
+					{
+					}
+					catch (IOException e)
+					{
+					}
+					finally
+					{
+						con.disconnect();
+						if (outputStream != null)
+							outputStream.close();
+					}
+				}
+				catch (Exception ex)
+				{
+				}
+			}
+			callbacks.dispatch(new DownloadResult(null));
 		}
-		return null;
     }
     
-    Queue<DownloadRequest> queue = new LinkedBlockingQueue<DownloadRequest>();
-    HashMap<String, ActiveDownload> activeDownloads = new HashMap<String, ActiveDownload>();
+    private static int num = 0;
 
-    int m_ParallelDownloads = 8;
-    X509Certificate m_ClientCert;
-
-    // Maximum number of parallel downloads from a single endpoint
-    public int getParallelDownloads()
+    class SimpleThreadFactory implements ThreadFactory
     {
-        return m_ParallelDownloads;
+    	public Thread newThread(Runnable r)
+    	{
+    		return new Thread(r, "DownloadManager" + ++num);    			
+    	}
     }
-
-    public void setParallelDownloads(int value)
+    
+    private ExecutorService execPool = Executors.newFixedThreadPool(8, new SimpleThreadFactory());
+	private Hashtable<URI, ActiveDownload> requests = new Hashtable<URI, ActiveDownload>();
+    
+    // Enqueue a new HTPP download
+    public void enque(URI address, int millisecondsTimeout, String contentType, OutputStream outputStream, Callback<DownloadResult> callback)
     {
-    	m_ParallelDownloads = value;
-    }
-
-    //  Client certificate
-    public X509Certificate getClientCert()
-    {
-        return m_ClientCert;
-    }
-
-    public void setClientCert(X509Certificate value)
-    {
-        m_ClientCert = value;
+    	synchronized (requests)
+    	{
+    		ActiveDownload download = requests.get(address);
+    		if (download == null)
+    		{
+    			download = new ActiveDownload(address, millisecondsTimeout, contentType, outputStream, callback);
+    			requests.put(address, download);
+    	    	execPool.submit(download);
+    		}
+    		else if (callback != null)
+    		{
+    			download.addCallback(callback);
+    		}
+    	}
     }
 
     // Cleanup method
     public void shutdown()
     {
-        synchronized (activeDownloads)
-        {
-            for (ActiveDownload download : activeDownloads.values())
-            {
-                try
-                {
-                    download.shutdown(true);
-                }
-                catch (Exception ex) { }
-            }
-            activeDownloads.clear();
-        }
-    }
-
-    // Check the queue for pending work
-    private void enquePending()
-    {
-        synchronized (queue)
-        {
-            if (queue.size() > 0)
-            {
-                int nr = 0;
-                synchronized (activeDownloads)
-                {
-                    nr = activeDownloads.size();
-                }
-
-                Logger.DebugLog(nr + " active downloads. Queued textures: " + queue.size());
-                
-                for (int i = nr; i < m_ParallelDownloads && queue.size() > 0; i++)
-                {
-                    final DownloadRequest item = queue.poll();
-                    synchronized (activeDownloads)
-                    {
-                        final String addr = item.address.toString();
-                        if (activeDownloads.containsKey(addr))
-                        {
-                            if (item.progressCallback != null)
-                            {
-                            	activeDownloads.get(addr).progressHandlers.add(item.progressCallback);
-                            }
-                            activeDownloads.get(addr).downloadHandlers.add(item.downloadCallback);
-                        }
-                        else
-                        {
-                            final ActiveDownload activeDownload = createActiveDownload(item.downloadCallback);
-							if (activeDownload != null)
-							{
-	                            if (item.progressCallback != null)
-	                            {
-	                            	activeDownload.progressHandlers.add(item.progressCallback);
-	                            }
-	                            activeDownload.downloadHandlers.add(item.downloadCallback);
-
-	                            Logger.DebugLog("Requesting " + addr);
-	                            
-	                            activeDownload.setProgressCallback(new ProgressCallback()
-	                            {
-	                                @Override
-									public void progress(long bytesReceived, long totalBytesToReceive)
-	                                {
-	                                    for (ProgressCallback handler : activeDownload.progressHandlers)
-	                                    {
-	                                        handler.progress(bytesReceived, totalBytesToReceive);
-	                                    }
-	                                }
-	                            });
-	                            activeDownload.executeHttpGet(item.address, item.contentType, new FutureCallback<byte[]>()
-	    	                    {
-	                                @Override
-									public void completed(byte[] responseData)
-	                                {
-	                                    synchronized (activeDownloads)
-	                                    {
-	                                    	activeDownloads.remove(addr);
-	                                    }
-	                                    for (FutureCallback<byte[]> handler : activeDownload.downloadHandlers)
-	                                    {
-	                                        handler.completed(responseData);
-	                                    }
-	                                    enquePending();
-	                                }
-	                                
-	                                @Override
-									public void failed(Exception ex)
-	                                {
-	                                    synchronized (activeDownloads)
-	                                    {
-	                                    	activeDownloads.remove(addr);
-	                                    }
-	                                    if (item.attempt >= item.retries)
-	                                    {
-	                                    	for (FutureCallback<byte[]> handler : activeDownload.downloadHandlers)
-	                                    	{
-	                                    		handler.failed(ex);
-	                                    	}
-	                                    }
-	                                    else
-	                                    {
-	                                        item.attempt++;
-                                            Logger.Log(String.format("Texture %s HTTP download failed, trying again retry %d/%d",
-                                                    item.address, item.attempt, item.retries), LogLevel.Warning);
-                                            synchronized(queue)
-                                            {
-                                            	enque(item);
-                                            }
-	                                    }
-	                                    enquePending();
-	                                }
-
-									@Override
-									public void cancelled()
-									{
-	                                    synchronized (activeDownloads)
-	                                    {
-	                                    	activeDownloads.remove(addr);
-	                                    }
-	                                    for (FutureCallback<byte[]> handler : activeDownload.downloadHandlers)
-	                                    {
-	                                        handler.cancelled();
-	                                    }
-	                                    enquePending();
-									}
-	                            }, item.millisecondsTimeout); 
-	                            activeDownloads.put(addr, activeDownload);
-							}
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Enqueue a new HTPP download
-    public void enque(DownloadRequest req)
-    {
-    	synchronized (activeDownloads)
-        {
-            String addr = req.address.toString();
-            if (activeDownloads.containsKey(addr))
-            {
-                activeDownloads.get(addr).downloadHandlers.add(req.downloadCallback);
-                return;
-            }
-        }
-
-    	synchronized (queue)
-        {
-            queue.offer(req);
-        }
-        enquePending();
+    	execPool.shutdownNow();
+    	requests.clear();
     }
 }

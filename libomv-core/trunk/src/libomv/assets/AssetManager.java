@@ -30,7 +30,10 @@
  */
 package libomv.assets;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -44,17 +47,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.http.nio.concurrent.FutureCallback;
 
 import libomv.DownloadManager;
+import libomv.DownloadManager.DownloadResult;
 import libomv.GridClient;
 import libomv.LibSettings;
 import libomv.Simulator;
-import libomv.DownloadManager.DownloadRequest;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
-import libomv.capabilities.AsyncHTTPClient;
 import libomv.capabilities.CapsClient;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.UploadBakedTextureMessage;
@@ -1239,48 +1241,7 @@ public class AssetManager implements PacketCallback
 	 * @param progress If true, the callback will be fired for each chunk of the
 	 *            downloaded image. The callback asset parameter will contain
 	 *            all previously received chunks of the texture asset starting
-	 *            from the beginning of the request <example> Request an image
-	 *            and fire a callback when the request is complete <code>
-	 * _Client.Assets.RequestImage(UUID.Parse("c307629f-e3a1-4487-5e88-0d96ac9d4965"), ImageType.Normal, TextureDownloader_OnDownloadFinished);
-	 *
-	 * private void TextureDownloader_OnDownloadFinished(TextureRequestState state, AssetTexture asset)
-	 * {
-	 *     if(state == TextureRequestState.Finished)
-	 *     {
-	 *         Console.WriteLine("Texture %s (%d bytes) has been successfully downloaded", asset.AssetID, asset.AssetData.Length);
-	 *     }
-	 * }
-	 * </code> Request an image and use an inline anonymous method to handle the
-	 *            downloaded texture data <code>
-	 * _Client.Assets.RequestImage(UUID.Parse("c307629f-e3a1-4487-5e88-0d96ac9d4965"), ImageType.Normal, delegate(TextureRequestState state, AssetTexture asset)
-	 *                                         {
-	 *                                             if(state == TextureRequestState.Finished)
-	 *                                             {
-	 *                                                 Console.WriteLine("Texture %s (%d bytes) has been successfully downloaded",
-	 *                                                 asset.AssetID,
-	 *                                                 asset.AssetData.Length);
-	 *                                             }
-	 *                                         }
-	 * );
-	 * </code> Request a texture, decode the texture to a bitmap image and apply
-	 *            it to a imagebox <code>
-	 * _Client.Assets.RequestImage(UUID.Parse("c307629f-e3a1-4487-5e88-0d96ac9d4965"), ImageType.Normal, TextureDownloader_OnDownloadFinished);
-	 *
-	 * private void TextureDownloader_OnDownloadFinished(TextureRequestState state, AssetTexture asset)
-	 * {
-	 *     if(state == TextureRequestState.Finished)
-	 *     {
-	 *         ManagedImage imgData;
-	 *         Image bitmap;
-	 *
-	 *         if (state == TextureRequestState.Finished)
-	 *         {
-	 *             OpenJPEG.DecodeToImage(assetTexture.AssetData, out imgData, out bitmap);
-	 *             picInsignia.Image = bitmap;
-	 *         }
-	 *     }
-	 * }
-	 * </code> </example>
+	 *            from the beginning of the request
 	 */
 	public final void RequestImage(UUID textureID, ImageType imageType, float priority, int discardLevel,
 			int packetStart, TextureDownloadCallback callback, boolean progress)
@@ -1382,35 +1343,36 @@ public class AssetManager implements PacketCallback
 
 		if (_Client.Network.getCapabilityURI("GetMesh") != null)
 		{
+			OutputStream os = null;
 			try
 			{
-				URI url = new URI(String.format("{%s}/?mesh_id={%s}", _Client.Network.getCapabilityURI("GetMesh"), meshID));
-				DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, null, null, new FutureCallback<byte[]>()
+				URI url = new URI(String.format("%s/?mesh_id={%s}", _Client.Network.getCapabilityURI("GetMesh"), meshID));
+				try
+				{
+					os = new FileOutputStream(_Cache.cachedAssetFile(meshID, "mesh"));
+				}
+				catch (FileNotFoundException e) { }
+				Callback<DownloadResult> downloadCallback = new Callback<DownloadResult>()
 				{
 					@Override
-					public void completed(byte[] response)
+					public boolean callback(DownloadResult result)
 					{
-						if (response != null) // success
+						if (result.result)
 						{
-							_Cache.put(meshID, response, "mesh");
-							callback.callback(true, new AssetMesh(meshID, response));
+							if (result.data != null) // success
+							{
+								callback.callback(true, new AssetMesh(meshID, result.data));
+							}
+							else
+							{
+								callback.callback(false, null);
+							}
 						}
+						return result.result;
 					}
 
-					@Override
-					public void failed(Exception ex)
-					{
-						Logger.Log("Failed to fetch mesh asset {" + meshID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
-						callback.callback(false, null);
-					}
-
-					@Override
-					public void cancelled()
-					{
-						callback.callback(false, null);
-					}
-				});
-				_HttpDownloads.enque(req);
+				};
+				_HttpDownloads.enque(url, _Client.Settings.CAPS_TIMEOUT, null, os, downloadCallback);
 			}
 			catch (URISyntaxException ex)
 			{
@@ -1457,39 +1419,40 @@ public class AssetManager implements PacketCallback
 			callback.callback(TextureRequestState.NotFound, null);
 			return;
 		}
+		OutputStream os = null;
 		URI url = new URI(appearenceUri + "texture/" + avatarID + "/" + bakeName + "/" + textureID);
-		DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", null, new FutureCallback<byte[]>()
+		try
+		{
+			os = new FileOutputStream(_Cache.cachedAssetFile(textureID, "tex"));
+		}
+		catch (FileNotFoundException e) { }
+		Callback<DownloadResult> downloadCallback = new Callback<DownloadResult>()
 		{
 			@Override
-			public void completed(byte[] response)
+			public boolean callback(DownloadResult result)
 			{
-				if (response != null) // success
+				if (result.result)
 				{
-					_Cache.put(textureID, response, "tex");
-					callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, response));
-					FireImageProgressEvent(textureID, response.length, response.length);
+					if (result.data != null) // success
+					{
+						callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, result.data));
+						FireImageProgressEvent(textureID, result.data.length, result.data.length);
+					}
+					else
+					{
+						Logger.Log("Failed to fetch server bake {" + textureID + "}: empty data", LogLevel.Warning, _Client);
+						callback.callback(TextureRequestState.Timeout, null);
+					}
 				}
-				else // download failed
+				else
 				{
-					Logger.Log("Failed to fetch server bake {" + textureID + "}: empty data", LogLevel.Warning, _Client);
-					callback.callback(TextureRequestState.Timeout, null);
+					FireImageProgressEvent(textureID, result.current, result.full);
 				}
+				return result.result;
 			}
 
-			@Override
-			public void failed(Exception ex)
-			{
-				Logger.Log("Failed to fetch server bake {" + textureID + "}: " + ((ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
-				callback.callback(TextureRequestState.Timeout, null);
-			}
-
-			@Override
-			public void cancelled()
-			{
-				callback.callback(TextureRequestState.Aborted, null);
-			}
-		});
-		_HttpDownloads.enque(req);
+		};
+		_HttpDownloads.enque(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", os, downloadCallback);
 	}
 
 	/**
@@ -1540,52 +1503,44 @@ public class AssetManager implements PacketCallback
 			return;
 		}
 
-		AsyncHTTPClient.ProgressCallback progressHandler = null;
-		if (progress)
-		{
-			progressHandler = new AsyncHTTPClient.ProgressCallback()
-			{
-				@Override
-				public void progress(long bytesReceived, long totalBytesToReceive)
-				{
-					FireImageProgressEvent(textureID, bytesReceived, totalBytesToReceive);
-				}
-			};
-		}
-
 		try
 		{
+			OutputStream os = null;
 			URI url = new URI(String.format("%s/?texture_id=%s", _Client.Network.getCapabilityURI("GetTexture"), textureID));
-			DownloadRequest req = _HttpDownloads.new DownloadRequest(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", progressHandler, new FutureCallback<byte[]>()
+			try
+			{
+				os = new FileOutputStream(_Cache.cachedAssetFile(textureID, "tex"));
+			}
+			catch (FileNotFoundException e) { }
+			Callback<DownloadResult> downloadCallback = new Callback<DownloadResult>()
 			{
 				@Override
-				public void completed(byte[] response)
+				public boolean callback(DownloadResult result)
 				{
-					if (response != null) // success
+					if (result.result)
 					{
-						_Cache.put(textureID, response, "tex");
-						callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, response));
-						FireImageProgressEvent(textureID, response.length, response.length);
+						if (result.data != null) // success
+						{
+							callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, result.data));
+							FireImageProgressEvent(textureID, result.data.length, result.data.length);
+						}
+						else
+						{
+							callback.callback(TextureRequestState.Pending, null);
+							Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP", textureID), LogLevel.Warning, _Client);
+							_Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
+						}
 					}
+					else
+					{
+						FireImageProgressEvent(textureID, result.current, result.full);
+					}
+					return result.result;
 				}
 
-				@Override
-				public void failed(Exception ex)
-				{
-					callback.callback(TextureRequestState.Pending, null);
-					Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}",
-							textureID, (ex == null) ? "" : ex.getMessage()), LogLevel.Warning, _Client);
+			};
+			_HttpDownloads.enque(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c", os, downloadCallback);
 
-					_Texture.RequestTexture(textureID, imageType, priority, discardLevel, packetStart, callback, progress);
-				}
-
-				@Override
-				public void cancelled()
-				{
-					callback.callback(TextureRequestState.Aborted, null);
-				}
-			});
-			_HttpDownloads.enque(req);
 		}
 		catch (URISyntaxException ex)
 		{

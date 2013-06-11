@@ -1538,8 +1538,8 @@ public class AppearanceManager implements PacketCallback
             }
             else
             {
-                Logger.Log("Wearable " + wearable.AssetID + "(" + wearable.WearableType + ") failed to download, " +
-                    transfer.Status, LogLevel.Warning, _Client);
+                Logger.Log("Wearable " + wearable.WearableType + " {" + wearable.AssetID + "} failed to download, status:  " + transfer.Status,
+                		   LogLevel.Warning, _Client);
             }
             latch.countDown();
         }
@@ -1699,19 +1699,20 @@ public class AppearanceManager implements PacketCallback
                         @Override
                         public void callback(TextureRequestState state, AssetTexture assetTexture)
                         {
+                            Logger.Log("Texture " + assetTexture.getAssetID() + " downloaded", LogLevel.Warning, _Client);
                             if (state == TextureRequestState.Finished)
                             {
-                                assetTexture.decode();
+                            	assetTexture.decode();
 
                                 for (int i = 0; i < _Textures.length; i++)
                                 {
-                                    if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(textureID))
+                                    if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(assetTexture.getAssetID()))
                                         _Textures[i].Texture = assetTexture;
                                 }
                             }
                             else
                             {
-                                Logger.Log("Texture " + textureID + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
+                                Logger.Log("Texture " + assetTexture.getAssetID() + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
                             }
                             latch.countDown();
                         }
