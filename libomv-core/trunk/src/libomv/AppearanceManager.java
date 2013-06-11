@@ -1699,9 +1699,9 @@ public class AppearanceManager implements PacketCallback
                         @Override
                         public void callback(TextureRequestState state, AssetTexture assetTexture)
                         {
-                            Logger.Log("Texture " + assetTexture.getAssetID() + " downloaded", LogLevel.Warning, _Client);
-                            if (state == TextureRequestState.Finished)
-                            {
+                        	if (state == TextureRequestState.Finished && assetTexture != null)
+                        	{
+                                Logger.Log("Texture " + assetTexture.getAssetID() + " downloaded", LogLevel.Debug, _Client);
                             	assetTexture.decode();
 
                                 for (int i = 0; i < _Textures.length; i++)
@@ -1716,7 +1716,7 @@ public class AppearanceManager implements PacketCallback
                             }
                             latch.countDown();
                         }
-                });
+                    });
                 }
             });
         }

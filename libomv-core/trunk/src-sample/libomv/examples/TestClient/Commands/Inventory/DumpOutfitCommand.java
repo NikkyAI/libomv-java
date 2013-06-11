@@ -54,7 +54,7 @@ public class DumpOutfitCommand extends Command
     public DumpOutfitCommand(TestClient testClient)
     {
         Name = "dumpoutfit";
-        Description = "Dumps all of the textures from an avatars outfit to the hard drive. " + usage;
+        Description = "Dumps all of the valid textures from an avatars outfit to the hard drive. " + usage;
         Category = CommandCategory.Inventory;
 
     }
@@ -110,25 +110,27 @@ public class DumpOutfitCommand extends Command
             {
                 TextureEntry.TextureEntryFace face = targetAv.Textures.faceTextures[j];
 
-                if (face != null)
+                if (face != null && !UUID.isZeroOrNull(face.getTextureID()))
                 {
                     ImageType type = ImageType.Normal;
-
-                    switch (AvatarTextureIndex.setValue(j))
+                    UUID uuid = face.getTextureID();
+                    if (!OutfitAssets.contains(uuid))
                     {
-                        case HeadBaked:
-                        case EyesBaked:
-                        case UpperBaked:
-                        case LowerBaked:
-                        case SkirtBaked:
-                            type = ImageType.Baked;
-                            break;
-                    }
+                        switch (AvatarTextureIndex.setValue(j))
+                        {
+                            case HeadBaked:
+                            case EyesBaked:
+                            case UpperBaked:
+                            case LowerBaked:
+                            case SkirtBaked:
+                                type = ImageType.Baked;
+                                break;
+                        }
 
-                    OutfitAssets.add(face.getTextureID());
-                    Client.Assets.RequestImage(face.getTextureID(), type, new Assets_OnImageReceived());
-                    output.append(AvatarTextureIndex.setValue(j).toString());
-                    output.append(" ");
+                        OutfitAssets.add(uuid);
+                        Client.Assets.RequestImage(uuid, type, new Assets_OnImageReceived());
+                    }
+                    output.append(AvatarTextureIndex.setValue(j).toString() + " (" + uuid.toString() + ") ");
                 }
         	}
         }
@@ -140,37 +142,43 @@ public class DumpOutfitCommand extends Command
 		@Override
     	public void callback(TextureRequestState state, AssetTexture assetTexture)
     	{
-	        synchronized (OutfitAssets)
+	        if (state == TextureRequestState.Finished && assetTexture != null)
 	        {
-	            if (OutfitAssets.contains(assetTexture.getAssetID()))
-	            {
-	                if (state == TextureRequestState.Finished)
-	                {
-	                    try
-	                    {
-	                    	FileOutputStream os = new FileOutputStream(new File(assetTexture.getAssetID() + ".jp2"));
-	                        os.write(assetTexture.AssetData);
-	                        os.close();
-	                        System.out.println("Wrote JPEG2000 image " + assetTexture.getAssetID() + ".jp2");
+				synchronized (OutfitAssets)
+		        {
+		        	UUID uuid = assetTexture.getAssetID();
+		            if (OutfitAssets.contains(uuid))
+		            {
+		                if (state == TextureRequestState.Finished)
+		                {
+		                    try
+		                    {
+		                    	File file = new File(uuid.toString() + ".jp2");
+		                    	FileOutputStream os = new FileOutputStream(file);
+		                        os.write(assetTexture.AssetData);
+		                        os.close();
+		                        System.out.println("Wrote JPEG2000 image at " + file.getCanonicalPath());
 
-	                        ManagedImage imgData = new J2KImage(new ByteArrayInputStream(assetTexture.AssetData));
-	                        TGAImage tgaImage = new TGAImage(imgData);
-	                        os = new FileOutputStream(new File(assetTexture.getAssetID() + ".tga"));
-	                        tgaImage.encode(os);
-	                        os.close();
-	                        System.out.println("Wrote TGA image " + assetTexture.getAssetID() + ".tga");
-	                    }
-	                    catch (Exception e)
-	                    {
-	                        System.out.println(e.toString());
-	                    }
-	                }
-	                else
-	                {
-	                	System.out.println("Failed to download image " + assetTexture.getAssetID());
-	                }
-	                OutfitAssets.remove(assetTexture.getAssetID());
-	            }
+		                        ManagedImage imgData = new J2KImage(new ByteArrayInputStream(assetTexture.AssetData));
+		                        TGAImage tgaImage = new TGAImage(imgData);
+		                        file = new File(uuid.toString() + ".tga");
+		                        os = new FileOutputStream(file);
+		                        tgaImage.encode(os);
+		                        os.close();
+		                        System.out.println("Wrote TGA image " + file.getCanonicalPath());
+		                    }
+		                    catch (Exception e)
+		                    {
+		                        System.out.println(e.toString());
+		                    }
+		                }
+		                else
+		                {
+		                	System.out.println("Failed to download image " + assetTexture.getAssetID());
+		                }
+		                OutfitAssets.remove(assetTexture.getAssetID());
+		            }
+		        }
 	        }
     	}
     }
