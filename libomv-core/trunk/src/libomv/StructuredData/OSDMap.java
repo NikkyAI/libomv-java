@@ -181,6 +181,14 @@ public class OSDMap extends OSD implements Map<String, OSD>
 	}
 
 	@Override
+	public OSD clone()
+	{
+		OSDMap osd = (OSDMap)super.clone();
+		osd.value = new HashMap<String, OSD>(this.value);
+		return osd;
+	}
+
+	@Override
 	public String toString()
 	{
 		try
@@ -285,7 +293,7 @@ public class OSDMap extends OSD implements Map<String, OSD>
 				OSD serializedField = get(field.getName());
 				if (serializedField != null)
 				{
-					field.set(obj, ToObject(field.getType(), serializedField));
+					field.set(obj, toObject(field.getType(), serializedField));
 				}
 			}
 		}

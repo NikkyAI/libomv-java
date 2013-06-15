@@ -82,7 +82,7 @@ public class OSDUri extends OSD
 	{
 		return osd != null && osd.AsUri().equals(value);
 	}
-
+	
 	@Override
 	public String toString()
 	{

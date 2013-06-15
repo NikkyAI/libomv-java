@@ -88,6 +88,14 @@ public class OSDUUID extends OSD
 	}
 
 	@Override
+	public OSD clone()
+	{
+		OSDUUID osd = (OSDUUID)super.clone();
+		osd.value = new UUID(this.value);
+		return osd;
+	}
+
+	@Override
 	public String toString()
 	{
 		return AsString();

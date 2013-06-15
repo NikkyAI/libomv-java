@@ -45,7 +45,7 @@ import libomv.types.Vector4;
 import libomv.types.Quaternion;
 import libomv.utils.Helpers;
 
-public class OSD
+public class OSD implements Cloneable
 {
 	protected static final String FRACT_DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
 	protected static final String WHOLE_DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -77,6 +77,11 @@ public class OSD
 		{
 			return Helpers.UTF8_ENCODING;
 		}
+	}
+	
+	public OSD()
+	{
+		super();
 	}
 
 	/** The OSD class implementation */
@@ -197,6 +202,17 @@ public class OSD
 	public boolean equals(OSD osd)
 	{
 		return osd != null && osd.getType() == OSDType.Unknown;
+	}
+	
+	public OSD clone()
+	{
+		OSD osd = null;
+	    try
+	    {
+	        osd = (OSD)super.clone();
+	    }
+	    catch (CloneNotSupportedException e) { }
+	    return osd;
 	}
 
 	@Override
@@ -427,7 +443,7 @@ public class OSD
 		return new OSD();
 	}
 
-	public static Object ToObject(Class<?> type, OSD value)
+	protected static Object toObject(Class<?> type, OSD value)
 	{
 		if (type == null || value == null)
 		{
@@ -501,10 +517,6 @@ public class OSD
 			}
 			return Quaternion.Identity;
 		}
-		if (type.isAssignableFrom(OSD.class))
-		{
-			return value;
-		}
 		// We don't know this type
 		return null;
 	}
@@ -559,7 +571,7 @@ public class OSD
 				OSD serializedField = serialized.get(field.getName());
 				if (serializedField != null)
 				{
-					field.set(obj, ToObject(field.getClass(), serializedField));
+					field.set(obj, toObject(field.getClass(), serializedField));
 				}
 			}
 		}

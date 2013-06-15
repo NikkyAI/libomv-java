@@ -45,7 +45,7 @@ import libomv.types.Vector4;
 
 public class OSDArray extends OSD implements List<OSD>
 {
-	private List<OSD> value;
+	private ArrayList<OSD> value;
 
 	@Override
 	public OSDType getType()
@@ -65,14 +65,7 @@ public class OSDArray extends OSD implements List<OSD>
 
 	public OSDArray(ArrayList<OSD> value)
 	{
-		if (value != null)
-		{
-			this.value = value;
-		}
-		else
-		{
-			this.value = new ArrayList<OSD>();
-		}
+		this.value = new ArrayList<OSD>(value);
 	}
 
 	@Override
@@ -374,6 +367,13 @@ public class OSDArray extends OSD implements List<OSD>
 	public boolean equals(OSD osd)
 	{
 		return osd != null && osd.getType() == OSDType.Array && ((OSDArray)osd).value.equals(value);
+	}
+
+	public OSD clone()
+	{
+		OSDArray osd = (OSDArray)super.clone();
+		osd.value = new ArrayList<OSD>(this.value);
+		return osd;
 	}
 
 	@Override

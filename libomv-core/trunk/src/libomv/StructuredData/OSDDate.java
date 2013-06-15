@@ -37,7 +37,7 @@ import libomv.utils.Helpers;
 
 public class OSDDate extends OSD
 {
-	private Date value;
+	private long value;
 
 	@Override
 	public OSDType getType()
@@ -47,7 +47,7 @@ public class OSDDate extends OSD
 
 	public OSDDate(Date value)
 	{
-		this.value = value;
+		this.value = value.getTime();
 	}
 
 	@Override
@@ -55,49 +55,49 @@ public class OSDDate extends OSD
 	{
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		return df.format(value);
+		return df.format(new Date(value));
 	}
 
 	@Override
 	public int AsInteger()
 	{
-		return (int) Helpers.DateTimeToUnixTime(value);
+		return (int) value / 1000;
 	}
 
 	@Override
 	public int AsUInteger()
 	{
-		return (((int) Helpers.DateTimeToUnixTime(value)) & 0xffffffff);
+		return (int)(value / 1000) & 0xffffffff;
 	}
 
 	@Override
 	public long AsLong()
 	{
-		return (long) Helpers.DateTimeToUnixTime(value);
+		return (long)(value / 1000);
 	}
 
 	@Override
 	public long AsULong()
 	{
-		return (((long) Helpers.DateTimeToUnixTime(value)) & 0xffffffffffffffffl);
+		return (long)(value / 1000) & 0xffffffffffffffffl;
 	}
 
 	@Override
 	public byte[] AsBinary()
 	{
-		return Helpers.DoubleToBytesL(Helpers.DateTimeToUnixTime(value));
+		return Helpers.DoubleToBytesL(value / 1000.0);
 	}
 
 	@Override
 	public Date AsDate()
 	{
-		return value;
+		return new Date(value);
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return value.hashCode();
+		return (int)value | (int)(value >> 32);
 	}
 	
 	@Override
@@ -108,7 +108,7 @@ public class OSDDate extends OSD
 
 	public boolean equals(OSD osd)
 	{
-		return osd != null && osd.AsDate().equals(value);
+		return osd != null && osd.AsLong() == value;
 	}
 
 	@Override

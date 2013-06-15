@@ -46,6 +46,18 @@ public class OSDBinary extends OSD
 		return OSDType.Binary;
 	}
 
+	public OSDBinary(OSDBinary value)
+	{
+		if (value != null)
+		{
+			this.value = value.value;
+		}
+		else
+		{
+			this.value = Helpers.EmptyBytes;
+		}
+	}
+
 	public OSDBinary(byte[] value)
 	{
 		if (value != null)
