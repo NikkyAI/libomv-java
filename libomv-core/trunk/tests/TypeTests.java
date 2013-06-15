@@ -82,7 +82,6 @@ public class TypeTests extends TestCase
     {
         HashMap<String, Double> testNumbers;
         testNumbers = new HashMap<String, Double>();
-        testNumbers.put("1.0", 1.0);
         testNumbers.put("1.1", 1.1);
         testNumbers.put("1.01", 1.01);
         testNumbers.put("1.001", 1.001);
