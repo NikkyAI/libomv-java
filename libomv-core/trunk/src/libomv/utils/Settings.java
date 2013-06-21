@@ -36,7 +36,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
@@ -298,4 +302,31 @@ public class Settings
 		OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
 		return osd == null ? new OSD() : osd;
 	}
+	
+	public Collection<String> keys()
+	{
+		ArrayList<String> values = new ArrayList<String>(defaults.keySet());
+		for (String key : settings.keySet())
+		{
+			if (!defaults.containsKey(key))
+			{
+				values.add(key);
+			}
+		}
+		return values;
+	}
+	
+	public Collection<OSD> values()
+	{
+		ArrayList<OSD> values = new ArrayList<OSD>(defaults.values());
+		for (Entry<String, OSD> e : settings.entrySet())
+		{
+			if (!defaults.containsKey(e.getKey()))
+			{
+				values.add(e.getValue());
+			}
+		}
+		return values;
+	}
+
 }
