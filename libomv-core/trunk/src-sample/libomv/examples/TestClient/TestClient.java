@@ -103,7 +103,7 @@ public class TestClient extends GridClient implements PacketCallback
 
 		RegisterAllCommands(this.getClass());
 
- 		Logger.LOG_LEVEL = LogLevel.Info;
+ 		Logger.LOG_LEVEL = LogLevel.Debug;
 
 		Settings.LOG_RESENDS = false;
 		Settings.put(LibSettings.STORE_LAND_PATCHES, true);
@@ -413,7 +413,7 @@ public class TestClient extends GridClient implements PacketCallback
 		@Override
 		public boolean callback(InventoryObjectOfferedCallbackArgs e)
 		{
-			if (MasterKey == null || !MasterKey.equals(UUID.Zero))
+			if (!UUID.isZeroOrNull(MasterKey))
 			{
 				if (!MasterKey.equals(e.getOffer().FromAgentID))
 					return false;
