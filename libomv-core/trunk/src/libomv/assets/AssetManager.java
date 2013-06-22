@@ -1633,7 +1633,7 @@ public class AssetManager implements PacketCallback
 	}
 	// #region Helpers
 
-	public AssetItem CreateAssetItem(AssetType type)
+	public static AssetItem CreateAssetItem(AssetType type)
 	{
 		switch (type)
 		{
@@ -1662,12 +1662,12 @@ public class AssetManager implements PacketCallback
 			case CallingCard:
 				return new AssetCallingCard();
 			default:
-				Logger.Log("Unimplemented asset type: " + type, LogLevel.Error, _Client);
+				Logger.Log("Unimplemented asset type: " + type, LogLevel.Error);
 		}
 		return new AssetMutable(type);
 	}
 
-	public AssetItem CreateAssetItem(AssetType type, UUID assetID, byte[] assetData)
+	public static AssetItem CreateAssetItem(AssetType type, UUID assetID, byte[] assetData)
 	{
 		AssetItem item = CreateAssetItem(type);
 		item.setAssetID(assetID);
