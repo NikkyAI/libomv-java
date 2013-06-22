@@ -57,6 +57,7 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
+import libomv.assets.AssetManager;
 import libomv.assets.AssetManager.AssetDownload;
 import libomv.assets.AssetManager.ImageDownload;
 import libomv.assets.AssetTexture;
@@ -1514,7 +1515,7 @@ public class AppearanceManager implements PacketCallback
         {
             if (transfer.Success)
             {
-            	wearable.Asset = (AssetWearable)_Client.Assets.CreateAssetItem(transfer.AssetType, transfer.ItemID, transfer.AssetData);
+            	wearable.Asset = (AssetWearable)AssetManager.CreateAssetItem(transfer.AssetType, transfer.ItemID, transfer.AssetData);
                 if (wearable.Asset.decode())
                 {
                     DecodeWearableParams(wearable, _Textures);
@@ -1689,7 +1690,7 @@ public class AppearanceManager implements PacketCallback
                 	if (download.State == TextureRequestState.Finished && download.AssetData != null)
                 	{
                         Logger.Log("Texture " + download.ItemID + " downloaded", LogLevel.Debug, _Client);
-                        AssetTexture texture = (AssetTexture)_Client.Assets.CreateAssetItem(AssetType.Texture, download.ItemID, download.AssetData);
+                        AssetTexture texture = (AssetTexture)AssetManager.CreateAssetItem(AssetType.Texture, download.ItemID, download.AssetData);
                     	texture.decode();
 
                         for (int i = 0; i < _Textures.length; i++)
