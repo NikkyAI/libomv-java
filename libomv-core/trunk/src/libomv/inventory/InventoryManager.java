@@ -57,7 +57,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
-import libomv.assets.AssetManager.XferReceivedCallbackArgs;
+import libomv.assets.AssetManager.XferDownload;
 import libomv.assets.AssetWearable.WearableType;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
@@ -2629,16 +2629,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				final TimeoutEvent<String> taskDownloadEvent = new TimeoutEvent<String>();
 				final long xferID = 0;
 
-				Callback<XferReceivedCallbackArgs> xferCallback = new Callback<XferReceivedCallbackArgs>()
+				Callback<XferDownload> xferCallback = new Callback<XferDownload>()
 				{
 					@Override
-					public boolean callback(XferReceivedCallbackArgs e)
+					public boolean callback(XferDownload download)
 					{
-						if (e.getXfer().XferID == xferID)
+						if (download.XferID == xferID)
 						{
 							try
 							{
-								taskDownloadEvent.set(Helpers.BytesToString(e.getXfer().AssetData));
+								taskDownloadEvent.set(Helpers.BytesToString(download.AssetData));
 							}
 							catch (UnsupportedEncodingException e1)
 							{

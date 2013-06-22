@@ -180,7 +180,7 @@ public class ClientManager
 		LibSettings settings = new LibSettings();
 		settings.put(LibSettings.ENABLE_ASSET_MANAGER, true);
 		settings.put(LibSettings.ENABLE_OBJECT_MANAGER, true);
-		settings.put(LibSettings.ENABLE_APPEARANCE_MANAGER, true);
+//		settings.put(LibSettings.ENABLE_APPEARANCE_MANAGER, true);
 		settings.put(LibSettings.ENABLE_DIRECTORY_MANAGER, true);
 		settings.put(LibSettings.USE_LLSD_LOGIN, true);
 		final TestClient client = new TestClient(this, settings);

@@ -58,13 +58,11 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.AssetDownload;
-import libomv.assets.AssetManager.AssetReceivedCallback;
-import libomv.assets.AssetItem;
+import libomv.assets.AssetManager.ImageDownload;
 import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.assets.AssetWearable.WearableType;
-import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
 import libomv.capabilities.CapsClient;
 import libomv.imaging.Baker;
@@ -1501,7 +1499,7 @@ public class AppearanceManager implements PacketCallback
         }
     }
 
-    private class WearablesReceived implements AssetReceivedCallback
+    private class WearablesReceived implements Callback<AssetDownload>
     {
         private final WearableData wearable;
         private final CountDownLatch latch;
@@ -1512,13 +1510,11 @@ public class AppearanceManager implements PacketCallback
             this.wearable = wearable;
         }
 
-        public void callback(AssetDownload transfer, AssetItem asset)
+        public boolean callback(AssetDownload transfer)
         {
-            if (transfer.Success && asset instanceof AssetWearable)
+            if (transfer.Success)
             {
-                // Update this wearable with the freshly downloaded asset 
-                wearable.Asset = (AssetWearable)asset;
-
+            	wearable.Asset = (AssetWearable)_Client.Assets.CreateAssetItem(transfer.AssetType, transfer.ItemID, transfer.AssetData);
                 if (wearable.Asset.decode())
                 {
                     DecodeWearableParams(wearable, _Textures);
@@ -1529,11 +1525,7 @@ public class AppearanceManager implements PacketCallback
                 else
                 {
                     wearable.Asset = null;
-                    try
-                    {
-                        Logger.Log("Failed to decode asset:\n" + Helpers.BytesToString(asset.AssetData), LogLevel.Error, _Client);
-                    }
-                    catch (UnsupportedEncodingException e) { }
+                    Logger.Log("Failed to decode wearable asset: " + transfer.ItemID, LogLevel.Error, _Client);
                 }
             }
             else
@@ -1542,6 +1534,7 @@ public class AppearanceManager implements PacketCallback
                 		   LogLevel.Warning, _Client);
             }
             latch.countDown();
+            return true;
         }
     }
     /**
@@ -1688,27 +1681,29 @@ public class AppearanceManager implements PacketCallback
         final CountDownLatch latch = new CountDownLatch(textureIDs.size());
         for (UUID textureID : textureIDs)
         {
-            _Client.Assets.RequestImage(textureID, new TextureDownloadCallback()
+            _Client.Assets.RequestImage(textureID, new Callback<ImageDownload>()
             {
                 @Override
-                public void callback(TextureRequestState state, AssetTexture assetTexture)
+                public boolean callback(ImageDownload download)
                 {
-                	if (state == TextureRequestState.Finished && assetTexture != null)
+                	if (download.State == TextureRequestState.Finished && download.AssetData != null)
                 	{
-                        Logger.Log("Texture " + assetTexture.getAssetID() + " downloaded", LogLevel.Debug, _Client);
-                    	assetTexture.decode();
+                        Logger.Log("Texture " + download.ItemID + " downloaded", LogLevel.Debug, _Client);
+                        AssetTexture texture = (AssetTexture)_Client.Assets.CreateAssetItem(AssetType.Texture, download.ItemID, download.AssetData);
+                    	texture.decode();
 
                         for (int i = 0; i < _Textures.length; i++)
                         {
-                            if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(assetTexture.getAssetID()))
-                                _Textures[i].Texture = assetTexture;
+                            if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(download.ItemID))
+                                _Textures[i].Texture = texture;
                         }
                     }
                     else
                     {
-                        Logger.Log("Texture " + assetTexture.getAssetID() + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
+                        Logger.Log("Texture " + download.ItemID + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
                     }
                     latch.countDown();
+                    return true;
                 }
             });
         }

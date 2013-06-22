@@ -31,10 +31,9 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import libomv.Simulator;
+import libomv.assets.AssetManager.ImageDownload;
 import libomv.assets.AssetManager.ImageType;
-import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
-import libomv.assets.TexturePipeline.TextureDownloadCallback;
 import libomv.assets.TexturePipeline.TextureRequestState;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
@@ -44,6 +43,7 @@ import libomv.imaging.TGAImage;
 import libomv.primitives.Avatar;
 import libomv.primitives.TextureEntry;
 import libomv.types.UUID;
+import libomv.utils.Callback;
 
 public class DumpOutfitCommand extends Command
 {
@@ -137,31 +137,28 @@ public class DumpOutfitCommand extends Command
         return output.toString();
     }
 
-    private class Assets_OnImageReceived implements TextureDownloadCallback
+    private class Assets_OnImageReceived implements Callback<ImageDownload>
     {
 		@Override
-    	public void callback(TextureRequestState state, AssetTexture assetTexture)
+    	public boolean callback(ImageDownload download)
     	{
-	        if (state == TextureRequestState.Finished && assetTexture != null)
+	        if (download.State == TextureRequestState.Finished && download.AssetData != null)
 	        {
 				synchronized (OutfitAssets)
 		        {
-		        	UUID uuid = assetTexture.getAssetID();
-		            if (OutfitAssets.contains(uuid))
+		            if (OutfitAssets.contains(download.ItemID))
 		            {
-		                if (state == TextureRequestState.Finished)
-		                {
 		                    try
 		                    {
-		                    	File file = new File(uuid.toString() + ".jp2");
+		                    	File file = new File(download.ItemID.toString() + ".jp2");
 		                    	FileOutputStream os = new FileOutputStream(file);
-		                        os.write(assetTexture.AssetData);
+		                        os.write(download.AssetData);
 		                        os.close();
 		                        System.out.println("Wrote JPEG2000 image at " + file.getCanonicalPath());
 
-		                        ManagedImage imgData = new J2KImage(new ByteArrayInputStream(assetTexture.AssetData));
+		                        ManagedImage imgData = new J2KImage(new ByteArrayInputStream(download.AssetData));
 		                        TGAImage tgaImage = new TGAImage(imgData);
-		                        file = new File(uuid.toString() + ".tga");
+		                        file = new File(download.ItemID.toString() + ".tga");
 		                        os = new FileOutputStream(file);
 		                        tgaImage.encode(os);
 		                        os.close();
@@ -172,14 +169,14 @@ public class DumpOutfitCommand extends Command
 		                        System.out.println(e.toString());
 		                    }
 		                }
-		                else
-		                {
-		                	System.out.println("Failed to download image " + assetTexture.getAssetID());
-		                }
-		                OutfitAssets.remove(assetTexture.getAssetID());
-		            }
 		        }
 	        }
-    	}
-    }
+	        else
+		    {
+		       	System.out.println("Failed to download image " + download.ItemID);
+		    }
+		    OutfitAssets.remove(download.ItemID);
+		    return true;
+	    }
+	}
 }

@@ -29,14 +29,10 @@
  */
 package libomv.assets;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -47,10 +43,11 @@ import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
 import libomv.LibSettings;
 import libomv.Simulator;
-import libomv.assets.AssetItem.AssetType;
+import libomv.assets.AssetManager.DelayedTransfer;
 import libomv.assets.AssetManager.ImageCodec;
 import libomv.assets.AssetManager.ImageDownload;
 import libomv.assets.AssetManager.ImageType;
+import libomv.assets.AssetManager.StatusCode;
 import libomv.packets.ImageDataPacket;
 import libomv.packets.ImageNotInDatabasePacket;
 import libomv.packets.ImagePacketPacket;
@@ -60,7 +57,6 @@ import libomv.packets.RequestImagePacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.utils.Callback;
-import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import libomv.utils.TimeoutEvent;
@@ -94,28 +90,6 @@ public class TexturePipeline implements PacketCallback
 	}
 
 	/**
-	 * A callback fired to indicate the status or final state of the requested
-	 * texture. For progressive downloads this will fire each time new asset
-	 * data is returned from the simulator.
-	 * 
-	 * @param state
-	 *            The <see cref="TextureRequestState"/> indicating either
-	 *            Progress for textures not fully downloaded, or the final
-	 *            result of the request after it has been processed through the
-	 *            TexturePipeline
-	 * @param assetTexture
-	 *            The <see cref="AssetTexture"/> object containing the Assets
-	 *            ID, raw data and other information. For progressive rendering
-	 *            the <see cref="Asset.AssetData"/> will contain the data from
-	 *            the beginning of the file. For failed, aborted and timed out
-	 *            requests it will contain an empty byte array.
-	 */
-	public interface TextureDownloadCallback
-	{
-		public void callback(TextureRequestState state, AssetTexture assetTexture);
-	}
-
-	/**
 	 * Texture request download handler, allows a configurable number of
 	 * download slots which manage multiple concurrent texture downloads from
 	 * the {@link Simulator}
@@ -140,44 +114,16 @@ public class TexturePipeline implements PacketCallback
 	// processed through the <see cref="TexturePipeline"/>
 	private class TaskInfo
 	{
-		// The current {@link TextureRequestState} which identifies the current
-		// status of the request
-		public TextureRequestState State;
-		// The Unique Request ID, This is also the Asset ID of the texture being
-		// requested
-		public UUID RequestID;
 		// The slot this request is occupying in the threadpoolSlots array
 		public int RequestSlot;
-		// The ImageType of the request.
-		public ImageType Type;
-
-		// The callback to fire when the request is complete, will include
-		// the {@link TextureRequestState} and the <see cref="AssetTexture"/>
-		// object containing the result data
-		public ArrayList<TextureDownloadCallback> Callbacks;
-		// If true, indicates the callback will be fired whenever new data is
-		// returned from the simulator.
-		// This is used to progressively render textures as portions of the
-		// texture are received.
-		public boolean ReportProgress;
+		
+		public SortedMap<Short, Short> PacketsSeen;
+		
+		public Simulator Simulator;
 		// The timeout event used for this task
 		public TimeoutEvent<Boolean> TimeoutEvent;
-		// #if DEBUG_TIMING
-		// The time the request was added to the the PipeLine
-		public Date StartTime;
-		// The time the request was sent to the simulator
-		public Date NetworkTime;
-		// #endif
 		// An object that maintains the data of an request thats in-process.
-		public ImageDownload Transfer;
-
-		public void CallCallback(TextureRequestState state, AssetTexture assetTexture)
-		{
-			for (TextureDownloadCallback callback : Callbacks)
-			{
-				callback.callback(state, assetTexture);
-			}
-		}
+		public ImageDownload Request;
 	}
 
 	// A dictionary containing all pending and in-process transfer requests
@@ -185,7 +131,7 @@ public class TexturePipeline implements PacketCallback
 	// and also the Asset Texture ID, and the value is an object containing the
 	// current state of the request and also
 	// the asset data as it is being re-assembled
-	private final HashMap<UUID, TaskInfo> _Transfers;
+	private final HashMap<UUID, TaskInfo> _TexTransfers;
 	// Holds the reference to the <see cref="GridClient"/> client object
 	private final GridClient _Client;
 
@@ -205,7 +151,7 @@ public class TexturePipeline implements PacketCallback
 	// Current number of pending and in-process transfers
 	public final int getTransferCount()
 	{
-		return _Transfers.size();
+		return _TexTransfers.size();
 	}
 
 	/**
@@ -224,7 +170,7 @@ public class TexturePipeline implements PacketCallback
 		_ThreadPool = Executors.newFixedThreadPool(maxDownloads);
 		_ThreadRequests = new Future[maxDownloads];
 
-		_Transfers = new HashMap<UUID, TaskInfo>();
+		_TexTransfers = new HashMap<UUID, TaskInfo>();
 
 		// Handle client connected and disconnected events
 		client.Login.OnLoginProgress.add(new Network_LoginProgress());
@@ -334,10 +280,9 @@ public class TexturePipeline implements PacketCallback
 		_Client.Network.UnregisterCallback(PacketType.ImageData, this);
 		_Client.Network.UnregisterCallback(PacketType.ImagePacket, this);
 
-		synchronized (_Transfers)
+		synchronized (_TexTransfers)
 		{
-
-			_Transfers.clear();
+			_TexTransfers.clear();
 		}
 
 		synchronized (_ThreadRequests)
@@ -358,33 +303,31 @@ public class TexturePipeline implements PacketCallback
 		@Override
 		public void run()
 		{
-			synchronized (_Transfers)
+			synchronized (_TexTransfers)
 			{
-				for (TaskInfo transfer : _Transfers.values())
+				for (TaskInfo task : _TexTransfers.values())
 				{
-					if (transfer.State.equals(TextureRequestState.Progress))
+					if (task.Request.State.equals(TextureRequestState.Progress))
 					{
-						ImageDownload download = transfer.Transfer;
-
 						// Find the first missing packet in the download
 						short packet = 0;
-						synchronized (download)
+						synchronized (task)
 						{
-							if (download.PacketsSeen != null && download.PacketsSeen.size() > 0)
+							if (task.PacketsSeen != null && task.PacketsSeen.size() > 0)
 							{
-								packet = GetFirstMissingPacket(download.PacketsSeen);
+								packet = GetFirstMissingPacket(task.PacketsSeen);
 							}
 						}
 
-						if (download.TimeSinceLastPacket > 5000)
+						if (task.Request.TimeSinceLastPacket > 5000)
 						{
 							// We're not receiving data for this texture fast
 							// enough, bump up the priority by 5%
-							download.Priority *= 1.05f;
-							download.TimeSinceLastPacket = 0;
+							task.Request.Priority *= 1.05f;
+							task.Request.TimeSinceLastPacket = 0;
 							try
 							{
-								RequestImage(download.ID, download.ImageType, download.Priority, download.DiscardLevel,
+								RequestImage(task.Request.ItemID, task.Request.ImageType, task.Request.Priority, task.Request.DiscardLevel,
 										packet);
 							}
 							catch (Exception e)
@@ -392,9 +335,9 @@ public class TexturePipeline implements PacketCallback
 							}
 						}
 
-						if (download.TimeSinceLastPacket > _Client.Settings.PIPELINE_REQUEST_TIMEOUT)
+						if (task.Request.TimeSinceLastPacket > _Client.Settings.PIPELINE_REQUEST_TIMEOUT)
 						{
-							transfer.TimeoutEvent.set(true);
+							task.TimeoutEvent.set(true);
 						}
 					}
 				}
@@ -436,63 +379,30 @@ public class TexturePipeline implements PacketCallback
 	 *            all previously received chunks of the texture asset starting
 	 *            from the beginning of the request
 	 */
-	public final void RequestTexture(UUID textureID, ImageType imageType, float priority, int discardLevel,
-			int packetStart, TextureDownloadCallback callback, boolean progressive)
+	public boolean RequestTexture(ImageDownload request)
 	{
-		if (textureID.equals(UUID.Zero))
+		TaskInfo task = GetTransferValue(request.ItemID);
+		if (task == null)
 		{
-			return;
-		}
-
-		if (callback != null)
-		{
-			if (_Cache.containsKey(textureID, "tex"))
+			request.State = TextureRequestState.Pending;
+			task = new TaskInfo();
+			task.TimeoutEvent = new TimeoutEvent<Boolean>();
+			task.RequestSlot = -1;
+			task.Request = request;
+		
+			synchronized (_TexTransfers)
 			{
-				byte[] assetData = _Cache.get(textureID, "tex");
-
-				callback.callback(TextureRequestState.Finished, new AssetTexture(textureID, assetData));
-				_Client.Assets.FireImageProgressEvent(textureID, assetData.length, assetData.length);
-			}
-			else
-			{
-				synchronized (_Transfers)
-				{
-					if (_Transfers.containsKey(textureID))
-					{
-						_Transfers.get(textureID).Callbacks.add(callback);
-					}
-					else
-					{
-						TaskInfo request = new TaskInfo();
-						request.State = TextureRequestState.Pending;
-						request.TimeoutEvent = new TimeoutEvent<Boolean>();
-						request.RequestID = textureID;
-						request.ReportProgress = progressive;
-						request.RequestSlot = -1;
-						request.Type = imageType;
-
-						request.Callbacks = new ArrayList<TextureDownloadCallback>();
-						request.Callbacks.add(callback);
-
-						ImageDownload downloadParams = _Client.Assets.new ImageDownload();
-						downloadParams.ID = textureID;
-						downloadParams.Priority = priority;
-						downloadParams.ImageType = imageType;
-						downloadParams.DiscardLevel = discardLevel;
-						downloadParams.suffix = "tex";
-						
-						request.Transfer = downloadParams;
-						request.StartTime = Calendar.getInstance().getTime();
-						_Transfers.put(textureID, request);
-					}
-				}
+				_TexTransfers.put(request.ItemID, task);
 			}
 		}
+		return true;
 	}
 
 	/**
 	 * Sends the actual request packet to the simulator
 	 * 
+	 * @Note Sending a priority of 0 and a discardlevel of -1 aborts download
+	 *
 	 * @param imageID
 	 *            The image to download
 	 * @param type
@@ -505,12 +415,10 @@ public class TexturePipeline implements PacketCallback
 	 *            marker of the data sent
 	 * @param packetNum
 	 *            Packet number to start the download at. This controls the
-	 *            start marker of the data sent Sending a priority of 0 and a
-	 *            discardlevel of -1 aborts download
+	 *            start marker of the data sent
 	 * @throws Exception
 	 */
-	private void RequestImage(UUID imageID, ImageType type, float priority, int discardLevel, int packetNum)
-			throws Exception
+	private void RequestImage(UUID imageID, ImageType type, float priority, int discardLevel, int packetNum) throws Exception
 	{
 		// Priority == 0 && DiscardLevel == -1 means cancel the transfer
 		if (priority == 0 && discardLevel == -1)
@@ -522,10 +430,10 @@ public class TexturePipeline implements PacketCallback
 			TaskInfo task = GetTransferValue(imageID);
 			if (task != null)
 			{
-				if (task.Transfer.Simulator != null)
+				if (task.Simulator != null)
 				{
 					// Already downloading, just updating the priority
-					float percentComplete = ((float) task.Transfer.Transferred / (float) task.Transfer.Size) * 100f;
+					float percentComplete = ((float) task.Request.Transferred / (float) task.Request.Size) * 100f;
 					if (Float.isNaN(percentComplete))
 					{
 						percentComplete = 0f;
@@ -534,13 +442,12 @@ public class TexturePipeline implements PacketCallback
 					if (percentComplete > 0f)
 					{
 						Logger.DebugLog(String.format("Updating priority on image transfer %s to %d, %d% complete",
-								imageID.toString(), task.Transfer.Priority, Math.round(percentComplete)));
+								imageID.toString(), task.Request.Priority, Math.round(percentComplete)));
 					}
 				}
 				else
 				{
-					ImageDownload transfer = task.Transfer;
-					transfer.Simulator = _Client.Network.getCurrentSim();
+					task.Simulator = _Client.Network.getCurrentSim();
 				}
 
 				// Build and send the request packet
@@ -578,7 +485,7 @@ public class TexturePipeline implements PacketCallback
 		if (task != null)
 		{
 			// this means we've actually got the request assigned to the threadpool
-			if (task.State == TextureRequestState.Progress)
+			if (task.Request.State == TextureRequestState.Progress)
 			{
 				RequestImagePacket request = new RequestImagePacket();
 				request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -589,21 +496,23 @@ public class TexturePipeline implements PacketCallback
 				request.RequestImage[0].DownloadPriority = 0;
 				request.RequestImage[0].Packet = 0;
 				request.RequestImage[0].Image = textureID;
-				request.RequestImage[0].Type = task.Type.getValue();
+				request.RequestImage[0].Type = task.Request.ImageType.getValue();
 				_Client.Network.sendPacket(request);
 
 				RemoveTransfer(textureID);
 
 				task.TimeoutEvent.set(false);
-				task.CallCallback(TextureRequestState.Aborted, new AssetTexture(textureID, Helpers.EmptyBytes));
-				_Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+				task.Request.State = TextureRequestState.Aborted;
+				task.Request.callbacks.dispatch(task.Request);
+				_Client.Assets.FireImageProgressEvent(task.Request.ItemID, task.Request.Transferred, task.Request.Size);
 			}
 			else
 			{
 				RemoveTransfer(textureID);
 
-				task.CallCallback(TextureRequestState.Aborted, new AssetTexture(textureID, Helpers.EmptyBytes));
-				_Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+				task.Request.State = TextureRequestState.Aborted;
+				task.Request.callbacks.dispatch(task.Request);
+				_Client.Assets.FireImageProgressEvent(task.Request.ItemID, task.Request.Transferred, task.Request.Size);
 			}
 		}
 	}
@@ -619,29 +528,28 @@ public class TexturePipeline implements PacketCallback
 			while (_Running)
 			{
 				// find free slots
-				int pending = 0;
 				int active = 0;
 				int slot;
 
 				TaskInfo nextTask = null;
 
-				synchronized (_Transfers)
+				synchronized (_TexTransfers)
 				{
-					for (TaskInfo request : _Transfers.values())
+					for (TaskInfo request : _TexTransfers.values())
 					{
-						if (request.State == TextureRequestState.Pending)
+						if (request.Request.State == TextureRequestState.Pending)
 						{
 							nextTask = request;
-							++pending;
 						}
-						else if (request.State == TextureRequestState.Progress)
+						else if (request.Request.State == TextureRequestState.Started ||
+								 request.Request.State == TextureRequestState.Progress)
 						{
 							++active;
 						}
 					}
 				}
 
-				if (nextTask != null && pending > 0 && active <= _ThreadRequests.length)
+				if (nextTask != null  && active <= _ThreadRequests.length)
 				{
 					slot = -1;
 					// find available slot for reset event
@@ -661,7 +569,7 @@ public class TexturePipeline implements PacketCallback
 					// -1 = slot not available
 					if (slot != -1)
 					{
-						nextTask.State = TextureRequestState.Started;
+						nextTask.Request.State = TextureRequestState.Started;
 						nextTask.RequestSlot = slot;
 
 						Logger.DebugLog(String.format("Sending Worker thread new download request %d", slot));
@@ -706,31 +614,28 @@ public class TexturePipeline implements PacketCallback
 		public void run()
 		{
 
-			task.State = TextureRequestState.Progress;
-			// #if DEBUG_TIMING
-			task.NetworkTime = Calendar.getInstance().getTime();
-			// #endif
+			task.Request.State = TextureRequestState.Progress;
 			// Find the first missing packet in the download
 			short packet = 0;
-			synchronized (task.Transfer)
+			synchronized (task.Request)
 			{
-				if (task.Transfer.PacketsSeen != null && task.Transfer.PacketsSeen.size() > 0)
+				if (task.PacketsSeen != null && task.PacketsSeen.size() > 0)
 				{
-					packet = GetFirstMissingPacket(task.Transfer.PacketsSeen);
+					packet = GetFirstMissingPacket(task.PacketsSeen);
 				}
 			}
 
 			// Request the texture
 			try
 			{
-				RequestImage(task.RequestID, task.Type, task.Transfer.Priority, task.Transfer.DiscardLevel, packet);
+				RequestImage(task.Request.ItemID, task.Request.ImageType, task.Request.Priority, task.Request.DiscardLevel, packet);
 			}
 			catch (Exception e)
 			{
 			}
 
 			// Set starting time
-			task.Transfer.TimeSinceLastPacket = 0;
+			task.Request.TimeSinceLastPacket = 0;
 
 			// Don't release this worker slot until texture is downloaded or
 			// timeout occurs
@@ -741,16 +646,16 @@ public class TexturePipeline implements PacketCallback
 				if (timeout == null || !timeout)
 				{
 					// Timed out
-					Logger.Log("Worker " + task.RequestSlot + " timeout waiting for texture " + task.RequestID
-							+ " to download got " + task.Transfer.Transferred + " of " + task.Transfer.Size,
+					Logger.Log("Worker " + task.RequestSlot + " timeout waiting for texture " + task.Request.ItemID
+							+ " to download got " + task.Request.Transferred + " of " + task.Request.Size,
 							LogLevel.Warning);
 
-					RemoveTransfer(task.RequestID);
+					RemoveTransfer(task.Request.ItemID);
 
-					AssetTexture texture = new AssetTexture(task.RequestID, task.Transfer.AssetData);
-					task.CallCallback(TextureRequestState.Timeout, texture);
+					task.Request.State = TextureRequestState.Timeout;
+					task.Request.callbacks.dispatch(task.Request);
 					_Client.Assets
-							.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+							.FireImageProgressEvent(task.Request.ItemID, task.Request.Transferred, task.Request.Size);
 				}
 			}
 			catch (InterruptedException e)
@@ -821,7 +726,7 @@ public class TexturePipeline implements PacketCallback
 		if (task != null)
 		{
 			// cancel active request and free up the threadpool slot
-			if (task.State.equals(TextureRequestState.Progress))
+			if (task.Request.State.equals(TextureRequestState.Progress))
 			{
 				task.TimeoutEvent.set(true);
 			}
@@ -829,13 +734,99 @@ public class TexturePipeline implements PacketCallback
 			RemoveTransfer(imageNotFoundData.ID);
 
 			// fire callback to inform the caller
-			task.CallCallback(TextureRequestState.NotFound, new AssetTexture(imageNotFoundData.ID, Helpers.EmptyBytes));
+			task.Request.State = TextureRequestState.NotFound;
+			task.Request.callbacks.dispatch(task.Request);
 			task.TimeoutEvent.set(true);
 		}
 		else
 		{
 			Logger.Log("Received an ImageNotFound packet for an image we did not request: "
 					+ imageNotFoundData.ID, LogLevel.Warning);
+		}
+	}
+
+	private boolean processDelayedData(ImageDownload download, DelayedTransfer data)
+	{
+		while (data != null)
+		{
+			System.arraycopy(data.Data, 0, download.AssetData, download.Transferred, data.Data.length);
+			download.Transferred += data.Data.length;
+			if (data.Status == StatusCode.OK && download.Transferred >= download.Size)
+			{
+				download.State = TextureRequestState.Finished;
+			}
+			else if (data.Status == StatusCode.Error)
+			{
+				download.State = TextureRequestState.Aborted;
+			}
+			
+			if (download.State != TextureRequestState.Progress)
+			{
+				synchronized (_TexTransfers)
+				{
+					_TexTransfers.remove(download.ItemID);
+				}
+				download.delayed.clear();
+
+				download.Success = download.State == TextureRequestState.Finished;
+				if (download.Success)
+				{
+					Logger.DebugLog("Transfer for asset " + download.ItemID.toString() + " completed", _Client);
+
+					// Cache successful asset download
+					_Cache.put(download.ItemID, download.AssetData, download.suffix);
+				}
+				else
+				{
+					Logger.Log("Transfer failed with status code " + download.State, LogLevel.Warning, _Client);
+				}
+					
+				download.callbacks.dispatch(download);
+				return true;
+			}
+			
+			download.PacketNum++;
+			data = download.delayed.remove(download.PacketNum);
+		}
+		
+		if (download.ReportProgress)
+		{
+			download.callbacks.dispatch(download);
+			_Client.Assets.FireImageProgressEvent(download.ItemID, download.Transferred, download.Size);
+		}
+		return false;
+	}
+
+	/**
+	 * Handle the initial ImageDataPacket sent from the simulator
+	 * 
+	 * @param sender
+	 *            The sender
+	 * @param e
+	 *            The EventArgs object containing the packet data
+	 */
+	private final void HandleImageData(Packet packet, Simulator simulator)
+	{
+		ImageDataPacket data = (ImageDataPacket) packet;
+		TaskInfo task = GetTransferValue(data.ImageID.ID);
+		if (task == null)
+		{
+			Logger.Log("Received a ImageData packet for a texture we didn't request, Image ID: "
+					+ data.ImageID.ID, LogLevel.Warning, _Client);			
+			return;
+		}
+
+		// reset the timeout interval since we got data
+		task.Request.TimeSinceLastPacket = 0;
+
+		if (task.Request.Size == 0)
+		{
+			task.Request.Codec = ImageCodec.setValue(data.ImageID.Codec);
+//			task.Request.PacketCount = data.ImageID.Packets;
+			task.Request.Size = data.ImageID.Size;
+			task.Request.AssetData = new byte[task.Request.Size];
+
+			processDelayedData(task.Request, _Client.Assets.new DelayedTransfer(StatusCode.OK, data.ImageData.getData()));
 		}
 	}
 
@@ -855,156 +846,20 @@ public class TexturePipeline implements PacketCallback
 		TaskInfo task = GetTransferValue(image.ImageID.ID);
 		if (task != null)
 		{
-			if (task.Transfer.Size == 0)
+			StatusCode status = StatusCode.OK;
+			DelayedTransfer info = _Client.Assets.new DelayedTransfer(status, image.ImageData.getData());
+			
+			if (!task.Request.gotInfo() || image.ImageID.Packet != task.Request.PacketNum)
 			{
-				// We haven't received the header yet, block until it's received
-				// or times out
-				task.Transfer.HeaderReceivedEvent.waitOne(1000 * 5);
-				if (task.Transfer.Size == 0)
-				{
-					Logger.Log("Timed out while waiting for the image header to download for " + task.Transfer.ID,
-							LogLevel.Warning, _Client);
-
-					RemoveTransfer(task.Transfer.ID);
-					task.TimeoutEvent.set(true); // free up request slot
-					task.CallCallback(TextureRequestState.Timeout, new AssetTexture(task.RequestID,
-							task.Transfer.AssetData));
-					return;
-				}
-			}
-
-			// The header is downloaded, we can insert this data in to the proper position
-			// Only insert if we haven't seen this packet before
-			synchronized (task.Transfer)
-			{
-				if (!task.Transfer.PacketsSeen.containsKey(image.ImageID.Packet))
-				{
-					task.Transfer.PacketsSeen.put(image.ImageID.Packet, image.ImageID.Packet);
-					System.arraycopy(image.ImageData.getData(), 0, task.Transfer.AssetData,
-							task.Transfer.InitialDataSize + (1000 * (image.ImageID.Packet - 1)),
-							image.ImageData.getData().length);
-					task.Transfer.Transferred += image.ImageData.getData().length;
-				}
-			}
-			task.Transfer.TimeSinceLastPacket = 0;
-
-			if (task.Transfer.Transferred >= task.Transfer.Size)
-			{
-				// #if DEBUG_TIMING
-				long stopTime = Calendar.getInstance().getTime().getTime();
-				long requestDuration = stopTime - task.StartTime.getTime();
-				long networkDuration = stopTime - task.NetworkTime.getTime();
-
-				TotalTime += requestDuration;
-				NetworkTime += networkDuration;
-				TotalBytes += task.Transfer.Size;
-
-				Logger.Log(
-						String.format(
-								"Transfer Complete %s [%d] Total Request Time: %d, Download Time %d, Network %d kb/sec, Image Size %d bytes",
-								task.RequestID.toString(), task.RequestSlot, requestDuration, networkDuration,
-								getNetworkThroughput(task.Transfer.Size, networkDuration), task.Transfer.Size),
-						LogLevel.Debug, _Client);
-				// #endif
-
-				task.Transfer.Success = true;
-				RemoveTransfer(task.Transfer.ID);
-				task.TimeoutEvent.set(true); // free up request slot
-				_Cache.put(task.RequestID, task.Transfer.AssetData, "tex");
-
-				task.CallCallback(TextureRequestState.Finished, new AssetTexture(task.RequestID,
-						task.Transfer.AssetData));
-
-				_Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+				/* We haven't received the header yet, or the packet number is higher than the currently
+				 * expected packet. Put it in the out of order hashlist */
+				task.Request.delayed.put((int)image.ImageID.Packet, info);
 			}
 			else
 			{
-				if (task.ReportProgress)
-				{
-					task.CallCallback(TextureRequestState.Progress, new AssetTexture(task.RequestID,
-							task.Transfer.AssetData));
-				}
-				_Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+				processDelayedData(task.Request, info);
 			}
-		}
-	}
-
-	/**
-	 * Handle the initial ImageDataPacket sent from the simulator
-	 * 
-	 * @param sender
-	 *            The sender
-	 * @param e
-	 *            The EventArgs object containing the packet data
-	 */
-	private final void HandleImageData(Packet packet, Simulator simulator)
-	{
-		ImageDataPacket data = (ImageDataPacket) packet;
-		TaskInfo task = GetTransferValue(data.ImageID.ID);
-		if (task != null)
-		{
-			// reset the timeout interval since we got data
-			task.Transfer.TimeSinceLastPacket = 0;
-
-			synchronized (task.Transfer)
-			{
-				if (task.Transfer.Size == 0)
-				{
-					task.Transfer.Codec = ImageCodec.setValue(data.ImageID.Codec);
-					task.Transfer.PacketCount = data.ImageID.Packets;
-					task.Transfer.Size = data.ImageID.Size;
-					task.Transfer.AssetData = new byte[task.Transfer.Size];
-					task.Transfer.AssetType = AssetType.Texture;
-					task.Transfer.PacketsSeen = new TreeMap<Short, Short>();
-					System.arraycopy(data.ImageData.getData(), 0, task.Transfer.AssetData, 0,
-							data.ImageData.getData().length);
-					task.Transfer.InitialDataSize = data.ImageData.getData().length;
-					task.Transfer.Transferred += data.ImageData.getData().length;
-				}
-			}
-
-			task.Transfer.HeaderReceivedEvent.set(true);
-
-			if (task.Transfer.Transferred >= task.Transfer.Size)
-			{
-				// #if DEBUG_TIMING
-				long stopTime = Calendar.getInstance().getTime().getTime();
-				long requestDuration = stopTime - task.StartTime.getTime();
-
-				long networkDuration = stopTime - task.NetworkTime.getTime();
-
-				TotalTime += requestDuration;
-				NetworkTime += networkDuration;
-				TotalBytes += task.Transfer.Size;
-
-				Logger.Log(
-						String.format(
-								"Transfer Complete %s [%d] Total Request Time: %d, Download Time %d, Network %d kb/sec, Image Size %d bytes",
-								task.RequestID, task.RequestSlot, requestDuration, networkDuration,
-								getNetworkThroughput(task.Transfer.Size, networkDuration), task.Transfer.Size),
-						LogLevel.Debug, _Client);
-				// #endif
-				task.Transfer.Success = true;
-				RemoveTransfer(task.RequestID);
-				task.TimeoutEvent.set(true);
-
-				_Cache.put(task.RequestID, task.Transfer.AssetData, task.Transfer.suffix);
-
-				for (TextureDownloadCallback callback : task.Callbacks)
-				{
-					callback.callback(TextureRequestState.Finished, new AssetTexture(task.RequestID,
-							task.Transfer.AssetData));
-				}
-			}
-			else if (task.ReportProgress)
-			{
-				for (TextureDownloadCallback callback : task.Callbacks)
-				{
-					callback.callback(TextureRequestState.Progress, new AssetTexture(task.RequestID,
-							task.Transfer.AssetData));
-				}
-			}
-			_Client.Assets.FireImageProgressEvent(task.RequestID, task.Transfer.Transferred, task.Transfer.Size);
+			task.Request.TimeSinceLastPacket = 0;
 		}
 	}
 
@@ -1017,17 +872,17 @@ public class TexturePipeline implements PacketCallback
 
 	private TaskInfo GetTransferValue(UUID textureID)
 	{
-		synchronized (_Transfers)
+		synchronized (_TexTransfers)
 		{
-			return _Transfers.get(textureID);
+			return _TexTransfers.get(textureID);
 		}
 	}
 
 	private boolean RemoveTransfer(UUID textureID)
 	{
-		synchronized (_Transfers)
+		synchronized (_TexTransfers)
 		{
-			return _Transfers.remove(textureID) != null;
+			return _TexTransfers.remove(textureID) != null;
 		}
 	}
 }

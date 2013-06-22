@@ -67,11 +67,9 @@ import libomv.assets.AssetGesture.GestureStep;
 import libomv.assets.AssetGesture.GestureStepAnimation;
 import libomv.assets.AssetGesture.GestureStepChat;
 import libomv.assets.AssetGesture.GestureStepWait;
-import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.AssetDownload;
-import libomv.assets.AssetManager.AssetReceivedCallback;
-import libomv.assets.AssetManager.XferReceivedCallbackArgs;
+import libomv.assets.AssetManager.XferDownload;
 import libomv.capabilities.CapsCallback;
 import libomv.capabilities.CapsClient;
 import libomv.capabilities.CapsMessage.AgentStateUpdateMessage;
@@ -3848,19 +3846,20 @@ public class AgentManager implements PacketCallback, CapsCallback
 				{
 					final TimeoutEvent<AssetGesture> gotAsset = new TimeoutEvent<AssetGesture>();
 
-					class AssetDownloadCallback implements AssetReceivedCallback
+					class AssetDownloadCallback implements Callback<AssetDownload>
 					{
 						@Override
-						public void callback(AssetDownload transfer, AssetItem asset)
+						public boolean callback(AssetDownload transfer)
 						{
 							if (transfer.Success)
 							{
-								gotAsset.set((AssetGesture) asset);
+								gotAsset.set(new AssetGesture(transfer.ItemID, transfer.AssetData));
 							}
 							else
 							{
 								gotAsset.set(null);
 							}
+							return true;
 						}
 					}
 
@@ -5807,14 +5806,14 @@ public class AgentManager implements PacketCallback, CapsCallback
         final TimeoutEvent<byte[]> gotMuteList = new TimeoutEvent<byte[]>();
         final AtomicLong xferID = new AtomicLong();
 
-        Callback<XferReceivedCallbackArgs> xferCallback = new Callback<XferReceivedCallbackArgs>()
+        Callback<XferDownload> xferCallback = new Callback<XferDownload>()
         {
           	@Override
-			public boolean callback(XferReceivedCallbackArgs xe)
+			public boolean callback(XferDownload download)
            	{
-                if (xe.getXfer().XferID == xferID.get())
+                if (download.XferID == xferID.get())
                 {
-                    gotMuteList.set(xe.getXfer().AssetData);
+                    gotMuteList.set(download.AssetData);
                 }
                 return false;
          	}

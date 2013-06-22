@@ -246,11 +246,11 @@ public class AssetCache
 			try
 			{
 				File file = cachedAssetFile(assetID, suffix);
-				boolean exists = file.exists();
+				boolean exists = file.exists() && file.length() > 0;
 				if (!exists)
 				{
 					file = getStaticAssetFile(assetID);
-					exists = file.exists();
+					exists = file.exists() && file.length() > 0;
 					if (exists)
 						Logger.DebugLog("Reading " + file + " from static asset cache.", _Client);
 				}

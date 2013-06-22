@@ -35,7 +35,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URI;
+import java.net.UnknownServiceException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
@@ -51,27 +53,28 @@ import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 /// Manages HTTP texture downloads with a limit on maximum concurrent downloads
 public class DownloadManager
 {
      public class DownloadResult
     {
-        public boolean result;
+        public boolean finished;
         public int current;
         public int full;
         public byte[] data;
         
         public DownloadResult(int current, int full)
         {
-        	result = false;
+        	finished = false;
         	this.current = current;
         	this.full = full;
         }
         
         public DownloadResult(byte[] data)
         {
-        	result = true;
+        	finished = true;
         	this.data = data;
         }
     }
@@ -152,6 +155,7 @@ public class DownloadManager
 								/* Ignore any exceptions here and let the connection fail if the security manager has a problem */
 							}
 						}
+						con.connect();
 						int len, total = con.getContentLength();
 						ByteArrayOutputStream os = new ByteArrayOutputStream(total > 0 ? total : 10000);
 						InputStream is = con.getInputStream();
@@ -166,11 +170,21 @@ public class DownloadManager
 						callbacks.dispatch(new DownloadResult(os.toByteArray()));
 						return;
 					}
-					catch (MalformedURLException e)
+					catch (MalformedURLException ex)
 					{
+						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
 					}
-					catch (IOException e)
+					catch (UnknownServiceException ex)
 					{
+						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
+					}
+			        catch (ProtocolException ex)
+					{
+						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
+					}
+					catch (IOException ex)
+					{
+						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
 					}
 					finally
 					{
@@ -181,6 +195,7 @@ public class DownloadManager
 				}
 				catch (Exception ex)
 				{
+					Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);
 				}
 			}
 			callbacks.dispatch(new DownloadResult(null));
