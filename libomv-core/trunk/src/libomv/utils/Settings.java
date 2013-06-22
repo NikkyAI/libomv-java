@@ -38,9 +38,7 @@ import java.io.Writer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
