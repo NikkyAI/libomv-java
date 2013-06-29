@@ -30,9 +30,10 @@
 package libomv;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -86,13 +87,13 @@ public class DownloadManager
         // Timout specified in milliseconds 
         private int millisecondsTimeout;
         // Accept the following content type
-        private String contentType;
+        private String acceptType;
         // How many times will this request be retried
         private int retries;
         // Current fetch attempt
         private int attempt;
-        
-        private OutputStream outputStream;
+        // The cache location to store this resources data after successful download if any
+        private File cacheFile;
         
         private CallbackHandler<DownloadResult> callbacks = new CallbackHandler<DownloadResult>();
     	
@@ -103,13 +104,13 @@ public class DownloadManager
             this.attempt = 0;
         }
 
-        public ActiveDownload(URI address, int millisecondsTimeout, String contentType, OutputStream outputStream, Callback<DownloadResult> callback)
+        public ActiveDownload(URI address, int millisecondsTimeout, String acceptType, File cacheFile, Callback<DownloadResult> callback)
 		{
         	this();
             this.address = address;
             this.millisecondsTimeout = millisecondsTimeout;
-            this.contentType = contentType;
-            this.outputStream = outputStream;
+            this.acceptType = acceptType;
+            this.cacheFile = cacheFile;
             this.callbacks.add(callback, false);
 		}
         
@@ -129,10 +130,9 @@ public class DownloadManager
 					try
 					{
 						con.setRequestProperty("Accept-Encoding", "identity");
-						if (contentType != null)
-						    con.setRequestProperty("Content-Type", contentType);
+						if (acceptType != null)
+						    con.setRequestProperty("Accept", acceptType);
 						con.setReadTimeout(millisecondsTimeout > 0 ? millisecondsTimeout : 0);
-		                Logger.DebugLog("Requesting " + address);
 						if (address.getScheme().equals("https"))
 						{
 							try
@@ -157,17 +157,31 @@ public class DownloadManager
 						}
 						con.connect();
 						int len, total = con.getContentLength();
-						ByteArrayOutputStream os = new ByteArrayOutputStream(total > 0 ? total : 10000);
+						ByteArrayOutputStream bos = new ByteArrayOutputStream(total > 0 ? total : 10000);
 						InputStream is = con.getInputStream();
 						byte b[] = new byte[10000];
 						while ((len = is.read(b)) >= 0)
 						{
 							callbacks.dispatch(new DownloadResult(len, total));
-							if (outputStream != null)
-								outputStream.write(b, 0, len);
-							os.write(b, 0, len);
+							bos.write(b, 0, len);
 						}
-						callbacks.dispatch(new DownloadResult(os.toByteArray()));
+						if (cacheFile != null)
+						{
+							try
+							{
+								FileOutputStream fos = new FileOutputStream(cacheFile);
+								try
+								{
+									fos.write(bos.toByteArray());
+								}
+								finally
+								{
+									fos.close();
+								}
+							}
+							catch (Exception ex) {}
+						}
+						callbacks.dispatch(new DownloadResult(bos.toByteArray()));
 						return;
 					}
 					catch (MalformedURLException ex)
@@ -189,8 +203,6 @@ public class DownloadManager
 					finally
 					{
 						con.disconnect();
-						if (outputStream != null)
-							outputStream.close();
 					}
 				}
 				catch (Exception ex)
@@ -216,14 +228,14 @@ public class DownloadManager
 	private Hashtable<URI, ActiveDownload> requests = new Hashtable<URI, ActiveDownload>();
     
     // Enqueue a new HTPP download
-    public void enque(URI address, int millisecondsTimeout, String contentType, OutputStream outputStream, Callback<DownloadResult> callback)
+    public void enque(URI address, int millisecondsTimeout, String acceptType, File cacheFile, Callback<DownloadResult> callback)
     {
     	synchronized (requests)
     	{
     		ActiveDownload download = requests.get(address);
     		if (download == null)
     		{
-    			download = new ActiveDownload(address, millisecondsTimeout, contentType, outputStream, callback);
+    			download = new ActiveDownload(address, millisecondsTimeout, acceptType, cacheFile, callback);
     			requests.put(address, download);
     	    	execPool.submit(download);
     		}

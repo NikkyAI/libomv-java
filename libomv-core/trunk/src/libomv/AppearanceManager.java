@@ -1689,7 +1689,6 @@ public class AppearanceManager implements PacketCallback
                 {
                 	if (download.State == TextureRequestState.Finished && download.AssetData != null)
                 	{
-                        Logger.Log("Texture " + download.ItemID + " downloaded", LogLevel.Debug, _Client);
                         AssetTexture texture = (AssetTexture)AssetManager.CreateAssetItem(AssetType.Texture, download.ItemID, download.AssetData);
                     	texture.decode();
 
@@ -1808,7 +1807,7 @@ public class AppearanceManager implements PacketCallback
         UUID newAssetID = UUID.Zero;
         int retries = UPLOAD_RETRIES;
 
-        while (newAssetID.equals(UUID.Zero) && retries > 0)
+        do
         {
             try
             {
@@ -1824,10 +1823,11 @@ public class AppearanceManager implements PacketCallback
             }
             --retries;
         }
+        while (UUID.isZeroOrNull(newAssetID) && retries > 0);
 
         _Textures[BakeTypeToAgentTextureIndex(bakeType).getValue()].TextureID = newAssetID;
 
-        if (newAssetID == UUID.Zero)
+        if (UUID.isZeroOrNull(newAssetID))
         {
             Logger.Log("Failed uploading bake " + bakeType, LogLevel.Warning, _Client);
             return false;
