@@ -180,31 +180,34 @@ public class J2KImage extends ManagedImage
     /**
      * Encode this <seealso cref="ManagedImage"/> object into a byte array
      *
-     * @param image The <seealso cref="ManagedImage"/> object to encode
+     * @param os The <seealso cref="OutputStream"/> to encode the image into
      */
-    public int encode(OutputStream os)
+    @Override
+    public int encode(OutputStream os) throws IOException
     {
         return encode(os, this, false);
     }
 
     /**
-     * Encode a <seealso cref="ManagedImage"/> object into a byte array
+     * Encode this <seealso cref="ManagedImage"/> object into a byte array
      *
-     * @param image The <seealso cref="ManagedImage"/> object to encode
+     * @param os The <seealso cref="OutputStream"/> to encode the image into
+     * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
      */
-    public static int encode(OutputStream os, ManagedImage image)
+    public int encode(OutputStream os, boolean lossless) throws IOException
     {
-        return encode(os, image, false);
+        return encode(os, this, lossless);
     }
 
     /**
      * Encode a <seealso cref="ManagedImage"/> object into a byte array
      * 
+     * @param os The <seealso cref="OutputStream"/> to encode the image into
      * @param image The <seealso cref="ManagedImage"/> object to encode
      * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
      * @return
      */
-    public static int encode(OutputStream os, ManagedImage image, boolean lossless)
+    public static int encode(OutputStream os, ManagedImage image, boolean lossless) throws IOException
     {
         if (((image.Channels & ManagedImage.ImageChannels.Gray) != 0) && ((image.Channels & ManagedImage.ImageChannels.Color) != 0) ||
         	((image.Channels & ManagedImage.ImageChannels.Bump) != 0) && ((image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
@@ -244,7 +247,7 @@ public class J2KImage extends ManagedImage
         return 0;
     }
 
-	private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)
+    private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)
 	{
 		int k1 = blk.offset + blk.w - 1;
 		for (int i = blk.w - 1; i >= 0; i--)

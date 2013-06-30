@@ -29,6 +29,8 @@
  */
 package libomv.imaging;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import libomv.types.Vector3;
@@ -256,6 +258,11 @@ public class ManagedImage
 	public ManagedImage clone()
 	{
 		return null;
+	}
+
+	public int encode(OutputStream os) throws IOException
+	{
+		return 0;
 	}
 
     private static void fillArray(byte[] array, byte value)

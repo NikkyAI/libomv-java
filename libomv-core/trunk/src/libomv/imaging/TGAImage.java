@@ -485,6 +485,7 @@ public class TGAImage extends ManagedImage
 	        decodePlain(is, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
 	}
 	
+    @Override
 	public int encode(OutputStream os) throws IOException
 	{
 		TGAHeader header = new TGAHeader(this);

@@ -102,9 +102,16 @@ public class AssetTexture extends AssetItem
 	@Override
 	public void encode()
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();		
-		J2KImage.encode(bos, Image);
-		AssetData = bos.toByteArray();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try
+		{
+			J2KImage.encode(bos, Image, false);
+			AssetData = bos.toByteArray();
+		}
+		catch (IOException ex)
+		{
+			Logger.Log("Failed to encode JPEG2000 image", LogLevel.Error, ex);
+		}
 	}
 
 	/**
