@@ -40,6 +40,7 @@ import java.util.Map.Entry;
 
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.AgentManager.InstantMessage;
 import libomv.AgentManager.InstantMessageCallbackArgs;
@@ -56,6 +57,7 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDUUID;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager.XferDownload;
 import libomv.assets.AssetWearable.WearableType;
@@ -515,38 +517,36 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            The item Owners {@link OpenMetaverse.UUID}
 	 * @throws Exception
 	 */
-	public final void RequestFetchInventory(UUID itemID, UUID ownerID) throws Exception
+	public void RequestFetchInventory(UUID itemID, UUID ownerID) throws Exception
 	{
-		FetchInventoryPacket fetch = new FetchInventoryPacket();
-		fetch.AgentData = fetch.new AgentDataBlock();
-		fetch.AgentData.AgentID = _Client.Self.getAgentID();
-		fetch.AgentData.SessionID = _Client.Self.getSessionID();
-
-		fetch.InventoryData = new FetchInventoryPacket.InventoryDataBlock[1];
-		fetch.InventoryData[0] = fetch.new InventoryDataBlock();
-		fetch.InventoryData[0].ItemID = itemID;
-		fetch.InventoryData[0].OwnerID = ownerID;
-
-		_Client.Network.sendPacket(fetch);
+		ArrayList<UUID> itemIDs = new ArrayList<UUID>();
+		ArrayList<UUID> ownerIDs = new ArrayList<UUID>();
+		itemIDs.add(itemID);
+		ownerIDs.add(ownerID);
+		RequestFetchInventory(itemIDs, ownerIDs);
 	}
 
 	/**
 	 * Request inventory items {@link InventoryManager.OnItemReceived}
 	 * 
-	 * @param itemIDs
-	 *            Inventory items to request
-	 * @param ownerIDs
-	 *            Owners of the inventory items
+	 * @param itemIDs Inventory items to request
+	 * @param ownerIDs Owners of the inventory items
 	 * @throws Exception
 	 */
-	public final void RequestFetchInventory(ArrayList<UUID> itemIDs, ArrayList<UUID> ownerIDs) throws Exception
+	public void RequestFetchInventory(ArrayList<UUID> itemIDs, ArrayList<UUID> ownerIDs) throws Exception
 	{
 		if (itemIDs.size() != ownerIDs.size())
 		{
 			throw new IllegalArgumentException("itemIDs and ownerIDs must contain the same number of entries");
 		}
 
-		FetchInventoryPacket fetch = new FetchInventoryPacket();
+        if (_Client.Settings.getBool(LibSettings.HTTP_INVENTORY))
+        {
+            if (RequestFetchInventoryCap(itemIDs, ownerIDs))
+              	return;
+        }
+
+        FetchInventoryPacket fetch = new FetchInventoryPacket();
 		fetch.AgentData = fetch.new AgentDataBlock();
 		fetch.AgentData.AgentID = _Client.Self.getAgentID();
 		fetch.AgentData.SessionID = _Client.Self.getSessionID();
@@ -559,9 +559,73 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			fetch.InventoryData[i].OwnerID = ownerIDs.get(i);
 		}
 		_Client.Network.sendPacket(fetch);
+		return;
 	}
 
 	/**
+	 * Request inventory items over Caps {@link InventoryManager.OnItemReceived}
+	 * 
+	 * @param itemIDs Inventory items to request
+	 * @param ownerIDs Owners of the inventory items
+	 * @return True if the request could be sent off
+	 * @throws IOReactorException 
+	 */
+    private boolean RequestFetchInventoryCap(ArrayList<UUID> itemIDs, ArrayList<UUID> ownerIDs) throws IOReactorException
+    {
+        URI url = _Client.Network.getCurrentSim().getCapabilityURI("FetchInventory2");
+        if (url == null)
+        {
+            Logger.Log("FetchInventory2 capability not available in the current sim", LogLevel.Warning, _Client);        	
+        	return false;
+        }
+        CapsClient request = new CapsClient(_Client, "FetchInventory2");
+
+        final class CapsCallback implements FutureCallback<OSD>
+        {
+        	@Override
+        	public void completed(OSD result)
+        	{
+                OSDMap res = (OSDMap)result;
+                OSDArray itemsOSD = (OSDArray)res.get("items");
+
+                for (int i = 0; i < itemsOSD.size(); i++)
+                {
+                    InventoryItem item = (InventoryItem)InventoryItem.fromOSD(itemsOSD.get(i));
+                    _Store.add(item.itemID, item);
+                    OnItemReceived.dispatch(new ItemReceivedCallbackArgs(item));
+                }
+        	}
+
+			@Override
+			public void cancelled()
+			{
+               Logger.Log("Failed getting data from FetchInventory2 capability.", LogLevel.Error, _Client);
+			}
+
+			@Override
+			public void failed(Exception ex)
+			{
+	               Logger.Log("Failed getting data from FetchInventory2 capability.", LogLevel.Error, _Client, ex);
+			}
+        };
+        
+        OSDMap OSDRequest = new OSDMap();
+        OSDRequest.put("agent_id", new OSDUUID(_Client.Self.getAgentID()));
+
+        OSDArray items = new OSDArray(itemIDs.size());
+        for (int i = 0; i < itemIDs.size(); i++)
+        {
+            OSDMap item = new OSDMap(2);
+            item.put("item_id", new OSDUUID(itemIDs.get(i)));
+            item.put("owner_id", new OSDUUID(ownerIDs.get(i)));
+            items.add(item);
+        }
+        OSDRequest.put("items", items);
+        request.executeHttpPost(url, OSDRequest, OSDFormat.Xml, new CapsCallback(), _Client.Settings.CAPS_TIMEOUT);
+        return true;
+    }
+
+    /**
 	 * Get contents of a folder {@link InventoryManager.OnRequestFolderContents}
 	 * InventoryFolder.DescendentCount will only be accurate if both folders and
 	 * items are requested
@@ -638,18 +702,23 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @return True if the request could be sent off
 	 * @throws Exception
 	 */
-	public final boolean RequestFolderContents(UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order, boolean httpOnly)
+	public boolean RequestFolderContents(UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order, boolean httpOnly)
 			throws Exception
 	{
 		if (_Client.Settings.getBool(LibSettings.HTTP_INVENTORY))
 		{
-			URI url = _Client.Network.getCapabilityURI("FetchInventoryDescendents2");
-			if (url != null)
-			{
-				RequestFolderContents(url, folderID, ownerID, fetchFolders, fetchItems, order);
+	    	String capability = _Client.Self.getAgentID().equals(ownerID) ? "FetchInventoryDescendents2" : "FetchLibDescendents2";
+			URI url = _Client.Network.getCapabilityURI(capability);
+	        if (url == null)
+	        {
+	            Logger.Log(capability + " capability not available in the current sim", LogLevel.Warning, _Client);
+	        }
+	        else if (RequestFolderContents(url, folderID, ownerID, fetchFolders, fetchItems, order))
+	        {
 				return true;
 			}	
 		}
+
 		if (!httpOnly)
 		{
 			FetchInventoryDescendentsPacket fetch = new FetchInventoryDescendentsPacket();
@@ -676,16 +745,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @param fetchFolders true to return {@link InventoryManager.InventoryFolder}'s contained in folder
 	 * @param fetchItems true to return {@link  InventoryManager.InventoryItem}'s contained in folder
 	 * @param order the sort order to return items in {@link InventoryManager.InventorySortOrder}
+	 * @return True if the request could be sent off
 	 * {@link InventoryManager.FolderContents}
 	 */
-    private final void RequestFolderContents(URI capabilityUrl, final UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
+    private boolean RequestFolderContents(URI capabilityUrl, final UUID folderID, UUID ownerID, boolean fetchFolders, boolean fetchItems, byte order)
     {
-        if (capabilityUrl == null)
-        {
-            Logger.Log("FetchInventoryDescendents2 capability not available in the current sim", LogLevel.Warning, _Client);
-            return;
-        }
-
         try
         {
         	String cap = CapsEventType.FetchInventoryDescendents.toString();
@@ -804,11 +868,12 @@ public class InventoryManager implements PacketCallback, CapsCallback
             req.put("folders", requestedFolders);
 
             request.executeHttpPost(capabilityUrl, req, OSDFormat.Xml, new CapsCallback(), _Client.Settings.CAPS_TIMEOUT);
+            return true;
         }
         catch (Exception ex)
         {
             Logger.Log("Failed to fetch inventory descendants for folder id " + folderID, LogLevel.Warning, _Client, ex);
-            return;
+            return false;
         }
     }
 
@@ -4239,7 +4304,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		for (BulkUpdateInventoryMessage.FolderDataInfo newFolder : msg.FolderData)
         {
-            if (newFolder.FolderID == UUID.Zero) continue;
+            if (UUID.isZeroOrNull(newFolder.FolderID)) continue;
 
             synchronized (_Store)
             {
@@ -4263,11 +4328,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
         for (BulkUpdateInventoryMessage.ItemDataInfo newItem : msg.ItemData)
         {
-            if (newItem.ItemID == UUID.Zero) continue;
+            if (UUID.isZeroOrNull(newItem.ItemID)) continue;
             InventoryType invType = newItem.InvType;
-            if (_ItemInventoryTypeRequest.containsKey(newItem.CallbackID))
+            synchronized (_ItemInventoryTypeRequest)
             {
-            	invType = _ItemInventoryTypeRequest.remove(newItem.CallbackID);
+            	if (_ItemInventoryTypeRequest.containsKey(newItem.CallbackID))
+            	{
+            		invType = _ItemInventoryTypeRequest.remove(newItem.CallbackID);
+            	}
             }
 			InventoryItem item = SafeCreateInventoryItem(invType, newItem.ItemID, newItem.FolderID, newItem.OwnerID);
 
