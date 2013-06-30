@@ -196,8 +196,12 @@ public class Simulator extends Thread
 	// [Flags]
     public static class RegionProtocols
     {
+    	// Nothing special
     	public static final long None = 0;
+    	// Region supports Server side Appearance
     	public static final long AgentAppearanceService = 1 << 0;
+    	// Viewer supports Server side Appearance
+    	public static final long SelfAppearanceSupport = 1 << 2;
 
     	public static long setValue(long value)
 		{
@@ -209,14 +213,14 @@ public class Simulator extends Thread
 			return value;
 		}
 
-		private static final long _mask = 0x7FFFFFFL;
+		private static final long _mask = 0x7FFFFFFFL;
     }
   	
   	/* Access level for a simulator */
 	public static enum SimAccess
 	{
 		/* Minimum access level, no additional checks */
-		Min(0),
+		Min(0)
 		/* Trial accounts allowed */
 		Trial(7),
 		/* PG rating */

@@ -1405,7 +1405,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		simulator.BillableFactor = handshake.RegionInfo.BillableFactor;
 		simulator.Access = SimAccess.setValue(handshake.RegionInfo.SimAccess);
 
-		simulator.RegionID = handshake.RegionID;
+		simulator.RegionID = handshake./* RegionInfo2. */RegionID;
 
 		simulator.ColoLocation = Helpers.BytesToString(handshake.RegionInfo3.getColoName());
 		simulator.CPUClass = handshake.RegionInfo3.CPUClassID;
@@ -1424,7 +1424,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		RegionHandshakeReplyPacket reply = new RegionHandshakeReplyPacket();
 		reply.AgentData.AgentID = _Client.Self.getAgentID();
 		reply.AgentData.SessionID = _Client.Self.getSessionID();
-		reply.Flags = 0;
+		reply.Flags = (int)RegionProtocols.SelfAppearanceSupport;
 		simulator.sendPacket(reply);
 
 		Logger.Log("Received a region handshake for " + simulator.getName(), LogLevel.Debug, _Client);
