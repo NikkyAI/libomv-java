@@ -83,7 +83,7 @@ public class CodestreamManipulator
 	private int pptp;
 
 	/** The name of the outfile */
-	private String outname;
+	private File outfile;
 
 	/** The length of a SOT plus a SOD marker */
 	private static int TP_HEAD_LEN = 14;
@@ -143,10 +143,10 @@ public class CodestreamManipulator
 	 * @param tempEph
 	 *            Flag indicating whether EPH merker should be removed
 	 */
-	public CodestreamManipulator(String outname, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
+	public CodestreamManipulator(File outfile, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
 			boolean tempEph)
 	{
-		this.outname = outname;
+		this.outfile = outfile;
 		this.nt = nt;
 		this.pptp = pptp;
 		this.ppmUsed = ppm;
@@ -179,7 +179,7 @@ public class CodestreamManipulator
 			return 0;
 
 		// Open file for reading and writing
-		BEBufferedRandomAccessFile fi = new BEBufferedRandomAccessFile(outname, "rw+");
+		BEBufferedRandomAccessFile fi = new BEBufferedRandomAccessFile(outfile, "rw+");
 		addedHeaderBytes -= fi.length();
 
 		// Parse the codestream for SOT, SOP and EPH markers
@@ -190,7 +190,7 @@ public class CodestreamManipulator
 
 		// Close file and overwrite with new file
 		fi.close();
-		fi = new BEBufferedRandomAccessFile(outname, "rw");
+		fi = new BEBufferedRandomAccessFile(outfile, "rw");
 
 		// Create tile-parts
 		createTileParts();

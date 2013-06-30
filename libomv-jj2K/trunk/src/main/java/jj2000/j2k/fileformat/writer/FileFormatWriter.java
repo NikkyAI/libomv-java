@@ -64,7 +64,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * The name of the file from which to read the codestream and to write the
 	 * JP2 file
 	 */
-	private String filename;
+	private File outfile;
 
 	/** Image height */
 	private int height;
@@ -118,13 +118,13 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * @param clength
 	 *            Length of codestream
 	 */
-	public FileFormatWriter(String filename, int height, int width, int nc, int[] bpc, int clength)
+	public FileFormatWriter(File outfile, int height, int width, int nc, int[] bpc, int clength)
 	{
 		this.height = height;
 		this.width = width;
 		this.nc = nc;
 		this.bpc = bpc;
-		this.filename = filename;
+		this.outfile = outfile;
 		this.clength = clength;
 
 		bpcVaries = false;
@@ -153,7 +153,7 @@ public class FileFormatWriter implements FileFormatBoxes
 		try
 		{
 			// Read and buffer the codestream
-			fi = new BEBufferedRandomAccessFile(filename, "rw+");
+			fi = new BEBufferedRandomAccessFile(outfile, "rw+");
 			codestream = new byte[clength];
 			fi.readFully(codestream, 0, clength);
 
@@ -229,17 +229,17 @@ public class FileFormatWriter implements FileFormatBoxes
 			fi.writeInt(8 + IHB_LENGTH + CSB_LENGTH);
 
 		// Write a JP2Header (TBox)
-		fi.writeInt(JP2_HEADER_BOX);
+		fi.writeInt(JP2_HEADER_BOX);       // 4 bytes
 
 		// Write image header box
-		writeImageHeaderBox();
+		writeImageHeaderBox();             // 22 bytes
 
 		// Write Colour Bpecification Box
-		writeColourSpecificationBox();
+		writeColourSpecificationBox();     // 15 Bytes
 
 		// if the number of bits per components varies write bpcc box
 		if (bpcVaries)
-			writeBitsPerComponentBox();
+			writeBitsPerComponentBox();    // 8 Byte + nc Bytes
 	}
 
 	/**
@@ -251,7 +251,6 @@ public class FileFormatWriter implements FileFormatBoxes
 	 */
 	private void writeBitsPerComponentBox() throws IOException
 	{
-
 		// Write box length (LBox)
 		fi.writeInt(BPC_LENGTH + nc);
 
@@ -274,7 +273,6 @@ public class FileFormatWriter implements FileFormatBoxes
 	 */
 	private void writeColourSpecificationBox() throws IOException
 	{
-
 		// Write box length (LBox)
 		fi.writeInt(CSB_LENGTH);
 

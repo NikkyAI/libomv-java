@@ -67,10 +67,6 @@ import java.io.*;
  */
 public abstract class BufferedRandomAccessFile implements RandomAccessIO, EndianType
 {
-
-	/** The name of the current file */
-	private String fileName;
-
 	/**
 	 * Whether the opened file is read only or not (defined by the constructor
 	 * arguments)
@@ -137,8 +133,6 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 */
 	protected BufferedRandomAccessFile(File file, String mode, int bufferSize) throws IOException
 	{
-
-		fileName = file.getName();
 		if (mode.equals("rw") || mode.equals("rw+"))
 		{ // mode read / write
 			isReadOnly = false;
@@ -677,6 +671,6 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	@Override
 	public String toString()
 	{
-		return "BufferedRandomAccessFile: " + fileName + " (" + ((isReadOnly) ? "read only" : "read/write") + ")";
+		return "BufferedRandomAccessFile: " + theFile.toString() + " (" + ((isReadOnly) ? "read only" : "read/write") + ")";
 	}
 }

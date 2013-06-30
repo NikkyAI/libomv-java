@@ -357,7 +357,7 @@ public class Encoder extends ImgEncoder implements Runnable
 				imgsrc = new ImgDataJoiner(imreader, imgcmpidxs);
 			}
 
-			int fileLength = encode(imgsrc, imsigned, ncomp, ppminput, outname, useFileFormat, verbose);
+			int fileLength = encode(imgsrc, imsigned, ncomp, ppminput, new File(outname), useFileFormat, verbose);
 			if (fileLength < 0)
 				return;
 

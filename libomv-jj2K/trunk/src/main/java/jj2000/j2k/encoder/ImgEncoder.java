@@ -1,6 +1,7 @@
 package jj2000.j2k.encoder;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -131,7 +132,7 @@ public class ImgEncoder
 		defpl = pl.getDefaultParameterList();
 	}
 
-	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, String outname,
+	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, File outfile,
 			boolean useFileFormat, boolean verbose) throws IOException
 	{
 		Tiler imgtiler;
@@ -392,7 +393,7 @@ public class ImgEncoder
 		OutputStream cs = null;
 		try
 		{
-			cs = new BufferedOutputStream(new FileOutputStream(outname));
+			cs = new BufferedOutputStream(new FileOutputStream(outfile));
 			// Rely on rate allocator to limit amount of data
 			bwriter = new CodestreamWriter(cs, Integer.MAX_VALUE);
 		}
@@ -449,7 +450,7 @@ public class ImgEncoder
 		{
 			try
 			{
-				CodestreamManipulator cm = new CodestreamManipulator(outname, ntiles, pktspertp, pphMain, pphTile,
+				CodestreamManipulator cm = new CodestreamManipulator(outfile, ntiles, pktspertp, pphMain, pphTile,
 						tempSop, tempEph);
 				fileLength += cm.doCodestreamManipulation();
 				if (pktspertp > 0)
@@ -473,6 +474,7 @@ public class ImgEncoder
 				return -1;
 			}
 		}
+		
 		// **** File Format ****
 		if (useFileFormat)
 		{
@@ -485,7 +487,7 @@ public class ImgEncoder
 					bpc[comp] = imgsrc.getNomRangeBits(comp);
 				}
 
-				FileFormatWriter ffw = new FileFormatWriter(outname, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc,
+				FileFormatWriter ffw = new FileFormatWriter(outfile, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc,
 						bpc, fileLength);
 				fileLength += ffw.writeFileFormat();
 			}
