@@ -220,7 +220,7 @@ public class Simulator extends Thread
 	public static enum SimAccess
 	{
 		/* Minimum access level, no additional checks */
-		Min(0)
+		Min(0),
 		/* Trial accounts allowed */
 		Trial(7),
 		/* PG rating */
