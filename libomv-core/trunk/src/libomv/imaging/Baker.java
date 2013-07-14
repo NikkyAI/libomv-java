@@ -30,7 +30,7 @@
 package libomv.imaging;
 
 import java.io.File;
-import java.io.IOException;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -330,7 +330,7 @@ public class Baker
         {
             return new TGAImage(new File(charDir, fileName));
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
             Logger.Log(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()), LogLevel.Error, ex);
             return null;

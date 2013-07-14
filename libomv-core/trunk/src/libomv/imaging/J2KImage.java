@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 import jj2000.j2k.decoder.ImgDecoder;
 import jj2000.j2k.encoder.ImgEncoder;
 import jj2000.j2k.fileformat.reader.FileFormatReader;
@@ -183,7 +182,7 @@ public class J2KImage extends ManagedImage
      * @param os The <seealso cref="OutputStream"/> to encode the image into
      */
     @Override
-    public int encode(OutputStream os) throws IOException
+    public int encode(OutputStream os) throws Exception
     {
         return encode(os, this, false);
     }
@@ -194,7 +193,7 @@ public class J2KImage extends ManagedImage
      * @param os The <seealso cref="OutputStream"/> to encode the image into
      * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
      */
-    public int encode(OutputStream os, boolean lossless) throws IOException
+    public int encode(OutputStream os, boolean lossless) throws Exception
     {
         return encode(os, this, lossless);
     }
@@ -207,7 +206,7 @@ public class J2KImage extends ManagedImage
      * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
      * @return
      */
-    public static int encode(OutputStream os, ManagedImage image, boolean lossless) throws IOException
+    public static int encode(OutputStream os, ManagedImage image, boolean lossless) throws Exception
     {
         if (((image.Channels & ManagedImage.ImageChannels.Gray) != 0) && ((image.Channels & ManagedImage.ImageChannels.Color) != 0) ||
         	((image.Channels & ManagedImage.ImageChannels.Bump) != 0) && ((image.Channels & ManagedImage.ImageChannels.Alpha) == 0))

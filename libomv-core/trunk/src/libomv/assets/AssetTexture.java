@@ -108,7 +108,7 @@ public class AssetTexture extends AssetItem
 			J2KImage.encode(bos, Image, false);
 			AssetData = bos.toByteArray();
 		}
-		catch (IOException ex)
+		catch (Exception ex)
 		{
 			Logger.Log("Failed to encode JPEG2000 image", LogLevel.Error, ex);
 		}

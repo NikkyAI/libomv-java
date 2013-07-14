@@ -29,7 +29,6 @@
  */
 package libomv.imaging;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -278,15 +277,80 @@ public class ManagedImage implements Cloneable
     @Override
 	public ManagedImage clone()
 	{
-		return null;
+    	ManagedImage clone;
+        try
+        {
+        	clone = (ManagedImage) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new AssertionError();
+        }
+
+        // Deep copy member fields here
+        if (this.Alpha != null)
+        {
+        	clone.Alpha = this.Alpha.clone();
+        }
+        if (this.Red != null)
+        {
+        	clone.Red = this.Red.clone();
+        }
+        if (this.Green != null)
+        {
+        	clone.Green = this.Green.clone();
+        }
+        if (this.Blue != null)
+        {
+        	clone.Blue = this.Blue.clone();
+        }
+        if (this.Bump != null)
+        {
+        	clone.Bump = this.Bump.clone();
+        }
+        return clone;
 	}
 
-	public int encode(OutputStream os) throws IOException
+    /** 
+     * Saves the image data into an output stream with whatever encoding this object supports
+     * 
+     * Note: This method does currently nothing as it does not support a native raw image format
+     * This method should be overwritten by derived classes to save the image data with whatever
+     * default options makes most sense for the image format.
+     * 
+     * @param os Stream in which to write the image data
+     * @return number of bytes written into the stream
+     * @throws Exception
+     */
+	public int encode(OutputStream os) throws Exception
 	{
 		return 0;
 	}
 
-    private static void fillArray(byte[] array, byte value)
+    /** 
+     * Saves the image data into an output stream with whatever encoding this object supports
+     * 
+     * Note: This method does currently nothing as it does not support a native raw image format
+     * This method should be overwritten by derived classes to save the image data with whatever
+     * default options makes most sense for the image format.
+     * 
+     * @param os Stream in which to write the image data
+     * @return number of bytes written into the stream
+     * @throws Exception
+     */
+	public int encode(OutputStream os, ImageCodec codec) throws Exception
+	{
+		switch (codec)
+		{
+		    case J2C:
+		    	return J2KImage.encode(os, this, false);
+		    case TGA:
+		    	return TGAImage.encode(os, this);		    	
+		}
+    	throw new UnsupportedCodecException(codec);
+	}
+
+	private static void fillArray(byte[] array, byte value)
     {
         if (array != null)
         {
