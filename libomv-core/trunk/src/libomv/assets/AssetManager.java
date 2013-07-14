@@ -58,6 +58,7 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.UploadBakedTextureMessage;
 import libomv.capabilities.CapsMessage.UploaderRequestComplete;
 import libomv.capabilities.CapsMessage.UploaderRequestUpload;
+import libomv.imaging.ManagedImage.ImageCodec;
 import libomv.inventory.InventoryItem;
 import libomv.packets.AbortXferPacket;
 import libomv.packets.AssetUploadCompletePacket;
@@ -243,26 +244,6 @@ public class AssetManager implements PacketCallback
 		}
 
 		public static byte getValue(ImageType value)
-		{
-			return (byte)value.ordinal();
-		}
-
-		public byte getValue()
-		{
-			return (byte)ordinal();
-		}
-	}
-
-	public enum ImageCodec
-	{
-		Invalid, RGB, J2C, BMP, TGA, JPEG, DXT, PNG;
-
-		public static ImageCodec setValue(int value)
-		{
-			return values()[value];
-		}
-
-		public static byte getValue(ImageCodec value)
 		{
 			return (byte)value.ordinal();
 		}

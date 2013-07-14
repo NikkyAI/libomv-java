@@ -30,13 +30,34 @@
 package libomv.imaging;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
 import libomv.types.Vector3;
 
-public class ManagedImage
+public class ManagedImage implements Cloneable
 {
+	public enum ImageCodec
+	{
+		Invalid, RGB, J2C, BMP, TGA, JPEG, DXT, PNG;
+
+		public static ImageCodec setValue(int value)
+		{
+			return values()[value];
+		}
+
+		public static byte getValue(ImageCodec value)
+		{
+			return (byte)value.ordinal();
+		}
+
+		public byte getValue()
+		{
+			return (byte)ordinal();
+		}
+	}
+
 	// [Flags]
 	public class ImageChannels
 	{
@@ -281,5 +302,17 @@ public class ManagedImage
         fillArray(Blue, (byte)0);
         fillArray(Alpha, (byte)0);
         fillArray(Bump, (byte)0);
+    }
+    
+    public static ManagedImage decode(InputStream input, ImageCodec codec) throws Exception
+    {
+    	switch (codec)
+    	{
+    		case J2C:
+    			return new J2KImage(input);
+    		case TGA:
+    			return new TGAImage(input);
+    	}
+    	throw new UnsupportedCodecException(codec);
     }
 }
