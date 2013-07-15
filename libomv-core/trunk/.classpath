@@ -6,12 +6,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.0.1.jar" sourcepath="lib/src/commons-io-2.0.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/httpasyncclient-4.0-alpha2.jar" sourcepath="lib/src/httpcomponents-asyncclient-4.0-alpha2-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/xpp3-1.1.4c.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/httpclient-4.1.2.jar" sourcepath="lib/src/httpcomponents-client-4.1.2-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/jj2000-1.0.3.jar" sourcepath="/libomv-j2k"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.1.4.jar" sourcepath="C:/Users/Rolf/workspace/libomv-java/lib/src/httpcomponents-core-4.1.4-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpcore-nio-4.1.4.jar" sourcepath="C:/Users/Rolf/workspace/libomv-java/lib/src/httpcomponents-core-4.1.4-src.zip"/>
+	<classpathentry kind="lib" path="lib/xpp3-1.1.4c.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpasyncclient-4.0-alpha2.jar"/>
+	<classpathentry kind="lib" path="lib/jj2000-1.0.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
