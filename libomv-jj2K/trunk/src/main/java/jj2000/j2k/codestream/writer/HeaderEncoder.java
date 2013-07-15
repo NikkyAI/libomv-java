@@ -50,8 +50,8 @@ import jj2000.j2k.codestream.*;
 import jj2000.j2k.encoder.*;
 import jj2000.j2k.entropy.*;
 import jj2000.j2k.image.*;
-import jj2000.j2k.util.*;
 import jj2000.j2k.io.*;
+import jj2000.j2k.util.*;
 import jj2000.j2k.*;
 
 import java.util.*;
@@ -270,18 +270,14 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * @param out
 	 *            Where to write the header.
 	 */
-	public void writeTo(BinaryDataOutput out) throws IOException
+	public int writeTo(RandomAccessIO out) throws IOException
 	{
-		int i, len;
 		byte buf[];
 
 		buf = getBuffer();
-		len = getLength();
 
-		for (i = 0; i < len; i++)
-		{
-			out.writeByte(buf[i]);
-		}
+		out.write(buf, 0, getLength());
+		return getLength();
 	}
 
 	/**
@@ -292,17 +288,6 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	protected int getBufferLength()
 	{
 		return baos.size();
-	}
-
-	/**
-	 * Writes the header to the specified OutputStream.
-	 * 
-	 * @param out
-	 *            Where to write the header.
-	 */
-	public void writeTo(OutputStream out) throws IOException
-	{
-		baos.writeTo(out);
 	}
 
 	/**

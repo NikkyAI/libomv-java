@@ -159,4 +159,28 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 *                If an I/O error ocurred.
 	 */
 	public void write(int b) throws IOException;
+
+	/**
+	 * Writes a byte array to the stream. Prior to writing, the stream is realigned at
+	 * the byte level.
+	 * 
+	 * @param b The byte array to write. The lower 8 bits of <tt>b</tt> are written.
+	 * 
+	 * @exception IOException
+	 *                If an I/O error ocurred.
+	 */
+	public void write(byte[] b) throws IOException;
+
+	/**
+	 * Writes a byte array to the stream. Prior to writing, the stream is realigned at
+	 * the byte level.
+	 * 
+	 * @param b The byte array to write. The lower 8 bits of <tt>b</tt> are written.
+	 * @param off The offset into the array to write from.
+	 * @param len The number of bytes to write into the stream.
+	 * 
+	 * @exception IOException
+	 *                If an I/O error ocurred.
+	 */
+	public void write(byte[] b, int off, int len) throws IOException;
 }

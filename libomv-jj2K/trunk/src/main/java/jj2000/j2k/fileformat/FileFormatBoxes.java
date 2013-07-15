@@ -100,19 +100,19 @@ public interface FileFormatBoxes
 	/** Image Header Box Fields */
 	public static final int IMB_VERS = 0x0100;
 
-	public static final int IMB_C = 7;
+	public static final byte IMB_C = 7;
 
-	public static final int IMB_UnkC = 1;
+	public static final byte IMB_UnkC = 1;
 
-	public static final int IMB_IPR = 0;
+	public static final byte IMB_IPR = 0;
 	/** end of Image Header Box Fields */
 
 	/** Colour Specification Box Fields */
-	public static final int CSB_METH = 1;
+	public static final byte CSB_METH = 1;
 
-	public static final int CSB_PREC = 0;
+	public static final byte CSB_PREC = 0;
 
-	public static final int CSB_APPROX = 0;
+	public static final byte CSB_APPROX = 0;
 
 	public static final int CSB_ENUM_SRGB = 16;
 

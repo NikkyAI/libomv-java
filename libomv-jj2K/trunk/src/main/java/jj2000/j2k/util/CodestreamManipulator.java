@@ -83,7 +83,10 @@ public class CodestreamManipulator
 	private int pptp;
 
 	/** The name of the outfile */
-	private File outfile;
+	private RandomAccessIO output;
+
+	/** The offset into the stream at which the codestream starts */
+	private int offset;
 
 	/** The length of a SOT plus a SOD marker */
 	private static int TP_HEAD_LEN = 14;
@@ -121,32 +124,20 @@ public class CodestreamManipulator
 	/**
 	 * Instantiates a codestream manipulator..
 	 * 
-	 * @param outname
-	 *            The name of the original outfile
-	 * 
-	 * @param nt
-	 *            The number of tiles in the image
-	 * 
-	 * @param pptp
-	 *            Packets per tile-part. If zero, no division into tileparts is
-	 *            performed
-	 * 
-	 * @param ppm
-	 *            Flag indicating that PPM marker is used
-	 * 
-	 * @param ppt
-	 *            Flag indicating that PPT marker is used
-	 * 
-	 * @param tempSop
-	 *            Flag indicating whether SOP merker should be removed
-	 * 
-	 * @param tempEph
-	 *            Flag indicating whether EPH merker should be removed
+	 * @param outname The name of the original outfile
+	 * @param offset The offset into the stream at which the codestream starts
+	 * @param nt  The number of tiles in the image
+	 * @param pptp Packets per tile-part. If zero, no division into tileparts is performed
+	 * @param ppm Flag indicating that PPM marker is used
+	 * @param ppt Flag indicating that PPT marker is used
+	 * @param tempSop  Flag indicating whether SOP merker should be removed
+	 * @param tempEph  Flag indicating whether EPH merker should be removed
 	 */
-	public CodestreamManipulator(File outfile, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
+	public CodestreamManipulator(RandomAccessIO output, int offset, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
 			boolean tempEph)
 	{
-		this.outfile = outfile;
+		this.output = output;
+		this.offset = offset;
 		this.nt = nt;
 		this.pptp = pptp;
 		this.ppmUsed = ppm;
@@ -178,30 +169,26 @@ public class CodestreamManipulator
 		if (ppmUsed == false && pptUsed == false && pptp == 0)
 			return 0;
 
-		// Open file for reading and writing
-		BEBufferedRandomAccessFile fi = new BEBufferedRandomAccessFile(outfile, "rw+");
-		addedHeaderBytes -= fi.length();
+		addedHeaderBytes = output.length();
 
 		// Parse the codestream for SOT, SOP and EPH markers
-		parseAndFind(fi);
+		output.seek(offset);
+		parseAndFind(output);
 
 		// Read and buffer the tile headers, packet headers and packet data
-		readAndBuffer(fi);
-
-		// Close file and overwrite with new file
-		fi.close();
-		fi = new BEBufferedRandomAccessFile(outfile, "rw");
+		output.seek(offset);
+		readAndBuffer(output);
 
 		// Create tile-parts
 		createTileParts();
 
 		// Write new codestream
-		writeNewCodestream(fi);
+		output.seek(offset);
+		writeNewCodestream(output);
 
 		// Close file
-		fi.flush();
-		addedHeaderBytes += fi.length();
-		fi.close();
+		output.flush();
+		addedHeaderBytes += output.length();
 
 		return addedHeaderBytes;
 	}
@@ -217,7 +204,7 @@ public class CodestreamManipulator
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	private void parseAndFind(BufferedRandomAccessFile fi) throws IOException
+	private void parseAndFind(RandomAccessIO fi) throws IOException
 	{
 		int length, pos, i, t /*, sop = 0, eph = 0*/;
 		short marker;
@@ -332,12 +319,11 @@ public class CodestreamManipulator
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	private void readAndBuffer(BufferedRandomAccessFile fi) throws IOException
+	private void readAndBuffer(RandomAccessIO fi) throws IOException
 	{
 		int p, prem, length, t, markIndex;
 
 		// Buffer main header
-		fi.seek(0);
 		length = positions[0].intValue() - 2;
 		mainHeader = new byte[length];
 		fi.readFully(mainHeader, 0, length);
@@ -571,7 +557,7 @@ public class CodestreamManipulator
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
 	 */
-	private void writeNewCodestream(BufferedRandomAccessFile fi) throws IOException
+	private void writeNewCodestream(RandomAccessIO fi) throws IOException
 	{
 		int t, p, tp;
 		int numTiles = tileParts.length;

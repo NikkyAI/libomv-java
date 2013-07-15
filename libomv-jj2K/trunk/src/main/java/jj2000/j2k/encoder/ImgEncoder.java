@@ -1,10 +1,6 @@
 package jj2000.j2k.encoder;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.NoSuchElementException;
@@ -21,6 +17,7 @@ import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.ImgDataConverter;
 import jj2000.j2k.image.Tiler;
 import jj2000.j2k.image.forwcomptransf.ForwCompTransf;
+import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.quantization.quantizer.Quantizer;
 import jj2000.j2k.roi.encoder.ROIScaler;
 import jj2000.j2k.util.CodestreamManipulator;
@@ -132,8 +129,7 @@ public class ImgEncoder
 		defpl = pl.getDefaultParameterList();
 	}
 
-	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, File outfile,
-			boolean useFileFormat, boolean verbose) throws IOException
+	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, RandomAccessIO output, boolean useFileFormat, boolean verbose) throws IOException
 	{
 		Tiler imgtiler;
 		ForwCompTransf fctransf;
@@ -388,19 +384,40 @@ public class ImgEncoder
 					2, e);
 			return -1;
 		}
-
+		
+		
+		// **** FileformatWriter ****
+		FileFormatWriter ffw = null;
+		int offset = 0;
+		if (useFileFormat)
+		{
+			try
+			{
+				int nc = imgsrc.getNumComps();
+				int[] bpc = new int[nc];
+				for (int comp = 0; comp < nc; comp++)
+				{
+					bpc[comp] = imgsrc.getNomRangeBits(comp);
+				}
+				ffw = new FileFormatWriter(output, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc, bpc);
+				offset += output.length();
+			}
+			catch (IOException e)
+			{
+				output.close();
+				throw new Error("Error while writing JP2 file format");
+			}	
+		}
+		
 		// **** CodestreamWriter ****
-		OutputStream cs = null;
 		try
 		{
-			cs = new BufferedOutputStream(new FileOutputStream(outfile));
 			// Rely on rate allocator to limit amount of data
-			bwriter = new CodestreamWriter(cs, Integer.MAX_VALUE);
+			bwriter = new CodestreamWriter(output, Integer.MAX_VALUE);
 		}
 		catch (Exception e)
 		{
-			if (cs != null)
-				cs.close();
+			output.close();
 			error("Could not open codestream output" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
 			return -1;
 		}
@@ -412,6 +429,7 @@ public class ImgEncoder
 		}
 		catch (IllegalArgumentException e)
 		{
+			output.close();
 			error("Could not instantiate rate allocator" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
 					2, e);
 			return -1;
@@ -440,18 +458,15 @@ public class ImgEncoder
 
 		// **** Done ****
 		bwriter.terminate();
-
-		// **** Calculate file length ****
+		
 		int fileLength = bwriter.getLength();
-		cs.close();
-
+		
 		// **** Tile-parts and packed packet headers ****
 		if (pktspertp > 0 || pphTile || pphMain)
 		{
 			try
 			{
-				CodestreamManipulator cm = new CodestreamManipulator(outfile, ntiles, pktspertp, pphMain, pphTile,
-						tempSop, tempEph);
+				CodestreamManipulator cm = new CodestreamManipulator(output, offset, ntiles, pktspertp, pphMain, pphTile, tempSop, tempEph);
 				fileLength += cm.doCodestreamManipulation();
 				if (pktspertp > 0)
 				{
@@ -469,32 +484,17 @@ public class ImgEncoder
 			}
 			catch (IOException e)
 			{
+				output.close();
 				error("Error while creating tileparts or packed packet headers"
 						+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
 				return -1;
 			}
 		}
-		
-		// **** File Format ****
-		if (useFileFormat)
-		{
-			try
-			{
-				int nc = imgsrc.getNumComps();
-				int[] bpc = new int[nc];
-				for (int comp = 0; comp < nc; comp++)
-				{
-					bpc[comp] = imgsrc.getNomRangeBits(comp);
-				}
 
-				FileFormatWriter ffw = new FileFormatWriter(outfile, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc,
-						bpc, fileLength);
-				fileLength += ffw.writeFileFormat();
-			}
-			catch (IOException e)
-			{
-				throw new Error("Error while writing JP2 file format");
-			}
+		// **** File Format ****
+		if (ffw != null)
+		{
+			fileLength += ffw.writeContiguousCodeStreamBoxHeader(fileLength);
 		}
 
 		// **** Report results ****

@@ -502,14 +502,9 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * Writes aan array of bytes to the stream. Prior to writing, the stream is
 	 * realigned at the byte level.
 	 * 
-	 * @param b
-	 *            The array of bytes to write.
-	 * 
-	 * @param offset
-	 *            The first byte in b to write
-	 * 
-	 * @param length
-	 *            The number of bytes from b to write
+	 * @param b The array of bytes to write.
+	 * @param offset The first byte in b to write
+	 * @param length The number of bytes from b to write
 	 * 
 	 * @exception java.io.IOException
 	 *                If an I/O error ocurred.
@@ -520,6 +515,25 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 		stop = offset + length;
 		if (stop > b.length)
 			throw new ArrayIndexOutOfBoundsException(b.length);
+		for (i = offset; i < stop; i++)
+		{
+			write(b[i]);
+		}
+	}
+
+	/**
+	 * Writes aan array of bytes to the stream. Prior to writing, the stream is
+	 * realigned at the byte level.
+	 * 
+	 * @param b The array of bytes to write.
+	 * 
+
+	 * @exception java.io.IOException
+	 *                If an I/O error ocurred.
+	 */
+	public final void write(byte[] b) throws IOException
+	{
+		int i, stop = b.length;
 		for (i = offset; i < stop; i++)
 		{
 			write(b[i]);
