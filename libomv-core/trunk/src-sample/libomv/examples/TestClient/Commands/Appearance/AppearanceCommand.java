@@ -25,6 +25,7 @@
  */
 package libomv.examples.TestClient.Commands.Appearance;
 
+import libomv.AppearanceManager;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
 import libomv.types.UUID;
@@ -43,12 +44,12 @@ public class AppearanceCommand extends Command
         Category = CommandCategory.Appearance;
     }
 
-	@Override
+    @Override
     public String execute(String[] args, UUID fromAgentID)
     {
-		if (Client.Appearance == null)
-			return "Appearance manager not enabled";
-		
+        if (Client.Appearance == null)
+            Client.Appearance = new AppearanceManager(Client);
+
         Client.Appearance.RequestSetAppearance((args.length > 0 && args[0].equalsIgnoreCase("force")));
         return "Appearance sequence started";
     }
