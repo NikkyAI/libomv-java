@@ -50,7 +50,6 @@ import jj2000.j2k.codestream.*;
 import jj2000.j2k.encoder.*;
 import jj2000.j2k.entropy.*;
 import jj2000.j2k.image.*;
-import jj2000.j2k.io.*;
 import jj2000.j2k.util.*;
 import jj2000.j2k.*;
 
@@ -270,7 +269,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 	 * @param out
 	 *            Where to write the header.
 	 */
-	public int writeTo(RandomAccessIO out) throws IOException
+	public int writeTo(OutputStream out) throws IOException
 	{
 		byte buf[];
 
@@ -1903,7 +1902,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions
 		// Isot
 		if (tileIdx > 65534)
 		{
-			throw new IllegalArgumentException("Trying to write a tile-part header whose tile index is " + "too high");
+			throw new IllegalArgumentException("Trying to write a tile-part header whose tile index is too high");
 		}
 		hbuf.writeByte(tileIdx >> 8);
 		hbuf.writeByte(tileIdx);

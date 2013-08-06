@@ -1,6 +1,8 @@
 package jj2000.j2k.encoder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.NoSuchElementException;
@@ -17,12 +19,12 @@ import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.ImgDataConverter;
 import jj2000.j2k.image.Tiler;
 import jj2000.j2k.image.forwcomptransf.ForwCompTransf;
-import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.quantization.quantizer.Quantizer;
 import jj2000.j2k.roi.encoder.ROIScaler;
 import jj2000.j2k.util.CodestreamManipulator;
 import jj2000.j2k.util.FacilityManager;
 import jj2000.j2k.util.MsgLogger;
+import jj2000.j2k.util.OSRandomAccessIO;
 import jj2000.j2k.util.ParameterList;
 import jj2000.j2k.wavelet.analysis.AnWTFilter;
 import jj2000.j2k.wavelet.analysis.ForwardWT;
@@ -129,7 +131,7 @@ public class ImgEncoder
 		defpl = pl.getDefaultParameterList();
 	}
 
-	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, RandomAccessIO output, boolean useFileFormat, boolean verbose) throws IOException
+	public int encode(BlkImgDataSrc imgsrc, boolean imsigned[], int ncomp, boolean ppminput, OutputStream output, boolean useFileFormat, boolean verbose) throws IOException
 	{
 		Tiler imgtiler;
 		ForwCompTransf fctransf;
@@ -384,36 +386,24 @@ public class ImgEncoder
 					2, e);
 			return -1;
 		}
-		
-		
-		// **** FileformatWriter ****
-		FileFormatWriter ffw = null;
-		int offset = 0;
-		if (useFileFormat)
+			
+		OutputStream os;
+		ByteArrayOutputStream baos = null;
+		if (pktspertp > 0 || pphTile || pphMain || useFileFormat)
 		{
-			try
-			{
-				int nc = imgsrc.getNumComps();
-				int[] bpc = new int[nc];
-				for (int comp = 0; comp < nc; comp++)
-				{
-					bpc[comp] = imgsrc.getNomRangeBits(comp);
-				}
-				ffw = new FileFormatWriter(output, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc, bpc);
-				offset += output.length();
-			}
-			catch (IOException e)
-			{
-				output.close();
-				throw new Error("Error while writing JP2 file format");
-			}	
+			baos = new ByteArrayOutputStream();
+			os = baos;
+		}
+		else
+		{
+			os = output;
 		}
 		
 		// **** CodestreamWriter ****
 		try
 		{
 			// Rely on rate allocator to limit amount of data
-			bwriter = new CodestreamWriter(output, Integer.MAX_VALUE);
+			bwriter = new CodestreamWriter(os, Integer.MAX_VALUE);
 		}
 		catch (Exception e)
 		{
@@ -461,42 +451,63 @@ public class ImgEncoder
 		
 		int fileLength = bwriter.getLength();
 		
-		// **** Tile-parts and packed packet headers ****
-		if (pktspertp > 0 || pphTile || pphMain)
+		if (pktspertp > 0 || pphTile || pphMain || useFileFormat)
 		{
-			try
+			OSRandomAccessIO io = new OSRandomAccessIO(baos.toByteArray(), Integer.MAX_VALUE);
+			// **** Tile-parts and packed packet headers ****
+			if (pktspertp > 0 || pphTile || pphMain)
 			{
-				CodestreamManipulator cm = new CodestreamManipulator(output, offset, ntiles, pktspertp, pphMain, pphTile, tempSop, tempEph);
-				fileLength += cm.doCodestreamManipulation();
-				if (pktspertp > 0)
+				try
 				{
-					FacilityManager.getMsgLogger().println(
-							"Created tile-parts containing at most " + pktspertp + " packets per tile.", 4, 6);
+					CodestreamManipulator cm = new CodestreamManipulator(io, ntiles, pktspertp, pphMain, pphTile, tempSop, tempEph);
+					fileLength += cm.doCodestreamManipulation();
+					if (pktspertp > 0)
+					{
+						FacilityManager.getMsgLogger().println(
+								"Created tile-parts containing at most " + pktspertp + " packets per tile.", 4, 6);
+					}
+					if (pphTile)
+					{
+						FacilityManager.getMsgLogger().println("Moved packet headers to tile headers", 4, 6);
+					}
+					if (pphMain)
+					{
+						FacilityManager.getMsgLogger().println("Moved packet headers to main header", 4, 6);
+					}
 				}
-				if (pphTile)
+				catch (IOException e)
 				{
-					FacilityManager.getMsgLogger().println("Moved packet headers to tile headers", 4, 6);
-				}
-				if (pphMain)
-				{
-					FacilityManager.getMsgLogger().println("Moved packet headers to main header", 4, 6);
+					io.close();
+					error("Error while creating tileparts or packed packet headers"
+							+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
+					return -1;
 				}
 			}
-			catch (IOException e)
+
+			// **** FileformatWriter ****
+			if (useFileFormat)
 			{
-				output.close();
-				error("Error while creating tileparts or packed packet headers"
-						+ ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
-				return -1;
+				try
+				{
+					int nc = imgsrc.getNumComps();
+					int[] bpc = new int[nc];
+					for (int comp = 0; comp < nc; comp++)
+					{
+						bpc[comp] = imgsrc.getNomRangeBits(comp);
+					}
+					FileFormatWriter ffw = new FileFormatWriter(output, imgsrc.getImgHeight(), imgsrc.getImgWidth(), nc, bpc, fileLength);
+					fileLength += ffw.length();
+				}
+				catch (IOException e)
+				{
+					io.close();
+					throw new Error("Error while writing JP2 file format");
+				}
 			}
+			io.writeTo(output);
+			io.close();
 		}
-
-		// **** File Format ****
-		if (ffw != null)
-		{
-			fileLength += ffw.writeContiguousCodeStreamBoxHeader(fileLength);
-		}
-
+		
 		// **** Report results ****
 		if (verbose)
 		{

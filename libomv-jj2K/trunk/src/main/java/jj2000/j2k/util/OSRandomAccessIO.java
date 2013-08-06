@@ -48,6 +48,22 @@ public class OSRandomAccessIO implements RandomAccessIO
 		length = 0;
 	}
 
+	public OSRandomAccessIO(byte[] data, int maxsize)
+	{
+		if (data == null)
+		{
+			throw new IllegalArgumentException();
+		}
+
+		buf = data;
+		// The maximum size is one byte more, to allow reading the EOF.
+		if (maxsize < Integer.MAX_VALUE)
+			maxsize++;
+		this.maxsize = maxsize;
+		pos = 0;
+		length = data.length;
+	}
+
 	/**
 	 * Checks if the cache buffer can accept 'inc' bytes and if that is not the case, it grows
 	 * the cache buffer by doubling the buffer size, upto a maximum of 'maxsize', making sure

@@ -52,7 +52,6 @@ import jj2000.j2k.entropy.encoder.*;
 import jj2000.j2k.image.input.*;
 import jj2000.j2k.roi.encoder.*;
 import jj2000.j2k.image.*;
-import jj2000.j2k.io.BEBufferedRandomAccessFile;
 import jj2000.j2k.util.*;
 import jj2000.j2k.*;
 
@@ -358,7 +357,7 @@ public class Encoder extends ImgEncoder implements Runnable
 				imgsrc = new ImgDataJoiner(imreader, imgcmpidxs);
 			}
 
-			int fileLength = encode(imgsrc, imsigned, ncomp, ppminput, new BEBufferedRandomAccessFile(new File(outname), "rw"), useFileFormat, verbose);
+			int fileLength = encode(imgsrc, imsigned, ncomp, ppminput, new FileOutputStream(new File(outname)), useFileFormat, verbose);
 			if (fileLength < 0)
 				return;
 

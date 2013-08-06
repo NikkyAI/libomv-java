@@ -85,9 +85,6 @@ public class CodestreamManipulator
 	/** The name of the outfile */
 	private RandomAccessIO output;
 
-	/** The offset into the stream at which the codestream starts */
-	private int offset;
-
 	/** The length of a SOT plus a SOD marker */
 	private static int TP_HEAD_LEN = 14;
 
@@ -133,11 +130,10 @@ public class CodestreamManipulator
 	 * @param tempSop  Flag indicating whether SOP merker should be removed
 	 * @param tempEph  Flag indicating whether EPH merker should be removed
 	 */
-	public CodestreamManipulator(RandomAccessIO output, int offset, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
+	public CodestreamManipulator(RandomAccessIO output, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
 			boolean tempEph)
 	{
 		this.output = output;
-		this.offset = offset;
 		this.nt = nt;
 		this.pptp = pptp;
 		this.ppmUsed = ppm;
@@ -169,21 +165,18 @@ public class CodestreamManipulator
 		if (ppmUsed == false && pptUsed == false && pptp == 0)
 			return 0;
 
-		addedHeaderBytes = output.length();
+		addedHeaderBytes = -output.length();
 
 		// Parse the codestream for SOT, SOP and EPH markers
-		output.seek(offset);
 		parseAndFind(output);
 
 		// Read and buffer the tile headers, packet headers and packet data
-		output.seek(offset);
 		readAndBuffer(output);
 
 		// Create tile-parts
 		createTileParts();
 
 		// Write new codestream
-		output.seek(offset);
 		writeNewCodestream(output);
 
 		// Close file
@@ -195,8 +188,8 @@ public class CodestreamManipulator
 
 	/**
 	 * This method parses the codestream for SOT, SOP and EPH markers and
-	 * removes header header bits signalling SOP and EPH markers if packed
-	 * packet headers are used
+	 * removes header bits signalling SOP and EPH markers if packed packet
+	 * headers are used
 	 * 
 	 * @param fi
 	 *            The file to parse the markers from

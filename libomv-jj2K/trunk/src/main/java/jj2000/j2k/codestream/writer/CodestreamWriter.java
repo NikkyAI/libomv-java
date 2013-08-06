@@ -42,10 +42,10 @@
  */
 package jj2000.j2k.codestream.writer;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import jj2000.j2k.codestream.Markers;
-import jj2000.j2k.io.RandomAccessIO;
 
 /**
  * This is the class for writing to a codestream. A codestream corresponds to
@@ -78,7 +78,7 @@ public class CodestreamWriter
 	protected int maxBytes;
 
 	/** The output stream to write */
-	protected RandomAccessIO out;
+	protected OutputStream out;
 
 	/**
 	 * The number of bytes already written to the codestream, excluding the
@@ -114,7 +114,7 @@ public class CodestreamWriter
 	 *            The maximum number of bytes that can be written to the
 	 *            codestream.
 	 */
-	public CodestreamWriter(RandomAccessIO out, int mb)
+	public CodestreamWriter(OutputStream out, int mb)
 	{
 		this.out = out;
 		this.maxBytes = mb;
@@ -326,7 +326,8 @@ public class CodestreamWriter
 		if (getMaxAvailableBytes() > 2)
 		{
 			// Write the EOC marker.
-			out.writeShort(Markers.EOC);
+			out.write(Markers.EOC >> 8);
+			out.write(Markers.EOC);
 		}
 		ndata += 2; // Add two to length of codestream for EOC marker
 	}

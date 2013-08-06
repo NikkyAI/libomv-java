@@ -432,7 +432,7 @@ public class ImgReaderPPM extends ImgReader
 	@Override
 	public final DataBlk getCompData(DataBlk blk, int c)
 	{
-		// NOTE: can not directly call getInterCompData since that returns
+		// NOTE: can not directly call getInternCompData since that returns
 		// internally buffered data.
 		int w, h;
 
