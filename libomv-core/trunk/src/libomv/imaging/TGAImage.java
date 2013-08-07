@@ -228,7 +228,7 @@ public class TGAImage extends ManagedImage
                
 		Width = header.ImageSpec.Width;
         Height = header.ImageSpec.Height;
-		initialize();
+		initialize(this);
 
 		if (header.getRleEncoded())
 			decodeRle(is, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());

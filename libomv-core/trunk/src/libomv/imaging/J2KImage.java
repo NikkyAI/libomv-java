@@ -39,7 +39,9 @@ import jj2000.j2k.encoder.ImgEncoder;
 import jj2000.j2k.fileformat.reader.FileFormatReader;
 import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.Coord;
+import jj2000.j2k.image.DataBlk;
 import jj2000.j2k.image.DataBlkInt;
+import jj2000.j2k.image.input.ImgReader;
 import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.util.ISRandomAccessIO;
 import jj2000.j2k.util.ParameterList;
@@ -55,6 +57,55 @@ public class J2KImage extends ManagedImage
 	private class PixelScale
 	{
 		int ls, mv, fb;
+	}
+	
+	private class ImgReaderMI extends ImgReader
+	{
+		public ImgReaderMI(int numComp)
+		{
+			w = Width;
+			h = Height;
+			nc = numComp;
+		}
+
+		
+		/* BlkImageDataSrc methods */
+		@Override
+		public int getFixedPoint(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getNomRangeBits(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public DataBlk getCompData(DataBlk arg0, int arg1) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DataBlk getInternCompData(DataBlk arg0, int arg1) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/* ImgReader methods */
+		@Override
+		public void close() throws IOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean isOrigSigned(int arg0) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	}
 
 	/**
@@ -111,7 +162,7 @@ public class J2KImage extends ManagedImage
 				throw new IllegalArgumentException("Decoded image with unhandled number of components: " + ncomps);
 		}		
 
-		initialize();
+		initialize(this);
 		
 		int height; // tile height
 		int width; // tile width
@@ -176,10 +227,16 @@ public class J2KImage extends ManagedImage
 		}
 	}
 	
+	public J2KImage(ManagedImage image)
+	{
+		
+	}
+	
     /**
      * Encode this <seealso cref="ManagedImage"/> object into a byte array
      *
      * @param os The <seealso cref="OutputStream"/> to encode the image into
+     * @return number of bytes written into the stream or -1 on error
      */
     @Override
     public int encode(OutputStream os) throws Exception
@@ -192,6 +249,7 @@ public class J2KImage extends ManagedImage
      *
      * @param os The <seealso cref="OutputStream"/> to encode the image into
      * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
+     * @return number of bytes written into the stream or -1 on error
      */
     public int encode(OutputStream os, boolean lossless) throws Exception
     {
@@ -204,7 +262,7 @@ public class J2KImage extends ManagedImage
      * @param os The <seealso cref="OutputStream"/> to encode the image into
      * @param image The <seealso cref="ManagedImage"/> object to encode
      * @param lossless true to enable lossless conversion, only useful for small images ie: sculptmaps
-     * @return
+     * @return number of bytes written into the stream or -1 on error
      */
     public static int encode(OutputStream os, ManagedImage image, boolean lossless) throws Exception
     {
@@ -234,16 +292,16 @@ public class J2KImage extends ManagedImage
 
         // Create parameter list using defaults
         ImgEncoder enc = new ImgEncoder(new ParameterList(defpl));
- 
+        J2KImage master = new J2KImage(image);
+        ImgReaderMI source = master.new ImgReaderMI(components);
+        
         boolean[] imsigned = new boolean[components];
-//		BlkImgDataSrc imgsrc = new ImgReaderMI(image);
-
-//		enc.encode(imgsrc, imsigned, components, false, os, true, false);
-
+        for (int i = 0; i < components; i++)
+        {
+        	imsigned[i] = source.isOrigSigned(i);
+        }
         
-        
-
-        return 0;
+		return enc.encode(source, imsigned, components, false, os, true, false);
     }
 
     private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)

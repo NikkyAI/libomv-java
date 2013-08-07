@@ -112,6 +112,14 @@ public class ManagedImage implements Cloneable
 		
 	}
 	
+	public ManagedImage(ManagedImage image)
+	{
+		this.Height = image.Height;
+		this.Width = image.Width;
+		this.Channels = image.Channels;
+		deepCopy(image, this);
+	}
+	
 	/**
 	 * Create a new blank image
 	 * 
@@ -127,32 +135,57 @@ public class ManagedImage implements Cloneable
 		Width = width;
 		Height = height;
 		Channels = channels;
-		initialize();
+		initialize(this);
 	}
 
-	protected int initialize()
+	protected static int initialize(ManagedImage image)
 	{
-		int n = Width * Height;
+		int n = image.Width * image.Height;
 
 
-		if ((Channels & ImageChannels.Gray) != 0)
+		if ((image.Channels & ImageChannels.Gray) != 0)
 		{
-			Red = new byte[n];
+			image.Red = new byte[n];
 		}
-		else if ((Channels & ImageChannels.Color) != 0)
+		else if ((image.Channels & ImageChannels.Color) != 0)
 		{
-			Red = new byte[n];
-			Green = new byte[n];
-			Blue = new byte[n];
+			image.Red = new byte[n];
+			image.Green = new byte[n];
+			image.Blue = new byte[n];
 		}
 
-		if ((Channels & ImageChannels.Alpha) != 0)
-			Alpha = new byte[n];
+		if ((image.Channels & ImageChannels.Alpha) != 0)
+			image.Alpha = new byte[n];
 
-		if ((Channels & ImageChannels.Bump) != 0)
-			Bump = new byte[n];
+		if ((image.Channels & ImageChannels.Bump) != 0)
+			image.Bump = new byte[n];
 		
 		return n;
+	}
+	
+	protected static void deepCopy(ManagedImage src, ManagedImage dst)
+	{
+        // Deep copy member fields here
+        if (src.Alpha != null)
+        {
+        	dst.Alpha = src.Alpha.clone();
+        }
+        if (src.Red != null)
+        {
+        	dst.Red = src.Red.clone();
+        }
+        if (src.Green != null)
+        {
+        	dst.Green = src.Green.clone();
+        }
+        if (src.Blue != null)
+        {
+        	dst.Blue = src.Blue.clone();
+        }
+        if (src.Bump != null)
+        {
+        	dst.Bump = src.Bump.clone();
+        }		
 	}
 
     /**
@@ -288,26 +321,7 @@ public class ManagedImage implements Cloneable
         }
 
         // Deep copy member fields here
-        if (this.Alpha != null)
-        {
-        	clone.Alpha = this.Alpha.clone();
-        }
-        if (this.Red != null)
-        {
-        	clone.Red = this.Red.clone();
-        }
-        if (this.Green != null)
-        {
-        	clone.Green = this.Green.clone();
-        }
-        if (this.Blue != null)
-        {
-        	clone.Blue = this.Blue.clone();
-        }
-        if (this.Bump != null)
-        {
-        	clone.Bump = this.Bump.clone();
-        }
+        deepCopy(this, clone);
         return clone;
 	}
 
@@ -319,7 +333,7 @@ public class ManagedImage implements Cloneable
      * default options makes most sense for the image format.
      * 
      * @param os Stream in which to write the image data
-     * @return number of bytes written into the stream
+     * @return number of bytes written into the stream or -1 on error
      * @throws Exception
      */
 	public int encode(OutputStream os) throws Exception
@@ -335,7 +349,7 @@ public class ManagedImage implements Cloneable
      * default options makes most sense for the image format.
      * 
      * @param os Stream in which to write the image data
-     * @return number of bytes written into the stream
+     * @return number of bytes written into the stream or -1 on error
      * @throws Exception
      */
 	public int encode(OutputStream os, ImageCodec codec) throws Exception
