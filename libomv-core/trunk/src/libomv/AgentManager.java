@@ -4975,7 +4975,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 			msg.LanguagePublic = isPublic;
 
 			URI url = _Client.Network.getCapabilityURI(CapsEventType.UpdateAgentLanguage.toString());
-			new CapsClient(_Client, CapsEventType.UpdateAgentLanguage.toString()).executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
+			if (url != null)
+			{
+				new CapsClient(_Client, CapsEventType.UpdateAgentLanguage.toString()).executeHttpPost(url, msg, null, _Client.Settings.CAPS_TIMEOUT);
+			}
 		}
 		catch (Exception ex)
 		{
