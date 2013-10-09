@@ -42,14 +42,7 @@ public class TGAImage extends ManagedImage
 {
     public TGAImage(ManagedImage image) throws IOException
 	{
-    	Width = image.Width;
-    	Height = image.Height;
-    	Channels = image.Channels;
-    	Red = image.Red;
-    	Green = image.Green;
-    	Blue = image.Blue;   			
-    	Alpha = image.Alpha;
-    	Bump = image.Bump;
+    	super(image);
 	}
     
     public TGAImage(File file) throws Exception

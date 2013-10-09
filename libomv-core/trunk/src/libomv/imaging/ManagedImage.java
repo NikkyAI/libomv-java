@@ -29,6 +29,9 @@
  */
 package libomv.imaging;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -39,7 +42,7 @@ public class ManagedImage implements Cloneable
 {
 	public enum ImageCodec
 	{
-		Invalid, RGB, J2C, BMP, TGA, JPEG, DXT, PNG;
+		Invalid, RGB, J2K, BMP, TGA, JPEG, DXT, PNG;
 
 		public static ImageCodec setValue(int value)
 		{
@@ -92,6 +95,9 @@ public class ManagedImage implements Cloneable
 	// Image channel flags
 	public byte Channels;
 
+	// BitDepth per channel
+	public int BitDepth;
+
 	// Red channel data
 	public byte[] Red;
 
@@ -106,18 +112,25 @@ public class ManagedImage implements Cloneable
 
 	// Bump channel data
 	public byte[] Bump;
+	
 
 	public ManagedImage()
 	{
 		
 	}
 	
+	/* Only do a shallow copy of the input image */
 	public ManagedImage(ManagedImage image)
 	{
-		this.Height = image.Height;
-		this.Width = image.Width;
-		this.Channels = image.Channels;
-		deepCopy(image, this);
+		Height = image.Height;
+		Width = image.Width;
+		Channels = image.Channels;
+		BitDepth = image.BitDepth;
+		Alpha = image.Alpha;
+		Bump = image.Bump;
+		Red = image.Red;
+		Green = image.Green;
+		Blue = image.Blue;
 	}
 	
 	/**
@@ -136,6 +149,24 @@ public class ManagedImage implements Cloneable
 		Height = height;
 		Channels = channels;
 		initialize(this);
+	}
+
+	public ManagedImage(File file)
+	{
+		try
+		{
+			byte[] data = new byte[10];
+			FileInputStream is = new FileInputStream(file);
+			
+
+			
+			is.read(data);
+			is.close();
+		}
+		catch (IOException ex)
+		{
+			
+		}
 	}
 
 	protected static int initialize(ManagedImage image)
@@ -356,7 +387,7 @@ public class ManagedImage implements Cloneable
 	{
 		switch (codec)
 		{
-		    case J2C:
+		    case J2K:
 		    	return J2KImage.encode(os, this, false);
 		    case TGA:
 		    	return TGAImage.encode(os, this);		    	
@@ -386,7 +417,7 @@ public class ManagedImage implements Cloneable
     {
     	switch (codec)
     	{
-    		case J2C:
+    		case J2K:
     			return new J2KImage(input);
     		case TGA:
     			return new TGAImage(input);
