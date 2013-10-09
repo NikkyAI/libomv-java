@@ -175,7 +175,7 @@ public class UUID implements Serializable
 	public UUID(UUID val)
 	{
 		data = new byte[16];
-		System.arraycopy(data, 0, val.data, 0, 16);
+		System.arraycopy(val.data, 0, data, 0, 16);
 	}
 
 	/**
