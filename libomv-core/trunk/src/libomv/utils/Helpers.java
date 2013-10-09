@@ -2334,6 +2334,46 @@ public class Helpers
 	}
 
 	/**
+	 * Get the file name suffix of the filename if any.
+	 * 
+	 * @param fileName The filename to get the suffix from
+	 * @return The suffix if it exists or the entire name otherwise
+	 */
+	public static String getFileExtension(String fileName)
+	{
+	    if (fileName == null)
+	    {
+	        throw new IllegalArgumentException("file name == null");
+	    }
+	    int pos = fileName.lastIndexOf('.') + 1;
+	    if (pos > 0 && pos < fileName.length())
+	    {
+	        return fileName.substring(pos, fileName.length() - pos);
+	    }
+	    return fileName;
+	}
+
+	/**
+	 * Get the file name without suffix of the filename if any.
+	 * 
+	 * @param fileName The filename to strip the suffix from
+	 * @return The filename without suffix if a suffix exists or the entire name otherwise
+	 */
+	public static String getBaseFileName(String fileName)
+	{
+	    if (fileName == null)
+	    {
+	        throw new IllegalArgumentException("file name == null");
+	    }
+	    int pos = fileName.lastIndexOf('.');
+	    if (pos > 0 && pos < fileName.length() - 1)
+	    {
+	        return fileName.substring(0, pos);
+	    }
+	    return fileName;
+	}
+
+	/**
 	 * Get the base path of the source for the code containing the specified class.
 	 * This can be both a path to a file directory (usually the bin directroy) when
 	 * running in the IDE, or the actual JAR file the code is located in.
