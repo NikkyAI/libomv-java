@@ -1555,7 +1555,7 @@ public class AssetManager implements PacketCallback
 								_ActiveDownloads.remove(download.ItemID);
 							}
 
-							download.Codec = ImageCodec.J2C;
+							download.Codec = ImageCodec.J2K;
 							download.State = TextureRequestState.Finished;
 							download.AssetData = result.data;
 							download.callbacks.dispatch(download);
