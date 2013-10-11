@@ -579,7 +579,7 @@ public class GridManager implements PacketCallback
 			{
 				if (args.getRegion().Name.equals(Name))
 				{
-					Name.notifyAll();
+					synchronized (Name) { Name.notifyAll(); }
 				}
 				return false;
 			}
@@ -593,7 +593,10 @@ public class GridManager implements PacketCallback
 		Callback<GridRegionCallbackArgs> callback = new OnGridRegionCallback(name);
 		OnGridRegion.add(callback);
 		RequestMapRegion(name, type);
-		name.wait(_Client.Settings.MAP_REQUEST_TIMEOUT);
+		synchronized (name)
+		{
+			name.wait(_Client.Settings.MAP_REQUEST_TIMEOUT);
+		}
 		OnGridRegion.remove(callback);
 
 		region = Regions.get(name);
