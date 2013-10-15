@@ -1947,7 +1947,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 */
 	public final int GetParcelLocalID(Simulator simulator, Vector3 position)
 	{
-		int value = simulator.getParcelMap((int)position.Y / 4, (int)position.X / 4);
+		int value = simulator.getParcelMap((int)position.X / 4, (int)position.Y / 4);
 		if (value > 0)
 		{
 			return value;
@@ -1955,7 +1955,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 		Logger.Log(String.format(
 						"ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?",
-						(int)position.Y / 4, (int)position.X / 4), LogLevel.Warning);
+						(int)position.X / 4, (int)position.Y / 4), LogLevel.Warning);
 		return 0;
 	}
 

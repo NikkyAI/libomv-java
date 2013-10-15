@@ -571,7 +571,9 @@ public class Simulator extends Thread
 
 	public synchronized final int getParcelMap(int x, int y)
 	{
-		return _ParcelMap[y * 64 + x];
+		if (x < 0 || x >= 64 || y < 0 || y >= 64)
+			throw new IllegalArgumentException("Simulator.getParcelMap() parameters need to be in the range 0 - 63. x = " + x + "; y = " + y);
+	    return _ParcelMap[y * 64 + x];
 	}
 
 	public synchronized final void setParcelMap(int x, int y, int value)
