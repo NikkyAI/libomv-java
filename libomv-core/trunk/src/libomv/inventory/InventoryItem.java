@@ -42,6 +42,7 @@ import libomv.assets.AssetItem.AssetType;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -113,24 +114,24 @@ public class InventoryItem extends InventoryNode
 	}
 
 	/* The {@link OpenMetaverse.UUID} of this item */
-	public UUID AssetID;
+	public UUID assetID;
 	/* The combined {@link OpenMetaverse.Permissions} of this item */
 	public Permissions Permissions;
-	/* The type of item from {@link OpenMetaverse.AssetType} */
+	/* The type of item from {@link libomv.assets.AssetItem.AssetType} */
 	public AssetType assetType;
 	/* The {@link OpenMetaverse.UUID} of the creator of this item */
-	public UUID CreatorID;
+//	public UUID CreatorID;
 	/* A Description of this item */
 	public String Description;
 	/*
 	 * The {@link OpenMetaverse.Group} s {@link OpenMetaverse.UUID} this item is
 	 * set to or owned by
 	 */
-	public UUID GroupID;
+//	public UUID GroupID;
 	/*
 	 * If true, item is owned by a group
 	 */
-	public boolean GroupOwned;
+//	public boolean GroupOwned;
 	/* The price this item can be purchased for */
 	public int SalePrice;
 	/* The type of sale from the {@link OpenMetaverse.SaleType} enum */
@@ -148,7 +149,7 @@ public class InventoryItem extends InventoryNode
 	/* Used to update the AssetID in requests sent to the server */
 	public UUID TransactionID;
 	/* The {@link OpenMetaverse.UUID} of the previous owner of the item */
-	public UUID LastOwnerID;
+//	public UUID LastOwnerID;
 
 	/**
 	 * Wrapper for creating a new {@link InventoryItem} object
@@ -159,7 +160,7 @@ public class InventoryItem extends InventoryNode
 	 *            The {@link UUID} of the newly created object
 	 * @return An {@link InventoryItem} object with the type and id passed
 	 */
-	public static InventoryItem create(InventoryType type, UUID id, UUID parentID, UUID ownerID)
+	public static InventoryItem create(InventoryType type, UUID id)
 	{
 		InventoryItem item = null;
 		switch (type)
@@ -182,9 +183,9 @@ public class InventoryItem extends InventoryNode
 			case Notecard:
 				item = new InventoryNotecard(id);
 				break;
-			case Category:
-				item = new InventoryCategory(id);
-				break;
+//			case Category:                                really a folder
+//				item = new InventoryCategory(id);
+//				break;
 			case LSL:
 				item = new InventoryLSL(id);
 				break;
@@ -213,14 +214,20 @@ public class InventoryItem extends InventoryNode
 					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, ex);
 				}
 		}
-		if (item != null)
-		{
-			item.ownerID = ownerID;
-			item.parentID = parentID;
-		}
 		return item;
 	}
 
+	public static InventoryItem create(InventoryType type, UUID id, UUID parentID, UUID ownerID)
+	{
+		InventoryItem item = create(type, id);
+		if (item != null)
+		{
+			item.parentID = parentID;
+			item.ownerID = ownerID;
+		}
+		return item;
+	}
+	
 	public InventoryItem()
 	{
 		super();
@@ -237,6 +244,12 @@ public class InventoryItem extends InventoryNode
 	public InventoryItem(UUID itemID)
 	{
 		super(itemID);
+	}
+
+	public InventoryItem(OSDMap map)
+	{
+		super();
+		fromOSD(map);
 	}
 
 	@Override
@@ -265,42 +278,47 @@ public class InventoryItem extends InventoryNode
 	protected OSDMap toOSD()
 	{
 		OSDMap map = super.toOSD();
-		map.put("assetID", OSD.FromUUID(AssetID));
-		map.put("permissions", Permissions.Serialize());
-		map.put("assetType", OSD.FromInteger(assetType.getValue()));
-		map.put("creatorID", OSD.FromUUID(CreatorID));
-		map.put("description", OSD.FromString(Description));
-		map.put("groupID", OSD.FromUUID(GroupID));
-		map.put("groupOwned", OSD.FromBoolean(GroupOwned));
-		map.put("salePrice", OSD.FromInteger(SalePrice));
-		map.put("saleType", OSD.FromInteger(saleType.getValue()));
-		map.put("flags", OSD.FromInteger(ItemFlags));
-		map.put("creationDate", OSD.FromDate(CreationDate));
-		map.put("lastOwnerID", OSD.FromUUID(LastOwnerID));
+		map.put("item_id", OSD.FromUUID(itemID));
+		map.put("asset_id", OSD.FromUUID(assetID));
+		map.put("type", OSD.FromInteger(assetType.getValue()));
+		map.put("inv_type", OSD.FromInteger(getType().getValue()));
+
+		map.put("flags", OSD.FromUInteger(ItemFlags));
+
+		map.put("permissions", Permissions.serialize());
+	
+		map.put("created_at", OSD.FromDate(CreationDate));
 		return map;
 	}
 
-	protected static InventoryNode fromOSD(InventoryNode node, OSD osd)
+	protected void fromOSD(OSDMap map)
 	{
-		if (node != null && node.getType() != InventoryType.Folder)
+		InventoryType type = InventoryType.setValue(map.get("inv_type").AsInteger());
+		if (type == InventoryType.Texture && AssetType.setValue(map.get("type").AsInteger()) == AssetType.Object)
 		{
-			OSDMap map = (OSDMap) osd;
-			InventoryItem item = (InventoryItem)node;
-
-			item.AssetID = map.get("assetID").AsUUID();
-			item.Permissions = new Permissions(map.get("permissions"));
-			item.assetType = AssetType.setValue(map.get("assetType").AsInteger());
-			item.CreatorID = map.get("creatorID").AsUUID();
-			item.Description = map.get("description").AsString();
-			item.GroupID = map.get("groupID").AsUUID();
-			item.GroupOwned = map.get("groupOwned").AsBoolean();
-			item.SalePrice = map.get("salePrice").AsInteger();
-			item.saleType = SaleType.setValue(map.get("saleType").AsInteger());
-			item.ItemFlags = map.get("flags").AsInteger();
-			item.CreationDate = map.get("creationDate").AsDate();
-			item.LastOwnerID = map.get("lastOwnerID").AsUUID();
+			type = InventoryType.Attachment;
 		}
-		return node;
+
+		
+		UUID itemID = map.get("asset_id").AsUUID();
+		if (itemID == null)
+			itemID = map.get("item_id").AsUUID();
+		InventoryItem item = create(type, itemID);
+
+		item.ownerID = map.get("agent_id").AsUUID();
+		item.parentID = map.get("parent_id").AsUUID();
+		
+		item.name = map.get("name").AsString();
+		item.Description = map.get("desc").AsString();
+		item.assetID = map.get("asset_id").AsUUID();
+		item.assetType = AssetType.setValue(map.get("type").AsInteger());
+		item.CreationDate =  Helpers.UnixTimeToDateTime(map.get("created_at").AsReal());
+		item.ItemFlags = map.get("flags").AsUInteger();
+		item.Permissions = libomv.types.Permissions.fromOSD(map.get("permissions"));
+
+		OSDMap sale = (OSDMap)map.get("sale_info");
+		item.SalePrice = sale.get("sale_price").AsInteger();
+		item.saleType = SaleType.setValue(sale.get("sale_type").AsInteger());
 	}
 
 	/**
@@ -317,18 +335,14 @@ public class InventoryItem extends InventoryNode
 		super.readObject(info);
 		if (serialVersionUID != info.readLong())
 			throw new InvalidObjectException("InventoryItem serial version mismatch");
-		AssetID = (UUID) info.readObject();
+		assetID = (UUID) info.readObject();
 		Permissions = (Permissions) info.readObject();
 		assetType = AssetType.setValue(info.readByte());
-		CreatorID = (UUID) info.readObject();
 		Description = info.readUTF();
-		GroupID = (UUID) info.readObject();
-		GroupOwned = info.readBoolean();
 		SalePrice = info.readInt();
 		saleType = SaleType.setValue(info.readByte());
 		ItemFlags = info.readInt();
 		CreationDate = (Date) info.readObject();
-		LastOwnerID = (UUID) info.readObject();
 	}
 
 	/**
@@ -343,24 +357,20 @@ public class InventoryItem extends InventoryNode
 	{
 		super.writeObject(info);
 		info.writeLong(serialVersionUID);
-		info.writeObject(AssetID);
+		info.writeObject(assetID);
 		info.writeObject(Permissions);
 		info.writeByte(assetType.getValue());
-		info.writeObject(CreatorID);
 		info.writeUTF(Description);
-		info.writeObject(GroupID);
-		info.writeBoolean(GroupOwned);
 		info.writeInt(SalePrice);
 		info.writeByte(saleType.getValue());
 		info.writeInt(ItemFlags);
 		info.writeObject(CreationDate);
-		info.writeObject(LastOwnerID);
 	}
 
 	@Override
 	public String toString()
 	{
-		return assetType + " " + AssetID + " (" + assetType + " " + itemID + ") '" + name + "'/'" +
+		return assetType + " " + assetID + " (" + assetType + " " + itemID + ") '" + name + "'/'" +
                     Description + "' " + Permissions;
 	}
 	
@@ -374,9 +384,8 @@ public class InventoryItem extends InventoryNode
 	@Override
 	public int hashCode()
 	{
-		return AssetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ getType().hashCode()
-				^ Description.hashCode() ^ GroupID.hashCode() ^ ((Boolean) GroupOwned).hashCode() ^ SalePrice
-				^ saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode() ^ LastOwnerID.hashCode();
+		return assetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ getType().hashCode()
+				^ Description.hashCode() ^ SalePrice ^ saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode();
 	}
 
 	/**
@@ -420,10 +429,8 @@ public class InventoryItem extends InventoryNode
 	 */
 	public final boolean equals(InventoryItem o)
 	{
-		return o != null && super.equals(o) && o.assetType.equals(assetType) && o.AssetID.equals(AssetID)
-				&& o.CreationDate.equals(CreationDate) && o.Description.equals(Description) && o.ItemFlags == ItemFlags
-				&& o.GroupID.equals(GroupID) && o.GroupOwned == GroupOwned && o.getType().equals(getType())
-				&& o.Permissions.equals(Permissions) && o.SalePrice == SalePrice && o.saleType.equals(saleType)
-				&& o.LastOwnerID.equals(LastOwnerID);
+		return o != null && super.equals(o) && o.assetType.equals(assetType) && o.assetID.equals(assetID) && o.CreationDate.equals(CreationDate)
+				&& o.Description.equals(Description) && o.ItemFlags == ItemFlags && o.getType().equals(getType())
+				&& o.Permissions.equals(Permissions) && o.SalePrice == SalePrice && o.saleType.equals(saleType);
 	}
 }

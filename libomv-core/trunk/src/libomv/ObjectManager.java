@@ -3589,18 +3589,14 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			props.AggregatePermTextures = objectData.AggregatePermTextures;
 			props.AggregatePermTexturesOwner = objectData.AggregatePermTexturesOwner;
 			props.Category = ObjectCategory.setValue(objectData.Category);
-			props.CreatorID = objectData.CreatorID;
 			props.FolderID = objectData.FolderID;
 			props.FromTaskID = objectData.FromTaskID;
-			props.GroupID = objectData.GroupID;
 			props.InventorySerial = objectData.InventorySerial;
 			props.ItemID = objectData.ItemID;
-			props.LastOwnerID = objectData.LastOwnerID;
-			props.OwnerID = objectData.OwnerID;
 			props.OwnershipCost = objectData.OwnershipCost;
 			props.SalePrice = objectData.SalePrice;
 			props.SaleType = SaleType.setValue(objectData.SaleType);
-			props.Permissions = new Permissions(objectData.BaseMask, objectData.EveryoneMask, objectData.GroupMask,
+			props.Permissions = new Permissions(objectData.CreatorID, objectData.OwnerID, objectData.LastOwnerID, objectData.GroupID, objectData.BaseMask, objectData.EveryoneMask, objectData.GroupMask,
 					objectData.NextOwnerMask, objectData.OwnerMask);
 
 			try
@@ -3659,13 +3655,10 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 		props.ObjectID = op.ObjectData.ObjectID;
 		props.Category = ObjectCategory.setValue(op.ObjectData.Category);
-		props.GroupID = op.ObjectData.GroupID;
-		props.LastOwnerID = op.ObjectData.LastOwnerID;
-		props.OwnerID = op.ObjectData.OwnerID;
 		props.OwnershipCost = op.ObjectData.OwnershipCost;
 		props.SalePrice = op.ObjectData.SalePrice;
 		props.SaleType = SaleType.setValue(op.ObjectData.SaleType);
-		props.Permissions = new Permissions(op.ObjectData.BaseMask, op.ObjectData.EveryoneMask,
+		props.Permissions = new Permissions(null, op.ObjectData.OwnerID, op.ObjectData.LastOwnerID, op.ObjectData.GroupID, op.ObjectData.BaseMask, op.ObjectData.EveryoneMask,
 				op.ObjectData.GroupMask, op.ObjectData.NextOwnerMask, op.ObjectData.OwnerMask);
 		try
 		{

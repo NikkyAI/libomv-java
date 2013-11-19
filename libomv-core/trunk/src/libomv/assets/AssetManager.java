@@ -800,7 +800,7 @@ public class AssetManager implements PacketCallback
 	public UUID RequestInventoryAsset(InventoryItem item, boolean priority, Callback<AssetDownload> callback)
 			throws Exception
 	{
-		return RequestInventoryAsset(item.AssetID, item.itemID, UUID.Zero, item.getOwnerID(), item.assetType, priority, callback);
+		return RequestInventoryAsset(item.assetID, item.itemID, UUID.Zero, item.getOwnerID(), item.assetType, priority, callback);
 	}
 	
 	/**

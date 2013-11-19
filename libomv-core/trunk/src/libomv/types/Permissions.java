@@ -87,12 +87,19 @@ public class Permissions implements Serializable
 		private static final byte _mask = All;
 	}
 
-	public int BaseMask;
-	public int EveryoneMask;
-	public int GroupMask;
-	public int NextOwnerMask;
-	public int OwnerMask;
+	public UUID creatorID;
+	public UUID ownerID;
+	public UUID lastOwnerID;
+	public UUID groupID;
 
+	public boolean isGroupOwned;
+	public int BaseMask;
+	public int OwnerMask;
+	public int GroupMask;
+	public int EveryoneMask;
+	public int NextOwnerMask;
+
+	
 	public Permissions()
 	{
 		BaseMask = 0;
@@ -107,8 +114,31 @@ public class Permissions implements Serializable
 		fromOSD(osd);
 	}
 
-	public Permissions(int baseMask, int everyoneMask, int groupMask, int nextOwnerMask, int ownerMask)
+	public Permissions(UUID creator, UUID owner, UUID lastOwner, UUID group, int baseMask, int everyoneMask, int groupMask, int nextOwnerMask, int ownerMask)
 	{
+		creatorID = creator;
+		ownerID = owner;
+		lastOwnerID = lastOwner;
+		groupID = group;
+
+		isGroupOwned = ownerID == null && groupID != null;
+
+		BaseMask = baseMask;
+		EveryoneMask = everyoneMask;
+		GroupMask = groupMask;
+		NextOwnerMask = nextOwnerMask;
+		OwnerMask = ownerMask;
+	}
+
+	public Permissions(UUID creator, UUID owner, UUID lastOwner, UUID group, boolean groupOwned, int baseMask, int everyoneMask, int groupMask, int nextOwnerMask, int ownerMask)
+	{
+		creatorID = creator;
+		ownerID = owner;
+		lastOwnerID = lastOwner;
+		groupID = group;
+
+		isGroupOwned = groupOwned;
+
 		BaseMask = baseMask;
 		EveryoneMask = everyoneMask;
 		GroupMask = groupMask;
@@ -118,29 +148,41 @@ public class Permissions implements Serializable
 
 	public Permissions(Permissions perm)
 	{
-		BaseMask = perm.BaseMask;
-		EveryoneMask = perm.EveryoneMask;
-		GroupMask = perm.GroupMask;
-		NextOwnerMask = perm.NextOwnerMask;
+		creatorID = perm.creatorID;
+		ownerID = perm.ownerID;
+		lastOwnerID = perm.lastOwnerID;
+		groupID = perm.groupID;
+
+		isGroupOwned = perm.isGroupOwned;
+
 		OwnerMask = perm.OwnerMask;
+		GroupMask = perm.GroupMask;
+		EveryoneMask = perm.EveryoneMask;
+		NextOwnerMask = perm.NextOwnerMask;
 	}
 
-	public Permissions GetNextPermissions()
+	public Permissions getNextPermissions(UUID newOwner, UUID group)
 	{
 		int nextMask = NextOwnerMask;
 
-		return new Permissions(BaseMask & nextMask, EveryoneMask & nextMask, GroupMask & nextMask, NextOwnerMask,
+		return new Permissions(creatorID, newOwner, ownerID, group, BaseMask & nextMask, EveryoneMask & nextMask, GroupMask & nextMask, NextOwnerMask,
 				OwnerMask & nextMask);
 	}
 
-	public OSD Serialize()
+	public OSD serialize()
 	{
 		OSDMap permissions = new OSDMap(5);
+		permissions.put("creator_id", OSD.FromUUID(creatorID));
+		permissions.put("owner_id", OSD.FromUUID(ownerID));
+		permissions.put("last_owner_id", OSD.FromUUID(lastOwnerID));
+		permissions.put("group_id", OSD.FromUUID(groupID));
+		permissions.put("is_owner_group", OSD.FromBoolean(isGroupOwned));
+		
 		permissions.put("base_mask", OSD.FromInteger(BaseMask));
-		permissions.put("everyone_mask", OSD.FromInteger(EveryoneMask));
-		permissions.put("group_mask", OSD.FromInteger(GroupMask));
-		permissions.put("next_owner_mask", OSD.FromInteger(NextOwnerMask));
 		permissions.put("owner_mask", OSD.FromInteger(OwnerMask));
+		permissions.put("group_mask", OSD.FromInteger(GroupMask));
+		permissions.put("everyone_mask", OSD.FromInteger(EveryoneMask));
+		permissions.put("next_owner_mask", OSD.FromInteger(NextOwnerMask));
 		return permissions;
 	}
 
@@ -151,6 +193,12 @@ public class Permissions implements Serializable
 
 		if (map != null)
 		{
+			permissions.creatorID = map.get("creator_id").AsUUID();
+			permissions.ownerID = map.get("owner_id").AsUUID();
+			permissions.lastOwnerID = map.get("last_owner_id").AsUUID();
+			permissions.groupID = map.get("group_id").AsUUID();
+			permissions.isGroupOwned = map.get("is_owner_group").AsBoolean();
+
 			permissions.BaseMask = map.get("base_mask").AsUInteger();
 			permissions.EveryoneMask = map.get("everyone_mask").AsUInteger();
 			permissions.GroupMask = map.get("group_mask").AsUInteger();
@@ -198,6 +246,6 @@ public class Permissions implements Serializable
 	}
 
 	public static final Permissions NoPermissions = new Permissions();
-	public static final Permissions FullPermissions = new Permissions(PermissionMask.All, PermissionMask.All,
+	public static final Permissions FullPermissions = new Permissions(null, null, null, null, PermissionMask.All, PermissionMask.All,
 			PermissionMask.All, PermissionMask.All, PermissionMask.All);
 }

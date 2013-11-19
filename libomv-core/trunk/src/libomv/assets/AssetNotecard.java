@@ -145,23 +145,23 @@ public class AssetNotecard extends AssetItem
 				output.append("\t\tgroup_mask\t" + String.format("08x", item.Permissions.GroupMask) + "\n");
 				output.append("\t\teveryone_mask\t" + String.format("08x", item.Permissions.EveryoneMask) + "\n");
 				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.Permissions.NextOwnerMask) + "\n");
-				output.append("\t\tcreator_id\t" + item.CreatorID + "\n");
-				output.append("\t\towner_id\t" + item.getOwnerID() + "\n");
-				output.append("\t\tlast_owner_id\t" + item.LastOwnerID + "\n");
-				output.append("\t\tgroup_id\t" + item.GroupID + "\n");
-				if (item.GroupOwned)
+				output.append("\t\tcreator_id\t" + item.Permissions.creatorID.toString() + "\n");
+				output.append("\t\towner_id\t" + item.Permissions.ownerID.toString() + "\n");
+				output.append("\t\tlast_owner_id\t" + item.Permissions.lastOwnerID.toString() + "\n");
+				output.append("\t\tgroup_id\t" + item.Permissions.groupID.toString() + "\n");
+				if (item.Permissions.isGroupOwned)
 					output.append("\t\tgroup_owned\t1\n");
 				output.append("\t}\n");
 
 				if (Permissions.hasPermissions(item.Permissions.BaseMask, PermissionMask.Modify | PermissionMask.Copy
 						| PermissionMask.Transfer)
-						|| item.AssetID == UUID.Zero)
+						|| item.assetID == UUID.Zero)
 				{
-					output.append("\t\tasset_id\t" + item.AssetID + "\n");
+					output.append("\t\tasset_id\t" + item.assetID + "\n");
 				}
 				else
 				{
-					output.append("\t\tshadow_id\t" + InventoryManager.EncryptAssetID(item.AssetID) + "\n");
+					output.append("\t\tshadow_id\t" + InventoryManager.EncryptAssetID(item.assetID) + "\n");
 				}
 
 				output.append("\t\ttype\t" + item.assetType.toString() + "\n");
@@ -343,7 +343,7 @@ public class AssetNotecard extends AssetItem
 								nextOwnerMask = (int) Helpers.TryParseHex(pval);
 							}
 						}
-						permissions = new Permissions(baseMask, everyoneMask, groupMask, nextOwnerMask, ownerMask);
+						permissions = new Permissions(creatorID, ownerID, lastOwnerID, groupID, baseMask, everyoneMask, groupMask, nextOwnerMask, ownerMask);
 					}
 					else if (key == "sale_info")
 					{
@@ -407,13 +407,10 @@ public class AssetNotecard extends AssetItem
 				}
 				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid, parentID, ownerID);
 
-				finalEmbedded.CreatorID = creatorID;
-				finalEmbedded.LastOwnerID = lastOwnerID;
-				finalEmbedded.GroupID = groupID;
 				finalEmbedded.Permissions = permissions;
 				finalEmbedded.SalePrice = salePrice;
 				finalEmbedded.saleType = saleType;
-				finalEmbedded.AssetID = assetID;
+				finalEmbedded.assetID = assetID;
 				finalEmbedded.assetType = assetType;
 				finalEmbedded.ItemFlags = flags;
 				finalEmbedded.name = name;

@@ -1365,21 +1365,18 @@ public class AssetPrim extends AssetItem
 			prim.AngularVelocity = this.AngularVelocity;
 			prim.clickAction = Primitive.ClickAction.setValue(this.ClickAction);
 			prim.Properties.CreationDate = this.CreationDate;
-			prim.Properties.CreatorID = this.CreatorID;
 			prim.Properties.Description = this.Description;
 			if (this.DieAtEdge)
 				prim.Flags |= PrimFlags.DieAtEdge;
 			prim.Properties.FolderID = this.FolderID;
-			prim.Properties.GroupID = this.GroupID;
 			prim.ID = this.ID;
-			prim.Properties.LastOwnerID = this.LastOwnerID;
 			prim.LocalID = this.LocalID;
 			prim.PrimData.Material = Primitive.Material.setValue(this.Material);
 			prim.Properties.Name = this.Name;
 			prim.OwnerID = this.OwnerID;
 			prim.ParentID = this.ParentID;
 			prim.PrimData.PCode = Primitive.PCode.setValue(this.PCode);
-			prim.Properties.Permissions = new Permissions(this.PermsBase, this.PermsEveryone, this.PermsGroup,
+			prim.Properties.Permissions = new Permissions(this.CreatorID, this.OwnerID, this.LastOwnerID, this.GroupID, this.PermsBase, this.PermsEveryone, this.PermsGroup,
 					this.PermsNextOwner, this.PermsOwner);
 			if (this.Phantom)
 				prim.Flags |= PrimFlags.Phantom;

@@ -739,7 +739,7 @@ public class AppearanceManager implements PacketCallback
                 InventoryWearable wearableItem = wearables.get(i);
 
                 WearableData wd = new WearableData();
-                wd.AssetID = wearableItem.AssetID;
+                wd.AssetID = wearableItem.assetID;
                 wd.AssetType = wearableItem.assetType;
                 wd.ItemID = wearableItem.itemID;
                 wd.WearableType = wearableItem.getWearableType();
@@ -1187,7 +1187,7 @@ public class AppearanceManager implements PacketCallback
                 InventoryWearable wearableItem = wearableItems.get(i);
 
                 WearableData wd = new WearableData();
-                wd.AssetID = wearableItem.AssetID;
+                wd.AssetID = wearableItem.assetID;
                 wd.AssetType = wearableItem.assetType;
                 wd.ItemID = wearableItem.itemID;
                 wd.WearableType = wearableItem.getWearableType();

@@ -69,11 +69,11 @@ public abstract class InventoryNode implements Serializable
 		Object(6),
 		/** Notecard */
 		Notecard(7),
-		/** */
-		Category(8),
 		/** Folder */
 		Folder(8),
-		/** */
+		/** Same as folder */
+//		Category(8),
+		/** Root folder which has no parent and an UUID.Null */
 		RootCategory(9),
 		/** an LSL Script */
 		LSL(10),
@@ -208,41 +208,35 @@ public abstract class InventoryNode implements Serializable
 	protected OSDMap toOSD()
 	{
 		OSDMap map = new OSDMap();
-		map.put("uuid", OSD.FromUUID(itemID));
-		map.put("type", OSD.FromInteger(getType().getValue()));
 		map.put("name", OSD.FromString(name));
-		map.put("owner", OSD.FromUUID(ownerID));
-		if (parent != null)
-		{
-			map.put("parent", OSD.FromUUID(parent.itemID));			
-		}
+		map.put("parent_id", OSD.FromUUID(parentID));
+		map.put("agent_id", OSD.FromUUID(ownerID));
 		return map;
 	}
 
+	
+	protected void fromOSD(OSDMap map)
+	{
+		name = map.get("name").AsString();
+		parentID = map.get("parent_id").AsUUID();
+		ownerID = map.get("agent_id").AsUUID();
+	}
+	
 	protected static InventoryNode fromOSD(OSD osd)
 	{
 		if (osd instanceof OSDMap)
 		{
 			OSDMap map = (OSDMap) osd;
-			UUID id = map.get("uuid").AsUUID();
-			UUID parentID = null;
-			if (map.containsKey("parent"))
-				parentID = map.get("parent").AsUUID();
-			InventoryType type = InventoryType.setValue(map.get("type").AsInteger());
-			InventoryNode node = InventoryNode.create(type, id, parentID, map.get("owner").AsUUID());
-			node.name = map.get("name").AsString();
 			
-			switch (type)
+			if (map.containsKey("default_type"))
 			{
-				case Folder:
-					return InventoryFolder.fromOSD(node, osd);
-				default:
-					return InventoryItem.fromOSD(node, osd);
+				return new InventoryFolder(map);
 			}
+			return new InventoryItem(map);
 		}
 		return null;
 	}
-
+	
 	protected void readObject(ObjectInputStream info) throws IOException, ClassNotFoundException
 	{
 		if (serialVersionUID != info.readLong())

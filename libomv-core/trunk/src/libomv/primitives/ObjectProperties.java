@@ -42,9 +42,6 @@ import libomv.utils.Helpers;
 public class ObjectProperties
 {
 	public UUID ObjectID;
-	public UUID CreatorID;
-	public UUID OwnerID;
-	public UUID GroupID;
 	public Date CreationDate;
 	public Permissions Permissions;
 	public int OwnershipCost;
@@ -58,7 +55,6 @@ public class ObjectProperties
 	public UUID ItemID;
 	public UUID FolderID;
 	public UUID FromTaskID;
-	public UUID LastOwnerID;
 	public String Name;
 	public String Description;
 	public String TouchName;
@@ -77,9 +73,6 @@ public class ObjectProperties
 	public ObjectProperties(ObjectProperties p)
 	{
 		ObjectID = p.ObjectID;
-		CreatorID = p.CreatorID;
-		OwnerID = p.OwnerID;
-		GroupID = p.GroupID;
 		CreationDate = p.CreationDate;
 		Permissions = new Permissions(p.Permissions);
 		OwnershipCost = p.OwnershipCost;
@@ -93,7 +86,6 @@ public class ObjectProperties
 		ItemID = p.ItemID;
 		FolderID = p.FolderID;
 		FromTaskID = p.FromTaskID;
-		LastOwnerID = p.LastOwnerID;
 		Name = p.Name;
 		Description = p.Description;
 		TouchName = p.TouchName;
@@ -113,14 +105,11 @@ public class ObjectProperties
 	public void SetFamilyProperties(ObjectProperties props)
 	{
 		ObjectID = props.ObjectID;
-		OwnerID = props.OwnerID;
-		GroupID = props.GroupID;
 		Permissions = props.Permissions;
 		OwnershipCost = props.OwnershipCost;
 		SaleType = props.SaleType;
 		SalePrice = props.SalePrice;
 		Category = props.Category;
-		LastOwnerID = props.LastOwnerID;
 		Name = props.Name;
 		Description = props.Description;
 	}

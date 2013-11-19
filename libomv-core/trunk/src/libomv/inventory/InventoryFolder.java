@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.Iterator;
 
 import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
@@ -73,11 +72,23 @@ public class InventoryFolder extends InventoryNode
 		version = 1;
 	}
 
+	public InventoryFolder(UUID itemID, UUID ownerID)
+	{
+		this(itemID);
+		this.ownerID = ownerID;
+	}
+
 	public InventoryFolder(UUID itemID, UUID parentID, UUID ownerID)
 	{
 		this(itemID);
 		this.parentID = parentID;
 		this.ownerID = ownerID;
+	}
+
+	public InventoryFolder(OSDMap map)
+	{
+		super();
+		fromOSD(map);
 	}
 
 	@Override
@@ -116,42 +127,36 @@ public class InventoryFolder extends InventoryNode
 	@Override
 	protected OSDMap toOSD()
 	{
+		return toOSD(false);
+	}
+	
+	protected OSDMap toOSD(boolean descendentRoot)
+	{
 		OSDMap map = super.toOSD();
-		map.put("preferedType", OSD.FromInteger(preferredType.getValue()));
+		map.put(descendentRoot ? "folder_id" : "category_id", OSD.FromUUID(itemID));
+		map.put("type_default", OSD.FromInteger(preferredType.getValue()));
 		map.put("version", OSD.FromInteger(version));
-		
-		if (children != null)
+		if (descendentRoot)
 		{
-			OSDArray array = new OSDArray(children.size());
-			Iterator<InventoryNode> iter = children.iterator();
-			while (iter.hasNext())
-			{
-				array.add(iter.next().toOSD());
-			}
-			map.put("children", array);
+			map.put("descendents", OSD.FromInteger(descendentCount));
 		}
 		return map;
 	}
 	
-	protected static InventoryNode fromOSD(InventoryNode node, OSD osd)
+	protected void fromOSD(OSDMap map)
 	{
-		if (node != null && node.getType() == InventoryType.Folder)
+		super.fromOSD(map);
+		if (ownerID == null)
+			ownerID = map.get("owner_id").AsUUID();
+		UUID folderID = map.get("category_id").AsUUID();
+		if (folderID == null)
+			folderID = map.get("folder_id").AsUUID();
+		version =  map.get("version").AsInteger();
+		preferredType = AssetType.setValue(map.get("type_default").AsInteger());
+		if (map.containsKey("descendents"))
 		{
-			OSDMap map = (OSDMap)osd;
-			InventoryFolder folder = (InventoryFolder)node;
-			folder.preferredType = AssetType.setValue(map.get("preferedType").AsInteger());
-			folder.version = map.get("version").AsInteger();
-			if (map.containsKey("children"))
-			{
-				OSDArray array = (OSDArray)map.get("children");
-				folder.children = new ArrayList<InventoryNode>(array.size());
-				for (int i = 0; i < array.size(); i++)
-				{
-					folder.children.add(InventoryNode.fromOSD(array.get(i)));
-				}
-			}
+			descendentCount =  map.get("descendents").AsInteger();		
 		}
-		return node;
 	}
 	
 	/**

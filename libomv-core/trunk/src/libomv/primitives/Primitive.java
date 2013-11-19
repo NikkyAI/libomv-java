@@ -1887,9 +1887,10 @@ public class Primitive
 		return Position.hashCode() ^ Velocity.hashCode() ^ Acceleration.hashCode() ^ Rotation.hashCode()
 				^ AngularVelocity.hashCode() ^ clickAction.hashCode() ^ (Flexible != null ? Flexible.hashCode() : 0)
 				^ (Light != null ? Light.hashCode() : 0) ^ (Sculpt != null ? Sculpt.hashCode() : 0) ^ Flags
-				^ MediaURL.hashCode() ^ (Properties != null ? Properties.OwnerID.hashCode() : 0) ^ ParentID
-				^ PrimData.hashCode() ^ ParticleSys.hashCode() ^ TextColor.hashCode() ^ TextureAnim.hashCode()
-				^ (Textures != null ? Textures.hashCode() : 0) ^ (int) SoundRadius ^ Scale.hashCode()
+				^ (MediaURL != null ? MediaURL.hashCode() : 0) ^ (OwnerID != null ? OwnerID.hashCode() : 0) ^ ParentID
+				^ (PrimData != null ? PrimData.hashCode() : 0) ^ (ParticleSys != null ? ParticleSys.hashCode() : 0)
+				^ (TextColor != null ? TextColor.hashCode() : 0) ^ (TextureAnim != null ? TextureAnim.hashCode() : 0)
+				^ (Textures != null ? Textures.hashCode() : 0) ^ (int) SoundRadius ^ (Scale != null ? Scale.hashCode() : 0)
 				^ SoundID.hashCode() ^ Text.hashCode() ^ TreeSpecies.hashCode();
 	}
 
