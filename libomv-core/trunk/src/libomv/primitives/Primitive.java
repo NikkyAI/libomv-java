@@ -36,6 +36,7 @@ import java.io.IOException;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDMap;
+import libomv.primitives.TextureEntry.TextureAnimMode;
 import libomv.primitives.TextureEntry.TextureAnimation;
 import libomv.types.Color4;
 import libomv.types.NameValue;
@@ -1693,6 +1694,9 @@ public class Primitive
 		if (Textures != null)
 			prim.put("textures", Textures.Serialize());
 
+		if ((TextureAnim.Flags & TextureAnimMode.ANIM_ON) != 0)
+            prim.put("texture_anim", TextureAnim.Serialize());
+
 		if (Light != null)
 			prim.put("light", Light.Serialize());
 
@@ -1732,8 +1736,15 @@ public class Primitive
 			Flexible = new FlexibleData(map.get("flex"));
 			Light = new LightData(map.get("light"));
 			LightMap = new LightImage(map.get("light_image"));
-			Sculpt = new SculptData(map.get("sculpt"));
+
+			if (map.containsKey("sculpt"))
+				Sculpt = new SculptData(map.get("sculpt"));
+			
 			Textures = new TextureEntry(map.get("textures"));
+
+			if (map.containsKey("texture_anim"))
+				TextureAnim = Textures.new TextureAnimation(map.get("texture_anim"));
+
 			Properties = new ObjectProperties();
 
 			String s;
