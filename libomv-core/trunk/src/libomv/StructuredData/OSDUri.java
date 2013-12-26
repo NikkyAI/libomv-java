@@ -84,6 +84,14 @@ public class OSDUri extends OSD
 	}
 	
 	@Override
+	public OSD clone()
+	{
+		OSDUri osd = (OSDUri)super.clone();
+		osd.value = URI.create(this.value.toString());
+		return osd;
+	}
+
+	@Override
 	public String toString()
 	{
 		return AsString();

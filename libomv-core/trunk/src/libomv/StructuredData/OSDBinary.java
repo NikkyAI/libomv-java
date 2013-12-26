@@ -151,6 +151,15 @@ public class OSDBinary extends OSD
 	}
 
 	@Override
+	public OSD clone()
+	{
+		OSDBinary osd = (OSDBinary)super.clone();
+		osd.value = new byte[this.value.length];
+		System.arraycopy(this.value, 0, osd.value, 0, this.value.length);
+		return osd;
+	}
+
+	@Override
 	public String toString()
 	{
 		return Helpers.BytesToHexString(value, null);

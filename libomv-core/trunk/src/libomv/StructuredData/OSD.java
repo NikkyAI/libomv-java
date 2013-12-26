@@ -449,51 +449,51 @@ public class OSD implements Cloneable
 		{
 			return null;
 		}
-		if (type.isAssignableFrom(Long.class) || type == long.class)
+		else if (type.isAssignableFrom(Long.class) || type == long.class)
 		{
 			return value.AsLong();
 		}
-		if (type.isAssignableFrom(Integer.class) || type == int.class)
+		else if (type.isAssignableFrom(Integer.class) || type == int.class)
 		{
 			return value.AsInteger();
 		}
-		if (type.isAssignableFrom(Short.class) || type == short.class)
+		else if (type.isAssignableFrom(Short.class) || type == short.class)
 		{
 			return (short) value.AsInteger();
 		}
-		if (type.isAssignableFrom(Byte.class) || type == byte.class)
+		else if (type.isAssignableFrom(Byte.class) || type == byte.class)
 		{
 			return (byte) value.AsInteger();
 		}
-		if (type.isAssignableFrom(Boolean.class) || type == boolean.class)
+		else if (type.isAssignableFrom(Boolean.class) || type == boolean.class)
 		{
 			return value.AsBoolean();
 		}
-		if (type.isAssignableFrom(Double.class) || type == double.class)
+		else if (type.isAssignableFrom(Double.class) || type == double.class)
 		{
 			return value.AsReal();
 		}
-		if (type.isAssignableFrom(Float.class) || type == float.class)
+		else if (type.isAssignableFrom(Float.class) || type == float.class)
 		{
 			return (float) value.AsReal();
 		}
-		if (type.isAssignableFrom(String.class))
+		else if (type.isAssignableFrom(String.class))
 		{
 			return value.AsString();
 		}
-		if (type.isAssignableFrom(Date.class))
+		else if (type.isAssignableFrom(Date.class))
 		{
 			return value.AsDate();
 		}
-		if (type.isAssignableFrom(URI.class))
+		else if (type.isAssignableFrom(URI.class))
 		{
 			return value.AsUri();
 		}
-		if (type.isAssignableFrom(UUID.class))
+		else if (type.isAssignableFrom(UUID.class))
 		{
 			return value.AsUUID();
 		}
-		if (type.isAssignableFrom(Vector3.class))
+		else if (type.isAssignableFrom(Vector3.class))
 		{
 			if (value.getType() == OSDType.Array)
 			{
@@ -501,7 +501,7 @@ public class OSD implements Cloneable
 			}
 			return Vector3.Zero;
 		}
-		if (type.isAssignableFrom(Vector4.class))
+		else if (type.isAssignableFrom(Vector4.class))
 		{
 			if (value.getType() == OSDType.Array)
 			{
@@ -509,7 +509,7 @@ public class OSD implements Cloneable
 			}
 			return Vector4.Zero;
 		}
-		if (type.isAssignableFrom(Quaternion.class))
+		else if (type.isAssignableFrom(Quaternion.class))
 		{
 			if (value.getType() == OSDType.Array)
 			{
@@ -517,6 +517,20 @@ public class OSD implements Cloneable
 			}
 			return Quaternion.Identity;
 		}
+		else if (type.isAssignableFrom(OSDArray.class))
+        {
+            OSDArray newArray = new OSDArray();
+            for (OSD o : (OSDArray)value)
+                newArray.add(o);
+            return newArray;
+        }
+		else if (type.isAssignableFrom(OSDMap.class))
+		{
+			OSDMap old = (OSDMap)value, newMap = new OSDMap();
+            for (String key : ((OSDMap)value).keySet())
+                newMap.put(key, old.get(key));
+            return newMap;
+        }
 		// We don't know this type
 		return null;
 	}
