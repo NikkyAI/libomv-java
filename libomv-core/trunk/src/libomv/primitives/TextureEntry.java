@@ -471,7 +471,7 @@ public class TextureEntry
 			fromOSD(osd, faceNumber);
 		}
 
-		public OSD Serialize(int faceNumber)
+		public OSD serialize(int faceNumber)
 		{
 			OSDMap tex = new OSDMap(10);
 			if (faceNumber >= 0)
@@ -657,7 +657,7 @@ public class TextureEntry
 			return data;
 		}
 
-		public OSD Serialize()
+		public OSD serialize()
 		{
 			OSDMap map = new OSDMap();
 
@@ -847,7 +847,7 @@ public class TextureEntry
 		return defaultTexture;
 	}
 
-	public OSD Serialize()
+	public OSD serialize()
 	{
 		OSDArray array = new OSDArray();
 
@@ -856,12 +856,12 @@ public class TextureEntry
 			return array;
 
 		// Otherwise, always add default texture
-		array.add(defaultTexture.Serialize(-1));
+		array.add(defaultTexture.serialize(-1));
 
 		for (int i = 0; i < MAX_FACES; i++)
 		{
 			if (faceTextures[i] != null)
-				array.add(faceTextures[i].Serialize(i));
+				array.add(faceTextures[i].serialize(i));
 		}
 		return array;
 	}

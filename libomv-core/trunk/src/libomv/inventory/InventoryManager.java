@@ -715,8 +715,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	        }
 	        else 
 	        {
-	            ArrayList<UUID> list = new ArrayList<UUID>(1);
-	            list.add(folderID);
+	            ArrayList<InventoryNode> list = new ArrayList<InventoryNode>(1);
+	            InventoryNode node = new InventoryFolder(folderID);
+	            node.ownerID = ownerID;
+	            list.add(node);
 	            if (RequestFolderContents(url, list, fetchFolders, fetchItems, order))
 	            {
 	            	return true;
@@ -754,7 +756,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 * @return True if the request could be sent off
 	 * {@link InventoryManager.FolderContents}
 	 */
-    public boolean RequestFolderContents(URI capabilityUrl, final ArrayList<UUID> batch, boolean fetchFolders, boolean fetchItems, byte order)
+    public boolean RequestFolderContents(URI capabilityUrl, final ArrayList<InventoryNode> batch, boolean fetchFolders, boolean fetchItems, byte order)
     {
     	try
         {
@@ -820,9 +822,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     catch (Exception ex)
                     {
                         Logger.Log("Failed to fetch inventory descendants", LogLevel.Warning, _Client, ex);
-                        for (UUID itemID : batch)
+                        for (InventoryNode node : batch)
                         {
-                            OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(itemID, false));
+                            OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
                         }
                     }
             	}
@@ -831,9 +833,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				public void cancelled()
 				{
                     Logger.Log("Fetch inventory descendants canceled", LogLevel.Warning, _Client);
-                    for (UUID itemID : batch)
+                    for (InventoryNode node : batch)
                     {
-                        OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(itemID, false));
+                        OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
                     }
 				}
 
@@ -841,19 +843,23 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				public void failed(Exception ex)
 				{
                     Logger.Log("Failed to fetch inventory descendants", LogLevel.Warning, _Client, ex);
-                    for (UUID itemID : batch)
+                    for (InventoryNode node : batch)
                     {
-                        OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(itemID, false));
+                        OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
                     }
 				}
             };
 
             // Construct request
             OSDArray requestedFolders = new OSDArray(batch.size());
-            for (UUID itemID : batch)
+            for (InventoryNode node : batch)
             {
                 OSDMap requestedFolder = new OSDMap(1);
-            	requestedFolder.put("folder_id", OSD.FromUUID(itemID));
+            	requestedFolder.put("folder_id", OSD.FromUUID(node.itemID));
+                requestedFolder.put("owner_id", OSD.FromUUID(node.ownerID));
+                requestedFolder.put("fetch_folders", OSD.FromBoolean(fetchFolders));
+                requestedFolder.put("fetch_items", OSD.FromBoolean(fetchItems));
+                requestedFolder.put("sort_order", OSD.FromInteger(order));
                 requestedFolders.add(requestedFolder);
             }
             OSDMap req = new OSDMap(1);
@@ -865,9 +871,9 @@ public class InventoryManager implements PacketCallback, CapsCallback
         catch (Exception ex)
         {
             Logger.Log("Failed to fetch inventory descendants", LogLevel.Warning, _Client, ex);
-            for (UUID itemID : batch)
+            for (InventoryNode node : batch)
             {
-                OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(itemID, false));
+                OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
             }
             return false;
         }

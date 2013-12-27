@@ -167,7 +167,7 @@ public class AssetTexture extends AssetItem
 	 * 
 	 * @return
 	 */
-	public boolean DecodeLayerBoundaries()
+	public boolean decodeLayerBoundaries()
 	{
 		LayerInfo = J2KImage.decodeLayerBoundaries(AssetData);
 		Components = LayerInfo.length;

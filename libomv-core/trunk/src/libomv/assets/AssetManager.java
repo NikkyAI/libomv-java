@@ -726,20 +726,44 @@ public class AssetManager implements PacketCallback
 	 * @param callback The callback to fire when the simulator responds with the
 	 *            asset data
 	 * @return The transaction ID that this asset download identifies
+	 * 
 	 * @throws Exception
 	 */
-	public UUID RequestAsset(UUID assetID, AssetType type, boolean priority, SourceType sourceType,
-			Callback<AssetDownload> callback) throws Exception
+	public UUID RequestAsset(UUID assetID, AssetType type, boolean priority, SourceType sourceType, Callback<AssetDownload> callback) throws Exception
 	{
+		return RequestAsset(assetID, UUID.Zero, UUID.Zero, type, priority, sourceType, null, callback);
+    }
+
+	/**
+	 * Request an asset download
+	 *
+	 * @param assetID Asset UUID
+	 * @param type Asset type, must be correct for the transfer to succeed
+	 * @param priority Whether to give this transfer an elevated priority
+	 * @param sourceType Source location of the requested asset
+	 * @param transactionID UUID of the transaction
+	 * @param callback The callback to fire when the simulator responds with the asset data
+	 * @return The transaction ID that this asset download identifies
+	 *
+	 * @throws Exception
+	 */
+     public UUID RequestAsset(UUID assetID, UUID itemID, UUID taskID, AssetType type, boolean priority, SourceType sourceType, UUID transactionID, Callback<AssetDownload> callback) throws Exception
+     {
 		Simulator simulator = _Client.Network.getCurrentSim();
 
 		// Build the request packet and send it
-		TransferRequestPacket request = CheckAssetCache(assetID, type, priority, sourceType, simulator, callback, "asset");
+		TransferRequestPacket request = CheckAssetCache(assetID, type, transactionID, priority, sourceType, simulator, callback, "asset");
 		if (request != null)
 		{		
-			byte[] paramField = new byte[20];
+			byte[] paramField = UUID.isZeroOrNull(taskID) ? new byte[20] : new byte[96];
 			assetID.toBytes(paramField, 0);
 			System.arraycopy(Helpers.Int32ToBytesL(type.getValue()), 0, paramField, 16, 4);
+			if (!UUID.isZeroOrNull(taskID))
+			{
+				taskID.toBytes(paramField, 48);
+				itemID.toBytes(paramField, 64);
+				assetID.toBytes(paramField, 80);
+            }
 			request.TransferInfo.setParams(paramField);
 
 			simulator.sendPacket(request);
@@ -825,7 +849,7 @@ public class AssetManager implements PacketCallback
 		Simulator simulator = _Client.Network.getCurrentSim();
 
 		// Build the request packet and send it
-		TransferRequestPacket request = CheckAssetCache(assetID, type, priority, SourceType.SimInventoryItem, simulator, callback, "asset");
+		TransferRequestPacket request = CheckAssetCache(assetID, type, null, priority, SourceType.SimInventoryItem, simulator, callback, "asset");
 		if (request != null)
 		{		
 			byte[] paramField = new byte[100];
@@ -861,7 +885,7 @@ public class AssetManager implements PacketCallback
 		Simulator simulator = _Client.Network.getCurrentSim();
 
 		// Build the request packet and send it
-		TransferRequestPacket request = CheckAssetCache(assetID, type, priority, SourceType.SimEstate, simulator, callback, "asset");
+		TransferRequestPacket request = CheckAssetCache(assetID, type, null, priority, SourceType.SimEstate, simulator, callback, "asset");
 		if (request != null)
 		{		
 			byte[] paramField = new byte[36];
@@ -876,7 +900,7 @@ public class AssetManager implements PacketCallback
 		return null; 
 	}
 
-	private TransferRequestPacket CheckAssetCache(UUID assetID, AssetType type, boolean priority, SourceType sourceType, Simulator simulator, Callback<AssetDownload> callback, String suffix)
+	private TransferRequestPacket CheckAssetCache(UUID assetID, AssetType type, UUID transactionID, boolean priority, SourceType sourceType, Simulator simulator, Callback<AssetDownload> callback, String suffix)
 	{
 		AssetDownload transfer;
 		// Check asset cache first
@@ -918,7 +942,7 @@ public class AssetManager implements PacketCallback
 		
 		// Add this transfer to the dictionary
 		transfer = new AssetDownload();
-		transfer.TransactionID = new UUID();
+		transfer.TransactionID = UUID.isZeroOrNull(transactionID) ? new UUID() : transactionID;
 		transfer.ItemID = assetID;
 		// transfer.AssetType = type; // Set again in TransferInfoHandler.
 		transfer.Priority = 100.0f + (priority ? 1.0f : 0.0f);

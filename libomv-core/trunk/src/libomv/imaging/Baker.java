@@ -516,6 +516,10 @@ public class Baker
         {
             byte alpha = src.Alpha[i] <= ((1 - val) * 255) ? (byte)0 : (byte)255;
 
+            if (alpha != 255)
+            {
+            }
+
             if (param.MultiplyBlend)
             {
                 dest.Alpha[i] = (byte)((dest.Alpha[i] * alpha) >> 8);

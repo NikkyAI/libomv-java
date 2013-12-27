@@ -1692,10 +1692,10 @@ public class Primitive
 		prim.put("volume", PrimData.Serialize());
 
 		if (Textures != null)
-			prim.put("textures", Textures.Serialize());
+			prim.put("textures", Textures.serialize());
 
 		if ((TextureAnim.Flags & TextureAnimMode.ANIM_ON) != 0)
-            prim.put("texture_anim", TextureAnim.Serialize());
+            prim.put("texture_anim", TextureAnim.serialize());
 
 		if (Light != null)
 			prim.put("light", Light.Serialize());

@@ -214,7 +214,11 @@ public abstract class AssetWearable extends AssetItem
 				if (stri == 0)
 				{
 					String versionstring = lines[stri];
-					version = Integer.parseInt(versionstring.split(" ")[2]);
+					if (versionstring.split(" ").length == 1)
+                        version = Integer.parseInt(versionstring);
+                    else
+    					version = Integer.parseInt(versionstring.split(" ")[2]);
+
 					if (version != 22 && version != 18 && version != 16 && version != 15)
 						return false;
 				}

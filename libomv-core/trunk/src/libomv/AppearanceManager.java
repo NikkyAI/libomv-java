@@ -220,7 +220,7 @@ public class AppearanceManager implements PacketCallback
     }
 
     // Data collected from visual params for each wearable needed for the calculation of the color
-    private class ColorParamInfo
+    public class ColorParamInfo
     {
         public VisualParam VisualParam;
         public VisualColorParam VisualColorParam;
@@ -1206,7 +1206,7 @@ public class AppearanceManager implements PacketCallback
      * @param param All the color info gathered from wearable's VisualParams passed as list of ColorParamInfo tuples
      * @returns Base color/tint for the wearable
      */
-    private Color4 GetColorFromParams(List<ColorParamInfo> param)
+    public Color4 GetColorFromParams(List<ColorParamInfo> param)
     {
         // Start off with a blank slate, black, fully transparent
         Color4 res = new Color4(0, 0, 0, 0);
@@ -1379,7 +1379,7 @@ public class AppearanceManager implements PacketCallback
      *
      * @param wearable Wearable to decode
      */
-    private void DecodeWearableParams(WearableData wearable, TextureData[] textures)
+    public void DecodeWearableParams(WearableData wearable, TextureData[] textures)
     {
         HashMap<VisualAlphaParam, Float> alphaMasks = new HashMap<VisualAlphaParam, Float>();
         List<ColorParamInfo> colorParams = new ArrayList<ColorParamInfo>();
@@ -1404,7 +1404,6 @@ public class AppearanceManager implements PacketCallback
                 		
                 if (wearable.WearableType == WearableType.Tattoo)
                 {
-                    colorParams.add(colorInfo);
                     if (key == 1062 || key == 1063 || key == 1064)
                     {
                         colorParams.add(colorInfo);

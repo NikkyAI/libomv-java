@@ -46,6 +46,8 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.ObjectManager;
+import libomv.inventory.InventoryItem;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.primitives.ObjectProperties;
 import libomv.primitives.ParticleSystem;
 import libomv.primitives.ParticleSystem.SourcePattern;
@@ -118,7 +120,7 @@ public class AssetPrim extends AssetItem
 		{
 			XmlPullParser reader = XmlPullParserFactory.newInstance().newPullParser();
 			reader.setInput(new ByteArrayInputStream(AssetData), Helpers.UTF8_ENCODING);
-			return DecodeXml(reader);
+			return decodeXml(reader);
 		}
 		catch (Exception e)
 		{
@@ -143,7 +145,7 @@ public class AssetPrim extends AssetItem
 	{
 		XmlPullParser reader = XmlPullParserFactory.newInstance().newPullParser();
 		reader.setInput(new StringReader(xmlData));
-		return DecodeXml(reader);
+		return decodeXml(reader);
 	}
 
 	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
@@ -325,7 +327,7 @@ public class AssetPrim extends AssetItem
         writer.endTag(null, name);
     }
 	
-	private boolean DecodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
+	private boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		parser.nextTag();
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");
@@ -821,7 +823,7 @@ public class AssetPrim extends AssetItem
 			public float Tension;
 			public Vector3 Force;
 
-			public OSDMap Serialize()
+			public OSDMap serialize()
 			{
 				OSDMap map = new OSDMap();
 				map.put("softness", OSD.FromInteger(Softness));
@@ -833,7 +835,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void Deserialize(OSDMap map)
+			public void deserialize(OSDMap map)
 			{
 				Softness = map.get("softness").AsInteger();
 				Gravity = (float) map.get("gravity").AsReal();
@@ -852,7 +854,7 @@ public class AssetPrim extends AssetItem
 			public float Falloff;
 			public float Cutoff;
 
-			public OSDMap Serialize()
+			public OSDMap serialize()
 			{
 				OSDMap map = new OSDMap();
 				map.put("color", OSD.FromColor4(Color));
@@ -863,7 +865,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void Deserialize(OSDMap map)
+			public void deserialize(OSDMap map)
 			{
 				Color = map.get("color").AsColor4();
 				Intensity = (float) map.get("intensity").AsReal();
@@ -878,7 +880,7 @@ public class AssetPrim extends AssetItem
 			public UUID Texture;
 			public byte Type;
 
-			public OSDMap Serialize()
+			public OSDMap serialize()
 			{
 				OSDMap map = new OSDMap();
 				map.put("texture", OSD.FromUUID(Texture));
@@ -886,7 +888,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void Deserialize(OSDMap map)
+			public void deserialize(OSDMap map)
 			{
 				Texture = map.get("texture").AsUUID();
 				Type = (byte) map.get("type").AsInteger();
@@ -917,7 +919,7 @@ public class AssetPrim extends AssetItem
 			public Vector2 ParticleStartScale;
 			public Vector2 ParticleEndScale;
 
-			public OSDMap Serialize()
+			public OSDMap serialize()
 			{
 				OSDMap map = new OSDMap();
 				map.put("flags", OSD.FromInteger(Flags));
@@ -944,7 +946,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void Deserialize(OSDMap map)
+			public void deserialize(OSDMap map)
 			{
 				Flags = map.get("flags").AsInteger();
 				Pattern = map.get("pattern").AsInteger();
@@ -990,7 +992,7 @@ public class AssetPrim extends AssetItem
 			public float ProfileEnd;
 			public float ProfileHollow;
 
-			public OSDMap Serialize()
+			public OSDMap serialize()
 			{
 				OSDMap map = new OSDMap();
 				map.put("path_curve", OSD.FromInteger(PathCurve));
@@ -1014,7 +1016,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void Deserialize(OSDMap map)
+			public void deserialize(OSDMap map)
 			{
 				PathCurve = map.get("path_curve").AsInteger();
 				PathBegin = (float) map.get("path_begin").AsReal();
@@ -1043,12 +1045,15 @@ public class AssetPrim extends AssetItem
 			{
 				public UUID ID;
 				public String Name;
-				public String OwnerIdentity;
-				public String CreatorIdentity;
-				public String GroupIdentity;
+                public UUID OwnerID;
+                public UUID CreatorID;
+                public UUID GroupID;
+                public UUID LastOwnerID;
+                public UUID PermsGranterID;
 				public UUID AssetID;
-				public String ContentType;
-				public String Description;
+                public AssetType Type;
+                public InventoryType InvType;
+                public String Description;
 				public int PermsBase;
 				public int PermsOwner;
 				public int PermsGroup;
@@ -1059,16 +1064,19 @@ public class AssetPrim extends AssetItem
 				public int Flags;
 				public Date CreationDate;
 
-				public OSDMap Serialize()
+				public OSDMap serialize()
 				{
 					OSDMap map = new OSDMap();
 					map.put("id", OSD.FromUUID(ID));
 					map.put("name", OSD.FromString(Name));
-					map.put("owner_identity", OSD.FromString(OwnerIdentity));
-					map.put("creator_identity", OSD.FromString(CreatorIdentity));
-					map.put("group_identity", OSD.FromString(GroupIdentity));
+					map.put("owner_id", OSD.FromUUID(OwnerID));
+					map.put("creator_id", OSD.FromUUID(CreatorID));
+					map.put("group_id", OSD.FromUUID(GroupID));
+                    map.put("last_owner_id", OSD.FromUUID(LastOwnerID));
+                    map.put("perms_granter_id", OSD.FromUUID(PermsGranterID));
 					map.put("asset_id", OSD.FromUUID(AssetID));
-					map.put("content_type", OSD.FromString(ContentType));
+					map.put("asset_type", OSD.FromInteger(Type.getValue()));
+                    map.put("inv_type", OSD.FromInteger(InvType.getValue()));
 					map.put("description", OSD.FromString(Description));
 					map.put("perms_base", OSD.FromInteger(PermsBase));
 					map.put("perms_owner", OSD.FromInteger(PermsOwner));
@@ -1082,15 +1090,18 @@ public class AssetPrim extends AssetItem
 					return map;
 				}
 
-				public void Deserialize(OSDMap map)
+				public void deserialize(OSDMap map)
 				{
 					ID = map.get("id").AsUUID();
 					Name = map.get("name").AsString();
-					OwnerIdentity = map.get("owner_identity").AsString();
-					CreatorIdentity = map.get("creator_identity").AsString();
-					GroupIdentity = map.get("group_identity").AsString();
+					OwnerID = map.get("owner_id").AsUUID();
+					CreatorID = map.get("creator_id").AsUUID();
+					GroupID = map.get("group_id").AsUUID();
 					AssetID = map.get("asset_id").AsUUID();
-					ContentType = map.get("content_type").AsString();
+                    LastOwnerID = map.get("last_owner_id").AsUUID();
+                    PermsGranterID = map.get("perms_granter_id").AsUUID();
+ 					Type = AssetType.setValue(map.get("asset_type").AsInteger());
+                    InvType = InventoryType.setValue(map.get("inv_type").AsInteger());
 					Description = map.get("description").AsString();
 					PermsBase = map.get("perms_base").AsInteger();
 					PermsOwner = map.get("perms_owner").AsInteger();
@@ -1102,12 +1113,38 @@ public class AssetPrim extends AssetItem
 					Flags = map.get("flags").AsInteger();
 					CreationDate = map.get("creation_date").AsDate();
 				}
+
+				public ItemBlock()
+                {
+                }
+				
+				public ItemBlock(InventoryItem item)
+                {
+                    AssetID = item.assetID;
+                    CreationDate = item.CreationDate;
+                    CreatorID = item.Permissions.creatorID;
+                    Description = item.Description;
+                    Flags = (int)item.ItemFlags;
+                    GroupID = item.Permissions.groupID;
+                    ID = item.itemID;
+                    InvType = item.getType() == InventoryType.Unknown && item.assetType == AssetType.LSLText ? InventoryType.LSL : item.getType(); ;
+                    LastOwnerID = item.Permissions.lastOwnerID;
+                    Name = item.name;
+                    OwnerID = item.getOwnerID();
+                    PermsBase = item.Permissions.BaseMask;
+                    PermsEveryone = item.Permissions.EveryoneMask;
+                    PermsGroup = item.Permissions.GroupMask;
+                    PermsNextOwner = item.Permissions.NextOwnerMask;
+                    PermsOwner = item.Permissions.OwnerMask;
+                    PermsGranterID = UUID.Zero;
+                    Type = item.assetType;
+                }
 			}
 
 			public int Serial;
 			public ItemBlock[] Items;
 
-			public OSDMap Serialize()
+			public OSDMap serialize()
 			{
 				OSDMap map = new OSDMap();
 				map.put("serial", OSD.FromInteger(Serial));
@@ -1116,14 +1153,14 @@ public class AssetPrim extends AssetItem
 				{
 					OSDArray array = new OSDArray(Items.length);
 					for (int i = 0; i < Items.length; i++)
-						array.add(Items[i].Serialize());
+						array.add(Items[i].serialize());
 					map.put("items", array);
 				}
 
 				return map;
 			}
 
-			public void Deserialize(OSDMap map)
+			public void deserialize(OSDMap map)
 			{
 				Serial = map.get("serial").AsInteger();
 
@@ -1135,7 +1172,7 @@ public class AssetPrim extends AssetItem
 					for (int i = 0; i < array.size(); i++)
 					{
 						ItemBlock item = new ItemBlock();
-						item.Deserialize((OSDMap) array.get(i));
+						item.deserialize((OSDMap) array.get(i));
 						Items[i] = item;
 					}
 				}
@@ -1277,24 +1314,24 @@ public class AssetPrim extends AssetItem
 			map.put("sale_type", OSD.FromInteger(SaleType));
 
 			if (Flexible != null)
-				map.put("flexible", Flexible.Serialize());
+				map.put("flexible", Flexible.serialize());
 			if (Light != null)
-				map.put("light", Light.Serialize());
+				map.put("light", Light.serialize());
 			if (Sculpt != null)
-				map.put("sculpt", Sculpt.Serialize());
+				map.put("sculpt", Sculpt.serialize());
 			if (Particles != null)
-				map.put("particles", Particles.Serialize());
+				map.put("particles", Particles.serialize());
 			if (Shape != null)
-				map.put("shape", Shape.Serialize());
+				map.put("shape", Shape.serialize());
 			if (Textures != null)
-				map.put("textures", Textures.Serialize());
+				map.put("textures", Textures.serialize());
 			if (Inventory != null)
-				map.put("inventory", Inventory.Serialize());
+				map.put("inventory", Inventory.serialize());
 
 			return map;
 		}
 
-		public void Deserialize(OSDMap map)
+		public void deserialize(OSDMap map)
 		{
 			ID = map.get("id").AsUUID();
 			AttachmentPosition = map.get("attachment_position").AsVector3();
@@ -1355,7 +1392,148 @@ public class AssetPrim extends AssetItem
 			SaleType = map.get("sale_type").AsInteger();
 		}
 
-		public Primitive ToPrimitive()
+		public PrimObject()
+		{
+			
+		}
+
+		public PrimObject(Primitive obj)
+		{
+            Acceleration = obj.Acceleration;
+            AllowedDrop = (obj.Flags & PrimFlags.AllowInventoryDrop) == PrimFlags.AllowInventoryDrop;
+            AngularVelocity = obj.AngularVelocity;
+            //AttachmentPosition
+            //AttachmentRotation
+            //BeforeAttachmentRotation
+            //CameraAtOffset
+            //CameraEyeOffset
+            ClickAction = obj.clickAction.getValue();
+            //CollisionSound
+            //CollisionSoundVolume;
+            CreationDate = obj.Properties.CreationDate;
+            CreatorID = obj.Properties.Permissions.creatorID;
+            Description = obj.Properties.Description;
+            DieAtEdge = (obj.Flags & PrimFlags.DieAtEdge) == PrimFlags.AllowInventoryDrop;
+            if (obj.Flexible != null)
+            {
+                Flexible = new FlexibleBlock();
+                Flexible.Drag = obj.Flexible.Drag;
+                Flexible.Force = obj.Flexible.Force;
+                Flexible.Gravity = obj.Flexible.Gravity;
+                Flexible.Softness = obj.Flexible.Softness;
+                Flexible.Tension = obj.Flexible.Tension;
+                Flexible.Wind = obj.Flexible.Wind;
+            }
+            FolderID = obj.Properties.FolderID;
+            GroupID = obj.Properties.Permissions.groupID;
+            ID = obj.Properties.ObjectID;
+            //Inventory;
+            //LastAttachmentPoint;
+            LastOwnerID = obj.Properties.Permissions.lastOwnerID;
+            if (obj.Light != null)
+            {
+                Light = new LightBlock();
+                Light.Color = obj.Light.Color;
+                Light.Cutoff = obj.Light.Cutoff;
+                Light.Falloff = obj.Light.Falloff;
+                Light.Intensity = obj.Light.Intensity;
+                Light.Radius = obj.Light.Radius;
+            }
+
+            //LinkNumber;
+            LocalID = obj.LocalID;
+            Material = obj.PrimData.Material.getValue();
+            Name = obj.Properties.Name;
+            OwnerID = obj.Properties.Permissions.ownerID;
+            ParentID = obj.ParentID;
+            
+            Particles = new ParticlesBlock();
+            Particles.AngularVelocity = obj.ParticleSys.AngularVelocity;
+            Particles.Acceleration = obj.ParticleSys.PartAcceleration;
+            Particles.BurstParticleCount = obj.ParticleSys.BurstPartCount;
+            Particles.BurstRate = obj.ParticleSys.BurstRadius;
+            Particles.BurstRate = obj.ParticleSys.BurstRate;
+            Particles.BurstSpeedMax = obj.ParticleSys.BurstSpeedMax;
+            Particles.BurstSpeedMin = obj.ParticleSys.BurstSpeedMin;
+            Particles.DataFlags = (int)obj.ParticleSys.PartDataFlags;
+            Particles.Flags = (int)obj.ParticleSys.PartFlags;
+            Particles.InnerAngle = obj.ParticleSys.InnerAngle;
+            Particles.MaxAge = obj.ParticleSys.MaxAge;
+            Particles.OuterAngle = obj.ParticleSys.OuterAngle;
+            Particles.ParticleEndColor = obj.ParticleSys.PartEndColor;
+            Particles.ParticleEndScale = new Vector2(obj.ParticleSys.PartEndScaleX, obj.ParticleSys.PartEndScaleY);
+            Particles.ParticleMaxAge = obj.ParticleSys.MaxAge;
+            Particles.ParticleStartColor = obj.ParticleSys.PartStartColor;
+            Particles.ParticleStartScale = new Vector2(obj.ParticleSys.PartStartScaleX, obj.ParticleSys.PartStartScaleY);
+            Particles.Pattern = (int)obj.ParticleSys.Pattern;
+            Particles.StartAge = obj.ParticleSys.StartAge;
+            Particles.TargetID = obj.ParticleSys.Target;
+            Particles.TextureID = obj.ParticleSys.Texture;
+
+            //PassTouches;
+            PCode = obj.PrimData.PCode.getValue();
+            PermsBase = obj.Properties.Permissions.BaseMask;
+            PermsEveryone = obj.Properties.Permissions.EveryoneMask;
+            PermsGroup = obj.Properties.Permissions.GroupMask;
+            PermsNextOwner = obj.Properties.Permissions.NextOwnerMask;
+            PermsOwner = obj.Properties.Permissions.OwnerMask;
+            Phantom = (obj.Flags & PrimFlags.Phantom) == PrimFlags.Phantom;
+            Position = obj.Position;
+            RegionHandle = obj.RegionHandle;
+            //RemoteScriptAccessPIN;
+            ReturnAtEdge = (obj.Flags & PrimFlags.ReturnAtEdge) == PrimFlags.ReturnAtEdge;
+            //RezDate;
+            Rotation = obj.Rotation;
+            SalePrice = obj.Properties.SalePrice;
+            SaleType = obj.Properties.SaleType.getValue();
+            Sandbox = (obj.Flags & PrimFlags.Sandbox) == PrimFlags.Sandbox;
+            Scale = obj.Scale;
+            //ScriptState;
+            if (obj.Sculpt != null)
+            {
+                Sculpt = new SculptBlock();
+                Sculpt.Texture = obj.Sculpt.SculptTexture;
+                Sculpt.Type = obj.Sculpt.getType().getValue();
+            }
+            Shape = new ShapeBlock();
+            Shape.PathBegin = obj.PrimData.PathBegin;
+            Shape.PathCurve = obj.PrimData.PathCurve.getValue();
+            Shape.PathEnd = obj.PrimData.PathEnd;
+            Shape.PathRadiusOffset = obj.PrimData.PathRadiusOffset;
+            Shape.PathRevolutions = obj.PrimData.PathRevolutions;
+            Shape.PathScaleX = obj.PrimData.PathScaleX;
+            Shape.PathScaleY = obj.PrimData.PathScaleY;
+            Shape.PathShearX = obj.PrimData.PathShearX;
+            Shape.PathShearY = obj.PrimData.PathShearY;
+            Shape.PathSkew = obj.PrimData.PathSkew;
+            Shape.PathTaperX = obj.PrimData.PathTaperX;
+            Shape.PathTaperY = obj.PrimData.PathTaperY;
+
+            Shape.PathTwist = obj.PrimData.PathTwist;
+            Shape.PathTwistBegin = obj.PrimData.PathTwistBegin;
+            Shape.ProfileBegin = obj.PrimData.ProfileBegin;
+            Shape.ProfileCurve = obj.PrimData.ProfileCurve.getValue();
+            Shape.ProfileEnd = obj.PrimData.ProfileEnd;
+            Shape.ProfileHollow = obj.PrimData.ProfileHollow;
+
+            SitName = obj.Properties.SitName;
+            //SitOffset;
+            //SitRotation;
+            SoundFlags = obj.SoundFlags;
+            SoundGain = obj.SoundGain;
+            SoundID = obj.SoundID;
+            SoundRadius = obj.SoundRadius;
+            State = obj.PrimData.State;
+            Temporary = (obj.Flags & PrimFlags.Temporary) == PrimFlags.Temporary;
+            Text = obj.Text;
+            TextColor = obj.TextColor;
+            Textures = obj.Textures;
+            //TouchName;
+            UsePhysics = (obj.Flags & PrimFlags.Physics) == PrimFlags.Physics;
+            Velocity = obj.Velocity;
+		}
+
+		public Primitive toPrimitive()
 		{
 			Primitive prim = new Primitive();
 			prim.Properties = new ObjectProperties();
