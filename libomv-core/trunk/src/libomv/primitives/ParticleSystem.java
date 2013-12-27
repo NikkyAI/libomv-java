@@ -305,8 +305,8 @@ public class ParticleSystem
 
 		if (size == LegacyDataBlockSize)
         {
-			pos = unpackSystem(bytes, pos);
-			pos = unpackLegacyData(bytes, pos);
+			pos += unpackSystem(bytes, pos);
+			pos += unpackLegacyData(bytes, pos);
         }
 		else if (size > LegacyDataBlockSize && size <= MaxDataBlockSize)
 		{
@@ -347,10 +347,8 @@ public class ParticleSystem
 			pos += 2;
 			StartAge = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
 			pos += 2;
-			InnerAngle = Helpers.BytesToFixedL(bytes, pos, false, 3, 5);
-			pos += 2;
-			OuterAngle = Helpers.BytesToFixedL(bytes, pos, false, 3, 5);
-			pos += 2;
+			InnerAngle = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
+			OuterAngle = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
 			BurstRate = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
 			pos += 2;
 			BurstRadius = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
