@@ -466,6 +466,12 @@ public class ParticleSystem
         }
         else
         {
+        	if (HasGlow())
+        		PartDataFlags |= ParticleDataFlags.DataGlow;
+
+        	if (HasBlendFunc())
+        		PartDataFlags |= ParticleDataFlags.DataBlend;
+
         	pos += Helpers.UInt32ToBytesL(SysDataSize, bytes, pos);
         	pos += packSystemBytes(bytes, pos);
         	int partSize = PartDataSize;
