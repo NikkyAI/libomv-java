@@ -91,7 +91,7 @@ public class ListContentsCommand extends Command
                     displayString += " " + item.itemID;
                     displayString += " " + item.name;
                     displayString += Helpers.NewLine;
-                    displayString += "  AssetID: " + item.AssetID;
+                    displayString += "  AssetID: " + item.assetID;
                 }
             }
             else
