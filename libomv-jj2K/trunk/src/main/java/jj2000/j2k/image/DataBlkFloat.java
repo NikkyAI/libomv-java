@@ -176,7 +176,7 @@ public class DataBlkFloat extends DataBlk
 	}
 
 	/**
-	 * Returns a string of informations about the DataBlkInt.
+	 * Returns a string of informations about the DataBlkFloat.
 	 */
 	@Override
 	public String toString()
