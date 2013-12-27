@@ -466,17 +466,19 @@ public class ParticleSystem
         }
         else
         {
-        	if (HasGlow())
-        		PartDataFlags |= ParticleDataFlags.DataGlow;
-
-        	if (HasBlendFunc())
-        		PartDataFlags |= ParticleDataFlags.DataBlend;
-
         	pos += Helpers.UInt32ToBytesL(SysDataSize, bytes, pos);
         	pos += packSystemBytes(bytes, pos);
         	int partSize = PartDataSize;
-        	if (HasGlow()) partSize += 2; // two bytes for start and end glow
-        	if (HasBlendFunc()) partSize += 2; // two bytes for start end end blend function
+        	if (HasGlow())
+        	{
+        		partSize += 2; // two bytes for start and end glow
+        		PartDataFlags |= ParticleDataFlags.DataGlow;
+        	}
+        	if (HasBlendFunc())
+        	{
+        		partSize += 2; // two bytes for start end end blend function
+        		PartDataFlags |= ParticleDataFlags.DataBlend;
+        	}
         	pos += Helpers.UInt32ToBytesL(partSize, bytes, pos);
         	pos += packLegacyData(bytes, pos);
 
