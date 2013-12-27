@@ -95,6 +95,12 @@ public class ParticleSystem
 		public static final int Emissive = 0x100;
 		// used for point/grab/touch
 		public static final int Beam = 0x200;
+		// continuous ribbon particle</summary>
+		public static final int Ribbon = 0x400;
+		// particle data contains glow</summary>
+		public static final int DataGlow = 0x10000;
+		// particle data contains blend functions</summary>
+		public static final int DataBlend = 0x20000;
 
 		public static int setValue(int value)
 		{
@@ -132,6 +138,20 @@ public class ParticleSystem
 		}
 
 		private static final byte _mask = 3;
+	}
+
+	public enum BlendFunc
+	{
+	    One,
+	    Zero,
+	    DestColor,
+	    SourceColor,
+	    OneMinusDestColor,
+	    OneMinusSourceColor,
+	    DestAlpha,
+	    SourceAlpha,
+	    OneMinusDestAlpha,
+	    OneMinusSourceAlpha;
 	}
 
 	public int CRC;
@@ -211,6 +231,39 @@ public class ParticleSystem
 	// particle
 	// Minimum value is 0, maximum value is 4
 	public float PartEndScaleY;
+	// A <see langword="float"/> that represents the start glow value
+	// Minimum value is 0, maximum value is 1
+	public float PartStartGlow;
+	// A <see langword="float"/> that represents the end glow value
+	// Minimum value is 0, maximum value is 1
+	public float PartEndGlow;
+
+	// OpenGL blend function to use at particle source
+	public byte BlendFuncSource;
+	// OpenGL blend function to use at particle destination
+	public byte BlendFuncDest;
+
+	public final byte MaxDataBlockSize = 98;
+	public final byte LegacyDataBlockSize = 86;
+	public final byte SysDataSize = 68;
+	public final byte PartDataSize = 18;
+
+	// Can this particle system be packed in a legacy compatible way
+	// True if the particle system doesn't use new particle system features
+	public boolean IsLegacyCompatible()
+	{
+	    return !HasGlow() && !HasBlendFunc();
+	}
+
+	public boolean HasGlow()
+	{
+	    return PartStartGlow > 0f || PartEndGlow > 0f;
+	}
+
+	public boolean HasBlendFunc()
+	{
+	    return BlendFuncSource != BlendFunc.SourceAlpha.ordinal() || BlendFuncDest != BlendFunc.OneMinusSourceAlpha.ordinal();
+	}
 
 	public ParticleSystem()
 	{
@@ -225,15 +278,66 @@ public class ParticleSystem
 	/**
 	 * Decodes a byte[] array into a ParticleSystem Object
 	 * 
-	 * @param data
-	 *            ParticleSystem object
-	 * @param pos
-	 *            Start position for BitPacker
+	 * @param data ParticleSystem object
+	 * @param pos Start position for BitPacker
 	 */
 	public ParticleSystem(byte[] bytes, int pos)
 	{
-		if (bytes.length > 88)
+		PartStartGlow = 0f;
+		PartEndGlow = 0f;
+		BlendFuncSource = (byte)BlendFunc.SourceAlpha.ordinal();
+		BlendFuncDest = (byte)BlendFunc.OneMinusSourceAlpha.ordinal();
+
+		CRC = PartFlags = 0;
+		Pattern = SourcePattern.None;
+		MaxAge = StartAge = InnerAngle = OuterAngle = BurstRate = BurstRadius = BurstSpeedMin =
+
+		BurstSpeedMax = 0.0f;
+		BurstPartCount = 0;
+		AngularVelocity = PartAcceleration = Vector3.Zero;
+		Texture = Target = UUID.Zero;
+		PartDataFlags = ParticleDataFlags.None;
+		PartMaxAge = 0.0f;
+		PartStartColor = PartEndColor = Color4.Black;
+		PartStartScaleX = PartStartScaleY = PartEndScaleX = PartEndScaleY = 0.0f;
+
+		int size = bytes.length - pos;
+
+		if (size == LegacyDataBlockSize)
+        {
+			pos = unpackSystem(bytes, pos);
+			pos = unpackLegacyData(bytes, pos);
+        }
+		else if (size > LegacyDataBlockSize && size <= MaxDataBlockSize)
 		{
+			int sysSize = Helpers.BytesToInt32L(bytes, pos);
+			pos += 4;
+			if (sysSize != SysDataSize) return; // unkown particle system data size
+			pos += unpackSystem(bytes, pos);
+			int dataSize =  Helpers.BytesToInt32L(bytes, pos);
+			pos += 4;
+			if (dataSize != PartDataSize) return; // unkown particle data size
+			pos += unpackLegacyData(bytes, pos);
+
+			if ((PartDataFlags & ParticleDataFlags.DataGlow) == ParticleDataFlags.DataGlow)
+			{
+			    if (bytes.length - pos < 2) return;
+			    PartStartGlow = bytes[pos++] / 255f;
+			    PartEndGlow = bytes[pos++] / 255f;
+			}
+
+		    if ((PartDataFlags & ParticleDataFlags.DataBlend) == ParticleDataFlags.DataBlend)
+			{
+			    if (bytes.length - pos < 2) return;
+			    BlendFuncSource = bytes[pos++];
+			    BlendFuncDest = bytes[pos++];
+			}
+		}
+	}
+	
+	
+	private int unpackSystem(byte[] bytes, int pos)
+	{
 			CRC = (int) Helpers.BytesToUInt32L(bytes, pos);
 			pos += 4;
 			PartFlags = ParticleFlags.setValue((int) Helpers.BytesToUInt32L(bytes, pos));
@@ -274,24 +378,25 @@ public class ParticleSystem
 			pos += 16;
 			Target = new UUID(bytes, pos);
 			pos += 16;
-			PartDataFlags = ParticleDataFlags.setValue((int) Helpers.BytesToUInt32L(bytes, pos));
-			pos += 4;
-			PartMaxAge = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
-			pos += 2;
-			PartStartColor = new Color4(bytes, pos, false);
-			pos += 4;
-			PartEndColor = new Color4(bytes, pos, false);
-			pos += 4;
-			PartStartScaleX = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
-			PartStartScaleY = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
-			PartEndScaleX = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
-			PartEndScaleY = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
-		}
-		else
-		{
-			init();
-		}
+			return pos;
 	}
+			
+    private int unpackLegacyData(byte[] bytes, int pos)
+    {
+    	PartDataFlags = ParticleDataFlags.setValue((int) Helpers.BytesToUInt32L(bytes, pos));
+		pos += 4;
+		PartMaxAge = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
+		pos += 2;
+		PartStartColor = new Color4(bytes, pos, false);
+		pos += 4;
+		PartEndColor = new Color4(bytes, pos, false);
+		pos += 4;
+		PartStartScaleX = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
+		PartStartScaleY = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
+		PartEndScaleX = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
+		PartEndScaleY = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
+		return pos;
+    }
 
 	public ParticleSystem(ParticleSystem particleSys)
 	{
@@ -344,8 +449,48 @@ public class ParticleSystem
 	public byte[] getBytes()
 	{
 		int pos = 0;
-		byte[] bytes = new byte[88];
+		int size = LegacyDataBlockSize;
 
+		if (!IsLegacyCompatible())
+			size += 8; // two new ints for size
+		if (HasGlow())
+			size += 2; // two bytes for start and end glow
+		if (HasBlendFunc())
+			size += 2; // two bytes for start and end blend function
+
+        byte[] bytes = new byte[size];
+        if (IsLegacyCompatible())
+       	{
+       	    pos += packSystemBytes(bytes, pos);
+       	    pos += packLegacyData(bytes, pos);
+        }
+        else
+        {
+        	pos += Helpers.UInt32ToBytesL(SysDataSize, bytes, pos);
+        	pos += packSystemBytes(bytes, pos);
+        	int partSize = PartDataSize;
+        	if (HasGlow()) partSize += 2; // two bytes for start and end glow
+        	if (HasBlendFunc()) partSize += 2; // two bytes for start end end blend function
+        	pos += Helpers.UInt32ToBytesL(partSize, bytes, pos);
+        	pos += packLegacyData(bytes, pos);
+
+        	if (HasGlow())
+        	{
+        		bytes[pos++] = Helpers.FloatToByte(PartStartGlow, 0.0f, 1.0f);
+        		bytes[pos++] = Helpers.FloatToByte(PartEndGlow, 0.0f, 1.0f);
+        	}
+
+        	if (HasBlendFunc())
+        	{
+        		bytes[pos++] = Helpers.FloatToByte(BlendFuncSource, 0.0f, 1.0f);
+        		bytes[pos++] = Helpers.FloatToByte(BlendFuncDest, 0.0f, 1.0f);
+        	}
+        }
+        return bytes;
+    }
+
+	private int packSystemBytes(byte[] bytes, int pos)
+    {
 		pos += Helpers.UInt32ToBytesL(CRC, bytes, pos);
 		pos += Helpers.UInt32ToBytesL(PartFlags, bytes, pos);
 		bytes[pos++] = Pattern;
@@ -366,6 +511,11 @@ public class ParticleSystem
 		pos += Helpers.FixedToBytesL(bytes, pos, PartAcceleration.Z, true, 8, 7);
 		pos += Texture.toBytes(bytes, pos);
 		pos += Target.toBytes(bytes, pos);
+		return pos;
+    }
+	
+	private int packLegacyData(byte[] bytes, int pos)
+    {
 		pos += Helpers.UInt32ToBytesL(PartDataFlags, bytes, pos);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartMaxAge, false, 8, 8);
 		pos += PartStartColor.toBytes(bytes, pos);
@@ -374,11 +524,10 @@ public class ParticleSystem
 		pos += Helpers.FixedToBytesL(bytes, pos, PartStartScaleY, false, 3, 5);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartEndScaleX, false, 3, 5);
 		pos += Helpers.FixedToBytesL(bytes, pos, PartEndScaleY, false, 3, 5);
-
-		return bytes;
+		return pos;
 	}
 
-	public OSD Serialize()
+	public OSD serialize()
 	{
 		OSDMap map = new OSDMap();
 
@@ -399,6 +548,24 @@ public class ParticleSystem
 		map.put("texture", OSD.FromUUID(Texture));
 		map.put("target", OSD.FromUUID(Target));
 
+		map.put("part_data_flags", OSD.FromInteger(PartDataFlags));
+		map.put("part_max_age", OSD.FromReal(PartMaxAge));
+		map.put("part_start_color", OSD.FromColor4(PartStartColor));
+		map.put("part_end_color", OSD.FromColor4(PartEndColor));
+		map.put("part_start_scale", OSD.FromVector3(new Vector3(PartStartScaleX, PartStartScaleY, 0f)));
+		map.put("part_end_scale", OSD.FromVector3(new Vector3(PartEndScaleX, PartEndScaleY, 0f)));
+
+		if (HasGlow())
+		{
+		    map.put("part_start_glow", OSD.FromReal(PartStartGlow));
+		    map.put("part_end_glow", OSD.FromReal(PartEndGlow));
+		}
+
+		if (HasBlendFunc())
+		{
+		    map.put("blendfunc_source", OSD.FromInteger(BlendFuncSource));
+		    map.put("blendfunc_dest", OSD.FromInteger(BlendFuncDest));
+		}
 		return map;
 	}
 
@@ -424,6 +591,31 @@ public class ParticleSystem
 			PartAcceleration = map.get("part_acceleration").AsVector3();
 			Texture = map.get("texture").AsUUID();
 			Target = map.get("target").AsUUID();
+
+			PartDataFlags = ParticleDataFlags.setValue(map.get("part_data_flags").AsUInteger());
+			PartMaxAge = (float) map.get("part_max_age").AsReal();
+			PartStartColor = map.get("part_start_color").AsColor4();
+			PartEndColor = map.get("part_end_color").AsColor4();
+
+			Vector3 ss = map.get("part_start_scale").AsVector3();
+			PartStartScaleX = ss.X;
+			PartStartScaleY = ss.Y;
+
+			Vector3 es = map.get("part_end_scale").AsVector3();
+			PartEndScaleX = es.X;
+			PartEndScaleY = es.Y;
+
+			if (map.containsKey("part_start_glow"))
+			{
+				PartStartGlow = (float)map.get("part_start_glow").AsReal();
+				PartEndGlow = (float)map.get("part_end_glow").AsReal();
+			}
+
+			if (map.containsKey("blendfunc_source"))
+			{
+			    BlendFuncSource = (byte)map.get("blendfunc_source").AsUInteger();
+			    BlendFuncDest = (byte)map.get("blendfunc_dest").AsUInteger();
+			}
 		}
 		else
 		{
