@@ -32,18 +32,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
 
 import libomv.Gui.components.AvatarPanel;
 
 public class AvatarViewer
 {
-    static JFrame frame = new AvatarPanel();
+    private static JFrame frame = new AvatarPanel();
 
-    static public void main(String[] args)
+	private static void createAndShowGUI() throws Exception
 	{
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         frame.setSize(800, 480);
-        frame.setUndecorated(true);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setUndecorated(false);
         frame.addWindowListener(new WindowAdapter()
         {
             @Override
@@ -52,10 +53,31 @@ public class AvatarViewer
                 exit();
             }
         });
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 	}
+	
+    static public void main(String[] args)
+	{
+		java.awt.EventQueue.invokeLater(new Runnable()
+	    {
+	    	@Override
+			public void run()
+	    	{
+	    		try
+				{
+					createAndShowGUI();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+	        }
+	    });
+	}
 
-    public static void exit() {
+    public static void exit()
+    {
         frame.dispose();
         System.exit(0);
     } 

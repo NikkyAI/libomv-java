@@ -120,7 +120,7 @@ public class OfflineController implements StateController, ActionListener
 			{
 				// Login was successful
 				System.out.println("JOMV: Message of the day: " + e.getMessage());
-				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdOnline));
+				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogin));
 				return true;
 			}
 			else if (e.getStatus() == LoginStatus.Redirecting)

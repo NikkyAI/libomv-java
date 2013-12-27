@@ -31,13 +31,13 @@ package libomv.core.media;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
-import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetManager;
 import libomv.assets.AssetManager.AssetDownload;
 import libomv.assets.AssetSound;
 import libomv.types.UUID;
 import libomv.types.Vector3;
+import libomv.utils.Callback;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import libomv.utils.TimeoutEvent;
@@ -65,22 +65,22 @@ public class BufferSound extends MediaObject
     /**
      * Handle arrival of a sound resource.
      */
-    public class Assets_OnSoundReceived implements AssetManager.AssetReceivedCallback
+    public class Assets_OnSoundReceived implements Callback<AssetDownload>
     {
 		@Override
-		public void callback(AssetDownload transfer, AssetItem asset)
+		public boolean callback(AssetDownload transfer)
 		{
 	        if (transfer.Success)
 	        {
 	            // If this was a Prefetch, just stop here.
 	            if (prefetchOnly)
-	                return;
+	                return false;
 
-	            Logger.Log("Opening sound " + asset.getAssetID().toString(), LogLevel.Debug);
+	            Logger.Log("Opening sound " + transfer.ItemID.toString(), LogLevel.Debug);
 
 	            // Decode the Ogg Vorbis buffer.
-	            AssetSound s = (AssetSound)asset;
-	            s.Decode();
+	            AssetSound s = (AssetSound)AssetManager.CreateAssetItem(AssetType.Sound, transfer.ItemID, transfer.AssetData);
+	            s.decode();
 
 	            try
 	            {
@@ -122,6 +122,7 @@ public class BufferSound extends MediaObject
 	        {
 	            Logger.Log("Failed to download sound: " + transfer.Status.toString(), LogLevel.Error);
 	        }
+	        return false;
 		}
     }
  

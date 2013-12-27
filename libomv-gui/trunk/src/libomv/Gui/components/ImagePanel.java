@@ -30,16 +30,20 @@ package libomv.Gui.components;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.io.ByteArrayInputStream;
 
 import javax.swing.JComponent;
 
 import libomv.GridClient;
 import libomv.Gui.Resources;
-import libomv.assets.AssetTexture;
-import libomv.assets.TexturePipeline.TextureDownloadCallback;
+import libomv.assets.AssetManager.ImageDownload;
 import libomv.assets.TexturePipeline.TextureRequestState;
+import libomv.imaging.ManagedImage;
 import libomv.types.UUID;
+import libomv.utils.Callback;
 import libomv.utils.ImageUtil;
+import libomv.utils.Logger;
+import libomv.utils.Logger.LogLevel;
 
 // Component to display an image loaded from a resource or other buffered image 
 public class ImagePanel extends JComponent
@@ -147,16 +151,25 @@ public class ImagePanel extends JComponent
 	 * Callback receiving the texture download result
 	 * 
 	 */
-	private class ImageDownloadCallback implements TextureDownloadCallback
+	private class ImageDownloadCallback implements Callback<ImageDownload>
 	{
 		@Override
-		public void callback(TextureRequestState state, AssetTexture assetTexture)
+		public boolean callback(ImageDownload texture)
 		{
-			if (state == TextureRequestState.Finished)
+			if (texture.State == TextureRequestState.Finished)
 			{
-				Image image = ImageUtil.convert(assetTexture.Image);
-				setImage(image, true);
+				try {
+					ManagedImage tex = ManagedImage.decode(new ByteArrayInputStream(texture.AssetData), texture.Codec);
+					Image image = ImageUtil.convert(tex);
+					setImage(image, true);
+				}
+				catch (Exception ex)
+				{
+					Logger.Log("Error decoding image", LogLevel.Error, _Client, ex);
+				}
+				return true;
 			}
+			return false;
 		}
 	}
 	

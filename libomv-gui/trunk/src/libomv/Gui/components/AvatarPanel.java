@@ -37,6 +37,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.HashMap;
 
@@ -77,7 +79,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.awt.Dimension;
 
-public class AvatarPanel extends JFrame implements ActionListener
+public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -114,8 +116,8 @@ public class AvatarPanel extends JFrame implements ActionListener
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		panel.setBackground(new Color(240, 240, 240));
 		getContentPane().add(panel, BorderLayout.WEST);
-//        panel.add(getGLControl());	
-//        getGLControl().requestFocus();	
+//      panel.add(getGLControl());	
+//      getGLControl().requestFocus();	
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -131,10 +133,10 @@ public class AvatarPanel extends JFrame implements ActionListener
 		mntmOpen.setActionCommand("avatar");
 		mntmOpen.addActionListener(this);
 		
-		JMenuItem mntmTexture = new JMenuItem("Texture");
-		mntmTexture.setActionCommand("texture");
-		mntmTexture.addActionListener(this);
-		mnOpen.add(mntmTexture);
+//		JMenuItem mntmTexture = new JMenuItem("Texture");
+//		mntmTexture.setActionCommand("texture");
+//		mntmTexture.addActionListener(this);
+//		mnOpen.add(mntmTexture);
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.setActionCommand("exit");
@@ -195,6 +197,11 @@ public class AvatarPanel extends JFrame implements ActionListener
 		}
 	}
 	
+	private void loadTexture(File file, ImagePanel panel)
+	{
+//		file.
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
@@ -214,19 +221,10 @@ public class AvatarPanel extends JFrame implements ActionListener
 				loadAvatarMesh(file);
 			}
 		}
-		else if (e.getActionCommand().equals("texture"))
+		if (e.getActionCommand().equals("exit"))
 		{
-			File file = FileDialog("Texture File (*.tga, *.png, *.j2k)", "tga", "png", "j2k");
-			if (file != null)
-			{
-				
-			}
+			System.exit(0);
 		}
-	}
-
-	private ActionListener getActionListener()
-	{
-		return this;
 	}
 
 	private class AvatarViewer implements GLEventListener
@@ -342,8 +340,9 @@ public class AvatarPanel extends JFrame implements ActionListener
 		@Override
 		public void dispose(GLAutoDrawable drawable)
 		{
+	        final GL2 gl = drawable.getGL().getGL2();
 			// TODO Auto-generated method stub
-			
+			gl.glFinish();
 		}
 	}
 	
@@ -471,7 +470,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			JButton jBtnAnimPath = new JButton("Browse");
 			jBtnAnimPath.setMnemonic(KeyEvent.VK_B);
 			jBtnAnimPath.setActionCommand("animation");
-			jBtnAnimPath.addActionListener(getActionListener());
+			jBtnAnimPath.addActionListener(this);
 			
 			gridBagConstraint = new GridBagConstraints();
 			gridBagConstraint.anchor = GridBagConstraints.CENTER;
@@ -572,6 +571,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel11 = new ImagePanel();
 			panel11.setMinimumSize(new Dimension(60, 60));
 			panel11.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel11.addMouseListener(this);
 			GridBagConstraints gbc_panel11 = new GridBagConstraints();
 			gbc_panel11.fill = GridBagConstraints.BOTH;
 			gbc_panel11.insets = new Insets(0, 0, 5, 5);
@@ -590,6 +590,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel12 = new ImagePanel();
 			panel12.setMinimumSize(new Dimension(60, 60));
 			panel12.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel12.addMouseListener(this);
 			GridBagConstraints gbc_panel12 = new GridBagConstraints();
 			gbc_panel12.fill = GridBagConstraints.BOTH;
 			gbc_panel12.insets = new Insets(0, 0, 5, 5);
@@ -608,6 +609,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel13 = new ImagePanel();
 			panel13.setMinimumSize(new Dimension(60, 60));
 			panel13.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel13.addMouseListener(this);
 			GridBagConstraints gbc_panel13 = new GridBagConstraints();
 			gbc_panel13.fill = GridBagConstraints.BOTH;
 			gbc_panel13.insets = new Insets(0, 0, 5, 5);
@@ -626,6 +628,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel21 = new ImagePanel();
 			panel21.setMinimumSize(new Dimension(60, 60));
 			panel21.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel21.addMouseListener(this);
 			GridBagConstraints gbc_panel21 = new GridBagConstraints();
 			gbc_panel21.fill = GridBagConstraints.BOTH;
 			gbc_panel21.insets = new Insets(0, 0, 5, 5);
@@ -644,6 +647,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel31 = new ImagePanel();
 			panel31.setMinimumSize(new Dimension(60, 60));
 			panel31.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel31.addMouseListener(this);
 			GridBagConstraints gbc_panel31 = new GridBagConstraints();
 			gbc_panel31.fill = GridBagConstraints.BOTH;
 			gbc_panel31.insets = new Insets(0, 0, 5, 5);
@@ -662,6 +666,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel32 = new ImagePanel();
 			panel32.setMinimumSize(new Dimension(60, 60));
 			panel32.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel32.addMouseListener(this);
 			GridBagConstraints gbc_panel32 = new GridBagConstraints();
 			gbc_panel32.fill = GridBagConstraints.BOTH;
 			gbc_panel32.insets = new Insets(0, 0, 5, 5);
@@ -680,6 +685,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel33 = new ImagePanel();
 			panel33.setMinimumSize(new Dimension(60, 60));
 			panel33.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel33.addMouseListener(this);
 			GridBagConstraints gbc_panel33 = new GridBagConstraints();
 			gbc_panel33.fill = GridBagConstraints.BOTH;
 			gbc_panel33.insets = new Insets(0, 0, 5, 5);
@@ -698,6 +704,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel34 = new ImagePanel();
 			panel34.setMinimumSize(new Dimension(60, 60));
 			panel34.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel34.addMouseListener(this);
 			GridBagConstraints gbc_panel34 = new GridBagConstraints();
 			gbc_panel34.fill = GridBagConstraints.BOTH;
 			gbc_panel34.insets = new Insets(0, 0, 5, 5);
@@ -716,6 +723,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel35 = new ImagePanel();
 			panel35.setMinimumSize(new Dimension(60, 60));
 			panel35.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel35.addMouseListener(this);
 			GridBagConstraints gbc_panel35 = new GridBagConstraints();
 			gbc_panel35.fill = GridBagConstraints.BOTH;
 			gbc_panel35.insets = new Insets(0, 0, 5, 5);
@@ -734,6 +742,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel36 = new ImagePanel();
 			panel36.setMinimumSize(new Dimension(60, 60));
 			panel36.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel36.addMouseListener(this);
 			GridBagConstraints gbc_panel36 = new GridBagConstraints();
 			gbc_panel36.fill = GridBagConstraints.BOTH;
 			gbc_panel36.insets = new Insets(0, 0, 5, 0);
@@ -752,6 +761,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel41 = new ImagePanel();
 			panel41.setMinimumSize(new Dimension(60, 60));
 			panel41.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel41.addMouseListener(this);
 			GridBagConstraints gbc_panel41 = new GridBagConstraints();
 			gbc_panel41.fill = GridBagConstraints.BOTH;
 			gbc_panel41.insets = new Insets(0, 0, 5, 5);
@@ -770,6 +780,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel42 = new ImagePanel();
 			panel42.setMinimumSize(new Dimension(60, 60));
 			panel42.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel42.addMouseListener(this);
 			GridBagConstraints gbc_panel42 = new GridBagConstraints();
 			gbc_panel42.fill = GridBagConstraints.BOTH;
 			gbc_panel42.insets = new Insets(0, 0, 5, 5);
@@ -788,6 +799,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel43 = new ImagePanel();
 			panel43.setMinimumSize(new Dimension(60, 60));
 			panel43.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel43.addMouseListener(this);
 			GridBagConstraints gbc_panel43 = new GridBagConstraints();
 			gbc_panel43.fill = GridBagConstraints.BOTH;
 			gbc_panel43.insets = new Insets(0, 0, 5, 5);
@@ -806,6 +818,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel44 = new ImagePanel();
 			panel44.setMinimumSize(new Dimension(60, 60));
 			panel44.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel44.addMouseListener(this);
 			GridBagConstraints gbc_panel44 = new GridBagConstraints();
 			gbc_panel44.fill = GridBagConstraints.BOTH;
 			gbc_panel44.insets = new Insets(0, 0, 5, 5);
@@ -824,6 +837,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel45 = new ImagePanel();
 			panel45.setMinimumSize(new Dimension(60, 60));
 			panel45.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel45.addMouseListener(this);
 			GridBagConstraints gbc_panel45 = new GridBagConstraints();
 			gbc_panel45.fill = GridBagConstraints.BOTH;
 			gbc_panel45.insets = new Insets(0, 0, 5, 5);
@@ -842,6 +856,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel46 = new ImagePanel();
 			panel46.setMinimumSize(new Dimension(60, 60));
 			panel46.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel46.addMouseListener(this);
 			GridBagConstraints gbc_panel46 = new GridBagConstraints();
 			gbc_panel46.fill = GridBagConstraints.BOTH;
 			gbc_panel46.insets = new Insets(0, 0, 5, 5);
@@ -860,6 +875,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel47 = new ImagePanel();
 			panel47.setMinimumSize(new Dimension(60, 60));
 			panel47.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel47.addMouseListener(this);
 			GridBagConstraints gbc_panel47 = new GridBagConstraints();
 			gbc_panel47.fill = GridBagConstraints.BOTH;
 			gbc_panel47.insets = new Insets(0, 0, 5, 5);
@@ -878,6 +894,7 @@ public class AvatarPanel extends JFrame implements ActionListener
 			ImagePanel panel51 = new ImagePanel();
 			panel51.setMinimumSize(new Dimension(60, 60));
 			panel51.setBorder(new LineBorder(new Color(0, 0, 0)));
+			panel51.addMouseListener(this);
 			GridBagConstraints gbc_panel51 = new GridBagConstraints();
 			gbc_panel51.fill = GridBagConstraints.BOTH;
 			gbc_panel51.insets = new Insets(0, 0, 0, 5);
@@ -886,5 +903,43 @@ public class AvatarPanel extends JFrame implements ActionListener
 			jPnTextures.add(panel51, gbc_panel51);
 		}
 		return jPnTextures;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e)
+	{
+		File file = FileDialog("Texture File (*.tga, *.png, *.j2k)", "tga", "png", "j2k");
+		if (file != null)
+		{
+			loadTexture(file, (ImagePanel)e.getComponent());
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

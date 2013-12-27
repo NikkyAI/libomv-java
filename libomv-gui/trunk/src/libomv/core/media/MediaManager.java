@@ -36,7 +36,7 @@ import libomv.AgentManager.ChatCallbackArgs;
 import libomv.AgentManager.ChatType;
 import libomv.GridClient;
 import libomv.NetworkManager.SimChangedCallbackArgs;
-import libomv.ObjectManager.KillObjectCallbackArgs;
+import libomv.ObjectManager.KillObjectsCallbackArgs;
 import libomv.ObjectManager.PrimCallbackArgs;
 import libomv.Simulator;
 import libomv.SoundManager;
@@ -45,8 +45,8 @@ import libomv.SoundManager.PreloadSoundCallbackArgs;
 import libomv.SoundManager.SoundTriggerCallbackArgs;
 import libomv.Gui.AppSettings;
 import libomv.Gui.windows.MainControl;
-import libomv.assets.AssetManager;
 import libomv.assets.AssetItem.AssetType;
+import libomv.assets.AssetManager.AssetDownload;
 import libomv.primitives.Primitive;
 import libomv.primitives.Primitive.SoundFlags;
 import libomv.types.UUID;
@@ -184,7 +184,7 @@ public class MediaManager extends MediaObject
         super.dispose();
     }
 
-    public void RequestAsset(UUID soundID, AssetType type, boolean priority, AssetManager.AssetReceivedCallback callback) throws Exception
+    public void RequestAsset(UUID soundID, AssetType type, boolean priority, Callback<AssetDownload> callback) throws Exception
     {
     	_Main.getGridClient().Assets.RequestAsset(soundID, type, priority, callback);
     }
@@ -355,7 +355,7 @@ public class MediaManager extends MediaObject
         {
         	if (!args.getSoundID().equals(UUID.Zero))
         	{
-        		if (!_Main.getGridClient().Assets.getCache().containsKey(args.getSoundID()))
+        		if (!_Main.getGridClient().Assets.getCache().containsKey(args.getSoundID(), null))
         			new BufferSound(args.getSoundID());
         	}
         	return false;
@@ -425,25 +425,25 @@ public class MediaManager extends MediaObject
     /**
      * Handle deletion of a noise-making object
      */
-    private class Objects_KillObject implements Callback<KillObjectCallbackArgs>
+    private class Objects_KillObject implements Callback<KillObjectsCallbackArgs>
     {
-    	public boolean callback(KillObjectCallbackArgs args)
+    	public boolean callback(KillObjectsCallbackArgs args)
     	{
     		synchronized (args.getSimulator().getObjectsPrimitives())
     		{
     			HashMap<Integer, Primitive> prims = args.getSimulator().getObjectsPrimitives();
-                if (prims.containsKey(args.getObjectLocalID()))
-                {
-                    Primitive p = prims.get(args.getObjectLocalID());
+    			for (int obj : args.getObjectLocalIDs())
+    			{
+                    Primitive p = prims.get(obj);
                     // Objects without sounds are not interesting.
-                    if (p.SoundID != null && !p.SoundID.equals(UUID.Zero))
+                    if (p != null && !UUID.isZeroOrNull(p.SoundID))
                     	BufferSound.kill(p.ID);
-                }
+    			}
     		}
             return false;
     	}
     }
-    private Callback<KillObjectCallbackArgs> objectKillCallback = new Objects_KillObject();
+    private Callback<KillObjectsCallbackArgs> objectKillCallback = new Objects_KillObject();
 
     /**
      * Watch for Teleports to cancel all the old sounds
