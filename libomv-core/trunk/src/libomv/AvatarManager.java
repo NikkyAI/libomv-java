@@ -1097,7 +1097,8 @@ public class AvatarManager implements PacketCallback, CapsCallback
             {
             	appearanceVersion = appearance.AppearanceData[0].AppearanceVersion;
             	COFVersion = appearance.AppearanceData[0].CofVersion;
-            	appearanceFlags = AppearanceManager.AppearanceFlags.setValue(appearance.AppearanceData[0].Flags);
+            	// used in the future
+            	// appearanceFlags = AppearanceManager.AppearanceFlags.setValue(appearance.AppearanceData[0].Flags);
             }
             
             Avatar av = simulator.findAvatar(appearance.Sender.ID);

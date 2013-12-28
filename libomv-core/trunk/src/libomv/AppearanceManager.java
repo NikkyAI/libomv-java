@@ -140,12 +140,15 @@ public class AppearanceManager implements PacketCallback
 
         public static AppearanceFlags setValue(int value)
         {
-            return values()[value + 1];
+            if (value >= 0 && value < values().length)
+            	return values()[value];
+            Logger.Log("Unknown Appearance flag value" + value, LogLevel.Warning);
+            return None;
         }
 
         public static byte getValue(BakeType value)
         {
-            return (byte) (value.ordinal() - 1);
+            return (byte) (value.ordinal());
         }
     }
 
