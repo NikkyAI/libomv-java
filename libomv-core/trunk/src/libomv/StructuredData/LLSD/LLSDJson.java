@@ -381,10 +381,20 @@ public final class LLSDJson extends OSDParser
 					writer.write(falseNotationValue);
 				}
 				break;
-			case Integer:
 			case Real:
-				writer.write(osd.AsString());
+				if (Double.isNaN(osd.AsReal()) || Double.isInfinite(osd.AsReal()))
+				{
+					writer.write("null");
+				}
+				else
+				{
+				    String str = osd.AsString();
+				    writer.write(str);
+				    if (str.indexOf('.') == -1 && str.indexOf('E') == -1)
+				    	writer.write(".0");
+				}
 				break;
+			case Integer:
 			case String:
 			case UUID:
 			case Date:
