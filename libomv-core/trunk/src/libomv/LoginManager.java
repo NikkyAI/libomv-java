@@ -1201,7 +1201,7 @@ public class LoginManager
 			if (reply.SimIP != null && reply.SimPort != 0)
 			{
 				// Connect to the sim given in the login reply
-				if (_Client.Network.Connect(reply.SimIP, reply.SimPort, reply.Region, true, reply.SeedCapability) != null)
+				if (_Client.Network.connect(reply.SimIP, reply.SimPort, reply.Region, true, reply.SeedCapability) != null)
 				{
 					_Client.setCurrentGrid(reply.Grid);
 

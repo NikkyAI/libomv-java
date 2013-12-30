@@ -5229,7 +5229,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			// Connect to the new sim
             _Client.Network.getCurrentSim().AgentMovementComplete = false; // we're not there anymore
 			InetAddress addr = InetAddress.getByAddress(Helpers.Int32ToBytesB(finish.Info.SimIP));
-			Simulator newSimulator = _Client.Network.Connect(addr, finish.Info.SimPort, finish.Info.RegionHandle, true,
+			Simulator newSimulator = _Client.Network.connect(addr, finish.Info.SimPort, finish.Info.RegionHandle, true,
 					seedcaps);
 
 			if (newSimulator != null)
@@ -5290,7 +5290,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		Logger.DebugLog("TeleportFinish received, Flags: " + msg.Flags, _Client);
 
 		// Connect to the new sim
-		Simulator newSimulator = _Client.Network.Connect(msg.IP, (short) msg.Port, msg.RegionHandle, true,
+		Simulator newSimulator = _Client.Network.connect(msg.IP, (short) msg.Port, msg.RegionHandle, true,
 				msg.SeedCapability.toString());
 		if (newSimulator != null)
 		{
@@ -5523,7 +5523,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         Logger.DebugLog("Crossed in to new region area, attempting to connect to " + endPoint.toString(), _Client);
 
         Simulator oldSim = _Client.Network.getCurrentSim();
-        Simulator newSim = _Client.Network.Connect(endPoint, regionHandle, true, seedCap);
+        Simulator newSim = _Client.Network.connect(endPoint, regionHandle, true, seedCap);
 
         if (newSim != null)
         {

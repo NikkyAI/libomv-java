@@ -1006,10 +1006,10 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		_PacketInbox.add(new IncomingPacket(simulator, message));
 	}
 
-	public Simulator Connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)
+	public Simulator connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)
 			throws Exception
 	{
-		return Connect(new InetSocketAddress(ip, port), handle, setDefault, seedcaps);
+		return connect(new InetSocketAddress(ip, port), handle, setDefault, seedcaps);
 	}
 
 	/**
@@ -1027,7 +1027,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *            URL of the capabilities server to use for this sim connection
 	 * @return A Simulator object on success, otherwise null
 	 * */
-	public Simulator Connect(InetSocketAddress endPoint, long handle, boolean setDefault, String seedcaps)
+	public Simulator connect(InetSocketAddress endPoint, long handle, boolean setDefault, String seedcaps)
 			throws Exception
 	{
 		Simulator simulator = FindSimulator(endPoint);
@@ -1632,7 +1632,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	            if (FindSimulator(endPoint) != null) return;
 
-	            if (Connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null)
+	            if (connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null)
 	            {
 	                Logger.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port, LogLevel.Error, _Client);
 	            }
@@ -1651,7 +1651,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 			if (FindSimulator(endPoint) != null) return;
 
-			if (Connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null)
+			if (connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null)
 			{
 				Logger.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, LogLevel.Error, _Client);
 			}
