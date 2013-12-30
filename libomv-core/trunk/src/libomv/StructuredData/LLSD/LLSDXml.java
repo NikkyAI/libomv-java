@@ -101,8 +101,9 @@ public final class LLSDXml extends OSDParser
 		{
 			if (encoding == null)
 				encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Xml);
-			return isHeader(data, llsdXmlHeader.getBytes(encoding), '>') ||
-				   isHeader(data, llsdXmlHeader2.getBytes(encoding), '>');
+			String str = new String(data, encoding);
+			return isHeader(str, llsdXmlHeader, '>') ||
+				   isHeader(str, llsdXmlHeader2, '>');
 		}
 		return false;
 	}
