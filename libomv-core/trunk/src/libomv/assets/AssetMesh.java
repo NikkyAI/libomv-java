@@ -90,33 +90,42 @@ public class AssetMesh extends AssetItem
         try
         {
             OSDMap header = (OSDMap)OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
+            MeshData.put("asset_header", header);
             data.mark(AssetData.length);
 
             for (String partName : header.keySet())
             {
               	OSD value = header.get(partName);
-                if (value.getType() != OSDType.Map)
+                if (value.getType() == OSDType.Map)
+                {
+                    OSDMap partInfo = (OSDMap)value;
+                    int offset = -1, size = 0;
+                    if (partInfo.containsKey("offset"))
+                    	offset = partInfo.get("offset").AsInteger();
+                    if (partInfo.containsKey("size"))
+                        size = partInfo.get("size").AsInteger();
+                    if (offset >= 0 || size > 0)
+                    {
+                        data.reset();
+                        data.skip(partInfo.get("offset").AsInteger());
+                        InflaterInputStream inflate = new InflaterInputStream(data);
+                        try
+                        {
+                        	MeshData.put(partName, OSDParser.deserialize(inflate, Helpers.UTF8_ENCODING));
+                        }
+                        finally
+                        {
+                        	inflate.close();
+                        }
+                    }
+                    else
+                    {
+                        MeshData.put(partName, value);
+                    }
+                }
+                else
                 {
                     MeshData.put(partName, value);
-                    continue;
-                }
-
-                OSDMap partInfo = (OSDMap)value;
-                if (partInfo.get("offset").AsInteger() < 0 || partInfo.get("size").AsInteger() == 0)
-                {
-                    MeshData.put(partName, partInfo);
-                    continue;
-                }
-                data.reset();
-                data.skip(partInfo.get("offset").AsInteger());
-                InflaterInputStream inflate = new InflaterInputStream(data);
-                try
-                {
-                	MeshData.put(partName, OSDParser.deserialize(inflate, Helpers.UTF8_ENCODING));
-                }
-                finally
-                {
-                	inflate.close();
                 }
             }
             return true;
