@@ -1,6 +1,6 @@
 /**
  * Copyright (c) blessedgeek from synthfuljava
- * Copyright (c) 2011-2012, Frederick Martian
+ * Copyright (c) 2011-2014, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

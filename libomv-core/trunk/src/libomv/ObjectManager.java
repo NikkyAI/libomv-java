@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2006-2009, openmetaverse.org
+ * Copyright (c) 2006-2014, openmetaverse.org
+ * Copyright (c) 2009-2014, Frederick Martian
  * Portions Copyright (c) 2006, Lateral Arts Limited
- * Copyright (c) 2009-2012, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

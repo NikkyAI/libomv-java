@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2007-2008, openmetaverse.org
- * Portions Copyright (c) 2012-2013, Frederick Martian
+ * Copyright (c) 2006-2014, openmetaverse.org
+ * Copyright (c) 2012-2014, Frederick Martian
  * All rights reserved.
  *
  * - Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions are met:
- *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Neither the name of the openmetaverse.org nor the names

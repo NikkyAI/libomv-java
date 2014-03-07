@@ -35,9 +35,9 @@ everything in one go from the root directory of the repository it is much better
 subproject separately, especially when you develop from an IDE such as Eclipse.
 	
 They can be extracted with following svn URLs:
-libomv-core: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-core/trunk libomv-java
-libomv-jj2K: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-jj2K/trunk libomv-jj2K
-libomv-gui: svn co https://libomv-java.svn.sourceforge.net/svnroot/libomv-java/libomv-gui/trunk libomv-gui
+libomv-core: svn co http://svn.code.sf.net/p/libomv-java/code/libomv-core/trunk libomv-java
+libomv-jj2K: svn co http://svn.code.sf.net/p/libomv-java/code/libomv-jj2K/trunk libomv-jj2K
+libomv-gui: svn co http://svn.code.sf.net/p/libomv-java/code/libomv-gui/trunk libomv-gui
 
 libomv-gui has an extra dependency for the jogl libraries that get best installed as user libraries in the
 Eclipse Environment. More details to follow. For now jogl is not a critical part as the only program
