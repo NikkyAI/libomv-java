@@ -69,6 +69,8 @@ public class OSD implements Cloneable
 					return "application/llsd+binary";
 				case Notation:
 					return "application/llsd+notation";
+				default:
+					break;
 			}
 			return "application/llsd+json";
 		}

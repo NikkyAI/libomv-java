@@ -125,6 +125,8 @@ public class DumpOutfitCommand extends Command
                             case SkirtBaked:
                                 type = ImageType.Baked;
                                 break;
+                	        default:
+                	        	break;
                         }
 
                         OutfitAssets.add(uuid);

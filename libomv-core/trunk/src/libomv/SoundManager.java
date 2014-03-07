@@ -452,6 +452,8 @@ public class SoundManager implements PacketCallback
 			case SoundTrigger:
 				HandleSoundTrigger(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 

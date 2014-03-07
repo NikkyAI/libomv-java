@@ -618,6 +618,8 @@ public class FriendsManager implements PacketCallback
 			case UUIDNameReply:
 				HandleUUIDNameReply(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -1051,6 +1053,9 @@ public class FriendsManager implements PacketCallback
 					break;
 				case FriendshipDeclined:
 					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
+					break;
+				default:
+					break;
 			}
 			return false;
 		}

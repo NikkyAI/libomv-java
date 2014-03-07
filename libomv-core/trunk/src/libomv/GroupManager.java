@@ -780,6 +780,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 				HandleAgentGroupDataUpdate(message, simulator);
 			case AgentDropGroup:
 				HandleAgentDropGroup(message, simulator);
+			default:
+				break;
 		}
 	}
 
@@ -841,6 +843,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 				break;
 			case UUIDGroupNameReply:
 				HandleUUIDGroupNameReply(packet, simulator);
+				break;
+			default:
 				break;
 		}
 	}

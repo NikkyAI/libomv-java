@@ -624,6 +624,8 @@ public class EstateTools implements PacketCallback, CapsCallback
 			case EstateCovenantReply:
 				HandleEstateCovenantReply(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -636,6 +638,8 @@ public class EstateTools implements PacketCallback, CapsCallback
 		    case LandStatReply:
 			    HandleLandStatReply(message, simulator);
 			    break;
+			default:
+				break;
 		}
 	}
 
@@ -1264,7 +1268,6 @@ public class EstateTools implements PacketCallback, CapsCallback
                             }
                         }
                         break;
-
                     case EstateBans:
                         //if (OnGetEstateBans != null)
                         {
@@ -1295,7 +1298,6 @@ public class EstateTools implements PacketCallback, CapsCallback
                             }
                         }
                         break;
-
                     case AllowedUsers:
                         //if (OnGetAllowedUsers != null)
                         {
@@ -1326,7 +1328,6 @@ public class EstateTools implements PacketCallback, CapsCallback
                             }
                         }
                         break;
-
                     case AllowedGroups:
                         //if (OnGetAllowedGroups != null)
                         {
@@ -1357,6 +1358,8 @@ public class EstateTools implements PacketCallback, CapsCallback
                             }
                         }
                         break;
+					default:
+						break;
                 }
             }
         }

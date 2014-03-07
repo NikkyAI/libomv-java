@@ -1501,6 +1501,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			case ParcelMediaCommandMessage:
 				HandleParcelMediaCommandMessagePacket(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -1514,6 +1516,8 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				break;
 			case ParcelProperties:
 				HandleParcelPropertiesReply(message, simulator);
+				break;
+			default:
 				break;
 		}
 	}

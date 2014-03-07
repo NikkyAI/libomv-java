@@ -491,6 +491,8 @@ public class LibSettings extends Settings implements PacketCallback
 				EconomyDataPacket econ = (EconomyDataPacket) packet;
 				priceUpload = econ.Info.PriceUpload;
 				break;
+			default:
+				break;
 		}
 	}
 }

@@ -1239,6 +1239,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			case PayPriceReply:
 				HandlePayPriceReply(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -1249,6 +1251,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		{
 			case ObjectPhysicsProperties:
 				HandleObjectPhysicsProperties(message, simulator);
+				break;
+			default:
 				break;
 		}
 	}
@@ -2701,6 +2705,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						break;
 					case ParticleSystem:
 						continue; // TODO: Do something with these
+					default:
+						break;
 				}
 			}
 			// #endregion Relevance check
@@ -2960,6 +2966,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 							// if (block.Data.Length > 0)
 							// Buffer.BlockCopy(block.Data, 0, prim.ScratchPad,
 							// 0, prim.ScratchPad.Length);
+							break;
+						default:
 							break;
 					}
 					prim.ScratchPad = Helpers.EmptyBytes;
@@ -3257,6 +3265,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						{
 							continue;
 						}
+						break;
+					default:
 						break;
 				}
 			}

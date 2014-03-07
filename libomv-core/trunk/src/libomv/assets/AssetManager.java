@@ -652,6 +652,8 @@ public class AssetManager implements PacketCallback
 			case InitiateDownload:
 				HandleInitiateDownloadPacket(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 

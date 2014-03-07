@@ -741,6 +741,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			case KickUser:
 				HandleKickUser(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -751,6 +753,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		{
 			case EnableSimulator:
 				HandleEnableSimulator(message, simulator);
+				break;
+			default:
 				break;
 		}
 		

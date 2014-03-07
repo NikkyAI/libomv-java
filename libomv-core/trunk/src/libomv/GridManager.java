@@ -329,6 +329,8 @@ public class GridManager implements PacketCallback
 			case RegionIDAndHandleReply:
 				HandleRegionHandleReply(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 

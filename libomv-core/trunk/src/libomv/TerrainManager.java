@@ -219,6 +219,8 @@ public class TerrainManager implements PacketCallback
 		{
 			case LayerData:
 				LayerDataHandler(packet,simulator);
+			default:
+				break;
 		}
 	}
 

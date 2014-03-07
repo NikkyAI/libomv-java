@@ -191,6 +191,8 @@ public class TexturePipeline implements PacketCallback
 			case ImageNotInDatabase:
 				HandleImageNotInDatabase(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 

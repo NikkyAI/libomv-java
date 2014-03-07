@@ -221,6 +221,8 @@ public class TestClient extends GridClient implements PacketCallback
 			case AlertMessage:
 				AlertMessageHandler(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 	
@@ -541,10 +543,12 @@ public class TestClient extends GridClient implements PacketCallback
 	                    } 
 	                    catch (ClassNotFoundException e)
 	                    {
+	        	            jarFile.close();
 	                        throw new RuntimeException("ClassNotFoundException loading " + className);
 	                    }
 	                }
 	            }
+	            jarFile.close();
 	        }
 	        catch (IOException e)
 	        {

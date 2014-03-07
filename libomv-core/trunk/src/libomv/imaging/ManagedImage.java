@@ -391,6 +391,8 @@ public class ManagedImage implements Cloneable
 		    	return J2KImage.encode(os, this, false);
 		    case TGA:
 		    	return TGAImage.encode(os, this);		    	
+			default:
+				break;
 		}
     	throw new UnsupportedCodecException(codec);
 	}
@@ -421,6 +423,8 @@ public class ManagedImage implements Cloneable
     			return new J2KImage(input);
     		case TGA:
     			return new TGAImage(input);
+			default:
+				break;
     	}
     	throw new UnsupportedCodecException(codec);
     }

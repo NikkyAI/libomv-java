@@ -450,6 +450,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			case ReplyTaskInventory:
 				HandleReplyTaskInventory(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -462,6 +464,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				HandleScriptRunningReply(message, simulator);
 			case BulkUpdateInventory:
 				HandleBulkUpdateInventory(message, simulator);
+			default:
+				break;
 		}
 	}
 
@@ -3509,6 +3513,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 							case GroupNotice:
 								imp.MessageBlock.Dialog = InstantMessageDialog.GroupNoticeInventoryAccepted.getValue();
 								break;
+							default:
+								break;
 						}
 						imp.MessageBlock.setBinaryBucket(args.getFolderID().getBytes());
 					}
@@ -3525,6 +3531,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								break;
 							case GroupNotice:
 								imp.MessageBlock.Dialog = InstantMessageDialog.GroupNoticeInventoryDeclined.getValue();
+								break;
+							default:
 								break;
 						}
 						imp.MessageBlock.setBinaryBucket(Helpers.EmptyBytes);

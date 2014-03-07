@@ -449,6 +449,8 @@ public class AppearanceManager implements PacketCallback
            case RebakeAvatarTextures:
                 HandleRebakeAvatarTextures(packet, simulator);
                 break;
+			default:
+				break;
        }
    }
 
@@ -2440,6 +2442,8 @@ public class AppearanceManager implements PacketCallback
                 textures.add(AvatarTextureIndex.Hair);
                 textures.add(AvatarTextureIndex.HairAlpha);
                 break;
+			default:
+				break;
         }
         return textures;
     }

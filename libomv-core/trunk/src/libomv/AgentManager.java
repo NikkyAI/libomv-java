@@ -3926,6 +3926,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 									}
 									break;
+								default:
+									break;
 							}
 						}
 						catch (Exception ex)
@@ -5032,7 +5034,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		{
 			case RequestTeleport:
 			case GroupInvitation:
-			
+			default:
+				break;			
 		}
 		return sessionID;
 	}

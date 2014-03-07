@@ -998,6 +998,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 			case DirPlacesReply:
 				HandleDirPlacesReply(packet, simulator);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -1011,6 +1013,8 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 				break;
 			case PlacesReply:
 				HandlePlacesReply(message, simulator);
+				break;
+			default:
 				break;
 		}
 	}
