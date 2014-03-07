@@ -168,6 +168,7 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.TimeoutEvent;
 
 import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.nio.reactor.IOReactorException;
 
 // Class to hold Client Avatar's data
 public class AgentManager implements PacketCallback, CapsCallback
@@ -1942,6 +1943,24 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public CallbackHandler<CallbackArgs> OnMuteListUpdated = new CallbackHandler<CallbackArgs>();
 
 	
+	// Contains the transaction summary when an item is purchased, money is
+	// given, or land is purchased
+	public class AgentAccessCallbackArgs implements CallbackArgs
+	{
+		final String mNewLevel;
+		final boolean mSuccess;
+
+		// New maturity accesss level returned from the sim
+        public String getNewLevel() { return mNewLevel; }
+        public boolean getSuccess() { return mSuccess; };
+        
+        public AgentAccessCallbackArgs(String newLevel, boolean success)
+        {
+        	mNewLevel = newLevel;
+        	mSuccess = success;
+        }
+	}
+
 	private UUID agentID;
 	// A temporary UUID assigned to this session, used for secure transactions
 	private UUID sessionID;
@@ -2001,11 +2020,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return agentID;
 	}
 
-	public final void setAgentID(UUID uuid)
-	{
-		agentID = uuid;
-	}
-
 	/*
 	 * Temporary {@link UUID} assigned to this session, used for verifying our
 	 * identity in packets
@@ -2027,11 +2041,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return localID;
 	}
 
-	public final void setLocalID(int id)
+	// not public
+	final void setLocalID(int value)
 	{
-		localID = id;
+		localID = value;
 	}
-
+	
 	/*
 	 * Where the avatar started at login. Can be "last", "home" or a login
 	 * {@link T:OpenMetaverse.URI}
@@ -2041,7 +2056,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return startLocation;
 	}
 
-	/* The access level of this agent, usually M or PG */
+	/* The access level of this agent, usually M, PG, or A */
 	public final String getAgentAccess()
 	{
 		return agentAccess;
@@ -2052,10 +2067,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		return collisionPlane;
 	}
-
-	public final void setCollisionPlane(Vector4 val)
+	
+	// not public
+	final void setCollisionPlane(Vector4 value)
 	{
-		collisionPlane = val;
+		collisionPlane = value;
 	}
 
 	/* An {@link Vector3} representing the velocity of our agent */
@@ -2064,9 +2080,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return velocity;
 	}
 
-	public void setVelocity(Vector3 val)
+	final void setVelocity(Vector3 value)
 	{
-		velocity = val;
+		velocity = value;
 	}
 
 	/* An {@link Vector3} representing the acceleration of our agent */
@@ -2074,10 +2090,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	{
 		return acceleration;
 	}
-
-	public void setAcceleration(Vector3 val)
+	
+	// not public
+	final void setAcceleration(Vector3 value)
 	{
-		acceleration = val;
+		acceleration = value;
 	}
 
 	/*
@@ -2089,21 +2106,34 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return angularVelocity;
 	}
 
-	public void setAngularVelocity(Vector3 val)
+	// not public
+	final void setAngularVelocity(Vector3 value)
 	{
-		angularVelocity = val;
+		angularVelocity = value;
 	}
 
 	public final Vector3d getGlobalHomePosition()
 	{
-		if(homePosition != null)
+		if (homePosition != null)
 		{
 			return Helpers.RegionHandleToGlobalPos(homeRegion, homePosition);
 		}
 		return null;
 	}
 
-	/* Avatar First Name (i.e. Philip) */
+    /* Position avatar client will goto when login to 'home' or during teleport request to 'home' region. */
+    public Vector3 getHomePosition()
+    {
+    	return homePosition;
+    }
+    
+    /* LookAt point saved/restored with HomePosition */
+    public Vector3 getHomeLookAt()
+    {
+    	return homeLookAt;
+    }
+    
+    /* Avatar First Name (i.e. Philip) */
 	public final String getFirstName()
 	{
 		return firstName;
@@ -2130,12 +2160,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 			fullName = String.format("%s %s", firstName, lastName);
 		}
 		return fullName;
-	}
-
-	public final void setName(String firstName, String lastName)
-	{
-		this.firstName = firstName;
-		this.lastName = lastName;
 	}
 
 	/* Gets the health of the agent */
@@ -2174,9 +2198,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return sittingOn;
 	}
 
-	public final void setSittingOn(long val)
+	// not public
+	final void setSittingOn(long value)
 	{
-		sittingOn = val;
+		sittingOn = value;
 	}
 
 	/* Gets the {@link UUID} of the agents active group. */
@@ -4997,6 +5022,65 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 	}
 
+	/**
+     * Sets agents maturity access level
+     * 
+     * @param access PG, M or A
+	 * @throws IOReactorException 
+     */
+	public void SetAgentAccess(String access) throws IOReactorException
+	{
+	    SetAgentAccess(access, null);
+    }
+
+	/**
+	 * Sets agents maturity access level
+	 * 
+	 * @param access PG, M or A
+	 * @param callback Callback function
+	 * @throws IOReactorException 
+     */
+	public void SetAgentAccess(String access, final Callback<AgentAccessCallbackArgs> callback) throws IOReactorException
+	{
+	    if (_Client == null) return;
+	    
+	    URI url = _Client.Network.getCurrentSim().getCapabilityURI("UpdateAgentInformation");
+        if (url == null) return;
+        
+        CapsClient request = new CapsClient(_Client, "UpdateAgentInformation");
+        
+        final class AccessCallback implements FutureCallback<OSD>
+        {
+
+			@Override
+			public void cancelled()
+			{
+                Logger.Log("Max maturity unchanged at " + agentAccess, LogLevel.Info, _Client);
+			}
+
+			@Override
+			public void completed(OSD result)
+			{
+                OSDMap map = (OSDMap)((OSDMap)result).get("access_prefs");
+                agentAccess = ((OSDMap)map).get("max").AsString();
+                Logger.Log("Max maturity access set to " + agentAccess, LogLevel.Info, _Client );
+			}
+
+			@Override
+			public void failed(Exception ex)
+			{
+                Logger.Log("Failed setting max maturity access.", LogLevel.Warning, _Client, ex);
+                callback.callback(new AgentAccessCallbackArgs(agentAccess, false));
+			}
+        }
+ 
+        OSDMap req = new OSDMap();
+        OSDMap prefs = new OSDMap();
+        prefs.put("max", OSD.FromString(access));
+        req.put("access_prefs", prefs);
+
+        request.executeHttpPost(url, req, OSDFormat.Xml, new AccessCallback(), _Client.Settings.CAPS_TIMEOUT);
+    }	
 	// #endregion Misc
 
 	public void UpdateCamera(boolean reliable) throws Exception
