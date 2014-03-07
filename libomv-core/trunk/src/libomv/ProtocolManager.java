@@ -390,19 +390,19 @@ public class ProtocolManager
 		try
 		{
 			map = new FileInputStream(mapFile);
+			try
+			{
+				output = new FileOutputStream(outputFile);
+			}
+			catch (Exception e)
+			{
+				map.close();
+				throw new Exception("Map file error, can't create output file", e);
+			}
 		}
 		catch (Exception e)
 		{
-			throw new Exception("Map file error", e);
-		}
-
-		try
-		{
-			output = new FileOutputStream(outputFile);
-		}
-		catch (Exception e)
-		{
-			throw new Exception("Map file error", e);
+			throw new Exception("Map file error, can't open map file", e);
 		}
 
 		while ((nread = map.read(buffer, 0, 2048)) != 0)

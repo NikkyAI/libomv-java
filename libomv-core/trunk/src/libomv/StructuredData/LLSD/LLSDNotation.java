@@ -152,6 +152,7 @@ public final class LLSDNotation extends OSDParser
 	 */
 	public OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
 	{
+		@SuppressWarnings("resource")
 		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
 		int marker = skipWhiteSpace(push);
 		if (marker < 0)

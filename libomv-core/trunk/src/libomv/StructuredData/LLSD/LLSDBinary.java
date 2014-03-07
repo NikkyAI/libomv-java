@@ -139,6 +139,7 @@ public final class LLSDBinary extends OSDParser
 	 */
 	protected OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
 	{
+		@SuppressWarnings("resource")
 		PushbackInputStream push = stream instanceof PushbackInputStream ? (PushbackInputStream)stream : new PushbackInputStream(stream);
 		int marker = skipWhiteSpace(push);
 		if (marker < 0)
