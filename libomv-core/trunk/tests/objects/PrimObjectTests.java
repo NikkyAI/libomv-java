@@ -28,7 +28,6 @@ package objects;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import libomv.primitives.Primitive;
 import libomv.primitives.TextureEntry;
@@ -49,7 +48,7 @@ public class PrimObjectTests extends TestCase
             float floatValue = Primitive.UnpackBeginCut(i);
             short result = Primitive.PackBeginCut(floatValue);
 
-            Assert.assertTrue("Started with " + i + ", float value was " + floatValue +
+            assertTrue("Started with " + i + ", float value was " + floatValue +
                 ", and ended up with " + result, result == i);
         }
     }
@@ -61,7 +60,7 @@ public class PrimObjectTests extends TestCase
             float floatValue = Primitive.UnpackEndCut(i);
             short result = Primitive.PackEndCut(floatValue);
 
-            Assert.assertTrue("Started with " + i + ", float value was " + floatValue +
+            assertTrue("Started with " + i + ", float value was " + floatValue +
                 ", and ended up with " + result, result == i);
         }
     }
@@ -73,7 +72,7 @@ public class PrimObjectTests extends TestCase
             float floatValue = Primitive.UnpackPathRevolutions(i);
             byte result = Primitive.PackPathRevolutions(floatValue);
 
-            Assert.assertTrue("Started with " + i + ", float value was " + floatValue +
+            assertTrue("Started with " + i + ", float value was " + floatValue +
                 ", and ended up with " + result, result == i);
         }
     }
@@ -85,7 +84,7 @@ public class PrimObjectTests extends TestCase
             float floatValue = Primitive.UnpackPathScale(i);
             byte result = Primitive.PackPathScale(floatValue);
 
-            Assert.assertTrue("Started with " + i + ", float value was " + floatValue +
+            assertTrue("Started with " + i + ", float value was " + floatValue +
                 ", and ended up with " + result, result == i);
         }
     }
@@ -97,7 +96,7 @@ public class PrimObjectTests extends TestCase
             float floatValue = Primitive.UnpackPathShear(i);
             byte result = Primitive.PackPathShear(floatValue);
 
-            Assert.assertTrue("Started with " + i + ", float value was " + floatValue +
+            assertTrue("Started with " + i + ", float value was " + floatValue +
             ", and ended up with " + result, result == i);
         }
     }
@@ -109,7 +108,7 @@ public class PrimObjectTests extends TestCase
             float floatValue = Primitive.UnpackPathTaper(i);
             byte result = Primitive.PackPathTaper(floatValue);
 
-            Assert.assertTrue("Started with " + i + ", float value was " + floatValue +
+            assertTrue("Started with " + i + ", float value was " + floatValue +
             ", and ended up with " + result, result == i);
         }
     }
@@ -123,7 +122,7 @@ public class PrimObjectTests extends TestCase
             byte[] offset = Helpers.TEOffsetShort(f);
             float foffset = Helpers.TEOffsetFloat(offset, 0);
 
-            Assert.assertTrue(foffset + " is not equal to " + f, foffset - f < 0.0001);
+            assertTrue(foffset + " is not equal to " + f, foffset - f < 0.0001);
         }
     }
 
@@ -184,22 +183,22 @@ public class PrimObjectTests extends TestCase
 
         byte[] teBytes = te.getBytes();
 
-        Assert.assertTrue(teBytes.length == teTest.length);
+        assertTrue(teBytes.length == teTest.length);
 
         for (int i = 0; i < teBytes.length; i++)
         {
-            Assert.assertTrue("Byte " + i + " is not equal", teBytes[i] == teTest[i]);
+            assertTrue("Byte " + i + " is not equal", teBytes[i] == teTest[i]);
         }
 
         TextureEntry te2 = new TextureEntry(teBytes, 0, teBytes.length);
 
         byte[] teBytes2 = te2.getBytes();
 
-        Assert.assertTrue(teBytes.length == teBytes2.length);
+        assertTrue(teBytes.length == teBytes2.length);
 
         for (int i = 0; i < teBytes.length; i++)
         {
-            Assert.assertTrue("Byte " + i + " is not equal", teBytes[i] == teBytes2[i]);
+            assertTrue("Byte " + i + " is not equal", teBytes[i] == teBytes2[i]);
         }
     }
 }
