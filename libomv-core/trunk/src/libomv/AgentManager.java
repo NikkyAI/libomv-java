@@ -1951,6 +1951,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	// Position avatar client will goto when login to 'home' or during teleport request to 'home' region.
 	private long homeRegion;
 	private Vector3 homePosition;
+	private Vector3 homeLookAt;
+	private Vector3 lookAt;
 	
 	private void setHomePosRegion(long region, Vector3 pos)
 	{
@@ -2111,6 +2113,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public final String getLastName()
 	{
 		return lastName;
+	}
+	
+	public final Vector3 getLookAt()
+	{
+		return lookAt;
 	}
 
 	/* Avatar Full Name (i.e. Philip Linden) */
@@ -2375,6 +2382,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 				_Movement.Camera.LookDirection(reply.LookAt);
 				homeRegion = reply.HomeRegion;
 				homePosition = reply.HomePosition;
+				homeLookAt = reply.HomeLookAt;
+				lookAt = reply.LookAt;
 			}
 			else if (e.getStatus() == LoginStatus.Success)
 			{
