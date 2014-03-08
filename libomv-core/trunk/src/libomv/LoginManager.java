@@ -307,7 +307,11 @@ public class LoginManager
         public String MapServerUrl;
         public String OpenIDUrl;
         public String AgentAppearanceServiceURL;
-        
+        public int COFVersion;
+        public String InitialOutfit;
+        public boolean FirstLogin;
+
+                 
 		// Unhandled:
 		// reply.gestures
 		// reply.event_categories
@@ -316,7 +320,6 @@ public class LoginManager
 		// reply.ui_config
 		// reply.login_flags
 		// reply.global_textures
-		// reply.initial_outfit
 
 		/**
 		 * Parse LLSD Login Reply Data
@@ -465,6 +468,44 @@ public class LoginManager
             if (reply.containsKey("agent_appearance_service"))
             {
             	AgentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
+            }
+            
+            COFVersion = 0;
+            if (reply.containsKey("cof_version"))
+            {
+                COFVersion = reply.get("cof_version").AsUInteger();
+            }
+
+            InitialOutfit = Helpers.EmptyString;
+            OSD osd = reply.get("initial-outfit");
+            if (osd != null && osd.getType() == OSDType.Array)
+            {
+                OSDArray array = (OSDArray)osd;
+                for (int i = 0; i < array.size(); i++)
+                {
+                	osd = array.get(i);
+                    if (osd.getType() == OSDType.Map)
+                    {
+                        OSDMap map = (OSDMap)osd;
+                        InitialOutfit = map.get("folder_name").AsString();
+                    }
+                }
+            }
+
+            FirstLogin = false;
+            osd = reply.get("login-flags");
+            if (osd != null && osd.getType() == OSDType. Array)
+            {
+                OSDArray array = (OSDArray)osd;
+                for (int i = 0; i < array.size(); i++)
+                {
+                	osd = array.get(i);
+                    if (osd.getType() == OSDType.Map)
+                    {
+                    	OSDMap map = (OSDMap)osd;
+                        FirstLogin = map.get("ever_logged_in").AsString().equalsIgnoreCase("N");
+                    }
+                }
             }
             return this;
 		}
