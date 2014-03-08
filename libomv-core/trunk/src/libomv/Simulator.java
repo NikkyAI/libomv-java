@@ -1018,6 +1018,12 @@ public class Simulator extends Thread
 			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
 			{
 				Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Error, _Client);
+
+				// Remove the simulator from the list, not useful if we haven't received the RegionHandshake
+				synchronized (_Client.Network.getSimulators())
+				{
+					_Client.Network.getSimulators().remove(this);
+				}
 				return false;
 			}
 			Thread.sleep(10);
