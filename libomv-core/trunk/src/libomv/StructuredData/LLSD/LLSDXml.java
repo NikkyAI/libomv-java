@@ -365,7 +365,7 @@ public final class LLSDXml extends OSDParser
 			}
 			catch (URISyntaxException ex)
 			{
-				new ParseException("Error parsing URI: " + ex.getMessage(), parser.getLineNumber());
+				throw new XmlPullParserException("Error parsing URI: " + ex.getMessage(), parser, ex);
 			}
 		}
 		else if (name.equals(MAP_TAG))
