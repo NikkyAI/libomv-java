@@ -30,7 +30,6 @@ package libomv.core.state;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -45,7 +44,7 @@ import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.utils.Callback;
 
-public class OnlineController implements StateController, ActionListener
+public class OnlineController implements StateController
 {
 	public static final String cmdFriends = "friends";
 	public static final String cmdGroups = "groups";

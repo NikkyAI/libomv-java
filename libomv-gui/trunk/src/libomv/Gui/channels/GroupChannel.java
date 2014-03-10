@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2012, Frederick Martian
+ * Copyright (c) 2009-2014, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,21 +112,22 @@ public class GroupChannel extends AbstractChannel
 	{
 		// Determine if this is a friend...
 		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
+		String localStyle = style, localMessage = message;
 		
 		// If this is an action message.
 		if (message.startsWith("/me "))
 		{
-			style = STYLE_ACTION;
+			localStyle = STYLE_ACTION;
 			// Remove the "/me".
-			message = message.substring(3);
+			localMessage = message.substring(3);
 		}
 		else if (style == null)
 		{
-			style = STYLE_REGULAR;
+			localStyle = STYLE_REGULAR;
 			// This is a normal message.
-			message = ": " + message;
+			localMessage = ": " + message;
 		}
-		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style));
+		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, localMessage, localStyle));
 	}
 
 	@Override
@@ -138,24 +139,24 @@ public class GroupChannel extends AbstractChannel
 	@Override
 	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception
 	{
-		String self = _Client.Self.getName();
+		String localMessage = message, self = _Client.Self.getName();
 
 		if (message.length() >= 1000)
         {
-        	message = message.substring(0, 1000);
+        	localMessage = message.substring(0, 1000);
         }
-		addHistory(message);	
+		addHistory(localMessage);	
 		
 		// Do we have an action command?
-		if (message.charAt(0) == '/')
+		if (localMessage.charAt(0) == '/')
 		{
 			String firstWord = "";
 			try
 			{
-				firstWord = message.split("\\s")[0].toLowerCase();
+				firstWord = localMessage.split("\\s")[0].toLowerCase();
 			}
 			catch (Exception ex) { }
-			String localMessage = message.substring(firstWord.length()).trim();
+			localMessage = localMessage.substring(firstWord.length()).trim();
 
 			// Deal with actions.
 			if (firstWord.equals("/me"))
@@ -166,13 +167,13 @@ public class GroupChannel extends AbstractChannel
 		else
 		{
 			// Normal
-			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + message, STYLE_REGULAR));
+			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + localMessage, STYLE_REGULAR));
 		}
 		// Indicate that we're no longer typing.
-		super.transmitMessage(message, type);
+		super.transmitMessage(localMessage, type);
 
 		// Send the message.
-		_Client.Self.InstantMessageGroup(getUUID(), message);
+		_Client.Self.InstantMessageGroup(getUUID(), localMessage);
 	}
 				
 	protected void triggerTyping(boolean start) throws Exception
@@ -187,7 +188,7 @@ public class GroupChannel extends AbstractChannel
 			jScrpAttendents = new JScrollPane();
 			add(jScrpAttendents, BorderLayout.EAST);
 
-			JList listAttendents = new JList();
+			JList<String> listAttendents = new JList<String>();
 			listAttendents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jScrpAttendents.setViewportView(listAttendents);
 		}

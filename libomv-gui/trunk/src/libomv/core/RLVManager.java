@@ -58,9 +58,7 @@ public class RLVManager
 
     private MainControl _Main;
 	
-    private List<RLVRule> rules = new ArrayList<RLVRule>();
-    
-    
+    private List<RLVRule> rules = new ArrayList<RLVRule>();   
     
     Pattern pattern = Pattern.compile("");
 /*

@@ -29,7 +29,6 @@
 package libomv.core.state;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -49,7 +48,7 @@ import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.utils.Callback;
 
-public class OfflineController implements StateController, ActionListener
+public class OfflineController implements StateController
 {
 	private MainControl _Main;
 	private GridClient _Client;

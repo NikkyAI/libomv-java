@@ -80,7 +80,7 @@ public class GroupList extends JScrollPane implements ActionListener
 	private GridClient _Client;
 	private CommWindow _Comm;
 	
-	private JList jLGroupsList;
+	private JList<Group> jLGroupsList;
 	
 	/**
 	 * Constructs a list to display
@@ -116,11 +116,11 @@ public class GroupList extends JScrollPane implements ActionListener
 		setViewportView(getJGroupsList());
 	}
 	
-	private final JList getJGroupsList()
+	private final JList<Group> getJGroupsList()
 	{
 		if (jLGroupsList == null)
 		{
-			jLGroupsList = new JList(new SortedListModel(new DefaultListModel(), SortOrder.ASCENDING));
+			jLGroupsList = new JList<Group>(new SortedListModel(new DefaultListModel<Group>(), SortOrder.ASCENDING));
 			// install a mouse handler
 			jLGroupsList.addMouseListener(new MouseAdapter()
 			{
@@ -145,7 +145,7 @@ public class GroupList extends JScrollPane implements ActionListener
 						// If the right mouse button was pressed...
 						else if (SwingUtilities.isRightMouseButton(e))
 						{
-							GroupPopupMenu gpm = new GroupPopupMenu((Group) (jLGroupsList.getSelectedValue()));
+							GroupPopupMenu gpm = new GroupPopupMenu(jLGroupsList.getSelectedValue());
 							gpm.show(jLGroupsList, e.getX(), e.getY());
 						}
 					}
@@ -168,7 +168,7 @@ public class GroupList extends JScrollPane implements ActionListener
 	 */
 	public Group findGroup(UUID id)
 	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
 		for (Enumeration<?> e = model.elements(); e.hasMoreElements();)
 		{
 			Group info = (Group) e.nextElement();
@@ -182,7 +182,7 @@ public class GroupList extends JScrollPane implements ActionListener
 	
 	private Group getSelectedGroupRow()
 	{
-		return (Group)getJGroupsList().getSelectedValue();
+		return getJGroupsList().getSelectedValue();
 	}
 	
 	/**
@@ -193,7 +193,7 @@ public class GroupList extends JScrollPane implements ActionListener
 	 */
 	public boolean addGroup(Group info)
 	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx < 0)
 			model.add(model.size(), info);
@@ -210,7 +210,7 @@ public class GroupList extends JScrollPane implements ActionListener
 	 */
 	public boolean removeGroup(Group info)
 	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx < 0)
 			return false;
@@ -226,7 +226,7 @@ public class GroupList extends JScrollPane implements ActionListener
 	 */
 	public boolean changeGroup(Group info)
 	{
-		DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx >= 0)
 			model.set(idx, info);
@@ -238,7 +238,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
 		{
 			// The toString() function from Group is used to set the label text
 			JLabel jlblName = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -435,7 +435,7 @@ public class GroupList extends JScrollPane implements ActionListener
 				@Override
 				public void run()
 				{
-					DefaultListModel model = (DefaultListModel) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+					DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
 					model.clear();
 					model.copyInto(params.getGroups().values().toArray());
 				}

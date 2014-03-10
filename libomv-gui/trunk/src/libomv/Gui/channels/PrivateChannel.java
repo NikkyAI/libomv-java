@@ -56,21 +56,22 @@ public class PrivateChannel extends AbstractChannel
 	{
 		// Determine if this is a friend...
 		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
+		String localMessage = message, localStyle = style;
 		
 		// If this is an action message.
 		if (message.startsWith("/me "))
 		{
-			style = STYLE_ACTION;
+			localStyle = STYLE_ACTION;
 			// Remove the "/me".
-			message = message.substring(3);
+			localMessage = message.substring(3);
 		}
 		else if (style == null) 
 		{
-			style = STYLE_REGULAR;
-			message = ": " + message;
+			localStyle = STYLE_REGULAR;
+			localMessage = ": " + message;
 		}
 		// This is a normal message.
-		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, message, style));
+		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, localMessage, localStyle));
 	}
 
 	@Override
@@ -82,33 +83,33 @@ public class PrivateChannel extends AbstractChannel
 		// Indicate that we're no longer typing.
 		super.transmitMessage(message, chatType);
 
-		String self = _Client.Self.getName();
+		String localMessage = message, self = _Client.Self.getName();
 		if (getUUID() != null)
 		{
 	        if (message.length() >= 1000)
 	        {
-	        	message = message.substring(0, 1000);
+	        	localMessage = message.substring(0, 1000);
 	        }
 			addHistory(message);	
 
             if (_Main.getStateControl().RLV.restrictionActive("sendim", getUUID()))
             {
-            	message = "*** IM blocked by sender's viewer";
+            	localMessage = "*** IM blocked by sender's viewer";
             }
             
 			// Deal with actions.
-			if (message.toLowerCase().startsWith("/me "))
+			if (localMessage.toLowerCase().startsWith("/me "))
 			{
 				// Remove the "/me "
-				addMessage(new ChatItem(self, STYLE_CHATLOCAL, " " + message.substring(4).trim(), STYLE_ACTION));
+				addMessage(new ChatItem(self, STYLE_CHATLOCAL, " " + localMessage.substring(4).trim(), STYLE_ACTION));
 			}
 			else
 			{
-				addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + message, STYLE_REGULAR));
+				addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + localMessage, STYLE_REGULAR));
 			}
 
 			// Send the message.
-			_Client.Self.InstantMessage(getUUID(), message, getSession());
+			_Client.Self.InstantMessage(getUUID(), localMessage, getSession());
 		}
 		else
 		{

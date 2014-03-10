@@ -82,8 +82,8 @@ public class GridEditor extends JDialog
 	private JButton jBtnCancel;
 	private JButton jBtnOk;
 
-	private DefaultListModel jLsModel;
-	private JList jLsGridNames;
+	private DefaultListModel<GridInfo> jLsModel;
+	private JList<GridInfo> jLsGridNames;
 	private JScrollPane jSpGridNames;
 	private JTextField jTxtName;
 	private JTextField jTxtNick;
@@ -323,7 +323,7 @@ public class GridEditor extends JDialog
 				{
 					try
 					{
-						updateGridProperties(_Client.queryGridInfo(((GridInfo) (getJLsGridNames().getSelectedValue()))), false);
+						updateGridProperties(_Client.queryGridInfo(getJLsGridNames().getSelectedValue()), false);
 					}
 					catch (Exception e)
 					{
@@ -361,7 +361,7 @@ public class GridEditor extends JDialog
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					updateGridProperties((GridInfo) (getJLsGridNames().getSelectedValue()), true);
+					updateGridProperties(getJLsGridNames().getSelectedValue(), true);
 				}
 			});
 		}
@@ -428,7 +428,7 @@ public class GridEditor extends JDialog
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					_Client.setDefaultGrid((GridInfo)getJLsGridNames().getSelectedValue());
+					_Client.setDefaultGrid(getJLsGridNames().getSelectedValue());
 					jLsGridNames.setCellRenderer(new MyListCellRenderer(_Client.getDefaultGrid()));
 				}
 			});
@@ -452,7 +452,7 @@ public class GridEditor extends JDialog
 					// Get all item objects
 					for (int i = 0; i < size; i++)
 					{
-						_Client.addGrid((GridInfo)getJLsGridNames().getModel().getElementAt(i), false);
+						_Client.addGrid(getJLsGridNames().getModel().getElementAt(i), false);
 					}
 					try
 					{
@@ -893,12 +893,12 @@ public class GridEditor extends JDialog
 		return jTxtCurrencySym;
 	}
 
-	private DefaultListModel getJLsModel()
+	private DefaultListModel<GridInfo> getJLsModel()
 	{
 		if (jLsModel == null)
 		{
 			int i = 0;
-			jLsModel = new DefaultListModel();
+			jLsModel = new DefaultListModel<GridInfo>();
 			Set<String> nicks = _Client.getGridNames();
 			for (String nick : nicks)
 			{
@@ -919,7 +919,7 @@ public class GridEditor extends JDialog
 		}
 
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus)
 		{
 			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -935,11 +935,11 @@ public class GridEditor extends JDialog
 		}
 	}
 
-	private JList getJLsGridNames()
+	private JList<GridInfo> getJLsGridNames()
 	{
 		if (jLsGridNames == null)
 		{
-			jLsGridNames = new JList(getJLsModel());
+			jLsGridNames = new JList<GridInfo>(getJLsModel());
 			jLsGridNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jLsGridNames.setLayoutOrientation(JList.VERTICAL);
 			jLsGridNames.setVisibleRowCount(-1);
@@ -950,7 +950,7 @@ public class GridEditor extends JDialog
 				@Override
 				public void valueChanged(ListSelectionEvent e)
 				{
-					updateGridProperties((GridInfo) getJLsGridNames().getSelectedValue(), false);
+					updateGridProperties(getJLsGridNames().getSelectedValue(), false);
 				}
 			});
 		}

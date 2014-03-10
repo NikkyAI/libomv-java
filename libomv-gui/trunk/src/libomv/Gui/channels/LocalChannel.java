@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2012, Frederick Martian
+ * Copyright (c) 2009-2014, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ public class LocalChannel extends AbstractChannel
 		// Did we already print that message?
 		if (!(self  && printLocalMessage))
 		{
-			String chatStyle = STYLE_CHATREMOTE;
+			String localStyle = style, localMessage = message, chatStyle = STYLE_CHATREMOTE;
 			if (self)
 			{
 				chatStyle = STYLE_CHATLOCAL;
@@ -116,16 +116,16 @@ public class LocalChannel extends AbstractChannel
 			// If this is an action message
 			if (message.startsWith("/me "))
 			{
-				style = style != null ? style : STYLE_ACTION;
+				localStyle = style != null ? style : STYLE_ACTION;
 				// Remove the "/me"
-				message = message.substring(3);
+				localMessage = message.substring(3);
 			}
 			else if (style == null)
 			{
-				 style = STYLE_REGULAR;
-				 message = ": " + message;
+				 localStyle = STYLE_REGULAR;
+				 localMessage = ": " + message;
 			}
-			addMessage(new ChatItem(timestamp, fromName, chatStyle, message, style));
+			addMessage(new ChatItem(timestamp, fromName, chatStyle, localMessage, localStyle));
 		}
 	}
 
@@ -138,26 +138,26 @@ public class LocalChannel extends AbstractChannel
 		super.transmitMessage(message, chatType);
 
         int channel = 0;
-		String shortMessage, style = STYLE_REGULAR,
-			   self = _Client.Self.getName();
-
+		String shortMessage, localMessage = message, style = STYLE_REGULAR, self = _Client.Self.getName();
+		ChatType localType = chatType;
+		
         if (message.length() >= 1000)
         {
-        	message = message.substring(0, 1000);
+        	localMessage = message.substring(0, 1000);
         }
-		addHistory(message);	
+		addHistory(localMessage);	
 
 		// Do we have a command?
-		if (message.charAt(0) == '/')
+		if (localMessage.charAt(0) == '/')
 		{
 			String firstWord = "";
 			try
 			{
-				firstWord = message.split("\\s")[0].toLowerCase();
+				firstWord = localMessage.split("\\s")[0].toLowerCase();
 			}
 			catch(Exception ex) { }
 
-			shortMessage = message.substring(firstWord.length()).trim();
+			shortMessage = localMessage.substring(firstWord.length()).trim();
 
 			// Deal with actions.
 			if (firstWord.equals("/me"))
@@ -168,19 +168,19 @@ public class LocalChannel extends AbstractChannel
 			// Shout
 			else if ((firstWord.startsWith("/shout")) || (firstWord.equals("/s")))
 			{
-				chatType = ChatType.Shout;
+				localType = ChatType.Shout;
 				style = STYLE_ACTION;
 				// Send the message without the /shout command
-				message = shortMessage;
+				localMessage = shortMessage;
 				shortMessage = " shouts: " + shortMessage;
 			}
 			// Whisper
 			else if ((firstWord.startsWith("/whisper")) || (firstWord.equals("/w")))
 			{
-				chatType = ChatType.Whisper;
+				localType = ChatType.Whisper;
 				style = STYLE_ACTION;
 				// Send the message without the /whisper command
-				message = shortMessage;
+				localMessage = shortMessage;
 				shortMessage = " whispers: " + shortMessage;
 			} 
 			else if (firstWord.length() > 1)
@@ -203,7 +203,7 @@ public class LocalChannel extends AbstractChannel
 
 				if (channel != 0)
 				{
-					message = shortMessage;
+					localMessage = shortMessage;
 					// Remove the channel command from the message
 					shortMessage = "(" + channel + ") " + shortMessage;
 				}
@@ -224,7 +224,7 @@ public class LocalChannel extends AbstractChannel
 		}
 
 		// Send the message.
-		_Client.Self.Chat(message, channel, chatType);
+		_Client.Self.Chat(localMessage, channel, localType);
 	}
 	
 	protected void triggerTyping(boolean start) throws Exception
@@ -239,7 +239,7 @@ public class LocalChannel extends AbstractChannel
 			jScrpAttendents = new JScrollPane();
 			add(jScrpAttendents, BorderLayout.EAST);
 
-			JList listAttendents = new JList();
+			JList<String> listAttendents = new JList<String>();
 			listAttendents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jScrpAttendents.setViewportView(listAttendents);
 		}

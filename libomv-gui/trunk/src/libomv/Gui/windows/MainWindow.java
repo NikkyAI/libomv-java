@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2014, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -148,7 +148,7 @@ public class MainWindow extends JFrame implements MainControl
 		comp.addActionListener(actionListener);
 	}
 
-	static public void setAction(JComboBox comp, ActionListener actionListener, String actionCommand)
+	static public void setAction(JComboBox<?> comp, ActionListener actionListener, String actionCommand)
 	{
 		if (actionCommand != null)
 		{
@@ -209,7 +209,7 @@ public class MainWindow extends JFrame implements MainControl
 		String action = e.getActionCommand();
 		if (action.equals(MainControl.cmdAbout))
 		{
-			AboutDialog about = new AboutDialog((JFrame)this);
+			AboutDialog about = new AboutDialog(this);
 			about.setVisible(true);			
 		}
 		else if (action.equals(MainControl.cmdSettings))

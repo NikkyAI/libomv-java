@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2011, Frederick Martian
+ * Copyright (c) 2010-2014, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,9 +85,9 @@ public class LoginPane extends JPanel implements ActionListener
 	private JPasswordField jPwdPassword;
 	private JButton jBtnLogin;
 	private JLabel jLblGridSelector;
-	private JComboBox jcbGridSelector;
+	private JComboBox<GridInfo> jcbGridSelector;
 	private JLabel jLblLocation;
-	private JComboBox jcbLocation;
+	private JComboBox<String> jcbLocation;
 	private JButton jBtnGrids;
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
@@ -453,22 +453,22 @@ public class LoginPane extends JPanel implements ActionListener
 		return jBtnLogin;
 	}
 
-	private JComboBox getJcbGridSelector()
+	private JComboBox<GridInfo> getJcbGridSelector()
 	{
 		if (jcbGridSelector == null)
 		{
-			jcbGridSelector = new JComboBox(_Client.getGridInfos());
+			jcbGridSelector = new JComboBox<GridInfo>(_Client.getGridInfos());
 			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid());
 			MainWindow.setAction(jcbGridSelector, this, cmdGrid);
 		}
 		return jcbGridSelector;
 	}
 
-	private JComboBox getJcbStartLocation()
+	private JComboBox<String> getJcbStartLocation()
 	{
 		if (jcbLocation == null)
 		{
-			jcbLocation = new JComboBox();
+			jcbLocation = new JComboBox<String>();
 			jcbLocation.setEditable(true);
 			jcbLocation.addItem("Last");
 			jcbLocation.addItem("Home");
@@ -582,7 +582,7 @@ public class LoginPane extends JPanel implements ActionListener
 	 *            The label associated with the component
 	 * @return True if valid, otherwise false
 	 */
-	private boolean validateField(JTextComponent component, JLabel associatedLabel)
+	private static boolean validateField(JTextComponent component, JLabel associatedLabel)
 	{
 		// If this is a text field..
 		if (component instanceof JTextField)

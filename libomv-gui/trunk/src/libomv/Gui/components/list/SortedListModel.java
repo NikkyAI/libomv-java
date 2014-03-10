@@ -20,6 +20,8 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import libomv.GroupManager.Group;
+
 /**
  * SortedListModel decorates an unsorted ListModel to provide a sorted model.
  * You can create a SortedListModel from models you already have. Place the
@@ -28,7 +30,7 @@ import javax.swing.event.ListDataListener;
  * 
  * @author John O'Conner
  */
-public class SortedListModel extends AbstractListModel
+public class SortedListModel extends AbstractListModel<Group>
 {
 	// The serialisation UID
 	private static final long serialVersionUID = 9161658455000735352L;
@@ -40,7 +42,7 @@ public class SortedListModel extends AbstractListModel
 	 * @param model
 	 *            the underlying, unsorted ListModel
 	 */
-	public SortedListModel(ListModel model)
+	public SortedListModel(ListModel<Group> model)
 	{
 		this(model, SortOrder.ASCENDING, null);
 	}
@@ -54,7 +56,7 @@ public class SortedListModel extends AbstractListModel
 	 * @param sortOrder
 	 *            that should be used
 	 */
-	public SortedListModel(ListModel model, SortOrder sortOrder)
+	public SortedListModel(ListModel<Group> model, SortOrder sortOrder)
 	{
 		this(model, sortOrder, null);
 	}
@@ -68,7 +70,7 @@ public class SortedListModel extends AbstractListModel
 	 * @param comp
 	 * 
 	 */
-	public SortedListModel(ListModel model, SortOrder sortOrder, Comparator<Object> comperator)
+	public SortedListModel(ListModel<Group> model, SortOrder sortOrder, Comparator<Object> comperator)
 	{
 		unsortedModel = model;
 		unsortedModel.addListDataListener(new ListDataListener()
@@ -121,10 +123,10 @@ public class SortedListModel extends AbstractListModel
 	 * @return element in the original model to which our entry points
 	 */
 	@Override
-	public Object getElementAt(int index) throws IndexOutOfBoundsException
+	public Group getElementAt(int index) throws IndexOutOfBoundsException
 	{
 		int modelIndex = toUnsortedModelIndex(index);
-		Object element = unsortedModel.getElementAt(modelIndex);
+		Group element = unsortedModel.getElementAt(modelIndex);
 		return element;
 	}
 
@@ -383,11 +385,11 @@ public class SortedListModel extends AbstractListModel
 	}
 
 	private List<SortedListEntry> sortedModel;
-	private ListModel unsortedModel;
+	private ListModel<Group> unsortedModel;
 	private Comparator<Object> comparator;
 	private SortOrder sortOrder;
 
-	public ListModel getUnsortedModel()
+	public ListModel<Group> getUnsortedModel()
 	{
 		return unsortedModel;
 	}

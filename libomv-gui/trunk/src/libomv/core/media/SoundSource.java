@@ -114,19 +114,19 @@ public class SoundSource
 
 	public int write(SourceDataLine line, int length) throws IOException
 	{
-		int bytesRead = 0, bytesWritten = 0;
+		int bytesRead = 0, bytesWritten = 0, localLength = length;
 		if (loopCount < 0 || loopCount > 1)
 		{
 			/* We are supposed to be looping */
 			if (din != null)
 			{
 				/* First time executing, read the input stream and store it in our internal buffer */
-		        int newcount = bufLength + length;
+		        int newcount = bufLength + localLength;
 				if (newcount > data.length)
 				{
 		            data = Arrays.copyOf(data, Math.max(data.length << 1, newcount));
 				}
-				bytesRead = din.read(data, bufLength, length);
+				bytesRead = din.read(data, bufLength, localLength);
 				if (bytesRead >= 0)
 				{
 					bufLength += bytesRead;
@@ -139,7 +139,7 @@ public class SoundSource
 			}
 			if (bufOffset < bufLength)
 			{
-				length = Math.min(length, bufLength - bufOffset);
+				localLength = Math.min(length, bufLength - bufOffset);
 			}
 			else
 			{
@@ -156,7 +156,7 @@ public class SoundSource
 			}
 			if (loopCount != 0)
 			{
-				bytesWritten = line.write(data, bufOffset, length);
+				bytesWritten = line.write(data, bufOffset, localLength);
 				if (bytesWritten > 0)
 				{
 					bufOffset += bytesWritten;
@@ -165,21 +165,19 @@ public class SoundSource
 			}
 			return 0;
 		}
-		else
+
 		{
+			bytesRead = din.read(data, 0, Math.min(data.length, localLength));
+			if (bytesRead > 0)
 			{
-				bytesRead = din.read(data, 0, Math.min(data.length, length));
+				bytesRead = line.write(data, 0, bytesRead);
 				if (bytesRead > 0)
 				{
-					bytesRead = line.write(data, 0, bytesRead);
-					if (bytesRead > 0)
-					{
-						bytesWritten += bytesRead;
-					}
+					bytesWritten += bytesRead;
 				}
 			}
-			while (bytesRead > 0 && bytesWritten < length);
-			return bytesWritten;
 		}
+		while (bytesRead > 0 && bytesWritten < localLength);
+		return bytesWritten;
 	}
 }

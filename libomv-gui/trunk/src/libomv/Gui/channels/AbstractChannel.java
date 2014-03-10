@@ -279,7 +279,7 @@ public abstract class AbstractChannel extends JPanel
 		if (message != null && !message.isEmpty())
 		{
 			tempStart = styledDocument.getLength();
-			styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(style == null ? style = STYLE_SYSTEM : style));
+			styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(style == null ? STYLE_SYSTEM : style));
 			tempLen = message.length();
 		}
 	}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2012, Frederick Martian
+ * Copyright (c) 2009-2014, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -368,6 +368,8 @@ public class CommWindow extends JFrame
 						}
 		            });
 					break;
+				default:
+					break;
 			}
 			
 			if (muted)
@@ -423,6 +425,8 @@ public class CommWindow extends JFrame
 						    				case Whisper:
 						    					localMessage.append(" whispers");
 						    					break;
+						    				default:
+						    				    break;		
 						            	}
 						            	localMessage.append(": ");
 						                if (sourceType == ChatSourceType.Agent && !message.startsWith("/") && _Main.getStateControl().RLV.restrictionActive("recvchat", sourceID.toString()))
@@ -455,6 +459,8 @@ public class CommWindow extends JFrame
 						                    {
 						                        style = AbstractChannel.STYLE_OBJECT;
 						                    }
+						                    break;
+						                default:
 						                    break;
 						            }
 					                channel.receiveMessage(null, sourceID, fromName, localMessage.toString(), style);		
@@ -601,6 +607,8 @@ public class CommWindow extends JFrame
 			                		Logger.Log("Inventory offered. Dialog not yet implemented", LogLevel.Warning, _Client);
 			                	}
 			                    break;
+			                default:
+			                	break;
 			            }
 					}
 					catch (Exception ex)

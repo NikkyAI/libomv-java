@@ -303,7 +303,8 @@ public class FriendList extends JPanel implements ActionListener
                 		return info.getCanSeeThemOnMap();
                 	case 7:
                 		return info.getCanModifyTheirObjects();
-            	}
+                	default:
+                }
             }
             return null;
         }
@@ -383,6 +384,7 @@ public class FriendList extends JPanel implements ActionListener
                 			updateRights(info, row, col);
                 		}
                 		break;
+                	default:
              	}
             }
         }
@@ -494,6 +496,8 @@ public class FriendList extends JPanel implements ActionListener
 	            		break;
 	            	case 7:
 	            		column.setHeaderValue(canEditTheirs);
+	            		break;
+	            	default:
 	            		break;
 	            }
 	            if (i != 1)
@@ -802,7 +806,7 @@ public class FriendList extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		final FriendInfo info = getSelectedFriendRow();
+		FriendInfo info = getSelectedFriendRow();
 		if (info != null)
 		{
 			if (e.getActionCommand().equals(cmdPayTo))
@@ -833,7 +837,17 @@ public class FriendList extends JPanel implements ActionListener
 				{
 					for (int selection : getJFriendsList().getSelectedColumns())
 					{
-						
+						info = _Friends.getFriend(jLFriendsList.convertRowIndexToModel(selection));
+						// Only allow creation of a chat window if the avatar name is resolved.
+						if (info.getName() != null && !info.getName().isEmpty())
+						{
+							if (_Comm.getChannel(info.getID()) == null)
+							{
+								PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(), new UUID());
+								_Comm.addChannel(channel);
+							}
+							_Comm.setFocus(null, info.getID());
+						}						
 					}
 				}
 			}
