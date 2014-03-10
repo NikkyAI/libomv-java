@@ -80,7 +80,7 @@ public class RegionInfoCommand extends Command
 		return usage;	
     }
 	
-	private String formatRegionInfo(Simulator sim)
+	private static String formatRegionInfo(Simulator sim)
 	{
         StringBuilder output = new StringBuilder();
         output.append("Region name: " + sim.getSimName() + "\n");

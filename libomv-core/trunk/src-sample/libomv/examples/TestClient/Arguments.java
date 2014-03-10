@@ -105,6 +105,8 @@ public class Arguments
 
                     Parameter = null;
                     break;
+                default:
+                	break;
             }
         }
         // In case a parameter is still waiting

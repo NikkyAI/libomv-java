@@ -65,7 +65,7 @@ public class TreeCommand extends Command
 	    return usage();
 	}
     
-    private String usage()
+    private static String usage()
     {
         StringBuilder usage = new StringBuilder("Usage: tree ");
         for (Tree value : Tree.values())

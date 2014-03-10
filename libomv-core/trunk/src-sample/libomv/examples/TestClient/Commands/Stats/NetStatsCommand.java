@@ -122,14 +122,15 @@ public class NetStatsCommand extends Command
     public String formatBytes(long bytes)
     {
         final int scale = 1024;
+        long localBytes = bytes;
         String[] orders = new String[] {"Bytes", "KB", "MB"};
         for (String order : orders)
         {
-            if (bytes < scale)
-                return String.format("%d %s", bytes, order);
+            if (localBytes < scale)
+                return String.format("%d %s", localBytes, order);
 
-            bytes /= scale;
+            localBytes /= scale;
         }
-        return String.format("%d GB", bytes);
+        return String.format("%d GB", localBytes);
     }
 }

@@ -328,7 +328,7 @@ public class NotationLLSDTests extends TestCase
         assertEquals("A" + "\u00ea" + "\u00f1" + "\u00fc" + "C", llsdNine.AsString());
     }
 
-    private void DoSomeStringSerializingActionsAndAsserts(String s) throws IOException, ParseException
+    static private void DoSomeStringSerializingActionsAndAsserts(String s) throws IOException, ParseException
     {
         OSD llsdOne = OSD.FromString(s);
         String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Notation);

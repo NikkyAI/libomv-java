@@ -33,7 +33,6 @@ public class InstallCert {
 	public static void main(String[] args) throws Exception {
 		
 //		args = new String[]{"login.agni.lindenlab.com"};
-		args = new String[]{"orderkay.com:10000"};
 		String host;
 		int port;
 

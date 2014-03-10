@@ -27,14 +27,15 @@ package libomv.test;
 import libomv.GridClient;
 import libomv.GridClient.GridInfo;
 
-public class gridsel
+public class GridSelector
 {
 	// The main entry point for the application.
 	static public void main(String[] args)
 	{
 		try
 		{
-			gridsel grid = new gridsel();
+			GridSelector grid = new GridSelector();
+			grid = null;
 		}
 		catch (Exception e)
 		{
@@ -42,7 +43,7 @@ public class gridsel
 		}
 	}
 
-	public gridsel() throws Exception
+	public GridSelector() throws Exception
 	{
 		GridClient client = new GridClient();
 		System.out.println(client.dumpGridlist());

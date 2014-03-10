@@ -43,7 +43,7 @@ public class PlayAnimationCommand extends Command
         Category = CommandCategory.Appearance;                        
     }
 
-    private String usage()
+    private static String usage()
     {
         String usage = "Usage:\n" +
             "\tplay list - list the built in animations\n" +

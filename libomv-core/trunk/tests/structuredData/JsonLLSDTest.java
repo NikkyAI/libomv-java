@@ -270,7 +270,7 @@ public class JsonLLSDTest extends TestCase
         assertEquals("aouAOUhsdjklfghskldjfghqeiurtzwieortzaslxfjkgh", llsdEight.AsString());
     }
 
-    private void DoSomeStringSerializingActionsAndAsserts(String s) throws IOException, ParseException
+    static private void DoSomeStringSerializingActionsAndAsserts(String s) throws IOException, ParseException
     {
         OSD llsdOne = OSD.FromString(s);
         String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);

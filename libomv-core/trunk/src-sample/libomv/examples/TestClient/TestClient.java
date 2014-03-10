@@ -229,18 +229,19 @@ public class TestClient extends GridClient implements PacketCallback
 	public void printResponse(String response, UUID toAgent) throws Exception
 	{
 		int length = response.length() - 1;
+        String localResponse = response;
 
 		if (toAgent != null && toAgent.equals(MasterKey))
 		{
-			if (response.charAt(length) == '\n')
-				response = response.substring(0, length);
-			Self.InstantMessage(toAgent, response);
+			if (localResponse.charAt(length) == '\n')
+				localResponse = response.substring(0, length);
+			Self.InstantMessage(toAgent, localResponse);
 		}
 		else
 		{
-			if (response.charAt(length) != '\n')
-				response += "\n";
-			System.out.println(response);
+			if (localResponse.charAt(length) != '\n')
+				localResponse += "\n";
+			System.out.println(localResponse);
 		}
 	}
 	

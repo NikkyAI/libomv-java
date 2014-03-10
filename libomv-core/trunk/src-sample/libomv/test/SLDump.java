@@ -39,7 +39,7 @@ import libomv.packets.PacketType;
 import libomv.types.PacketCallback;
 import libomv.utils.Callback;
 
-public class sldump implements PacketCallback
+public class SLDump implements PacketCallback
 {
 	private boolean disconnected = false;
 
@@ -78,10 +78,10 @@ public class sldump implements PacketCallback
 			protocol.PrintMap();
 			return;
 		}
-		sldump temp = new sldump(args);
+		SLDump temp = new SLDump(args);
 	}
 
-	public sldump(String[] args)
+	public SLDump(String[] args)
 	{
 		Callback<LoginProgressCallbackArgs> loginResp = new LoginProgressHandler();
 		Callback<DisconnectedCallbackArgs> disconnect = new DisconnectedHandler();
