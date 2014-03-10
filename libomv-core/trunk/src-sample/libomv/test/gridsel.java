@@ -34,7 +34,7 @@ public class gridsel
 	{
 		try
 		{
-			new gridsel();
+			gridsel grid = new gridsel();
 		}
 		catch (Exception e)
 		{

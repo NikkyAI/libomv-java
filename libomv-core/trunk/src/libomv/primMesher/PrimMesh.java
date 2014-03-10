@@ -97,7 +97,7 @@ public class PrimMesh
                     steps += (int)(twistTotalAbs * 3.66); //  dahlia's magic number
 
                 float start = -0.5f;
-                float stepSize = length / (float)steps;
+                float stepSize = length / steps;
                 float percentOfPathMultiplier = stepSize * 0.999999f;
                 float xOffset = this.topShearX * this.pathCutBegin;
                 float yOffset = this.topShearY * this.pathCutBegin;
@@ -709,7 +709,7 @@ public class PrimMesh
 
                         float u1 = newLayer.us.get(uIndex);
                         float u2 = 1.0f;
-                        if (uIndex < (int)newLayer.us.size() - 1)
+                        if (uIndex < newLayer.us.size() - 1)
                             u2 = newLayer.us.get(uIndex + 1);
 
                         if (whichVert == cut1Vert || whichVert == cut2Vert)

@@ -48,10 +48,7 @@ public class CrouchCommand extends Command
         {
             return "Started crouching";
         }
-        else
-        {
-            return "Stopped crouching";
-        }
+        return "Stopped crouching";
     }
 
 }

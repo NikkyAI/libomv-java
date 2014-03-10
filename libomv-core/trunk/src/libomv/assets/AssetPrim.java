@@ -1124,7 +1124,7 @@ public class AssetPrim extends AssetItem
                     CreationDate = item.CreationDate;
                     CreatorID = item.Permissions.creatorID;
                     Description = item.Description;
-                    Flags = (int)item.ItemFlags;
+                    Flags = item.ItemFlags;
                     GroupID = item.Permissions.groupID;
                     ID = item.itemID;
                     InvType = item.getType() == InventoryType.Unknown && item.assetType == AssetType.LSLText ? InventoryType.LSL : item.getType(); ;
@@ -1455,8 +1455,8 @@ public class AssetPrim extends AssetItem
             Particles.BurstRate = obj.ParticleSys.BurstRate;
             Particles.BurstSpeedMax = obj.ParticleSys.BurstSpeedMax;
             Particles.BurstSpeedMin = obj.ParticleSys.BurstSpeedMin;
-            Particles.DataFlags = (int)obj.ParticleSys.PartDataFlags;
-            Particles.Flags = (int)obj.ParticleSys.PartFlags;
+            Particles.DataFlags = obj.ParticleSys.PartDataFlags;
+            Particles.Flags = obj.ParticleSys.PartFlags;
             Particles.InnerAngle = obj.ParticleSys.InnerAngle;
             Particles.MaxAge = obj.ParticleSys.MaxAge;
             Particles.OuterAngle = obj.ParticleSys.OuterAngle;
@@ -1465,7 +1465,7 @@ public class AssetPrim extends AssetItem
             Particles.ParticleMaxAge = obj.ParticleSys.MaxAge;
             Particles.ParticleStartColor = obj.ParticleSys.PartStartColor;
             Particles.ParticleStartScale = new Vector2(obj.ParticleSys.PartStartScaleX, obj.ParticleSys.PartStartScaleY);
-            Particles.Pattern = (int)obj.ParticleSys.Pattern;
+            Particles.Pattern = obj.ParticleSys.Pattern;
             Particles.StartAge = obj.ParticleSys.StartAge;
             Particles.TargetID = obj.ParticleSys.Target;
             Particles.TextureID = obj.ParticleSys.Texture;

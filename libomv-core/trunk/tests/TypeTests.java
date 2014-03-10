@@ -118,7 +118,7 @@ public class TypeTests extends TestCase
         for (Entry<String, Double> kvp : testNumbers.entrySet())
         {
             double testNumber = kvp.getValue();
-            double testNumber2 = (double)((float)testNumber);
+            double testNumber2 = ((float)testNumber);
             boolean noPrecisionLoss = testNumber == testNumber2;
 
             Vector3 a = new Vector3(

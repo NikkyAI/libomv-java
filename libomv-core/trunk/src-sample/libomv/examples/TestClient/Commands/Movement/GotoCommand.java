@@ -91,8 +91,9 @@ public class GotoCommand extends Command
 			}
         }, true);
         if (Client.Self.Teleport(sim, new Vector3(x, y, z)))
+        {
             return "Teleported to " + Client.Network.getCurrentSim().getName();
-        else
-            return "Teleport failed: " + message;
+        }
+        return "Teleport failed: " + message;
 	}
 }

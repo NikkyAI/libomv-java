@@ -45,10 +45,7 @@ public class GoHomeCommand extends Command
 		{
 			return "Teleport Home Succesful";
 		}
-		else
-		{	
-			return "Teleport Home Failed";
-		}
+		return "Teleport Home Failed";
     }
 
 }

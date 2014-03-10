@@ -72,9 +72,6 @@ public class AvatarInfoCommand extends Command
 
             return output.toString();
         }
-        else
-        {
-            return "No nearby avatar with the name " + targetName;
-        }
+        return "No nearby avatar with the name " + targetName;
     }
 }

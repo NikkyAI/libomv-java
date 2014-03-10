@@ -1389,11 +1389,11 @@ public class EstateTools implements PacketCallback, CapsCallback
 
             if (type == LandStatReportType.TopScripts)
             {
-                OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs((int)p.RequestData.TotalObjectCount, Tasks)); 
+                OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(p.RequestData.TotalObjectCount, Tasks)); 
             }
             else if (type == LandStatReportType.TopColliders)
             {
-                OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs((int) p.RequestData.TotalObjectCount, Tasks)); 
+                OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(p.RequestData.TotalObjectCount, Tasks)); 
             }
 
             /*
@@ -1433,11 +1433,11 @@ public class EstateTools implements PacketCallback, CapsCallback
 
         if (type == LandStatReportType.TopScripts)
         {
-            OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs((int)m.TotalObjectCount, Tasks)); 
+            OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(m.TotalObjectCount, Tasks)); 
         }
         else if (type == LandStatReportType.TopColliders)
         {
-            OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs((int)m.TotalObjectCount, Tasks)); 
+            OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(m.TotalObjectCount, Tasks)); 
         }
     }
     // #endregion

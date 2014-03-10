@@ -484,7 +484,7 @@ public class XmlLLSDTest extends TestCase
        assertTrue(Arrays.equals(binary, llsdBinaryDS.AsBinary()));
    }
 
-    /// Test that undefened elements are parsed correctly.
+    /// Test that undefined elements are parsed correctly.
     /// Currently this just checks that there is no error since undefined has no
     /// value and there is no SD child class for Undefined elements - the
     /// current implementation generates an instance of SD
@@ -500,7 +500,7 @@ public class XmlLLSDTest extends TestCase
         byte[] bytes = testSD.getBytes(Helpers.UTF8_ENCODING);
         theSD = OSDParser.deserialize(bytes);
 
-        assertTrue(theSD instanceof OSD);
+        assertTrue(theSD != null);
     }
 
     /// Test that various URI representations are parsed correctly.

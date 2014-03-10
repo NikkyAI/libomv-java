@@ -1909,12 +1909,9 @@ public class AppearanceManager implements PacketCallback
                 // TODO: Set local visual params and baked textures based on the result here
                 return true;
             }
-            else
+            if (result.containsKey("error"))
             {
-                if (result.containsKey("error"))
-                {
-                    msg += ": " + result.get("error").AsString();
-                }
+                msg += ": " + result.get("error").AsString();
             }
         }
         capsRequest.shutdown(true);

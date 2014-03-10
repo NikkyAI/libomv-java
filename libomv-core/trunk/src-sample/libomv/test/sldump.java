@@ -78,7 +78,7 @@ public class sldump implements PacketCallback
 			protocol.PrintMap();
 			return;
 		}
-		new sldump(args);
+		sldump temp = new sldump(args);
 	}
 
 	public sldump(String[] args)

@@ -53,17 +53,12 @@ public class GotoLandmarkCommand extends Command
         {
             return "Invalid UUID";
         }
-        else
-        {
-            System.out.println("Teleporting to " + landmark.toString());
-        }
+        System.out.println("Teleporting to " + landmark.toString());
+
         if (Client.Self.Teleport(landmark))
         {
             return "Teleport Succesful";
         }
-        else
-        {
-            return "Teleport Failed";
-        }
+        return "Teleport Failed";
     }
 }

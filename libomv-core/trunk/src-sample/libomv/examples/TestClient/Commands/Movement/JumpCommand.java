@@ -48,9 +48,6 @@ public class JumpCommand extends Command
         {
             return "Started jumping";
         }
-        else
-        {
-            return "Stopped jumping";
-        }
+        return "Stopped jumping";
 	}
 }

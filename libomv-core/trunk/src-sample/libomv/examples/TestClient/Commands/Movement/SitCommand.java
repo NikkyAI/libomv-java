@@ -63,9 +63,6 @@ public class SitCommand extends Command
 
             return "Sat on " + closest.ID + " (" + closest.LocalID + "). Distance: " + closestDistance;
         }
-        else
-        {
-            return "Couldn't find a nearby prim to sit on";
-        }
+        return "Couldn't find a nearby prim to sit on";
 	}
 }

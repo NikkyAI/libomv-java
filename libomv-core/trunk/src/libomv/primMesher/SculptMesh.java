@@ -80,8 +80,8 @@ public class SculptMesh implements Cloneable
 
         try
         {
-            xStep = (xEnd - xBegin) / (float)(numXElements - 1);
-            yStep = (yEnd - yBegin) / (float)(numYElements - 1);
+            xStep = (xEnd - xBegin) / (numXElements - 1);
+            yStep = (yEnd - yBegin) / (numYElements - 1);
 
             uStep = 1.0f / (numXElements - 1);
             vStep = 1.0f / (numYElements - 1);

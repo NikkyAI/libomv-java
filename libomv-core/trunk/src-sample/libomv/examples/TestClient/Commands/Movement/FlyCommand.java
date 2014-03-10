@@ -48,9 +48,6 @@ public class FlyCommand extends Command
         {
             return "Started flying";
         }
-        else
-        {
-            return "Stopped flying";
-        }
+        return "Stopped flying";
     }
 }

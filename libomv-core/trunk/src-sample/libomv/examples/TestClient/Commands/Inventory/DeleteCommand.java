@@ -75,13 +75,10 @@ public class DeleteCommand extends Command
                 Client.Inventory.MoveFolder(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);  
                 return String.format("Moved folder %s to Trash", node.name);
         	}
-        	else
-        	{
-        		// move the item to the trash folder
-        		Client.Inventory.MoveItem(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);
-                return String.format("Moved item %s to Trash", node.name);
-        	}
-        }
+       		// move the item to the trash folder
+       		Client.Inventory.MoveItem(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);
+            return String.format("Moved item %s to Trash", node.name);
+         }
         return String.format("Found %d items", found.size());
     }
 }

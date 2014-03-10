@@ -57,6 +57,14 @@ public class BotManager implements BotKilledHandler
 	}
 
 	public static void main(String args) {
-		new BotManager();
+		BotManager manager = new BotManager();
+		try
+		{
+		    manager.AddBot("Frederick", "Martian", "");
+		}
+		catch (Exception ex)
+		{
+			
+		}
 	}
 }

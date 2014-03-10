@@ -49,9 +49,10 @@ public class HelpCommand extends Command
         if (args.length > 0)
         {
             if (Client.Commands.containsKey(args[0]))
+            {
                 return Client.Commands.get(args[0]).Description;
-            else
-                return "Command " + args[0] + " Does not exist. \"help\" to display all available commands.";
+            }
+            return "Command " + args[0] + " Does not exist. \"help\" to display all available commands.";
         }
 		StringBuilder result = new StringBuilder();
         TreeMap<CommandCategory, ArrayList<Command>> CommandTree = new TreeMap<CommandCategory, ArrayList<Command>>();

@@ -5062,7 +5062,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			public void completed(OSD result)
 			{
                 OSDMap map = (OSDMap)((OSDMap)result).get("access_prefs");
-                agentAccess = ((OSDMap)map).get("max").AsString();
+                agentAccess = map.get("max").AsString();
                 Logger.Log("Max maturity access set to " + agentAccess, LogLevel.Info, _Client );
 			}
 

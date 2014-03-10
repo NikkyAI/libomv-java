@@ -82,9 +82,6 @@ public class AgentLocationsCommand extends Command
             }
             return ret.toString();
         }
-        else
-        {
-            return "Failed to fetch agent locations";
-        }
+        return "Failed to fetch agent locations";
     }
 }

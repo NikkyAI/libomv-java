@@ -213,16 +213,14 @@ public class Helpers
 	{
 		if (val < 0)
 			return (int) Math.ceil(val - 0.5f);
-		else
-			return (int) Math.floor(val + 0.5f);
+		return (int) Math.floor(val + 0.5f);
 	}
 
 	public static int roundFromZero(double val)
 	{
 		if (val < 0)
 			return (int) Math.ceil(val - 0.5f);
-		else
-			return (int) Math.floor(val + 0.5f);
+		return (int) Math.floor(val + 0.5f);
 	}
 
 	/** Test if a single precision float is a finite number */
@@ -2079,8 +2077,7 @@ public class Helpers
 				else if	(s.contains("inf"))
 					if (s.charAt(0) == '-')
 						return Float.NEGATIVE_INFINITY;
-					else
-						return Float.POSITIVE_INFINITY;
+					return Float.POSITIVE_INFINITY;
 			}
 		}
 		return 0.0f;
@@ -2102,8 +2099,7 @@ public class Helpers
 				else if	(s.contains("inf"))
 					if (s.charAt(0) == '-')
 						return Double.NEGATIVE_INFINITY;
-					else
-						return Double.POSITIVE_INFINITY;
+					return Double.POSITIVE_INFINITY;
 			}
 		}
 		return 0.0d;

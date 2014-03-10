@@ -86,10 +86,7 @@ public class IMCommand extends Command
             Client.Self.InstantMessage(id, message);
             return "Instant messaged " + ToAvatarName + " {" + id + "} with message: " + message;
         }
-        else
-        {
-            return "Name lookup for " + ToAvatarName + " failed";
-        }
+        return "Name lookup for " + ToAvatarName + " failed";
     }
 
     private class Avatars_AvatarPickerReply implements Callback<AvatarPickerReplyCallbackArgs>

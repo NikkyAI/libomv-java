@@ -3187,11 +3187,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				{
 					if (update.Avatar)
 					{
-						obj = (Primitive) getAvatar(simulator, update.LocalID, null, null);
+						obj = getAvatar(simulator, update.LocalID, null, null);
 					}
 					else
 					{
-						obj = (Primitive) getPrimitive(simulator, update.LocalID, null, null);
+						obj = getPrimitive(simulator, update.LocalID, null, null);
 					}
 				}
 

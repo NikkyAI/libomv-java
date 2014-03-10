@@ -84,9 +84,6 @@ public class ObjectInventoryCommand extends Command
             }
             return result.toString();
         }
-        else
-        {
-            return "Failed to download task inventory for " + Helpers.LocalIDToString(objectLocalID);
-        }
+        return "Failed to download task inventory for " + Helpers.LocalIDToString(objectLocalID);
     }
 }

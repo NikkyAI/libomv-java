@@ -73,13 +73,13 @@ public class OSDDate extends OSD
 	@Override
 	public long AsLong()
 	{
-		return (long)(value / 1000);
+		return (value / 1000);
 	}
 
 	@Override
 	public long AsULong()
 	{
-		return (long)(value / 1000) & 0xffffffffffffffffl;
+		return (value / 1000) & 0xffffffffffffffffl;
 	}
 
 	@Override
