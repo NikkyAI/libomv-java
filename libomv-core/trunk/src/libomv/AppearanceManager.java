@@ -1314,6 +1314,8 @@ public class AppearanceManager implements PacketCallback
                 case Blend:
                     res = Color4.lerp(res, paramColor, p.Value);
                     break;
+                default:
+                	break;
             }
         }
         return res;
@@ -2021,6 +2023,8 @@ public class AppearanceManager implements PacketCallback
                     case 842:
                         agentSizeVPHipLength = paramValue;
                         break;
+                    default:
+                    	break;
                 }
 
                 if (vpIndex == nrParams) break;

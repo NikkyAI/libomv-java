@@ -234,6 +234,8 @@ public class GridClient
 					case 12:
 						string = directoryFee;
 						break;
+	                default:
+	                	break;
 				}
 				if (string != null)
 					hash ^= string.hashCode();
@@ -306,6 +308,8 @@ public class GridClient
 						string1 = directoryFee;
 						string2 = info.directoryFee;
 						break;
+	                default:
+	                	break;
 				}
 				if (string1 == null || !string1.equals(string2))
 				{

@@ -302,6 +302,8 @@ public class AssetGesture extends AssetItem
 
 					sb.append(waitflags + "\n");
 					break;
+                default:
+                	break;
 			}
 		}
 		AssetData = Helpers.StringToBytes(sb.toString());
@@ -391,6 +393,8 @@ public class AssetGesture extends AssetItem
 						wait.WaitForAnimation = (flags & 0x02) != 0;
 						Sequence.add(wait);
 						break;
+	                default:
+	                	break;
 				}
 			}
 			return true;

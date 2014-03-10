@@ -33,6 +33,7 @@ import icc.ICCProfileException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidParameterException;
 
 import jj2000.j2k.JJ2KExceptionHandler;
 import jj2000.j2k.decoder.ImgDecoder;
@@ -98,6 +99,8 @@ public class J2KImage extends ManagedImage
 					case 5:
 						ptrs[i] = Bump;
 						break;
+	                default:
+	                	throw new InvalidParameterException();
 				}
 			}
 			
@@ -493,6 +496,8 @@ public class J2KImage extends ManagedImage
 							dataSrc.getInternCompData(block, 0);
 							fillLine(block, scale[0], Red, off);
 							break;
+		                default:
+		                	throw new InvalidParameterException();
 					}
 				}
 			}

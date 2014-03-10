@@ -324,6 +324,8 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				}
 				serializer.endTag(null, TYPE_STRUCT);
 			    break;
+            default:
+            	break;
 		}
 	}
 

@@ -258,6 +258,8 @@ public final class LLSDXml extends OSDParser
 				}
 				writer.endTag(null, ARRAY_TAG);
 				break;
+			default:
+				break;
 		}
 	}
 

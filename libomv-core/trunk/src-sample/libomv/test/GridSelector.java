@@ -35,7 +35,6 @@ public class GridSelector
 		try
 		{
 			GridSelector grid = new GridSelector();
-			grid = null;
 		}
 		catch (Exception e)
 		{

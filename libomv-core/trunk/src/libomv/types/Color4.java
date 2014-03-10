@@ -488,7 +488,7 @@ public final class Color4
 			double sectorPos;
 
 			// The color wheel consists of 6 sectors.
-			// Figure out which sector you//re in.
+			// Figure out which sector we're in.
 			sectorPos = hue / 60d;
 			sectorNumber = (int) (Math.floor(sectorPos));
 
@@ -536,6 +536,8 @@ public final class Color4
 					r = value;
 					g = p;
 					b = q;
+					break;
+				default:
 					break;
 			}
 		}

@@ -261,6 +261,8 @@ public final class LLSDJson extends OSDParser
 				return parseArray(reader);
 			case mapBeginNotationMarker:
 				return parseMap(reader);
+			default:
+				break;
 		}
 		throw new ParseException("LLSD JSON parsing: Unexpected character '" + (char) character + "'.",
 				reader.getBytePosition());

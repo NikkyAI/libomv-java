@@ -63,6 +63,8 @@ public abstract class OSDParser
 				return new LLSDXml();
 			case Json:
 				return new LLSDJson();
+			default:
+				break;
 		}
 		return null;
 	}

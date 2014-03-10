@@ -332,6 +332,8 @@ public class ProtocolManager
 				return MediumMaps.getMapPacketByCommand(command);
 			case PacketFrequency.Low:
 				return LowMaps.getMapPacketByCommand(command);
+            default:
+            	break;
 		}
 
 		throw new Exception("Cannot find map for command \"" + command + "\" with frequency \"" + frequency + "\"");

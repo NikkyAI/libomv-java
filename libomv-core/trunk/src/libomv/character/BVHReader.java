@@ -571,6 +571,8 @@ public class BVHReader extends KeyFrameMotion
 		    		float vs[] = toFloat(i, line);
 		    		bvh.getMotion().getMotions().add(vs);
 		    		break;
+                default:
+                	break;
 		    }
 		}	
 	}

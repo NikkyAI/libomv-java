@@ -152,6 +152,8 @@ public class PacketHeader
 				return Data[7];
 			case PacketFrequency.High:
 				return Data[6];
+			default:
+				break;
 		}
 		return 0;
 	}
@@ -169,6 +171,8 @@ public class PacketHeader
 				break;
 			case PacketFrequency.High:
 				Data[6] = (byte) (value & 0xFF);
+				break;
+			default:
 				break;
 		}
 	}
@@ -191,6 +195,8 @@ public class PacketHeader
 				break;
 			case PacketFrequency.High:
 				this.length = 7;
+				break;
+			default:
 				break;
 		}
 
@@ -225,6 +231,8 @@ public class PacketHeader
 				Data[7] = (byte) 0xFF;
 			case PacketFrequency.Medium:
 				Data[6] = (byte) 0xFF;
+			default:
+				break;
 		}
 	}
 

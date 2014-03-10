@@ -1049,6 +1049,8 @@ public class Quaternion
 			case ZYX:
 				ret = multiply(multiply(zQ, yQ), xQ);
 				break;
+			default:
+				break;
 		}
 		return ret;
 	}

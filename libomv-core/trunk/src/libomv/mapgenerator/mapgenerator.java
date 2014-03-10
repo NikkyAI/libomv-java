@@ -36,7 +36,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import libomv.ProtocolManager;
 import libomv.ProtocolManager.FieldType;
 import libomv.ProtocolManager.MapBlock;
@@ -87,6 +86,8 @@ public class mapgenerator
 				return "byte";
 			case FieldType.Fixed:
 				return "byte[]";
+            default:
+            	break;
 		}
 		return null;
 	}
@@ -116,6 +117,8 @@ public class mapgenerator
 			case FieldType.Vector4:
 			case FieldType.Fixed:
 				return "null";
+			default:
+				break;
 		}
 		return null;
 	}
@@ -549,6 +552,7 @@ public class mapgenerator
 							writer.println("import libomv.types.UUID;");
 							variableField[field.type] = true;
 							break;
+							
 						case FieldType.Vector3:
 							writer.println("import libomv.types.Vector3;");
 							variableField[field.type] = true;
@@ -564,6 +568,8 @@ public class mapgenerator
 						case FieldType.Quaternion:
 							writer.println("import libomv.types.Quaternion;");
 							variableField[field.type] = true;
+							break;
+						default:
 							break;
 					}
 				}
@@ -1336,6 +1342,7 @@ public class mapgenerator
 				}
 			}
 
+			writer.println("                        default:\n                            break;");
 			writer.println("                    }\n                    break;\n"
 					+ "                case PacketFrequency.Medium:\n                    switch (id)\n                    {");
 
@@ -1349,6 +1356,7 @@ public class mapgenerator
 				}
 			}
 
+			writer.println("                        default:\n                            break;");
 			writer.println("                    }\n                    break;\n"
 					+ "                case PacketFrequency.High:\n                    switch (id)\n"
 					+ "                    {");
@@ -1363,8 +1371,10 @@ public class mapgenerator
 				}
 			}
 
-			writer.println("                    }\n                    break;\n            }\n\n"
-					+ "            return PacketType.Default;\n        }\n");
+			writer.println("                        default:\n                            break;");
+			writer.println("                    }\n                    break;");
+			writer.println("                default:\n                    break;\n            }");
+			writer.println("            return PacketType.Default;\n        }\n");
 
 			writer.println("        /**\n"
 					+ "         * Construct a packet in it's native class from a capability OSD structure\n"
@@ -1398,7 +1408,8 @@ public class mapgenerator
 							+ "Packet(_header,bytes);");
 				}
 			}
-			writer.println("                    }\n                case PacketFrequency.Medium:\n"
+			writer.println("                        default:\n                            break;");
+			writer.println("                    }\n                    break;\n                case PacketFrequency.Medium:\n"
 					+ "                    switch (_header.getID())\n                    {");
 			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
 			{
@@ -1409,7 +1420,8 @@ public class mapgenerator
 							+ "Packet(_header, bytes);");
 				}
 			}
-			writer.println("                    }\n                case PacketFrequency.High:\n"
+			writer.println("                        default:\n                            break;");
+			writer.println("                    }\n                    break;\n                case PacketFrequency.High:\n"
 					+ "                    switch (_header.getID())\n                    {");
 			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
 			{
@@ -1420,7 +1432,8 @@ public class mapgenerator
 							+ "Packet(_header, bytes);");
 				}
 			}
-			writer.println("                    }\n            }\n"
+			writer.println("                        default:\n                            break;");
+			writer.println("                    }\n                    break;\n                default:\n                    break;\n            }\n"
 					+ "            throw new Exception(\"Unknown packet ID\");\n        }\n");
 
 			// Write the packet classes

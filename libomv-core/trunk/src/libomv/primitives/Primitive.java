@@ -1794,6 +1794,8 @@ public class Primitive
 				case Mesh:
 					Sculpt = new SculptData(data, i, paramLength);
 					break;
+				default:
+					break;
 			}
 			i += paramLength;
 			totalLength += paramLength + 6;
