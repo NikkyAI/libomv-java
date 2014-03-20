@@ -258,6 +258,7 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("GetObjectCost"));
 			req.add(OSD.FromString("GetObjectPhysicsData"));
 			req.add(OSD.FromString("GetTexture"));
+			req.add(OSD.FromString("GroupAPIv1"));
 			req.add(OSD.FromString("GroupMemberData"));
 			req.add(OSD.FromString("GroupProposalBallot"));
 			req.add(OSD.FromString("HomeLocation"));

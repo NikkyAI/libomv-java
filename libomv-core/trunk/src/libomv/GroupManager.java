@@ -32,6 +32,7 @@ package libomv;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
@@ -651,6 +653,37 @@ public class GroupManager implements PacketCallback, CapsCallback
 		private static final long _mask = 0x3FFFFFFFFFFFL;
 	}
 
+	// Ban actions available for group members
+    public enum GroupBanAction
+    {
+        // Ban agent from joining a group
+        Ban(1),
+        // Remove restriction on agent jointing a group
+        Unban(2);
+
+        public static GroupBanAction setValue(int value)
+		{
+			for (GroupBanAction e : values())
+			{
+				if (e.val == value)
+					return e;
+			}
+			return Ban;
+		}
+
+		public int getValue()
+		{
+			return val;
+		}
+
+		private int val;
+
+		private GroupBanAction(int value)
+		{
+			val = value;
+		}
+    }
+
 	// #endregion Enums
 
 	private GridClient _Client;
@@ -701,6 +734,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 	public CallbackHandler<GroupNoticesListReplyCallbackArgs> OnGroupNoticesListReply = new CallbackHandler<GroupNoticesListReplyCallbackArgs>();
 
 	public CallbackHandler<GroupInvitationCallbackArgs> OnGroupInvitation = new CallbackHandler<GroupInvitationCallbackArgs>();
+
+	public CallbackHandler<BannedAgentsCallbackArgs> OnBannedAgents = new CallbackHandler<BannedAgentsCallbackArgs>();
 
 	public HashMap<UUID, Callback<GroupAccountDetails>> OnGroupAccountDetailsCallbacks = new HashMap<UUID, Callback<GroupAccountDetails>>();
 
@@ -1621,6 +1656,195 @@ public class GroupManager implements PacketCallback, CapsCallback
 		_Client.Network.sendPacket(p);
 	}
 
+	/**
+     * Gets the URI of the cpability for handling group bans
+     * 
+     * @param groupID UUID of the group
+	 * @throws URISyntaxException 
+     * @returns null, if the feature is not supported, or URI of the capability
+     */
+	public URI GetGroupAPIUri(UUID groupID) throws URISyntaxException
+    {
+         URI ret = _Client.Network.getCapabilityURI("GroupAPIv1");
+         if (ret != null)
+         {
+             ret = new URI(String.format("%s?group_id=%s", ret.toString(), groupID.toString()));
+         }
+         return ret;
+    }
+
+	/**
+     * Request a list of residents banned from joining a group
+     * 
+     * @param groupID UUID of the group
+	 * @throws URISyntaxException 
+	 * @throws IOReactorException 
+     */
+    public void RequestBannedAgents(UUID groupID) throws IOReactorException, URISyntaxException
+    {
+        RequestBannedAgents(groupID, null);
+    }
+
+	/**
+     * Request a list of residents banned from joining a group
+     * 
+     * @param groupID UUID of the group
+     * @param callback Callback on request completition
+	 * @throws URISyntaxException 
+	 * @throws IOReactorException 
+     */
+    public void RequestBannedAgents(final UUID groupID, final Callback<BannedAgentsCallbackArgs> callback) throws URISyntaxException, IOReactorException
+    {
+        class ClientCallback implements FutureCallback<OSD>
+        {
+        	@Override
+        	public void cancelled()
+        	{
+        		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
+        		if (callback != null)
+        		{
+        			try
+        			{
+        				callback.callback(ret);
+        			}
+        			catch (Exception ex) { }
+        		}
+        		OnBannedAgents.dispatch(ret);
+        	}
+        	
+        	@Override
+        	public void completed(OSD result)
+        	{
+        		UUID gid = ((OSDMap)result).get("group_id").AsUUID();
+        		OSDMap banList = (OSDMap)((OSDMap)result).get("ban_list");
+        		HashMap<UUID, Date> bannedAgents = new HashMap<UUID, Date>(banList.size());
+
+        		for (String id : banList.keySet())
+        		{
+        			UUID uid = new UUID(id);
+        			bannedAgents.put(uid, ((OSDMap)banList.get(uid)).get("ban_date").AsDate());
+        		}
+        		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(gid, true, bannedAgents);
+
+        		if (callback != null)
+        		{
+        			try
+        			{
+        				callback.callback(ret);
+        			}
+        			catch (Exception ex) { }
+        		}
+        		OnBannedAgents.dispatch(ret);
+        	}
+        	
+        	@Override
+        	public void failed(Exception ex)
+        	{
+        		Logger.Log("Failed to get a list of banned group members: " + ex.getMessage(), LogLevel.Warning, _Client);
+        		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
+        		if (callback != null)
+        		{
+        			try
+        			{
+        				callback.callback(ret);
+        			}
+        			catch (Exception ex1) { }
+        		}
+        		OnBannedAgents.dispatch(ret);
+			}
+        }
+
+        URI uri = GetGroupAPIUri(groupID);
+        if (uri == null) return;
+        CapsClient req = new CapsClient(_Client, "GroupAPIv1");
+        req.executeHttpGet(uri, null, new ClientCallback(),  _Client.Settings.CAPS_TIMEOUT);
+    }
+
+
+	/**
+     * Request that group of agents be banned or unbanned from the group
+     * 
+     * @param groupID UUID of the group
+     * @param action Ban/Unban action<
+     * @param agents Array of agents UUIDs to ban
+	 * @throws URISyntaxException 
+	 * @throws IOReactorException 
+     */
+    public void RequestBanAction(UUID groupID, GroupBanAction action, UUID[] agents) throws IOReactorException, URISyntaxException
+    {
+        RequestBanAction(groupID, action, agents, null);
+    }
+
+	/**
+     * Request that group of agents be banned or unbanned from the group
+     * 
+     * @param groupID UUID of the group
+     * @param action Ban/Unban action<
+     * @param agents Array of agents UUIDs to ban
+     * @param callback Callback on request completition
+	 * @throws URISyntaxException 
+	 * @throws IOReactorException 
+     */
+    public void RequestBanAction(final UUID groupID, GroupBanAction action, UUID[] agents, final Callback<CallbackArgs> callback) throws IOReactorException, URISyntaxException
+    {
+        class ClientCallback implements FutureCallback<OSD>
+        {
+        	@Override
+        	public void cancelled()
+        	{
+        		if (callback != null)
+        		{
+        			try
+        			{
+        				callback.callback(null);
+        			}
+        			catch (Exception ex) { }
+        		}
+        	}
+        	
+        	@Override
+        	public void completed(OSD result)
+        	{
+        		if (callback != null)
+        		{
+            		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, true, null);
+        			try
+        			{
+        				callback.callback(ret);
+        			}
+        			catch (Exception ex) { }
+        		}
+        	}
+        	
+        	@Override
+        	public void failed(Exception ex)
+        	{
+        		Logger.Log("Failed to ban or unban group members: " + ex.getMessage(), LogLevel.Warning, _Client);
+        		if (callback != null)
+        		{
+        			try
+        			{
+        				callback.callback(null);
+        			}
+        			catch (Exception ex1) { }
+        		}
+			}
+       }
+
+        URI uri = GetGroupAPIUri(groupID);
+        if (uri == null) return;
+
+        OSDMap request = new OSDMap();
+        request.put("ban_action", OSD.FromInteger(action.getValue()));
+        OSDArray banIDs = new OSDArray(agents.length);
+        for (UUID agent : agents)
+        {
+            banIDs.add(OSD.FromUUID(agent));
+        }
+        request.put("ban_ids", banIDs);
+        CapsClient req = new CapsClient(_Client, "GroupAPIv1");
+        req.executeHttpPost(uri, request, OSDFormat.Xml, new ClientCallback(), _Client.Settings.CAPS_TIMEOUT);
+    }
 	// #endregion
 
 	// #region Packet Handlers
@@ -2749,6 +2973,29 @@ public class GroupManager implements PacketCallback, CapsCallback
 			this.m_Fee = fee;
 		}
 	}
-	// #endregion CallbackArgs
 
+    // Result of the request for list of agents banned from a group
+    public class BannedAgentsCallbackArgs implements CallbackArgs
+    {
+        private final UUID mGroupID;
+        private final boolean mSuccess;
+        private final HashMap<UUID, Date> mBannedAgents;
+
+        // Indicates if list of banned agents for a group was successfully retrieved
+        public UUID getGroupID() { return mGroupID; }
+
+        // Indicates if list of banned agents for a group was successfully retrieved
+        public boolean getSuccess() { return mSuccess; }
+
+        // Array containing a list of UUIDs of the agents banned from a group
+        public HashMap<UUID, Date> getBannedAgents() { return mBannedAgents; }
+
+        public BannedAgentsCallbackArgs(UUID groupID, boolean success, HashMap<UUID, Date> bannedAgents)
+        {
+            this.mGroupID = groupID;
+            this.mSuccess = success;
+            this.mBannedAgents = bannedAgents;
+        }
+    }
+	// #endregion CallbackArgs
 }
