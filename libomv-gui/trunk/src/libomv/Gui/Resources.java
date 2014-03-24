@@ -218,9 +218,12 @@ public final class Resources
 	
 	private static String loadTextFile(InputStream is)
 	{
-		Scanner scanner = new Scanner(is, Helpers.UTF8_ENCODING).useDelimiter("\\A");
+		String retval = Helpers.EmptyString;
+		Scanner scanner = new Scanner(is, Helpers.UTF8_ENCODING);
+		scanner.useDelimiter("\\A");
 		if (scanner.hasNext())
-			return scanner.next();
-		return Helpers.EmptyString;
+			retval = scanner.next();
+		scanner.close();
+		return retval;
 	}
 }
