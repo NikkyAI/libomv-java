@@ -828,24 +828,20 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	public URI getCapabilityURI(String capability)
 	{
-		synchronized (_Simulators)
-		{
-			if (_CurrentSim != null)
-			{
-				return _CurrentSim.getCapabilityURI(capability);
-			}
-		}
-		return null;
+		return getCapabilityURI(capability, _CurrentSim);
 	}
 
 	public URI getCapabilityURI(String capability, Simulator simulator)
 	{
-		if (simulator == null)
-			simulator = _CurrentSim;
-
-		if (simulator != null)
+		synchronized (_Simulators)
 		{
-			return simulator.getCapabilityURI(capability);
+			if (simulator == null)
+				simulator = _CurrentSim;
+
+			if (simulator != null)
+			{
+				return simulator.getCapabilityURI(capability);
+			}
 		}
 		return null;
 	}
