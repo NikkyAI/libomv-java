@@ -826,11 +826,25 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		RegisterCallback(PacketType.SimStats, this);
 	}
 
+	/**
+	 * Get the capability URL from the current simulator
+	 * 
+	 * @param capability The name of the capability to retrieve the URL from
+	 * @return The URI for the capability or null if it doesn't exist
+	 */
 	public URI getCapabilityURI(String capability)
 	{
 		return getCapabilityURI(capability, _CurrentSim);
 	}
 
+	/**
+	 * Get the capability URL from the currenta specific simulator
+	 * 
+	 * @param capability The name of the capability to retrieve the URL from
+	 * @param simulator The simulator for which the capability URL should be returned
+	 *                  If "simulator" is null, this function uses the current simulator
+	 * @return The URI for the capability or null if it doesn't exist
+	 */
 	public URI getCapabilityURI(String capability, Simulator simulator)
 	{
 		synchronized (_Simulators)
