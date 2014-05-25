@@ -433,10 +433,9 @@ public class TestClient extends GridClient implements PacketCallback
 	private void AgentDataUpdateHandler(Packet packet, Simulator simulator) throws Exception
 	{
 		AgentDataUpdatePacket p = (AgentDataUpdatePacket) packet;
-		if (p.AgentData.AgentID.equals(simulator.getClient().Self.getAgentID()))
+		if (p.AgentData.AgentID.equals(simulator.getClient().Self.getAgentID()) && !UUID.isZeroOrNull(p.AgentData.ActiveGroupID))
 		{
 			GroupID = p.AgentData.ActiveGroupID;
-
 			GroupMembersRequestID = simulator.getClient().Groups.RequestGroupMembers(GroupID);
 		}
 	}
