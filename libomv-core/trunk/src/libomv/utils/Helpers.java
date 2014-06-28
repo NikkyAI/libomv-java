@@ -31,6 +31,7 @@
 package libomv.utils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -62,10 +63,14 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.InflaterInputStream;
+import java.util.zip.InflaterOutputStream;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
@@ -2283,6 +2288,34 @@ public class Helpers
 	public static String getPlatform()
 	{
 		return System.getProperty("os.name");
+	}
+
+	public static OSD ZDecompressOSD(InputStream in) throws IOException, ParseException
+	{
+		InflaterInputStream inflate = new InflaterInputStream(in);
+		try
+		{
+			return OSDParser.deserialize(inflate);
+		}
+		finally
+		{
+			inflate.close();
+		}
+	}
+
+	public static byte[] ZCompressOSD(OSD osd) throws IOException
+	{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		InflaterOutputStream inflate = new InflaterOutputStream(out);
+		try
+		{
+			OSDParser.serialize(inflate, osd, OSD.OSDFormat.Binary);
+			return out.toByteArray();
+		}
+		finally
+		{
+			inflate.close();
+		}
 	}
 
 	/**
