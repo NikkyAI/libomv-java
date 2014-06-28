@@ -63,6 +63,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;
 
@@ -2306,15 +2307,15 @@ public class Helpers
 	public static byte[] ZCompressOSD(OSD osd) throws IOException
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		InflaterOutputStream inflate = new InflaterOutputStream(out);
+		DeflaterOutputStream deflate = new DeflaterOutputStream(out);
 		try
 		{
-			OSDParser.serialize(inflate, osd, OSD.OSDFormat.Binary);
+			OSDParser.serialize(deflate, osd, OSD.OSDFormat.Binary);
 			return out.toByteArray();
 		}
 		finally
 		{
-			inflate.close();
+			deflate.close();
 		}
 	}
 
