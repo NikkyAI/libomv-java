@@ -30,7 +30,6 @@
 package libomv.capabilities;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.zip.InflaterInputStream;
 
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.AgentManager.InstantMessageOnline;
@@ -52,11 +50,9 @@ import libomv.ParcelManager.ParcelCategory;
 import libomv.ParcelManager.ParcelResult;
 import libomv.Simulator.SimAccess;
 import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.OSDParser;
 import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
 import libomv.inventory.InventoryItem;
@@ -5617,9 +5613,7 @@ public class CapsMessage implements IMessage
 	    {
 	        try
 	        {
-	        	InputStream in = new InflaterInputStream(new ByteArrayInputStream(map.get("Zipped").AsBinary()));
-                MaterialData = OSDParser.deserialize(in, OSDFormat.Binary);
-	            in.close();
+                MaterialData = Helpers.ZDecompressOSD(new ByteArrayInputStream(map.get("Zipped").AsBinary()));
 	        }
 	        catch (Exception ex)
 	        {

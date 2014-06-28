@@ -32,7 +32,6 @@ package libomv.assets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.util.zip.InflaterInputStream;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
@@ -99,34 +98,15 @@ public class AssetMesh extends AssetItem
                 if (value.getType() == OSDType.Map)
                 {
                     OSDMap partInfo = (OSDMap)value;
-                    int offset = -1, size = 0;
-                    if (partInfo.containsKey("offset"))
-                    	offset = partInfo.get("offset").AsInteger();
-                    if (partInfo.containsKey("size"))
-                        size = partInfo.get("size").AsInteger();
-                    if (offset >= 0 || size > 0)
+                    int offset = partInfo.get("offset").AsInteger(), size = partInfo.get("size").AsInteger();
+                    if (offset >= 0 && size > 0)
                     {
                         data.reset();
-                        data.skip(partInfo.get("offset").AsInteger());
-                        InflaterInputStream inflate = new InflaterInputStream(data);
-                        try
-                        {
-                        	MeshData.put(partName, OSDParser.deserialize(inflate, Helpers.UTF8_ENCODING));
-                        }
-                        finally
-                        {
-                        	inflate.close();
-                        }
-                    }
-                    else
-                    {
-                        MeshData.put(partName, value);
+                        data.skip(offset);
+                        value = Helpers.ZDecompressOSD(data);
                     }
                 }
-                else
-                {
-                    MeshData.put(partName, value);
-                }
+                MeshData.put(partName, value);
             }
             return true;
         }
