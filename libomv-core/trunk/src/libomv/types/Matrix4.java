@@ -309,6 +309,43 @@ public final class Matrix4
 		return quaternion;
 	}
 
+	public Vector3 getTranslation()
+	{
+		return new Vector3(M41, M42, M43);
+	}
+	
+    public boolean decompose(Vector3 scale, Quaternion rotation, Vector3 translation)
+    {
+        translation.X = M41;
+        translation.Y = M42;
+        translation.Z = M43;
+
+        float xs = (Math.signum(M11 * M12 * M13 * M14) < 0) ? -1 : 1;
+        float ys = (Math.signum(M21 * M22 * M23 * M24) < 0) ? -1 : 1;
+        float zs = (Math.signum(M31 * M32 * M33 * M34) < 0) ? -1 : 1;
+
+        scale.X = xs * (float)Math.sqrt(M11 * M11 + M12 * M12 + M13 * M13);
+        scale.Y = ys * (float)Math.sqrt(M21 * M21 + M22 * M22 + M23 * M23);
+        scale.Z = zs * (float)Math.sqrt(M31 * M31 + M32 * M32 + M33 * M33);
+
+        if (scale.X == 0.0 || scale.Y == 0.0 || scale.Z == 0.0)
+        {
+            rotation = Quaternion.Identity;
+            return false;
+        }
+
+        Matrix4 m1 = new Matrix4(M11 / scale.X, M12 / scale.X, M13 / scale.X, 0,
+                                 M21 / scale.Y, M22 / scale.Y, M23 / scale.Y, 0,
+                                 M31 / scale.Z, M32 / scale.Z, M33 / scale.Z, 0,
+                                 0, 0, 0, 1);
+
+        rotation.setFromRotationMatrix(m1);
+        return true;
+    }	
+
+    // #endregion Public Methods
+	
+    // #region Static Methods
 	public static Matrix4 createFromAxisAngle(Vector3 axis, float angle)
 	{
 		Matrix4 matrix = new Matrix4();

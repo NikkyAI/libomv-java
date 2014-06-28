@@ -566,53 +566,11 @@ public class Quaternion
 				* upCos - atLeftSin * upSin));
 	}
 
-	public static Quaternion createFromRotationMatrix(Matrix4 m)
+	public static Quaternion createFromRotationMatrix(Matrix4 matrix)
 	{
-		Quaternion quat = new Quaternion();
-
-		float trace = m.trace();
-
-		if (trace > Helpers.FLOAT_MAG_THRESHOLD)
-		{
-			float s = (float) Math.sqrt(trace + 1f);
-			quat.W = s * 0.5f;
-			s = 0.5f / s;
-			quat.X = (m.M23 - m.M32) * s;
-			quat.Y = (m.M31 - m.M13) * s;
-			quat.Z = (m.M12 - m.M21) * s;
-		}
-		else
-		{
-			if (m.M11 > m.M22 && m.M11 > m.M33)
-			{
-				float s = (float) Math.sqrt(1f + m.M11 - m.M22 - m.M33);
-				quat.X = 0.5f * s;
-				s = 0.5f / s;
-				quat.Y = (m.M12 + m.M21) * s;
-				quat.Z = (m.M13 + m.M31) * s;
-				quat.W = (m.M23 - m.M32) * s;
-			}
-			else if (m.M22 > m.M33)
-			{
-				float s = (float) Math.sqrt(1f + m.M22 - m.M11 - m.M33);
-				quat.Y = 0.5f * s;
-				s = 0.5f / s;
-				quat.X = (m.M21 + m.M12) * s;
-				quat.Z = (m.M32 + m.M23) * s;
-				quat.W = (m.M31 - m.M13) * s;
-			}
-			else
-			{
-				float s = (float) Math.sqrt(1f + m.M33 - m.M11 - m.M22);
-				quat.Z = 0.5f * s;
-				s = 0.5f / s;
-				quat.X = (m.M31 + m.M13) * s;
-				quat.Y = (m.M32 + m.M23) * s;
-				quat.W = (m.M12 - m.M21) * s;
-			}
-		}
-
-		return quat;
+		Quaternion quaternion = new Quaternion();
+		quaternion.setFromRotationMatrix(matrix);
+		return quaternion;
 	}
 
 	public static float dot(Quaternion quaternion1, Quaternion quaternion2)
@@ -891,6 +849,48 @@ public class Quaternion
 		return this;
 	}
 
+	
+	public void setFromRotationMatrix(Matrix4 matrix)
+	{
+		float num = (matrix.M11 + matrix.M22) + matrix.M33;
+		if (num > 0f)
+		{
+			num = (float)Math.sqrt(num + 1f);
+			W = num * 0.5f;
+			num = 0.5f / num;
+			X = (matrix.M23 - matrix.M32) * num;
+			Y = (matrix.M31 - matrix.M13) * num;
+			Z = (matrix.M12 - matrix.M21) * num;
+		}
+		else if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33))
+		{
+			num = (float) Math.sqrt(1f + matrix.M11 - matrix.M22 - matrix.M33);
+			X = 0.5f * num;
+			num = 0.5f / num;
+			Y = (matrix.M12 + matrix.M21) * num;
+			Z = (matrix.M13 + matrix.M31) * num;
+			W = (matrix.M23 - matrix.M32) * num;
+		}
+		else if (matrix.M22 > matrix.M33)
+		{
+			num = (float) Math.sqrt(1f + matrix.M22 - matrix.M11 - matrix.M33);
+			Y = 0.5f * num;
+			num = 0.5f / num;
+			X = (matrix.M21 + matrix.M12) * num;
+			Z = (matrix.M32 + matrix.M23) * num;
+			W = (matrix.M31 - matrix.M13) * num;
+		}
+		else
+		{
+			num = (float) Math.sqrt(1f + matrix.M33 - matrix.M11 - matrix.M22);
+			Z = 0.5f * num;
+			num = 0.5f / num;
+			X = (matrix.M31 + matrix.M13) * num;
+			Y = (matrix.M32 + matrix.M23) * num;
+			W = (matrix.M12 - matrix.M21) * num;
+		}
+	}
+	
 	public static Quaternion negate(Quaternion quaternion)
 	{
 		return new Quaternion(quaternion).negate();
