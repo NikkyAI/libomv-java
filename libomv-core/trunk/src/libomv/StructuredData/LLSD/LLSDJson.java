@@ -387,7 +387,7 @@ public final class LLSDJson extends OSDParser
 			case Real:
 				if (Double.isNaN(osd.AsReal()) || Double.isInfinite(osd.AsReal()))
 				{
-					writer.write("null");
+					writer.write(nullNotationValue);
 				}
 				else
 				{
@@ -398,6 +398,8 @@ public final class LLSDJson extends OSDParser
 				}
 				break;
 			case Integer:
+			    writer.write(osd.AsString());
+			    break;
 			case String:
 			case UUID:
 			case Date:
