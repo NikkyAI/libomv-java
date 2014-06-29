@@ -252,6 +252,7 @@ public final class NativeServices
 				if (loadLibrary())
 					break;
 			case LIB_STATE_NOT_FOUND: // Could not be found, throw exception
+			default:
 				throw new UnsatisfiedLinkError("NativeServices: native shared library could not be loaded");
 		}
 	}

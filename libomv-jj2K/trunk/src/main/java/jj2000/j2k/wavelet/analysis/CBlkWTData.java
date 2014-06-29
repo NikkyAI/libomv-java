@@ -211,6 +211,8 @@ public abstract class CBlkWTData
 			case DataBlk.TYPE_FLOAT:
 				typeString = "Float";
 				break;
+			default:
+				throw new IllegalArgumentException("unhandled data block type " + getDataType());
 		}
 
 		return "CBlkWTData: ulx=" + ulx + ", uly=" + uly + ", code-block(" + m + "," + n + "), width=" + w

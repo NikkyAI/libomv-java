@@ -281,6 +281,8 @@ public class ProgressionSpec extends ModuleSpec
 								}
 								curProg.ce = tmp;
 								break;
+							default:
+								throw new IllegalArgumentException("unhandled integer type " + intType);
 						}
 
 						if (intType < 4)
@@ -430,6 +432,8 @@ public class ProgressionSpec extends ModuleSpec
 						specValType[0][0] = SPEC_DEF;
 						tileCompVal.put("t0c0", null);
 						break;
+					default:
+						throw new IllegalArgumentException("unhandled spec tile type " + specValType[0][0] + " in transformation");
 				}
 			}
 		}

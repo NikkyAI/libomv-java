@@ -63,7 +63,7 @@ import java.awt.*;
  * drag.
  * 
  */
-public class ImgMouseListener extends MouseAdapter implements MouseMotionListener
+public class ImgMouseListener extends MouseAdapter
 {
 	/** The component where the image is displayed */
 	ImgScrollPane isp;

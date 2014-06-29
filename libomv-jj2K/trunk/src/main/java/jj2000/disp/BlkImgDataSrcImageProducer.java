@@ -46,6 +46,7 @@ package jj2000.disp;
 import jj2000.j2k.image.*;
 
 import java.awt.image.*;
+import java.security.InvalidParameterException;
 import java.util.*;
 import java.awt.*;
 
@@ -426,6 +427,8 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 							src.getInternCompData(db1, 0);
 							prog = prog || db1.progressive;
 							break;
+						default:
+							throw new InvalidParameterException("Invalid color type: " + type);
 					}
 					if (prog)
 					{ // Progressive data not supported
@@ -493,6 +496,8 @@ public class BlkImgDataSrcImageProducer implements ImageProducer
 								pixbuf[i] = (tmp4 << 24) | (tmp1 << 16) | (tmp2 << 8) | tmp3;
 							}
 							break;
+						default:
+							throw new InvalidParameterException("Invalid color type: " + type);
 					}
 					// Send the line data to the consumers
 					for (i = cons.length - 1; i >= 0; i--)

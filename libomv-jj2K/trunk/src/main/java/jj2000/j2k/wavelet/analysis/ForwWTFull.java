@@ -748,6 +748,8 @@ public class ForwWTFull extends ForwardWT
 						nextsb = (SubbandAn) nextsb.getParent();
 						direction = up;
 						break;
+					default:
+						throw new IllegalArgumentException("unhandled orientation " + nextsb.orientation);
 				}
 			}
 
@@ -783,6 +785,8 @@ public class ForwWTFull extends ForwardWT
 							nextsb = (SubbandAn) nextsb.getParent();
 							direction = up;
 							break;
+						default:
+							throw new IllegalArgumentException("unhandled orientation " + nextsb.orientation);
 					}
 				}
 			}

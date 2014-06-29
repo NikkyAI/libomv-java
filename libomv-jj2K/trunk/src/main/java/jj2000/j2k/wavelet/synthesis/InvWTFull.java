@@ -45,6 +45,8 @@
  */
 package jj2000.j2k.wavelet.synthesis;
 
+import java.security.InvalidParameterException;
+
 import jj2000.j2k.wavelet.*;
 import jj2000.j2k.decoder.*;
 import jj2000.j2k.image.*;
@@ -290,6 +292,8 @@ public class InvWTFull extends InverseWT
 				case DataBlk.TYPE_INT:
 					reconstructedComps[c] = new DataBlkInt(0, 0, getTileCompWidth(tIdx, c), getTileCompHeight(tIdx, c));
 					break;
+				default:
+					throw new InvalidParameterException("Invalid data block type: " + dtype);
 			}
 			// Reconstruct source image
 			waveletTreeReconstruction(reconstructedComps[c], src.getSynSubbandTree(tIdx, c), c);
@@ -385,6 +389,8 @@ public class InvWTFull extends InverseWT
 				}
 				dst_data = dst_data_float;
 				break;
+			default:
+				throw new InvalidParameterException("Invalid data block type: " + blk.getDataType());
 		}
 
 		// Use getInternCompData() to get the data, since getInternCompData()
@@ -443,6 +449,8 @@ public class InvWTFull extends InverseWT
 			case DataBlk.TYPE_FLOAT:
 				buf = new float[(w >= h) ? w : h];
 				break;
+			default:
+				throw new InvalidParameterException("Invalid data block type: " + sb.getHorWFilter().getDataType());
 		}
 
 		// Perform the horizontal reconstruction
@@ -518,6 +526,8 @@ public class InvWTFull extends InverseWT
 					}
 				}
 				break;
+			default:
+				throw new InvalidParameterException("Invalid data block type: " + sb.getVerWFilter().getDataType());
 		}
 	}
 

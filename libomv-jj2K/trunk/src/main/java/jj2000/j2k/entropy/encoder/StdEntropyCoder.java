@@ -110,7 +110,7 @@ import java.util.*;
  * @see CBlkWTData
  * @see CBlkRateDistStats
  */
-public class StdEntropyCoder extends EntropyCoder implements StdEntropyCoderOptions
+public class StdEntropyCoder extends EntropyCoder
 {
 	/**
 	 * Whether to collect timing information or not: false. Used as a compile

@@ -317,6 +317,8 @@ public class AnWTFilterSpec extends ModuleSpec
 						specValType[0][0] = SPEC_DEF;
 						tileCompVal.put("t0c0", null);
 						break;
+					default:
+						throw new IllegalArgumentException("unhandled spec tile type " + specValType[0][0] + " in transformation");
 				}
 			}
 		}

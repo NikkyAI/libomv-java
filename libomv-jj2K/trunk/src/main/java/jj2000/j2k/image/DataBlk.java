@@ -217,6 +217,9 @@ public abstract class DataBlk
 			case TYPE_FLOAT:
 				typeString = "Float";
 				break;
+			default:
+				typeString = "Undefined";
+				break;
 		}
 
 		return "DataBlk: upper-left(" + ulx + "," + uly + "), width=" + w + ", height=" + h + ", progressive="

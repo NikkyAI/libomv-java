@@ -408,6 +408,8 @@ public class ImgEncoder
 		catch (Exception e)
 		{
 			output.close();
+			if (baos != null)
+				baos.close();
 			error("Could not open codestream output" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""), 2, e);
 			return -1;
 		}
@@ -420,6 +422,8 @@ public class ImgEncoder
 		catch (IllegalArgumentException e)
 		{
 			output.close();
+			if (baos != null)
+				baos.close();
 			error("Could not instantiate rate allocator" + ((e.getMessage() != null) ? (":\n" + e.getMessage()) : ""),
 					2, e);
 			return -1;
@@ -454,6 +458,7 @@ public class ImgEncoder
 		if (pktspertp > 0 || pphTile || pphMain || useFileFormat)
 		{
 			OSRandomAccessIO io = new OSRandomAccessIO(baos.toByteArray(), Integer.MAX_VALUE);
+			baos.close();
 			// **** Tile-parts and packed packet headers ****
 			if (pktspertp > 0 || pphTile || pphMain)
 			{

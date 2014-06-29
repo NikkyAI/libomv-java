@@ -219,9 +219,6 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 
 		switch (ttype)
 		{
-			case NONE:
-				System.arraycopy(ntdepth, 0, tdepth, 0, ntdepth.length);
-				break;
 			case FORW_RCT:
 				if (ntdepth.length > 3)
 				{
@@ -256,8 +253,11 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 				tdepth[2] = MathUtil.log2((int) Math.floor((1 << ntdepth[0]) * 0.5 + (1 << ntdepth[1]) * 0.418701
 						+ (1 << ntdepth[2]) * 0.081299) - 1) + 1;
 				break;
+			case NONE:
+			default:
+				System.arraycopy(ntdepth, 0, tdepth, 0, ntdepth.length);
+				break;
 		}
-
 		return tdepth;
 	}
 
@@ -596,7 +596,8 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 						k1 -= block1.scanw - w;
 					}
 					break;
-
+				default:
+					/* Not really possible */
 			}
 		}
 		else if (c >= 3)
@@ -747,6 +748,8 @@ public class ForwCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 						k2 -= block2.scanw - w;
 					}
 					break;
+				default:
+					/* Not really possible */
 			}
 		}
 		else if (c >= 3)

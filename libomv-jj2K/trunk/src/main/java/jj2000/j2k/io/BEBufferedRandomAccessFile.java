@@ -53,7 +53,7 @@ import java.io.*;
  * @see BinaryDataInput
  * @see BufferedRandomAccessFile
  */
-public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile implements RandomAccessIO, EndianType
+public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile
 {
 
 	/**

@@ -249,7 +249,7 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 	 *            The bitdepth of each un-transformed component
 	 * 
 	 * @param ttype
-	 *            The type ID of the inverse component tranformation
+	 *            The type ID of the inverse component transformation
 	 * 
 	 * @param tdepth
 	 *            If not null the results are stored in this array, otherwise a
@@ -309,6 +309,8 @@ public class InvCompTransf extends ImgDataAdapter implements BlkImgDataSrc
 				tdepth[2] = MathUtil.log2((int) Math.floor((1 << utdepth[0]) * 0.5 + (1 << utdepth[1]) * 0.418701
 						+ (1 << utdepth[2]) * 0.081299) - 1) + 1;
 				break;
+			default:
+				throw new IllegalArgumentException("unhandled tranfomation type " + ttype);
 		}
 
 		return tdepth;

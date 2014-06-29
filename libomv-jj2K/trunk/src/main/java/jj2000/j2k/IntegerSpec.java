@@ -44,6 +44,7 @@ package jj2000.j2k;
 
 import jj2000.j2k.util.*;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 
 /**
@@ -263,6 +264,8 @@ public class IntegerSpec extends ModuleSpec
 						specValType[0][0] = SPEC_DEF;
 						tileCompVal.put("t0c0", null);
 						break;
+					default:
+						throw new InvalidParameterException("Invalid spec Type: " + specValType[0][0]);
 				}
 			}
 		}

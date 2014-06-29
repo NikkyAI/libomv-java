@@ -45,6 +45,7 @@ package jj2000.j2k.codestream;
 
 import jj2000.j2k.wavelet.*;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 
 /**
@@ -383,6 +384,8 @@ public class HeaderInfo implements Markers, ProgressionType, FilterTypes, Clonea
 				case COMP_POS_RES_LY_PROG:
 					str += " Progress. type : COMP_POS_RES_LY_PROG\n";
 					break;
+				default:
+					throw new InvalidParameterException("Invalid Progress. Type: " + sgcod_po);
 			}
 			str += " Num. of layers : " + sgcod_nl + "\n";
 			str += " Cblk dimension : " + (1 << (spcod_cw + 2)) + "x" + (1 << (spcod_ch + 2)) + "\n";
@@ -394,6 +397,8 @@ public class HeaderInfo implements Markers, ProgressionType, FilterTypes, Clonea
 				case W5X3:
 					str += " Filter         : 5-3 reversible\n";
 					break;
+				default:
+					throw new InvalidParameterException("Invalid Filter Type: " + spcod_t[0]);
 			}
 			str += " Multi comp tr. : " + (sgcod_mct == 1) + "\n";
 			if (spcod_ps != null)
@@ -480,6 +485,8 @@ public class HeaderInfo implements Markers, ProgressionType, FilterTypes, Clonea
 				case W5X3:
 					str += " Filter         : 5-3 reversible\n";
 					break;
+				default:
+					throw new InvalidParameterException("Invalid Filter Type: " + spcoc_t[0]);
 			}
 			if (spcoc_ps != null)
 			{
@@ -772,6 +779,8 @@ public class HeaderInfo implements Markers, ProgressionType, FilterTypes, Clonea
 					case ProgressionType.COMP_POS_RES_LY_PROG:
 						str += "  COMP_POS_RES_LY_PROG\n";
 						break;
+					default:
+						throw new InvalidParameterException("Invalid Progress. Type: " + ppoc[chg]);
 				}
 			}
 			str += "\n";

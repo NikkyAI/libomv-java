@@ -44,6 +44,7 @@ package jj2000.j2k;
 
 import jj2000.j2k.image.*;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 
 /**
@@ -171,6 +172,8 @@ public class ModuleSpec implements Cloneable
 			case SPEC_TYPE_TILE_COMP:
 				specType = SPEC_TYPE_TILE_COMP;
 				break;
+			default:
+				throw new InvalidParameterException("Invalid spec Type: " + type);
 		}
 	}
 
@@ -434,6 +437,8 @@ public class ModuleSpec implements Cloneable
 				case SPEC_TYPE_COMP:
 					errMsg += "tiles as it is a 'component only' specific option";
 					break;
+				default:
+					throw new InvalidParameterException("Invalid spec Type: " + specType);
 			}
 			throw new Error(errMsg);
 		}

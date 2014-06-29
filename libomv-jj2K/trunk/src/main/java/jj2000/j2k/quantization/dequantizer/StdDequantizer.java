@@ -396,6 +396,8 @@ public class StdDequantizer extends Dequantizer
 						k -= inblk.scanw - w;
 					}
 					break;
+				default:
+					throw new IllegalArgumentException("unhandled data block type " + outdtype + " in dequantization");
 			}
 		}
 		// Return the output code-block
