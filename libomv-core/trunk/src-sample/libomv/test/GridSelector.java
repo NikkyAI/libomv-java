@@ -29,12 +29,15 @@ import libomv.GridClient.GridInfo;
 
 public class GridSelector
 {
+	private GridClient _Client;
+	static GridSelector _GridSel = null;
+
 	// The main entry point for the application.
 	static public void main(String[] args)
 	{
 		try
 		{
-			GridSelector grid = new GridSelector();
+			_GridSel = new GridSelector();
 		}
 		catch (Exception e)
 		{
@@ -44,9 +47,9 @@ public class GridSelector
 
 	public GridSelector() throws Exception
 	{
-		GridClient client = new GridClient();
-		System.out.println(client.dumpGridlist());
-		GridInfo info = client.queryGridInfo(client.getDefaultGrid());
+		_Client = new GridClient();
+		System.out.println(_Client.dumpGridlist());
+		GridInfo info = _Client.queryGridInfo(_Client.getDefaultGrid());
 		System.out.println(info.dump());
 	}
 }

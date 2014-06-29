@@ -42,6 +42,7 @@ import libomv.utils.Callback;
 public class SLDump implements PacketCallback
 {
 	private boolean disconnected = false;
+	static SLDump _Dump = null;
 
 	// The main entry point for the application.
 	static public void main(String[] args)
@@ -78,7 +79,7 @@ public class SLDump implements PacketCallback
 			protocol.PrintMap();
 			return;
 		}
-		SLDump temp = new SLDump(args);
+		_Dump = new SLDump(args);
 	}
 
 	public SLDump(String[] args)
