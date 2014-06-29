@@ -842,10 +842,23 @@ public final class Matrix4
 	@Override
 	public int hashCode()
 	{
-		return ((Float)M11).hashCode() ^ ((Float)M12).hashCode() ^ ((Float)M13).hashCode() ^ ((Float)M14).hashCode() ^
-			   ((Float)M21).hashCode() ^ ((Float)M22).hashCode() ^ ((Float)M23).hashCode() ^ ((Float)M24).hashCode() ^
-			   ((Float)M31).hashCode() ^ ((Float)M32).hashCode() ^ ((Float)M33).hashCode() ^ ((Float)M34).hashCode() ^
-			   ((Float)M41).hashCode() ^ ((Float)M42).hashCode() ^ ((Float)M43).hashCode() ^ ((Float)M44).hashCode();
+		int hashCode = ((Float)M11).hashCode();
+		hashCode = hashCode * 31 + ((Float)M12).hashCode();
+		hashCode = hashCode * 31 + ((Float)M13).hashCode();
+		hashCode = hashCode * 31 + ((Float)M14).hashCode();
+		hashCode = hashCode * 31 + ((Float)M21).hashCode();
+		hashCode = hashCode * 31 + ((Float)M22).hashCode();
+		hashCode = hashCode * 31 + ((Float)M23).hashCode();
+		hashCode = hashCode * 31 + ((Float)M24).hashCode();
+		hashCode = hashCode * 31 + ((Float)M31).hashCode();
+		hashCode = hashCode * 31 + ((Float)M32).hashCode();
+		hashCode = hashCode * 31 + ((Float)M33).hashCode();
+		hashCode = hashCode * 31 + ((Float)M34).hashCode();
+		hashCode = hashCode * 31 + ((Float)M41).hashCode();
+		hashCode = hashCode * 31 + ((Float)M42).hashCode();
+		hashCode = hashCode * 31 + ((Float)M43).hashCode();
+		hashCode = hashCode * 31 + ((Float)M44).hashCode();
+		return  hashCode;
 	}
 
 	/**

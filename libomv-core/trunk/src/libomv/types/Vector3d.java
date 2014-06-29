@@ -300,7 +300,7 @@ public class Vector3d
 	@Override
 	public int hashCode()
 	{
-		return ((Double)X).hashCode() + ((Double)Y).hashCode() + ((Double)Z).hashCode();
+		return ((Double)X).hashCode() * 31 * 31 + ((Double)Y).hashCode() * 31 + ((Double)Z).hashCode();
 	}
 
 	public Vector3d negate()

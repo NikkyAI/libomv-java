@@ -249,7 +249,7 @@ public class Vector3
 	@Override
 	public int hashCode()
 	{
-		return ((Float)X).hashCode() ^ ((Float)Y).hashCode() ^ ((Float)Z).hashCode();
+		return ((Float)X).hashCode() * 31 * 31  + ((Float)Y).hashCode() * 31 + ((Float)Z).hashCode();
 	}
 
 	/**

@@ -238,7 +238,7 @@ public final class Vector2
 	@Override
 	public int hashCode()
 	{
-		return ((Float)X).hashCode() ^ ((Float)Y).hashCode();
+		return ((Float)X).hashCode() * 31 + ((Float)Y).hashCode();
 	}
 
 	/**

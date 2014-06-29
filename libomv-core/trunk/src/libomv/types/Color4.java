@@ -600,7 +600,11 @@ public final class Color4
 	@Override
 	public int hashCode()
 	{
-		return ((Float)R).hashCode() ^ ((Float)G).hashCode() ^ ((Float)B).hashCode() ^ ((Float)A).hashCode();
+		int hashCode = ((Float)R).hashCode();
+		hashCode = hashCode * 31 + ((Float)G).hashCode();
+		hashCode = hashCode * 31 + ((Float)B).hashCode();
+		hashCode = hashCode * 31 + ((Float)A).hashCode();
+		return  hashCode;
 	}
 
 	public static boolean equals(Color4 lhs, Color4 rhs)
