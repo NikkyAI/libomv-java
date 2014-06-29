@@ -392,9 +392,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 		Region(7),
 		/* Event message when an object uses llOwnerSay */
 		OwnerSay(8),
-		/* From llRegionSayTo() */
+		/* Event message when an object uses llRegionSayTo() */
 		RegionSayTo(9),
-		/* Special value to support llRegionSay, never sent to the client */
+		/* Special value to support llRegionSay(), never sent to the client */
 		RegionSay(255);
 
 		public static ChatType setValue(byte value)
