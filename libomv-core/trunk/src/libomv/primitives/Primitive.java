@@ -508,7 +508,7 @@ public class Primitive
 		private static String[] strings = { "Default", "Chest", "Head", "Left Shoulder", "Right Shoulder", "Left Hand",
 				"Right Hand", "Left Foot", "Right Foot", "Back", "Pelvis", "Mouth", "Chin", "Left Ear", "Right Ear",
 				"Left Eye", "Right Eye", "Nose", "Right Upper Arm", "Right Lower Arm", "Left Upper Arm",
-				"Left Lower Arm", "Right Hip", "Right Upper Leg", "Right Lower Leg", "Left Hip", "Left Hip",
+				"Left Lower Arm", "Right Hip", "Right Upper Leg", "Right Lower Leg", "Left Hip", "Left Upper Leg",
 				"Left Lower Leg", "Belly", "Left Pec", "Right Pec", "HUD Center 2", "HUD Top Right", "HUD Top Center",
 				"HUD Top Left", "HUD Center 1", "HUD Bottom Left", "HUD Bottom", "HUD Bottom Right", "Neck", "Avatar Center" };
 

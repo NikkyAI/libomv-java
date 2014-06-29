@@ -388,8 +388,12 @@ public class AgentManager implements PacketCallback, CapsCallback
 		StopTyping(5),
 		/* Send the message to the debug channel */
 		Debug(6),
+		/*  */
+		Region(7),
 		/* Event message when an object uses llOwnerSay */
 		OwnerSay(8),
+		/* From llRegionSayTo() */
+		RegionSayTo(9),
 		/* Special value to support llRegionSay, never sent to the client */
 		RegionSay(255);
 
