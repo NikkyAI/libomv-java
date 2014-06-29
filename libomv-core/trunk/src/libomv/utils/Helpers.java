@@ -383,7 +383,7 @@ public class Helpers
 		{
 			return ".00";
 		}
-		String s = String.format("%f", val);
+		String s = String.format(Locale.ENGLISH, "%f", val);
 
 		// Trim trailing zeroes
 		int i = s.length();
