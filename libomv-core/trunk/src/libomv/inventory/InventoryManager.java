@@ -1241,10 +1241,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Move an inventory item to a new folder
 	 * 
-	 * @param itemID
-	 *            The {@link UUID} of the source item to move
-	 * @param folderID
-	 *            The {@link UUID} of the destination folder
+	 * @param itemID The {@link UUID} of the source item to move
+	 * @param folderID The {@link UUID} of the destination folder
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
@@ -1256,12 +1254,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Move and rename an inventory item
 	 * 
-	 * @param itemID
-	 *            The {@link UUID} of the source item to move
-	 * @param folderID
-	 *            The {@link UUID} of the destination folder
-	 * @param newName
-	 *            The name to change the folder to
+	 * @param itemID The {@link UUID} of the source item to move
+	 * @param folderID The {@link UUID} of the destination folder
+	 * @param newName The name to change the folder to, use null or an empty
+	 *                name to indicate that the name hasn't changed
 	 * @throws Exception
 	 */
 	public final void MoveItem(UUID itemID, UUID folderID, String newName) throws Exception
@@ -1344,8 +1340,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Remove descendants of a folder, basically emptying the folder
 	 * 
-	 * @param folder
-	 *            The {@link UUID} of the folder
+	 * @param folder The {@link UUID} of the folder
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
