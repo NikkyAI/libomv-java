@@ -308,10 +308,9 @@ public class InventoryStore extends InventoryFolder
 			}
 
 			// Check if there was already a parent and if it matches with the new parent
-			if (node.parentID != null && node.parent != null && !node.parent.itemID.equals(node.parentID))
+			if (node.parent != null && node.parent.itemID != null && !node.parent.itemID.equals(node.parentID))
 			{
 				// This is a reassignment of the parent so remove us from the previous parent
-				
 				if (node.parent.children != null)
 					node.parent.children.remove(node);
 				node.parent = null;
