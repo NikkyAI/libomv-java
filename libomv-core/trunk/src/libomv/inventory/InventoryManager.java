@@ -1285,7 +1285,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			if (_Store.containsItem(itemID))
 			{
 				InventoryNode inv = _Store.getItem(itemID);
-				inv.name = newName;
+				if (!Helpers.isEmpty(newName))
+				{
+					inv.name = newName;
+				}
 				_Store.add(folderID, inv);
 			}
 		}
