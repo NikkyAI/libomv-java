@@ -1777,14 +1777,14 @@ public class Helpers
 	 */
 	public static byte[] StringToBytes(String str)
 	{
-		int length = str.length();
-		if (length == 0)
+		if (Helpers.isEmpty(str))
 		{
 			return Helpers.EmptyBytes;
 		}
 
 		try
 		{
+			int length = str.length();
 			byte[] bytes = new byte[length + 1];
 			System.arraycopy(str.getBytes(UTF8_ENCODING), 0, bytes, 0, length);
 			return bytes;
@@ -1808,13 +1808,13 @@ public class Helpers
 	 */
 	public static byte[] HexStringToBytes(String hexString, boolean handleDirty) throws Exception
 	{
+		if (Helpers.isEmpty(hexString))
+		{
+			return Helpers.EmptyBytes;
+		}
+
 		if (handleDirty)
 		{
-			if (hexString.isEmpty())
-			{
-				return Helpers.EmptyBytes;
-			}
-
 			StringBuilder stripped = new StringBuilder(hexString.length());
 			char c;
 
@@ -1871,7 +1871,7 @@ public class Helpers
 	 */
 	private static byte HexToByte(String hex) throws Exception
 	{
-		if (hex.length() > 2 || hex.length() <= 0)
+		if (Helpers.isEmpty(hex) || hex.length() > 2 || hex.length() <= 0)
 		{
 			throw new Exception("hex must be 1 or 2 characters in length");
 		}
@@ -2261,11 +2261,7 @@ public class Helpers
 	 */
 	public static boolean isEmpty(char[] array)
 	{
-		if (array == null || array.length == 0)
-		{
-			return true;
-		}
-		return false;
+		return ((array == null) || (array.length == 0));
 	}
 
 	/**
@@ -2277,7 +2273,7 @@ public class Helpers
 	 */
 	public static boolean isEmpty(String str)
 	{
-		return str == null || str.length() == 0;
+		return ((str == null) || str.isEmpty());
 	}
 
 	/**
