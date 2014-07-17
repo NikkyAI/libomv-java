@@ -148,7 +148,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 		}
 		// Set the layout to something without gaps
 		setLayout(new BorderLayout());
-		// Set the im,age scroll pane to display the image
+		// Set the image scroll pane to display the image
 		isp = new ImgScrollPane(ImgScrollPane.SCROLLBARS_AS_NEEDED);
 		add(isp, BorderLayout.CENTER);
 		validate();
