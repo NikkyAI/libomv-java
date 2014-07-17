@@ -42,7 +42,6 @@ public class DownloadCommand extends Command
     private UUID _AssetID;
     private AssetType _AssetType;
     TimeoutEvent<Boolean> DownloadHandle = new TimeoutEvent<Boolean>();
-    boolean Success;
     String usage = "Usage: download [uuid] [assetType]";
 
     public DownloadCommand(TestClient testClient)
@@ -58,7 +57,6 @@ public class DownloadCommand extends Command
         if (args.length != 2)
             return usage;
 
-        Success = false;
         _AssetID = UUID.parse(args[0]);
         _AssetType = AssetType.Unknown;
  
