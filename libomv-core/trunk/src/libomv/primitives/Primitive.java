@@ -61,19 +61,19 @@ public class Primitive
 	/** Identifier code for primitive types */
 	public enum PCode
 	{
-		/** None */
+		/* None */
 		None(0),
-		/** A Primitive */
+		/* A Primitive */
 		Prim(9),
-		/** A Avatar */
+		/* A Avatar */
 		Avatar(47),
-		/** Linden grass */
+		/* Linden grass */
 		Grass(95),
-		/** Linden tree */
+		/* Linden tree */
 		NewTree(111),
-		/** A primitive that acts as the source for a particle stream */
+		/* A primitive that acts as the source for a particle stream */
 		ParticleSystem(143),
-		/** A Linden tree */
+		/* A Linden true */
 		Tree(255);
 
 		public static PCode setValue(int value)

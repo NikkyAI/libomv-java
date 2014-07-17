@@ -350,6 +350,7 @@ public class ParticleSystem
 			InnerAngle = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
 			OuterAngle = Helpers.BytesToFixedL(bytes, pos++, false, 3, 5);
 			BurstRate = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
+			if (BurstRate < 0.01f) BurstRate = 0.01f;
 			pos += 2;
 			BurstRadius = Helpers.BytesToFixedL(bytes, pos, false, 8, 8);
 			pos += 2;

@@ -183,13 +183,22 @@ public abstract class AssetItem
 		 */
 		public static AssetType setValue(String value)
 		{
-			int i = 0;
-			for (String name : _AssetTypeNames)
+			if (value != null)
 			{
-				i++;
-				if (name.compareToIgnoreCase(value) == 0)
+				try
 				{
-					return values()[i];
+					return setValue(Integer.parseInt(value, 10));
+				}
+				catch (NumberFormatException ex) {}
+				
+				int i = 0;
+				for (String name : _AssetTypeNames)
+				{
+					i++;
+					if (name.compareToIgnoreCase(value) == 0)
+					{
+						return values()[i];
+					}
 				}
 			}
 			return Unknown;

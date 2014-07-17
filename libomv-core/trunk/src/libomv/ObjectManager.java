@@ -413,7 +413,54 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			this.m_TimeDilation = timeDilation;
 		}
 	}
+	
+	/**
+	 * Raised when the simulator sends us data containing
+	 * 
+	 * A <see cref="Primitive"/>, Foliage or Attachment {@link RequestObject}
+	 * {@link RequestObjects}
+	 */
+	public CallbackHandler<ParticleUpdateCallbackArgs> OnParticleUpdate = new CallbackHandler<ParticleUpdateCallbackArgs>();
+	
 
+	public class ParticleUpdateCallbackArgs implements CallbackArgs
+	{
+	    private final Simulator m_Simulator;
+		private final ParticleSystem m_ParticleSystem;
+		private final Primitive m_Source;
+
+		// Get the simulator the object originated from
+		public Simulator getSimulator()
+		{
+			return m_Simulator;
+		}
+		// Get the <see cref="ParticleSystem"/> data
+		public ParticleSystem getParticleSystem()
+		{
+			return m_ParticleSystem;
+		}
+		// Get <see cref="Primitive"/> source
+		public Primitive getSource()
+		{
+			return m_Source;
+		}
+
+		/**
+		 * Construct a new instance of the ParticleUpdateEventArgs class
+		 *
+		 * @param "simulator" The simulator the packet originated from
+		 * @param "particlesystem" The ParticleSystem data
+		 * @param "source" The Primitive source
+		 */
+		public ParticleUpdateCallbackArgs(Simulator simulator, ParticleSystem particlesystem, Primitive source)
+		{
+		    m_Simulator = simulator;
+		    m_ParticleSystem = particlesystem;
+		    m_Source = source;
+		}
+    }
+	 
+		 
 	/**
 	 * Raised when the simulator sends us data containing
 	 * 
@@ -423,8 +470,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	public CallbackHandler<PrimCallbackArgs> OnObjectUpdate = new CallbackHandler<PrimCallbackArgs>();
 
 	/**
-	 * Provides additional primitive data for the <see
-	 * cref="ObjectManager.ObjectProperties"/> event
+	 * Provides additional primitive data for the <see cref="ObjectManager.ObjectProperties"/> event
 	 * <p>
 	 * The <see cref="ObjectManager.ObjectProperties"/> event occurs when the
 	 * simulator sends an <see cref="ObjectPropertiesPacket"/> containing
@@ -2691,7 +2737,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					case Tree:
 					case NewTree:
 					case Prim:
-						if (OnObjectUpdate.count() == 0)
+						if (OnObjectUpdate.count() == 0 && OnParticleUpdate.count() == 0)
 						{
 							continue;
 						}
@@ -2982,6 +3028,12 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					// #endregion
 
 					OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
+
+					// OnParticleUpdate handler replacing decode particles, PCode.Particle system appears to be deprecated this is a fix
+					if (prim.ParticleSys.PartMaxAge != 0)
+					{
+					    OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.ParticleSys, prim));
+					}
 					break;
 				    // #endregion Prim and Foliage
 
@@ -3055,56 +3107,13 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					break;
 				    // #endregion Avatar
 				case ParticleSystem:
-					DecodeParticleUpdate(block);
-					// TODO: Create a callback for particle updates
+					/* Obselete */
 					break;
 				default:
 					Logger.DebugLog("Got an ObjectUpdate block with an unrecognized PCode " + pcode.toString(), _Client);
 					break;
 			}
 		}
-	}
-
-	protected final void DecodeParticleUpdate(ObjectUpdatePacket.ObjectDataBlock block)
-	{
-		// TODO: Handle ParticleSystem ObjectUpdate blocks
-
-		// float bounce_b
-		// Vector4 scale_range
-		// Vector4 alpha_range
-		// Vector3 vel_offset
-		// float dist_begin_fadeout
-		// float dist_end_fadeout
-		// UUID image_uuid
-		// long flags
-		// byte createme
-		// Vector3 diff_eq_alpha
-		// Vector3 diff_eq_scale
-		// byte max_particles
-		// byte initial_particles
-		// float kill_plane_z
-		// Vector3 kill_plane_normal
-		// float bounce_plane_z
-		// Vector3 bounce_plane_normal
-		// float spawn_range
-		// float spawn_frequency
-		// float spawn_frequency_range
-		// Vector3 spawn_direction
-		// float spawn_direction_range
-		// float spawn_velocity
-		// float spawn_velocity_range
-		// float speed_limit
-		// float wind_weight
-		// Vector3 current_gravity
-		// float gravity_weight
-		// float global_lifetime
-		// float individual_lifetime
-		// float individual_lifetime_range
-		// float alpha_decay
-		// float scale_decay
-		// float distance_death
-		// float damp_motion_factor
-		// Vector3 wind_diffusion_factor
 	}
 
 	/**
@@ -3176,6 +3185,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 				// Textures
 				// FIXME: Why are we ignoring the first four bytes here?
+				//        Most likely because this is the number of bytes that the following TextureEntry block has
 				if (block.getTextureEntry().length > 4)
 				{
 					update.Textures = new TextureEntry(block.getTextureEntry(), 4, block.getTextureEntry().length - 4);
@@ -3238,6 +3248,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	private final void HandleObjectUpdateCompressed(Packet packet, Simulator simulator)
 	{
 		ObjectUpdateCompressedPacket update = (ObjectUpdateCompressedPacket) packet;
+		UpdateDilation(simulator, update.RegionData.TimeDilation);
 
 		for (int b = 0; b < update.ObjectData.length; b++)
 		{
@@ -3246,7 +3257,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			byte[] data = block.getData();
 
 			// UUID
-			UUID fullID = new UUID(data, 0); i += 16;
+			UUID fullID = new UUID(data, i); i += 16;
 			// Local ID
 			int localid = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 			// PCode
@@ -3308,7 +3319,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Parent ID
 			if ((flags & CompressedFlags.HasParent) != 0)
 			{
-				prim.ParentID = (int) Helpers.BytesToUInt32L(data, i); i += 4;
+				prim.ParentID = (int)Helpers.BytesToUInt32L(data, i); i += 4;
 			}
 			else
 			{
@@ -3328,7 +3339,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 				if ((flags & CompressedFlags.ScratchPad) != 0)
 				{
-					int size = data[i++];
+					int size = (int)Helpers.BytesToUInt32L(data, i);
+					i += 4;
 					prim.ScratchPad = new byte[size];
 					System.arraycopy(data, i, prim.ScratchPad, 0, size);
 					i += size;
@@ -3360,20 +3372,23 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			// Media URL
 			if ((flags & CompressedFlags.MediaURL) != 0)
 			{
-				String text = Helpers.EmptyString;
-				while (data[i] != 0)
+				try
 				{
-					text += (char) data[i++];
+					prim.MediaURL = Helpers.BytesToString(data, i, -1, Helpers.ASCII_ENCODING);
 				}
-				i++;
-
-				prim.MediaURL = text;
+				catch (UnsupportedEncodingException e)
+				{ }
+				i += prim.MediaURL.length() + 1;
 			}
 
 			// Particle system
 			if ((flags & CompressedFlags.HasParticles) != 0)
 			{
 				prim.ParticleSys = new ParticleSystem(data, i); i += 86;
+			}
+			else
+			{
+				prim.ParticleSys = null;
 			}
 
 			// Extra parameters
@@ -3418,43 +3433,55 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 			}
 
-			prim.PrimData.PathCurve = PathCurve.setValue(data[i++]);
-			short pathBegin = (short) Helpers.BytesToUInt16L(data, i); i += 2;
-			prim.PrimData.PathBegin = Primitive.UnpackBeginCut(pathBegin);
-			short pathEnd = (short) Helpers.BytesToUInt16L(data, i); i += 2;
-			prim.PrimData.PathEnd = Primitive.UnpackEndCut(pathEnd);
-			prim.PrimData.PathScaleX = Primitive.UnpackPathScale(data[i++]);
-			prim.PrimData.PathScaleY = Primitive.UnpackPathScale(data[i++]);
-			prim.PrimData.PathShearX = Primitive.UnpackPathShear(data[i++]);
-			prim.PrimData.PathShearY = Primitive.UnpackPathShear(data[i++]);
-			prim.PrimData.PathTwist = Primitive.UnpackPathTwist(data[i++]);
-			prim.PrimData.PathTwistBegin = Primitive.UnpackPathTwist(data[i++]);
-			prim.PrimData.PathRadiusOffset = Primitive.UnpackPathTwist(data[i++]);
-			prim.PrimData.PathTaperX = Primitive.UnpackPathTaper(data[i++]);
-			prim.PrimData.PathTaperY = Primitive.UnpackPathTaper(data[i++]);
-			prim.PrimData.PathRevolutions = Primitive.UnpackPathRevolutions(data[i++]);
-			prim.PrimData.PathSkew = Primitive.UnpackPathTwist(data[i++]);
-
-			prim.PrimData.ProfileCurve = ProfileCurve.setValue(data[i++]);
-			prim.PrimData.ProfileBegin = Primitive.UnpackBeginCut((short) Helpers.BytesToUInt16L(data, i)); i += 2;
-			prim.PrimData.ProfileEnd = Primitive.UnpackEndCut((short) Helpers.BytesToUInt16L(data, i)); i += 2;
-			prim.PrimData.ProfileHollow = Primitive.UnpackProfileHollow((short) Helpers.BytesToUInt16L(data, i)); i += 2;
-
-			// TextureEntry
-			int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i); i += 4;
-			prim.Textures = new TextureEntry(data, i, textureEntryLength);
-			i += textureEntryLength;
-
-			// Texture animation
-			if ((flags & CompressedFlags.TextureAnimation) != 0)
+			if (data.length > i)
 			{
-				// int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
-				i += 4;
-				prim.TextureAnim = prim.Textures.new TextureAnimation(data, i);
+				Logger.Log("ImrovedTerseUpdate has extra data of " + (data.length - i) + " bytes.", LogLevel.Debug);
+			}
+			
+			if (data.length >= i + 27)
+			{
+				prim.PrimData.PathCurve = PathCurve.setValue(data[i++]);
+
+				prim.PrimData.PathBegin = Primitive.UnpackBeginCut((short)Helpers.BytesToUInt16L(data, i)); i += 2;
+				prim.PrimData.PathEnd = Primitive.UnpackEndCut((short)Helpers.BytesToUInt16L(data, i)); i += 2;
+				prim.PrimData.PathScaleX = Primitive.UnpackPathScale(data[i++]);
+				prim.PrimData.PathScaleY = Primitive.UnpackPathScale(data[i++]);
+				prim.PrimData.PathShearX = Primitive.UnpackPathShear(data[i++]);
+				prim.PrimData.PathShearY = Primitive.UnpackPathShear(data[i++]);
+				prim.PrimData.PathTwist = Primitive.UnpackPathTwist(data[i++]);
+				prim.PrimData.PathTwistBegin = Primitive.UnpackPathTwist(data[i++]);
+				prim.PrimData.PathRadiusOffset = Primitive.UnpackPathTwist(data[i++]);
+				prim.PrimData.PathTaperX = Primitive.UnpackPathTaper(data[i++]);
+				prim.PrimData.PathTaperY = Primitive.UnpackPathTaper(data[i++]);
+				prim.PrimData.PathRevolutions = Primitive.UnpackPathRevolutions(data[i++]);
+				prim.PrimData.PathSkew = Primitive.UnpackPathTwist(data[i++]);
+
+				prim.PrimData.ProfileCurve = ProfileCurve.setValue(data[i++]);
+				prim.PrimData.ProfileBegin = Primitive.UnpackBeginCut((short)Helpers.BytesToUInt16L(data, i)); i += 2;
+				prim.PrimData.ProfileEnd = Primitive.UnpackEndCut((short)Helpers.BytesToUInt16L(data, i)); i += 2;
+				prim.PrimData.ProfileHollow = Primitive.UnpackProfileHollow((short)Helpers.BytesToUInt16L(data, i)); i += 2;
+
+				// TextureEntry
+				int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i); i += 4;
+				prim.Textures = new TextureEntry(data, i, textureEntryLength);
+				i += textureEntryLength;
+
+				// Texture animation
+				if ((flags & CompressedFlags.TextureAnimation) != 0)
+				{
+				    // int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
+					i += 4;
+					prim.TextureAnim = prim.Textures.new TextureAnimation(data, i);
+				}
 			}
 			// #endregion
 
 			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
+
+			if (prim.ParticleSys.PartMaxAge != 0)
+			{
+			    OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.ParticleSys, prim));
+			}
 		}
 	}
 
