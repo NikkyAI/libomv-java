@@ -918,7 +918,12 @@ public class CapsMessage implements IMessage
 		public boolean ObscureMedia;
 		// true to obscure (hide) music url
 		public boolean ObscureMusic;
-
+		// true if avatars in this parcel should be invisible to people outside
+		public boolean SeeAVs;
+		// true if avatars outside can hear any sounds avatars inside play
+		public boolean AnyAVSounds;
+		// true if group members outside can hear any sounds avatars inside play
+		public boolean GroupAVSounds;
 		/**
 		 * @return the type of message
 		 */
@@ -988,6 +993,9 @@ public class CapsMessage implements IMessage
 			parcelDataMap.put("TotalPrims", OSD.FromInteger(TotalPrims));
 			parcelDataMap.put("UserLocation", OSD.FromVector3(UserLocation));
 			parcelDataMap.put("UserLookAt", OSD.FromVector3(UserLookAt));
+			parcelDataMap.put("SeeAVs", OSD.FromBoolean(SeeAVs));
+			parcelDataMap.put("AnyAVSounds", OSD.FromBoolean(AnyAVSounds));
+			parcelDataMap.put("GroupAVSounds", OSD.FromBoolean(GroupAVSounds));
 			dataArray.add(parcelDataMap);
 			map.put("ParcelData", dataArray);
 
@@ -1082,6 +1090,9 @@ public class CapsMessage implements IMessage
 			TotalPrims = parcelDataMap.get("TotalPrims").AsInteger();
 			UserLocation = parcelDataMap.get("UserLocation").AsVector3();
 			UserLookAt = parcelDataMap.get("UserLookAt").AsVector3();
+			SeeAVs = parcelDataMap.get("SeeAVs").AsBoolean();
+			AnyAVSounds = parcelDataMap.get("AnyAVSounds").AsBoolean();
+			GroupAVSounds = parcelDataMap.get("GroupAVSounds").AsBoolean();
 
 			if (map.containsKey("MediaData")) // temporary, OpenSim doesn't send
 												// this block
@@ -1163,6 +1174,12 @@ public class CapsMessage implements IMessage
 		public Vector3 UserLocation;
 		//
 		public Vector3 UserLookAt;
+		// true if avatars in this parcel should be invisible to people outside
+		public boolean SeeAVs;
+		// true if avatars outside can hear any sounds avatars inside play
+		public boolean AnyAVSounds;
+		// true if group members outside can hear any sounds avatars inside play
+		public boolean GroupAVSounds;
 
 		/**
 		 * @return the type of message
@@ -1209,6 +1226,9 @@ public class CapsMessage implements IMessage
 			map.put("snapshot_id", OSD.FromUUID(SnapshotID));
 			map.put("user_location", OSD.FromVector3(UserLocation));
 			map.put("user_look_at", OSD.FromVector3(UserLookAt));
+			map.put("see_avs", OSD.FromBoolean(SeeAVs));
+			map.put("any_av_sounds", OSD.FromBoolean(AnyAVSounds));
+			map.put("group_av_sounds", OSD.FromBoolean(GroupAVSounds));
 
 			return map;
 		}
@@ -1248,6 +1268,18 @@ public class CapsMessage implements IMessage
 			SnapshotID = map.get("snapshot_id").AsUUID();
 			UserLocation = map.get("user_location").AsVector3();
 			UserLookAt = map.get("user_look_at").AsVector3();
+			if (map.containsKey("see_avs"))
+			{
+			    SeeAVs = map.get("see_avs").AsBoolean();
+				AnyAVSounds = map.get("any_av_sounds").AsBoolean();
+				GroupAVSounds = map.get("group_av_sounds").AsBoolean();
+			}
+			else
+			{
+				SeeAVs = true;
+				AnyAVSounds = true;
+				GroupAVSounds = true;
+			}
 		}
 	}
 
