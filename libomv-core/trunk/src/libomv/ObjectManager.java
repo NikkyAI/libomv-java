@@ -3433,12 +3433,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				}
 			}
 
-			if (data.length > i)
-			{
-				Logger.Log("ImrovedTerseUpdate has extra data of " + (data.length - i) + " bytes.", LogLevel.Debug);
-			}
-			
-			if (data.length >= i + 27)
+			if (data.length >= i + 23)
 			{
 				prim.PrimData.PathCurve = PathCurve.setValue(data[i++]);
 
@@ -3460,25 +3455,34 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				prim.PrimData.ProfileBegin = Primitive.UnpackBeginCut((short)Helpers.BytesToUInt16L(data, i)); i += 2;
 				prim.PrimData.ProfileEnd = Primitive.UnpackEndCut((short)Helpers.BytesToUInt16L(data, i)); i += 2;
 				prim.PrimData.ProfileHollow = Primitive.UnpackProfileHollow((short)Helpers.BytesToUInt16L(data, i)); i += 2;
+			}
 
+			if (data.length >= i + 4)
+			{
 				// TextureEntry
 				int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i); i += 4;
 				prim.Textures = new TextureEntry(data, i, textureEntryLength);
 				i += textureEntryLength;
-
+			}
+		    // int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
+			if (data.length >= i + 20 && (flags & CompressedFlags.TextureAnimation) != 0)
+			{
 				// Texture animation
-				if ((flags & CompressedFlags.TextureAnimation) != 0)
-				{
-				    // int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
-					i += 4;
-					prim.TextureAnim = prim.Textures.new TextureAnimation(data, i);
-				}
+				i += 4;
+				prim.TextureAnim = prim.Textures.new TextureAnimation(data, i);
+			}
+            
+			prim.IsAttachment = (flags & CompressedFlags.HasNameValues) != 0 && prim.ParentID != 0;
+
+			if (data.length > i)
+			{
+				Logger.Log("CompressedUpdate has extra data of " + (data.length - i) + " bytes.", LogLevel.Debug);
 			}
 			// #endregion
 
 			OnObjectUpdate.dispatch(new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
 
-			if (prim.ParticleSys.PartMaxAge != 0)
+			if (prim.ParticleSys != null && prim.ParticleSys.PartMaxAge != 0)
 			{
 			    OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.ParticleSys, prim));
 			}
