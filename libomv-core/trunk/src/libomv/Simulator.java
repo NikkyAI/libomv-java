@@ -1383,8 +1383,8 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(ID) == null)
 							{
-								Logger.Log(String.format("ACK for a packet (%d) we didn't send: %s", ID, packet
-										.getClass().getName()), LogLevel.Warning, _Client);
+								Logger.Log(String.format("ACK for a packet (%d) we didn't send: %s", ID,
+										packet.getClass().getName()), LogLevel.Warning, _Client);
 							}
 						}
 					}
@@ -1410,13 +1410,13 @@ public class Simulator extends Thread
 				{
 					if (packet.getHeader().getResent())
 					{
-						Logger.DebugLog("Received a resend of already processed packet #" + Integer.toString(sequence) + ", type: "
-								+ packet.getType(), _Client);
+						Logger.DebugLog(String.format("Received a resend of already processed packet #%d, type: %s, from %s",
+								                       sequence, packet.getType(), getName()), _Client);
 					}
 					else
 					{
-						Logger.Log("Received a duplicate (not marked as resend) of packet #" + Integer.toString(sequence) + ", type: "
-								+ packet.getType(), LogLevel.Warning, _Client);
+						Logger.Log(String.format("Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s", 
+								                 sequence, packet.getType(), _Client.Self.getName(), getName()), LogLevel.Warning, _Client);
 					}
 					// Avoid firing a callback twice for the same packet
 					continue;
