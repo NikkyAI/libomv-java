@@ -105,7 +105,7 @@ public class SimpleAppletDecoder extends Applet implements Runnable
 		int i;
 		URL input;
 
-		// Get the dfault parameter values
+		// Get the default parameter values
 		defpl = new ParameterList();
 		for (i = pinfo.length - 1; i >= 0; i--)
 		{
