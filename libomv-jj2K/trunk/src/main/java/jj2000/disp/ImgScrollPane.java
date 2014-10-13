@@ -131,11 +131,11 @@ public class ImgScrollPane extends Container
 	/** The thickness of the scrollbars: 16 pixels */
 	final static int SCROLLBAR_THICKNESS = 16;
 
-	/** The inetrnal gap between the elements, in pixels: 0 */
+	/** The internal gap between the elements, in pixels: 0 */
 	final static int INTERNAL_GAP = 0;
 
 	/**
-	 * The propertion between the visible scrollbar length and the block
+	 * The proportion between the visible scrollbar length and the block
 	 * increment amount: 0.8
 	 */
 	final static float BLOCK_INCREMENT_PROPORTION = 0.8f;
@@ -148,7 +148,7 @@ public class ImgScrollPane extends Container
 	ISPScrollbar hsbar;
 
 	/**
-	 * The vertical scrollabr.
+	 * The vertical scrollbar.
 	 * 
 	 * @serial
 	 */
