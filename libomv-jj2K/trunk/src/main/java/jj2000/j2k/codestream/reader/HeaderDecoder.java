@@ -721,7 +721,8 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		ms.rcom = ehs.readUnsignedShort();
 		switch (ms.rcom)
 		{
-			case RCOM_GEN_USE:
+			case RCOM_BINARY:
+			case RCOM_LATIN:
 				ms.ccom = new byte[ms.lcom - 4];
 				ehs.read(ms.ccom, 0, ms.lcom - 4);
 				break;
