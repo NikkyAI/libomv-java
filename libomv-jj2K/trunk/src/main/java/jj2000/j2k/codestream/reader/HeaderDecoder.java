@@ -723,10 +723,7 @@ public class HeaderDecoder implements ProgressionType, Markers, StdEntropyCoderO
 		{
 			case RCOM_GEN_USE:
 				ms.ccom = new byte[ms.lcom - 4];
-				for (int i = 0; i < ms.lcom - 4; i++)
-				{
-					ms.ccom[i] = ehs.readByte();
-				}
+				ehs.read(ms.ccom, 0, ms.lcom - 4);
 				break;
 			default:
 				// --- Unknown or unsupported markers ---
