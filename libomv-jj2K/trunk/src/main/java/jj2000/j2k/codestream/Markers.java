@@ -201,6 +201,9 @@ public interface Markers
 	/** Comment (COM): 0xFF64 */
 	public final static short COM = (short) 0xff64;
 
-	/** General use registration value (COM): 0x0001 */
-	public final static short RCOM_GEN_USE = (short) 0x0001;
+	/** Binary use registration value (binary) (COM): 0x0000 */
+	public final static short RCOM_BINARY = (short) 0x0000;
+
+	/** General use registration value (latin) (COM): 0x0001 */
+	public final static short RCOM_LATIN = (short) 0x0001;
 }
