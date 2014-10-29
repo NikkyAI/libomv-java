@@ -30,7 +30,6 @@
 package libomv.imaging;
 
 import java.io.File;
-
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +45,7 @@ import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.imaging.ManagedImage.ImageChannels;
 import libomv.types.Color4;
+import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -53,7 +53,9 @@ import libomv.utils.Logger.LogLevel;
 // A set of textures that are layered on each other and "baked" in to a single texture, for avatar appearances
 public class Baker
 {
-    // #region Properties
+	public static final UUID IMG_INVISIBLE = new UUID("3a367d1c-bef1-6d43-7595-e88c1e3aadb3");
+
+	// #region Properties
     // Final baked texture
     public AssetTexture getBakedTexture() { return bakedTexture; }
     // Component layers
@@ -173,6 +175,10 @@ public class Baker
                 if (tex.Texture.Image.Alpha != null)
                 {
                     alphaWearableTexture = tex.Texture.Image.clone();
+                }
+                else if (textures.get(i).TextureID.equals(IMG_INVISIBLE))
+                {
+                	alphaWearableTexture = new ManagedImage(bakeWidth, bakeHeight, ManagedImage.ImageChannels.Alpha);
                 }
                 continue;
             }
