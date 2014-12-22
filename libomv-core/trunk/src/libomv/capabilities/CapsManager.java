@@ -491,6 +491,7 @@ public class CapsManager extends Thread
 					++errorCount;
 					Logger.Log("Error retrieving response from the event queue request!", LogLevel.Warning, _Simulator.getClient(), ex);
 				} 
+				request = null;
 
 				if (errorCount > 0)
 				{

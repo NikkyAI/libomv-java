@@ -3219,6 +3219,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					_Client.Self.setAngularVelocity(update.AngularVelocity);
 				}
 				// #endregion Update _Client.Self
+
 				if (obj != null && objectTracking)
 				{
 					obj.Position = update.Position;
@@ -3227,7 +3228,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					obj.CollisionPlane = update.CollisionPlane;
 					obj.Acceleration = update.Acceleration;
 					obj.AngularVelocity = update.AngularVelocity;
-					obj.PrimData = obj.new ConstructionData();
+					if (obj.PrimData == null)
+					    obj.PrimData = obj.new ConstructionData();
 					obj.PrimData.State = update.State;
 					if (update.Textures != null)
 						obj.Textures = update.Textures;

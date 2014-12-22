@@ -65,7 +65,7 @@ public class J2KImage extends ManagedImage
 	{
 		/**
 		 * Temporary DataBlkInt object (needed when encoder uses floating-point
-		 * filters). This avoid allocating new DataBlk at each time
+		 * filters). This avoids allocating new DataBlk at each time
 		 */
 		private DataBlkInt intBlk;
 		
