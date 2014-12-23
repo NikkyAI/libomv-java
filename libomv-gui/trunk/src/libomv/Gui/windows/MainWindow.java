@@ -219,11 +219,10 @@ public class MainWindow extends JFrame implements MainControl
 		}
 		else if (action.equals(MainControl.cmdQuit))
 		{
-			_State.dispose();
 			if (_Client.Network.getConnected())
 			{
                 int confirm = JOptionPane.showOptionDialog(MainWindow.this,
-                        "Are You Sure to Logout from the network and Close this Application?",
+                        "Are You sure you want to Logout from the network and close this Application?",
                         "Quit Confirmation", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, null, null);
                 if (confirm == JOptionPane.YES_OPTION)
@@ -236,13 +235,14 @@ public class MainWindow extends JFrame implements MainControl
         			{
 						Logger.Log("Response to teleportation invite failed", LogLevel.Error, _Client, ex);
         			}
-        			System.exit(0);			
+                }
+                else
+                {
+                	return;
                 }
 			}
-			else
-			{
-    			System.exit(0);			
-			}
+			_State.dispose();
+			System.exit(0);			
 		}
 	}
 }

@@ -181,7 +181,12 @@ public class OfflineController implements StateController
 	{
 		if (_Browser == null)
 		{
-	        _Browser = BrowserFactory.createBrowser(BrowserType.getCrossPlatformBrowser());		
+			BrowserType type = BrowserType.getCrossPlatformBrowser();
+			String os = System.getProperty("os.name");
+			String arch = System.getProperty("os.arch");
+			if (os.contains("Windows") && (arch.indexOf("64") != -1))
+				type = BrowserType.IE;
+			_Browser = BrowserFactory.createBrowser(type);		
 		}
 		return _Browser;
 	}	

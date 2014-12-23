@@ -284,7 +284,7 @@ public class StateController implements ActionListener
 			String ar = System.getProperty("os.arch").toLowerCase();
 			BrowserType type = BrowserType.getCrossPlatformBrowser();
 			
-			if (os.startsWith("windows") && ar.contains("amd64"))
+			if (os.startsWith("windows") /* && ar.contains("amd64") */)
 			{
 				type = BrowserType.IE;
 			}			
