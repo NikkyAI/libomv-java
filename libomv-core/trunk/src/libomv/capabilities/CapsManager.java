@@ -236,11 +236,12 @@ public class CapsManager extends Thread
 			OSDArray req = new OSDArray();
 			// This list can be updated by using the following command to obtain a
 			// current list of capabilities the official linden viewer supports:
-			// wget -q -O - https://bitbucket.org/lindenlab/viewer-development/raw/default/indra/newview/llviewerregion.cpp
-			// | grep 'capabilityNames.append' | sed 's/^[ \t]*//;s/capabilityNames.append("/req.Add("/'
+			// wget -q -O - https://bitbucket.org/lindenlab/viewer-release/raw/default/indra/newview/llviewerregion.cpp | grep 'capabilityNames.append'  | sed 's/^[ \t]*//;s/capabilityNames.append("/req.Add("/'
+			req.add(OSD.FromString("AgentPreferences"));
 			req.add(OSD.FromString("AgentState"));
 			req.add(OSD.FromString("AttachmentResources"));
 			req.add(OSD.FromString("AvatarPickerSearch"));
+			req.add(OSD.FromString("AvatarRenderInfo"));
 			req.add(OSD.FromString("CharacterProperties"));
 			req.add(OSD.FromString("ChatSessionRequest"));
 			req.add(OSD.FromString("CopyInventoryFromNotecard"));
@@ -249,12 +250,16 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("EnvironmentSettings"));
 			req.add(OSD.FromString("EstateChangeInfo"));
 			req.add(OSD.FromString("EventQueueGet"));
+			req.add(OSD.FromString("FacebookConnect"));
+			req.add(OSD.FromString("FlickrConnect"));
+			req.add(OSD.FromString("TwitterConnect"));
 			req.add(OSD.FromString("FetchInventory2"));
 			req.add(OSD.FromString("FetchInventoryDescendents2"));
 			req.add(OSD.FromString("FetchLib2"));
 			req.add(OSD.FromString("FetchLibDescendents2"));
 			req.add(OSD.FromString("GetDisplayNames"));
 			req.add(OSD.FromString("GetMesh"));
+			req.add(OSD.FromString("GetMesh2"));
 			req.add(OSD.FromString("GetObjectCost"));
 			req.add(OSD.FromString("GetObjectPhysicsData"));
 			req.add(OSD.FromString("GetTexture"));
@@ -264,6 +269,7 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("HomeLocation"));
 			req.add(OSD.FromString("IncrementCOFVersion")); 
 			req.add(OSD.FromString("LandResources"));
+			req.add(OSD.FromString("LSLSyntax"));
 			req.add(OSD.FromString("MapLayer"));
 			req.add(OSD.FromString("MapLayerGod"));
 			req.add(OSD.FromString("MeshUploadFlags"));
