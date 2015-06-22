@@ -819,18 +819,7 @@ public class Quaternion
 
 	public Quaternion divide(Quaternion quaternion)
 	{
-		float q2lensq = quaternion.lengthSquared();
-		float x2 = quaternion.X / q2lensq;
-		float y2 = quaternion.Y / q2lensq;
-		float z2 = quaternion.Z / q2lensq;
-		float w2 = quaternion.W / q2lensq;
-
-		float x = (X * w2) - (W * x2) - (Y * z2) + (Z * y2);
-		float y =	(Y * w2) - (W * y2) - (Z * x2) + (X * z2);
-		float z = (Z * w2) - (W * z2) - (X * y2) + (Y * x2); 
-		float w = (W * w2) + (X * x2) + (Y * y2) + (Z * z2);
-	    X = x; Y = y; Z = z; W = w; 
-		return this;
+		return inverse().multiply(quaternion);
 	}
 
 	public float dot(Quaternion quaternion)
