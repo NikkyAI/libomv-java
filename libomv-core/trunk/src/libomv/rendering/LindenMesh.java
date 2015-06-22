@@ -49,7 +49,7 @@ public class LindenMesh
 {
     static final String MESH_HEADER = "Linden Binary Mesh 1.0";
     static final String MORPH_FOOTER = "End Morphs";
-
+    
     // #region Mesh Structs
 
     public class Face
@@ -397,7 +397,7 @@ public class LindenMesh
         List<Morph> morphs = new ArrayList<Morph>();
         String morphName = Helpers.readString(fis, 64);
 
-        while (morphName != MORPH_FOOTER)
+        while (!morphName.equals(MORPH_FOOTER))
         {
             Morph morph = new Morph();
             morph.Name = morphName;
