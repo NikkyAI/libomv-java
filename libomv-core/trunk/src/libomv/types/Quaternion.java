@@ -478,23 +478,21 @@ public class Quaternion
 	 */
 	public void getAxisAngle(RefObject<Vector3> axis, RefObject<Float> angle)
 	{
-		axis.argvalue = new Vector3(0f);
-		float scale = (float) Math.sqrt(X * X + Y * Y + Z * Z);
-
-		if (scale < Helpers.FLOAT_MAG_THRESHOLD || W > 1.0f || W < -1.0f)
+		Quaternion q = this.normalize();
+		float sin = (float)Math.sqrt(1.0f - q.W * q.W);
+		if (sin >= 0.001)
 		{
-			angle.argvalue = 0.0f;
-			axis.argvalue.X = 0.0f;
-			axis.argvalue.Y = 1.0f;
-			axis.argvalue.Z = 0.0f;
-		}
-		else
-		{
-			angle.argvalue = 2.0f * (float) Math.acos(W);
-			float ooscale = 1f / scale;
-			axis.argvalue.X = X * ooscale;
-			axis.argvalue.Y = Y * ooscale;
-			axis.argvalue.Z = Z * ooscale;
+		    float invSin = 1.0f / sin;
+		    if (q.W < 0) invSin = -invSin;
+		    axis.argvalue = new Vector3(q.X, q.Y, q.Z).multiply(invSin);
+		    angle.argvalue = 2.0f * (float)Math.acos(q.W);
+		    if (angle.argvalue > Math.PI)
+		    angle.argvalue = 2.0f * (float)Math.PI - angle.argvalue;
+		 }
+		 else
+		 {
+			 axis.argvalue = Vector3.UnitX;
+			 angle.argvalue = 0f;
 		}
 	}
 
