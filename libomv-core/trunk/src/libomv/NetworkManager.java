@@ -77,6 +77,7 @@ import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
+import libomv.utils.TimeoutEvent;
 
 // NetworkManager is responsible for managing the network layer of
 // libsecondlife. It tracks all the server connections, serializes
@@ -690,7 +691,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	}
 
 	private Timer _DisconnectTimer;
-
+	private Timer _LogoutTimer;
+	
 	// The simulator that the logged in avatar is currently occupying
 	private Simulator _CurrentSim;
 
@@ -805,6 +807,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		_Simulators = new ArrayList<Simulator>();
 		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
 		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
+		_LogoutTimer = new Timer();
 		_CurrentSim = null;
 		
         syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
@@ -1152,36 +1155,123 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 		return simulator;
 	}
+	
+    /**
+     * Begins the non-blocking logout. Makes sure that the LoggedOut event is
+     * called even if the server does not send a logout reply, and shutdown()
+     * is properly called.
+     * 
+     * @throws Exception 
+     */
+    public void BeginLogout() throws Exception
+    {
+        // Wait for a logout response (by way of the LoggedOut event. If the response is received,
+        // shutdown will be fired in the callback itself that caused this event to be triggered.
+        // Otherwise we fire it manually with a NetworkTimeout type after LOGOUT_TIMEOUT
+    	class LoggedOutHandler extends TimerTask implements Callback<LoggedOutCallbackArgs>
+    	{
+			// Executed when the timer times out
+    		@Override
+			public void run()
+			{
+	            try
+	            {
+					shutdown(DisconnectType.NetworkTimeout);
+				}
+	            catch (Exception e) 
+				{ }
+	       	    OnLoggedOut.remove(this);
+	            OnLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<UUID>()));
+			}	
 
-	public void Logout() throws Exception
+			// Executed when the log out resulted in an acknowledgement from the server
+			@Override
+			public boolean callback(LoggedOutCallbackArgs params)
+			{
+        		this.cancel();
+                return true;
+			}
+    		
+    	}
+  
+    	LoggedOutHandler timeoutTask = new LoggedOutHandler();
+  
+        OnLoggedOut.add(timeoutTask);
+ 
+        // Send the packet requesting a clean logout
+        RequestLogout();
+        _LogoutTimer.schedule(timeoutTask, _Client.Settings.LOGOUT_TIMEOUT);
+     }
+
+    /**
+     * Initiate a blocking logout request. This will return when the logout
+     * handshake has completed or when <code>Settings.LOGOUT_TIMEOUT</code>
+     * has expired and the network layer is manually shut down
+     */
+    public void Logout() throws Exception
 	{
+        final TimeoutEvent<Boolean> timeout = new  TimeoutEvent<Boolean>();
+		
+        Callback<LoggedOutCallbackArgs> loggedOut = new Callback<LoggedOutCallbackArgs>()
+        {
+        	@Override
+        	public boolean callback(LoggedOutCallbackArgs params)
+        	{
+        	    timeout.set(true);
+        	    return true;
+        	}
+        };
+
+        OnLoggedOut.add(loggedOut);
+
+        // Send the packet requesting a clean logout
+		RequestLogout();
+
+        // Wait for a logout response. If the response is received, shutdown() will
+        // be fired in the callback. Otherwise we fire it manually with a NetworkTimeout type
+        boolean success = timeout.waitOne(_Client.Settings.LOGOUT_TIMEOUT);
+        if (!success)
+        {
+    		// Shutdown the network layer
+    		shutdown(DisconnectType.NetworkTimeout, "User logged out");
+        }
+        OnLoggedOut.remove(loggedOut);
+	}
+
+	/** 
+	 * Initiate the logout process. The <code>Shutdown()</code> function
+	 * needs to be manually called.
+	 *
+	 * @throws Exception
+	 */
+	public void RequestLogout() throws Exception
+	{
+		if (_DisconnectTimer == null)
+		{
+			_DisconnectTimer.cancel();
+			_DisconnectTimer = null;
+		}
+
 		// This will catch a Logout when the client is not logged in
 		if (_CurrentSim == null || !_Connected)
 		{
 			return;
 		}
 
-		Logger.Log("Logging out", LogLevel.Info, _Client);
-
 		_Connected = false;
 		_Client.setCurrentGrid((String)null);
-		_DisconnectTimer.cancel();
 		_PacketHandlerThread.shutdown();
-		
+
+		Logger.Log("Logging out", LogLevel.Info, _Client);
+
 		// Send a logout request to the current sim
 		LogoutRequestPacket logout = new LogoutRequestPacket();
 		logout.AgentData.AgentID = _Client.Self.getAgentID();
 		logout.AgentData.SessionID = _Client.Self.getSessionID();
 
 		_CurrentSim.sendPacket(logout);
-
-		// TODO: We should probably check if the server actually received the
-		// logout request
-
-		// Shutdown the network layer
-		shutdown(DisconnectType.ClientInitiated, "User logged out");
 	}
-
+	
 	private void setCurrentSim(Simulator simulator, String seedcaps) throws InterruptedException, IOException
 	{
 		if (!simulator.equals(getCurrentSim()))
@@ -1698,8 +1788,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	{
 		LogoutReplyPacket logout = (LogoutReplyPacket) packet;
 
-		if ((logout.AgentData.SessionID == _Client.Self.getSessionID())
-				&& (logout.AgentData.AgentID == _Client.Self.getAgentID()))
+		if ((logout.AgentData.SessionID.equals(_Client.Self.getSessionID()))
+				&& (logout.AgentData.AgentID.equals(_Client.Self.getAgentID())))
 		{
 			Logger.DebugLog("Logout reply received", _Client);
 

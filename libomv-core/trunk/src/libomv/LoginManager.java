@@ -904,7 +904,7 @@ public class LoginManager
 		LoginParams loginParams = DefaultLoginParams(firstName, lastName, password, channel, version);
 		loginParams.Start = start;
 
-		return Login(loginParams);
+		return Login(loginParams, null);
 	}
 
 	/**
