@@ -35,6 +35,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
+import libomv.types.Matrix4;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
 import libomv.types.Vector3;
@@ -179,6 +180,32 @@ public class TypeTests extends TestCase
 
         assertTrue(a.toString() + " * " + b.toString() + " produced " + result.toString() +
             " instead of " + expected.toString(), result.equals(expected));
+    }
+    
+    
+    public void testMatrix() throws Exception
+    {
+    	Matrix4 matrix = new Matrix4(0, 0, 74, 1,
+				                     0, 435, 0, 1,
+				                     345, 0, 34, 1,
+				                     0, 0, 0, 0);
+    	
+    	/* determinant of singular matrix returns zero */
+    	assertEquals("Determinant of singular matrix is not 0", 0d, matrix.determinant(), 0.001d);
+    	
+    	/* inverse of identity matrix is the identity matrix */
+       	assertTrue("Inverse of identity matrix should be the identity matrix", Matrix4.Identity.equals(Matrix4.inverse(Matrix4.Identity)));
+  	 
+    	/* inverse of non-singular matrix test */
+        matrix = new Matrix4(1, 1, 0, 0,
+    			    		 1, 1, 1, 0,
+    					     0, 1, 1, 0,
+    					     0, 0, 0, 1);
+    	Matrix4 expectedInverse = new Matrix4(0, 1,-1, 0,
+    						                  1,-1, 1, 0,
+    						                 -1, 1, 0, 0,
+    						                  0, 0, 0, 1);
+    	assertEquals("inverse of simple non singular matrix failed", expectedInverse, Matrix4.inverse(matrix));
     }
 
     //public void testVectorQuaternionMath()

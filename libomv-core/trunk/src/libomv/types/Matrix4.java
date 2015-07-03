@@ -169,7 +169,7 @@ public final class Matrix4
 		float det = 0f;
 
 		float diag1 = M11 * M22 * M33;
-		float diag2 = M12 * M32 * M31;
+		float diag2 = M12 * M23 * M31;
 		float diag3 = M13 * M21 * M32;
 		float diag4 = M31 * M22 * M13;
 		float diag5 = M32 * M23 * M11;
@@ -791,7 +791,7 @@ public final class Matrix4
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * ((minor(matrix, i, j)).determinant())));
+				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * ((minor(matrix, i, j)).determinant3x3())));
 			}
 		}
 		adjointMatrix = transpose(adjointMatrix);
