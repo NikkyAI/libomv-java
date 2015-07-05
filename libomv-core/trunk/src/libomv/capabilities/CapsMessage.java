@@ -134,6 +134,7 @@ public class CapsMessage implements IMessage
 		ObjectPhysicsProperties,
 		ObjectMediaNavigate,
 		ObjectMedia,
+		GetObjectCost,
 		AttachmentResources,
 		LandResources,
 		ProductInfoRequest,
@@ -5654,6 +5655,121 @@ public class CapsMessage implements IMessage
 	        }
 	    }
 	} 
+
+    public class GetObjectCostRequest implements IMessage
+    {
+        // Object IDs for which to request cost information
+        public UUID[] ObjectIDs;
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.GetObjectCost;
+		}
+        
+		/**
+         * Deserializes the message
+         *
+         * @param map Incoming data to deserialize
+         */
+		@Override
+        public void Deserialize(OSDMap map)
+        {
+            OSDArray array = (OSDArray)map.get("object_ids");
+            if (array != null)
+            {
+                ObjectIDs = new UUID[array.size()];
+
+                for (int i = 0; i < array.size(); i++)
+                {
+                    ObjectIDs[i] = array.get(i).AsUUID();
+                }
+            }
+            else
+            {
+                ObjectIDs = new UUID[0];
+            }
+        }
+
+		/**
+         * Serializes the message
+         *
+         * @returns Serialized OSD
+         */
+		@Override
+        public OSDMap Serialize()
+        {
+            OSDMap ret = new OSDMap();
+            OSDArray array = new OSDArray();
+
+            for (int i = 0; i < ObjectIDs.length; i++)
+            {
+                array.add(OSD.FromUUID(ObjectIDs[i]));
+            }
+
+            ret.put("object_ids", array);
+            return ret;
+        }
+    }
+
+    public class GetObjectCostMessage implements IMessage
+    {
+        public UUID object_id;
+        public double link_cost;
+        public double object_cost;
+        public double physics_cost;
+        public double link_physics_cost;
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.GetObjectCost;
+		}
+ 
+		/**
+         * Deserializes the message
+         *
+         * @param map Incoming data to deserialize
+         */
+        public void Deserialize(OSDMap map)
+        {
+            if (map.size() != 1)
+                Logger.Log("GetObjectCostMessage returned values for more than one object! Function needs to be fixed for that!", LogLevel.Error);                    
+
+            for (String key : map.keySet())
+            {
+            	object_id = UUID.parse(key);
+                OSDMap values = (OSDMap)map.get(key);
+
+                link_cost = values.get("linked_set_resource_cost").AsReal();
+                object_cost = values.get("resource_cost").AsReal();
+                physics_cost = values.get("physics_cost").AsReal();
+                link_physics_cost = values.get("linked_set_physics_cost").AsReal();
+                // value["resource_limiting_type"].AsString();
+                return;
+            }
+        }
+
+		/**
+         * Serializes the message
+         *
+         * @returns Serialized OSD
+         */
+        public OSDMap Serialize()
+        {
+            OSDMap values = new OSDMap(4);
+            values.put("linked_set_resource_cost", OSD.FromReal(link_cost));
+            values.put("resource_cost", OSD.FromReal(object_cost));
+            values.put("physics_cost", OSD.FromReal(physics_cost));
+            values.put("linked_set_physics_cost", OSD.FromReal(link_physics_cost));
+
+            OSDMap map = new OSDMap(1);
+            map.put(object_id.toString(), values);
+            return map;
+        }
+
+    }
+	
 	// #endregion Object Media Messages
 
 	// #region Resource usage
@@ -5706,7 +5822,7 @@ public class CapsMessage implements IMessage
 			}
 		}
 	}
-
+	
 	// Details about parcel resource usage
 	public class ParcelResourcesDetail
 	{
@@ -6268,6 +6384,9 @@ public class CapsMessage implements IMessage
 	public IMessage DecodeEvent(CapsEventType eventType, OSDMap map)
 	{
 		IMessage message = null;
+		if (map == null)
+			return message;
+
 		switch (eventType)
 		{
 			case AgentGroupDataUpdate:
@@ -6446,8 +6565,18 @@ public class CapsMessage implements IMessage
 			case RenderMaterials:
 				message = new RenderMaterialsMessage();
 				break;
+			case GetObjectCost:
+	            if (map.containsKey("object_ids"))
+	            {
+	                message = new GetObjectCostRequest();
+	            }
+	            else
+	            {
+	                message = new GetObjectCostMessage();
+	            }
+	            break;
 
-			// Capabilities TODO:
+	        // Capabilities TODO:
 			case DispatchRegionInfo:
 			case EstateChangeInfo:
 			case FetchInventoryDescendents:
