@@ -559,7 +559,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Can subdivide and join parcels
 		public static final long LandDivideJoin = 1L << 15;
 
-		// Chat
+		// Group Chat moderation related
 		// Can join group chat sessions
 		public static final long JoinChat = 1L << 16;
 		// Can use voice chat in Group Chat sessions
@@ -616,7 +616,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Can landscape using Linden plants
 		public static final long LandGardening = 1L << 35;
 
-		// Objects
+		// Object Management
 		// Can deed objects to group
 		public static final long DeedObject = 1L << 36;
 		// Can move group owned objects
@@ -624,6 +624,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Can set group owned objects for-sale
 		public static final long ObjectSetForSale = 1L << 39;
 
+		// Accounting
 		// Pay group liabilities and receive group dividends
 		public static final long Accountable = 1L << 40;
 
@@ -640,6 +641,16 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Can vote on group proposals
 		public static final long VoteOnProposal = 1L << 45;
 
+		// Experiences
+		// Has admin rights to any experiences owned by this group
+		public static final long ExperienceAdmin = 1L << 49;
+		// Can sign scripts for experiences owned by this group
+		public static final long ExperienceCreator = 1L << 50;
+		       
+		// Group Banning
+		// Allows access to ban / un-ban agents from a group
+		public static final long GroupBanAccess = 1L << 51;
+		
 		public static long setValue(long value)
 		{
 			return value & _mask;
