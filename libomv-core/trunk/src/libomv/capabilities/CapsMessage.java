@@ -134,6 +134,7 @@ public class CapsMessage implements IMessage
 		ObjectPhysicsProperties,
 		ObjectMediaNavigate,
 		ObjectMedia,
+		GetObjectPhysicsData,
 		GetObjectCost,
 		AttachmentResources,
 		LandResources,
@@ -5656,6 +5657,132 @@ public class CapsMessage implements IMessage
 	    }
 	} 
 
+	public class GetObjectPhysicsRequest implements IMessage
+	{
+        // Object IDs for which to request physics information
+        public UUID[] ObjectIDs;
+
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.GetObjectPhysicsData;
+		}
+
+		/**
+         * Deserializes the message
+         *
+         * @param map Incoming data to deserialize
+         */
+		@Override
+        public void Deserialize(OSDMap map)
+        {
+            OSDArray array = (OSDArray)map.get("object_ids");
+            if (array != null)
+            {
+                ObjectIDs = new UUID[array.size()];
+
+                for (int i = 0; i < array.size(); i++)
+                {
+                    ObjectIDs[i] = array.get(i).AsUUID();
+                }
+            }
+            else
+            {
+                ObjectIDs = new UUID[0];
+            }
+        }
+
+		/**
+         * Serializes the message
+         *
+         * @returns Serialized OSD
+         */
+		@Override
+        public OSDMap Serialize()
+        {
+            OSDMap ret = new OSDMap();
+            OSDArray array = new OSDArray();
+
+            for (int i = 0; i < ObjectIDs.length; i++)
+            {
+                array.add(OSD.FromUUID(ObjectIDs[i]));
+            }
+
+            ret.put("object_ids", array);
+            return ret;
+        }
+	}
+	
+    public class GetObjectPhysicsMessage implements IMessage
+    {
+        class ObjectPhysics
+        {
+        	public UUID object_id;
+            public int shape_type;
+            public double density;
+            public double friction;
+            public double restitution;
+            public double gravity_multiplier;
+        }
+
+        public ObjectPhysics[] objectPhysics;
+        
+		@Override
+		public CapsEventType getType()
+		{
+			return CapsEventType.GetObjectCost;
+		}
+ 
+		/**
+         * Deserializes the message
+         *
+         * @param map Incoming data to deserialize
+         */
+        public void Deserialize(OSDMap map)
+        {
+        	int i = 0;
+        	objectPhysics = new ObjectPhysics[map.size()];
+        	
+            for (String key : map.keySet())
+            {
+            	objectPhysics[i].object_id = UUID.parse(key);
+                OSDMap values = (OSDMap)map.get(key);
+
+                objectPhysics[i].shape_type = values.get("PhysicsShapeType").AsInteger();
+                if (values.containsKey("Density"))
+                {
+                	objectPhysics[i].density = values.get("Density").AsReal();
+                	objectPhysics[i].friction = values.get("Friction").AsReal();
+                	objectPhysics[i].restitution = values.get("Restitution").AsReal();
+                	objectPhysics[i].gravity_multiplier = values.get("GravityMultiplier").AsReal();
+               }
+            }
+        }
+
+		/**
+         * Serializes the message
+         *
+         * @returns Serialized OSD
+         */
+        public OSDMap Serialize()
+        {
+            OSDMap map = new OSDMap(objectPhysics.length);
+            for (ObjectPhysics physics : objectPhysics)
+        	{
+        		OSDMap values = new OSDMap(4);
+        		values.put("PhysicsShapeType", OSD.FromReal(physics.shape_type));
+        		values.put("Density", OSD.FromReal(physics.density));
+        		values.put("Friction", OSD.FromReal(physics.friction));
+        		values.put("Restitution", OSD.FromReal(physics.restitution));
+        		values.put("GravityMultiplier", OSD.FromReal(physics.gravity_multiplier));
+
+        		map.put(physics.object_id.toString(), values);
+        	}
+            return map;
+        }
+
+    }
+
     public class GetObjectCostRequest implements IMessage
     {
         // Object IDs for which to request cost information
@@ -5714,12 +5841,17 @@ public class CapsMessage implements IMessage
 
     public class GetObjectCostMessage implements IMessage
     {
-        public UUID object_id;
-        public double link_cost;
-        public double object_cost;
-        public double physics_cost;
-        public double link_physics_cost;
+        class ObjectCost
+        {
+        	public UUID object_id;
+            public double link_cost;
+            public double object_cost;
+            public double physics_cost;
+            public double link_physics_cost;
+        }
 
+        public ObjectCost[] objectCosts;
+        
 		@Override
 		public CapsEventType getType()
 		{
@@ -5733,20 +5865,19 @@ public class CapsMessage implements IMessage
          */
         public void Deserialize(OSDMap map)
         {
-            if (map.size() != 1)
-                Logger.Log("GetObjectCostMessage returned values for more than one object! Function needs to be fixed for that!", LogLevel.Error);                    
-
+        	int i = 0;
+        	objectCosts = new ObjectCost[map.size()];
+        	
             for (String key : map.keySet())
             {
-            	object_id = UUID.parse(key);
+            	objectCosts[i].object_id = UUID.parse(key);
                 OSDMap values = (OSDMap)map.get(key);
 
-                link_cost = values.get("linked_set_resource_cost").AsReal();
-                object_cost = values.get("resource_cost").AsReal();
-                physics_cost = values.get("physics_cost").AsReal();
-                link_physics_cost = values.get("linked_set_physics_cost").AsReal();
+                objectCosts[i].link_cost = values.get("linked_set_resource_cost").AsReal();
+                objectCosts[i].object_cost = values.get("resource_cost").AsReal();
+                objectCosts[i].physics_cost = values.get("physics_cost").AsReal();
+                objectCosts[i].link_physics_cost = values.get("linked_set_physics_cost").AsReal();
                 // value["resource_limiting_type"].AsString();
-                return;
             }
         }
 
@@ -5757,14 +5888,17 @@ public class CapsMessage implements IMessage
          */
         public OSDMap Serialize()
         {
-            OSDMap values = new OSDMap(4);
-            values.put("linked_set_resource_cost", OSD.FromReal(link_cost));
-            values.put("resource_cost", OSD.FromReal(object_cost));
-            values.put("physics_cost", OSD.FromReal(physics_cost));
-            values.put("linked_set_physics_cost", OSD.FromReal(link_physics_cost));
+            OSDMap map = new OSDMap(objectCosts.length);
+            for (ObjectCost cost : objectCosts)
+        	{
+        		OSDMap values = new OSDMap(4);
+        		values.put("linked_set_resource_cost", OSD.FromReal(cost.link_cost));
+        		values.put("resource_cost", OSD.FromReal(cost.object_cost));
+        		values.put("physics_cost", OSD.FromReal(cost.physics_cost));
+        		values.put("linked_set_physics_cost", OSD.FromReal(cost.link_physics_cost));
 
-            OSDMap map = new OSDMap(1);
-            map.put(object_id.toString(), values);
+        		map.put(cost.object_id.toString(), values);
+        	}
             return map;
         }
 
@@ -6575,7 +6709,17 @@ public class CapsMessage implements IMessage
 	                message = new GetObjectCostMessage();
 	            }
 	            break;
-
+			case GetObjectPhysicsData:
+	            if (map.containsKey("object_ids"))
+	            {
+	                message = new GetObjectPhysicsRequest();
+	            }
+	            else
+	            {
+	                message = new GetObjectPhysicsMessage();
+	            }
+	            break;
+				
 	        // Capabilities TODO:
 			case DispatchRegionInfo:
 			case EstateChangeInfo:
