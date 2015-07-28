@@ -3932,7 +3932,22 @@ public class AgentManager implements PacketCallback, CapsCallback
 							switch (step.getGestureStepType())
 							{
 								case Chat:
-									Chat(((GestureStepChat) step).Text, 0, ChatType.Normal);
+									String text = ((GestureStepChat)step).Text;
+									int channel = 0;
+									Pattern p = Pattern.compile("^/(?<channel>-?[0-9]+) *(?<text>.*)");
+									Matcher m = p.matcher(text);
+									
+									String val = m.group("channel");
+									if (Helpers.isEmpty(val))
+									{
+									    try
+									    {
+									    	channel = Integer.decode(val);
+									        text = m.group("text");
+									    }
+										catch (Exception ex) { }
+									}
+									Chat(text, channel, ChatType.Normal);
 									break;
 								case Animation:
 									GestureStepAnimation anim = (GestureStepAnimation) step;
@@ -3968,10 +3983,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 									break;
 							}
 						}
-						catch (Exception ex)
-						{
-
-						}
+						catch (Exception ex) { }
 					}
 				}
 			}
