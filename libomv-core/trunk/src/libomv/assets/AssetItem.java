@@ -112,10 +112,16 @@ public abstract class AssetItem
         Mesh(49),
         /** Marketplace direct delivery inbox ("Received Items") */
         Inbox(50),
-        /** Marketplace direct delivery outbox */
+        /** Marketplace direct delivery outbox ("Merchant Outbox") */
         Outbox(51),
-        /** */
-        BasicRoot(52);
+        /** Root folder */
+        BasicRoot(52),
+        /** Viewer-Managed Marketplace Listings */
+        VMMListings(53),
+        /** Viewer-Managed Marketplace Stock */
+        VMMStocks(54),
+        /** Viewer-Managed Marketplace Versions (not used) */
+        VMMVersions(55);
 
 		private static final String[] _AssetTypeNames = new String[] {
 			"texture",    // 0
