@@ -70,6 +70,7 @@ import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
 import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
 import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryFolder;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
@@ -331,10 +332,64 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	// #region String Arrays
 
 	/* Partial mapping of AssetTypes to folder names */
-	private static final String[] _NewFolderNames = new String[] { "Textures", "Sounds", "Calling Cards", "Landmarks",
-			"Scripts", "Clothing", "Objects", "Notecards", "New Folder", "Inventory", "Scripts", "Scripts",
-			"Uncompressed Images", "Body Parts", "Trash", "Photo Album", "Lost And Found", "Uncompressed Sounds",
-			"Uncompressed Images", "Uncompressed Images", "Animations", "Gestures" };
+	private static final String[] _NewFolderNames = new String[]
+	{
+		"Textures",          // 0
+		"Sounds",            // 1
+		"Calling Cards",     // 2
+		"Landmarks",         // 3
+		Helpers.EmptyString, // 4
+		"Clothing",          // 5
+		"Objects",           // 6
+		"Notecards",         // 7
+		"My Inventory",      // 8
+		Helpers.EmptyString, // 9
+		"Scripts",           // 10
+		Helpers.EmptyString, // 11
+		Helpers.EmptyString, // 12
+		"Body Parts",        // 13
+		"Trash",             // 14
+		"Photo Album",       // 15
+		"Lost And Found",    // 16
+		Helpers.EmptyString, // 17
+		Helpers.EmptyString, // 18
+		Helpers.EmptyString, // 19
+		"Animations",        // 20
+		"Gestures",          // 21
+		Helpers.EmptyString, // 22
+		"Favorites",         // 23
+		Helpers.EmptyString, // 24
+		Helpers.EmptyString, // 25
+		"New Folder",        // 26
+		"New Folder",        // 27
+		"New Folder",        // 28
+		"New Folder",        // 29
+		"New Folder",        // 30
+		"New Folder",        // 31
+		"New Folder",        // 32
+		"New Folder",        // 33
+		"New Folder",        // 34
+		"New Folder",        // 35
+		"New Folder",        // 36
+		"New Folder",        // 37
+		"New Folder",        // 38
+		"New Folder",        // 39
+		"New Folder",        // 40
+		"New Folder",        // 41
+		"New Folder",        // 42
+		"New Folder",        // 43
+		"New Folder",        // 44
+		"New Folder",        // 45
+		"Current Outfit",    // 46
+		"New Outfit",        // 47
+		"My Outfits",        // 48
+		"Meshes",            // 49
+		"Received Items",    // 50
+		"Merchant Outbox",   // 51
+		"Basic Root",        // 52
+		"Marketplace Listings", // 53
+		"New Stock",         // 54
+	};
 
 	// #endregion String Arrays
 
@@ -805,7 +860,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                         					InventoryFolder category = SafeCreateInventoryFolder(folderID, parentID, descFolder.get("agent_id").AsUUID());
                         					category.name = descFolder.get("name").AsString();
                         					category.version = descFolder.get("version").AsInteger();
-                        					category.preferredType = AssetType.setValue(descFolder.get("type_default").AsInteger());
+                        					category.preferredType = FolderType.setValue(descFolder.get("type_default").AsInteger());
                         				}
                         			}
                         			// Fetch descendent items
@@ -900,6 +955,11 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final InventoryFolder FindFolderForType(AssetType type) throws InventoryException
 	{
+		return FindFolderForType(FolderType.setValue(type.getValue()));
+	}
+	
+	public final InventoryFolder FindFolderForType(FolderType type) throws InventoryException
+	{
 		if (_Store == null)
 		{
 			Logger.Log("Inventory is null, FindFolderForType() lookup cannot continue", LogLevel.Error, _Client);
@@ -908,12 +968,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		synchronized (_Store)
 		{
-			// Folders go in the root
-			if (type == AssetType.Folder)
-			{
-				return _Store.getInventoryFolder();
-			}
-
 			// Loop through each top-level directory and check if PreferredType
 			// matches the requested type
 			
@@ -1121,7 +1175,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void MoveFolder(UUID folderID, UUID newparentID, String newName) throws UnsupportedEncodingException,
 			Exception
 	{
-		UpdateFolderProperties(folderID, newparentID, newName, AssetType.Unknown);
+		UpdateFolderProperties(folderID, newparentID, newName, FolderType.None);
 	}
 
 	/**
@@ -1137,7 +1191,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            Folder type
 	 * @throws Exception
 	 */
-	public final void UpdateFolderProperties(UUID folderID, UUID parentID, String name, AssetType type)
+	public final void UpdateFolderProperties(UUID folderID, UUID parentID, String name, FolderType type)
 			throws Exception
 	{
 		synchronized (_Store)
@@ -1476,7 +1530,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final void EmptyLostAndFound() throws InventoryException, Exception
 	{
-		EmptySystemFolder(AssetType.LostAndFoundFolder);
+		EmptySystemFolder(FolderType.LostAndFound);
 	}
 
 	/**
@@ -1486,7 +1540,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final void EmptyTrash() throws Exception
 	{
-		EmptySystemFolder(AssetType.TrashFolder);
+		EmptySystemFolder(FolderType.Trash);
 	}
 
 	/**
@@ -1496,7 +1550,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            The type of folder to empty
 	 * @throws Exception
 	 */
-	private void EmptySystemFolder(AssetType folderType) throws Exception
+	private void EmptySystemFolder(FolderType folderType) throws Exception
 	{
 		synchronized (_Store)
 		{
@@ -1614,7 +1668,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 */
 	public final UUID CreateFolder(UUID parentID, String name) throws Exception
 	{
-		return CreateFolder(parentID, name, AssetType.Unknown);
+		return CreateFolder(parentID, name, FolderType.None);
 	}
 
 	/**
@@ -1628,21 +1682,21 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	 *            Name of the folder to create
 	 * @param preferredType
 	 *            Sets this folder as the default folder for new assets of the
-	 *            specified type. Use <code>AssetType.Unknown</code> to create a
+	 *            specified type. Use <code>FolderType.None</code> to create a
 	 *            normal folder, otherwise it will likely create a duplicate of
 	 *            an existing folder type
 	 * @return The UUID of the newly created folder
 	 * @throws Exception
 	 */
-	public final UUID CreateFolder(UUID parentID, String name, AssetType preferredType) throws Exception
+	public final UUID CreateFolder(UUID parentID, String name, FolderType preferredType) throws Exception
 	{
 		UUID id = new UUID();
 
 		// Assign a folder name if one is not already set
 		if (Helpers.isEmpty(name))
 		{
-			if (preferredType.getValue() >= AssetType.Texture.getValue()
-					&& preferredType.getValue() <= AssetType.Gesture.getValue())
+			if (preferredType.getValue() >= FolderType.Texture.getValue()
+					&& preferredType.getValue() <= FolderType.Gesture.getValue())
 			{
 				name = _NewFolderNames[preferredType.getValue()];
 			}
@@ -2427,7 +2481,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	public final void RequestDeRezToInventory(int objectLocalID) throws Exception
 	{
 		RequestDeRezToInventory(objectLocalID, DeRezDestination.AgentInventoryTake,
-				FindFolderForType(AssetType.Object).itemID, new UUID());
+				FindFolderForType(FolderType.Object).itemID, new UUID());
 	}
 
 	/**
@@ -3171,10 +3225,10 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				UUID itemID = UUID.Zero;
 				UUID parentID = UUID.Zero;
 				String name = Helpers.EmptyString;
-				AssetType assetType = AssetType.Unknown;
 
 				if (key.equals("inv_object"))
 				{
+					FolderType folderType = FolderType.None;
 					// In practice this appears to only be used for folders
 
 					while (lineNum < lines.length)
@@ -3199,7 +3253,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 							}
 							else if (key.equals("type"))
 							{
-								assetType = AssetType.setValue(val);
+								folderType = FolderType.setValue(val);
 							}
 							else if (key.equals("name"))
 							{
@@ -3210,11 +3264,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 					InventoryFolder folder = new InventoryFolder(itemID, parentID, _Client.Self.getAgentID());
 					folder.name = name;
-					folder.preferredType = assetType;
+					folder.preferredType = folderType;
 					items.add(folder);
 				}
 				else if (key.equals("inv_item"))
 				{
+					AssetType assetType = AssetType.Unknown;
+
 					// Any inventory item that links to an assetID, has
 					// permissions, etc
 					UUID assetID = UUID.Zero;
@@ -3964,7 +4020,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					{
 						InventoryFolder folder = new InventoryFolder(reply.FolderData[i].FolderID, reply.FolderData[i].ParentID, reply.AgentData.OwnerID);
 						folder.name = Helpers.BytesToString(reply.FolderData[i].getName());
-						folder.preferredType = AssetType.setValue(reply.FolderData[i].Type);
+						folder.preferredType = FolderType.setValue(reply.FolderData[i].Type);
 						_Store.add(folder);
 					}
 				}
@@ -4240,7 +4296,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     }
 					if (dataBlock.getName() != null)
 						folder.name = Helpers.BytesToString(dataBlock.getName());
-					folder.preferredType = AssetType.setValue(dataBlock.Type);
+					folder.preferredType = FolderType.setValue(dataBlock.Type);
 					_Store.add(folder);
 				}
 			}

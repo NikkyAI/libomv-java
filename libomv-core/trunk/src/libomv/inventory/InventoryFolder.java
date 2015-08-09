@@ -39,8 +39,8 @@ import java.util.Iterator;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
-import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 /**
  * A folder contains {@link libomv.inventory.InventoryNode}s and has certain
@@ -48,9 +48,184 @@ import libomv.types.UUID;
  */
 public class InventoryFolder extends InventoryNode
 {
+	/** The different types of folder */
+	public enum FolderType
+	{
+	    /** None folder type */
+	    None(-1),
+	    /** Texture folder type */
+	    Texture(0),
+	    /** Sound folder type */
+	    Sound(1),
+	    /** Calling card folder type */
+	    CallingCard(2),
+	    /** Landmark folder type */
+	    Landmark(3),
+	    /** Clothing folder type */
+	    Clothing(5),
+	    /** Object folder type */
+	    Object(6),
+	    /** Notecard folder type */
+	    Notecard(7),
+	    /** The root folder type */
+	    Root(8),
+	    /** LSLText folder */
+	    LSLText(10),
+	    /** Bodyparts folder */
+	    BodyPart(13),
+	    /** Trash folder */
+	    Trash(14),
+	    /** Snapshot folder */
+	    Snapshot(15),
+	    /** Lost And Found folder */
+	    LostAndFound(16),
+	    /** Animation folder */
+	    Animation(20),
+	    /** Gesture folder */
+	    Gesture(21),
+	    /** Favorites folder */
+	    Favorites(23),
+	    /** Ensemble beginning range */
+	    EnsembleStart(26),
+	    /** Ensemble ending range */
+	    EnsembleEnd(45),
+	    /** Current outfit folder */
+	    CurrentOutfit(46),
+	    /** Outfit folder */
+	    Outfit(47),
+	    /** My outfits folder */
+	    MyOutfits(48),
+	    /** Mesh folder */
+	    Mesh(49),
+	    /** Marketplace direct delivery inbox ("Received Items") */
+	    Inbox(50),
+	    /** Marketplace direct delivery outbox */
+	    Outbox(51),
+	    /** Basic root folder */
+	    BasicRoot(52),
+	    /** Marketplace listings folder */
+	    MarketplaceListings(53),
+	    /** Marketplace stock folder */
+	    MarkplaceStock(54),
+	    /** Hypergrid Suitcase folder */
+	    Suitcase(100);
+	     
+	    private static final String[] _FolderTypeNames = new String[]
+	    {
+	        "texture",    //  0
+	        "sound",      //  1
+	    	"callcard",   //  2
+	    	"landmark",   //  3
+	    	Helpers.EmptyString, //  4
+	    	"clothing",   //  5
+	    	"object",     //  6
+	    	"notecard",   //  7
+	    	"root_inv",   //  8
+	    	Helpers.EmptyString, //  9
+	    	"lsltext",    // 10
+	    	Helpers.EmptyString, // 11
+	    	Helpers.EmptyString, // 12
+	    	"bodypart",   // 13
+	    	"trash",      // 14
+	    	"snapshot",   // 15
+	    	"lstndfnd",   // 16
+	    	Helpers.EmptyString, // 17
+	    	Helpers.EmptyString, // 18
+	    	Helpers.EmptyString, // 19
+	    	"animatn",    // 20
+	    	"gesture",    // 21
+	    	Helpers.EmptyString, // 22
+	    	"favorite",   // 23
+	    	Helpers.EmptyString, // 24
+	    	Helpers.EmptyString, // 25
+	    	"ensemble",   // 26
+	    	"ensemble",   // 27
+	    	"ensemble",   // 28
+	    	"ensemble",   // 29
+	    	"ensemble",   // 30
+	    	"ensemble",   // 31
+	    	"ensemble",   // 32
+	    	"ensemble",   // 33
+	    	"ensemble",   // 34
+	    	"ensemble",   // 35
+	    	"ensemble",   // 36
+	    	"ensemble",   // 37
+	    	"ensemble",   // 38
+	    	"ensemble",   // 39
+	    	"ensemble",   // 40
+	    	"ensemble",   // 41
+	    	"ensemble",   // 42
+	    	"ensemble",   // 43
+	    	"ensemble",   // 44
+	    	"ensemble",   // 45
+	    	"current",    // 46
+	    	"outfit",     // 47
+	    	"my_otfts",   // 48
+	    	"mesh",       // 49
+	    	"inbox",      // 50
+	    	"outbox",     // 51
+	    	"basic_rt",   // 52
+	    	"merchant",   // 53
+	    	"stock",      // 54
+	    };
+
+		/**
+		 * Translate a string name of an FolderType into the proper Type
+		 * 
+		 * @param type
+		 *            A string containing the AssetType name
+		 * @return The FolderType which matches the string name, or
+		 *         FolderType.None if no match was found
+		 */
+		public static FolderType setValue(String value)
+		{
+			if (value != null)
+			{
+				try
+				{
+					return setValue(Integer.parseInt(value, 10));
+				}
+				catch (NumberFormatException ex) {}
+				
+				int i = 0;
+				for (String name : _FolderTypeNames)
+				{
+					i++;
+					if (name.compareToIgnoreCase(value) == 0)
+					{
+						return setValue(i);
+					}
+				}
+			}
+			return None;
+		}
+
+		public static FolderType setValue(int value)
+	    {
+	    	for (FolderType e : values())
+	    	{
+	    		if (e._value == value)
+	    			return e;
+	    	}
+	    	return None;
+	    }
+
+		public byte getValue()
+		{
+			return _value;
+		}
+
+		private final byte _value;
+
+		private FolderType(int value)
+		{
+			this._value = (byte) value;
+		}
+	}
+
 	private static final long serialVersionUID = 1L;
 	// The Preferred {@link T:libomv.assets.AssetItem.AssetType} for a folder.
-	public AssetType preferredType;
+	public FolderType preferredType;
 	// The Version of this folder
 	public int version;
 	// The number of descendents in this folder. This value can be different to the actual
@@ -68,7 +243,7 @@ public class InventoryFolder extends InventoryNode
 	public InventoryFolder(UUID itemID)
 	{
 		super(itemID);
-		preferredType = AssetType.Unknown;
+		preferredType = FolderType.None;
 		version = 1;
 	}
 
@@ -152,7 +327,7 @@ public class InventoryFolder extends InventoryNode
 		if (folderID == null)
 			folderID = map.get("folder_id").AsUUID();
 		version =  map.get("version").AsInteger();
-		preferredType = AssetType.setValue(map.get("type_default").AsInteger());
+		preferredType = FolderType.setValue(map.get("type_default").AsInteger());
 		if (map.containsKey("descendents"))
 		{
 			descendentCount =  map.get("descendents").AsInteger();		
@@ -174,7 +349,7 @@ public class InventoryFolder extends InventoryNode
 		if (serialVersionUID != info.readLong())
 			throw new InvalidObjectException("InventoryItem serial version mismatch");
 
-		preferredType = AssetType.setValue(info.readByte());
+		preferredType = FolderType.setValue(info.readByte());
 		version = info.readInt();
 
 		int num = info.readInt();

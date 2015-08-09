@@ -27,9 +27,9 @@ package libomv.examples.TestClient.Commands.Inventory;
 
 import java.util.ArrayList;
 
-import libomv.assets.AssetItem.AssetType;
 import libomv.examples.TestClient.Command;
 import libomv.examples.TestClient.TestClient;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryNode;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.UUID;
@@ -72,13 +72,13 @@ public class DeleteCommand extends Command
         	if (node.getType() == InventoryType.Folder)
         	{
                 // move the folder to the trash folder
-                Client.Inventory.MoveFolder(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);  
+                Client.Inventory.MoveFolder(node.itemID, Client.Inventory.FindFolderForType(FolderType.Trash).itemID);  
                 return String.format("Moved folder %s to Trash", node.name);
         	}
        		// move the item to the trash folder
-       		Client.Inventory.MoveItem(node.itemID, Client.Inventory.FindFolderForType(AssetType.TrashFolder).itemID);
+       		Client.Inventory.MoveItem(node.itemID, Client.Inventory.FindFolderForType(FolderType.Trash).itemID);
             return String.format("Moved item %s to Trash", node.name);
-         }
+        }
         return String.format("Found %d items", found.size());
     }
 }

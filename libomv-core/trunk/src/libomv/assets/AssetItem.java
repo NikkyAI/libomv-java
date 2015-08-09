@@ -56,10 +56,8 @@ public abstract class AssetItem
 		Object(6),
 		/** Notecard asset */
 		Notecard(7),
-		/** Holds a collection of inventory items */
+		/** Holds a collection of inventory items. "Category" in the Linden viewer */
 		Folder(8),
-		/** Root inventory folder */
-		RootFolder(9),
 		/** Linden scripting language script */
 		LSLText(10),
 		/** LSO bytecode for a script */
@@ -68,12 +66,6 @@ public abstract class AssetItem
 		TextureTGA(12),
 		/** Collection of textures and shape parameters that can be worn */
 		Bodypart(13),
-		/** Trash folder */
-		TrashFolder(14),
-		/** Snapshot folder */
-		SnapshotFolder(15),
-		/** Lost and found folder */
-		LostAndFoundFolder(16),
 		/** Uncompressed sound */
 		SoundWAV(17),
 		/** Uncompressed TGA non-square image, not to be used as a texture */
@@ -86,42 +78,15 @@ public abstract class AssetItem
 		Gesture(21),
 		/** Simstate file */
 		Simstate(22),
-		/** Contains landmarks for favorites */
-		FavoriteFolder(23),
 		/** Asset is a link to another inventory item */
 		Link(24),
 		/** Asset is a link to another inventory folder */
 		LinkFolder(25),
-		/** Beginning of the range reserved for ensembles */
-		EnsembleStart(26),
-		/** End of the range reserved for ensembles */
-		EnsembleEnd(45),
-		/**
-		 * Folder containing inventory links to wearables and attachments that
-		 * are part of the current outfit
-		 */
-		CurrentOutfitFolder(46),
-		/**
-		 * Folder containing inventory items or links to inventory items of
-		 * wearables and attachments together make a full outfit
-		 */
-		OutfitFolder(47),
-		/** Root folder for the folders of type OutfitFolder */
-		MyOutfitsFolder(48),
+		/** Marketplace Folder. Same as an Category but different display methods */
+		MarketplaceFolder(26),
 		/** Linden mesh format */
-        Mesh(49),
-        /** Marketplace direct delivery inbox ("Received Items") */
-        Inbox(50),
-        /** Marketplace direct delivery outbox ("Merchant Outbox") */
-        Outbox(51),
-        /** Root folder */
-        BasicRoot(52),
-        /** Viewer-Managed Marketplace Listings */
-        VMMListings(53),
-        /** Viewer-Managed Marketplace Stock */
-        VMMStocks(54),
-        /** Viewer-Managed Marketplace Versions (not used) */
-        VMMVersions(55);
+        Mesh(49);
+
 
 		private static final String[] _AssetTypeNames = new String[] {
 			"texture",    // 0
@@ -133,24 +98,24 @@ public abstract class AssetItem
 			"object",     // 6
 			"notecard",   // 7
 			"category",   // 8
-			"root",       // 9
+			Helpers.EmptyString, // 9
 			"lsltext",    // 10
 			"lslbyte",    // 11
 			"txtr_tga",   // 12
 			"bodypart",   // 13
-			"trash",      // 14
-			"snapshot",   // 15
-			"lstndfnd",   // 16
+			Helpers.EmptyString, // 14
+			Helpers.EmptyString, // 15
+			Helpers.EmptyString, // 16
 			"snd_wav",    // 17
 			"img_tga",    // 18
 			"jpeg",       // 19
 			"animatn",    // 20
 			"gesture",    // 21
 			"simstate",   // 22
-			"favorites",  // 23
+			Helpers.EmptyString, // 23
 			"link",       // 24
 			"linkfldr",   // 25
-			Helpers.EmptyString, // 26
+			"marketplacefolder", // 26
 	        Helpers.EmptyString, // 27
 	        Helpers.EmptyString, // 28
 	        Helpers.EmptyString, // 29
@@ -170,13 +135,10 @@ public abstract class AssetItem
 	        Helpers.EmptyString, // 43
 	        Helpers.EmptyString, // 44
 	        Helpers.EmptyString, // 45
-	        "curoutfit",  // 46
-	        "outfit",     // 47
-	        "myoutfits",  // 48
+	        Helpers.EmptyString, // 46
+	        Helpers.EmptyString, // 47
+	        Helpers.EmptyString, // 48
 	        "mesh",       // 49
-	        "inbox",      // 50
-	        "outbox",  	  // 51
-	        "basicroot",  // 52
 		};
 
 		/**

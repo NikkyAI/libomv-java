@@ -113,6 +113,7 @@ public class InventoryItem extends InventoryNode
 		private static final int _mask = 0x7F1100;
 	}
 
+	 
 	/* The {@link OpenMetaverse.UUID} of this item */
 	public UUID assetID;
 	/* The combined {@link OpenMetaverse.Permissions} of this item */

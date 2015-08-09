@@ -55,6 +55,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.primitives.MediaEntry;
@@ -143,6 +144,7 @@ public class CapsMessage implements IMessage
 		EstateChangeInfo,
 		FetchInventoryDescendents,
 		GroupProposalBallot,
+		GroupAPIv1,
 		MapLayerGod,
 		NewFileAgentInventory,
 		BulkUpdateInventory,
@@ -1504,14 +1506,14 @@ public class CapsMessage implements IMessage
             public UUID FolderID;
             public UUID ParentID;
             public String Name;
-            public AssetType Type;
+            public FolderType Type;
 
             public FolderDataInfo(OSDMap map)
             {
                 FolderID = map.get("FolderID").AsUUID();
                 ParentID = map.get("ParentID").AsUUID();
                 Name = map.get("Name").AsString();
-                Type = AssetType.setValue(map.get("Type").AsInteger());
+                Type = FolderType.setValue(map.get("Type").AsInteger());
              }
         }
 
@@ -6681,6 +6683,7 @@ public class CapsMessage implements IMessage
 	            break;
 				
 	        // Capabilities TODO:
+			case GroupAPIv1:
 			case DispatchRegionInfo:
 			case EstateChangeInfo:
 			case FetchInventoryDescendents:

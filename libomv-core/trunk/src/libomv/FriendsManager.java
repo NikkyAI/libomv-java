@@ -38,8 +38,8 @@ import libomv.AgentManager.InstantMessageOnline;
 import libomv.LoginManager.BuddyListEntry;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
-import libomv.assets.AssetItem.AssetType;
 import libomv.inventory.InventoryException;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.packets.AcceptFriendshipPacket;
 import libomv.packets.ChangeUserRightsPacket;
 import libomv.packets.DeclineFriendshipPacket;
@@ -639,7 +639,7 @@ public class FriendsManager implements PacketCallback
 			throw new InventoryException(
 					"Inventory not instantiated. Need to lookup CallingCard folder in order to accept a friendship request.");
 
-		UUID callingCardFolder = _Client.Inventory.FindFolderForType(AssetType.CallingCard).itemID;
+		UUID callingCardFolder = _Client.Inventory.FindFolderForType(FolderType.CallingCard).itemID;
 
 		AcceptFriendshipPacket request = new AcceptFriendshipPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -706,7 +706,7 @@ public class FriendsManager implements PacketCallback
 	 */
 	public final void OfferFriendship(UUID agentID, String message) throws Exception
 	{
-		UUID folderID = _Client.Inventory.FindFolderForType(AssetType.CallingCard).itemID;
+		UUID folderID = _Client.Inventory.FindFolderForType(FolderType.CallingCard).itemID;
 		_Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, folderID,
 				InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Online);
 	}

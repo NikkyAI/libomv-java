@@ -46,9 +46,9 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
-import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsClient;
 import libomv.inventory.InventoryException;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.types.Permissions.PermissionMask;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
@@ -317,8 +317,8 @@ public class ModelUploader
         req.put("asset_type", OSD.FromString("mesh"));
         req.put("inventory_type", OSD.FromString("object"));
 
-        req.put("folder_id", OSD.FromUUID(_Client.Inventory.FindFolderForType(AssetType.Object).itemID));
-        req.put("texture_folder_id", OSD.FromUUID(_Client.Inventory.FindFolderForType(AssetType.Texture).itemID));
+        req.put("folder_id", OSD.FromUUID(_Client.Inventory.FindFolderForType(FolderType.Object).itemID));
+        req.put("texture_folder_id", OSD.FromUUID(_Client.Inventory.FindFolderForType(FolderType.Texture).itemID));
 
         req.put("everyone_mask", OSD.FromInteger(PermissionMask.setValue(PermissionMask.All)));
         req.put("group_mask", OSD.FromInteger(PermissionMask.setValue(PermissionMask.All)));

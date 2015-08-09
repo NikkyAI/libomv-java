@@ -44,7 +44,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import libomv.GridClient;
-import libomv.assets.AssetItem.AssetType;
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
@@ -163,7 +162,7 @@ public class InventoryStore extends InventoryFolder
 		_Folders.put(UUID.Zero, this);
 
 		name = "Root";
-		preferredType = AssetType.RootFolder;
+		preferredType = FolderType.Root;
 	}
 		
 	// The root folder of the avatars inventory

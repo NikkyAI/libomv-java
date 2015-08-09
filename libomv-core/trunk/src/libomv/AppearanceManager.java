@@ -69,6 +69,7 @@ import libomv.capabilities.CapsClient;
 import libomv.imaging.Baker;
 import libomv.inventory.InventoryAttachment;
 import libomv.inventory.InventoryFolder;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryManager.InventorySortOrder;
 import libomv.inventory.InventoryObject;
@@ -1883,11 +1884,11 @@ public class AppearanceManager implements PacketCallback
             return false;
         }
 
-        InventoryFolder COF = _Client.Inventory.FindFolderForType(AssetType.CurrentOutfitFolder);
+        InventoryFolder COF = _Client.Inventory.FindFolderForType(FolderType.CurrentOutfit);
         if (COF == null)
         {
             _Client.Inventory.FolderContents(_Client.Inventory.getRootNode(false).itemID, _Client.Self.getAgentID(), true, true, InventorySortOrder.ByDate, true, _Client.Settings.CAPS_TIMEOUT);
-            COF = _Client.Inventory.FindFolderForType(AssetType.CurrentOutfitFolder);
+            COF = _Client.Inventory.FindFolderForType(FolderType.CurrentOutfit);
         }
 
         if (COF == null)

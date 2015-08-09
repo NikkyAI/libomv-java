@@ -45,11 +45,11 @@ import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
-import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.AsyncHTTPClient;
 import libomv.capabilities.CapsClient;
 import libomv.capabilities.RpcClient;
 import libomv.inventory.InventoryFolder;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.packets.EconomyDataRequestPacket;
 import libomv.types.UUID;
 import libomv.types.Vector2;
@@ -648,7 +648,7 @@ public class LoginManager
 						OSDMap map = (OSDMap) array.get(i);
 						folders[i] = new InventoryFolder(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID(), ownerID);
 						folders[i].name = map.get("name").AsString();
-						folders[i].preferredType = AssetType.setValue(map.get("type_default").AsInteger());
+						folders[i].preferredType = FolderType.setValue(map.get("type_default").AsInteger());
 						folders[i].version = map.get("version").AsInteger();
 					}
 				}
