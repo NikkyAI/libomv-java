@@ -133,6 +133,8 @@ public class LoginManager
 		public String Version;
 		/** A string containing the platform information the agent is running on */
 		public String Platform;
+		/** A string containing version number for OS the agent is running on */
+		public String PlatformVersion;
 		/** A string hash of the network cards Mac Address */
 		public String MAC;
 		/** Unknown or deprecated */
@@ -180,6 +182,7 @@ public class LoginManager
 			this.MethodName = "login_to_simulator";
 			this.Start = "last";
 			this.Platform = Helpers.getPlatform();
+			this.PlatformVersion = Helpers.getPlatformVersion();
 			this.MAC = Helpers.getMAC();
 			this.ViewerDigest = "";
 			this.ID0 = Helpers.getMAC();
@@ -1013,6 +1016,9 @@ public class LoginManager
         if (loginParams.Platform == null)
         	loginParams.Platform = Helpers.getPlatform();
 
+        if (loginParams.PlatformVersion == null)
+        	loginParams.PlatformVersion = Helpers.getPlatformVersion();
+
         if (loginParams.MAC == null)
         	loginParams.MAC = Helpers.getMAC();
         
@@ -1055,6 +1061,7 @@ public class LoginManager
 			loginLLSD.put("channel", OSD.FromString(loginParams.Channel));
 			loginLLSD.put("version", OSD.FromString(loginParams.Version));
 			loginLLSD.put("platform", OSD.FromString(loginParams.Platform));
+			loginLLSD.put("platform_version", OSD.FromString(loginParams.PlatformVersion));
 			loginLLSD.put("mac", OSD.FromString(loginParams.MAC));
 			loginLLSD.put("agree_to_tos", OSD.FromBoolean(loginParams.AgreeToTos));
 			loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));

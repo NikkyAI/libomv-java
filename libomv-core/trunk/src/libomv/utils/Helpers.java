@@ -2279,13 +2279,26 @@ public class Helpers
 	/**
 	 * Get current OS
 	 * 
-	 * @return Either "Win" or "Linux"
+	 * @return Either "win", "lnx", or "mac"
 	 */
 	public static String getPlatform()
 	{
-		return System.getProperty("os.name");
+		String platform = System.getProperty("os.name").substring(0, 3).toLowerCase();
+		
+		if (platform.equals("win") || platform.equals("mac") || platform.equals("sun"))
+			return platform;
+		else if (platform.equals("lin"))
+		    return "lnx";
+		else if (platform.equals("fre"))
+			return "bsd";
+		return "unk";
 	}
 
+	public static String getPlatformVersion()
+	{
+		return System.getProperty("os.version").substring(0, 3).toLowerCase();
+	}
+	
 	public static OSD ZDecompressOSD(InputStream in) throws IOException, ParseException
 	{
 		InflaterInputStream inflate = new InflaterInputStream(in);
