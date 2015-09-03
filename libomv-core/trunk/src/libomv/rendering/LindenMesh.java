@@ -29,10 +29,10 @@
  */
 package libomv.rendering;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -41,30 +41,14 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
 
+import libomv.GridClient;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
-public class LindenMesh
+public class LindenMesh extends ReferenceMesh
 {
-    static final String MESH_HEADER = "Linden Binary Mesh 1.0";
-    static final String MORPH_FOOTER = "End Morphs";
-    
     // #region Mesh Structs
-
-    public class Face
-    {
-        public short Indices1;
-        public short Indices2;
-        public short Indices3;
-        
-        public Face(ShortBuffer indices, int idx)
-        {
-        	Indices1 = indices.get(idx++);
-        	Indices2 = indices.get(idx++);
-        	Indices3 = indices.get(idx++);
-        }
-    }
 
     public class Vertex
     {
@@ -123,76 +107,18 @@ public class LindenMesh
     }
     // #endregion Mesh Structs
 
-    // Level of Detail mesh
-    public class LODMesh
-    {
-        public float MinPixelWidth;
-
-        protected String _header;
-        protected boolean _hasWeights;
-        protected boolean _hasDetailTexCoords;
-        protected Vector3 _position;
-        protected Vector3 _rotationAngles;
-        protected byte _rotationOrder;
-        protected Vector3 _scale;
-        protected short _numFaces;
-        protected ShortBuffer Indices;
-
-        public void LoadMesh(String filename) throws IOException
-        {
-        	LoadMesh(new FileInputStream(filename));
-        }
-        
-        public void LoadMesh(File file) throws IOException
-        {
-        	LoadMesh(new FileInputStream(file));
-        }
-
-        public void LoadMesh(InputStream stream) throws IOException
-        {
-        	SwappedDataInputStream fis = new SwappedDataInputStream(stream);
-        	_header = Helpers.readString(fis, 24);
-            if (!_header.equals(MESH_HEADER))
-                throw new IOException("Unrecognized mesh format");
-
-            // Populate base mesh variables
-            _hasWeights = fis.readByte() != 1;
-            _hasDetailTexCoords = fis.readByte() != 1;
-            _position = new Vector3(fis);
-            _rotationAngles = new Vector3(fis);
-            _rotationOrder = fis.readByte();
-            _scale = new Vector3(fis);
-            _numFaces = fis.readShort();
-
-            Indices = ShortBuffer.allocate(3 * _numFaces);
-            for (int i = 0; i < _numFaces; i++)
-            {
-                Indices.put(fis.readShort());
-                Indices.put(fis.readShort());
-                Indices.put(fis.readShort());
-            }
-        }
-        
-        public Face getFace(int index)
-        {
-        	if (index >= _numFaces)
-        		return null;
-    		return new Face(Indices, index * 3);
-        }
-    }
-
-    public float MinPixelWidth;
-
+ 
+    protected String _name;
     public String getName() { return _name; }
-    public String getHeader() { return _header; }
-    public boolean getHasWeights() { return _hasWeights; }
-    public boolean getHasDetailTexCoords() { return _hasDetailTexCoords; }
-    public Vector3 getPosition() { return _position; }
-    public Vector3 getRotationAngles() { return _rotationAngles; }
-    //public byte RotationOrder
-    public Vector3 getScale() { return _scale; }
-    public short getNumVertices() { return _numVertices; }
 
+    private LindenSkeleton _skeleton;
+	public LindenSkeleton getSkeleton() { return _skeleton; }
+
+    protected short _numVertices;
+
+
+    
+    protected FloatBuffer Vertices;
     public Vector3 getVerticeCoord(int index)
     {
     	if (index >= _numVertices)
@@ -200,6 +126,12 @@ public class LindenMesh
     	index *= 3;
     	return new Vector3(Vertices.get(index), Vertices.get(index + 1), Vertices.get(index + 2));
     }
+    
+    protected FloatBuffer Normals;
+    protected FloatBuffer BiNormals;
+    protected FloatBuffer TexCoords;
+    protected FloatBuffer DetailTexCoords;
+    protected FloatBuffer Weights;
 
     public Vertex getVertex(int index)
     {
@@ -214,116 +146,66 @@ public class LindenMesh
     	offset = index * 2;
     	vertex.TexCoord = new Vector2(TexCoords.get(offset), TexCoords.get(offset + 1));
     	vertex.DetailTexCoord = new Vector2(DetailTexCoords.get(offset), DetailTexCoords.get(offset + 1));
+
     	vertex.Weight = Weights.get(index);
     	return vertex;
     }
-    
-    public short getNumFaces() { return _numFaces; }
-
-    public Face getFace(int index)
-    {
-    	if (index >= _numFaces)
-    		return null;
-    	return new Face(Indices, index);
-    }
-    
-    public short getNumSkinJoints() { return _numSkinJoints; }
-    public String[] getSkinJoints() { return _skinJoints; }
-    public Morph[] getMorphs() { return _morphs; }
-    public int getNumRemaps() { return _numRemaps; }
-    public VertexRemap[] getVertexRemaps() { return _vertexRemaps; }
-    public TreeMap<Integer, LODMesh> getLODMeshes() { return _lodMeshes; }
-
-    protected String _name;
-    protected String _header;
-    protected boolean _hasWeights;
-    protected boolean _hasDetailTexCoords;
-    protected Vector3 _position;
-    protected Vector3 _rotationAngles;
-    protected byte _rotationOrder;
-    protected Vector3 _scale;
-    protected short _numVertices;
-    public FloatBuffer Vertices;
-    public FloatBuffer Normals;
-    public FloatBuffer BiNormals;
-    public FloatBuffer TexCoords;
-    public FloatBuffer DetailTexCoords;
-    public FloatBuffer Weights;
-    public Vector3 Center;
-   
-    protected short _numFaces;
-    public ShortBuffer Indices;
+ 
     protected short _numSkinJoints;
+    public short getNumSkinJoints() { return _numSkinJoints; }
     protected String[] _skinJoints;
+    public String[] getSkinJoints() { return _skinJoints; }
     protected Morph[] _morphs;
+    public Morph[] getMorphs() { return _morphs; }
     protected int _numRemaps;
+    public int getNumRemaps() { return _numRemaps; }
     protected VertexRemap[] _vertexRemaps;
-    protected TreeMap<Integer, LODMesh> _lodMeshes;
+    public VertexRemap[] getVertexRemaps() { return _vertexRemaps; }
+    protected TreeMap<Integer, ReferenceMesh> _meshes;
+    public TreeMap<Integer, ReferenceMesh> getMeshes() { return _meshes; }
 
-    public LindenMesh(String name)
+    public LindenMesh(GridClient client, String name) throws IOException, URISyntaxException
+    {
+        this(client, name, null);
+    }
+
+    public LindenMesh(GridClient client, String name, LindenSkeleton skeleton) throws IOException, URISyntaxException
     {
         _name = name;
-        _lodMeshes = new TreeMap<Integer, LODMesh>();
-    }
-
-    public void LoadMesh(String filename) throws IOException
-    {
-    	LoadMesh(new FileInputStream(filename));
+        _skeleton = skeleton;
+        _meshes = new TreeMap<Integer, ReferenceMesh>();
+        
+        if (_skeleton == null)
+        {
+        	_skeleton = LindenSkeleton.load(client);
+        }
     }
     
-    public void LoadMesh(File file) throws IOException
+    /**
+     * Load the mesh from a file
+     *
+     * @param "filename" The filename and path of the file containing the mesh data
+     */
+    public void load(String filename) throws IOException
     {
-    	LoadMesh(new FileInputStream(file));
+    	load(new FileInputStream(filename));
     }
-
-    public void LoadMesh(InputStream stream) throws IOException
+    
+    public void load(InputStream stream) throws IOException
     {
     	SwappedDataInputStream fis = new SwappedDataInputStream(stream);
-    	_header = Helpers.readString(fis, 24);
-        if (!_header.equals(MESH_HEADER))
-            throw new IOException("Unrecognized mesh format");
-
-        // Populate base mesh variables
-        _hasWeights = fis.readByte() != 1;
-        _hasDetailTexCoords = fis.readByte() != 1;
-        _position = new Vector3(fis);
-        _rotationAngles = new Vector3(fis);
-        _rotationOrder = fis.readByte();
-        _scale = new Vector3(fis);
+    	super.load(fis);
 
         _numVertices = fis.readShort();
-
-        float temp;
-        float minX, minY, minZ;
-        minX = minY = minZ = Float.MAX_VALUE;
-        float maxX, maxY, maxZ;
-        maxX = maxY = maxZ = Float.MIN_VALUE;
         
         // Populate the vertex array
         Vertices = FloatBuffer.allocate(3 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
         {
-        	temp = fis.readFloat();
-            if (temp < minX)
-                minX = temp;
-            else if (temp > maxX)
-                maxX = temp;
-            Vertices.put(temp);
-        	temp = fis.readFloat();
-            if (temp < minY)
-                minY = temp;
-            else if (temp > maxY)
-                maxY = temp;
-            Vertices.put(temp);
-        	temp = fis.readFloat();
-            if (temp < minZ)
-                minZ = temp;
-            else if (temp > maxZ)
-                maxZ = temp;
-            Vertices.put(temp);
+            Vertices.put(fis.readFloat());
+            Vertices.put(fis.readFloat());
+            Vertices.put(fis.readFloat());
         }
-        // Calculate the center-point from the bounding box edges
-        Center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
         
         Normals = FloatBuffer.allocate(3 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
@@ -369,12 +251,12 @@ public class LindenMesh
 
         _numFaces = fis.readShort();
 
-        Indices = ShortBuffer.allocate(3 * _numFaces);
+        _faces = ShortBuffer.allocate(3 * _numFaces);
         for (int i = 0; i < _numFaces; i++)
         {
-            Indices.put(fis.readShort());
-            Indices.put(fis.readShort());
-            Indices.put(fis.readShort());
+        	_faces.put(fis.readShort());
+        	_faces.put(fis.readShort());
+        	_faces.put(fis.readShort());
         }
     
         if (_hasWeights)
@@ -438,23 +320,100 @@ public class LindenMesh
             _numRemaps = 0;
             _vertexRemaps = new VertexRemap[0];
         }
-        finally
+        
+        // uncompress the skin weights
+        if (_skeleton != null)
         {
-        	fis.close();
+            // some meshes aren't weighted, which doesn't make much sense. We check for
+        	// left and right eyeballs, and assign them a 100% to their respective bone.
+            List<String> expandedJointList = _skeleton.buildExpandedJointList(_skinJoints);
+            if (expandedJointList.size() == 0)
+            {
+                if (_name.equals("eyeBallLeftMesh"))
+                {
+                    expandedJointList.add("mEyeLeft");
+                    expandedJointList.add("mSkull");
+                }
+                else if (_name.equals("eyeBallRightMesh"))
+                {
+                    expandedJointList.add("mEyeRight");
+                    expandedJointList.add("mSkull");
+                }
+            }
+
+            if (expandedJointList.size() > 0)
+                expandCompressedSkinWeights(expandedJointList);
         }
     }
     
-    public void LoadLODMesh(int level, String filename) throws IOException
+    //region Skin weight
+
+    /**
+     * Layout of one skinweight element
+     */
+    public class SkinWeightElement
     {
-        LODMesh lod = new LODMesh();
-        lod.LoadMesh(filename);
-        _lodMeshes.put(level, lod);
+        public String bone1;        // Name of the first bone that influences the vertex
+        public String bone2;        // Name of the second bone that influences the vertex
+        public float weight1;       // Weight with whitch the first bone influences the vertex
+        public float weight2;       // Weight with whitch the second bone influences the vertex
     }
 
-    public void LoadLODMesh(int level, File file) throws IOException
+    // List of skinweights, in the same order as the mesh vertices
+    public List<SkinWeightElement> SkinWeights = new ArrayList<SkinWeightElement>();
+
+    /**
+     * Decompress the skinweights
+     *
+     * @param expandedJointList The expanded joint list, used to index which bones should influece the vertex
+     */
+    private void expandCompressedSkinWeights(List<String> expandedJointList)
     {
-        LODMesh lod = new LODMesh();
-        lod.LoadMesh(file);
-        _lodMeshes.put(level, lod);
+        for (int i = 0; i < _numVertices; i++)
+        {
+            int boneIndex = (int)Math.floor(Weights.get(i)); // Whole number part is the index
+            float boneWeight = (Weights.get(i) - boneIndex); // fractional part is the weight
+            SkinWeightElement elm = new SkinWeightElement();
+
+            if (boneIndex == 0)         // Special case for dealing with eye meshes, which doesn't have any weights
+            {
+                elm.bone1 = expandedJointList.get(0);
+                elm.weight1 = 1;
+                elm.bone2 = expandedJointList.get(1);
+                elm.weight2 = 0;
+            }
+            else if (boneIndex < expandedJointList.size())
+            {
+                elm.bone1 = expandedJointList.get(boneIndex - 1);
+                elm.weight1 = 1 - boneWeight;
+                elm.bone2 = expandedJointList.get(boneIndex);
+                elm.weight2 = boneWeight;
+            }
+            else
+            {   // this should add a weight where the "invalid" Joint has a weight of zero
+                elm.bone1 = expandedJointList.get(boneIndex - 1);
+                elm.weight1 = 1 - boneWeight;
+                elm.bone2 = "mPelvis";
+                elm.weight2 = boneWeight;
+            }
+            SkinWeights.add(elm);
+       }
+    }
+    //#endregion Skin weight
+
+    public ReferenceMesh LoadLodMesh(GridClient client, int level, String filename) throws IOException, URISyntaxException
+    {
+    	ReferenceMesh refMesh;
+        if (filename.equals("avatar_eye_1.llm"))
+        {
+        	refMesh = new ReferenceMesh();
+        }
+        else
+        {
+        	refMesh = new LindenMesh(client, "");
+        }
+        refMesh.load(filename);
+        _meshes.put(level, refMesh);
+        return refMesh;
     }
 }
