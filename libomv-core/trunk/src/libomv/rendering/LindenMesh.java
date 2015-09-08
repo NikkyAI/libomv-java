@@ -32,7 +32,6 @@ package libomv.rendering;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -164,12 +163,12 @@ public class LindenMesh extends ReferenceMesh
     protected TreeMap<Integer, ReferenceMesh> _meshes;
     public TreeMap<Integer, ReferenceMesh> getMeshes() { return _meshes; }
 
-    public LindenMesh(GridClient client, String name) throws IOException, URISyntaxException
+    public LindenMesh(GridClient client, String name) throws Exception
     {
         this(client, name, null);
     }
 
-    public LindenMesh(GridClient client, String name, LindenSkeleton skeleton) throws IOException, URISyntaxException
+    public LindenMesh(GridClient client, String name, LindenSkeleton skeleton) throws Exception
     {
         _name = name;
         _skeleton = skeleton;
@@ -401,7 +400,7 @@ public class LindenMesh extends ReferenceMesh
     }
     //#endregion Skin weight
 
-    public ReferenceMesh LoadLodMesh(GridClient client, int level, String filename) throws IOException, URISyntaxException
+    public ReferenceMesh LoadLodMesh(GridClient client, int level, String filename) throws Exception
     {
     	ReferenceMesh refMesh;
         if (filename.equals("avatar_eye_1.llm"))

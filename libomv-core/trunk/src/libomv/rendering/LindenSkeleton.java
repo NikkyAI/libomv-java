@@ -31,8 +31,6 @@ package libomv.rendering;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,7 +157,7 @@ public class LindenSkeleton
         return this.num_collision_volumes;
     }
 
-    static public LindenSkeleton load(GridClient client) throws IOException, URISyntaxException
+    static public LindenSkeleton load(GridClient client) throws Exception
 	{
 		return load(client, null);
 	}
@@ -284,17 +282,19 @@ public class LindenSkeleton
         	}
         }
         
-        public void endElement(String namespaceURI, String localName, String qName) throws SAXException
+        public void endElement(String namespaceURI, String localName, String qName)
         {
         	if (qName.equalsIgnoreCase("bone"))
         	{
-        		System.out.format("Name: %s\n", joint.name);
         		if (joints != null)
         		{
-        			joint.bone = joints.toArray(joint.bone);
+        			joint.bone = joints.toArray(new Joint[joints.size()]);
         		}
-        		joints = stack.remove(stack.size() - 1);
-                joint = joints.get(joints.size() - 1);     		
+        		if (stack.size() > 0)
+        		{
+        			joints = stack.remove(stack.size() - 1);
+        			joint = joints.get(joints.size() - 1);
+        		}
         	}
         	else if (qName.equalsIgnoreCase("linden_skeleton"))
         	{
@@ -303,7 +303,7 @@ public class LindenSkeleton
         }
     }
     
-    static public LindenSkeleton load(GridClient client, String fileName) throws IOException, URISyntaxException
+    static public LindenSkeleton load(GridClient client, String fileName) throws Exception
 	{
     	File charFile = null;
     	FileInputStream skeletonData = null;
@@ -332,6 +332,7 @@ public class LindenSkeleton
     	catch (Exception ex)
     	{
     		skeleton = null;
+    		throw ex;
     	}
     	finally
     	{
