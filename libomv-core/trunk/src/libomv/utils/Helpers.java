@@ -2397,7 +2397,7 @@ public class Helpers
 	 * @param fileName The filename to strip the suffix from
 	 * @return The filename without suffix if a suffix exists or the entire name otherwise
 	 */
-	public static String getBaseFileName(String fileName)
+	public static String getBaseFileName(String fileName) throws IllegalArgumentException
 	{
 	    if (fileName == null)
 	    {
@@ -2420,9 +2420,10 @@ public class Helpers
 	 * @param clazz the class to get the code source for
 	 * @return the URL for the code source
 	 */
-	public static URL getBaseFileURL(Class<?> clazz)
+	public static URL getBaseFileURL(Class<?> clazz) throws SecurityException
 	{
-		CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+		Class<?> temp = clazz != null ?  clazz : Helpers.class;
+		CodeSource codeSource = temp.getProtectionDomain().getCodeSource();
 		return codeSource.getLocation();
 	}
 	

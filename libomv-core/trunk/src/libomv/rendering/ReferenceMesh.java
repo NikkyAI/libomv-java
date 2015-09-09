@@ -76,7 +76,7 @@ public class ReferenceMesh
     protected byte _rotationOrder;
     protected Vector3 _scale;
     protected short _numFaces;
-    protected ShortBuffer _faces;
+    public ShortBuffer Indices;
 
     public String getHeader() { return _header; }
     public boolean getHasWeights() { return _hasWeights; }
@@ -91,7 +91,7 @@ public class ReferenceMesh
     {
     	if (index >= _numFaces)
     		return null;
-		return new Face(_faces, index * 3);
+		return new Face(Indices, index * 3);
     }
 
     public void load(String filename) throws IOException
@@ -114,12 +114,12 @@ public class ReferenceMesh
     	load(fis);
         
         _numFaces = fis.readShort();
-   		_faces = ShortBuffer.allocate(3 * _numFaces);
+   		Indices = ShortBuffer.allocate(3 * _numFaces);
         for (int i = 0; i < _numFaces; i++)
         {
-        	_faces.put(fis.readShort());
-        	_faces.put(fis.readShort());
-        	_faces.put(fis.readShort());
+        	Indices.put(fis.readShort());
+        	Indices.put(fis.readShort());
+        	Indices.put(fis.readShort());
         }
     }
     

@@ -114,10 +114,8 @@ public class LindenMesh extends ReferenceMesh
 	public LindenSkeleton getSkeleton() { return _skeleton; }
 
     protected short _numVertices;
-
-
     
-    protected FloatBuffer Vertices;
+    public FloatBuffer Vertices;
     public Vector3 getVerticeCoord(int index)
     {
     	if (index >= _numVertices)
@@ -125,12 +123,17 @@ public class LindenMesh extends ReferenceMesh
     	index *= 3;
     	return new Vector3(Vertices.get(index), Vertices.get(index + 1), Vertices.get(index + 2));
     }
-    
-    protected FloatBuffer Normals;
-    protected FloatBuffer BiNormals;
-    protected FloatBuffer TexCoords;
-    protected FloatBuffer DetailTexCoords;
-    protected FloatBuffer Weights;
+    protected Vector3 _center;
+    public Vector3 getCenter()
+    {
+    	return _center;
+    }    
+   
+    public FloatBuffer Normals;
+    public FloatBuffer BiNormals;
+    public FloatBuffer TexCoords;
+    public FloatBuffer DetailTexCoords;
+    public FloatBuffer Weights;
 
     public Vertex getVertex(int index)
     {
@@ -150,6 +153,7 @@ public class LindenMesh extends ReferenceMesh
     	return vertex;
     }
  
+    private GridClient _client;
     protected short _numSkinJoints;
     public short getNumSkinJoints() { return _numSkinJoints; }
     protected String[] _skinJoints;
@@ -163,6 +167,11 @@ public class LindenMesh extends ReferenceMesh
     protected TreeMap<Integer, ReferenceMesh> _meshes;
     public TreeMap<Integer, ReferenceMesh> getMeshes() { return _meshes; }
 
+    public LindenMesh(String name) throws Exception
+    {
+        this(null, name, null);
+    }
+    
     public LindenMesh(GridClient client, String name) throws Exception
     {
         this(client, name, null);
@@ -170,16 +179,17 @@ public class LindenMesh extends ReferenceMesh
 
     public LindenMesh(GridClient client, String name, LindenSkeleton skeleton) throws Exception
     {
+        _client = client;
         _name = name;
         _skeleton = skeleton;
         _meshes = new TreeMap<Integer, ReferenceMesh>();
         
         if (_skeleton == null)
         {
-        	_skeleton = LindenSkeleton.load(client);
+        	_skeleton = LindenSkeleton.load(client, null);
         }
     }
-    
+
     /**
      * Load the mesh from a file
      *
@@ -187,7 +197,19 @@ public class LindenMesh extends ReferenceMesh
      */
     public void load(String filename) throws IOException
     {
-    	load(new FileInputStream(filename));
+    	FileInputStream fis = new FileInputStream(filename);
+    	try
+    	{
+    		load(fis);
+    	}
+    	catch (IOException ex)
+    	{
+    		System.out.append(filename + "\r\n");
+    	}
+    	finally
+    	{
+    		fis.close();
+    	}
     }
     
     public void load(InputStream stream) throws IOException
@@ -197,14 +219,36 @@ public class LindenMesh extends ReferenceMesh
 
         _numVertices = fis.readShort();
         
-        // Populate the vertex array
+    	float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE, val,
+    		  maxX = Float.MIN_VALUE, maxY = Float.MIN_VALUE, maxZ = Float.MIN_VALUE;
+    	// Populate the vertex array
         Vertices = FloatBuffer.allocate(3 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
         {
-            Vertices.put(fis.readFloat());
-            Vertices.put(fis.readFloat());
-            Vertices.put(fis.readFloat());
+        	val = fis.readFloat();
+        	if (val < minX)
+        		minX = val;
+        	else if (val > maxX)
+        		maxX = val;
+            Vertices.put(val);
+
+            val = fis.readFloat();
+        	if (val < minY)
+        		minY = val;
+        	else if (val > maxY)
+        		maxY = val;
+            Vertices.put(val);
+        	
+            val = fis.readFloat();
+        	if (val < minZ)
+        		minX = val;
+        	else if (val > maxZ)
+        		maxZ = val;
+            Vertices.put(val);
         }
+        
+        // Store the Center vector
+        _center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
         
         Normals = FloatBuffer.allocate(3 * _numVertices);
         for (int i = 0; i < _numVertices; i++)
@@ -250,12 +294,12 @@ public class LindenMesh extends ReferenceMesh
 
         _numFaces = fis.readShort();
 
-        _faces = ShortBuffer.allocate(3 * _numFaces);
+        Indices = ShortBuffer.allocate(3 * _numFaces);
         for (int i = 0; i < _numFaces; i++)
         {
-        	_faces.put(fis.readShort());
-        	_faces.put(fis.readShort());
-        	_faces.put(fis.readShort());
+        	Indices.put(fis.readShort());
+        	Indices.put(fis.readShort());
+        	Indices.put(fis.readShort());
         }
     
         if (_hasWeights)
@@ -287,6 +331,7 @@ public class LindenMesh extends ReferenceMesh
 
             for (int i = 0; i < morph.NumVertices; i++)
             {
+            	morph.Vertices[i] = new MorphVertex();
                 morph.Vertices[i].VertexIndex = fis.readInt();
                 morph.Vertices[i].Position = new Vector3(fis);
                 morph.Vertices[i].Normal = new Vector3(fis);
@@ -345,6 +390,22 @@ public class LindenMesh extends ReferenceMesh
         }
     }
     
+    public ReferenceMesh loadLod(int level, String filename) throws Exception
+    {
+    	ReferenceMesh mesh;
+        if (filename.equalsIgnoreCase("avatar_eye_1.llm"))
+        {
+        	mesh = new ReferenceMesh();
+        }
+        else
+        {
+        	mesh = new LindenMesh(_client, "");
+        }
+        mesh.load(filename);
+        _meshes.put(level, mesh);
+        return mesh;
+    }
+
     //region Skin weight
 
     /**
@@ -399,20 +460,4 @@ public class LindenMesh extends ReferenceMesh
        }
     }
     //#endregion Skin weight
-
-    public ReferenceMesh LoadLodMesh(GridClient client, int level, String filename) throws Exception
-    {
-    	ReferenceMesh refMesh;
-        if (filename.equals("avatar_eye_1.llm"))
-        {
-        	refMesh = new ReferenceMesh();
-        }
-        else
-        {
-        	refMesh = new LindenMesh(client, "");
-        }
-        refMesh.load(filename);
-        _meshes.put(level, refMesh);
-        return refMesh;
-    }
 }

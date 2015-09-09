@@ -38,7 +38,7 @@ import libomv.Gui.components.AvatarPanel;
 
 public class AvatarViewer
 {
-    private static JFrame frame = new AvatarPanel();
+    private static JFrame frame = new AvatarPanel(null);
 
 	private static void createAndShowGUI() throws Exception
 	{

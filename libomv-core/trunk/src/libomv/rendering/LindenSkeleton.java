@@ -157,11 +157,6 @@ public class LindenSkeleton
         return this.num_collision_volumes;
     }
 
-    static public LindenSkeleton load(GridClient client) throws Exception
-	{
-		return load(client, null);
-	}
-
     private class SkeletonHandler extends DefaultHandler
     {
     	private LindenSkeleton skeleton;
@@ -303,15 +298,35 @@ public class LindenSkeleton
         }
     }
     
-    static public LindenSkeleton load(GridClient client, String fileName) throws Exception
+    /**
+     * Load the default skeleton file "character/avatar_skeleton.xml"
+     * 
+     * @return the loaded skeleton object or null
+     * @throws Exception
+     */
+    static public LindenSkeleton load() throws Exception
 	{
+    	return load(null, null);
+	}
+
+    /**
+     * Load the default skeleton file "character/avatar_skeleton.xml"
+     * 
+     * @param client GridClient used to locate the code base as well as the settings for the character directory
+     * @param fileName the skeleton XML file name to load or if null the default "avatar_skeleton.xml"
+     * @return the loaded skeleton object or null
+     * @throws Exception
+     */
+    static public LindenSkeleton load(GridClient client, String fileName) throws Exception
+    {
     	File charFile = null;
     	FileInputStream skeletonData = null;
     	LindenSkeleton skeleton = null;
 
     	if (fileName == null)
         {
-       		File charDir = new File(Helpers.getBaseDirectory(client.getClass()), client.Settings.getString(LibSettings.CHARACTER_DIR));
+    		String characterDir = client != null ? client.Settings.getString(LibSettings.CHARACTER_DIR) : "character";
+       		File charDir = new File(Helpers.getBaseDirectory(client != null ? client.getClass() : null), characterDir);
        		charFile = new File(charDir, "avatar_skeleton.xml");
         }
         else

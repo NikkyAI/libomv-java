@@ -42,14 +42,6 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.HashMap;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.fixedfunc.GLLightingFunc;
-import javax.media.opengl.fixedfunc.GLMatrixFunc;
-import javax.media.opengl.glu.GLU;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -69,6 +61,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import libomv.GridClient;
 import libomv.rendering.LindenMesh;
 import libomv.types.Vector3;
 import libomv.utils.Logger;
@@ -77,6 +70,16 @@ import libomv.utils.Logger.LogLevel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.glu.GLU;
+
 import java.awt.Dimension;
 
 public class AvatarPanel extends JFrame implements ActionListener, MouseListener
@@ -94,13 +97,15 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 
     private GLCanvas glControl;
 
+    private GridClient _client;
+    
     private HashMap<String, LindenMesh> _meshes = new HashMap<String, LindenMesh>();
     private boolean _wireframe = true;
     private boolean _showSkirt = false;
 
     static GLU glu = new GLU();
 
-	public AvatarPanel()
+	public AvatarPanel(GridClient client)
 	{
 		JTabbedPane tabs = new JTabbedPane();
 		tabs.setMinimumSize(new Dimension(300, 300));
@@ -142,6 +147,8 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 		mntmExit.setActionCommand("exit");
 		mntmExit.addActionListener(this);
 		mnFile.add(mntmExit);
+		
+		_client = client;
 	}
 	
 	private File FileDialog(String description, String...extensions)
@@ -177,18 +184,18 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 	            // Mash up the filename with the current path
 	            fileName = new File(file.getParentFile(), fileName).getPath();
 
-	            LindenMesh mesh = (_meshes.containsKey(type) ? _meshes.get(type) : new LindenMesh(type));
+	            LindenMesh mesh = (_meshes.containsKey(type) ? _meshes.get(type) : new LindenMesh(_client, type));
 	            if (lod == 0)
 	            {
-	                mesh.LoadMesh(fileName);
+	                mesh.load(fileName);
 	            }
 	            else
 	            {
-	                mesh.LoadLODMesh(lod, fileName);
+	                mesh.loadLod(lod, fileName);
 	            }
 
 	            _meshes.put(type, mesh);
-	            glControl.invalidate();
+	            getGLControl().invalidate();
 	        }
 		}
 		catch (Exception ex)
@@ -215,7 +222,7 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 		}
 		else if (e.getActionCommand().equals("avatar"))
 		{
-			File file = FileDialog("Avatar File (avatar_lad.xml)", "avatar_lad.xml");
+			File file = FileDialog("Avatar File (avatar_lad.xml)", "xml");
 			if (file != null)
 			{
 				loadAvatarMesh(file);
@@ -280,7 +287,7 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 	                // Individual prim matrix
 	                gl.glPushMatrix();
 
-	                //GL.glTranslatef(mesh.Position.X, mesh.Position.Y, mesh.Position.Z);
+	                //gl.glTranslatef(mesh.Position.X, mesh.Position.Y, mesh.Position.Z);
 
 	                gl.glRotatef(mesh.getRotationAngles().X, 1f, 0f, 0f);
 	                gl.glRotatef(mesh.getRotationAngles().Y, 0f, 1f, 0f);
@@ -310,7 +317,8 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 	    {
 	        final GL2 gl = drawable.getGL().getGL2();
 
-	        if (height <= 0) {
+	        if (height <= 0)
+	        {
 	            height = 1;
 	        }
 	        float aspect = (float) width / (float) height;
@@ -328,7 +336,7 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 	        if (_meshes.containsKey("headMesh") && _meshes.containsKey("lowerBodyMesh"))
 	        {
 	            LindenMesh head = _meshes.get("headMesh"), lowerBody = _meshes.get("lowerBodyMesh");
-	            center = Vector3.divide(Vector3.add(head.Center, lowerBody.Center), 2f);
+	            center = Vector3.divide(Vector3.add(head.getCenter(), lowerBody.getCenter()), 2f);
 	        }
 	        
 	        double value = getJSldZoom().getValue() * 0.1d + center.Y;
