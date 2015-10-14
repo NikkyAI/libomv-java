@@ -1201,6 +1201,10 @@ version 2.0
 		{	Count			S32				}
 		{	OnlineStatus	BOOL			}
 	}
+	{
+		DataExtended    Variable
+		{   TimeStamp       U32             }
+	}
 }
 
 // GroupNoticeListRequest
