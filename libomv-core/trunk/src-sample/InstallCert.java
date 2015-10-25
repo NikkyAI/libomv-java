@@ -121,7 +121,7 @@ public class InstallCert {
 		}
 
 		X509Certificate cert = chain[k];
-	    FileOutputStream fos = new FileOutputStream(args + ".cert");
+	    FileOutputStream fos = new FileOutputStream(args[0] + ".cert");
 	    byte[] certBytes = cert.getEncoded();
 	    fos.write(certBytes);
 	    fos.close();
