@@ -71,6 +71,7 @@ import libomv.packets.ParcelInfoRequestPacket;
 import libomv.packets.ParcelJoinPacket;
 import libomv.packets.ParcelMediaCommandMessagePacket;
 import libomv.packets.ParcelMediaUpdatePacket;
+import libomv.packets.ParcelObjectOwnersReplyPacket;
 import libomv.packets.ParcelObjectOwnersRequestPacket;
 import libomv.packets.ParcelOverlayPacket;
 import libomv.packets.ParcelPropertiesRequestByIDPacket;
@@ -277,12 +278,26 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	// [Flags]
 	public static class TerraformBrushSize
 	{
+		static float LAND_BRUSH_SIZE[] = {1.0f, 2.0f, 4.0f};
+
 		// Small
 		public static final byte Small = 1 << 0;
 		// Medium
 		public static final byte Medium = 1 << 1;
 		// Large
 		public static final byte Large = 1 << 2;
+
+		public static byte getIndex(float value)
+		{
+			for (byte i = 2; i >= 0; i--)
+			{
+				if (value > LAND_BRUSH_SIZE[i])
+				{
+					return i;
+				}
+			}
+			return 0;
+		}
 
 		public static byte setValue(int value)
 		{
@@ -1473,6 +1488,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		_Client.Network.RegisterCallback(PacketType.ParcelMediaUpdate, this);
 		_Client.Network.RegisterCallback(PacketType.ParcelOverlay, this);
 		_Client.Network.RegisterCallback(PacketType.ParcelMediaCommandMessage, this);
+		_Client.Network.RegisterCallback(PacketType.ParcelObjectOwnersReply, this);
 	}
 
 	@Override
@@ -1501,6 +1517,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			case ParcelMediaCommandMessage:
 				HandleParcelMediaCommandMessagePacket(packet, simulator);
 				break;
+			case ParcelObjectOwnersReply:
+				HandleParcelObjectOwnersReply(packet, simulator);
+				break;				
 			default:
 				break;
 		}
@@ -1979,7 +1998,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
-	public final boolean Terraform(Simulator simulator, int localID, TerraformAction action, byte brushSize)
+	public final boolean Terraform(Simulator simulator, int localID, TerraformAction action, float brushSize)
 			throws Exception
 	{
 		return Terraform(simulator, localID, 0f, 0f, 0f, 0f, action, brushSize, 1);
@@ -2008,7 +2027,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 */
 	public final boolean Terraform(Simulator simulator, float west, float south, float east, float north,
-			TerraformAction action, byte brushSize) throws Exception
+			TerraformAction action, float brushSize) throws Exception
 	{
 		return Terraform(simulator, -1, west, south, east, north, action, brushSize, 1);
 	}
@@ -2040,7 +2059,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 */
 	public final boolean Terraform(Simulator simulator, int localID, float west, float south, float east, float north,
-			TerraformAction action, byte brushSize, int seconds) throws Exception
+			TerraformAction action, float brushSize, int seconds) throws Exception
 	{
 		float height = 0f;
 		int x, y;
@@ -2099,14 +2118,14 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 */
 	public final void Terraform(Simulator simulator, int localID, float west, float south, float east, float north,
-			TerraformAction action, byte brushSize, int seconds, float height) throws Exception
+			TerraformAction action, float brushSize, int seconds, float height) throws Exception
 	{
 		ModifyLandPacket land = new ModifyLandPacket();
 		land.AgentData.AgentID = _Client.Self.getAgentID();
 		land.AgentData.SessionID = _Client.Self.getSessionID();
 
 		land.ModifyBlock.Action = action.getValue();
-		land.ModifyBlock.BrushSize = brushSize;
+		land.ModifyBlock.BrushSize = TerraformBrushSize.getIndex(brushSize);
 		land.ModifyBlock.Seconds = seconds;
 		land.ModifyBlock.Height = height;
 
@@ -2120,7 +2139,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 		land.BrushSize = new float[1];
 		land.BrushSize[0] = brushSize;
-
+		
 		simulator.sendPacket(land);
 	}
 
@@ -2562,6 +2581,30 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			}
 			OnParcelAccessListReply.dispatch(new ParcelAccessListReplyCallbackArgs(simulator, reply.Data.SequenceID,
 					reply.Data.LocalID, reply.Data.Flags, accessList));
+		}
+	}
+
+	private final void HandleParcelObjectOwnersReply(Packet packet, Simulator simulator)
+	{
+		if (OnParcelObjectOwnersReply.count() > 0)
+		{
+			ArrayList<ParcelPrimOwners> primOwners = new ArrayList<ParcelPrimOwners>();
+
+			ParcelObjectOwnersReplyPacket msg = (ParcelObjectOwnersReplyPacket)packet;
+
+			for (int i = 0; i < msg.Data.length; i++)
+			{
+				ParcelPrimOwners primOwner = new ParcelPrimOwners();
+				primOwner.OwnerID = msg.Data[i].OwnerID;
+				primOwner.Count = msg.Data[i].Count;
+				primOwner.IsGroupOwned = msg.Data[i].IsGroupOwned;
+				primOwner.OnlineStatus = msg.Data[i].OnlineStatus;
+				if (i < msg.TimeStamp.length)
+					primOwner.NewestPrim = new Date(msg.TimeStamp[i] & 0xFFFF);
+
+				primOwners.add(primOwner);
+			}
+			OnParcelObjectOwnersReply.dispatch(new ParcelObjectOwnersReplyCallbackArgs(simulator, primOwners));
 		}
 	}
 

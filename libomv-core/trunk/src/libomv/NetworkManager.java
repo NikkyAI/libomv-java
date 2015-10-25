@@ -1210,7 +1210,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
      */
     public void Logout() throws Exception
 	{
-        final TimeoutEvent<Boolean> timeout = new  TimeoutEvent<Boolean>();
+        final TimeoutEvent<Boolean> timeout = new TimeoutEvent<Boolean>();
 		
         Callback<LoggedOutCallbackArgs> loggedOut = new Callback<LoggedOutCallbackArgs>()
         {
@@ -1229,8 +1229,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
         // Wait for a logout response. If the response is received, shutdown() will
         // be fired in the callback. Otherwise we fire it manually with a NetworkTimeout type
-        boolean success = timeout.waitOne(_Client.Settings.LOGOUT_TIMEOUT);
-        if (!success)
+        Boolean success = timeout.waitOne(_Client.Settings.LOGOUT_TIMEOUT);
+        if (success == null || !success)
         {
     		// Shutdown the network layer
     		shutdown(DisconnectType.NetworkTimeout, "User logged out");

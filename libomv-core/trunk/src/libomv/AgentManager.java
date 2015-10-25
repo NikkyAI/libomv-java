@@ -331,7 +331,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		public static InstantMessageDialog setValue(int value)
 		{
-			return values()[value];
+			if (values().length > value)
+				return values()[value];
+			Logger.Log("Invalid InstantMessageDialog value: " + value , Logger.LogLevel.Error);
+			return MessageFromAgent;
 		}
 
 		public byte getValue()
@@ -356,7 +359,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		public static InstantMessageOnline setValue(int value)
 		{
-			return values()[value];
+			if (values().length > value)
+				return values()[value];
+			Logger.Log("Invalid InstantMessageOnline value: " + value , Logger.LogLevel.Error);
+			return Offline;
 		}
 
 		public byte getValue()
