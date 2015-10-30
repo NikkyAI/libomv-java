@@ -1659,10 +1659,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	/**
 	 * Creates a new inventory folder
 	 * 
-	 * @param parentID
-	 *            ID of the folder to put this folder in
-	 * @param name
-	 *            Name of the folder to create
+	 * @param parentID ID of the folder to put this folder in
+	 * @param name Name of the folder to create
 	 * @return The UUID of the newly created folder
 	 * @throws Exception
 	 */
@@ -1672,16 +1670,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Creates a new inventory folder If you specify a preferred type of
-	 * <code>AsseType.Folder</code> it will create a new root folder which may
+	 * Creates a new inventory folder. If you specify a preferred type of
+	 * <code>FolderType.Root</code> it will create a new root folder which may
 	 * likely cause all sorts of strange problems
 	 * 
-	 * @param parentID
-	 *            ID of the folder to put this folder in
-	 * @param name
-	 *            Name of the folder to create
-	 * @param preferredType
-	 *            Sets this folder as the default folder for new assets of the
+	 * @param parentID ID of the folder to put this folder in
+	 * @param name Name of the folder to create
+	 * @param preferredType Sets this folder as the default folder for new assets of the
 	 *            specified type. Use <code>FolderType.None</code> to create a
 	 *            normal folder, otherwise it will likely create a duplicate of
 	 *            an existing folder type
@@ -1695,8 +1690,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		// Assign a folder name if one is not already set
 		if (Helpers.isEmpty(name))
 		{
-			if (preferredType.getValue() >= FolderType.Texture.getValue()
-					&& preferredType.getValue() <= FolderType.Gesture.getValue())
+			if (preferredType.getValue() >= FolderType.Texture.getValue() &&
+				preferredType.getValue() <= FolderType.Gesture.getValue())
 			{
 				name = _NewFolderNames[preferredType.getValue()];
 			}
