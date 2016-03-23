@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jogl-2.0"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jogl"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/libomv-java"/>
 	<classpathentry kind="lib" path="lib/engine-gecko.jar"/>
 	<classpathentry kind="lib" path="lib/engine-ie.jar"/>
 	<classpathentry kind="lib" path="lib/engine-webkit.jar"/>
@@ -22,5 +18,7 @@
 	<classpathentry kind="lib" path="lib/xulrunner-linux64.jar"/>
 	<classpathentry kind="lib" path="lib/xulrunner-mac.jar"/>
 	<classpathentry kind="lib" path="lib/xulrunner-windows.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libomv-core"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jogl 2.3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
