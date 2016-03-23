@@ -2599,7 +2599,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				primOwner.Count = msg.Data[i].Count;
 				primOwner.IsGroupOwned = msg.Data[i].IsGroupOwned;
 				primOwner.OnlineStatus = msg.Data[i].OnlineStatus;
-				if (i < msg.TimeStamp.length)
+				if (msg.TimeStamp != null && i < msg.TimeStamp.length)
 					primOwner.NewestPrim = new Date(msg.TimeStamp[i] & 0xFFFF);
 
 				primOwners.add(primOwner);
