@@ -57,6 +57,7 @@ public class Avatar extends Primitive
 		public static final byte Identified = 4;
 		public static final byte Transacted = 8;
 		public static final byte Online = 16;
+		public static final byte AgeVerified = 32;
 
 		public static byte setValue(int value)
 		{
@@ -68,7 +69,7 @@ public class Avatar extends Primitive
 			return (byte) (value & _mask);
 		}
 
-		private static final byte _mask = 0x1F;
+		private static final byte _mask = 0x3F;
 	}
 
 	// #endregion Enums
@@ -241,6 +242,23 @@ public class Avatar extends Primitive
 			else
 			{
 				Flags &= ~ProfileFlags.Transacted;
+			}
+		}
+
+		public boolean getAgeVerified()
+		{
+			return ((Flags & ProfileFlags.AgeVerified) != 0);
+		}
+
+		public void setAgeVerified(boolean value)
+		{
+			if (value == true)
+			{
+				Flags |= ProfileFlags.AgeVerified;
+			}
+			else
+			{
+				Flags &= ~ProfileFlags.AgeVerified;
 			}
 		}
 
