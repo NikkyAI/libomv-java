@@ -3351,36 +3351,43 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			
 
 			// Floating text
+			prim.Text = Helpers.EmptyString;
 			if ((flags & CompressedFlags.HasText) != 0)
 			{
-				// Floating text
+				int idx = i;
+				while (data[i] != 0)
+				{
+					i++;
+				};				
 				try
 				{
-					prim.Text = Helpers.BytesToString(data, i, -1, Helpers.ASCII_ENCODING);
+					prim.Text = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				}
 				catch (UnsupportedEncodingException e)
 				{ }
-				i += prim.Text.length() + 1;
+				i++;
 				// Text color
 				prim.TextColor = new Color4(data, i, false, true); i += 4;
-			}
-			else
-			{
-				prim.Text = Helpers.EmptyString;
 			}
 
 			prim.IsAttachment = (((flags & CompressedFlags.HasNameValues) != 0) && prim.ParentID != 0);
 
 			// Media URL
+			prim.MediaURL = Helpers.EmptyString;
 			if ((flags & CompressedFlags.MediaURL) != 0)
 			{
+				int idx = i;
+				while (data[i] != 0)
+				{
+					i++;
+				};				
 				try
 				{
-					prim.MediaURL = Helpers.BytesToString(data, i, -1, Helpers.ASCII_ENCODING);
+					prim.MediaURL = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				}
 				catch (UnsupportedEncodingException e)
 				{ }
-				i += prim.MediaURL.length() + 1;
+				i++;
 			}
 
 			// Particle system
