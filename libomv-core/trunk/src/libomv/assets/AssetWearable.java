@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import libomv.ObjectManager.SaleType;
-import libomv.primitives.Primitive.AttachmentPoint;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
