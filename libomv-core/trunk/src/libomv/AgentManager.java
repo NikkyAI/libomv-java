@@ -131,6 +131,7 @@ import libomv.packets.PickInfoUpdatePacket;
 import libomv.packets.RemoveMuteListEntryPacket;
 import libomv.packets.RetrieveInstantMessagesPacket;
 import libomv.packets.ScriptAnswerYesPacket;
+import libomv.packets.ScriptControlChangePacket;
 import libomv.packets.ScriptDialogReplyPacket;
 import libomv.packets.ScriptSensorReplyPacket;
 import libomv.packets.ScriptSensorRequestPacket;
@@ -1501,6 +1502,49 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public CallbackHandler<SetDisplayNameReplyCallbackArgs> OnSetDisplayNameReply = new CallbackHandler<SetDisplayNameReplyCallbackArgs>();
 
 	
+    // Data sent by a script requesting to take or release specified controls to your agent
+    public class ScriptControlChangeCallbackArgs implements CallbackArgs
+    {
+        private int m_Controls;
+        private boolean m_Pass;
+        private boolean m_Take;
+
+        // Get the controls the script is attempting to take or release to the agent</summary>
+        public int getControl()
+        {
+        	return m_Controls;
+        }
+
+        // True if the script is passing controls back to the agent
+        public boolean getPass()
+        {
+        	return m_Pass;
+        }
+
+        // True if the script is requesting controls be released to the script
+        public boolean getTake()
+    	{
+        	return m_Take;
+    	}
+
+        /**
+         * Construct a new instance of the ScriptControlEventArgs class
+         *  
+         * @param controls The controls the script is attempting to take or release to the agent
+         * @param pass True if the script is passing controls back to the agent
+         * @param take True if the script is requesting controls be released to the script
+         */
+        public ScriptControlChangeCallbackArgs(int controls, boolean pass, boolean take)
+        {
+        	this.m_Controls = controls;
+        	this.m_Pass = pass;
+        	this.m_Take = take;
+        }
+    }
+
+	public CallbackHandler<ScriptControlChangeCallbackArgs> OnScriptControlChange = new CallbackHandler<ScriptControlChangeCallbackArgs>();
+
+	
     // Data containing script sensor requests which allow an agent to know the specific details
     // of a primitive sending script sensor requests
     public class ScriptSensorReplyCallbackArgs implements CallbackArgs
@@ -1526,7 +1570,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         {
         	return m_GroupID;
         }
-        //Get the name of the primitive sending the s ensor
+        //Get the name of the primitive sending the sensor
         public String getName()
         {
         	return m_Name;
@@ -2594,7 +2638,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HandleAgentStateUpdate(message, simulator);
 				break;
 			default:
-				Logger.Log("AgentManager: Unhandled message" + message.getType().toString(), LogLevel.Warning, _Client);
+				Logger.Log("AgentManager: Unhandled message " + message.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -2641,6 +2685,9 @@ public class AgentManager implements PacketCallback, CapsCallback
 			case HealthMessage:
 				HandleHealthMessage(packet, simulator);
 				break;
+			case ScriptControlChange:
+				HandleScriptControlChange(packet, simulator);
+				break;
 			case ScriptSensorReply:
 				HandleScriptSensorReply(packet, simulator);
 				break;
@@ -2660,7 +2707,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HandleCameraConstraint(packet, simulator);
 				break;
 			default:
-				Logger.Log("AgentManager: Unhandled packet" + packet.getType().toString(), LogLevel.Warning, _Client);
+				Logger.Log("AgentManager: Unhandled packet " + packet.getType().toString(), LogLevel.Warning, _Client);
 		}
 	}
 
@@ -5883,8 +5930,26 @@ public class AgentManager implements PacketCallback, CapsCallback
 
     private void HandleCameraConstraint(Packet packet, Simulator simulator)
     {
-        CameraConstraintPacket camera = (CameraConstraintPacket)packet;
-        OnCameraConstraint.dispatch(new CameraConstraintCallbackArgs(camera.Plane));
+        if (OnCameraConstraint.count() > 0)
+        {
+        	CameraConstraintPacket camera = (CameraConstraintPacket)packet;
+        	OnCameraConstraint.dispatch(new CameraConstraintCallbackArgs(camera.Plane));
+        }
+    }
+
+    private void HandleScriptControlChange(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    {
+        if (OnScriptControlChange.count() > 0)
+        {
+        	ScriptControlChangePacket reply = (ScriptControlChangePacket)packet;
+        	
+            for (int i = 0; i < reply.Data.length; i++)
+            {
+                ScriptControlChangePacket.DataBlock block = reply.Data[i];
+
+                OnScriptControlChange.dispatch(new ScriptControlChangeCallbackArgs(ScriptControlChange.getValue(block.Controls), block.PassToAgent, block.TakeControls));
+            }
+        }
     }
 
     private void HandleScriptSensorReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
