@@ -612,6 +612,25 @@ public class TextureEntry
 			}
 		}
 
+		public TextureAnimation(byte[] data, int pos, int length)
+		{
+			if (length >= 16 && data.length >= (length + pos))
+			{
+				Flags = TextureAnimMode.setValue(data[pos++]);
+				Face = data[pos++];
+				SizeX = data[pos++];
+				SizeY = data[pos++];
+
+				Start = Helpers.BytesToFloatL(data, pos);
+				Length = Helpers.BytesToFloatL(data, pos + 4);
+				Rate = Helpers.BytesToFloatL(data, pos + 8);
+			}
+			else
+			{
+				init();
+			}
+		}
+
 		public TextureAnimation(OSD osd)
 		{
 			fromOSD(osd);
