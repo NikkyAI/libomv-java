@@ -503,14 +503,46 @@ public class Primitive
 		/** Neck */
 		Neck,
 		/** Avatar Center */
-		Root;
+		Root,
+		/** Left Ring Finger */
+		LeftHandRing,
+		/** Right Ring Finger */
+		RightHandRing,
+		/** Tail Base */
+		TailBase,
+		/** Tail Tip */
+		TailTip,
+		/** Left Wing */
+		LeftWing,
+		/** Right Wing */
+		RightWing,
+		/** Jaw */
+		Jaw,
+		/** Alt Left Ear */
+		AltLeftEar,
+		/** Alt Right Ear */
+		AltRightEar,
+		/** Alt Left Eye */
+		AltLeftEye,
+		/** Alt Right Eye */
+		AltRightEye,
+		/** Tongue */
+		Tongue,
+		/** Groin */
+		Groin,
+		/** Left Hind Foot */
+		LeftHindFoot,
+		/** Right Hind Foot */
+		RightHindFoot;
 
 		private static String[] strings = { "Default", "Chest", "Head", "Left Shoulder", "Right Shoulder", "Left Hand",
 				"Right Hand", "Left Foot", "Right Foot", "Back", "Pelvis", "Mouth", "Chin", "Left Ear", "Right Ear",
-				"Left Eye", "Right Eye", "Nose", "Right Upper Arm", "Right Lower Arm", "Left Upper Arm",
-				"Left Lower Arm", "Right Hip", "Right Upper Leg", "Right Lower Leg", "Left Hip", "Left Upper Leg",
-				"Left Lower Leg", "Belly", "Left Pec", "Right Pec", "HUD Center 2", "HUD Top Right", "HUD Top Center",
-				"HUD Top Left", "HUD Center 1", "HUD Bottom Left", "HUD Bottom", "HUD Bottom Right", "Neck", "Avatar Center" };
+				"Left Eye", "Right Eye", "Nose", "Right Upper Arm", "Right Lower Arm", "Left Upper Arm", "Left Lower Arm",
+				"Right Hip", "Right Upper Leg", "Right Lower Leg", "Left Hip", "Left Upper Leg", "Left Lower Leg", "Belly",
+				"Left Pec", "Right Pec", "HUD Center 2", "HUD Top Right", "HUD Top Center", "HUD Top Left", "HUD Center 1",
+				"HUD Bottom Left", "HUD Bottom", "HUD Bottom Right", "Neck", "Avatar Center", "Left Ring Finger",
+				"Right Ring Finger", "Tail Base", "Tail Tip", "Left Wing", "Right Wing", "Jaw", "Alt Left Ear", "Alt Right Ear",
+				"Alt Left Eye", "Alt Right Eye", "Tongue", "Groin", "Left Hind Foot", "Right Hind Foot"};
 
 		public static AttachmentPoint setValue(String value)
 		{
