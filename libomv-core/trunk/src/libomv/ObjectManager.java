@@ -3417,13 +3417,18 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if ((flags & CompressedFlags.HasNameValues) != 0)
 			{
 				String text = Helpers.EmptyString;
+				int idx = i;
+				while (data[i] != 0)
+				{
+					i++;
+				};				
 				try
 				{
-					text = Helpers.BytesToString(data, i, -1);
+					text = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				}
 				catch (UnsupportedEncodingException e)
 				{ }
-				i += text.length() + 1;
+				i++;
 
 				// Parse the name values
 				if (text.length() > 0)
@@ -3477,8 +3482,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			if (data.length >= i + 20 && (flags & CompressedFlags.TextureAnimation) != 0)
 			{
 				// Texture animation
-				i += 4;
-				prim.TextureAnim = prim.Textures.new TextureAnimation(data, i);
+				int textureAnimationLength = (int) Helpers.BytesToUInt32L(data, i); i += 4;
+				prim.TextureAnim = prim.Textures.new TextureAnimation(data, i, textureAnimationLength);
+				i += textureAnimationLength;
 			}
             
 			prim.IsAttachment = (flags & CompressedFlags.HasNameValues) != 0 && prim.ParentID != 0;
