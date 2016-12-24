@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import libomv.ObjectManager.SaleType;
+import libomv.primitives.Primitive.AttachmentPoint;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -111,6 +112,21 @@ public abstract class AssetWearable extends AssetItem
 		Tattoo,
 		/** Physics */
 		Physics;
+		
+		static String strings[] = {"Invalid", "Shape", "Skin", "Hair", "Eyes", "Shirt", "Pants", "Shoes", "Socks", "Jacket",
+				                   "Gloves", "Undershirt", "Underpants", "Skirt", "Alpha", "Tattoo", "Physics"};
+
+		public static WearableType setValue(String value)
+		{
+			for (int i = 0; i < values().length; i++)
+			{
+				if (value.equals(strings[i]))
+				{
+					return values()[i];
+				}
+			}
+			return Invalid;
+		}
 
 		public static WearableType setValue(int value)
 		{
@@ -121,7 +137,7 @@ public abstract class AssetWearable extends AssetItem
 
 		public static byte getValue(WearableType value)
 		{
-			return (byte)(value.ordinal() - 1);
+			return (byte)((value == Invalid) ? 255 : (value.ordinal() - 1));
 		}
 
 		public byte getValue()
@@ -129,6 +145,17 @@ public abstract class AssetWearable extends AssetItem
 			return (byte)(ordinal() - 1);
 		}
 		
+		@Override
+		public String toString()
+		{
+			return toString(this);
+		}
+
+		public static String toString(WearableType point)
+		{
+			return strings[point.ordinal()];
+		}
+
 		public static int getNumValues()
 		{
 			return values().length - 1;
