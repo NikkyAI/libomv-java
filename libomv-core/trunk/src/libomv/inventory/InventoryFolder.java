@@ -69,6 +69,8 @@ public class InventoryFolder extends InventoryNode
 	    Notecard(7),
 	    /** The root folder type */
 	    Root(8),
+		/** Non-conformant OpenSim root folder type, obsolete("No longer used, please use FolderType.Root") */
+		OldRoot(9),
 	    /** LSLText folder */
 	    LSLText(10),
 	    /** Bodyparts folder */
