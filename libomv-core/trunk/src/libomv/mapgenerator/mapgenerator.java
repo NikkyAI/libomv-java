@@ -674,6 +674,7 @@ public class mapgenerator
 		// Constructor that takes a byte array and beginning position only (no prebuilt header)
 		writer.println("    public " + packet.Name + "Packet(ByteBuffer bytes) throws Exception");
 		writer.println("    {");
+		writer.println("        hasVariableBlocks = " + (hasVariableBlocks ? "true" : "false") + ";");
 		writer.println("        _header = new PacketHeader(bytes, PacketFrequency." + PacketFrequency.Names[packet.Frequency] + ");");
 		for (MapBlock block : packet.Blocks)
 		{
@@ -755,6 +756,7 @@ public class mapgenerator
 		// Constructor that takes a byte array and a prebuilt header
 		writer.println("    public " + packet.Name + "Packet(PacketHeader head, ByteBuffer bytes)");
 		writer.println("    {");
+		writer.println("        hasVariableBlocks = " + (hasVariableBlocks ? "true" : "false") + ";");
 		writer.println("        _header = head;");
 		for (MapBlock block : packet.Blocks)
 		{
@@ -1309,7 +1311,7 @@ public class mapgenerator
 					+ "{\n"
 					+ "    public static final int MTU = 1200;\n\n"
 					+ "    public boolean hasVariableBlocks;\n"
-					+ "    protected PacketHeader _header;"
+					+ "    protected PacketHeader _header;\n"
 					+ "    public PacketHeader getHeader() { return _header; }\n"
 					+ "    public void setHeader(PacketHeader value) { _header = value; };\n"
 					+ "    public abstract PacketType getType();\n"
