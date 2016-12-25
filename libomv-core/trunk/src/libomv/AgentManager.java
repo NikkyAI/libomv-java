@@ -1509,7 +1509,7 @@ public class AgentManager implements PacketCallback, CapsCallback
         private boolean m_Pass;
         private boolean m_Take;
 
-        // Get the controls the script is attempting to take or release to the agent</summary>
+        // Get the controls the script is attempting to take or release to the agent
         public int getControl()
         {
         	return m_Controls;

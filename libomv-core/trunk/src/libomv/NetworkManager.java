@@ -454,7 +454,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			LibSettings.PACKET_INBOX_SIZE);
 	/** Outgoing packets that are awaiting handling */
 	private BlockingQueue<OutgoingPacket> _PacketOutbox = new LinkedBlockingQueue<OutgoingPacket>(
-			LibSettings.PACKET_INBOX_SIZE);
+			LibSettings.PACKET_OUTBOX_SIZE);
 
 	/** Number of packets in the incoming queue */
 	public final int getInboxCount()

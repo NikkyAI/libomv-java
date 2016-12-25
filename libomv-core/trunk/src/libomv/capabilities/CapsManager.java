@@ -340,7 +340,7 @@ public class CapsManager extends Thread
 
 					if (eventQueueGet == null)
 					{
-						Logger.Log("Returned capabilities does not contain an EventQueueGet caps", LogLevel.Warning, _Simulator.getClient());
+						Logger.Log("Caps seed: Returned capabilities does not contain an EventQueueGet caps", LogLevel.Warning, _Simulator.getClient());
 					}
 					/* when successful: return and startup eventqueue */
 					return eventQueueGet;
@@ -350,10 +350,10 @@ public class CapsManager extends Thread
 			{
 				if (ex.getStatusCode() == HttpStatus.SC_NOT_FOUND)
 				{
-					Logger.Log("Seed capability returned a 404 status, capability system is aborting", LogLevel.Error, _Simulator.getClient());
+					Logger.Log("Caps seed: Seed capability returned a 404 status, capability system is aborting", LogLevel.Error, _Simulator.getClient());
 					throw ex;
 				}
-				Logger.Log("Seed capability returned an error status", LogLevel.Warning, _Simulator.getClient(), ex);
+				Logger.Log("Caps seed: Seed capability returned an error status", LogLevel.Warning, _Simulator.getClient(), ex);
 			}
 		}
 		/* Retry seed request */
@@ -399,21 +399,21 @@ public class CapsManager extends Thread
 						}
 						else
 						{
-							Logger.Log("No Message handler exists for event " + eventName + ". Unable to decode. Will try Generic Handler next",
+							Logger.Log("Caps loop: No Message handler exists for event " + eventName + ". Unable to decode. Will try Generic Handler next",
 									   LogLevel.Warning, _Simulator.getClient());
-							Logger.Log("Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
+							Logger.Log("Caps loop: Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
 									   LogLevel.Debug, _Simulator.getClient());
 
 							// try generic decoder next which takes a caps event and tries to match it to an existing packet
 							Packet packet = CapsToPacket.BuildPacket(eventName, body);
 							if (packet != null)
 							{
-								Logger.Log("Serializing " + packet.getType() + " capability with generic handler", LogLevel.Debug, _Simulator.getClient());
+								Logger.Log("Caps loop: Serializing " + packet.getType() + " capability with generic handler", LogLevel.Debug, _Simulator.getClient());
 								_Simulator.getClient().Network.DistributePacket(_Simulator, packet);
 							}
 							else
 							{
-								Logger.Log("No Packet or Message handler exists for " + eventName, LogLevel.Warning, _Simulator.getClient());
+								Logger.Log("Caps loop: No Packet or Message handler exists for " + eventName, LogLevel.Warning, _Simulator.getClient());
 							}
 						}
 					}
@@ -429,7 +429,7 @@ public class CapsManager extends Thread
 					if (result == null)
 					{
 						++errorCount;
-						Logger.Log("Got an unparseable response from the event queue!", LogLevel.Warning, _Simulator.getClient());
+						Logger.Log("Caps loop: Got an unparseable response from the event queue!", LogLevel.Warning, _Simulator.getClient());
 					}
 					else if (result instanceof OSDMap)
 					{
