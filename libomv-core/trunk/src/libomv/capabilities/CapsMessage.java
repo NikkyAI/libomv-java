@@ -2751,7 +2751,7 @@ public class CapsMessage implements IMessage
 	{
 		// true of the script was successfully compiled by the simulator
 		public boolean Compiled;
-		// A String containing the error which occured while trying to update
+		// A String containing the error which occurred while trying to update
 		// the script
 		public String Error;
 		// A new AssetID assigned to the script
@@ -5308,7 +5308,7 @@ public class CapsMessage implements IMessage
 		// New URL
 		public String URL;
 
-		// Prim UUID where navigation occured
+		// Prim UUID where navigation occurred
 		public UUID PrimID;
 
 		// Face index

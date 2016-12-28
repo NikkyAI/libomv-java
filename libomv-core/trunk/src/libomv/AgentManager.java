@@ -4277,7 +4277,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * TeleportStatus stat = timo.waitms(timeout);
 	 * if (stat == null)
 	 * {
-	 *    // The timeout occured
+	 *    // The timeout occurred
 	 * }
 	 * </example>
 	 * 
