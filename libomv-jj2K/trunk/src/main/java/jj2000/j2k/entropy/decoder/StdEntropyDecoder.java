@@ -1023,7 +1023,7 @@ public class StdEntropyDecoder extends EntropyDecoder implements StdEntropyCoder
 			}
 		}
 
-		// If an error ocurred conceal it
+		// If an error occurred, conceal it
 		if (error && doer)
 		{
 			if (verber)

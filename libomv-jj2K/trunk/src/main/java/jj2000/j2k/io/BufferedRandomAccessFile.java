@@ -129,7 +129,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            The number of bytes to buffer
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	protected BufferedRandomAccessFile(File file, String mode, int bufferSize) throws IOException
 	{
@@ -160,7 +160,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            the 2 modes are different only if the file already exists).
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	protected BufferedRandomAccessFile(File file, String mode) throws IOException
 	{
@@ -183,7 +183,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            The number of bytes to buffer
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	protected BufferedRandomAccessFile(String name, String mode, int bufferSize) throws IOException
 	{
@@ -202,7 +202,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            the 2 modes are different only if the file already exists).
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	protected BufferedRandomAccessFile(String name, String mode) throws IOException
 	{
@@ -218,7 +218,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            The offset where to move to.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	protected final void readNewBuffer(int off) throws IOException
 	{
@@ -262,7 +262,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * Closes the buffered random access file
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public void close() throws IOException
@@ -291,7 +291,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * @return The length of the stream, in bytes.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int length() throws IOException
@@ -321,7 +321,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *                If in read-only and seeking beyond EOF.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public void seek(int off) throws IOException
@@ -352,7 +352,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * @return The byte read.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 * 
 	 * @exception java.io.EOFException
 	 *                If the end of file was reached
@@ -398,7 +398,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public final void readFully(byte b[], int off, int len) throws IOException
@@ -437,7 +437,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            The byte to write. The lower 8 bits of <tt>b</tt> are written.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public final void write(int b) throws IOException
@@ -472,7 +472,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            The byte to write.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public final void write(byte b) throws IOException
 	{
@@ -507,7 +507,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * @param length The number of bytes from b to write
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public final void write(byte[] b, int offset, int length) throws IOException
 	{
@@ -529,7 +529,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * 
 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public final void write(byte[] b) throws IOException
 	{
@@ -555,7 +555,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *            The value to write to the output
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public final void writeByte(int v) throws IOException
@@ -568,7 +568,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 * the bit level), and the stream should be realigned at the byte level.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public final void flush() throws IOException
@@ -592,7 +592,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *                necessary data.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public final byte readByte() throws EOFException, IOException
@@ -627,7 +627,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *                necessary data.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public final int readUnsignedByte() throws EOFException, IOException
@@ -663,7 +663,7 @@ public abstract class BufferedRandomAccessFile implements RandomAccessIO, Endian
 	 *                be skipped.
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int skipBytes(int n) throws EOFException, IOException

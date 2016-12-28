@@ -121,7 +121,7 @@ public class CmdLnDecoder
 		}
 		catch (StringFormatException e)
 		{
-			System.err.println("An error occured while parsing the arguments:\n" + e.getMessage());
+			System.err.println("An error occurred while parsing the arguments:\n" + e.getMessage());
 			return;
 		}
 		// Parse the arguments from some file?
@@ -142,7 +142,7 @@ public class CmdLnDecoder
 			}
 			catch (IOException e)
 			{
-				System.err.println("An error ocurred while reading from the argument file " + pl.getParameter("pfile"));
+				System.err.println("An error occurred while reading from the argument file " + pl.getParameter("pfile"));
 				return;
 			}
 			try
@@ -161,7 +161,7 @@ public class CmdLnDecoder
 			}
 			catch (StringFormatException e)
 			{
-				System.err.println("An error occured while re-parsing the arguments:\n" + e.getMessage());
+				System.err.println("An error occurred while re-parsing the arguments:\n" + e.getMessage());
 				return;
 			}
 		}
@@ -169,7 +169,8 @@ public class CmdLnDecoder
 		// Instantiate the Decoder object
 		dec = new Decoder(pl);
 		if (dec.getExitCode() != 0)
-		{ // An error ocurred
+		{
+			// An error occurred
 			System.exit(dec.getExitCode());
 		}
 
@@ -186,6 +187,7 @@ public class CmdLnDecoder
 		{
 			if (dec.getExitCode() != 0)
 			{
+				// An error occurred
 				System.exit(dec.getExitCode());
 			}
 		}

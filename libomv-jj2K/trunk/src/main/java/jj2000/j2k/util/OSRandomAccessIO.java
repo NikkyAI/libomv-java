@@ -436,7 +436,7 @@ public class OSRandomAccessIO implements RandomAccessIO
 	 *            The offset where to move to.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public void seek(int off) throws IOException
@@ -476,7 +476,7 @@ public class OSRandomAccessIO implements RandomAccessIO
 	 * 
 	 * @exception EOFException If the end-of currently defined data was reached
 	 *            before gettingall the requested data.
-	 * @exception IOException If an I/O error ocurred.
+	 * @exception IOException If an I/O error occurred.
 	 * @exception RuntimeException If an error occurred during array copy.
 	 */
 	@Override

@@ -293,7 +293,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 		}
 		catch (IOException e)
 		{
-			throw new Error("An IOException has ocurred where it should never occur");
+			throw new Error("An IOException has occurred where it should never occur");
 		}
 		ratepending = false;
 		islayer = false;
@@ -349,7 +349,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 					}
 					catch (IOException e)
 					{
-						throw new Error("An IOException has ocurred where it should never occur");
+						throw new Error("An IOException has occurred where it should never occur");
 					}
 					if (stok.ttype != StreamTokenizer.TT_EOF)
 					{
@@ -366,7 +366,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 			}
 			catch (IOException e)
 			{
-				throw new Error("An IOException has ocurred where it should never occur");
+				throw new Error("An IOException has occurred where it should never occur");
 			}
 		}
 		if (islayer)

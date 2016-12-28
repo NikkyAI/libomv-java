@@ -63,7 +63,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * the bit and byte level) should be written.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void close() throws IOException;
 
@@ -75,7 +75,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * @return The offset of the current position, in bytes.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int getPos() throws IOException;
 
@@ -86,7 +86,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * @return The length of the stream, in bytes.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int length() throws IOException;
 
@@ -105,7 +105,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 *                If in read-only and seeking beyond EOF.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void seek(int off) throws IOException;
 
@@ -119,7 +119,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 *                If the end-of file was reached.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int read() throws EOFException, IOException;
 
@@ -144,7 +144,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void readFully(byte b[], int off, int len) throws IOException;
 
@@ -156,7 +156,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 *            The byte to write. The lower 8 bits of <tt>b</tt> are written.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void write(int b) throws IOException;
 
@@ -167,7 +167,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * @param b The byte array to write. The lower 8 bits of <tt>b</tt> are written.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void write(byte[] b) throws IOException;
 
@@ -180,7 +180,7 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * @param len The number of bytes to write into the stream.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void write(byte[] b, int off, int len) throws IOException;
 }

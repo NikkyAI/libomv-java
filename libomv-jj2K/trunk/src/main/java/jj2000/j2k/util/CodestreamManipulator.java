@@ -149,7 +149,7 @@ public class CodestreamManipulator
 	 * @return The number of bytes that the file has increased by
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int doCodestreamManipulation() throws IOException
 	{
@@ -195,7 +195,7 @@ public class CodestreamManipulator
 	 *            The file to parse the markers from
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void parseAndFind(RandomAccessIO fi) throws IOException
 	{
@@ -310,7 +310,7 @@ public class CodestreamManipulator
 	 *            The file to read the headers and data from
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void readAndBuffer(RandomAccessIO fi) throws IOException
 	{
@@ -382,7 +382,7 @@ public class CodestreamManipulator
 	 * headers and packet data
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void createTileParts() throws IOException
 	{
@@ -548,7 +548,7 @@ public class CodestreamManipulator
 	 *            The file to write the new codestream to
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void writeNewCodestream(RandomAccessIO fi) throws IOException
 	{

@@ -73,7 +73,7 @@ import java.io.*;
  * through the constructor. The when the run() method is invoked and the decoder
  * executes. The exit code of the class can be obtained with the getExitCode()
  * method, after the constructor and after the run method. A non-zero value
- * indicates that an error has ocurred.
+ * indicates that an error has occurred.
  * 
  * <p>
  * The decoding chain corresponds to the following sequence of modules:
@@ -178,7 +178,7 @@ public class Decoder extends ImgDecoder implements Runnable
 
 	/**
 	 * Runs the decoder. After completion the exit code is set, a non-zero value
-	 * indicates that an error ocurred.
+	 * indicates that an error occurred.
 	 * 
 	 * @see #getExitCode
 	 */
@@ -220,12 +220,12 @@ public class Decoder extends ImgDecoder implements Runnable
 			}
 			catch (StringFormatException e)
 			{
-				error("An error occured while parsing the arguments:\n" + e.getMessage(), 1, e);
+				error("An error occurred while parsing the arguments:\n" + e.getMessage(), 1, e);
 				return;
 			}
 			catch (NumberFormatException e)
 			{
-				error("An error occured while parsing the arguments:\n" + e.getMessage(), 1, e);
+				error("An error occurred while parsing the arguments:\n" + e.getMessage(), 1, e);
 				return;
 			}
 
@@ -726,7 +726,7 @@ public class Decoder extends ImgDecoder implements Runnable
 			}
 			else
 			{
-				error("An error has occured during decoding.", 2);
+				error("An error has occurred during decoding.", 2);
 			}
 
 			if (pl.getParameter("debug").equals("on"))

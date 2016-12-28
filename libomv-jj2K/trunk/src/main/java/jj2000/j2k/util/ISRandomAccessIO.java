@@ -288,7 +288,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                If seeking beyond EOF and the data length is known.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public void seek(int off) throws IOException
@@ -311,7 +311,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 * @return The length of the stream, in bytes.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int length() throws IOException
@@ -332,7 +332,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                If the end-of file was reached.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int read() throws IOException
@@ -378,7 +378,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public void readFully(byte b[], int off, int n) throws IOException
@@ -426,7 +426,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public byte readByte() throws IOException
@@ -449,7 +449,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int readUnsignedByte() throws IOException
@@ -472,7 +472,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public short readShort() throws IOException
@@ -495,7 +495,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int readUnsignedShort() throws IOException
@@ -518,7 +518,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int readInt() throws IOException
@@ -541,7 +541,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public long readUnsignedInt() throws IOException
@@ -564,7 +564,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public long readLong() throws IOException
@@ -591,7 +591,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public float readFloat() throws IOException
@@ -616,7 +616,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public double readDouble() throws IOException
@@ -647,7 +647,7 @@ public class ISRandomAccessIO implements RandomAccessIO
 	 *                be skipped.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	@Override
 	public int skipBytes(int n) throws IOException

@@ -73,7 +73,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public byte readByte() throws EOFException, IOException;
 
@@ -90,7 +90,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int readUnsignedByte() throws EOFException, IOException;
 
@@ -105,7 +105,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public short readShort() throws EOFException, IOException;
 
@@ -122,7 +122,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int readUnsignedShort() throws EOFException, IOException;
 
@@ -137,7 +137,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int readInt() throws EOFException, IOException;
 
@@ -154,7 +154,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public long readUnsignedInt() throws EOFException, IOException;
 
@@ -169,7 +169,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public long readLong() throws EOFException, IOException;
 
@@ -185,7 +185,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public float readFloat() throws EOFException, IOException;
 
@@ -201,7 +201,7 @@ public interface BinaryDataInput
 	 *                necessary data.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public double readDouble() throws EOFException, IOException;
 
@@ -229,7 +229,7 @@ public interface BinaryDataInput
 	 *                be skipped.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public int skipBytes(int n) throws EOFException, IOException;
 }

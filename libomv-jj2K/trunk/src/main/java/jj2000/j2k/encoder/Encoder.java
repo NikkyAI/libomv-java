@@ -153,7 +153,7 @@ public class Encoder extends ImgEncoder implements Runnable
 
 	/**
 	 * Runs the encoder. After completion the exit code is set, a non-zero value
-	 * indicates that an error ocurred.
+	 * indicates that an error occurred.
 	 * 
 	 * @see #getExitCode
 	 */
@@ -196,12 +196,12 @@ public class Encoder extends ImgEncoder implements Runnable
 			}
 			catch (StringFormatException e)
 			{
-				error("An error occured while parsing the arguments:\n" + e.getMessage(), 1, e);
+				error("An error occurred while parsing the arguments:\n" + e.getMessage(), 1, e);
 				return;
 			}
 			catch (NumberFormatException e)
 			{
-				error("An error occured while parsing the arguments:\n" + e.getMessage(), 1, e);
+				error("An error occurred while parsing the arguments:\n" + e.getMessage(), 1, e);
 				return;
 			}
 

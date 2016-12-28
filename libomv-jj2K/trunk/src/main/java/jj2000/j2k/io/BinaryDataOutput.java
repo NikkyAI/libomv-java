@@ -79,7 +79,7 @@ public interface BinaryDataOutput
 	 *            The value to write to the output
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void writeByte(int v) throws IOException;
 
@@ -98,7 +98,7 @@ public interface BinaryDataOutput
 	 *            The value to write to the output
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void writeShort(int v) throws IOException;
 
@@ -111,7 +111,7 @@ public interface BinaryDataOutput
 	 *            The value to write to the output
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void writeInt(int v) throws IOException;
 
@@ -124,7 +124,7 @@ public interface BinaryDataOutput
 	 *            The value to write to the output
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void writeLong(long v) throws IOException;
 
@@ -137,7 +137,7 @@ public interface BinaryDataOutput
 	 *            The value to write to the output
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void writeFloat(float v) throws IOException;
 
@@ -150,7 +150,7 @@ public interface BinaryDataOutput
 	 *            The value to write to the output
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void writeDouble(double v) throws IOException;
 
@@ -171,7 +171,7 @@ public interface BinaryDataOutput
 	 * realigned at the byte level.
 	 * 
 	 * @exception IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	public void flush() throws IOException;
 }

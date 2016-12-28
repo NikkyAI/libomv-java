@@ -158,7 +158,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * This method writes the File Type box
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void writeFileTypeBox() throws IOException
 	{
@@ -185,7 +185,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * This method writes the JP2Header box
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void writeJP2HeaderBox() throws IOException
 	{
@@ -215,7 +215,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * This method writes the Bits Per Component box
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 * 
 	 */
 	private void writeBitsPerComponentBox() throws IOException
@@ -237,7 +237,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * This method writes the Colour Specification box
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 * 
 	 */
 	private void writeColourSpecificationBox() throws IOException
@@ -268,7 +268,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 * This method writes the Image Header box
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void writeImageHeaderBox() throws IOException
 	{
@@ -314,7 +314,7 @@ public class FileFormatWriter implements FileFormatBoxes
 	 *            The contiguous codestream length
 	 * 
 	 * @exception java.io.IOException
-	 *                If an I/O error ocurred.
+	 *                If an I/O error occurred.
 	 */
 	private void writeContiguousCodeStreamBoxHeader(int clength) throws IOException
 	{
