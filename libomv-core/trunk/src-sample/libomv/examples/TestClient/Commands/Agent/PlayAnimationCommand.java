@@ -66,7 +66,7 @@ public class PlayAnimationCommand extends Command
 
         if (animationID != null)
         {
-            Client.Self.AnimationStart(animationID, true);
+            Client.Self.AnimationStart(animationID);
         }
         else if (arg.toLowerCase().equals("list"))
         {
@@ -95,7 +95,7 @@ public class PlayAnimationCommand extends Command
             {
                 if (e.getValue().equals(arg.toUpperCase()))
                 {
-                    Client.Self.AnimationStart(e.getKey(), true);
+                    Client.Self.AnimationStart(e.getKey());
                     break;
                 }
             }

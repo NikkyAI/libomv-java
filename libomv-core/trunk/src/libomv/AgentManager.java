@@ -3065,8 +3065,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * @param participants
 	 *            {@link UUID} List of UUIDs to start a conference with
 	 * @param tmp_session_id
-	 *            the temportary session ID returned in the <see
-	 *            cref="OnJoinedGroupChat"/> callback>
+	 *            the temporary session ID returned in the {see cref="OnJoinedGroupChat" callback
 	 * @throws Exception
 	 */
 	public final void StartIMConference(UUID[] participants, UUID tmp_session_id) throws Exception
@@ -4008,13 +4007,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 									{
 										if (SignaledAnimations.containsKey(anim.ID))
 										{
-											AnimationStop(anim.ID, true);
+											AnimationStop(anim.ID);
 										}
-										AnimationStart(anim.ID, true);
+										AnimationStart(anim.ID);
 									}
 									else
 									{
-										AnimationStop(anim.ID, true);
+										AnimationStop(anim.ID);
 									}
 									break;
 								case Sound:
@@ -4107,16 +4106,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * 
 	 * @param animation
 	 *            The {@link UUID} of the animation to start playing
-	 * @param reliable
-	 *            Whether to ensure delivery of this packet or not
 	 * @throws Exception
 	 */
-	public final void AnimationStart(UUID animation, boolean reliable) throws Exception
+	public final void AnimationStart(UUID animation) throws Exception
 	{
-		HashMap<UUID, Boolean> animations = new HashMap<UUID, Boolean>();
-		animations.put(animation, true);
-
-		Animate(animations, reliable);
+		Animate(animation, true);
 	}
 
 	/**
@@ -4125,32 +4119,51 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * @param animation
 	 *            The {@link UUID} of a currently playing animation to stop
 	 *            playing
-	 * @param reliable
-	 *            Whether to ensure delivery of this packet or not
 	 * @throws Exception
 	 */
-	public final void AnimationStop(UUID animation, boolean reliable) throws Exception
+	public final void AnimationStop(UUID animation) throws Exception
 	{
-		HashMap<UUID, Boolean> animations = new HashMap<UUID, Boolean>();
-		animations.put(animation, false);
-
-		Animate(animations, reliable);
+		Animate(animation, false);
 	}
 
+	/**
+	 * Send an AgentAnimation packet that will toggle an animations on or off
+	 * 
+	 * @param uuid
+	 *            The animation {@link UUID} s, and whether to turn that
+	 *            animation on or off
+	 * @param start
+	 *            Wether the animation should be started or stopped
+	 * @throws Exception
+	 */
+	public final void Animate(UUID uuid, Boolean start) throws Exception
+	{
+		AgentAnimationPacket animate = new AgentAnimationPacket();
+		animate.getHeader().setReliable(false);
+
+		animate.AgentData.AgentID = _Client.Self.getAgentID();
+		animate.AgentData.SessionID = _Client.Self.getSessionID();
+		animate.AnimationList = new AgentAnimationPacket.AnimationListBlock[1];
+
+		animate.AnimationList[0] = animate.new AnimationListBlock();
+		animate.AnimationList[0].AnimID = uuid;
+		animate.AnimationList[0].StartAnim = start;
+
+		_Client.Network.sendPacket(animate);
+	}
+	
 	/**
 	 * Send an AgentAnimation packet that will toggle animations on or off
 	 * 
 	 * @param animations
 	 *            A list of animation {@link UUID} s, and whether to turn that
 	 *            animation on or off
-	 * @param reliable
-	 *            Whether to ensure delivery of this packet or not
 	 * @throws Exception
 	 */
-	public final void Animate(HashMap<UUID, Boolean> animations, boolean reliable) throws Exception
+	public final void Animate(HashMap<UUID, Boolean> animations) throws Exception
 	{
 		AgentAnimationPacket animate = new AgentAnimationPacket();
-		animate.getHeader().setReliable(reliable);
+		animate.getHeader().setReliable(false);
 
 		animate.AgentData.AgentID = _Client.Self.getAgentID();
 		animate.AgentData.SessionID = _Client.Self.getSessionID();
@@ -4165,13 +4178,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 			i++;
 		}
 
-		// TODO: Implement support for this
-		animate.PhysicalAvatarEventList = new AgentAnimationPacket.PhysicalAvatarEventListBlock[0];
-		for (i = 0; i < 0; i++)
-		{
-			animate.PhysicalAvatarEventList[i] = animate.new PhysicalAvatarEventListBlock();
-			animate.PhysicalAvatarEventList[i].setTypeData(null);
-		}
 		_Client.Network.sendPacket(animate);
 	}
 
