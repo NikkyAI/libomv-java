@@ -73,7 +73,8 @@ public class BVHMotion
 	}
 	
 	public float getDuration()
-	{//TODO support ignore first
+	{
+		//TODO support ignore first
 		return frameTime * motions.size();
 	}
 }

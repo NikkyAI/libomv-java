@@ -24,7 +24,7 @@ public class BVHWriter
 		StringBuilder buffer = new StringBuilder();
 		//hierachy
 		buffer.append("HIERARCHY\n");
-		writeTo(bvh.getHiearchy(),buffer,0);
+		writeTo(bvh.getHiearchy(), buffer, 0);
 
 		//MOTION
 		int frames = bvh.getFrames();
@@ -44,7 +44,7 @@ public class BVHWriter
 					v += " ";
 				}
 			}
-			buffer.append(v+"\n");
+			buffer.append(v + "\n");
 		}
 		//return text;
 		return buffer.toString();
