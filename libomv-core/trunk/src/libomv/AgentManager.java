@@ -6859,7 +6859,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				if (updateTimer != null)
 				{
 					updateTask.cancel();
-					updateTask = new UpdateTimer();
+					updateTask = new UpdateTimerTask();
 					updateTimer.scheduleAtFixedRate(updateTask, updateInterval, updateInterval);
 				}
 				updateInterval = value;
@@ -6956,7 +6956,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			}
 		}
 
-		private class UpdateTimer extends TimerTask
+		private class UpdateTimerTask extends TimerTask
 		{
 			@Override
 			public void run()
@@ -6978,8 +6978,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		public void ResetTimer()
 		{
 			CleanupTimer();
-			updateTimer = new Timer();
-			updateTask = new UpdateTimer();
+			updateTimer = new Timer("UpdateTimer");
+			updateTask = new UpdateTimerTask();
 			updateTimer.scheduleAtFixedRate(updateTask, updateInterval, updateInterval);
 		}
 
