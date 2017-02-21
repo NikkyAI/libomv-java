@@ -1015,12 +1015,26 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	public void DistributePacket(Simulator simulator, Packet packet)
 	{
-		_PacketInbox.add(new IncomingPacket(simulator, packet));
+		try
+		{
+			_PacketInbox.add(new IncomingPacket(simulator, packet));
+		}
+		catch (Exception ex)
+		{
+			Logger.Log("Suppressing packet " + packet.toString(), LogLevel.Warning, _Client, ex);
+		}
 	}
 
 	public void DistributeCaps(Simulator simulator, IMessage message)
 	{
-		_PacketInbox.add(new IncomingPacket(simulator, message));
+		try
+		{
+			_PacketInbox.add(new IncomingPacket(simulator, message));
+		}
+		catch (Exception ex)
+		{
+			Logger.Log("Suppressing message " + message.toString(), LogLevel.Warning, _Client, ex);
+		}
 	}
 
 	public Simulator connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)

@@ -185,7 +185,7 @@ public class LibSettings extends Settings implements PacketCallback
 	 * The initial size of the packet inbox and outbox, where packets are stored before
 	 * processing
 	 */
-	public static final int PACKET_INBOX_SIZE = 100;
+	public static final int PACKET_INBOX_SIZE = 300;
 	public static final int PACKET_OUTBOX_SIZE = 100;
 	/* Maximum size of packet that we want to send over the wire */
 	public static final int MAX_PACKET_SIZE = 1200;
