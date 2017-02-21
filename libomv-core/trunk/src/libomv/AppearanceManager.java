@@ -72,6 +72,8 @@ import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryManager.InventorySortOrder;
+import libomv.inventory.InventoryNode;
+import libomv.inventory.InventoryNode.InventoryType;
 import libomv.inventory.InventoryObject;
 import libomv.inventory.InventoryWearable;
 import libomv.packets.AgentCachedTexturePacket;
@@ -158,6 +160,8 @@ public class AppearanceManager implements PacketCallback
     private static final int MAX_CONCURRENT_DOWNLOADS = 5;
     // Maximum number of concurrent uploads for baked textures 
     private static final int MAX_CONCURRENT_UPLOADS = 6;
+    // Timeout for fetching inventory listings
+    private static final int INVENTORY_TIMEOUT = 1000 * 30;
     // Timeout for fetching a single wearable, or receiving a single packet response 
     private static final int WEARABLE_TIMEOUT = 1000 * 30;
     // Timeout for fetching a single texture 
@@ -2147,6 +2151,63 @@ public class AppearanceManager implements PacketCallback
         }, REBAKE_DELAY);
     }
     // #endregion Appearance Helpers
+
+    // #region Inventory Helpers
+
+    public boolean GetFolderWearables(String[] folderPath, List<InventoryWearable> wearables, List<InventoryItem> attachments) throws Exception
+    {
+        UUID folder = _Client.Inventory.FindObjectByPath(
+            _Client.Inventory.getRootNode(false).itemID, _Client.Self.getAgentID(), String.join("/", folderPath), INVENTORY_TIMEOUT);
+
+        if (folder != UUID.Zero)
+        {
+            return GetFolderWearables(folder, wearables, attachments);
+        }
+        Logger.Log("Failed to resolve outfit folder path " + folderPath, LogLevel.Error, _Client);
+        wearables = null;
+        attachments = null;
+        return false;
+    }
+
+    private boolean GetFolderWearables(UUID folder, List<InventoryWearable> wearables, List<InventoryItem> attachments) throws Exception
+    {
+        List<InventoryNode> objects = _Client.Inventory.FolderContents(folder, _Client.Self.getAgentID(), false, true, InventorySortOrder.ByName, INVENTORY_TIMEOUT);
+
+        if (objects != null)
+        {
+            for (InventoryNode ib : objects)
+            {
+                if (ib.getType() == InventoryType.Wearable)
+                {
+                    Logger.DebugLog("Adding wearable " + ib.name, _Client);
+                    wearables.add((InventoryWearable)ib);
+                }
+                else if (ib.getType() == InventoryType.Attachment)
+                {
+                    Logger.DebugLog("Adding attachment (attachment) " + ib.name, _Client);
+                    attachments.add((InventoryItem)ib);
+                }
+                else if (ib.getType() == InventoryType.Object)
+                {
+                    Logger.DebugLog("Adding attachment (object) " + ib.name, _Client);
+                    attachments.add((InventoryItem)ib);
+                }
+                else
+                {
+                    Logger.DebugLog("Ignoring inventory item " + ib.name, _Client);
+                }
+            }
+        }
+        else
+        {
+            Logger.Log("Failed to download folder contents of + " + folder, LogLevel.Error, _Client);
+            return false;
+        }
+
+        return true;
+    }
+
+    // #endregion Inventory Helpers
 
     // #region Callbacks
 
