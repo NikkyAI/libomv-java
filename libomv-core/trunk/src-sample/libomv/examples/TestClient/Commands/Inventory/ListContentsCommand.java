@@ -47,6 +47,13 @@ public class ListContentsCommand extends Command
         Category = CommandCategory.Inventory;
     }
 
+    private String getSubString(String string, int offset, int length)
+    {
+    	if (string.length() >= offset + length)
+    		return string.substring(offset, length);
+    	return string + Helpers.repeat(" ", length - string.length());
+    }
+    
 	@Override
     public String execute(String[] args, UUID fromAgentID) throws Exception
     {
@@ -79,6 +86,7 @@ public class ListContentsCommand extends Command
                     InventoryFolder folder = (InventoryFolder)node;
                     displayString += "d--------- ";
                     displayString += folder.itemID;
+                    displayString += " " + getSubString(folder.preferredType.toString(), 0, 13);
                     displayString += " " + folder.name;
                 }
                 else if (node instanceof InventoryItem)
@@ -89,6 +97,7 @@ public class ListContentsCommand extends Command
                     displayString += PermMaskString(item.Permissions.GroupMask);
                     displayString += PermMaskString(item.Permissions.EveryoneMask);
                     displayString += " " + item.itemID;
+                    displayString += " " + getSubString(item.assetType.toString(), 0, 13);
                     displayString += " " + item.name;
                     displayString += Helpers.NewLine;
                     displayString += "  AssetID: " + item.assetID;
