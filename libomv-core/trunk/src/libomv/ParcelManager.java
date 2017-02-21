@@ -780,6 +780,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		public boolean ObscureMusic;
 		// A struct containing media details
 		public ParcelMedia Media;
+		// true if avatars in this parcel should be invisible to people outside
+		public boolean SeeAVs;
+		// true if avatars outside can hear any sounds avatars inside play
+		public boolean AnyAVSounds;
+		// true if group members outside can hear any sounds avatars inside play
+		public boolean GroupAVSounds;
 
 		/**
 		 * Displays a parcel object in string format
@@ -865,6 +871,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				req.SnapshotID = this.SnapshotID;
 				req.UserLocation = this.UserLocation;
 				req.UserLookAt = this.UserLookAt;
+				req.SeeAVs = this.SeeAVs;
+				req.AnyAVSounds = this.AnyAVSounds;
+				req.GroupAVSounds = this.GroupAVSounds;
 
 				new CapsClient(_Client, "UpdateParcel").executeHttpPost(url, req, null, simulator.getClient().Settings.CAPS_TIMEOUT);
 			}
@@ -2446,6 +2455,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			parcel.Media.MediaType = msg.MediaType;
 			parcel.ObscureMedia = msg.ObscureMedia;
 			parcel.ObscureMusic = msg.ObscureMusic;
+			parcel.SeeAVs = msg.SeeAVs;
+			parcel.AnyAVSounds = msg.AnyAVSounds;
+			parcel.GroupAVSounds = msg.GroupAVSounds;
 
 			if (_Client.Settings.PARCEL_TRACKING)
 			{
