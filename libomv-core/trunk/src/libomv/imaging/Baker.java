@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2006-2014, openmetaverse.org
- * Copyright (c) 2009-2014, Frederick Martian
+ * Copyright (c) 2006-2016, openmetaverse.org
+ * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.imaging.ManagedImage.ImageChannels;
 import libomv.types.Color4;
-import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
@@ -53,8 +52,6 @@ import libomv.utils.Logger.LogLevel;
 // A set of textures that are layered on each other and "baked" in to a single texture, for avatar appearances
 public class Baker
 {
-	public static final UUID IMG_INVISIBLE = new UUID("3a367d1c-bef1-6d43-7595-e88c1e3aadb3");
-
 	// #region Properties
     // Final baked texture
     public AssetTexture getBakedTexture() { return bakedTexture; }
@@ -66,8 +63,6 @@ public class Baker
     public int getBakeHeight()  { return bakeHeight; }
     // Bake type
     public BakeType getBakeType()  { return bakeType; }
-    // Is this one of the 3 skin bakes
-    private boolean IsSkin() { return bakeType == BakeType.Head || bakeType == BakeType.Lower || bakeType == BakeType.Upper; }
     // #endregion
 
     // #region Private fields
@@ -83,7 +78,9 @@ public class Baker
     private BakeType bakeType;
     // Directory from where to load static resource layers
     private File charDir;
-    // #endregion
+
+	private GridClient _client;
+   // #endregion
 
     
     // #region Constructor
@@ -95,6 +92,7 @@ public class Baker
      */
     public Baker(GridClient client, BakeType bakeType) throws URISyntaxException
     {
+    	_client = client;
         this.bakeType = bakeType;
         this.charDir = new File(Helpers.getBaseDirectory(this.getClass()), client.Settings.getString(LibSettings.CHARACTER_DIR));
 
@@ -129,6 +127,11 @@ public class Baker
     {
         bakedTexture = new AssetTexture(new ManagedImage(bakeWidth, bakeHeight, (byte)(ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump)));
 
+        // These are for head baking, they get special treatment
+        AppearanceManager.TextureData skinTexture = _client.Appearance.new TextureData();
+        List<AppearanceManager.TextureData> tattooTextures = new ArrayList<AppearanceManager.TextureData>();
+        List<ManagedImage> alphaWearableTextures = new ArrayList<ManagedImage>();
+        
         // Base color for eye bake is white, color of layer0 for others
         if (bakeType == BakeType.Eyes)
         {
@@ -139,8 +142,29 @@ public class Baker
             InitBakedLayerColor(textures.get(0).Color);
         }
 
-        // Do we have skin texture?
-        boolean SkinTexture = textures.size() > 0 && textures.get(0).Texture != null;
+        // Sort out the special layers we need for head baking and alpha
+        for (AppearanceManager.TextureData tex : textures)
+        {
+            if (tex.Texture == null)
+                continue;
+        
+            if (tex.TextureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0 ||
+                tex.TextureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0 ||
+                tex.TextureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0)
+                skinTexture = tex;
+        
+            if (tex.TextureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0 ||
+                tex.TextureIndex.compareTo(AvatarTextureIndex.UpperTattoo) == 0 ||
+                tex.TextureIndex.compareTo(AvatarTextureIndex.LowerTattoo) == 0)
+                tattooTextures.add(tex);
+        
+            if (tex.TextureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0 &&
+                tex.TextureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0) 
+            {
+                if (tex.Texture.Image.Alpha != null)
+                    alphaWearableTextures.add(tex.Texture.Image.clone());
+            }
+        }
 
         if (bakeType == BakeType.Head)
         {
@@ -149,17 +173,15 @@ public class Baker
             MultiplyLayerFromAlpha(bakedTexture.Image, LoadResourceLayer("head_skingrain.tga"));
         }
 
-        if (!SkinTexture && bakeType == BakeType.Upper)
+        if (skinTexture.Texture == null)
         {
-            DrawLayer(LoadResourceLayer("upperbody_color.tga"), false);
-        }
+        	if (bakeType == BakeType.Upper)
+        	    DrawLayer(LoadResourceLayer("upperbody_color.tga"), false);
 
-        if (!SkinTexture && bakeType == BakeType.Lower)
-        {
-            DrawLayer(LoadResourceLayer("lowerbody_color.tga"), false);
-        }
 
-        ManagedImage alphaWearableTexture = null;
+        	if (bakeType == BakeType.Lower)
+        		DrawLayer(LoadResourceLayer("lowerbody_color.tga"), false);
+        }
 
         // Layer each texture on top of one other, applying alpha masks as we go
         for (int i = 0; i < textures.size(); i++)
@@ -169,26 +191,19 @@ public class Baker
             if (tex.Texture == null) continue;
 
             // Is this Alpha wearable and does it have an alpha channel?
-            if (AvatarTextureIndex.LowerAlpha.compareTo(tex.TextureIndex) <= 0 &&
-                AvatarTextureIndex.HairAlpha.compareTo(tex.TextureIndex) >= 0)
-            {
-                if (tex.Texture.Image.Alpha != null)
-                {
-                    alphaWearableTexture = tex.Texture.Image.clone();
-                }
-                else if (textures.get(i).TextureID.equals(IMG_INVISIBLE))
-                {
-                	alphaWearableTexture = new ManagedImage(bakeWidth, bakeHeight, ManagedImage.ImageChannels.Alpha);
-                }
+            if (tex.TextureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0 &&
+            	tex.TextureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0)
                 continue;
-            }
 
             // Don't draw skin and tattoo on head bake first
             // For head bake the skin and texture are drawn last, go figure
-            if (bakeType == BakeType.Head && (i == 0 || i == 1)) continue;
+            if (bakeType == BakeType.Head &&
+                textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0 ||
+            	textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0)
+            	continue;
 
             ManagedImage texture = tex.Texture.Image.clone();
-            //File.WriteAllBytes(bakeType + "-texture-layer-" + i + ".tga", texture.ExportTGA());
+            //File.WriteAllBytes(bakeType + "-texture-layer-" + textures.get(i).TextureIndex + i + ".tga", texture.ExportTGA());
 
             // Resize texture to the size of baked layer
             // FIXME: if texture is smaller than the layer, don't stretch it, tile it
@@ -201,7 +216,7 @@ public class Baker
             // Special case for hair layer for the head bake
             // If we don't have skin texture, we discard hair alpha
             // and apply hair(i == 2) pattern over the texture
-            if (!SkinTexture && bakeType == BakeType.Head && i == 2)
+            if (skinTexture.Texture == null && bakeType == BakeType.Head && textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.Hair) == 0)
             {
                 if (texture.Alpha != null)
                 {
@@ -210,9 +225,11 @@ public class Baker
                 MultiplyLayerFromAlpha(texture, LoadResourceLayer("head_hair.tga"));
             }
 
-            // Aply tint and alpha masks except for skin that has a texture
+            // Apply tint and alpha masks except for skin that has a texture
             // on layer 0 which always overrides other skin settings
-            if (!(IsSkin() && i == 0))
+            if (!(textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0 ||
+                  textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0 ||
+                  textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0))
             {
                 ApplyTint(texture, tex.Color);
 
@@ -230,7 +247,7 @@ public class Baker
                         for (int j = 0; j < bakedTexture.Image.Bump.length; j++) bakedTexture.Image.Bump[j] = Byte.MAX_VALUE;
                     }
                 }
-                // Apply parametrized alpha masks
+                // Apply parameterized alpha masks
                 else if (tex.AlphaMasks != null && tex.AlphaMasks.size() > 0)
                 {
                     // Combined mask for the layer, fully transparent to begin with
@@ -289,13 +306,13 @@ public class Baker
         }
 
         // For head and tattoo, we add skin last
-        if (SkinTexture && bakeType == BakeType.Head)
+        if (bakeType == BakeType.Head)
         {
-            ManagedImage texture;
-            
-            if (textures.get(0).Texture != null)
+        	ManagedImage texture;
+
+            if (skinTexture.Texture != null)
             {
-            	texture = textures.get(0).Texture.Image.clone();
+            	texture = skinTexture.Texture.Image.clone();
             	if (texture.Width != bakeWidth || texture.Height != bakeHeight)
             	{
             		try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
@@ -303,26 +320,27 @@ public class Baker
             	}
             	DrawLayer(texture, false);
             }
-            // Add head tattoo here (if available, order dependant)
-            if (textures.size() > 1 && textures.get(1).Texture != null)
+
+            for (AppearanceManager.TextureData tex : tattooTextures)
             {
-            	texture = textures.get(1).Texture.Image.clone();
-            	if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            	// Add head tattoo here (if available, order dependent)
+            	if (tex.Texture != null)
             	{
-            		try
-            		{ 
-            			texture.resizeNearestNeighbor(bakeWidth, bakeHeight);
+            		texture = tex.Texture.Image.clone();
+            		if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            		{
+            		    try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
+            		    catch (Exception ex) { }
             		}
-            		catch (Exception ex) { };
+            		DrawLayer(texture, false);
             	}
-            	DrawLayer(texture, false);
             }
         }
 
         // Apply any alpha wearable textures to make parts of the avatar disappear
-        if (alphaWearableTexture != null)
+        for (ManagedImage img : alphaWearableTextures)
         {
-            AddAlpha(bakedTexture.Image, alphaWearableTexture);
+        	AddAlpha(bakedTexture.Image, img);
         }
 
         // We are done, encode asset for finalized bake
@@ -521,10 +539,6 @@ public class Baker
         for (int i = 0; i < dest.Alpha.length; i++)
         {
             byte alpha = src.Alpha[i] <= ((1 - val) * 255) ? (byte)0 : (byte)255;
-
-            if (alpha != 255)
-            {
-            }
 
             if (param.MultiplyBlend)
             {
