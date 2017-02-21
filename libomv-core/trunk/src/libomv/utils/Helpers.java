@@ -2269,6 +2269,7 @@ public class Helpers
 	 * 
 	 * @param str
 	 *            the String to check, may be null
+	 *
 	 * @return <code>true</code> if the String is empty or null
 	 */
 	public static boolean isEmpty(String str)
@@ -2277,9 +2278,38 @@ public class Helpers
 	}
 
 	/**
+	 * Generates a String with n times the input string str repeated
+	 * 
+	 * @param str
+	 *            the String to repeat n times
+	 * @param n
+	 *            the number of repetitions of string str
+	 *            
+	 * @return <code>true</code> if the String is empty or null
+	 */
+	public static String repeat(String str, int n)
+	{
+		if (n < 0 || str == null)
+		    throw new IllegalArgumentException(
+		        "the given repetition count is smaller than zero!");
+		else if (n == 0)
+		    return "";
+		else if (n == 1)
+		    return str;
+		else if (n % 2 == 0)
+		{
+		    String s = repeat(str, n / 2);
+		    return s.concat(s);
+		}
+		else
+		{
+		    return str.concat(repeat(str, n - 1));
+		}
+	}
+	/**
 	 * Get current OS
 	 * 
-	 * @return Either "win", "lnx", or "mac"
+	 * @return either "win", "mac", "lnx", "bsd", "sun", or "unx"
 	 */
 	public static String getPlatform()
 	{
