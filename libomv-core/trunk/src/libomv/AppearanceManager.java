@@ -685,8 +685,11 @@ public class AppearanceManager implements PacketCallback
      */
     public UUID GetWearableAsset(WearableType type)
     {
-        if (_Wearables.containsKey(type))
-            return _Wearables.get(type).AssetID;
+    	synchronized (_Wearables)
+    	{
+    		if (_Wearables.containsKey(type))
+    			return _Wearables.get(type).AssetID;
+    	}
         return UUID.Zero;
     }
 
@@ -1640,6 +1643,7 @@ public class AppearanceManager implements PacketCallback
         {
             AvatarTextureIndex index = indices.get(i);
 
+            // If this is not the skirt layer or we're wearing a skirt then add it
             if (index != AvatarTextureIndex.Skirt || _Wearables.containsKey(WearableType.Skirt))
                 AddTextureDownload(index, textures);
         }
@@ -1863,8 +1867,8 @@ public class AppearanceManager implements PacketCallback
             }
         });
 
-        // FIXME: evalute the need for timeout here, RequestUploadBakedTexture() will
-        // timout either on Client.Settings.TRANSFER_TIMEOUT or Client.Settings.CAPS_TIMEOUT
+        // FIXME: evaluate the need for timeout here, RequestUploadBakedTexture() will
+        // timeout either on Client.Settings.TRANSFER_TIMEOUT or Client.Settings.CAPS_TIMEOUT
         // depending on which upload method is used.
         UUID bakeID = uploadEvent.waitOne(UPLOAD_TIMEOUT);
         return bakeID != null ? bakeID : UUID.Zero;
