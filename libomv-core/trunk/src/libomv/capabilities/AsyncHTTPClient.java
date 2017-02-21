@@ -385,7 +385,7 @@ public abstract class AsyncHTTPClient<T>
 
 			if (millisecondTimeout >= 0)
 			{
-				timeout = new Timer();
+				timeout = new Timer("HTTP Async Timer");
 				timeout.schedule(new TimerTask()
 				{
 					@Override

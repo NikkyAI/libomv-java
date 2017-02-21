@@ -220,7 +220,7 @@ public class AssetCache
 	{
 		if (useAssetCache && autoPruneEnabled && _Client.Network.getConnected())
 		{
-			cleanerTimer = new Timer();
+			cleanerTimer = new Timer("AssetCleaner");
 			cleanerTimer.schedule(new TimerTask()
 			{
 				@Override
