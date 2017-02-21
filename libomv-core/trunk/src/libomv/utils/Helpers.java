@@ -2283,20 +2283,26 @@ public class Helpers
 	 */
 	public static String getPlatform()
 	{
-		String platform = System.getProperty("os.name").substring(0, 3).toLowerCase();
+		String platform = System.getProperty("os.name").toLowerCase();
 		
-		if (platform.equals("win") || platform.equals("mac") || platform.equals("sun"))
-			return platform;
-		else if (platform.equals("lin"))
+		if (platform.contains("windows"))
+			return "win";
+		else if (platform.contains("mac"))
+			return "mac";
+		else if (platform.contains("sun") || platform.contains("solaris"))
+			return "sun";
+		else if (platform.contains("linux"))
 		    return "lnx";
-		else if (platform.equals("fre"))
+		else if (platform.contains("freebsd"))
 			return "bsd";
+		else if (platform.contains("unix") || platform.contains("aix") || platform.contains("hp-ux"))
+			return "unx";
 		return "unk";
 	}
 
 	public static String getPlatformVersion()
 	{
-		return System.getProperty("os.version").substring(0, 3).toLowerCase();
+		return System.getProperty("os.version");
 	}
 	
 	public static OSD ZDecompressOSD(InputStream in) throws IOException, ParseException
