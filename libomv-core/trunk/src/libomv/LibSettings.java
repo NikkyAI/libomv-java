@@ -413,7 +413,8 @@ public class LibSettings extends Settings implements PacketCallback
 	}
 	
     // #region Default settings
-    private DefaultSetting[] defaults = {
+    private DefaultSetting[] defaults =
+    {
             new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
             new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
             new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),

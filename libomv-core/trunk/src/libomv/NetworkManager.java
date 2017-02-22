@@ -321,7 +321,12 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		OnEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
 	}
 
-	// An event triggered when the logout is confirmed
+	/**
+	 *  An event triggered when the logout is confirmed
+	 *
+	 *  An empty itemIDs list indicates a abortion of the logout procedure after the
+	 *  logout timout has expired without receiving any confirmation from the server
+	 */
 	public class LoggedOutCallbackArgs implements CallbackArgs
 	{
 		private final Vector<UUID> itemIDs;
@@ -807,7 +812,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		_Simulators = new ArrayList<Simulator>();
 		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
 		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
-		_LogoutTimer = new Timer();
+		_LogoutTimer = new Timer("LogoutTimer");
 		_CurrentSim = null;
 		
         syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
@@ -1190,12 +1195,13 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			{
 	            try
 	            {
-					shutdown(DisconnectType.NetworkTimeout);
+					shutdown(DisconnectType.NetworkTimeout, "User logged out");
 				}
 	            catch (Exception e) 
 				{ }
+	            /* Remove ourself from the event dispatcher */
 	       	    OnLoggedOut.remove(this);
-	            OnLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<UUID>()));
+ 	            OnLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<UUID>()));
 			}	
 
 			// Executed when the log out resulted in an acknowledgement from the server
@@ -1203,7 +1209,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			public boolean callback(LoggedOutCallbackArgs params)
 			{
         		this.cancel();
-                return true;
+	            /* Remove ourself from the event dispatcher */
+               return true;
 			}
     		
     	}
@@ -1232,6 +1239,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
         	public boolean callback(LoggedOutCallbackArgs params)
         	{
         	    timeout.set(true);
+	            /* Remove ourself from the event dispatcher */
         	    return true;
         	}
         };
@@ -1378,9 +1386,13 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				// Fire the SimDisconnected event if a handler is registered
 				OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(_CurrentSim, DisconnectType.NetworkTimeout));
 			}
+			
 		}
 		_Connected = false;
-		if (OnDisconnected != null)
+		_LogoutTimer.cancel();
+		_LogoutTimer = null;
+
+		if (OnDisconnected.count() > 0)
 		{
 			OnDisconnected.dispatch(new DisconnectedCallbackArgs(type, message));
 		}
