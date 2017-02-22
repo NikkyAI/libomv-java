@@ -51,6 +51,7 @@ import libomv.GroupManager.GroupMembersReplyCallbackArgs;
 import libomv.LoginManager.LoginProgressCallbackArgs;
 import libomv.LoginManager.LoginStatus;
 import libomv.NetworkManager.DisconnectedCallbackArgs;
+import libomv.NetworkManager.LoggedOutCallbackArgs;
 import libomv.LibSettings;
 import libomv.NetworkManager.SimChangedCallbackArgs;
 import libomv.ObjectManager.AvatarUpdateCallbackArgs;
@@ -116,6 +117,7 @@ public class TestClient extends GridClient implements PacketCallback
 		Self.OnInstantMessage.add(new Self_IM(), false);
 		Groups.OnGroupMembersReply.add(new GroupMembersHandler(), false);
 		Inventory.OnInventoryObjectOffered.add(new Inventory_OnInventoryObjectReceived(), false);
+	    Network.OnLoggedOut.add(new Network_LoggedOut(), false);
 		
 		Network.RegisterCallback(PacketType.AgentDataUpdate, this);
 		Network.RegisterCallback(PacketType.AvatarAppearance, this);
@@ -329,7 +331,16 @@ public class TestClient extends GridClient implements PacketCallback
 		}
     }
 
-    public void SetDefaultCamera()
+	private class Network_LoggedOut implements Callback<LoggedOutCallbackArgs>
+	{
+		@Override
+		public boolean callback(LoggedOutCallbackArgs e)
+		{
+			return cancel();
+		}
+    }
+
+	public void SetDefaultCamera()
     {
     	/* Set camera 5m behind the avatar */
         Self.getMovement().Camera.LookAt(new Vector3(-5, 0, 0).multiply(Self.getMovement().BodyRotation).add(Self.getAgentPosition()), Self.getAgentPosition());
