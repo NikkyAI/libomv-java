@@ -70,6 +70,8 @@ public class ListContentsCommand extends Command
             return "Empty directory";
 
         String displayString = Client.CurrentDirectory.name + " contains:" + Helpers.NewLine;
+        displayString += "Attributes UUID                                 Type          Description" + Helpers.NewLine;
+        displayString += "---------------------------------------------------------------------------------------------------" + Helpers.NewLine;
         // Pretty simple, just print out the contents.
         for (InventoryNode node : contents)
         {
