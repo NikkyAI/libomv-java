@@ -4064,14 +4064,89 @@ public class CapsMessage implements IMessage
 	// the string "ENTER" or "LEAVE" respectively.
 	public class ChatterBoxSessionAgentListUpdatesMessage implements IMessage
 	{
-		// initial when agent joins session
-		// <llsd><map><key>events</key><array><map><key>body</key><map><key>agent_updates</key><map><key>32939971-a520-4b52-8ca5-6085d0e39933</key><map><key>info</key><map><key>can_voice_chat</key><boolean>1</boolean><key>is_moderator</key><boolean>1</boolean></map><key>transition</key><string>ENTER</string></map><key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key><map><key>info</key><map><key>can_voice_chat</key><boolean>1</boolean><key>is_moderator</key><boolean>0</boolean></map><key>transition</key><string>ENTER</string></map></map><key>session_id</key><string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string><key>updates</key><map><key>32939971-a520-4b52-8ca5-6085d0e39933</key><string>ENTER</string><key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key><string>ENTER</string></map></map><key>message</key><string>ChatterBoxSessionAgentListUpdates</string></map><map><key>body</key><map><key>agent_updates</key><map><key>32939971-a520-4b52-8ca5-6085d0e39933</key><map><key>info</key><map><key>can_voice_chat</key><boolean>1</boolean><key>is_moderator</key><boolean>1</boolean></map></map></map><key>session_id</key><string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string><key>updates</key><map
-		// /></map><key>message</key><string>ChatterBoxSessionAgentListUpdates</string></map></array><key>id</key><integer>5</integer></map></llsd>
+		/* initial when agent joins session
+	       <llsd>
+		    <map>
+		     <key>events</key>
+		     <array>
+		      <map>
+		       <key>body</key>
+		       <map>
+		        <key>agent_updates</key>
+		        <map>
+		         <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
+		         <map>
+		          <key>info</key>
+		          <map>
+		           <key>can_voice_chat</key>
+		           <boolean>1</boolean>
+		           <key>is_moderator</key>
+		           <boolean>1</boolean>
+		          </map>
+		          <key>transition</key>
+		          <string>ENTER</string>
+		         </map>
+		         <key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key>
+		         <map>
+		          <key>info</key>
+		          <map>
+		           <key>can_voice_chat</key>
+		           <boolean>1</boolean>
+		           <key>is_moderator</key>
+		           <boolean>0</boolean>
+		          </map>
+		          <key>transition</key>
+		          <string>ENTER</string>
+		         </map>
+		        </map>
+		        <key>session_id</key>
+		        <string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string>
+		        <key>updates</key>
+		        <map>
+		         <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
+		         <string>ENTER</string>
+		         <key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key>
+		         <string>ENTER</string>
+		        </map>
+		       </map>
+		       <key>message</key>
+		       <string>ChatterBoxSessionAgentListUpdates</string>
+		      </map>
+		      <map>
+		       <key>body</key>
+		       <map>
+		        <key>agent_updates</key>
+		        <map>
+		         <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
+		         <map>
+		          <key>info</key>
+		          <map>
+		           <key>can_voice_chat</key>
+		           <boolean>1</boolean>
+		           <key>is_moderator</key>
+		           <boolean>1</boolean>
+		          </map>
+		         </map>
+		        </map>
+		        <key>session_id</key>
+		        <string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string>
+		        <key>updates</key>
+		        <map>
+		        </map>
+		       </map >
+	           <key>message</key>
+		       <string>ChatterBoxSessionAgentListUpdates</string>
+		      </map>
+		     </array>
+		     <key>id</key>
+		     <integer>5</integer>
+		    </map>
+		   </llsd>
 
 		// a message containing only moderator updates
 		// <llsd><map><key>events</key><array><map><key>body</key><map><key>agent_updates</key><map><key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key><map><key>info</key><map><key>mutes</key><map><key>text</key><boolean>1</boolean></map></map></map></map><key>session_id</key><string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string><key>updates</key><map
 		// /></map><key>message</key><string>ChatterBoxSessionAgentListUpdates</string></map></array><key>id</key><integer>7</integer></map></llsd>
-
+        */
 		public UUID SessionID;
 
 		public class AgentUpdatesBlock
@@ -4116,12 +4191,12 @@ public class CapsMessage implements IMessage
 				mutesMap.put("text", OSD.FromBoolean(Updates[i].MuteText));
 				mutesMap.put("voice", OSD.FromBoolean(Updates[i].MuteVoice));
 
-				OSDMap infoMap = new OSDMap(4);
+				OSDMap infoMap = new OSDMap(3);
 				infoMap.put("can_voice_chat", OSD.FromBoolean(Updates[i].CanVoiceChat));
 				infoMap.put("is_moderator", OSD.FromBoolean(Updates[i].IsModerator));
 				infoMap.put("mutes", mutesMap);
 
-				OSDMap imap = new OSDMap(1);
+				OSDMap imap = new OSDMap(2);
 				imap.put("info", infoMap);
 				imap.put("transition", OSD.FromString(Updates[i].Transition));
 
