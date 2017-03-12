@@ -103,7 +103,7 @@ public final class LLSDNotation extends OSDParser
 	private static final char doubleQuotesNotationMarker = '"';
 	private static final char singleQuotesNotationMarker = '\'';
 
-	public static boolean isFormat(String string)
+	protected static boolean isFormat(String string)
 	{
 		int character = skipWhiteSpace(string);
 		if (character == '<')
@@ -113,7 +113,7 @@ public final class LLSDNotation extends OSDParser
 		return false;
 	}
 	
-	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
+	protected static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
 	{
 		int character = skipWhiteSpace(data);
 		if (character == '<')
@@ -134,7 +134,7 @@ public final class LLSDNotation extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
+	protected OSD unflatten(InputStream stream, String encoding) throws ParseException, IOException
 	{
 		if (encoding == null)
 			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Notation);
@@ -150,7 +150,7 @@ public final class LLSDNotation extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
+	protected OSD unflatten(Reader reader, String encoding) throws ParseException, IOException
 	{
 		PushbackReader push = reader instanceof PushbackReader ? (PushbackReader)reader : new PushbackReader(reader);
 		int marker = skipWhiteSpace(push);
@@ -179,7 +179,7 @@ public final class LLSDNotation extends OSDParser
 	 * @param prependHeader Indicates if the format header should be prepended
 	 * @throws IOException
 	 */
-	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
+	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (encoding == null)
 			encoding = OSD.OSDFormat.contentEncodingDefault(OSDFormat.Notation);
@@ -196,7 +196,7 @@ public final class LLSDNotation extends OSDParser
 	 * @param prependHeader Indicates if the format header should be prepended
 	 * @throws IOException
 	 */
-	public void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
+	protected void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		if (prependHeader)
 		{
@@ -692,7 +692,7 @@ public final class LLSDNotation extends OSDParser
 		writer.write(mapEndNotationMarker);
 	}
 
-	public static String getString(PushbackReader reader, int notationChar) throws IOException, ParseException
+	private static String getString(PushbackReader reader, int notationChar) throws IOException, ParseException
 	{
 		switch (notationChar)
 		{
@@ -714,7 +714,7 @@ public final class LLSDNotation extends OSDParser
 		}
 	}
 	
-	public static int getLengthInBrackets(PushbackReader reader) throws IOException, ParseException
+	private static int getLengthInBrackets(PushbackReader reader) throws IOException, ParseException
 	{
 		int character;
 		StringBuilder s = new StringBuilder();

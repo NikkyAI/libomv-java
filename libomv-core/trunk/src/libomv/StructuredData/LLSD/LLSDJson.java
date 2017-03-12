@@ -74,7 +74,7 @@ public final class LLSDJson extends OSDParser
 
 	private static final char doubleQuotesNotationMarker = '"';
 
-	public static boolean isFormat(String string)
+	protected static boolean isFormat(String string)
 	{
 		int character = skipWhiteSpace(string);
 		if (character == '<')
@@ -84,7 +84,7 @@ public final class LLSDJson extends OSDParser
 		return false;
 	}
 	
-	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
+	protected static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
 	{
 		int character = skipWhiteSpace(data);
 		if (character == '<')
@@ -200,7 +200,7 @@ public final class LLSDJson extends OSDParser
 		serializeElement(writer, data);
 	}
 
-	public static void serializeFormatted(Writer writer, OSD data) throws IOException
+	private static void serializeFormatted(Writer writer, OSD data) throws IOException
 	{
 		serializeElementFormatted(writer, "", data);
 	}
@@ -617,7 +617,7 @@ public final class LLSDJson extends OSDParser
 		writer.write(mapEndNotationMarker);
 	}
 
-	public static int BufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
+	private static int BufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException
 	{
 
 		boolean charactersEqual = true;

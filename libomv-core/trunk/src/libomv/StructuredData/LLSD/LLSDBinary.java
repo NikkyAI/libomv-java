@@ -90,7 +90,7 @@ public final class LLSDBinary extends OSDParser
 	private static final byte doubleQuotesNotationMarker = '"';
 	private static final byte singleQuotesNotationMarker = '\'';
 
-	public static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
+	protected static boolean isFormat(String string, String encoding) throws UnsupportedEncodingException
 	{
 		int character = skipWhiteSpace(string);
 		if (character == '<')
@@ -102,7 +102,7 @@ public final class LLSDBinary extends OSDParser
 		return false;
 	}
 	
-	public static boolean isFormat(byte[] data)
+	protected static boolean isFormat(byte[] data)
 	{
 		int character = skipWhiteSpace(data);
 		if (character == '<')

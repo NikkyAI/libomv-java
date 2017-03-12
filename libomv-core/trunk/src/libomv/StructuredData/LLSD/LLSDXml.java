@@ -83,7 +83,7 @@ public final class LLSDXml extends OSDParser
 	private static final String ARRAY_TAG = "array";
 
 
-	public static boolean isFormat(String string)
+	protected static boolean isFormat(String string)
 	{
 		int character = skipWhiteSpace(string);
 		if (character == '<')
@@ -94,7 +94,7 @@ public final class LLSDXml extends OSDParser
 		return false;
 	}
 	
-	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
+	protected static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
 	{
 		int character = skipWhiteSpace(data);
 		if (character == '<')
@@ -116,7 +116,7 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
+	protected OSD unflatten(Reader reader, String encoding) throws IOException, ParseException
 	{
 		try
 		{
@@ -138,7 +138,7 @@ public final class LLSDXml extends OSDParser
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
+	protected OSD unflatten(InputStream stream, String encoding) throws IOException, ParseException
 	{
 		try
 		{
@@ -159,7 +159,7 @@ public final class LLSDXml extends OSDParser
 	 * @param data The hierarchical OSD object to serialize
 	 * @throws IOException
 	 */
-	public void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
+	protected void flatten(Writer writer, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		try
 		{
@@ -180,7 +180,7 @@ public final class LLSDXml extends OSDParser
 	 * @param data The hierarchical OSD object to serialize
 	 * @throws IOException
 	 */
-	public void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
+	protected void flatten(OutputStream stream, OSD data, boolean prependHeader, String encoding) throws IOException
 	{
 		try
 		{
