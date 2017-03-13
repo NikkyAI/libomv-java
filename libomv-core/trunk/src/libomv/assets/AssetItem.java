@@ -243,6 +243,7 @@ public abstract class AssetItem
 	{
 		AssetID = assetID;
 		AssetData = assetData;
+		decode();
 	}
 
 	/**

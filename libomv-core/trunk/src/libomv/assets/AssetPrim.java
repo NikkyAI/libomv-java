@@ -86,7 +86,17 @@ public class AssetPrim extends AssetItem
 	{
 	}
 
-	public AssetPrim(String xmlData) throws XmlPullParserException, IOException
+    /// <summary>
+    /// Initializes a new instance of an AssetPrim object
+    /// </summary>
+    /// <param name="assetID">A unique <see cref="UUID"/> specific to this asset</param>
+    /// <param name="assetData">A byte array containing the raw asset data</param>
+    public AssetPrim(UUID assetID, byte[] assetData)
+    {
+    	 super(assetID, assetData);
+    }
+
+    public AssetPrim(String xmlData) throws XmlPullParserException, IOException
 	{
 		decodeXml(xmlData);
 	}
@@ -105,7 +115,14 @@ public class AssetPrim extends AssetItem
 	{
 		try
 		{
-			AssetData = encodeXml().getBytes(Helpers.UTF8_ENCODING);
+			StringWriter textWriter = new StringWriter();
+			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
+			xmlWriter.setOutput(textWriter);
+
+			encodeXml(xmlWriter);
+			xmlWriter.flush();
+			AssetData = textWriter.toString().getBytes(Helpers.UTF8_ENCODING);
+			textWriter.close();
 		}
 		catch (Exception e)
 		{
@@ -129,18 +146,6 @@ public class AssetPrim extends AssetItem
 		}
 	}
 
-	public String encodeXml() throws XmlPullParserException, IllegalArgumentException, IllegalStateException,
-			IOException
-	{
-		StringWriter textWriter = new StringWriter();
-		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-		xmlWriter.setOutput(textWriter);
-
-		encodeXml(xmlWriter);
-		xmlWriter.flush();
-		return textWriter.toString();
-	}
-
 	public boolean decodeXml(String xmlData) throws XmlPullParserException, IOException
 	{
 		XmlPullParser reader = XmlPullParserFactory.newInstance().newPullParser();
@@ -148,16 +153,16 @@ public class AssetPrim extends AssetItem
 		return decodeXml(reader);
 	}
 
-	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	public void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
 	{
         writer.startTag(null, "SceneObjectGroup");
         writePrim(writer, Parent, null);
-        writer.endTag(null, "SceneObjectGroup");
 
         writer.startTag(null, "OtherParts");
         for (PrimObject child : Children)
         	writePrim(writer, child, Parent);
         writer.endTag(null, "OtherParts");
+        writer.endTag(null, "SceneObjectGroup");
         writer.endDocument();
 	}
 
@@ -167,12 +172,46 @@ public class AssetPrim extends AssetItem
         writer.attribute(null, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         writer.attribute(null, "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
 
-        writeUUID(writer, "CreatorID", prim.CreatorID);
-        writeUUID(writer, "FolderID", prim.FolderID);
+        prim.CreatorID.serializeXml(writer, null, "CreatorID");
+        prim.FolderID.serializeXml(writer, null, "FolderID");
         writeText(writer, "InventorySerial", (prim.Inventory != null) ? Integer.toString(prim.Inventory.Serial) : "0");
 
         // FIXME: Task inventory
-        writeText(writer , "TaskInventory", "");
+        writer.startTag(null, "TaskInventory");
+        if (prim.Inventory != null)
+        {
+            for (PrimObject.InventoryBlock.ItemBlock item : prim.Inventory.Items)
+            {
+                writer.startTag(null, "TaskInventoryItem");
+
+                item.AssetID.serializeXml(writer, null, "AssetID");
+                writeInt(writer, "BasePermissions", item.PermsBase);
+                writeLong(writer, "CreationDate", (long)Helpers.DateTimeToUnixTime(item.CreationDate));
+                item.CreatorID.serializeXml(writer, null, "CreatorID");
+                writeText(writer, "Description", item.Description);
+                writeInt(writer, "EveryonePermissions", item.PermsEveryone);
+                writeInt(writer, "Flags", item.Flags);
+                item.GroupID.serializeXml(writer, null, "GroupID");
+                writeInt(writer, "GroupPermissions", item.PermsGroup);
+                writeInt(writer, "InvType", item.InvType.getValue());
+                item.ID.serializeXml(writer, null, "ItemID");
+                UUID.Zero.serializeXml(writer, null, "OldItemID");
+                item.LastOwnerID.serializeXml(writer, null, "LastOwnerID");
+                writeText(writer, "Name", item.Name);
+                writeInt(writer, "NextPermissions", item.PermsNextOwner);
+                item.OwnerID.serializeXml(writer, null, "OwnerID");
+                writeInt(writer, "CurrentPermissions", item.PermsOwner);
+                prim.ID.serializeXml(writer, null, "ParentID");
+                prim.ID.serializeXml(writer, null, "ParentPartID");
+                item.PermsGranterID.serializeXml(writer, null, "PermsGranter");
+                writeInt(writer, "PermsMask", 0);
+                writeInt(writer, "Type", item.Type.getValue());
+                writeText(writer, "OwnerChanged", "false");
+
+                writer.endTag(null, "TaskInventoryItem");
+            }
+        }
+        writer.endTag(null, "TaskInventory");
 
         int flags = PrimFlags.None;
         if (prim.UsePhysics) flags |= PrimFlags.Physics;
@@ -183,7 +222,7 @@ public class AssetPrim extends AssetItem
         if (prim.Sandbox) flags |= PrimFlags.Sandbox;
         writeInt(writer, "ObjectFlags", flags);
 
-        writeUUID(writer, "UUID", prim.ID);
+        prim.ID.serializeXml(writer, null, "UUID");
         writeInt(writer, "LocalId", prim.LocalID);
         writeText(writer, "Name", prim.Name);
         writeInt(writer, "Material", prim.Material);
@@ -196,19 +235,19 @@ public class AssetPrim extends AssetItem
         else
             groupPosition = parent.Position;
 
-        writeVector3(writer, "GroupPosition", groupPosition);
+        groupPosition.serializeXml(writer, null,  "GroupPosition", Helpers.EnUsCulture);
         if (prim.ParentID == 0)
-            writeVector3(writer, "OffsetPosition", Vector3.Zero);
+        	Vector3.Zero.serializeXml(writer, null, "OffsetPosition");
         else
-            writeVector3(writer, "OffsetPosition", prim.Position);
-        writeQuaternion(writer, "RotationOffset", prim.Rotation);
-        writeVector3(writer, "Velocity", prim.Velocity);
-        writeVector3(writer, "RotationalVelocity", Vector3.Zero);
-        writeVector3(writer, "AngularVelocity", prim.AngularVelocity);
-        writeVector3(writer, "Acceleration", prim.Acceleration);
+        	prim.Position.serializeXml(writer, null, "OffsetPosition");
+        prim.Rotation.serializeXml(writer, null, "RotationOffset");
+        prim.Velocity.serializeXml(writer, null, "Velocity");
+        Vector3.Zero.serializeXml(writer, null, "RotationalVelocity");
+        prim.AngularVelocity.serializeXml(writer, null, "AngularVelocity");
+        prim.Acceleration.serializeXml(writer, null, "Acceleration");
         writeText(writer, "Description", prim.Description);
 
-        writeColor4(writer, "Color", prim.TextColor);
+        prim.TextColor.serializeXml(writer, null, "Color");
 
         writeText(writer, "Text", prim.Text);
         writeText(writer, "SitName", prim.SitName);
@@ -218,12 +257,6 @@ public class AssetPrim extends AssetItem
         writeInt(writer, "ClickAction", prim.ClickAction);
 
         writer.startTag(null, "Shape");
-
-        writeInt(writer, "ProfileCurve", prim.Shape.ProfileCurve);
-        writeText(writer, "TextureEntry", Base64.encodeBase64String(prim.Textures != null ? prim.Textures.getBytes() : Helpers.EmptyBytes));
-
-        // FIXME: ExtraParams
-        writeText(writer, "ExtraParams", Helpers.EmptyString);
 
         writeInt(writer, "PathBegin", Primitive.PackBeginCut(prim.Shape.PathBegin));
         writeInt(writer, "PathCurve", prim.Shape.PathCurve);
@@ -243,42 +276,48 @@ public class AssetPrim extends AssetItem
         writeInt(writer, "ProfileBegin", Primitive.PackBeginCut(prim.Shape.ProfileBegin));
         writeInt(writer, "ProfileEnd", Primitive.PackEndCut(prim.Shape.ProfileEnd));
         writeInt(writer, "ProfileHollow", Primitive.PackProfileHollow(prim.Shape.ProfileHollow));
-        writeVector3(writer, "Scale", prim.Scale);
+        prim.Scale.serializeXml(writer, null, "Scale");
         writeInt(writer, "State", prim.State);
         writeText(writer, "ProfileShape", ProfileCurve.setValue(prim.Shape.ProfileCurve & 0x0F).toString());
         writeText(writer, "HollowShape", HoleType.setValue((prim.Shape.ProfileCurve & 0xF0) >> 4).toString());
+        writeInt(writer, "ProfileCurve", prim.Shape.ProfileCurve);
+        
+        writeText(writer, "TextureEntry", Base64.encodeBase64String(prim.Textures != null ? prim.Textures.getBytes() : Helpers.EmptyBytes));
+
+        // FIXME: ExtraParams
+        writeText(writer, "ExtraParams", Helpers.EmptyString);
         
         // FIXME: write sculpt, flexy and light data
 
         writer.endTag(null, "Shape");
 
-        writeVector3(writer, "Scale", prim.Scale);
+        prim.Scale.serializeXml(writer, null, "Scale"); // FIXME: again?
         writeInt(writer, "UpdateFlag", 0);
-        writeQuaternion(writer, "SitTargetOrientation", Quaternion.Identity);
-        writeVector3(writer, "SitTargetPosition", prim.SitOffset);
-        writeVector3(writer, "SitTargetPositionLL", prim.SitOffset);
-        writeQuaternion(writer, "SitTargetOrientationLL", prim.SitRotation);
+        Quaternion.Identity.serializeXml(writer, null, "SitTargetOrientation");
+        prim.SitOffset.serializeXml(writer, null, "SitTargetPosition");
+        prim.SitOffset.serializeXml(writer, null, "SitTargetPositionLL");
+        prim.SitRotation.serializeXml(writer, null, "SitTargetOrientationLL");
         writeInt(writer, "ParentID", prim.ParentID);
-        writeInt(writer, "CreationDate", ((int)Helpers.DateTimeToUnixTime(prim.CreationDate)));
+        writeLong(writer, "CreationDate", (long)Helpers.DateTimeToUnixTime(prim.CreationDate));
         writeInt(writer, "Category", 0);
         writeInt(writer, "SalePrice", prim.SalePrice);
-        writeInt(writer, "ObjectSaleType", (prim.SaleType));
+        writeInt(writer, "ObjectSaleType", prim.SaleType);
         writeInt(writer, "OwnershipCost", 0);
-        writeUUID(writer, "GroupID", prim.GroupID);
-        writeUUID(writer, "OwnerID", prim.OwnerID);
-        writeUUID(writer, "LastOwnerID", prim.LastOwnerID);
+        prim.GroupID.serializeXml(writer, null, "GroupID");
+        prim.OwnerID.serializeXml(writer, null, "OwnerID");
+        prim.LastOwnerID.serializeXml(writer, null, "LastOwnerID");
         writeInt(writer, "BaseMask", prim.PermsBase);
         writeInt(writer, "OwnerMask", prim.PermsOwner);
         writeInt(writer, "GroupMask", prim.PermsGroup);
         writeInt(writer, "EveryoneMask", prim.PermsEveryone);
         writeInt(writer, "NextOwnerMask", prim.PermsNextOwner);
         writeText(writer, "Flags", "None");
-        writeUUID(writer, "CollisionSound", prim.CollisionSound);
+        prim.CollisionSound.serializeXml(writer, null, "CollisionSound");
         writeFloat(writer, "CollisionSoundVolume", prim.CollisionSoundVolume);
+        Vector3.Zero.serializeXml(writer, null, "SitTargetAvatar");
         writer.endTag(null, "SceneObjectPart");
 	}
 
-	
     static void writeText(XmlSerializer writer, String name, String text) throws IllegalArgumentException, IllegalStateException, IOException
     {
     	writer.startTag(null, name).text(text).endTag(null, name);
@@ -299,35 +338,7 @@ public class AssetPrim extends AssetItem
     	writer.startTag(null, name).text(Float.toString(number)).endTag(null, name);
     }
 
-    static void writeUUID(XmlSerializer writer, String name, UUID id) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-        writer.startTag(null, name);
-        id.serialize(writer);
-        writer.endTag(null, name);
-    }
-
-    static void writeColor4(XmlSerializer writer, String name, Color4 color) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-        writer.startTag(null, name);
-        color.serialize(writer);
-        writer.endTag(null, name);
-    }
-
-    static void writeVector3(XmlSerializer writer, String name, Vector3 vec) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-        writer.startTag(null, name);
-        vec.serialize(writer);
-        writer.endTag(null, name);
-    }
-
-    static void writeQuaternion(XmlSerializer writer, String name, Quaternion quat) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-        writer.startTag(null, name);
-        quat.serialize(writer);
-        writer.endTag(null, name);
-    }
-	
-	private boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
+	public boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		parser.nextTag();
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");

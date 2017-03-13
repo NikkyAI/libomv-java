@@ -59,8 +59,7 @@ public class AssetCallingCard extends AssetItem
 	public AssetCallingCard(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-        decode();
-    }
+     }
 	
 	/**
 	 * Construct an Asset object of type Callingcard

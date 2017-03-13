@@ -65,7 +65,6 @@ public class AssetLandmark extends AssetItem
 	public AssetLandmark(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		decode();
 	}
 
 	/**

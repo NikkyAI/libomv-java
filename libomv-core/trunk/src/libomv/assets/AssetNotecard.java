@@ -83,7 +83,6 @@ public class AssetNotecard extends AssetItem
 	public AssetNotecard(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		decode();
 	}
 
 	/**

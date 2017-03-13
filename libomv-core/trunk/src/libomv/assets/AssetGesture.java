@@ -223,7 +223,6 @@ public class AssetGesture extends AssetItem
 	public AssetGesture(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-		decode();
 	}
 
 	/**
