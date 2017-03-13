@@ -1642,6 +1642,36 @@ public class Helpers
 	}
 
 	/**
+	 * delete a directory and all its contents
+	 * 
+	 * @param directory
+	 *            The directory to delete
+	 * @return true if the directory and all its contents could be deleted
+	 */
+	public static boolean deleteDirectory(File directory)
+	{
+	    if (directory.exists())
+	    {
+	        File[] files = directory.listFiles();
+	        if (null != files)
+	        {
+	            for (int i = 0; i < files.length; i++)
+	            {
+	                if (files[i].isDirectory())
+	                {
+	                    deleteDirectory(files[i]);
+	                }
+	                else
+	                {
+	                    files[i].delete();
+	                }
+	            }
+	        }
+	    }
+	    return(directory.delete());
+	}
+
+	/**
 	 * read a variable length UTF8 byte array to a string, consuming  len characters
 	 * 
 	 * @param bytes
@@ -1653,7 +1683,7 @@ public class Helpers
 	{
 		byte[] bytes = new byte[len];
 		is.read(bytes);
-		return BytesToString(bytes, 0, len);
+		return BytesToString(bytes, 0, len, UTF8_ENCODING);
 	}
 	
 	/**
@@ -1777,6 +1807,11 @@ public class Helpers
 	 */
 	public static byte[] StringToBytes(String str)
 	{
+		return StringToBytes(str, UTF8_ENCODING);
+	}
+	
+	public static byte[] StringToBytes(String str, String encoding)
+	{
 		if (Helpers.isEmpty(str))
 		{
 			return Helpers.EmptyBytes;
@@ -1784,9 +1819,9 @@ public class Helpers
 
 		try
 		{
-			int length = str.length();
-			byte[] bytes = new byte[length + 1];
-			System.arraycopy(str.getBytes(UTF8_ENCODING), 0, bytes, 0, length);
+			byte[] string = str.getBytes(encoding);
+			byte[] bytes = new byte[string.length + 1];
+			System.arraycopy(string, 0, bytes, 0, string.length);
 			return bytes;
 		}
 		catch (UnsupportedEncodingException ex)
