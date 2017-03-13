@@ -33,6 +33,7 @@ package libomv.types;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -268,13 +269,24 @@ public class Vector3d
 		return new Vector3d(parser);
 	}
 	
-	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException
 	{
-		writer.startTag(null, "X").text(Double.toString(X)).endTag(null, "X");
-		writer.startTag(null, "Y").text(Double.toString(Y)).endTag(null, "Y");
-		writer.startTag(null, "Z").text(Double.toString(Z)).endTag(null, "Z");
+		writer.startTag(namespace, name);
+		writer.startTag(namespace, "X").text(Double.toString(X)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Double.toString(Y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(Double.toString(Z)).endTag(namespace, "Z");
+		writer.endTag(namespace, name);
 	}
 	
+	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(namespace, name);
+		writer.startTag(namespace, "X").text(String.format(locale, "%f",  X)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f",  Y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(String.format(locale, "%f",  Z)).endTag(namespace, "Z");
+		writer.endTag(namespace, name);
+	}
+
 	@Override
 	public String toString()
 	{

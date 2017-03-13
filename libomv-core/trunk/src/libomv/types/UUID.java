@@ -330,9 +330,11 @@ public class UUID implements Serializable
 		return new UUID(parser);
 	}
 	
-	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException
 	{
-	    writer.startTag(null, "UUID").text(toString()).endTag(null, "UUID");
+        writer.startTag(namespace, name);
+	    writer.startTag(namespace, "UUID").text(toString()).endTag(namespace, "UUID");
+        writer.endTag(namespace, name);
 	}
 
 	/**

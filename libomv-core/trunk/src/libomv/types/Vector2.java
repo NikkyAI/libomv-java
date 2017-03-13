@@ -33,6 +33,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
 import org.xmlpull.v1.XmlPullParser;
@@ -206,12 +207,21 @@ public final class Vector2
 		return new Vector2(parser);
 	}
 	
-	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException
 	{
-		writer.startTag(null, "X").text(Float.toString(X)).endTag(null, "X");
-		writer.startTag(null, "Y").text(Float.toString(Y)).endTag(null, "Y");
+		writer.startTag(namespace, name);
+		writer.startTag(namespace, "X").text(Float.toString(X)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Float.toString(Y)).endTag(namespace, "Y");
+		writer.endTag(namespace, name);
 	}
 
+	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		writer.startTag(namespace, name);
+		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
+		writer.endTag(namespace, name);
+	}
 	/**
 	 * Get a formatted string representation of the vector
 	 * 

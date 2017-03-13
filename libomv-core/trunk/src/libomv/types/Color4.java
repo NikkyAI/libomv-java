@@ -32,6 +32,7 @@ package libomv.types;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.IllegalArgumentException;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -567,18 +568,30 @@ public final class Color4
 		return new Color4(parser);
 	}
 	
-	public void serialize(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException
 	{
-		writer.startTag(null, "R").text(Float.toString(R)).endTag(null, "R");
-		writer.startTag(null, "G").text(Float.toString(G)).endTag(null, "G");
-		writer.startTag(null, "B").text(Float.toString(B)).endTag(null, "B");
-		writer.startTag(null, "A").text(Float.toString(A)).endTag(null, "A");
+        writer.startTag(namespace, name);
+		writer.startTag(namespace, "R").text(Float.toString(R)).endTag(namespace, "R");
+		writer.startTag(namespace, "G").text(Float.toString(G)).endTag(namespace, "G");
+		writer.startTag(namespace, "B").text(Float.toString(B)).endTag(namespace, "B");
+		writer.startTag(namespace, "A").text(Float.toString(A)).endTag(namespace, "A");
+        writer.endTag(namespace, name);
+	}
+
+	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+        writer.startTag(namespace, name);
+		writer.startTag(namespace, "R").text(String.format(locale, "%f", R)).endTag(namespace, "R");
+		writer.startTag(namespace, "G").text(String.format(locale, "%f", G)).endTag(namespace, "G");
+		writer.startTag(namespace, "B").text(String.format(locale, "%f", B)).endTag(namespace, "B");
+		writer.startTag(namespace, "A").text(String.format(locale, "%f", A)).endTag(namespace, "A");
+        writer.endTag(namespace, name);
 	}
 
 	@Override
 	public String toString()
 	{
-		return String.format(Helpers.EnUsCulture, "<%f, %f, %f>", R, G, B, A);
+		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", R, G, B, A);
 	}
 
 	public String ToRGBString()
