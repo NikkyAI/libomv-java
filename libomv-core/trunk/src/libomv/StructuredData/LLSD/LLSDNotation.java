@@ -103,7 +103,7 @@ public final class LLSDNotation extends OSDParser
 	private static final char doubleQuotesNotationMarker = '"';
 	private static final char singleQuotesNotationMarker = '\'';
 
-	protected static boolean isFormat(String string)
+	public static boolean isFormat(String string)
 	{
 		int character = skipWhiteSpace(string);
 		if (character == '<')
@@ -113,7 +113,7 @@ public final class LLSDNotation extends OSDParser
 		return false;
 	}
 	
-	protected static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
+	public static boolean isFormat(byte[] data, String encoding) throws UnsupportedEncodingException
 	{
 		int character = skipWhiteSpace(data);
 		if (character == '<')
