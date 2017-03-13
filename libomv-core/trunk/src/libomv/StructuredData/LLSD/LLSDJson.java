@@ -200,11 +200,6 @@ public final class LLSDJson extends OSDParser
 		serializeElement(writer, data);
 	}
 
-	private static void serializeFormatted(Writer writer, OSD data) throws IOException
-	{
-		serializeElementFormatted(writer, "", data);
-	}
-
 	/**
 	 * Read the next LLSD data element in and return the OSD structure for it
 	 * 
