@@ -41,20 +41,21 @@ public class PushbackInputStream extends FilterInputStream
 
 	/**
 	 * The position within the pushback buffer from which the next byte will be
-	 * read. When the buffer is empty, <code>pos</code> is equal to
-	 * <code>buf.length</code>; when the buffer is full, <code>pos</code> is
+	 * read. When the buffer is empty, <code>bufSpace</code> is equal to
+	 * <code>buf.length</code>; when the buffer is full, <code>bufSpace</code> is
 	 * equal to zero.
 	 */
-	private int pos;
+	private int bufStart;
+	private int bufEnd;
 
 	/**
 	 * The number of bytes read so far
 	 */
-	private int bytes;
+	private long bytesRead;
 
-	public int getBytePosition()
+	public long getBytePosition()
 	{
-		return bytes;
+		return bytesRead;
 	}
 
 	/**
@@ -112,8 +113,9 @@ public class PushbackInputStream extends FilterInputStream
 			throw new IllegalArgumentException("offset < 0");
 		}
 		this.buf = new byte[size];
-		this.pos = size;
-		this.bytes = offset;
+		this.bufStart = 0;
+		this.bufEnd = 0;
+		this.bytesRead = offset;
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public class PushbackInputStream extends FilterInputStream
 		if (buf == null)
 			throw new IOException("Stream closed");
 
-		return (buf.length - pos) + super.available();
+		return (bufEnd - bufStart) + super.available();
 	}
 
 	/**
@@ -191,14 +193,14 @@ public class PushbackInputStream extends FilterInputStream
 		if (buf == null)
 			throw new IOException("Stream closed");
 
-		if (pos < buf.length)
+		if (bufEnd > bufStart)
 		{
-			bytes++;
-			return buf[pos++] & 0xff;
+			bytesRead++;
+			return buf[bufStart++] & 0xff;
 		}
 		int read = super.read();
 		if (read > 0)
-			bytes++;
+			bytesRead++;
 		return read;
 	}
 
@@ -230,7 +232,7 @@ public class PushbackInputStream extends FilterInputStream
 	 *             reading from this reader.
 	 */
 	@Override
-	public int read(byte[] buffer, int off, int len) throws IOException
+	public int read(byte[] buffer, int offset, int length) throws IOException
 	{
 		if (buf == null)
 			throw new IOException("Stream closed");
@@ -238,40 +240,45 @@ public class PushbackInputStream extends FilterInputStream
 		if (buffer == null)
 			throw new IllegalArgumentException("Null buffer");
 
-		if ((off < 0) || (off > buffer.length) || (len < 0) || ((off + len) > buffer.length) || ((off + len) < 0))
+		if ((offset < 0) || (offset > buffer.length) || (length < 0) || ((offset + length) > buffer.length) || ((offset + length) < 0))
 		{
 			throw new IndexOutOfBoundsException();
 		}
 
-		if (len == 0)
+		if (length == 0)
 		{
 			return 0;
 		}
 
-		int avail = buf.length - pos;
-		if (avail > 0)
+		int bufAvail = bufEnd - bufStart;
+		if (bufAvail > 0)
 		{
-			if (len < avail)
+			if (length <bufAvail)
 			{
-				avail = len;
+				bufAvail = length;
 			}
-			System.arraycopy(buf, pos, buffer, off, avail);
-			pos += avail;
-			off += avail;
-			len -= avail;
-			bytes += avail;
+			System.arraycopy(buf, bufStart, buffer, offset, bufAvail);
+			bufStart += bufAvail;
+			if (bufStart == bufEnd)
+			{
+				bufStart = 0;
+				bufEnd = 0;
+			}
+			bytesRead += bufAvail;
+			offset +=bufAvail;
+			length -= bufAvail;
 		}
-		if (len > 0)
+
+		if (length > 0)
 		{
-			len = super.read(buffer, off, len);
-			if (len == -1)
+			length = super.read(buffer, offset, length);
+			if (length == -1)
 			{
-				return avail == 0 ? -1 : avail;
+				return bufAvail == 0 ? -1 : bufAvail;
 			}
-			bytes += len;
-			return avail + len;
+			bytesRead += length;
 		}
-		return avail;
+		return bufAvail + length;
 	}
 
 	/**
@@ -307,12 +314,21 @@ public class PushbackInputStream extends FilterInputStream
 		if (buf == null)
 			throw new IOException("Stream closed");
 
-		if (pos == 0)
+		if (buf.length == bufEnd)
 		{
-			throw new IOException("Push back buffer is full");
+			if (bufStart > 0)
+			{
+				System.arraycopy(buf, bufStart, buf, 0, bufEnd - bufStart);
+				bufEnd -= bufStart;
+				bufStart = 0;
+			}
+			else
+			{
+				throw new IOException("Push back buffer is full");
+			}
 		}
-		buf[--pos] = (byte) b;
-		bytes--;
+		buf[bufEnd++] = (byte) b;
+		bytesRead--;
 	}
 
 	/**
@@ -359,18 +375,24 @@ public class PushbackInputStream extends FilterInputStream
 			throw new ArrayIndexOutOfBoundsException("Length out of bounds");
 		}
 
-		if (length > pos)
+		if (length > buf.length - bufEnd + bufStart)
 		{
 			throw new IOException("Push back buffer is full");
 		}
 
-		System.arraycopy(buffer, offset, buf, pos, length);
-		pos -= length;
-		bytes -= length;
+		if (length > buf.length - bufEnd)
+		{
+			System.arraycopy(buf, bufStart, buf, 0, bufEnd - bufStart);
+			bufEnd -= bufStart;
+			bufStart = 0;
+		}	
+		System.arraycopy(buffer, offset, buf, bufEnd, length);
+		bufEnd += length;
+		bytesRead -= length;
 	}
 
 	/**
-	 * Pushes all the byte in {@code buffer} back to this reader. The bytes are
+	 * Pushes all the bytes in {@code buffer} back to this reader. The bytes are
 	 * pushed back in such a way that the next character read from this stream
 	 * is buffer[0], then buffer[1] and so on.
 	 * <p>
@@ -413,26 +435,31 @@ public class PushbackInputStream extends FilterInputStream
 		if (buf == null)
 			throw new IOException("Stream closed");
 
-		if (count <= 0)
+		if (count == 0)
 		{
 			return 0;
 		}
 
-		long pskip = buf.length - pos;
-		if (pskip > 0)
+		int bufAvail = bufEnd - bufStart;
+		if (bufAvail > 0)
 		{
-			if (count < pskip)
+			if (count < bufAvail)
 			{
-				pskip = count;
+				bufStart += count;
+				count = 0;
 			}
-			pos += pskip;
-			count -= pskip;
+			else
+			{
+				bufStart = 0;
+				bufEnd = 0;
+				count -= bufAvail;
+			}
 		}
 		if (count > 0)
 		{
-			pskip += super.skip(count);
+			bufAvail += super.skip(count);
 		}
-		bytes -= pskip;
-		return pskip;
+		bytesRead += bufAvail;
+		return bufAvail;
 	}
 }
