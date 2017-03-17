@@ -407,8 +407,7 @@ public class UUID implements Serializable
 	 */
 	public static boolean TryParse(String val, RefObject<UUID> result)
 	{
-		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() != 38)
-				|| (val.length() != 36 && val.length() != 32))
+		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() < 38) || (val.length() < 36 && val.length() != 32))
 		{
 			result.argvalue = UUID.Zero;
 			return false;
