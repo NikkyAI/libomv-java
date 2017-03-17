@@ -2416,20 +2416,25 @@ public class Helpers
 	 * Get the file name suffix of the filename if any.
 	 * 
 	 * @param fileName The filename to get the suffix from
-	 * @return The suffix if it exists or the entire name otherwise
+	 * @return The suffix if it exists or null otherwise
 	 */
 	public static String getFileExtension(String fileName)
+	{
+		return getFileExtension(fileName, '.');
+	}
+
+	public static String getFileExtension(String fileName, char seperator)
 	{
 	    if (fileName == null)
 	    {
 	        throw new IllegalArgumentException("file name == null");
 	    }
-	    int pos = fileName.lastIndexOf('.') + 1;
+	    int pos = fileName.lastIndexOf(seperator) + 1;
 	    if (pos > 0 && pos < fileName.length())
 	    {
 	        return fileName.substring(pos, fileName.length() - pos);
 	    }
-	    return fileName;
+	    return null;
 	}
 
 	/**
