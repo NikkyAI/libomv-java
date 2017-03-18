@@ -111,6 +111,7 @@ public final class Color4
     	if (eventType != XmlPullParser.START_TAG)
     		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
     	
+    	A = 1f;
    		while (parser.nextTag() == XmlPullParser.START_TAG)
    		{
    			String name = parser.getName();
@@ -124,11 +125,13 @@ public final class Color4
    			}
    			else if (name.equalsIgnoreCase("B"))
    			{
-				B= Helpers.TryParseFloat(parser.nextText().trim());
+				B = Helpers.TryParseFloat(parser.nextText().trim());
    			}
 			else if (name.equalsIgnoreCase("A"))
 			{
-				A = Helpers.TryParseFloat(parser.nextText().trim());
+				String element = parser.nextText().trim();
+				if (!Helpers.isEmpty(element))
+					A = Helpers.TryParseFloat(element);
 			}
    			else
    			{
@@ -151,7 +154,6 @@ public final class Color4
 	 */
 	public Color4(byte[] byteArray, int pos, boolean inverted)
 	{
-		R = G = B = A = 0f;
 		fromBytes(byteArray, pos, inverted);
 	}
 
@@ -175,8 +177,7 @@ public final class Color4
 	 */
 	public Color4(byte[] byteArray, int pos, boolean inverted, boolean alphaInverted)
 	{
-		R = G = B = A = 0f;
-		fromBytes(byteArray, pos, inverted, alphaInverted);
+ 		fromBytes(byteArray, pos, inverted, alphaInverted);
 	}
 
 	/**
@@ -212,7 +213,6 @@ public final class Color4
 				// Monochromatic and equal, compare alpha
 				return ((Float) A).compareTo(color.A);
 			}
-
 			// Compare lightness
 			return ((Float) R).compareTo(R);
 		}
@@ -222,7 +222,6 @@ public final class Color4
 			// RGB is equal, compare alpha
 			return ((Float) A).compareTo(color.A);
 		}
-
 		// Compare hues
 		return ((Float) thisHue).compareTo(thatHue);
 	}

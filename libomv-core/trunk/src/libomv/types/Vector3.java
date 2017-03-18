@@ -421,12 +421,13 @@ public class Vector3
 		return false;
 	}
 	
-	public static boolean isZeroOrNull(Vector3 q)
+	public static boolean isZeroOrNull(Vector3 v)
 	{
 		if (v != null)
 			return v.equals(Zero);
 		return true;
 	}
+
 	public Vector3 clamp(Vector3 min, Vector3 max)
 	{
 		X = Helpers.Clamp(X, min.X, max.X);
