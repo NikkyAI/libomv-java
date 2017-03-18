@@ -155,7 +155,7 @@ public class UUID implements Serializable
 	{
 		// entering with event on START_TAG for the tag name identifying the UUID
 		// call nextTag() to proceed to inner <UUID> or <Guid> element
-		int eventType = parser.nextTag();
+		int eventType = parser.next();
 		switch (eventType)
 		{
 			case XmlPullParser.START_TAG:
@@ -169,7 +169,11 @@ public class UUID implements Serializable
 					// apperently not an UUID, skip entire element and generate UUID.Zero  
 					Helpers.skipElement(parser);
 				}
-				parser.nextTag();
+				parser.nextTag(); // Advance to outer end tag
+				break;
+			case XmlPullParser.TEXT:
+				fromString(parser.getText());
+				parser.nextTag(); // Advance to end tag
 				break;
 			case XmlPullParser.END_TAG:
 				// empty outer tag, generate UUID.Zero  
@@ -243,7 +247,7 @@ public class UUID implements Serializable
 		}
 
 		// Any valid string contains now only hexadecimal characters in its first 32 bytes	
-		if (string.length() >= 32 && !string.substring(0, 32).matches("^0-9a-fA-F"))
+		if (string.length() >= 32 && string.substring(0, 32).matches("[0-9A-Fa-f]+"))
 		{
 			try
 			{
