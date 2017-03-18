@@ -83,28 +83,27 @@ public final class Vector2
 	 */
     public Vector2(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-    	if (parser.nextTag() != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
-		do
-		{
-			if (!parser.isEmptyElementTag())
+		// entering with event on START_TAG for the tag name identifying the Quaternion
+    	int eventType = parser.getEventType();
+    	if (eventType != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+    	
+   		while (parser.nextTag() == XmlPullParser.START_TAG)
+   		{
+			String name = parser.getName();
+			if (name.equals("X"))
 			{
-				String name = parser.getName();
-				if (name.equals("X"))
-				{
-					X = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Y"))
-				{
-					Y = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else
-				{
-					Helpers.skipElement(parser);
-				}
+				X = Helpers.TryParseFloat(parser.nextText().trim());
 			}
-		}
-        while (parser.nextTag() == XmlPullParser.START_TAG);
+			else if (name.equals("Y"))
+			{
+				Y = Helpers.TryParseFloat(parser.nextText().trim());
+			}
+			else
+			{
+				Helpers.skipElement(parser);
+			}
+    	}
     }
 
     /**
@@ -366,6 +365,25 @@ public final class Vector2
 	public boolean isFinite()
 	{
 		return Helpers.IsFinite(X) && Helpers.IsFinite(Y);
+	}
+
+	public boolean isZero()
+	{
+		return equals(Zero);
+	}
+
+	public static boolean isZero(Vector2 v)
+	{
+		if (v != null)
+			return v.equals(Zero);
+		return false;
+	}
+
+	public static boolean isZeroOrNull(Vector2 v)
+	{
+		if (v != null)
+			return v.equals(Zero);
+		return true;
 	}
 
 	public static Vector2 clamp(Vector2 value1, Vector2 min, Vector2 max)

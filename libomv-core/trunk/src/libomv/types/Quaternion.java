@@ -150,36 +150,35 @@ public class Quaternion
 	 */
 	public Quaternion(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		if (parser.nextTag() != XmlPullParser.START_TAG)
-			throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
-		do
-		{
-			if (!parser.isEmptyElementTag())
+		// entering with event on START_TAG for the tag name identifying the Quaternion
+    	int eventType = parser.getEventType();
+    	if (eventType != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+    	
+   		while (parser.nextTag() == XmlPullParser.START_TAG)
+   		{
+			String name = parser.getName();
+			if (name.equals("X"))
 			{
-				String name = parser.getName();
-				if (name.equals("X"))
-				{
-					X = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Y"))
-				{
-					Y = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Z"))
-				{
-					Z = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("W"))
-				{
-					W = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else
-				{
-					Helpers.skipElement(parser);
-				}
+				X = Helpers.TryParseFloat(parser.nextText().trim());
 			}
-		}
-		while (parser.nextTag() == XmlPullParser.START_TAG);
+			else if (name.equals("Y"))
+			{
+				Y = Helpers.TryParseFloat(parser.nextText().trim());
+			}
+			else if (name.equals("Z"))
+			{
+				Z = Helpers.TryParseFloat(parser.nextText().trim());
+			}
+			else if (name.equals("W"))
+			{
+				W = Helpers.TryParseFloat(parser.nextText().trim());
+			}
+			else
+			{
+				Helpers.skipElement(parser);
+			}
+    	}
 	}
 
 	public Quaternion(Quaternion q)
@@ -724,6 +723,25 @@ public class Quaternion
 		return (X == 0f && Y == 0f && Z == 0f && W == 1f);
 	}
 	
+	public boolean isZero()
+	{
+		return equals(Zero);
+	}
+	
+	public static boolean isZero(Quaternion q)
+	{
+		if (q != null)
+			return q.equals(Zero);
+		return false;
+	}
+	
+	public static boolean isZeroOrNull(Quaternion q)
+	{
+		if (q != null)
+			return q.equals(Zero);
+		return true;
+	}
+
 	public Quaternion negate()
 	{
 		X = -X;
@@ -1123,4 +1141,6 @@ public class Quaternion
 	/** A quaternion with a value of 0,0,0,1 */
 	public final static Quaternion Identity = new Quaternion(0f, 0f, 0f, 1f);
 
+	/** A quaternion with a value of 0,0,0,0 */
+	public final static Quaternion Zero = new Quaternion(0f, 0f, 0f, 0f);
 }

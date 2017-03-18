@@ -106,36 +106,35 @@ public final class Color4
 	 */
     public Color4(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-    	if (parser.nextTag() != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
-		do
-		{
-			if (!parser.isEmptyElementTag())
+		// entering with event on START_TAG for the tag name identifying the Vector3
+    	int eventType = parser.getEventType();
+    	if (eventType != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+    	
+   		while (parser.nextTag() == XmlPullParser.START_TAG)
+   		{
+   			String name = parser.getName();
+   			if (name.equalsIgnoreCase("R"))
+   			{
+				R = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("G"))
+   			{
+				G = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("B"))
+   			{
+				B= Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+			else if (name.equalsIgnoreCase("A"))
 			{
-				String name = parser.getName();
-				if (name.equals("R"))
-				{
-					R = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("G"))
-				{
-					G = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("B"))
-				{
-					B = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("A"))
-				{
-					A = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else
-				{
-					Helpers.skipElement(parser);
-				}
+				A = Helpers.TryParseFloat(parser.nextText().trim());
 			}
-		}
-        while (parser.nextTag() == XmlPullParser.START_TAG);
+   			else
+   			{
+   				Helpers.skipElement(parser);
+   			}
+    	}
     }
 
 	/**

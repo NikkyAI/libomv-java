@@ -102,32 +102,31 @@ public class Vector3d
 	 */
     public Vector3d(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-    	if (parser.nextTag() != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
-		do
-		{
-			if (!parser.isEmptyElementTag())
-			{
-				String name = parser.getName();
-				if (name.equals("X"))
-				{
-					X = Helpers.TryParseDouble(parser.nextText().trim());
-				}
-				else if (name.equals("Y"))
-				{
-					Y = Helpers.TryParseDouble(parser.nextText().trim());
-				}
-				else if (name.equals("Z"))
-				{
-					Z = Helpers.TryParseDouble(parser.nextText().trim());
-				}
-				else
-				{
-					Helpers.skipElement(parser);
-				}
-			}
-		}
-        while (parser.nextTag() == XmlPullParser.START_TAG);
+		// entering with event on START_TAG for the tag name identifying the Vector3
+    	int eventType = parser.getEventType();
+    	if (eventType != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+    	
+   		while (parser.nextTag() == XmlPullParser.START_TAG)
+   		{
+   			String name = parser.getName();
+   			if (name.equalsIgnoreCase("X"))
+   			{
+   				X = Helpers.TryParseDouble(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("Y"))
+   			{
+   				Y = Helpers.TryParseDouble(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("Z"))
+   			{
+   				Z = Helpers.TryParseDouble(parser.nextText().trim());
+   			}
+   			else
+   			{
+   				Helpers.skipElement(parser);
+   			}
+    	}
     }
 
 	/**

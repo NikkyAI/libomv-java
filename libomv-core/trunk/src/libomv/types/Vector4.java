@@ -87,36 +87,35 @@ public class Vector4
 	 */
     public Vector4(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-    	if (parser.nextTag() != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
-		do
-		{
-			if (!parser.isEmptyElementTag())
+		// entering with event on START_TAG for the tag name identifying the Vector3
+    	int eventType = parser.getEventType();
+    	if (eventType != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+    	
+   		while (parser.nextTag() == XmlPullParser.START_TAG)
+   		{
+   			String name = parser.getName();
+   			if (name.equalsIgnoreCase("X"))
+   			{
+				X = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("Y"))
+   			{
+				Y = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("Z"))
+   			{
+				Z= Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+			else if (name.equalsIgnoreCase("S"))
 			{
-				String name = parser.getName();
-				if (name.equals("X"))
-				{
-					X = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Y"))
-				{
-					Y = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Z"))
-				{
-					Z = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("S"))
-				{
-					S = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else
-				{
-					Helpers.skipElement(parser);
-				}
+				S = Helpers.TryParseFloat(parser.nextText().trim());
 			}
-		}
-        while (parser.nextTag() == XmlPullParser.START_TAG);
+   			else
+   			{
+   				Helpers.skipElement(parser);
+   			}
+    	}
     }
 
 	public Vector4(byte[] dest, int pos)

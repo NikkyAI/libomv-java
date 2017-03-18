@@ -111,7 +111,7 @@ public class UUID implements Serializable
 	public UUID(byte[] byteArray, int pos)
 	{
 		data = new byte[16];
-		System.arraycopy(byteArray, pos, data, 0, 16);
+		System.arraycopy(byteArray, pos, data, 0, Math.min(byteArray.length, 16));
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class UUID implements Serializable
 		data = new byte[16];
 		if (le)
 		{
-			Helpers.UInt64ToBytesL(value, data, 8);
+			Helpers.UInt64ToBytesL(value, data, 0);
 		}
 		else
 		{
@@ -153,17 +153,32 @@ public class UUID implements Serializable
 
 	public UUID(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		parser.nextTag();
-		parser.require(XmlPullParser.START_TAG, null, null);
-		if (!parser.isEmptyElementTag())
+		// entering with event on START_TAG for the tag name identifying the UUID
+		// call nextTag() to proceed to inner <UUID> or <Guid> element
+		int eventType = parser.nextTag();
+		switch (eventType)
 		{
-			String name = parser.getName();
-			if (name.equals("Guid") || name.equals("UUID"))
-			{
-				fromString(parser.nextText());
-			}
+			case XmlPullParser.START_TAG:
+				if (parser.getName().equalsIgnoreCase("GUID") || parser.getName().equalsIgnoreCase("UUID"))
+				{
+					// we got apparently an UUID, try to create it from the string
+					fromString(parser.nextText());
+				}
+				else
+				{
+					// apperently not an UUID, skip entire element and generate UUID.Zero  
+					Helpers.skipElement(parser);
+				}
+				parser.nextTag();
+				break;
+			case XmlPullParser.END_TAG:
+				// empty outer tag, generate UUID.Zero  
+			    break;
+			default:
+	    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
 		}
-		parser.nextTag();
+		if (data == null)
+			data = new byte[16];
 	}
 
 	/**
@@ -286,8 +301,9 @@ public class UUID implements Serializable
 	 */
 	public int toBytes(byte[] dest, int pos)
 	{
-		System.arraycopy(data, 0, dest, pos, data.length);
-		return data.length;
+		int length = Math.min(data.length, dest.length - pos);
+		System.arraycopy(data, 0, dest, pos, length);
+		return length;
 	}
 
 	public long AsLong()
@@ -372,7 +388,11 @@ public class UUID implements Serializable
 	{
 		if (uuid != null)
 		{
-			return Arrays.equals(this.data, uuid.data);
+			if (uuid.data == null && this.data == null)
+				return true;
+			
+			if (uuid.data != null && this.data != null)
+				return Arrays.equals(this.data, uuid.data);
 		}
 		return false;
 	}
@@ -504,21 +524,22 @@ public class UUID implements Serializable
 		return uuid.toString();
 	}
 
+	public boolean isZero()
+	{
+		return equals(Zero);		
+	}
+	
 	public static boolean isZero(UUID uuid)
 	{
 		if (uuid != null)
-		{
 			return uuid.equals(Zero);
-		}
 		return false;
 	}
 	
 	public static boolean isZeroOrNull(UUID uuid)
 	{
 		if (uuid != null)
-		{
 			return uuid.equals(Zero);
-		}
 		return true;
 	}
 

@@ -99,32 +99,31 @@ public class Vector3
 	 */
     public Vector3(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-    	if (parser.nextTag() != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag: " + parser.getEventType(), parser, null);
-		do
-		{
-			if (!parser.isEmptyElementTag())
-			{
-				String name = parser.getName();
-				if (name.equals("X"))
-				{
-					X = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Y"))
-				{
-					Y = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else if (name.equals("Z"))
-				{
-					Z = Helpers.TryParseFloat(parser.nextText().trim());
-				}
-				else
-				{
-					Helpers.skipElement(parser);
-				}
-			}
-		}
-        while (parser.nextTag() == XmlPullParser.START_TAG);
+		// entering with event on START_TAG for the tag name identifying the Vector3
+    	int eventType = parser.getEventType();
+    	if (eventType != XmlPullParser.START_TAG)
+    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+    	
+   		while (parser.nextTag() == XmlPullParser.START_TAG)
+   		{
+   			String name = parser.getName();
+   			if (name.equalsIgnoreCase("X"))
+   			{
+   				X = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("Y"))
+   			{
+   				Y = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else if (name.equalsIgnoreCase("Z"))
+   			{
+   				Z = Helpers.TryParseFloat(parser.nextText().trim());
+   			}
+   			else
+   			{
+   				Helpers.skipElement(parser);
+   			}
+    	}
     }
 
     /**
@@ -175,11 +174,13 @@ public class Vector3
 		Z = z;
 	}
 
-	public Vector3(String value)
+/*
+  	public Vector3(String value)
+ 
 	{
 		// TODO Auto-generated constructor stub
 	}
-
+*/
 	/**
 	 * Returns the raw bytes for this vector
 	 * 
@@ -408,6 +409,24 @@ public class Vector3
 		return (Helpers.IsFinite(X) && Helpers.IsFinite(Y) && Helpers.IsFinite(Z));
 	}
 
+	public boolean isZero()
+	{
+		return equals(Zero);
+	}
+
+	public static boolean isZero(Vector3 v)
+	{
+		if (v != null)
+			return v.equals(Zero);
+		return false;
+	}
+	
+	public static boolean isZeroOrNull(Vector3 q)
+	{
+		if (v != null)
+			return v.equals(Zero);
+		return true;
+	}
 	public Vector3 clamp(Vector3 min, Vector3 max)
 	{
 		X = Helpers.Clamp(X, min.X, max.X);
@@ -711,24 +730,6 @@ public class Vector3
 	public static Vector3 divide(Vector3 value, float divider)
 	{
 		return new Vector3(value).divide(divider);
-	}
-
-	public static boolean isZero(Vector3 v)
-	{
-		if (v != null)
-		{
-			return v.equals(Zero);
-		}
-		return false;
-	}
-	
-	public static boolean isZeroOrNull(Vector3 v)
-	{
-		if (v != null)
-		{
-			return v.equals(Zero);
-		}
-		return true;
 	}
 
 	/** A vector with a value of 0,0,0 */
