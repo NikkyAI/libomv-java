@@ -31,6 +31,7 @@ package libomv.assets;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -86,9 +87,7 @@ public class AssetPrim extends AssetItem
 	{
 	}
 
-    /// <summary>
     /// Initializes a new instance of an AssetPrim object
-    /// </summary>
     /// <param name="assetID">A unique <see cref="UUID"/> specific to this asset</param>
     /// <param name="assetData">A byte array containing the raw asset data</param>
     public AssetPrim(UUID assetID, byte[] assetData)
@@ -99,6 +98,11 @@ public class AssetPrim extends AssetItem
     public AssetPrim(String xmlData) throws XmlPullParserException, IOException
 	{
 		decodeXml(xmlData);
+	}
+
+    public AssetPrim(XmlPullParser xmlParser) throws XmlPullParserException, IOException
+	{
+		decodeXml(xmlParser);
 	}
 	
 	public AssetPrim(PrimObject parent, ArrayList<PrimObject> children)
@@ -113,44 +117,68 @@ public class AssetPrim extends AssetItem
 	@Override
 	public void encode()
 	{
+		StringWriter textWriter = new StringWriter();
 		try
 		{
-			StringWriter textWriter = new StringWriter();
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 			xmlWriter.setOutput(textWriter);
 
 			encodeXml(xmlWriter);
 			xmlWriter.flush();
 			AssetData = textWriter.toString().getBytes(Helpers.UTF8_ENCODING);
-			textWriter.close();
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			e.printStackTrace();
+			Logger.Log("XML encoding error", Logger.LogLevel.Error, ex);
+		}
+		finally
+		{
+			try
+			{
+				textWriter.close();
+			}
+			catch (IOException ex)
+			{
+				Logger.Log("XML encoding error", Logger.LogLevel.Error, ex);
+			}
 		}
 	}
 
 	@Override
 	public boolean decode()
 	{
+		InputStream stream = new ByteArrayInputStream(AssetData);
 		try
 		{
-			XmlPullParser reader = XmlPullParserFactory.newInstance().newPullParser();
-			reader.setInput(new ByteArrayInputStream(AssetData), Helpers.UTF8_ENCODING);
-			return decodeXml(reader);
+			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+			parser.setInput(stream, Helpers.UTF8_ENCODING);
+			parser.nextTag();
+			return decodeXml(parser);
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			e.printStackTrace();
-			return false;
+			Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
 		}
+		finally
+		{
+			try
+			{
+				stream.close();
+			}
+			catch (IOException ex)
+			{
+				Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
+			}
+		}
+		return false;
 	}
 
 	public boolean decodeXml(String xmlData) throws XmlPullParserException, IOException
 	{
-		XmlPullParser reader = XmlPullParserFactory.newInstance().newPullParser();
-		reader.setInput(new StringReader(xmlData));
-		return decodeXml(reader);
+		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+		parser.setInput(new StringReader(xmlData));
+		parser.nextTag();
+		return decodeXml(parser);
 	}
 
 	public void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
@@ -340,7 +368,6 @@ public class AssetPrim extends AssetItem
 
 	public boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		parser.nextTag();
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");
 
 		Parent = loadPrim(parser);
@@ -1424,7 +1451,7 @@ public class AssetPrim extends AssetItem
             CreationDate = obj.Properties.CreationDate;
             CreatorID = obj.Properties.Permissions.creatorID;
             Description = obj.Properties.Description;
-            DieAtEdge = (obj.Flags & PrimFlags.DieAtEdge) == PrimFlags.AllowInventoryDrop;
+            DieAtEdge = (obj.Flags & PrimFlags.DieAtEdge) == PrimFlags.DieAtEdge;
             if (obj.Flexible != null)
             {
                 Flexible = new FlexibleBlock();
