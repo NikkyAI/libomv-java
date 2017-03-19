@@ -39,6 +39,7 @@ import java.util.TimerTask;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import libomv.AgentManager.InstantMessage;
 import libomv.AgentManager.InstantMessageCallbackArgs;
 import libomv.AgentManager.InstantMessageDialog;
 import libomv.DirectoryManager.AgentSearchData;
@@ -351,26 +352,27 @@ public class TestClient extends GridClient implements PacketCallback
 		@Override
 		public boolean callback(InstantMessageCallbackArgs e)
 		{
-			boolean groupIM = e.getIM().GroupIM && GroupMembers != null && GroupMembers.containsKey(e.getIM().FromAgentID) ? true
+			InstantMessage im = e.getIM();
+			boolean groupIM = im.GroupIM && GroupMembers != null && GroupMembers.containsKey(im.FromAgentID) ? true
 					: false;
 
-			if (e.getIM().FromAgentID.equals(MasterKey) || (GroupCommands && groupIM))
+			if (im.FromAgentID.equals(MasterKey) || (GroupCommands && groupIM))
 			{
 				// Received an IM from someone that is authenticated
-				System.out.println(String.format("<%s (%s)> %s: %s (@%s:%s)", e.getIM().GroupIM ? "GroupIM" : "IM", e.getIM().Dialog,
-						e.getIM().FromAgentName, e.getIM().Message, e.getIM().RegionID, e.getIM().Position));
+				System.out.println(String.format("<%s %s (%s)> %s: %s (@%s:%s)", im.GroupIM ? "GroupIM" : "IM", im.Timestamp, im.Dialog,
+						im.FromAgentName, im.Message, im.RegionID, im.Position));
 
 				try
 				{
-					if (e.getIM().Dialog == InstantMessageDialog.RequestTeleport)
+					if (im.Dialog == InstantMessageDialog.RequestTeleport)
 					{
 						System.out.println("Accepting teleport lure.");
-						Self.TeleportLureRespond(e.getIM().FromAgentID, e.getIM().IMSessionID, true);
+						Self.TeleportLureRespond(im.FromAgentID, im.IMSessionID, true);
 					}
-					else if (e.getIM().Dialog == InstantMessageDialog.MessageFromAgent
-							|| e.getIM().Dialog == InstantMessageDialog.MessageFromObject)
+					else if (im.Dialog == InstantMessageDialog.MessageFromAgent
+							|| im.Dialog == InstantMessageDialog.MessageFromObject)
 					{
-						ClientManager.getInstance().doCommandAll(e.getIM().Message, e.getIM().FromAgentID);
+						ClientManager.getInstance().doCommandAll(im.Message, im.FromAgentID);
 					}
 				}
 				catch (Exception ex)
@@ -381,8 +383,8 @@ public class TestClient extends GridClient implements PacketCallback
 			else
 			{
 				// Received an IM from someone that is not the bot's master, ignore
-				System.out.println(String.format("<%s (%s)> %s (not master): %s (@%s:%s)", e.getIM().GroupIM ? "GroupIM" : "IM",
-						e.getIM().Dialog, e.getIM().FromAgentName, e.getIM().Message, e.getIM().RegionID, e.getIM().Position));
+				System.out.println(String.format("<%s %s (%s)> %s (not master): %s (@%s:%s)", im.GroupIM ? "GroupIM" : "IM", im.Timestamp,
+						im.Dialog, im.FromAgentName, im.Message, im.RegionID, im.Position));
 			}
 			return false;
 		}
@@ -459,6 +461,7 @@ public class TestClient extends GridClient implements PacketCallback
         {
         	Appearances.put(appearance.Sender.ID, appearance);
         }
+        System.out.println("Set Appearence finished. Received packet: " + packet.toString());
     }
 
 	private void AlertMessageHandler(Packet packet, Simulator simulator) throws UnsupportedEncodingException
