@@ -61,12 +61,7 @@ public class FacetedMesh extends Mesh
     {
         try
         {
-            if (!meshAsset.decode())
-            {
-                return null;
-            }
-
-            OSDMap meshData = meshAsset.MeshData;
+            OSDMap meshData = meshAsset.getMeshData();
             OSD facesOSD = null;
 
             switch (LOD)

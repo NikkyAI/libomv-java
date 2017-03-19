@@ -204,12 +204,12 @@ public abstract class AssetItem
 		}
 	}
 
-	/** A byte array containing the raw asset data */
-	public byte[] AssetData;
 	/** True if the asset is only stored on the server temporarily */
 	public boolean Temporary;
 	/** The assets unique unique ID */
 	protected UUID AssetID;
+	/** A byte array containing the raw asset data */
+	protected byte[] AssetData;
 
 	public UUID getAssetID()
 	{
@@ -221,15 +221,15 @@ public abstract class AssetItem
 		AssetID = value;
 	}
 
+	public byte[] getAssetData()
+	{
+		encode();
+		return AssetData;
+	}
+
 	/** The "type" of asset, Notecard, Animation, etc */
 	public abstract AssetType getAssetType();
 
-	/**
-	 * Construct a new Asset object
-	 */
-	public AssetItem()
-	{
-	}
 
 	/**
 	 * Construct a new Asset object
@@ -245,12 +245,12 @@ public abstract class AssetItem
 		AssetData = assetData;
 		decode();
 	}
-
+	
 	/**
 	 * Regenerates the <code>AssetData</code> byte array from the properties of
 	 * the derived class.
 	 */
-	public abstract void encode();
+	protected abstract void encode();
 
 	/**
 	 * Decodes the AssetData, placing it in appropriate properties of the
@@ -258,5 +258,5 @@ public abstract class AssetItem
 	 * 
 	 * @return True if the asset decoding succeeded, otherwise false
 	 */
-	public abstract boolean decode();
+	protected abstract boolean decode();
 }

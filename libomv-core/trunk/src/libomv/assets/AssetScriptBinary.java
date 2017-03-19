@@ -41,11 +41,6 @@ public class AssetScriptBinary extends AssetItem
 		return AssetType.LSLBytecode;
 	}
 
-	// Initializes a new instance of an AssetScriptBinary object
-	public AssetScriptBinary()
-	{
-	}
-
 	/**
 	 * Initializes a new instance of an AssetScriptBinary object with parameters
 	 * 
@@ -63,7 +58,7 @@ public class AssetScriptBinary extends AssetItem
 	 * TODO: Encodes a scripts contents into a LSO Bytecode file
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 	}
 
@@ -73,7 +68,7 @@ public class AssetScriptBinary extends AssetItem
 	 * @return true
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		return true;
 	}

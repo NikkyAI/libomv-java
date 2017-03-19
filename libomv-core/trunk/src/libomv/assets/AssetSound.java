@@ -42,13 +42,6 @@ public class AssetSound extends AssetItem
 	}
 
 	/**
-	 * Initializes a new instance of an AssetSound object
-	 */
-	public AssetSound()
-	{
-	}
-
-	/**
 	 * Initializes a new instance of an AssetSound object with parameters
 	 * 
 	 * @param assetID
@@ -65,7 +58,7 @@ public class AssetSound extends AssetItem
 	 * TODO: Encodes a sound file
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 	}
 
@@ -75,7 +68,7 @@ public class AssetSound extends AssetItem
 	 * @return true
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		return true;
 	}

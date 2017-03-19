@@ -47,9 +47,6 @@ public class AssetCallingCard extends AssetItem
 	/** UUID of the Callingcard target avatar */
 	public UUID AvatarID = UUID.Zero;
 
-	/** Construct an Asset of type Callingcard */
-	public AssetCallingCard() { }
-  	
 	/**
 	 * Construct an Asset object of type Callingcard
 	 * 
@@ -68,6 +65,7 @@ public class AssetCallingCard extends AssetItem
 	 */
 	public AssetCallingCard(UUID avatarID)
 	{
+		super(null, null);
 		AvatarID = avatarID;
 		encode();
     }
@@ -76,7 +74,7 @@ public class AssetCallingCard extends AssetItem
 	 * Encode the raw contents of a string with the specific Callingcard format
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		String temp = "Callingcard version 2\n" + "avatar_id " + AvatarID.toString() + "\n";
 		AssetData = Helpers.StringToBytes(temp);
@@ -88,14 +86,17 @@ public class AssetCallingCard extends AssetItem
 	 * @return True if the AssetData was successfully decoded to a UUID and Vector
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
+		if (AssetData == null)
+			return false;
+
 		try
 		{
 			String text = Helpers.BytesToString(AssetData);
-			if (text.toLowerCase().contains("callingcard version 2"))
+			if (text != null && text.toLowerCase().contains("callingcard version 2"))
 			{
-				AvatarID = new UUID(text.substring(text.indexOf("avatar_id") + 10, 36));
+				AvatarID = new UUID(text.substring(text.indexOf("avatar_id") + 9, 38).trim());
 				return true;
 			}
 		}

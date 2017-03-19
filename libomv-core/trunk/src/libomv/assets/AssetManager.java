@@ -1620,38 +1620,45 @@ public class AssetManager implements PacketCallback
 	// #region Helpers
 	public static AssetItem CreateAssetItem(AssetType type, UUID assetID, byte[] assetData)
 	{
-		switch (type)
+		try
 		{
-			case Animation:
-				return new AssetAnimation(assetID, assetData);
-			case Bodypart:
-				return new AssetBodypart(assetID, assetData);
-			case CallingCard:
-				return new AssetCallingCard(assetID, assetData);
-			case Clothing:
-				return new AssetClothing(assetID, assetData);
-			case Gesture:
-				return new AssetGesture(assetID, assetData);
-			case Landmark:
-				return new AssetLandmark(assetID, assetData);
-			case LSLBytecode:
-				return new AssetScriptBinary(assetID, assetData);
-			case LSLText:
-				return new AssetScriptText(assetID, assetData);
-			case Mesh:
-				return new AssetMesh(assetID, assetData);
-			case Notecard:
-				return new AssetNotecard(assetID, assetData);
-			case Object:
-				return new AssetPrim(assetID, assetData);
-			case Sound:
-				return new AssetSound(assetID, assetData);
-			case Texture:
-				return new AssetTexture(assetID, assetData);
-			default:
-				Logger.Log("Unimplemented asset type: " + type, LogLevel.Error);
+			switch (type)
+			{
+				case Animation:
+					return new AssetAnimation(assetID, assetData);
+				case Bodypart:
+					return new AssetBodypart(assetID, assetData);
+				case CallingCard:
+					return new AssetCallingCard(assetID, assetData);
+				case Clothing:
+					return new AssetClothing(assetID, assetData);
+				case Gesture:
+					return new AssetGesture(assetID, assetData);
+				case Landmark:
+					return new AssetLandmark(assetID, assetData);
+				case LSLBytecode:
+					return new AssetScriptBinary(assetID, assetData);
+				case LSLText:
+					return new AssetScriptText(assetID, assetData);
+				case Mesh:
+					return new AssetMesh(assetID, assetData);
+				case Notecard:
+					return new AssetNotecard(assetID, assetData);
+				case Object:
+					return new AssetPrim(assetID, assetData);
+				case Sound:
+					return new AssetSound(assetID, assetData);
+				case Texture:
+					return new AssetTexture(assetID, assetData);
+				default:
+					Logger.Log("Unimplemented asset type: " + type, LogLevel.Error);
+			}
 		}
-		return new AssetMutable(type);
+		catch (Exception ex)
+		{
+			Logger.Log("Exception occurred when creating an asset", Logger.LogLevel.Error, ex);
+		}
+		return new AssetMutable(type, assetID, assetData);
 	}
 	// #endregion Helpers
 

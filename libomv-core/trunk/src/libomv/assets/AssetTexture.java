@@ -57,11 +57,6 @@ public class AssetTexture extends AssetItem
 
 	public int Components;
 
-	// Initializes a new instance of an AssetTexture object
-	public AssetTexture()
-	{
-	}
-
 	/**
 	 * Initializes a new instance of an AssetTexture object
 	 * 
@@ -83,6 +78,7 @@ public class AssetTexture extends AssetItem
 	 */
 	public AssetTexture(ManagedImage image)
 	{
+		super(null, null);
 		Image = image;
 		Components = 0;
 		if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
@@ -95,12 +91,17 @@ public class AssetTexture extends AssetItem
 			++Components;
 	}
 
+	public boolean updateData()
+	{
+		return decode();
+	}
+	
 	/**
 	 * Populates the {@link AssetData} byte array with a JPEG2000 encoded image
 	 * created from the data in {@link Image}
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try
@@ -122,9 +123,12 @@ public class AssetTexture extends AssetItem
 	 * @throws IOException 
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		Components = 0;
+
+        if (AssetData == null)
+			return false;
 
 		InputStream is = new ByteArrayInputStream(AssetData);
 		try

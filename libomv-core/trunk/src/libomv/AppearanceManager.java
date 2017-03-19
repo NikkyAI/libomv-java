@@ -256,7 +256,7 @@ public class AppearanceManager implements PacketCallback
         public String toString()
         {
             return String.format("TextureID: %s, Texture: %s",
-                TextureID, Texture != null ? Texture.AssetData.length + " bytes" : "(null)");
+                TextureID, Texture != null ? Texture.getAssetData().length + " bytes" : "(null)");
         }
     }
 
@@ -1530,7 +1530,7 @@ public class AppearanceManager implements PacketCallback
             if (transfer.Success)
             {
             	wearable.Asset = (AssetWearable)AssetManager.CreateAssetItem(transfer.AssetType, transfer.ItemID, transfer.AssetData);
-                if (wearable.Asset.decode())
+                if (wearable.Asset != null)
                 {
                     DecodeWearableParams(wearable, _Textures);
                     Logger.DebugLog("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
@@ -1539,7 +1539,6 @@ public class AppearanceManager implements PacketCallback
                 }
                 else
                 {
-                    wearable.Asset = null;
                     Logger.Log("Failed to decode wearable asset: " + transfer.ItemID, LogLevel.Error, _Client);
                 }
             }
@@ -1705,8 +1704,11 @@ public class AppearanceManager implements PacketCallback
                 	if (download.State == TextureRequestState.Finished && download.AssetData != null)
                 	{
                         AssetTexture texture = (AssetTexture)AssetManager.CreateAssetItem(AssetType.Texture, download.ItemID, download.AssetData);
-                    	texture.decode();
-
+                        if (texture == null)
+                        {
+                            Logger.Log("Failed to decode texture: " + textureID, LogLevel.Error, _Client);
+                        }
+ 
                         for (int i = 0; i < _Textures.length; i++)
                         {
                             if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(download.ItemID))
@@ -1826,7 +1828,7 @@ public class AppearanceManager implements PacketCallback
         {
             try
             {
-                newAssetID = UploadBake(oven.getBakedTexture().AssetData);
+                newAssetID = UploadBake(oven.getBakedTexture().getAssetData());
             }
             catch (IOException e)
             {

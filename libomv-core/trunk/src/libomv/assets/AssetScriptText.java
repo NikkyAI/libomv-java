@@ -47,11 +47,6 @@ public class AssetScriptText extends AssetItem
 	// A string of characters represting the script contents
 	public String Source;
 
-	// Initializes a new AssetScriptText object
-	public AssetScriptText()
-	{
-	}
-
 	/**
 	 * Initializes a new AssetScriptText object with parameters
 	 * 
@@ -73,6 +68,7 @@ public class AssetScriptText extends AssetItem
 	 */
 	public AssetScriptText(String source)
 	{
+		super(null, null);
 		Source = source;
 	}
 
@@ -82,7 +78,7 @@ public class AssetScriptText extends AssetItem
 	 * 
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		AssetData = Helpers.StringToBytes(Source);
 	}
@@ -93,7 +89,7 @@ public class AssetScriptText extends AssetItem
 	 * @return true if decoding is successful
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		try
 		{

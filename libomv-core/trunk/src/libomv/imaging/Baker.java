@@ -343,9 +343,8 @@ public class Baker
         	AddAlpha(bakedTexture.Image, img);
         }
 
-        // We are done, encode asset for finalized bake
-        bakedTexture.encode();
-        //File.WriteAllBytes(bakeType + ".tga", bakedTexture.Image.ExportTGA());
+        // We are done, make sure internal data is updated for finalized bake
+        bakedTexture.updateData();
     }
 
     public ManagedImage LoadResourceLayer(String fileName)

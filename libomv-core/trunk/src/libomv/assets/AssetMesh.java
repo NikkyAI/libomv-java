@@ -46,17 +46,19 @@ import libomv.utils.Logger.LogLevel;
 public class AssetMesh extends AssetItem
 {
     // Decoded mesh data
-    public OSDMap MeshData;
+    private OSDMap MeshData;
 
+    public OSDMap getMeshData()
+    {
+    	decode();
+    	return MeshData;
+    }
     // Override the base classes AssetType
 	@Override
 	public AssetItem.AssetType getAssetType()
 	{
 		return AssetItem.AssetType.Mesh;
 	}
-
-	// Initializes a new instance of an AssetMesh object
-	public AssetMesh() { }
 
     /**
      * Initializes a new instance of an AssetMesh object with parameters
@@ -71,7 +73,7 @@ public class AssetMesh extends AssetItem
 
     // TODO: Encodes Collada file into LLMesh format
 	@Override
-	public void encode()
+	protected void encode()
 	{
 	}
 
@@ -82,10 +84,14 @@ public class AssetMesh extends AssetItem
      * @returns true
      */
 	@Override
-	public boolean decode()
+	protected boolean decode()
     {
         MeshData = new OSDMap();
-        InputStream data = new ByteArrayInputStream(AssetData);
+
+        if (AssetData == null)
+			return false;
+
+		InputStream data = new ByteArrayInputStream(AssetData);
         try
         {
             OSDMap header = (OSDMap)OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
@@ -112,13 +118,16 @@ public class AssetMesh extends AssetItem
         }
         catch (Exception ex)
         {
+            Logger.Log("Failed to decode mesh asset", LogLevel.Error, ex);
+            return false;
+        }
+        finally
+        {
         	try
         	{
 				data.close();
 			}
         	catch (IOException e) {}
-            Logger.Log("Failed to decode mesh asset", LogLevel.Error, ex);
-            return false;
         }
     }
 }

@@ -3957,7 +3957,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 					{
 						_Client.Assets.RequestAsset(gestureID, AssetType.Gesture, true, new AssetDownloadCallback());
 						gesture = gotAsset.waitOne(30 * 1000);
-						if (gesture != null && gesture.decode())
+						if (gesture != null)
 						{
 							synchronized (gestureCache)
 							{

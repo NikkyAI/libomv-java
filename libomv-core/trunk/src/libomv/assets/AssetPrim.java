@@ -82,10 +82,6 @@ public class AssetPrim extends AssetItem
 		return AssetType.Object;
 	}
 
-	// Initializes a new instance of an AssetPrim object
-	public AssetPrim()
-	{
-	}
 
     /// Initializes a new instance of an AssetPrim object
     /// <param name="assetID">A unique <see cref="UUID"/> specific to this asset</param>
@@ -97,16 +93,19 @@ public class AssetPrim extends AssetItem
 
     public AssetPrim(String xmlData) throws XmlPullParserException, IOException
 	{
+   	    super(null, null);
 		decodeXml(xmlData);
 	}
 
     public AssetPrim(XmlPullParser xmlParser) throws XmlPullParserException, IOException
 	{
+   	    super(null, null);
 		decodeXml(xmlParser);
 	}
 	
 	public AssetPrim(PrimObject parent, ArrayList<PrimObject> children)
 	{
+   	    super(null, null);
 		Parent = parent;
 		if (children != null)
 			Children = children;
@@ -147,27 +146,30 @@ public class AssetPrim extends AssetItem
 	@Override
 	public boolean decode()
 	{
-		InputStream stream = new ByteArrayInputStream(AssetData);
-		try
+		if (AssetData != null)
 		{
-			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-			parser.setInput(stream, Helpers.UTF8_ENCODING);
-			parser.nextTag();
-			return decodeXml(parser);
-		}
-		catch (Exception ex)
-		{
-			Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
-		}
-		finally
-		{
+			InputStream stream = new ByteArrayInputStream(AssetData);
 			try
 			{
-				stream.close();
+				XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+				parser.setInput(stream, Helpers.UTF8_ENCODING);
+				parser.nextTag();
+				return decodeXml(parser);
 			}
-			catch (IOException ex)
+			catch (Exception ex)
 			{
 				Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
+			}
+			finally
+			{
+				try
+				{
+					stream.close();
+				}
+				catch (IOException ex)
+				{
+					Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
+				}
 			}
 		}
 		return false;
@@ -375,17 +377,15 @@ public class AssetPrim extends AssetItem
 		{
 			parser.nextTag(); // Advance to <OtherParths>
 			if (parser.getEventType() == XmlPullParser.END_TAG)
-				System.out.println("Unexpected event type");
+				Logger.Log("Unexpected event type", Logger.LogLevel.Error);
 
 			if (!parser.isEmptyElementTag())
 			{
-				int loop = 0;
 				parser.require(XmlPullParser.START_TAG, null, "OtherParts");
 
 				ArrayList<PrimObject> children = new ArrayList<PrimObject>();
 				while (parser.nextTag() == XmlPullParser.START_TAG)
 				{
-					loop++;
 					PrimObject child = loadPrim(parser);
 					if (child != null)
 						children.add(child);
@@ -635,7 +635,10 @@ public class AssetPrim extends AssetItem
 			}
 			else
 			{
-				Logger.Log("Received unrecocognized asset primitive element " + name + " \"" + Helpers.skipElementDebug(parser) + "\"", Logger.LogLevel.Warning);
+				if (parser.isEmptyElementTag())
+					Helpers.skipElement(parser);
+				else
+					Logger.Log("Received unrecocognized asset primitive element " + name + " \"" + Helpers.skipElementDebug(parser) + "\"", Logger.LogLevel.Debug);
 			}
 		}
 		// currently at </SceneObjectPart>

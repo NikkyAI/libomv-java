@@ -49,11 +49,6 @@ public class AssetLandmark extends AssetItem
 	// Local position of the target
 	public Vector3 Position = Vector3.Zero;
 
-	// Construct an Asset of type Landmark
-	public AssetLandmark()
-	{
-	}
-
 	/**
 	 * Construct an Asset object of type Landmark
 	 * 
@@ -77,6 +72,7 @@ public class AssetLandmark extends AssetItem
 	 */
 	public AssetLandmark(UUID regionID, Vector3 pos)
 	{
+		super(null, null);
 		RegionID = regionID;
 		Position = pos;
 		encode();
@@ -87,7 +83,7 @@ public class AssetLandmark extends AssetItem
 	 * 
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		String temp = "Landmark version 2\n";
 		temp += "region_id " + RegionID + "\n";
@@ -102,8 +98,11 @@ public class AssetLandmark extends AssetItem
 	 *         Vector
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
+		if (AssetData == null)
+			return false;
+
 		try
 		{
 			String text = Helpers.BytesToString(AssetData);

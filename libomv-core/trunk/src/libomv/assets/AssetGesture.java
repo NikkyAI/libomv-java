@@ -207,11 +207,6 @@ public class AssetGesture extends AssetItem
 	/* Sequence of gesture steps */
 	public List<GestureStep> Sequence;
 
-	/* Constructs gesture asset */
-	public AssetGesture()
-	{
-	}
-
 	/**
 	 * Constructs gesture asset
 	 * 
@@ -229,7 +224,7 @@ public class AssetGesture extends AssetItem
 	 * Encodes gesture asset suitable for upload
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("2\n");
@@ -314,8 +309,11 @@ public class AssetGesture extends AssetItem
 	 * @return true if the asset data was decoded successfully
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
+		if (AssetData == null)
+			return false;
+		
 		try
 		{
 			String[] lines = Helpers.BytesToString(AssetData).split("\n");

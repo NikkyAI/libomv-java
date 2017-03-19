@@ -41,11 +41,6 @@ public class AssetAnimation extends AssetItem
 		return AssetItem.AssetType.Animation;
 	}
 
-	// Default Constructor
-	public AssetAnimation()
-	{
-	}
-
 	/**
 	 * Construct an Asset object of type Animation
 	 * 
@@ -60,12 +55,12 @@ public class AssetAnimation extends AssetItem
 	}
 
 	@Override
-	public void encode()
+	protected void encode()
 	{
 	}
 
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		return true;
 	}

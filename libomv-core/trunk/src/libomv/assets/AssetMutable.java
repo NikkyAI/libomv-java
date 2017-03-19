@@ -42,12 +42,6 @@ public class AssetMutable extends AssetItem
 		return type;
 	}
 	
-	/** Construct an asset of a mutable type */
-	public AssetMutable(AssetType type)
-	{
-		this.type = type;
-	}
-
 	/**
 	 * Construct an Asset object of a mutable type
 	 * 
@@ -62,12 +56,12 @@ public class AssetMutable extends AssetItem
 	}
 
 	@Override
-	public void encode()
+	protected void encode()
 	{
 	}
 
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		return true;
 	}

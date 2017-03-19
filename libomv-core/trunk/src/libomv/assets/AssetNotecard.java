@@ -67,11 +67,6 @@ public class AssetNotecard extends AssetItem
 	 */
 	public List<InventoryItem> EmbeddedItems = null;
 
-	/** Construct an Asset of type Notecard */
-	public AssetNotecard()
-	{
-	}
-
 	/**
 	 * Construct an Asset object of type Notecard
 	 * 
@@ -93,6 +88,7 @@ public class AssetNotecard extends AssetItem
 	 */
 	public AssetNotecard(String text)
 	{
+		super(null, null);
 		BodyText = text;
 		encode();
 	}
@@ -207,7 +203,7 @@ public class AssetNotecard extends AssetItem
 	}
 
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		EmbeddedItems = new ArrayList<InventoryItem>();
 		BodyText = Helpers.EmptyString;

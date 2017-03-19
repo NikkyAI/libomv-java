@@ -208,13 +208,16 @@ public abstract class AssetWearable extends AssetItem
 	 * @return true if the asset data was decoded successfully
 	 */
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		/* Initialize certain values to some sensible default values */
 		Name =  Helpers.EmptyString;
 		Description = Helpers.EmptyString;
 		wearableType = WearableType.Shape;
 		Permissions = new Permissions();
+
+        if (AssetData == null)
+			return false;
 
 		try
 		{
@@ -388,7 +391,7 @@ public abstract class AssetWearable extends AssetItem
 	// Encode the assets string represantion into a format consumable by the
 	// asset server
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		StringBuilder data = new StringBuilder("LLWearable version 22\n");
 		data.append(Name + "\n\n");
