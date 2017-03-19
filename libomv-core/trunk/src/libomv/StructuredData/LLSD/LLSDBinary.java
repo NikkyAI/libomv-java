@@ -147,7 +147,7 @@ public final class LLSDBinary extends OSDParser
 		}
 		else if (marker == '<')
 		{
-			int offset = push.getBytePosition();
+			int offset = (int)push.getBytePosition();
 			if (!isHeader(push, llsdBinaryHeader, '>'))
 				throw new ParseException("Failed to decode binary LLSD", offset);	
 		}
@@ -320,7 +320,7 @@ public final class LLSDBinary extends OSDParser
 				break;
 			case doubleQuotesNotationMarker:
 			case singleQuotesNotationMarker:
-				throw new ParseException("Binary LLSD parsing: LLSD Notation Format strings are not yet supported",	stream.getBytePosition());
+				throw new ParseException("Binary LLSD parsing: LLSD Notation Format strings are not yet supported",	(int)stream.getBytePosition());
 			case stringBinaryMarker:
 				int stringLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 				osd = OSD.FromString(new String(consumeBytes(stream, stringLength), encoding));
@@ -335,7 +335,7 @@ public final class LLSDBinary extends OSDParser
 				catch (URISyntaxException ex)
 				{
 					throw new ParseException("Binary LLSD parsing: Invalid Uri format detected: " + ex.getMessage(),
-							stream.getBytePosition());
+							(int)stream.getBytePosition());
 				}
 				osd = OSD.FromUri(uri);
 				break;
@@ -353,7 +353,7 @@ public final class LLSDBinary extends OSDParser
 				osd = parseMap(stream, encoding);
 				break;
 			default:
-				throw new ParseException("Binary LLSD parsing: Unknown type marker.", stream.getBytePosition());
+				throw new ParseException("Binary LLSD parsing: Unknown type marker.", (int)stream.getBytePosition());
 		}
 		return osd;
 	}
@@ -370,7 +370,7 @@ public final class LLSDBinary extends OSDParser
 		}
 		if (skipWhiteSpace(stream) != arrayEndBinaryMarker)
 		{
-			throw new ParseException("Binary LLSD parsing: Missing end marker in array.", stream.getBytePosition());
+			throw new ParseException("Binary LLSD parsing: Missing end marker in array.", (int)stream.getBytePosition());
 		}
 
 		return osdArray;
@@ -385,7 +385,7 @@ public final class LLSDBinary extends OSDParser
 		{
 			if (skipWhiteSpace(stream) != keyBinaryMarker)
 			{
-				throw new ParseException("Binary LLSD parsing: Missing key marker in map.", stream.getBytePosition());
+				throw new ParseException("Binary LLSD parsing: Missing key marker in map.", (int)stream.getBytePosition());
 			}
 			int keyLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
 			String key = new String(consumeBytes(stream, keyLength), encoding);
@@ -394,7 +394,7 @@ public final class LLSDBinary extends OSDParser
 		}
 		if (skipWhiteSpace(stream) != mapEndBinaryMarker)
 		{
-			throw new ParseException("Binary LLSD parsing: Missing end marker in map.", stream.getBytePosition());
+			throw new ParseException("Binary LLSD parsing: Missing end marker in map.", (int)stream.getBytePosition());
 		}
 		return osdMap;
 	}
