@@ -74,7 +74,6 @@ import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
-import libomv.utils.RefObject;
 
 // Simulator is a wrapper for a network connection to a simulator and the
 // Region class representing the block of land in the metaverse.
@@ -222,13 +221,13 @@ public class Simulator extends Thread
 		/* Minimum access level, no additional checks */
 		Min(0),
 		/* Trial accounts allowed */
-		Trial(7),
+		Trial(7),                 //          4 + 2 + 1
 		/* PG rating */
-		PG(13),
+		PG(13),                   //  8 +     4     + 1
 		/* Mature rating */
-		Mature(21),
+		Mature(21),               // 16 +     4     + 1
 		/* Adult rating */
-		Adult(42),
+		Adult(42),                // 32 + 8 + 4
 		/* Simulator is offline */
 		Down(0xFE),
 		/* Simulator does not exist */
@@ -1196,7 +1195,7 @@ public class Simulator extends Thread
 	 *            successful, otherwise 0.0f
 	 * @return True if the lookup was successful, otherwise false
 	 */
-	public final boolean TerrainHeightAtPoint(int x, int y, RefObject<Float> height)
+	public final float TerrainHeightAtPoint(int x, int y)
 	{
 		if (Terrain != null && x >= 0 && x < 256 && y >= 0 && y < 256)
 		{
@@ -1208,12 +1207,10 @@ public class Simulator extends Thread
 			TerrainPatch patch = Terrain[patchY * 16 + patchX];
 			if (patch != null)
 			{
-				height.argvalue = patch.Data[y * 16 + x];
-				return true;
+				return patch.Data[y * 16 + x];
 			}
 		}
-		height.argvalue = 0.0f;
-		return false;
+		return Float.NaN;
 	}
 
 	private final void sendPing() throws Exception

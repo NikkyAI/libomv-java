@@ -2091,7 +2091,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			y = (int) p.AABBMax.Y - (int) p.AABBMin.Y / 2;
 		}
 		RefObject<Float> ref = new RefObject<Float>(height);
-		if (!simulator.TerrainHeightAtPoint(x, y, ref))
+		if (Float.isNaN(simulator.TerrainHeightAtPoint(x, y)))
 		{
 			Logger.Log("Land Patch not stored for location", LogLevel.Warning, _Client);
 			return false;
