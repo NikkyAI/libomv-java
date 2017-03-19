@@ -273,6 +273,17 @@ public class OSD implements Cloneable
 		return new OSDString(value.getHostAddress());
 	}
 
+	public static OSD FromUUID(String value)
+	{
+		if (value.length() >=36)
+		{
+			UUID uuid = UUID.parse(value);
+			if (uuid != null)
+				return OSD.FromUUID(uuid);
+		}
+		return new OSDString(value);
+	}
+
 	public static OSD FromUUID(UUID value)
 	{
 		return new OSDUUID(value);

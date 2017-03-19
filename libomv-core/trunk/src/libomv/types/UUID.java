@@ -198,25 +198,6 @@ public class UUID implements Serializable
 	}
 
 	/**
-	 * Assigns this UUID from 16 bytes out of a byte array
-	 * 
-	 * @param source
-	 *            Byte array containing the UUID to assign this UUID to
-	 * @param pos
-	 *            Starting position of the UUID in the byte array
-	 * @return true when successful, false otherwise
-	 */
-	public boolean fromBytes(byte[] source, int pos)
-	{
-		if (source.length >= pos + 16)
-		{
-			System.arraycopy(source, pos, data, 0, 16);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Parses a string UUID representation and assigns its value to the object
 	 * <example
 	 * >uuid.FromString("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
@@ -226,7 +207,7 @@ public class UUID implements Serializable
 	 *            either be hyphenated or non-hyphenated
 	 * @return true when successful, false otherwise
 	 */
-	public boolean fromString(String string)
+	private boolean fromString(String string)
 	{
 		// Always create new data array to prevent overwriting byref data
 		data = new byte[16];
@@ -343,11 +324,6 @@ public class UUID implements Serializable
 	public static UUID GenerateUUID()
 	{
 		return new UUID(makeNewGuid());
-	}
-	
-	static public UUID parse(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
-		return new UUID(parser);
 	}
 	
 	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException

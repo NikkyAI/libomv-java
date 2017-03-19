@@ -47,7 +47,6 @@ import libomv.StructuredData.OSDBinary;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSD.OSDFormat;
-import libomv.types.UUID;
 import libomv.utils.Helpers;
 import libomv.utils.PushbackReader;
 
@@ -293,14 +292,7 @@ public final class LLSDJson extends OSDParser
 	private static OSD parseString(PushbackReader reader) throws IOException, ParseException
 	{
 		String string = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
-		if (string.length() >=36)
-		{
-			UUID uuid = new UUID();
-			if (uuid.fromString(string))
-			    return OSD.FromUUID(uuid);
-		}
-		OSD osd = OSD.FromString(string);
-		
+		OSD osd = OSD.FromUUID(string);
 		if (string.length() > 16)
 		{
 			Date date = osd.AsDate();

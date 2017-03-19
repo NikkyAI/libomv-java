@@ -52,7 +52,6 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDString;
-import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 public class RpcClient extends AsyncHTTPClient<OSD>
@@ -392,7 +391,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			}
 			else if (name.equals(TYPE_STRING))
 			{
-				ret = parseString(parser.nextText());
+				ret = OSD.FromUUID(parser.nextText());
 			}
 			else if (name.equals(TYPE_DATE_TIME_ISO8601))
 			{
@@ -482,16 +481,5 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		parser.nextTag(); // TAG_VALUE (</value>)
 		parser.require(XmlPullParser.END_TAG, null, TAG_VALUE);
 		return ret;
-	}
-	
-	private static OSD parseString(String string)
-	{
-		if (string.length() >=36)
-		{
-			UUID uuid = new UUID();
-			if (uuid.fromString(string))
-			    return OSD.FromUUID(uuid);
-		}
-		return OSD.FromString(string);
 	}
 }
