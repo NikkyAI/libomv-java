@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import libomv.utils.Helpers;
+import libomv.utils.Logger;
 
 public class TarArchiveReader
 {
@@ -78,7 +79,7 @@ public class TarArchiveReader
     	TarHeader hdr = ReadHeader();
     	if (hdr != null && hdr.FileSize > 0)
     	{
-    		byte[] data = ReadData(hdr.FileSize);
+        	byte[] data = ReadData(hdr.FileSize);
     		header.EntryType = hdr.EntryType;
     		header.FilePath = hdr.FilePath;
     		header.FileSize = hdr.FileSize;
@@ -106,15 +107,14 @@ public class TarArchiveReader
             int longNameLength = ConvertOctalBytesToDecimal(header, 124, 11);
             byte[] nameBytes = ReadData(longNameLength);
             tarHeader.FilePath = Helpers.BytesToString(nameBytes, 0, longNameLength, Helpers.ASCII_ENCODING);
-            //Logger.DebugFormat("[TAR ARCHIVE READER]: Got long file name " + tarHeader.FilePath);
-            m_br.read(header);
+            // Logger.Log("[TAR ARCHIVE READER]: Got long file name " + tarHeader.FilePath, Logger.LogLevel.Debug);
+    		header = ReadData(512);
         }
         else
         {
             tarHeader.FilePath = Helpers.BytesToString(header, 0, 100).trim();
-            //Logger.DebugFormat("[TAR ARCHIVE READER]: Got short file name " + tarHeader.FilePath);
+            // Logger.Log("[TAR ARCHIVE READER]: Got short file name " + tarHeader.FilePath, Logger.LogLevel.Debug);
         }
-        String fileSize = Helpers.BytesToString(header, 124, 12);
         tarHeader.FileSize = ConvertOctalBytesToDecimal(header, 124, 11);
 
         switch (header[156])
@@ -153,27 +153,31 @@ public class TarArchiveReader
     /// <returns></returns>
     protected byte[] ReadData(int size) throws IOException
     {
+        int offset = 0, read = 0;
         byte[] data = new byte[size];
-        int read = m_br.read(data);
-        while (read < size)
+        while (read >= 0 && size > offset)
         {
-        	read += m_br.read(data, read, size - read);
+        	read = m_br.read(data, offset, size - offset);
+        	if (read >= 0)
+        		offset += read;
         }
-        //Logger.DebugFormat("[TAR ARCHIVE READER]: size " + size);
+        //Logger.Log("[TAR ARCHIVE READER]: size " + size, );
 
-        // Read the rest of the empty padding in the 512 byte block
-        if (size % 512 != 0)
+        if (size % 512 > 0)
         {
+        	// Read the rest of the empty padding in the 512 byte block
         	int paddingLeft = 512 - (size % 512);
         	
-            //Logger.DebugLog("[TAR ARCHIVE READER]: Reading " + paddingLeft + " padding bytes");
-
-            read = (int)m_br.skip(paddingLeft);
-            while (read < paddingLeft)
-            {
-                read += (int)m_br.skip(paddingLeft - read);
-            }
+        	//Logger.DebugLog("[TAR ARCHIVE READER]: Reading " + paddingLeft + " padding bytes");
+        	while (read >= 0 && paddingLeft > 0)
+        	{
+        		read = (int)m_br.skip(paddingLeft);
+        		if (read >= 0)
+        			paddingLeft -= read;
+        	}
         }
+        if (read < 0)
+        	Logger.Log("[TAR ARCHIVE READER]: Premature end of archive stream encounterd", Logger.LogLevel.Error);
         return data;
     }
 

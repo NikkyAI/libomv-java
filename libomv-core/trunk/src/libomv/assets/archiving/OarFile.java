@@ -61,24 +61,13 @@ import libomv.ParcelManager;
 import libomv.ParcelManager.Parcel;
 import libomv.Simulator;
 import libomv.Simulator.RegionFlags;
-import libomv.assets.AssetAnimation;
-import libomv.assets.AssetBodypart;
-import libomv.assets.AssetClothing;
-import libomv.assets.AssetGesture;
 import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
-import libomv.assets.AssetLandmark;
 import libomv.assets.AssetManager;
 import libomv.assets.AssetManager.AssetDownload;
 import libomv.assets.AssetManager.ImageDownload;
 import libomv.assets.AssetManager.SourceType;
-import libomv.assets.AssetMesh;
-import libomv.assets.AssetNotecard;
 import libomv.assets.AssetPrim.PrimObject;
-import libomv.assets.AssetScriptBinary;
-import libomv.assets.AssetScriptText;
-import libomv.assets.AssetSound;
-import libomv.assets.AssetTexture;
 import libomv.primitives.TextureEntry.TextureEntryFace;
 import libomv.types.UUID;
 import libomv.utils.Callback;
@@ -182,10 +171,10 @@ public class OarFile
                         {  
                             if (assetCallback != null)
                             {
-                                if (LoadAsset(header.FilePath, data, assetCallback, pushStream.getBytePosition(), fileLength))
-                                    successfulAssetRestores++;
-                                else
-                                    failedAssetRestores++;
+                           		if (LoadAsset(header.FilePath, data, assetCallback, pushStream.getBytePosition(), fileLength))
+                           			successfulAssetRestores++;
+                           		else
+                           			failedAssetRestores++;
                             }
                         }
                         else if (header.FilePath.startsWith(ArchiveConstants.TERRAINS_PATH))
@@ -234,7 +223,7 @@ public class OarFile
         // Right now we're nastily obtaining the UUID from the filename
     	if (!assetPath.startsWith(ArchiveConstants.ASSETS_PATH))
     		return false;
-
+    	
     	String fileName = assetPath.substring(ArchiveConstants.ASSETS_PATH.length());
         String extension = Helpers.getFileExtension(fileName, ArchiveConstants.ASSET_EXTENSION_SEPARATOR);
 
@@ -251,51 +240,7 @@ public class OarFile
         AssetType assetType = ArchiveConstants.getAssetTypeForExtenstion(extension);
         if (assetType != null)
         {
-            AssetItem asset = null;
-
-            switch (assetType)
-            {
-                case Animation:
-                    asset = new AssetAnimation(uuid.argvalue, data);
-                    break;
-                case Bodypart:
-                    asset = new AssetBodypart(uuid.argvalue, data);
-                    break;
-                case Clothing:
-                    asset = new AssetClothing(uuid.argvalue, data);
-                    break;
-                case Gesture:
-                    asset = new AssetGesture(uuid.argvalue, data);
-                    break;
-                case Landmark:
-                    asset = new AssetLandmark(uuid.argvalue, data);
-                    break;
-                case LSLBytecode:
-                    asset = new AssetScriptBinary(uuid.argvalue, data);
-                    break;
-                case LSLText:
-                    asset = new AssetScriptText(uuid.argvalue, data);
-                    break;
-                case Notecard:
-                    asset = new AssetNotecard(uuid.argvalue, data);
-                    break;
-                case Object:
-                    asset = new AssetPrim(uuid.argvalue, data);
-                    break;
-                case Sound:
-                    asset = new AssetSound(uuid.argvalue, data);
-                    break;
-                case Texture:
-                    asset = new AssetTexture(uuid.argvalue, data);
-                    break;
-                case Mesh:
-                    asset = new AssetMesh(uuid.argvalue, data);
-                    break;
-                default:
-                    Logger.Log("[OarFile] Unhandled asset type " + assetType, Logger.LogLevel.Error);
-                    break;
-            }
-
+            AssetItem asset = AssetManager.CreateAssetItem(assetType, uuid.argvalue, data);
             if (asset != null)
             {
                 assetCallback.callback(new OarFile().new AssetLoadedData(asset, bytesRead, totalBytes));
@@ -336,8 +281,8 @@ public class OarFile
         boolean loaded = false;
         String extension = FilenameUtils.getExtension(filePath);
         
-        if (extension.equals(".r32") || 
-        	extension.equals(".f32"))
+        if (extension.equals("r32") || 
+        	extension.equals("f32"))
         {
             // RAW32
             if (data.length == 256 * 256 * 4)
@@ -360,21 +305,21 @@ public class OarFile
                     Logger.LogLevel.Warning);
             }
         }
-        else if (extension.equals(".ter"))
+        else if (extension.equals("ter"))
             ; // Terragen
-        else if (extension.equals(".raw"))
+        else if (extension.equals("raw"))
             ; // LLRAW
-        else if (extension.equals(".jpg") ||
-        		 extension.equals(".jpeg"))
+        else if (extension.equals("jpg") ||
+        		 extension.equals("jpeg"))
             ; // JPG
-        else if (extension.equals(".bmp"))
+        else if (extension.equals("bmp"))
             ; // BMP
-        else if (extension.equals(".png"))
+        else if (extension.equals("png"))
             ; // PNG
-        else if (extension.equals(".gif"))
+        else if (extension.equals("gif"))
             ; // GIF
-        else if (extension.equals(".tif") ||
-        	     extension.equals(".tiff"))
+        else if (extension.equals("tif") ||
+        	     extension.equals("tiff"))
             ; // TIFF
         else
             Logger.Log("[OarFile] Unrecognized terrain format in " + filePath, Logger.LogLevel.Warning);
@@ -391,7 +336,16 @@ public class OarFile
         XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
 		parser.setInput(stream, Helpers.UTF8_ENCODING);
 
-		parser.nextTag();
+		try
+		{
+			parser.nextTag();
+		}
+		catch (XmlPullParserException ex)
+		{
+			String string = Helpers.BytesToString(objectData);
+			Logger.Log("What the heck", Logger.LogLevel.Debug);
+		}
+
   		if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("scene"))
 		{
   			parser.nextTag();
@@ -405,7 +359,7 @@ public class OarFile
         }
         else
         {
-             AssetPrim linkset = new AssetPrim(parser);
+            AssetPrim linkset = new AssetPrim(parser);
             if (linkset != null)
                 objectCallback.callback(new OarFile().new SceneObjectLoadedData(linkset, bytesRead, totalBytes));
         }

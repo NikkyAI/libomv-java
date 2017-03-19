@@ -3,12 +3,7 @@ package archive;
 import java.io.File;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URL;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import junit.framework.TestCase;
 import libomv.assets.archiving.OarFile;

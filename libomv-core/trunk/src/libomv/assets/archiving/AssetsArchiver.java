@@ -117,10 +117,7 @@ public class AssetsArchiver
                     "Unrecognized asset type %s with uuid %s. This asset will be saved but unable to be reloaded",
                     asset.getAssetType(), asset.getAssetID()), Logger.LogLevel.Warning);
             }
-
-            asset.encode();
-
-            archive.writeFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.AssetData);
+            archive.writeFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.getAssetData());
         }
     }
     
