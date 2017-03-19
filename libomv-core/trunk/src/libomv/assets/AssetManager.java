@@ -1616,48 +1616,42 @@ public class AssetManager implements PacketCallback
 		}
 		return false;
 	}
-	// #region Helpers
 
-	public static AssetItem CreateAssetItem(AssetType type)
+	// #region Helpers
+	public static AssetItem CreateAssetItem(AssetType type, UUID assetID, byte[] assetData)
 	{
 		switch (type)
 		{
-			case Notecard:
-				return new AssetNotecard();
-			case LSLText:
-				return new AssetScriptText();
-			case LSLBytecode:
-				return new AssetScriptBinary();
-			case Texture:
-				return new AssetTexture();
-			case Object:
-				return new AssetPrim();
-			case Clothing:
-				return new AssetClothing();
-			case Bodypart:
-				return new AssetBodypart();
 			case Animation:
-				return new AssetAnimation();
-			case Sound:
-				return new AssetSound();
-			case Landmark:
-				return new AssetLandmark();
-			case Gesture:
-				return new AssetGesture();
+				return new AssetAnimation(assetID, assetData);
+			case Bodypart:
+				return new AssetBodypart(assetID, assetData);
 			case CallingCard:
-				return new AssetCallingCard();
+				return new AssetCallingCard(assetID, assetData);
+			case Clothing:
+				return new AssetClothing(assetID, assetData);
+			case Gesture:
+				return new AssetGesture(assetID, assetData);
+			case Landmark:
+				return new AssetLandmark(assetID, assetData);
+			case LSLBytecode:
+				return new AssetScriptBinary(assetID, assetData);
+			case LSLText:
+				return new AssetScriptText(assetID, assetData);
+			case Mesh:
+				return new AssetMesh(assetID, assetData);
+			case Notecard:
+				return new AssetNotecard(assetID, assetData);
+			case Object:
+				return new AssetPrim(assetID, assetData);
+			case Sound:
+				return new AssetSound(assetID, assetData);
+			case Texture:
+				return new AssetTexture(assetID, assetData);
 			default:
 				Logger.Log("Unimplemented asset type: " + type, LogLevel.Error);
 		}
 		return new AssetMutable(type);
-	}
-
-	public static AssetItem CreateAssetItem(AssetType type, UUID assetID, byte[] assetData)
-	{
-		AssetItem item = CreateAssetItem(type);
-		item.setAssetID(assetID);
-		item.AssetData = assetData;
-		return item;
 	}
 	// #endregion Helpers
 

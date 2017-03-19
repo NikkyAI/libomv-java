@@ -42,13 +42,6 @@ public class AssetClothing extends AssetWearable
 	}
 
 	/**
-	 * Initializes a new instance of an AssetClothing object
-	 */
-	public AssetClothing()
-	{
-	}
-
-	/**
 	 * Initializes a new instance of an AssetClothing object with parameters
 	 * 
 	 * @param assetID
@@ -59,16 +52,5 @@ public class AssetClothing extends AssetWearable
 	public AssetClothing(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-	}
-
-	/**
-	 * Initializes a new instance of an AssetScriptBinary object with parameters
-	 * 
-	 * @param source
-	 *            A string containing the Clothings data
-	 */
-	public AssetClothing(String source)
-	{
-		super(source);
 	}
 }

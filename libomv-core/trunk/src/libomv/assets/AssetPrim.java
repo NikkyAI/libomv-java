@@ -369,23 +369,29 @@ public class AssetPrim extends AssetItem
 	public boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");
-		parser.nextTag(); // Advance to <RootPart>
+		parser.nextTag(); // Advance to <RootPart> (or sometimes just <SceneObjectPart>
 		Parent = loadPrim(parser);
 		if (Parent != null)
 		{
 			parser.nextTag(); // Advance to <OtherParths>
-			parser.require(XmlPullParser.START_TAG, null, "OtherParts");
+			if (parser.getEventType() == XmlPullParser.END_TAG)
+				System.out.println("Unexpected event type");
 
-			ArrayList<PrimObject> children = new ArrayList<PrimObject>();
-			while (parser.nextTag() == XmlPullParser.START_TAG)
+			if (!parser.isEmptyElementTag())
 			{
-				parser.nextTag(); // Advance to <Part>
-				PrimObject child = loadPrim(parser);
-				if (child != null)
-					children.add(child);
-			}
+				int loop = 0;
+				parser.require(XmlPullParser.START_TAG, null, "OtherParts");
 
-			Children = children;
+				ArrayList<PrimObject> children = new ArrayList<PrimObject>();
+				while (parser.nextTag() == XmlPullParser.START_TAG)
+				{
+					loop++;
+					PrimObject child = loadPrim(parser);
+					if (child != null)
+						children.add(child);
+				}
+				Children = children;
+			}
 			return true;
 		}
 		Logger.Log("Failed to load root linkset prim", LogLevel.Error);
@@ -396,13 +402,18 @@ public class AssetPrim extends AssetItem
 	{
 		PrimObject obj = new PrimObject();
 		Vector3 groupPosition = null, offsetPosition = null;
+		boolean gotExtraPartTag = false;
 
 		obj.Inventory = obj.new InventoryBlock();
  
 		// Enter with eventType == XmlPullParser.START_TAG 
 		if (parser.getEventType() == XmlPullParser.START_TAG && (parser.getName().equals("RootPart") || parser.getName().equals("Part")))
+		{
+			gotExtraPartTag = true;
 			parser.nextTag();  // Advance to SceneObjectPart tag
-		 
+		}
+		if (!parser.getName().equals("SceneObjectPart"))
+			System.out.println("Something went wrong");
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectPart");
 
 		obj.AllowedDrop = true;
@@ -624,12 +635,12 @@ public class AssetPrim extends AssetItem
 			}
 			else
 			{
-				Logger.Log("Received unrecocognized asset primitive element " + name, Logger.LogLevel.Warning);
-				Helpers.skipElement(parser);
+				Logger.Log("Received unrecocognized asset primitive element " + name + " \"" + Helpers.skipElementDebug(parser) + "\"", Logger.LogLevel.Warning);
 			}
 		}
 		// currently at </SceneObjectPart>
-		parser.nextTag(); // Advance to </RootPart> or </Part>
+		if (gotExtraPartTag)
+			parser.nextTag(); // Advance to </RootPart> or </Part>
 
 		if (obj.ParentID == 0)
 	 		obj.Position = groupPosition;

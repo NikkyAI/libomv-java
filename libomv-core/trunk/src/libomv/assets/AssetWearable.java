@@ -162,11 +162,11 @@ public abstract class AssetWearable extends AssetItem
 	}
 
 	// A string containing the name of the asset
-	public String Name = Helpers.EmptyString;
+	public String Name;
 	// A string containing a short description of the asset
-	public String Description = Helpers.EmptyString;
+	public String Description;
 	// The Assets WearableType
-	public WearableType wearableType = WearableType.Shape;
+	public WearableType wearableType;
 	// The For-Sale status of the object
 	public SaleType ForSale;
 	// An Integer representing the purchase price of the asset
@@ -184,15 +184,10 @@ public abstract class AssetWearable extends AssetItem
 	// The Permissions mask of the asset
 	public Permissions Permissions;
 	// A Dictionary containing Key/Value pairs of the objects parameters
-	public HashMap<Integer, Float> Params = new HashMap<Integer, Float>();
+	public HashMap<Integer, Float> Params;
 	// A Dictionary containing Key/Value pairs where the Key is the textures
 	// Index and the Value is the Textures {@link UUID}
-	public HashMap<AvatarTextureIndex, UUID> Textures = new HashMap<AvatarTextureIndex, UUID>();
-
-	// Initializes a new instance of an AssetWearable object
-	public AssetWearable()
-	{
-	}
+	public HashMap<AvatarTextureIndex, UUID> Textures;
 
 	/**
 	 * Initializes a new instance of an AssetWearable object with parameters
@@ -208,17 +203,6 @@ public abstract class AssetWearable extends AssetItem
 	}
 
 	/**
-	 * Initializes a new instance of an AssetWearable object with parameters
-	 * 
-	 * @param source
-	 *            A string containing the asset parameters
-	 */
-	public AssetWearable(String source)
-	{
-		AssetData = Helpers.StringToBytes(source);
-	}
-
-	/**
 	 * Decode an assets byte encoded data to a string
 	 * 
 	 * @return true if the asset data was decoded successfully
@@ -226,7 +210,10 @@ public abstract class AssetWearable extends AssetItem
 	@Override
 	public boolean decode()
 	{
-		int version = -1;
+		/* Initialize certain values to some sensible default values */
+		Name =  Helpers.EmptyString;
+		Description = Helpers.EmptyString;
+		wearableType = WearableType.Shape;
 		Permissions = new Permissions();
 
 		try
@@ -239,6 +226,7 @@ public abstract class AssetWearable extends AssetItem
 			{
 				if (stri == 0)
 				{
+					int version = -1;
 					String versionstring = lines[stri];
 					if (versionstring.split(" ").length == 1)
                         version = Integer.parseInt(versionstring);
@@ -246,7 +234,10 @@ public abstract class AssetWearable extends AssetItem
     					version = Integer.parseInt(versionstring.split(" ")[2]);
 
 					if (version != 22 && version != 18 && version != 16 && version != 15)
+					{
+						Logger.Log("Unsupported asset wearable version " + version, Logger.LogLevel.Debug);
 						return false;
+					}
 				}
 				else if (stri == 1)
 				{
@@ -266,6 +257,9 @@ public abstract class AssetWearable extends AssetItem
 						fields = line.split(" ");
 						if (fields[0].equals("parameters"))
 						{
+							if (Params == null)
+								Params = new HashMap<Integer, Float>();
+
 							int count = Integer.parseInt(fields[1]) + stri;
 							for (; stri < count;)
 							{
@@ -291,6 +285,9 @@ public abstract class AssetWearable extends AssetItem
 						}
 						else if (fields[0].equals("textures"))
 						{
+							if (Textures == null)
+								Textures = new HashMap<AvatarTextureIndex, UUID>();
+
 							int count = Integer.parseInt(fields[1]) + stri;
 							for (; stri < count;)
 							{

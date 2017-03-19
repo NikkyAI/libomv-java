@@ -44,11 +44,6 @@ public class AssetBodypart extends AssetWearable
 		return AssetType.Bodypart;
 	}
 
-	// Initializes a new instance of an AssetBodyPart object
-	public AssetBodypart()
-	{
-	}
-
 	/**
 	 * Initializes a new instance of an AssetBodyPart object with parameters
 	 * 
@@ -60,16 +55,5 @@ public class AssetBodypart extends AssetWearable
 	public AssetBodypart(UUID assetID, byte[] assetData)
 	{
 		super(assetID, assetData);
-	}
-
-	/**
-	 * Initializes a new instance of an AssetBodyPart object with parameters
-	 * 
-	 * @param source
-	 *            A string representing the values of the Bodypart
-	 */
-	public AssetBodypart(String source)
-	{
-		super(source);
 	}
 }
