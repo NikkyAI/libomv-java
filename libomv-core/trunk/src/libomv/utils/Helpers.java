@@ -2432,7 +2432,7 @@ public class Helpers
 	    int pos = fileName.lastIndexOf(seperator) + 1;
 	    if (pos > 0 && pos < fileName.length())
 	    {
-	        return fileName.substring(pos, fileName.length() - pos);
+	        return fileName.substring(pos, fileName.length());
 	    }
 	    return null;
 	}
