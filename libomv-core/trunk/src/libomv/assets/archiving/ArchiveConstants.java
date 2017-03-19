@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import libomv.assets.AssetItem.AssetType;
+import libomv.utils.Helpers;
 
 public class ArchiveConstants
 {
@@ -26,50 +27,63 @@ public class ArchiveConstants
     public static final String LANDDATA_PATH = "landdata/";
 
     /// The character the separates the uuid from extension information in an archived asset filename
-    public static final String ASSET_EXTENSION_SEPARATOR = "_";
+    public static final char ASSET_EXTENSION_SEPARATOR = '_';
 
     /// Extensions used for asset types in the archive
-    public static final Map<AssetType, String> ASSET_TYPE_TO_EXTENSION = new HashMap<AssetType, String>();
-    public static final Map<String, AssetType> EXTENSION_TO_ASSET_TYPE = new HashMap<String, AssetType>();
+    private static final Map<AssetType, String> ASSET_TYPE_TO_EXTENSION = new HashMap<AssetType, String>();
+    private static final Map<String, AssetType> EXTENSION_TO_ASSET_TYPE = new HashMap<String, AssetType>();
 
     static
     {
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Animation, ASSET_EXTENSION_SEPARATOR + "animation.bvh");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Bodypart, ASSET_EXTENSION_SEPARATOR + "bodypart.txt");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.CallingCard, ASSET_EXTENSION_SEPARATOR + "callingcard.txt");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Clothing, ASSET_EXTENSION_SEPARATOR + "clothing.txt");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Folder, ASSET_EXTENSION_SEPARATOR + "folder.txt");   // Not sure if we'll ever see this
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Gesture, ASSET_EXTENSION_SEPARATOR + "gesture.txt");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.ImageJPEG, ASSET_EXTENSION_SEPARATOR + "image.jpg");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.ImageTGA, ASSET_EXTENSION_SEPARATOR + "image.tga");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Landmark, ASSET_EXTENSION_SEPARATOR + "landmark.txt");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.LSLBytecode, ASSET_EXTENSION_SEPARATOR + "bytecode.lso");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.LSLText, ASSET_EXTENSION_SEPARATOR + "script.lsl");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Notecard, ASSET_EXTENSION_SEPARATOR + "notecard.txt");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Object, ASSET_EXTENSION_SEPARATOR + "object.xml");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Simstate, ASSET_EXTENSION_SEPARATOR + "simstate.bin");   // Not sure if we'll ever see this
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Sound, ASSET_EXTENSION_SEPARATOR + "sound.ogg");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.SoundWAV, ASSET_EXTENSION_SEPARATOR + "sound.wav");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.Texture, ASSET_EXTENSION_SEPARATOR + "texture.jp2");
-        ASSET_TYPE_TO_EXTENSION.put(AssetType.TextureTGA, ASSET_EXTENSION_SEPARATOR + "texture.tga");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Animation, "animation.bvh");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Bodypart, "bodypart.txt");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.CallingCard, "callingcard.txt");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Clothing, "clothing.txt");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Folder, "folder.txt");   // Not sure if we'll ever see this
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Gesture, "gesture.txt");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.ImageJPEG, "image.jpg");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.ImageTGA, "image.tga");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Landmark, "landmark.txt");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.LSLBytecode, "bytecode.lso");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.LSLText, "script.lsl");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Notecard, "notecard.txt");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Object, "object.xml");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Simstate, "simstate.bin");   // Not sure if we'll ever see this
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Sound, "sound.ogg");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.SoundWAV, "sound.wav");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.Texture, "texture.jp2");
+        ASSET_TYPE_TO_EXTENSION.put(AssetType.TextureTGA, "texture.tga");
 
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "animation.bvh", AssetType.Animation);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "bodypart.txt", AssetType.Bodypart);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "callingcard.txt", AssetType.CallingCard);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "clothing.txt", AssetType.Clothing);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "folder.txt", AssetType.Folder);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "gesture.txt", AssetType.Gesture);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "image.jpg", AssetType.ImageJPEG);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "image.tga", AssetType.ImageTGA);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "landmark.txt", AssetType.Landmark);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "bytecode.lso", AssetType.LSLBytecode);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "script.lsl", AssetType.LSLText);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "notecard.txt", AssetType.Notecard);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "object.xml", AssetType.Object);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "simstate.bin", AssetType.Simstate);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "sound.ogg", AssetType.Sound);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "sound.wav", AssetType.SoundWAV);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "texture.jp2", AssetType.Texture);
-        EXTENSION_TO_ASSET_TYPE.put(ASSET_EXTENSION_SEPARATOR + "texture.tga", AssetType.TextureTGA);
+        EXTENSION_TO_ASSET_TYPE.put("animation.bvh", AssetType.Animation);
+        EXTENSION_TO_ASSET_TYPE.put("bodypart.txt", AssetType.Bodypart);
+        EXTENSION_TO_ASSET_TYPE.put("callingcard.txt", AssetType.CallingCard);
+        EXTENSION_TO_ASSET_TYPE.put("clothing.txt", AssetType.Clothing);
+        EXTENSION_TO_ASSET_TYPE.put("folder.txt", AssetType.Folder);
+        EXTENSION_TO_ASSET_TYPE.put("gesture.txt", AssetType.Gesture);
+        EXTENSION_TO_ASSET_TYPE.put("image.jpg", AssetType.ImageJPEG);
+        EXTENSION_TO_ASSET_TYPE.put("image.tga", AssetType.ImageTGA);
+        EXTENSION_TO_ASSET_TYPE.put("landmark.txt", AssetType.Landmark);
+        EXTENSION_TO_ASSET_TYPE.put("bytecode.lso", AssetType.LSLBytecode);
+        EXTENSION_TO_ASSET_TYPE.put("script.lsl", AssetType.LSLText);
+        EXTENSION_TO_ASSET_TYPE.put("notecard.txt", AssetType.Notecard);
+        EXTENSION_TO_ASSET_TYPE.put("object.xml", AssetType.Object);
+        EXTENSION_TO_ASSET_TYPE.put("simstate.bin", AssetType.Simstate);
+        EXTENSION_TO_ASSET_TYPE.put("sound.ogg", AssetType.Sound);
+        EXTENSION_TO_ASSET_TYPE.put("sound.wav", AssetType.SoundWAV);
+        EXTENSION_TO_ASSET_TYPE.put("texture.jp2", AssetType.Texture);
+        EXTENSION_TO_ASSET_TYPE.put("texture.tga", AssetType.TextureTGA);
+    }
+    
+    public static String getExtensionForType(AssetType type)
+    {
+    	String extension = ASSET_TYPE_TO_EXTENSION.get(type);
+    	if (extension != null)
+    		return ASSET_EXTENSION_SEPARATOR + extension;
+    	return Helpers.EmptyString;
+    }
+
+    public static AssetType getAssetTypeForExtenstion(String extension)
+    {
+   		return EXTENSION_TO_ASSET_TYPE.get(extension);
     }
 }

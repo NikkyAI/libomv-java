@@ -29,20 +29,38 @@
  */
 package libomv.assets.archiving;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
 import libomv.assets.AssetPrim;
+import libomv.ParcelManager;
+import libomv.ParcelManager.Parcel;
+import libomv.Simulator;
+import libomv.Simulator.RegionFlags;
 import libomv.assets.AssetAnimation;
 import libomv.assets.AssetBodypart;
 import libomv.assets.AssetClothing;
@@ -61,151 +79,217 @@ import libomv.assets.AssetScriptBinary;
 import libomv.assets.AssetScriptText;
 import libomv.assets.AssetSound;
 import libomv.assets.AssetTexture;
-import libomv.primitives.Primitive;
-import libomv.primitives.Primitive.PrimFlags;
 import libomv.primitives.TextureEntry.TextureEntryFace;
-import libomv.types.Quaternion;
 import libomv.types.UUID;
-import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
+import libomv.utils.PushbackInputStream;
+import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 
 public class OarFile
 {
-    //public delegate void AssetLoadedCallback(Asset asset, long bytesRead, long totalBytes);
-    //public delegate void TerrainLoadedCallback(float[,] terrain, long bytesRead, long totalBytes);
-    //public delegate void SceneObjectLoadedCallback(AssetPrim linkset, long bytesRead, long totalBytes);
-    //public delegate void SettingsLoadedCallback(string regionName, RegionSettings settings);
+	
+    public class AssetLoadedData
+    {
+    	public AssetItem asset;
+    	public long bytesRead;
+    	public long totalBytes;
+    	
+    	public AssetLoadedData(AssetItem asset, long bytesRead, long totalBytes)
+    	{
+    		this.asset = asset;
+        	this.bytesRead = bytesRead;
+        	this.totalBytes = totalBytes;
+    	}
+    };
+    
+    public class TerrainLoadedData
+    {
+    	public float[][] terrain;
+    	public long bytesRead;
+    	public long totalBytes;
+    	
+        public TerrainLoadedData(float[][] terrain, long bytesRead, long totalBytes)
+        {
+        	this.terrain = terrain;
+        	this.bytesRead = bytesRead;
+        	this.totalBytes = totalBytes;
+        }
+    }
+    
+    public class SceneObjectLoadedData
+    {
+    	public AssetPrim linkset;
+    	public long bytesRead;
+    	public long totalBytes;
+    	
+    	public SceneObjectLoadedData(AssetPrim linkset, long bytesRead, long totalBytes)
+    	{
+    		this.linkset = linkset;
+        	this.bytesRead = bytesRead;
+        	this.totalBytes = totalBytes;
+    	}
+    }
 
+    public class SettingsLoadedData
+    {
+    	 public String regionName;
+    	 public RegionSettings settings;
+    	
+         public SettingsLoadedData(String regionName, RegionSettings settings)
+         {
+        	 this.regionName = regionName;
+        	 this.settings = settings;
+         }
+    }
     // #region Archive Loading
 
-	/*
-    public static void UnpackageArchive(String filename, AssetLoadedCallback assetCallback, TerrainLoadedCallback terrainCallback,
-        SceneObjectLoadedCallback objectCallback, SettingsLoadedCallback settingsCallback)
+    public static void UnpackageArchive(File filename, Callback<AssetLoadedData> assetCallback, Callback<TerrainLoadedData> terrainCallback,
+        Callback<SceneObjectLoadedData> objectCallback, Callback<SettingsLoadedData> settingsCallback) throws FileNotFoundException
     {
         int successfulAssetRestores = 0;
         int failedAssetRestores = 0;
 
-        try
-        {
-            InputStream fileStream = new FileInputStream(filename);
-            if (fileStream != null)
+        long fileLength = filename.length();
+        TarArchiveReader archive = null;
+        GZIPInputStream loadStream = null;
+        PushbackInputStream pushStream = null;
+        InputStream fileStream = new FileInputStream(filename);
+       	try
+       	{
+            loadStream = new GZIPInputStream(fileStream);
+            if (loadStream != null)
             {
-                GZipInputStream loadStream = new GZipInputStream(fileStream);
-                if (loadStream != null)
+                pushStream = new PushbackInputStream(loadStream);
+                if (pushStream != null)
                 {
-                    TarArchiveReader archive = new TarArchiveReader(loadStream);
+                  	archive = new TarArchiveReader(pushStream);
 
-                    String filePath;
-                    byte[] data;
-                    TarArchiveReader.TarEntryType entryType;
+                  	TarArchiveReader.TarHeader header = archive.new TarHeader();
+                   	byte [] data;
 
-                    while ((data = archive.ReadEntry(out filePath, out entryType)) != null)
-                    {
-                        if (filePath.startsWith(ArchiveConstants.OBJECTS_PATH))
-                        {
-                            // Deserialize the XML bytes
-                            if (objectCallback != null)
-                                LoadObjects(data, objectCallback, fileStream.Position, fileStream.Length);
+                   	while ((data = archive.ReadEntry(header)) != null)
+                   	{
+                   		if (header.FilePath.startsWith(ArchiveConstants.OBJECTS_PATH))
+                   		{
+                   			// Deserialize the XML bytes
+                   			if (objectCallback != null)
+                                LoadObjects(data, objectCallback, pushStream.getBytePosition(), fileLength);
                         }
-                        else if (filePath.startsWith(ArchiveConstants.ASSETS_PATH))
-                        {
+                        else if (header.FilePath.startsWith(ArchiveConstants.ASSETS_PATH))
+                        {  
                             if (assetCallback != null)
                             {
-                                if (LoadAsset(filePath, data, assetCallback, fileStream.Position, fileStream.Length))
+                                if (LoadAsset(header.FilePath, data, assetCallback, pushStream.getBytePosition(), fileLength))
                                     successfulAssetRestores++;
                                 else
                                     failedAssetRestores++;
                             }
                         }
-                        else if (filePath.startsWith(ArchiveConstants.TERRAINS_PATH))
+                        else if (header.FilePath.startsWith(ArchiveConstants.TERRAINS_PATH))
                         {
-                            if (terrainCallback != null)
-                                LoadTerrain(filePath, data, terrainCallback, fileStream.Position, fileStream.Length);
+                          	if (terrainCallback != null)
+                           		LoadTerrain(header.FilePath, data, terrainCallback, pushStream.getBytePosition(), fileLength);
                         }
-                        else if (filePath.startsWith(ArchiveConstants.SETTINGS_PATH))
+                        else if (header.FilePath.startsWith(ArchiveConstants.SETTINGS_PATH))
                         {
-                            if (settingsCallback != null)
-                                LoadRegionSettings(filePath, data, settingsCallback);
+                          	if (settingsCallback != null)
+                           		LoadRegionSettings(header.FilePath, data, settingsCallback);
                         }
-                    }
-
-                    archive.Close();
+                   	}
                 }
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Log("[OarFile] Error loading OAR file: ", Logger.LogLevel.Error, e);
-            return;
-        }
-
+        	}
+       	}
+       	catch (Exception ex)
+       	{
+       		Logger.Log("[OarFile] Error loading OAR file: ", Logger.LogLevel.Error, ex);
+       		return;
+       	}
+       	finally
+       	{
+       		try
+       		{
+      			if (archive != null)
+       				archive.close();
+       			if (pushStream != null)
+       				pushStream.close();
+       			if (loadStream != null)
+       				pushStream.close();
+       			if (fileStream != null)
+        			fileStream.close();
+       		}
+       		catch (IOException ex)
+       		{}
+       	}
+        
+        Logger.Log(String.format("[OarFile]: Restored " + successfulAssetRestores + " assets"), Logger.LogLevel.Debug);
         if (failedAssetRestores > 0)
-            Logger.Log(String.Format("[OarFile]: Failed to load {0} assets", failedAssetRestores), Helpers.LogLevel.Warning);
+            Logger.Log(String.format("[OarFile]: Failed to load " + failedAssetRestores + " assets"), Logger.LogLevel.Warning);
     }
-*/
-    private static boolean LoadAsset(String assetPath, byte[] data, AssetLoadedCallback assetCallback, long bytesRead, long totalBytes)
+
+    private static boolean LoadAsset(String assetPath, byte[] data, Callback<AssetLoadedData> assetCallback, long bytesRead, long totalBytes)
     {
         // Right now we're nastily obtaining the UUID from the filename
-        String filename = assetPath.remove(0, ArchiveConstants.ASSETS_PATH.length());
-        int i = filename.lastIndexOf(ArchiveConstants.ASSET_EXTENSION_SEPARATOR);
+    	if (!assetPath.startsWith(ArchiveConstants.ASSETS_PATH))
+    		return false;
 
-        if (i == -1)
+    	String fileName = assetPath.substring(ArchiveConstants.ASSETS_PATH.length());
+        String extension = Helpers.getFileExtension(fileName, ArchiveConstants.ASSET_EXTENSION_SEPARATOR);
+
+        if (extension == null)
         {
             Logger.Log(String.format(
-                "[OarFile]: Could not find extension information in asset path %s since it's missing the separator %s. Skipping",
-                assetPath, ArchiveConstants.ASSET_EXTENSION_SEPARATOR), Helpers.LogLevel.Warning);
+                "[OarFile]: Could not find extension information in asset path %s since it's missing the separator %c. Skipping",
+                assetPath, ArchiveConstants.ASSET_EXTENSION_SEPARATOR), Logger.LogLevel.Warning);
             return false;
         }
 
-        String extension = filename.substring(i);
-        UUID uuid;
-        UUID.TryParse(filename.Remove(filename.length() - extension.length()), out uuid);
-
-        if (ArchiveConstants.EXTENSION_TO_ASSET_TYPE.containsKey(extension))
+        RefObject<UUID> uuid = new RefObject<UUID>(null);
+        UUID.TryParse(fileName, uuid);
+        AssetType assetType = ArchiveConstants.getAssetTypeForExtenstion(extension);
+        if (assetType != null)
         {
-            AssetType assetType = ArchiveConstants.EXTENSION_TO_ASSET_TYPE.get(extension);
             AssetItem asset = null;
 
             switch (assetType)
             {
                 case Animation:
-                    asset = new AssetAnimation(uuid, data);
+                    asset = new AssetAnimation(uuid.argvalue, data);
                     break;
                 case Bodypart:
-                    asset = new AssetBodypart(uuid, data);
+                    asset = new AssetBodypart(uuid.argvalue, data);
                     break;
                 case Clothing:
-                    asset = new AssetClothing(uuid, data);
+                    asset = new AssetClothing(uuid.argvalue, data);
                     break;
                 case Gesture:
-                    asset = new AssetGesture(uuid, data);
+                    asset = new AssetGesture(uuid.argvalue, data);
                     break;
                 case Landmark:
-                    asset = new AssetLandmark(uuid, data);
+                    asset = new AssetLandmark(uuid.argvalue, data);
                     break;
                 case LSLBytecode:
-                    asset = new AssetScriptBinary(uuid, data);
+                    asset = new AssetScriptBinary(uuid.argvalue, data);
                     break;
                 case LSLText:
-                    asset = new AssetScriptText(uuid, data);
+                    asset = new AssetScriptText(uuid.argvalue, data);
                     break;
                 case Notecard:
-                    asset = new AssetNotecard(uuid, data);
+                    asset = new AssetNotecard(uuid.argvalue, data);
                     break;
                 case Object:
-                    asset = new AssetPrim(uuid, data);
+                    asset = new AssetPrim(uuid.argvalue, data);
                     break;
                 case Sound:
-                    asset = new AssetSound(uuid, data);
+                    asset = new AssetSound(uuid.argvalue, data);
                     break;
                 case Texture:
-                    asset = new AssetTexture(uuid, data);
+                    asset = new AssetTexture(uuid.argvalue, data);
                     break;
                 case Mesh:
-                    asset = new AssetMesh(uuid, data);
+                    asset = new AssetMesh(uuid.argvalue, data);
                     break;
                 default:
                     Logger.Log("[OarFile] Unhandled asset type " + assetType, Logger.LogLevel.Error);
@@ -214,287 +298,277 @@ public class OarFile
 
             if (asset != null)
             {
-                assetCallback(asset, bytesRead, totalBytes);
+                assetCallback.callback(new OarFile().new AssetLoadedData(asset, bytesRead, totalBytes));
                 return true;
             }
         }
-
-        Logger.Log("[OarFile] Failed to load asset", Helpers.LogLevel.Warning);
+        Logger.Log("[OarFile] Failed to load asset", Logger.LogLevel.Warning);
         return false;
     }
 
-    private static boolean LoadRegionSettings(String filePath, byte[] data, SettingsLoadedCallback settingsCallback)
+    private static boolean LoadRegionSettings(String filePath, byte[] data, Callback<SettingsLoadedData> settingsCallback)
     {
         RegionSettings settings = null;
-        bool loaded = false;
+        boolean loaded = false;
 
         try
         {
-            using (MemoryStream stream = new MemoryStream(data))
-                settings = RegionSettings.FromStream(stream);
+            InputStream stream = new ByteArrayInputStream(data);
+                settings = RegionSettings.fromStream(stream, Helpers.ASCII_ENCODING);
             loaded = true;
         }
         catch (Exception ex)
         {
-            Logger.Log("[OarFile] Failed to parse region settings file " + filePath + ": " + ex.Message, Helpers.LogLevel.Warning);
+            Logger.Log("[OarFile] Failed to parse region settings file " + filePath + ": ", Logger.LogLevel.Warning, ex);
         }
 
         // Parse the region name out of the filename
-        string regionName = Path.GetFileNameWithoutExtension(filePath);
-
+        String regionName = FilenameUtils.removeExtension(FilenameUtils.getName(filePath.toString()));
         if (loaded)
-            settingsCallback(regionName, settings);
+            settingsCallback.callback(new OarFile().new SettingsLoadedData(regionName, settings));
 
         return loaded;
     }
 
-    private static bool LoadTerrain(string filePath, byte[] data, TerrainLoadedCallback terrainCallback, long bytesRead, long totalBytes)
+    private static boolean LoadTerrain(String filePath, byte[] data, Callback<TerrainLoadedData> terrainCallback, long bytesRead, long totalBytes)
     {
-        float[,] terrain = new float[256, 256];
-        bool loaded = false;
-
-        switch (Path.GetExtension(filePath))
+        float[][] terrain = new float[256][256];
+        boolean loaded = false;
+        String extension = FilenameUtils.getExtension(filePath);
+        
+        if (extension.equals(".r32") || 
+        	extension.equals(".f32"))
         {
-            case ".r32":
-            case ".f32":
-                // RAW32
-                if (data.Length == 256 * 256 * 4)
-                {
-                    int pos = 0;
-                    for (int y = 0; y < 256; y++)
-                    {
-                        for (int x = 0; x < 256; x++)
-                        {
-                            terrain[y, x] = Utils.Clamp(Utils.BytesToFloat(data, pos), 0.0f, 255.0f);
-                            pos += 4;
-                        }
-                    }
-
-                    loaded = true;
-                }
-                else
-                {
-                    Logger.Log("[OarFile] RAW32 terrain file " + filePath + " has the wrong number of bytes: " + data.Length,
-                        Helpers.LogLevel.Warning);
-                }
-                break;
-            case ".ter":
-                // Terragen
-            case ".raw":
-                // LLRAW
-            case ".jpg":
-            case ".jpeg":
-                // JPG
-            case ".bmp":
-                // BMP
-            case ".png":
-                // PNG
-            case ".gif":
-                // GIF
-            case ".tif":
-            case ".tiff":
-                // TIFF
-            default:
-                Logger.Log("[OarFile] Unrecognized terrain format in " + filePath, Helpers.LogLevel.Warning);
-                break;
-        }
-
-        if (loaded)
-            terrainCallback(terrain, bytesRead, totalBytes);
-
-        return loaded;
-    }
-
-    public static void LoadObjects(byte[] objectData, SceneObjectLoadedCallback objectCallback, long bytesRead, long totalBytes)
-    {
-        XmlDocument doc = new XmlDocument();
-
-        using (XmlTextReader reader = new XmlTextReader(new MemoryStream(objectData)))
-        {
-            reader.WhitespaceHandling = WhitespaceHandling.None;
-            doc.Load(reader);
-        }
-
-        XmlNode rootNode = doc.FirstChild;
-
-        if (rootNode.LocalName.Equals("scene"))
-        {
-            foreach (XmlNode node in rootNode.ChildNodes)
+            // RAW32
+            if (data.length == 256 * 256 * 4)
             {
-                AssetPrim linkset = new AssetPrim(node.OuterXml);
+                int pos = 0;
+                for (int y = 0; y < 256; y++)
+                {
+                    for (int x = 0; x < 256; x++)
+                    {
+                        terrain[y][x] = Helpers.Clamp(Helpers.BytesToFloatL(data, pos), 0.0f, 255.0f);
+                        pos += 4;
+                    }
+                }
+
+                loaded = true;
+            }
+            else
+            {
+                Logger.Log("[OarFile] RAW32 terrain file " + filePath + " has the wrong number of bytes: " + data.length,
+                    Logger.LogLevel.Warning);
+            }
+        }
+        else if (extension.equals(".ter"))
+            ; // Terragen
+        else if (extension.equals(".raw"))
+            ; // LLRAW
+        else if (extension.equals(".jpg") ||
+        		 extension.equals(".jpeg"))
+            ; // JPG
+        else if (extension.equals(".bmp"))
+            ; // BMP
+        else if (extension.equals(".png"))
+            ; // PNG
+        else if (extension.equals(".gif"))
+            ; // GIF
+        else if (extension.equals(".tif") ||
+        	     extension.equals(".tiff"))
+            ; // TIFF
+        else
+            Logger.Log("[OarFile] Unrecognized terrain format in " + filePath, Logger.LogLevel.Warning);
+
+        if (loaded)
+            terrainCallback.callback(new OarFile().new TerrainLoadedData(terrain, bytesRead, totalBytes));
+
+        return loaded;
+    }
+
+    public static void LoadObjects(byte[] objectData, Callback<SceneObjectLoadedData> objectCallback, long bytesRead, long totalBytes) throws XmlPullParserException, IOException
+    {
+        InputStream stream = new ByteArrayInputStream(objectData);
+        XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+		parser.setInput(stream, Helpers.UTF8_ENCODING);
+
+		parser.nextTag();
+  		if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("scene"))
+		{
+  			parser.nextTag();
+            while (parser.getEventType() == XmlPullParser.START_TAG)
+            {
+                AssetPrim linkset = new AssetPrim(parser);
                 if (linkset != null)
-                    objectCallback(linkset, bytesRead, totalBytes);
+                    objectCallback.callback(new OarFile().new SceneObjectLoadedData(linkset, bytesRead, totalBytes));
+      			parser.nextTag();
             }
         }
         else
         {
-            AssetPrim linkset = new AssetPrim(rootNode.OuterXml);
+             AssetPrim linkset = new AssetPrim(parser);
             if (linkset != null)
-                objectCallback(linkset, bytesRead, totalBytes);
+                objectCallback.callback(new OarFile().new SceneObjectLoadedData(linkset, bytesRead, totalBytes));
         }
+		stream.close();
     }
 
-    #endregion Archive Loading
+    //#endregion Archive Loading
 
-    #region Archive Saving
+    //#region Archive Saving
 
-    public static void PackageArchive(string directoryName, string filename)
+    public static void PackageArchive(File directoryName, File fileName) throws IOException
     {
-        const string ARCHIVE_XML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<archive major_version=\"0\" minor_version=\"1\" />";
+        final String ARCHIVE_XML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<archive major_version=\"0\" minor_version=\"1\" />";
 
-        TarArchiveWriter archive = new TarArchiveWriter(new GZipStream(new FileStream(filename, FileMode.Create), CompressionMode.Compress));
+        TarArchiveWriter archive = new TarArchiveWriter(new GZIPOutputStream(new FileOutputStream(fileName)));
 
         // Create the archive.xml file
-        archive.WriteFile("archive.xml", ARCHIVE_XML);
+        archive.writeFile("archive.xml", ARCHIVE_XML);
 
         // Add the assets
-        string[] files = Directory.GetFiles(directoryName + "/" + ArchiveConstants.ASSETS_PATH);
-        foreach (string file in files)
-            archive.WriteFile(ArchiveConstants.ASSETS_PATH + Path.GetFileName(file), File.ReadAllBytes(file));
+        File dir = new File(directoryName, ArchiveConstants.ASSETS_PATH);
+        String[] files = dir.list();
+        for (String file : files)
+            archive.writeFile(ArchiveConstants.ASSETS_PATH + FilenameUtils.getName(file), FileUtils.readFileToByteArray(new File(dir, file)));
 
         // Add the objects
-        files = Directory.GetFiles(directoryName + "/" + ArchiveConstants.OBJECTS_PATH);
-        foreach (string file in files)
-            archive.WriteFile(ArchiveConstants.OBJECTS_PATH + Path.GetFileName(file), File.ReadAllBytes(file));
+        dir = new File(directoryName, ArchiveConstants.OBJECTS_PATH);
+        files = dir.list();
+        for (String file : files)
+            archive.writeFile(ArchiveConstants.OBJECTS_PATH + FilenameUtils.getName(file), FileUtils.readFileToByteArray(new File(dir, file)));
 
         // Add the terrain(s)
-        files = Directory.GetFiles(directoryName + "/" + ArchiveConstants.TERRAINS_PATH);
-        foreach (string file in files)
-            archive.WriteFile(ArchiveConstants.TERRAINS_PATH + Path.GetFileName(file), File.ReadAllBytes(file));
+        dir = new File(directoryName, ArchiveConstants.TERRAINS_PATH);
+        files = dir.list();
+        for (String file : files)
+            archive.writeFile(ArchiveConstants.TERRAINS_PATH + FilenameUtils.getName(file), FileUtils.readFileToByteArray(new File(dir, file)));
 
         // Add the parcels(s)
-        files = Directory.GetFiles(directoryName + "/" + ArchiveConstants.LANDDATA_PATH);
-        foreach (string file in files)
-            archive.WriteFile(ArchiveConstants.LANDDATA_PATH + Path.GetFileName(file), File.ReadAllBytes(file));
+        dir = new File(directoryName, ArchiveConstants.LANDDATA_PATH);
+        files = dir.list();
+        for (String file : files)
+            archive.writeFile(ArchiveConstants.LANDDATA_PATH + FilenameUtils.getName(file), FileUtils.readFileToByteArray(new File(dir, file)));
 
         // Add the setting(s)
-        files = Directory.GetFiles(directoryName + "/" + ArchiveConstants.SETTINGS_PATH);
-        foreach (string file in files)
-            archive.WriteFile(ArchiveConstants.SETTINGS_PATH + Path.GetFileName(file), File.ReadAllBytes(file));
+        dir = new File(directoryName, ArchiveConstants.SETTINGS_PATH);
+        files = dir.list();
+        for (String file : files)
+            archive.writeFile(ArchiveConstants.SETTINGS_PATH + FilenameUtils.getName(file), FileUtils.readFileToByteArray(new File(dir, file)));
 
-        archive.Close();
+        archive.close();
     }
 
-    public static void SaveTerrain(Simulator sim, string terrainPath)
+    public static void SaveTerrain(Simulator sim, File terrainPath) throws IOException, InterruptedException
     {
-        if (Directory.Exists(terrainPath))
-            Directory.Delete(terrainPath, true);
-        Thread.Sleep(100);
-        Directory.CreateDirectory(terrainPath);
-        Thread.Sleep(100);
-        FileInfo file = new FileInfo(Path.Combine(terrainPath, sim.Name + ".r32"));
-        FileStream s = file.Open(FileMode.Create, FileAccess.Write);
-        SaveTerrainStream(s, sim);
-
-        s.Close();
+        if (terrainPath.exists())
+            FileUtils.deleteDirectory(terrainPath);
+        Thread.sleep(100);
+        terrainPath.mkdir();
+        Thread.sleep(100);
+        OutputStream stream = new FileOutputStream(new File(terrainPath, sim.getName() + ".r32"));
+        SaveTerrainStream(stream, sim);
+        stream.close();
     }
 
-    private static void SaveTerrainStream(Stream s, Simulator sim)
+    private static void SaveTerrainStream(OutputStream stream, Simulator sim) throws IOException
     {
-        BinaryWriter bs = new BinaryWriter(s);
-        
-        int y;
+        int x, y;
         for (y = 0; y < 256; y++)
         {
-            int x;
             for (x = 0; x < 256; x++)
             {
-                float height;
-                sim.TerrainHeightAtPoint(x, y, out height);
-                bs.Write(height);
+                float height = sim.TerrainHeightAtPoint(x, y);
+                stream.write(Helpers.FloatToBytesL(height));
             }
         }
-
-        bs.Close();
     }
 
-    public static void SaveParcels(Simulator sim, String parcelPath)
+    public static void SaveParcels(Simulator sim, File parcelPath) throws IOException, InterruptedException, IllegalArgumentException, IllegalStateException, XmlPullParserException
     {
-        if (Directory.Exists(parcelPath))
-            Directory.Delete(parcelPath, true);
-        Thread.Sleep(100);
-        Directory.CreateDirectory(parcelPath);
-        Thread.Sleep(100);
-        sim.Parcels.ForEach((Parcel parcel) =>
+        if (parcelPath.exists())
+            FileUtils.deleteDirectory(parcelPath);
+        Thread.sleep(100);
+        parcelPath.mkdir();
+        Thread.sleep(100);
+        
+        for (Parcel parcel : sim.Parcels.values())
         {
-                UUID globalID = UUID.Random();
-                SerializeParcel(parcel, globalID, Path.Combine(parcelPath, globalID + ".xml"));
-        });
-    }
-
-    private static void SerializeParcel(Parcel parcel, UUID globalID, string filename)
-    {
-        StringWriter sw = new StringWriter();
-        XmlTextWriter xtw = new XmlTextWriter(sw) { Formatting = Formatting.Indented };
-
-        xtw.WriteStartDocument();
-        xtw.startTag(null, "LandData");
-
-        xtw.WriteElementString("Area", Convert.ToString(parcel.Area));
-        xtw.WriteElementString("AuctionID", Convert.ToString(parcel.AuctionID));
-        xtw.WriteElementString("AuthBuyerID", parcel.AuthBuyerID.ToString());
-        xtw.WriteElementString("Category", Convert.ToString((sbyte)parcel.Category));
-        TimeSpan t = parcel.ClaimDate.ToUniversalTime() - Utils.Epoch;
-        xtw.WriteElementString("ClaimDate", Convert.ToString((int)t.TotalSeconds));
-        xtw.WriteElementString("ClaimPrice", Convert.ToString(parcel.ClaimPrice));
-        xtw.WriteElementString("GlobalID", globalID.ToString());
-        xtw.WriteElementString("GroupID", parcel.GroupID.ToString());
-        xtw.WriteElementString("IsGroupOwned", Convert.ToString(parcel.IsGroupOwned));
-        xtw.WriteElementString("Bitmap", Convert.ToBase64String(parcel.Bitmap));
-        xtw.WriteElementString("Description", parcel.Desc);
-        xtw.WriteElementString("Flags", Convert.ToString((uint)parcel.Flags));
-        xtw.WriteElementString("LandingType", Convert.ToString((byte)parcel.Landing));
-        xtw.WriteElementString("Name", parcel.Name);
-        xtw.WriteElementString("Status", Convert.ToString((sbyte)parcel.Status));
-        xtw.WriteElementString("LocalID", parcel.LocalID.ToString());
-        xtw.WriteElementString("MediaAutoScale", Convert.ToString(parcel.Media.MediaAutoScale ? 1 : 0));
-        xtw.WriteElementString("MediaID", parcel.Media.MediaID.ToString());
-        xtw.WriteElementString("MediaURL", parcel.Media.MediaURL);
-        xtw.WriteElementString("MusicURL", parcel.MusicURL);
-        xtw.WriteElementString("OwnerID", parcel.OwnerID.ToString());
-
-        xtw.startTag(null, "ParcelAccessList");
-        foreach (ParcelManager.ParcelAccessEntry pal in parcel.AccessBlackList)
-        {
-            xtw.startTag(null, "ParcelAccessEntry");
-            xtw.WriteElementString("AgentID", pal.AgentID.ToString());
-            xtw.WriteElementString("Time", pal.Time.ToString("s"));
-            xtw.WriteElementString("AccessList", Convert.ToString((uint)pal.Flags));
-            xtw.WriteEndElement();
+            UUID globalID = UUID.GenerateUUID();
+            SerializeParcel(parcel, globalID, new File(parcelPath, globalID + ".xml"));
         }
-        foreach (ParcelManager.ParcelAccessEntry pal in parcel.AccessWhiteList)
-        {
-            xtw.startTag(null, "ParcelAccessEntry");
-            xtw.WriteElementString("AgentID", pal.AgentID.ToString());
-            xtw.WriteElementString("Time", pal.Time.ToString("s"));
-            xtw.WriteElementString("AccessList", Convert.ToString((uint)pal.Flags));
-            xtw.WriteEndElement();
-        }
-        xtw.WriteEndElement();
-
-        xtw.WriteElementString("PassHours", Convert.ToString(parcel.PassHours));
-        xtw.WriteElementString("PassPrice", Convert.ToString(parcel.PassPrice));
-        xtw.WriteElementString("SalePrice", Convert.ToString(parcel.SalePrice));
-        xtw.WriteElementString("SnapshotID", parcel.SnapshotID.ToString());
-        xtw.WriteElementString("UserLocation", parcel.UserLocation.ToString());
-        xtw.WriteElementString("UserLookAt", parcel.UserLookAt.ToString());
-        xtw.WriteElementString("Dwell", "0");
-        xtw.WriteElementString("OtherCleanTime", Convert.ToString(parcel.OtherCleanTime));
-
-        xtw.WriteEndElement();
-
-        xtw.Close();
-        sw.Close();
-        File.WriteAllText(filename, sw.ToString());
     }
 
-    public static void SaveRegionSettings(Simulator sim, string settingsPath)
+    private static void SerializeParcel(Parcel parcel, UUID globalID, File fileName) throws IllegalArgumentException, IllegalStateException, IOException, XmlPullParserException
     {
-        if (Directory.Exists(settingsPath))
-            Directory.Delete(settingsPath, true);
-        Thread.Sleep(100);
-        Directory.CreateDirectory(settingsPath);
-        Thread.Sleep(100);
+        Writer fileWriter = new FileWriter(fileName);
+		XmlSerializer writer = XmlPullParserFactory.newInstance().newSerializer();
+   		writer.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "  ");
+		writer.setOutput(fileWriter);
+        writer.startDocument(Helpers.UTF8_ENCODING, null);
+        writer.startTag(null, "LandData");
+
+        writeInt(writer, "Area", parcel.Area);
+        writeInt(writer, "AuctionID", parcel.AuctionID);
+        parcel.AuthBuyerID.serializeXml(writer, null, "AuthBuyerID");
+        writeInt(writer, "Category", parcel.Category.getValue());
+        writeLong(writer, "ClaimDate", (long)Helpers.DateTimeToUnixTime(parcel.ClaimDate));
+        writeInt(writer, "ClaimPrice", parcel.ClaimPrice);
+        globalID.serializeXml(writer, null, "GlobalID");
+        parcel.GroupID.serializeXml(writer, null, "GroupID");
+        writeBoolean(writer, "IsGroupOwned", parcel.IsGroupOwned);
+        writeString(writer, "Bitmap", Base64.encodeBase64String(parcel.Bitmap != null ? parcel.Bitmap : Helpers.EmptyBytes));
+        writeString(writer, "Description", parcel.Desc);
+        writeInt(writer, "Flags", parcel.Flags);
+        writeInt(writer, "LandingType", parcel.Landing.getValue());
+        writeString(writer, "Name", parcel.Name);
+        writeInt(writer, "Status", parcel.Status.getValue());
+        writeInt(writer, "LocalID", parcel.LocalID);
+        writeInt(writer, "MediaAutoScale", parcel.Media.MediaAutoScale ? 1 : 0);
+        parcel.Media.MediaID.serializeXml(writer, null, "MediaID");
+        writeString(writer, "MediaURL", parcel.Media.MediaURL);
+        writeString(writer, "MusicURL", parcel.MusicURL);
+        parcel.OwnerID.serializeXml(writer, null, "OwnerID");
+
+        writer.startTag(null, "ParcelAccessList");
+        for (ParcelManager.ParcelAccessEntry pal : parcel.AccessBlackList)
+        {
+        	writer.startTag(null, "ParcelAccessEntry");
+            pal.AgentID.serializeXml(writer, null, "AgentID");
+            writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.Time)); // 2008-06-15T21:15:07
+            writeInt(writer, "AccessList", pal.Flags);
+            writer.endTag(null, "ParcelAccessEntry");
+        }
+        for (ParcelManager.ParcelAccessEntry pal : parcel.AccessWhiteList)
+        {
+            writer.startTag(null, "ParcelAccessEntry");
+            pal.AgentID.serializeXml(writer, null, "AgentID");
+            writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.Time)); // 2008-06-15T21:15:07
+            writeInt(writer, "AccessList", pal.Flags);
+            writer.endTag(null, "ParcelAccessEntry");
+        }
+        writer.endTag(null, "ParcelAccessList");
+
+        writeFloat(writer, "PassHours", parcel.PassHours);
+        writeInt(writer, "PassPrice", parcel.PassPrice);
+        writeInt(writer, "SalePrice", parcel.SalePrice);
+        parcel.SnapshotID.serializeXml(writer, null, "SnapshotID");
+        parcel.UserLocation.serializeXml(writer, null, "UserLocation");
+        parcel.UserLookAt.serializeXml(writer, null, "UserLookAt");
+        writeString(writer, "Dwell", "0");
+        writeInt(writer, "OtherCleanTime", parcel.OtherCleanTime);
+
+        writer.endTag(null, "LandData");
+
+        fileWriter.close();
+    }
+
+    public static void SaveRegionSettings(Simulator sim, File settingsPath) throws IOException, InterruptedException, XmlPullParserException
+    {
+        if (settingsPath.exists())
+            FileUtils.deleteDirectory(settingsPath);
+        Thread.sleep(100);
+        settingsPath.mkdir();
+        Thread.sleep(100);
 
         RegionSettings settings = new RegionSettings();
         //settings.AgentLimit;
@@ -508,7 +582,7 @@ public class OarFile
         settings.DisablePhysics = (sim.Flags & RegionFlags.SkipPhysics) == RegionFlags.SkipPhysics;
         settings.DisableScripts = (sim.Flags & RegionFlags.SkipScripts) == RegionFlags.SkipScripts;
         settings.FixedSun = (sim.Flags & RegionFlags.SunFixed) == RegionFlags.SunFixed;
-        settings.MaturityRating = (int)(sim.Access & SimAccess.Mature & SimAccess.Adult & SimAccess.PG);
+        settings.MaturityRating = sim.Access.getValue();
         //settings.ObjectBonus;
         settings.RestrictPushing = (sim.Flags & RegionFlags.RestrictPushObject) == RegionFlags.RestrictPushObject;
         settings.TerrainDetail0 = sim.TerrainDetail0;
@@ -526,46 +600,48 @@ public class OarFile
         //settings.UseEstateSun;
         settings.WaterHeight = sim.WaterHeight;
 
-        settings.ToXML(Path.Combine(settingsPath, sim.Name + ".xml"));
+        settings.toXML(new File(settingsPath, sim.getName() + ".xml"));
     }
 
-    public static void SavePrims(AssetManager manager, List<AssetPrim> prims, String primsPath, String assetsPath)
+    public static void SavePrims(AssetManager manager, List<AssetPrim> prims, File primsDir, File assetsPath) throws InterruptedException
     {
         Map<UUID, UUID> textureList = new HashMap<UUID, UUID>();
 
         // Delete all of the old linkset files
         try
         {
-        	Directory.Delete(primsPath, true);
+        	FileUtils.deleteDirectory(primsDir);
         }
         catch (Exception ex) { }
 
-        Thread.Sleep(100);
+        Thread.sleep(100);
         // Create a new folder for the linkset files
-        try { Directory.CreateDirectory(primsPath); }
-        catch (Exception ex)
-        {
-            Logger.Log("Failed saving prims: " + ex.Message, Helpers.LogLevel.Error);
-            return;
-        }
-        Thread.Sleep(100);
         try
         {
-            foreach (AssetPrim assetPrim in prims)
+        	primsDir.mkdir();
+        }
+        catch (Exception ex)
+        {
+            Logger.Log("Failed saving prims: ", Logger.LogLevel.Error, ex);
+            return;
+        }
+        Thread.sleep(100);
+        try
+        {
+            for (AssetPrim assetPrim : prims)
             {
-                SavePrim(assetPrim, Path.Combine(primsPath, "Primitive_" + assetPrim.Parent.ID + ".xml"));
+                SavePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.Parent.ID + ".xml"));
 
                 CollectTextures(assetPrim.Parent, textureList);
                 if (assetPrim.Children != null)
                 {
-                    foreach (PrimObject child in assetPrim.Children)
+                    for (PrimObject child : assetPrim.Children)
                         CollectTextures(child, textureList);
                 }
             }
-
-            SaveAssets(manager, AssetType.Texture, new List<UUID>(textureList.Keys), assetsPath);
+            SaveAssets(manager, AssetType.Texture, textureList.keySet(), assetsPath);
         }
-        catch
+        catch (Exception ex)
         {
         }
     }
@@ -584,7 +660,7 @@ public class OarFile
                 {
                     TextureEntryFace face = prim.Textures.faceTextures[i];
                     if (face != null)
-                        textureList. put(face.getTextureID(), face.getTextureID());
+                        textureList.put(face.getTextureID(), face.getTextureID());
                 }
             }
             if (prim.Sculpt != null && !prim.Sculpt.Texture.equals(UUID.Zero))
@@ -592,13 +668,13 @@ public class OarFile
         }
     }
 
-    public static void ClearAssetFolder(File directory)
+    public static void ClearAssetFolder(File directory) throws InterruptedException
     {
         // Delete the assets folder
         try
         {
         	
-        	Helpers.deleteDirectory(directory);
+        	FileUtils.deleteDirectory(directory);
         }
         catch (Exception ex) { }
         Thread.sleep(100);
@@ -616,95 +692,109 @@ public class OarFile
         Thread.sleep(100);
     }
 
-    public static void SaveAssets(AssetManager assetManager, AssetType assetType, List<UUID> assets, String assetsPath)
+    public static void SaveAssets(AssetManager assetManager, AssetType assetType, Set<UUID> assets, File assetsPath) throws Exception
     {
-        int count = 0;
         List<UUID> remainingTextures = new ArrayList<UUID>(assets);
-        TimeoutEvent<Boolean> AllPropertiesReceived = new TimeoutEvent<Boolean>();
-        for (int i = 0; i < assets.size(); i++)
+        TimeoutEvent<Boolean> allReceived = new TimeoutEvent<Boolean>();
+        assets.forEach(new Consumer<UUID>()
         {
-            UUID texture = assets.get(i);
-            if (assetType.equals(AssetType.Texture))
-            {
-                assetManager.RequestImage(texture, new Callback<ImageDownload>()
-                {
-        			@Override
-        			public boolean callback(ImageDownload transfer)
-        			{
-        				if (transfer.Success)
-        				{
-        					String extension = Helpers.EmptyString;
+			@Override
+			public void accept(UUID texture)
+			{
+	            if (assetType.equals(AssetType.Texture))
+	            {
+	                assetManager.RequestImage(texture, new Callback<ImageDownload>()
+	                {
+	        			@Override
+	        			public boolean callback(ImageDownload transfer)
+	        			{
+	        				if (transfer.Success)
+	        				{
+	        					if (transfer.AssetData != null)
+	        					{
+	        						String extension = ArchiveConstants.getExtensionForType(assetType);
+	        						try
+	        						{
+	        							OutputStream stream = new FileOutputStream(new File(assetsPath, texture.toString() + extension));
+	        							stream.write(transfer.AssetData);
+	        							stream.close();
+	        							remainingTextures.remove(texture);
+	        							if (remainingTextures.size() == 0)
+	        								allReceived.set(true);
+	        						}
+	        						catch (IOException ex)
+	        						{}
+	        					}
+	        					else
+	        					{
+	        						System.out.println("Missing asset " + texture);
+	        					}
+	        				}
+	        				return true;
+	        			}
+	                });
+	            }
+	            else
+	            {
+	            	try
+	            	{
+	                    assetManager.RequestAsset(texture, assetType, false, new Callback<AssetDownload>()
+	                    {
+	               			@Override
+	            			public boolean callback(AssetDownload transfer)
+	            			{
+	            				if (transfer.Success)
+	            				{
+	            					if (transfer.AssetData != null)
+	            					{
+		        						String extension = ArchiveConstants.getExtensionForType(assetType);
+	            						try
+	            						{
+	            							OutputStream stream = new FileOutputStream(new File(assetsPath, texture.toString() + extension));
+	            							stream.write(transfer.AssetData);
+	            							stream.close();
+	            							remainingTextures.remove(texture);
+	            							if (remainingTextures.size() == 0)
+	            								allReceived.set(true);
+	            						}
+	               						catch (IOException ex)
+	            						{}
+	            					}
+	            					else
+	            					{
+	            						System.out.println("Missing asset " + texture);
+	            					}
+	            				}
+	            				return true;
+	            			}
+	                    });
+	            	}
+	            	catch (Exception ex)
+	            	{
+	            		
+	            	}
+	            }
+	            try
+	            {
+	            	Thread.sleep(200);
+		            if (remainingTextures.size() > 0 && remainingTextures.size() % 5 == 0)
+		                Thread.sleep(250);
+	            }
+	            catch (Exception ex)
+	            {
+	            	
+	            }
+			}	
+        });
 
-        					if (transfer.AssetData != null)
-        					{
-        						if (ArchiveConstants.ASSET_TYPE_TO_EXTENSION.containsKey(assetType))
-        							extension = ArchiveConstants.ASSET_TYPE_TO_EXTENSION.get(assetType);
+        allReceived.waitOne(5000 + 350 * assets.size());
 
-        						OutputStream stream = new FileOutputStream(new File(assetsPath, texture.toString() + extension));
-        						stream.write(transfer.AssetData);
-        						stream.close();
-        						remainingTextures.remove(texture);
-        						if (remainingTextures.size() == 0)
-        							AllPropertiesReceived.set(true);
-        						++count;
-        					}
-        					else
-        					{
-        						System.out.println("Missing asset " + texture);
-        					}
-        				}
-        				return true;
-        			}
-                });
-            }
-            else
-            {
-                assetManager.RequestAsset(texture, assetType, false, new Callback<AssetDownload>()
-                {
-           			@Override
-        			public boolean callback(AssetDownload transfer)
-        			{
-        				if (transfer.Success)
-        				{
-        					String extension = Helpers.EmptyString;
-
-        					if (asset != null)
-        					{
-        						if (ArchiveConstants.ASSET_TYPE_TO_EXTENSION.ContainsKey(assetType))
-        							extension = ArchiveConstants.ASSET_TYPE_TO_EXTENSION.get(assetType);
-
-        						OutputStream stream = new FileOutputStream(new File(assetsPath, texture.toString() + extension));
-        						stream.write(transfer.AssetData);
-        						stream.close();
-        						remainingTextures.remove(asset.AssetID);
-        						if (remainingTextures.size() == 0)
-        							AllPropertiesReceived.set(true);
-        						++count;
-        					}
-        					else
-        					{
-           						System.out.println("Missing asset " + texture);
-        					}
-        				}
-        				return true;
-        			}
-                });
-            }
-
-//            Thread.sleep(200);
- //           if (i % 5 == 0)
-//                Thread.sleep(250);
-        }
-        AllPropertiesReceived.wait(5000 + 350 * assets.count);
-
-        Logger.Log("Copied " + count + " textures to the asset archive folder", Logger.LogLevel.Info);
+        Logger.Log("Copied " + (assets.size() - remainingTextures.size()) + " textures to the asset archive folder", Logger.LogLevel.Info);
     }
 
-    public static void SaveSimAssets(AssetManager assetManager, AssetType assetType, UUID assetID, UUID itemID, UUID primID, String assetsPath)
+    public static void SaveSimAssets(AssetManager assetManager, AssetType assetType, UUID assetID, UUID itemID, UUID primID, File assetsPath) throws Exception
     {
-        int count = 0;
-        TimeoutEvent<Boolean> AllPropertiesReceived = new TimeoutEvent<Boolean>();
-
+        TimeoutEvent<Integer> allReceived = new TimeoutEvent<Integer>();
         assetManager.RequestAsset(assetID, itemID, primID, assetType, false, SourceType.SimInventoryItem, UUID.GenerateUUID(), new Callback<AssetDownload>()
         {
 			@Override
@@ -712,60 +802,80 @@ public class OarFile
 			{
 				if (transfer.Success)
 				{
-					String extension = Helpers.EmptyString;
-
-					if (ArchiveConstants.ASSET_TYPE_TO_EXTENSION.containsKey(assetType))
-						extension = ArchiveConstants.ASSET_TYPE_TO_EXTENSION.get(assetType);
-
 					if (transfer.AssetData != null)
 					{
-						OutputStream stream = new FileOutputStream(new File(assetsPath, assetID.toString() + extension));
-						stream.write(transfer.AssetData);
-						stream.close();
-						++count;
+						String extension = ArchiveConstants.getExtensionForType(assetType);
+						try
+						{
+							OutputStream stream = new FileOutputStream(new File(assetsPath, assetID.toString() + extension));
+							stream.write(transfer.AssetData);
+							stream.close();
+							allReceived.set(1);
+						}
+						catch (Exception ex) { };
 					}
-					AllPropertiesReceived.set(transfer.AssetData != null);
-					return true;
+					else
+					{
+						allReceived.set(0);
+   						System.out.println("Missing asset " + assetID);
+					}
 				}
+				return true;
 			}
         });
-        AllPropertiesReceived.wait(5000);
-
-        Logger.Log("Copied " + count + " textures to the asset archive folder", Logger.LogLevel.Info);
+        Integer count = allReceived.waitOne(5000);
+        if (count != null)
+        	Logger.Log("Copied " + count + " textures to the asset archive folder", Logger.LogLevel.Info);
     }
 
-    static void SavePrim(AssetPrim prim, String filename)
+    static void SavePrim(AssetPrim prim, File filename) throws IOException
     {
+    	Writer writer = null;
         try
         {
-            Writer writer = new FileWriter(filename);
-            {
-        		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-        		xmlWriter.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "    ");
-        		xmlWriter.setOutput(writer);
-        		xmlWriter.startDocument(Helpers.UTF8_ENCODING, null);
-                prim.encodeXml(xmlWriter);
-                xmlWriter.flush();
-                writer.close();
-            }
+            writer = new FileWriter(filename);
+       		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
+       		xmlWriter.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "    ");
+       		xmlWriter.setOutput(writer);
+       		xmlWriter.startDocument(Helpers.UTF8_ENCODING, null);
+            prim.encodeXml(xmlWriter);
+            xmlWriter.flush();
         }
         catch (Exception ex)
         {
             Logger.Log("Failed saving linkset: ", Logger.LogLevel.Error, ex);
+            throw new IOException("failed saving linkset", ex);
+        }
+        finally
+        {
+            if (writer != null)
+            	writer.close();	
         }
     }
 
-    static void WriteUUID(XmlSerializer writer, String name, UUID id)
+    static void writeBoolean(XmlSerializer writer, String tag, boolean value) throws IllegalArgumentException, IllegalStateException, IOException
     {
-        writer.startTag(null, name);
-        WriteElement(writer, "UUID", id.toString());
-        writer.endTag(null, name);
+    	writer.startTag(null,  tag).text(value ? "True" : "False").endTag(null,  tag);
     }
 
-   
-    static void WriteElement(XmlSerializer writer, String name, String value)
+    static void writeInt(XmlSerializer writer, String tag, int value) throws IllegalArgumentException, IllegalStateException, IOException
     {
-    	writer.startTag(null,  name).text(value).endTag(null,  value);
+    	writer.startTag(null,  tag).text(Integer.toString(value)).endTag(null,  tag);
+    }
+
+    static void writeLong(XmlSerializer writer, String tag, long value) throws IllegalArgumentException, IllegalStateException, IOException
+    {
+    	writer.startTag(null,  tag).text(Long.toString(value)).endTag(null,  tag);
+    }
+
+    static void writeFloat(XmlSerializer writer, String tag, float value) throws IllegalArgumentException, IllegalStateException, IOException
+    {
+    	writer.startTag(null,  tag).text(Float.toString(value)).endTag(null,  tag);
+    }
+
+    static void writeString(XmlSerializer writer, String tag, String value) throws IllegalArgumentException, IllegalStateException, IOException
+    {
+    	writer.startTag(null,  tag).text(value).endTag(null,  tag);
     }
     // #endregion Archive Saving
 }

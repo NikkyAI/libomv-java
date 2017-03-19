@@ -60,12 +60,12 @@ public class AssetsArchiver
     public void Archive(TarArchiveWriter archive) throws IOException
     {
         //WriteMetadata(archive);
-        WriteData(archive);
+        writeData(archive);
     }
 
     /// Write an assets metadata file to the given archive
     /// <param name="archive"></param>
-    protected void WriteMetadata(TarArchiveWriter archive) throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException
+    protected void writeMetadata(TarArchiveWriter archive) throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException
     {
         StringWriter sw = new StringWriter();
 		XmlSerializer writer = XmlPullParserFactory.newInstance().newSerializer();
@@ -82,65 +82,50 @@ public class AssetsArchiver
             {
             	writer.startTag(null, "asset");
 
-                String extension = Helpers.EmptyString;
+				String extension = ArchiveConstants.getExtensionForType(asset.getAssetType());
 
-                if (ArchiveConstants.ASSET_TYPE_TO_EXTENSION.containsKey(asset.getAssetType()))
-                {
-                    extension = ArchiveConstants.ASSET_TYPE_TO_EXTENSION.get(asset.getAssetType());
-                }
+                writeString(writer, "filename", uuid.toString() + extension);
 
-                WriteString(writer, "filename", uuid.toString() + extension);
-
-                WriteString(writer, "name", uuid.toString());
-                WriteString(writer, "description", Helpers.EmptyString);
-                WriteString(writer, "asset-type", asset.getAssetType().toString());
+                writeString(writer, "name", uuid.toString());
+                writeString(writer, "description", Helpers.EmptyString);
+                writeString(writer, "asset-type", asset.getAssetType().toString());
                 writer.endTag(null, "asset");
             }
         }
 
         writer.endTag(null,  "assets");
         writer.endDocument();
-        archive.WriteFile("assets.xml", sw.toString());
+        archive.writeFile("assets.xml", sw.toString());
     }
-
-	protected void WriteString(XmlSerializer writer, String tag, String text) throws IllegalArgumentException, IllegalStateException, IOException
-	{
-        writer.startTag(null, tag).text(text).endTag(null, tag);	
-	}
 
     /// <summary>
     /// Write asset data files to the given archive
     /// </summary>
     /// <param name="archive"></param>
-    protected void WriteData(TarArchiveWriter archive) throws IOException
+    protected void writeData(TarArchiveWriter archive) throws IOException
     {
         // It appears that gtar, at least, doesn't need the intermediate directory entries in the tar
         //archive.AddDir("assets");
-
-        int assetsAdded = 0;
-
         for (UUID uuid : m_assets.keySet())
         {
             AssetItem asset = m_assets.get(uuid);
 
-            String extension = Helpers.EmptyString;
-
-            if (ArchiveConstants.ASSET_TYPE_TO_EXTENSION.containsKey(asset.getAssetType()))
-            {
-                extension = ArchiveConstants.ASSET_TYPE_TO_EXTENSION.get(asset.getAssetType());
-            }
-            else
+			String extension = ArchiveConstants.getExtensionForType(asset.getAssetType());
+            if (extension == null);
             {
                 Logger.Log(String.format(
-                    "Unrecognized asset type {0} with uuid {1}.  This asset will( be saved but not reloaded",
+                    "Unrecognized asset type %s with uuid %s. This asset will be saved but unable to be reloaded",
                     asset.getAssetType(), asset.getAssetID()), Logger.LogLevel.Warning);
             }
 
             asset.encode();
 
-            archive.WriteFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.AssetData);
-
-            assetsAdded++;
+            archive.writeFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.AssetData);
         }
     }
+    
+	protected void writeString(XmlSerializer writer, String tag, String text) throws IllegalArgumentException, IllegalStateException, IOException
+	{
+        writer.startTag(null, tag).text(text).endTag(null, tag);	
+	} 
 }

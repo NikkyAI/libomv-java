@@ -29,8 +29,13 @@
  */
 package libomv.assets.archiving;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.apache.commons.io.IOUtils;
 
 import libomv.utils.Helpers;
 
@@ -46,30 +51,37 @@ public class TarArchiveWriter
 
     /// Write a directory entry to the tar archive.  We can only handle one path level right now!
     /// <param name="dirName"></param>
-    public void WriteDir(String dirName) throws IOException
+    public void writeDir(String dirName) throws IOException
     {
         // Directories are signalled by a final /
-        if (!dirName.endsWith("/"))
-            dirName += "/";
-
-        WriteFile(dirName, new byte[0]);
+    	if (!dirName.endsWith("/"))
+    		dirName += "/";
+        writeFile(dirName, new byte[0]);
     }
 
     /// Write a file to the tar archive
     /// <param name="filePath"></param>
     /// <param name="data"></param>
-    public void WriteFile(String filePath, String data) throws IOException
+    public void writeFile(String filePath, String data) throws IOException
     {
-        WriteFile(filePath, data.getBytes(Helpers.ASCII_ENCODING));
+        writeFile(filePath, data.getBytes(Helpers.ASCII_ENCODING));
+    }
+
+    public void writeFile(String filePath, File file) throws IOException
+    {
+    	InputStream stream = new FileInputStream(file);
+        byte[] data = IOUtils.toByteArray(stream);
+        writeFile(filePath, data);
+        stream.close();
     }
 
     /// Write a file to the tar archive
     /// <param name="filePath"></param>
     /// <param name="data"></param>
-    public void WriteFile(String filePath, byte[] data) throws IOException
+    public void writeFile(String filePath, byte[] data) throws IOException
     {
         if (filePath.length() > 100)
-            WriteEntry("././@LongLink", filePath.getBytes(Helpers.ASCII_ENCODING), 'L');
+            writeEntry("././@LongLink", filePath.getBytes(Helpers.ASCII_ENCODING), 'L');
 
         char fileType;
 
@@ -81,12 +93,11 @@ public class TarArchiveWriter
         {
             fileType = '0';
         }
-
-        WriteEntry(filePath, data, fileType);
+        writeEntry(filePath, data, fileType);
     }
 
     /// Finish writing the raw tar archive data to a stream.  The stream will be closed on completion.
-    public void Close() throws IOException
+    public void close() throws IOException
     {
         //m_log.Debug("[TAR ARCHIVE WRITER]: Writing final consecutive 0 blocks");
 
@@ -121,9 +132,9 @@ public class TarArchiveWriter
     /// <param name="filePath"></param>
     /// <param name="data"></param>
     /// <param name="fileType"></param>
-    protected void WriteEntry(String filePath, byte[] data, char fileType) throws IOException
+    protected void writeEntry(String filePath, byte[] data, char fileType) throws IOException
     {
-        byte[] header = new byte[512];
+        byte[] header = new byte[512];        	
 
         // file path field (100)
         byte[] nameBytes = Helpers.StringToBytes(filePath, Helpers.ASCII_ENCODING);

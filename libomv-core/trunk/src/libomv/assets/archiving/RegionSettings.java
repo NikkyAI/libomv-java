@@ -29,9 +29,11 @@
  */
 package libomv.assets.archiving;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.Writer;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -77,104 +79,121 @@ public class RegionSettings
     public boolean UseEstateSun;
     public boolean FixedSun;
 
-    public static RegionSettings FromStream(InputStream stream) throws XmlPullParserException, IOException
+    public static RegionSettings fromReader(Reader reader) throws XmlPullParserException, IOException
     {
+		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+		parser.setInput(reader);
+		return fromXml(parser);
+    }
+
+    public static RegionSettings fromStream(InputStream stream, String encoding) throws XmlPullParserException, IOException
+    {
+		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+		parser.setInput(stream, encoding);
+		return fromXml(parser);
+    }
+
+    protected static RegionSettings fromXml(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
         RegionSettings settings = new RegionSettings();
         String name;
-        
-		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-		parser.setInput(stream, Helpers.UTF8_ENCODING);
-        
+
+		parser.nextTag();
 		parser.require(XmlPullParser.START_TAG, null, "RegionSettings");
-		parser.nextTag();
-
-		parser.require(XmlPullParser.START_TAG, null, "General");
 		
-		do
+		while (parser.nextTag() == XmlPullParser.START_TAG)
 		{
 			name = parser.getName();
-            if (name.equals("AllowDamage"))
-            	settings.AllowDamage = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("AllowLandResell"))
-                settings.AllowLandResell = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("AllowLandJoinDivide"))
-                    settings.AllowLandJoinDivide = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("BlockFly"))
-                    settings.BlockFly = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("BlockLandShowInSearch"))
-                    settings.BlockLandShowInSearch = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("BlockTerraform"))
-                    settings.BlockTerraform = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("DisableCollisions"))
-                    settings.DisableCollisions = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("DisablePhysics"))
-                    settings.DisablePhysics = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("DisableScripts"))
-                    settings.DisableScripts = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("MaturityRating"))
-                    settings.MaturityRating = Helpers.TryParseInt(parser.nextText().trim());
-            else if (name.equals("RestrictPushing"))
-                    settings.RestrictPushing = Helpers.TryParseBoolean(parser.nextText().trim());
-            else if (name.equals("AgentLimit"))
-                    settings.AgentLimit = Helpers.TryParseInt(parser.nextText().trim());
-            else if (name.equals("ObjectBonus"))
-                    settings.ObjectBonus = Helpers.TryParseFloat(parser.getText());
-		} while (parser.nextTag() == XmlPullParser.START_TAG);
-
-		parser.nextTag();
-		parser.require(XmlPullParser.START_TAG, null, "GroundTextures");
-		do
-		{
-			name = parser.getName();
-            if (name.equals("Texture1"))
-                settings.TerrainDetail0 = new UUID(parser);
-            else if (name.equals("Texture2"))
-                settings.TerrainDetail1 = new UUID(parser);
-            else if (name.equals("Texture3"))
-                settings.TerrainDetail2 = new UUID(parser);
-            else if (name.equals("Texture4"))
-                settings.TerrainDetail3 = new UUID(parser);
-            else if (name.equals("ElevationLowSW"))
-                settings.TerrainStartHeight00 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationLowNW"))
-                settings.TerrainStartHeight01 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationLowSE"))
-                settings.TerrainStartHeight10 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationLowNE"))
-                settings.TerrainStartHeight11 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationHighSW"))
-                settings.TerrainHeightRange00 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationHighNW"))
-                settings.TerrainHeightRange01 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationHighSE"))
-                settings.TerrainHeightRange10 = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("ElevationHighNE"))
-                settings.TerrainHeightRange11 = Helpers.TryParseFloat(parser.nextText());
+            if (name.equals("General"))
+            {
+            	while (parser.nextTag() == XmlPullParser.START_TAG)
+            	{
+            		name = parser.getName();
+            		if (name.equals("AllowDamage"))
+            			settings.AllowDamage = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("AllowLandResell"))
+                        settings.AllowLandResell = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("AllowLandJoinDivide"))
+                        settings.AllowLandJoinDivide = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("BlockFly"))
+                        settings.BlockFly = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("BlockLandShowInSearch"))
+                        settings.BlockLandShowInSearch = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("BlockTerraform"))
+                        settings.BlockTerraform = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("DisableCollisions"))
+                        settings.DisableCollisions = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("DisablePhysics"))
+                        settings.DisablePhysics = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("DisableScripts"))
+                        settings.DisableScripts = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("MaturityRating"))
+                        settings.MaturityRating = Helpers.TryParseInt(parser.nextText().trim());
+                    else if (name.equals("RestrictPushing"))
+                        settings.RestrictPushing = Helpers.TryParseBoolean(parser.nextText().trim());
+                    else if (name.equals("AgentLimit"))
+                        settings.AgentLimit = Helpers.TryParseInt(parser.nextText().trim());
+                    else if (name.equals("ObjectBonus"))
+                        settings.ObjectBonus = Helpers.TryParseFloat(parser.nextText());
+            	}
+            	// at </General>
+    		}
+            else if (name.equals("GroundTextures"))
+            {
+            	while (parser.nextTag() == XmlPullParser.START_TAG)
+            	{
+        			name = parser.getName();
+                    if (name.equals("Texture1"))
+                        settings.TerrainDetail0 = new UUID(parser);
+                    else if (name.equals("Texture2"))
+                        settings.TerrainDetail1 = new UUID(parser);
+                    else if (name.equals("Texture3"))
+                        settings.TerrainDetail2 = new UUID(parser);
+                    else if (name.equals("Texture4"))
+                        settings.TerrainDetail3 = new UUID(parser);
+                    else if (name.equals("ElevationLowSW"))
+                        settings.TerrainStartHeight00 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationLowNW"))
+                        settings.TerrainStartHeight01 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationLowSE"))
+                        settings.TerrainStartHeight10 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationLowNE"))
+                        settings.TerrainStartHeight11 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationHighSW"))
+                        settings.TerrainHeightRange00 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationHighNW"))
+                        settings.TerrainHeightRange01 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationHighSE"))
+                        settings.TerrainHeightRange10 = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("ElevationHighNE"))
+                        settings.TerrainHeightRange11 = Helpers.TryParseFloat(parser.nextText());
+                }
+              	// </GroundTextures>
+            }
+            else if (name.equals("Terrain"))
+            {
+              	while (parser.nextTag() == XmlPullParser.START_TAG)
+              	{
+        			name = parser.getName();
+                    if (name.equals("WaterHeight"))
+                        settings.WaterHeight = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("TerrainRaiseLimit"))
+                        settings.TerrainRaiseLimit = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("TerrainLowerLimit"))
+                        settings.TerrainLowerLimit = Helpers.TryParseFloat(parser.nextText());
+                    else if (name.equals("UseEstateSun"))
+                        settings.UseEstateSun = Helpers.TryParseBoolean(parser.nextText());
+                    else if (name.equals("FixedSun"))
+                        settings.FixedSun = Helpers.TryParseBoolean(parser.nextText());
+              	}
+              	// at </Terrain>
+            }
         }
-		while (parser.nextTag() == XmlPullParser.START_TAG);
-
-		parser.nextTag();
-		parser.require(XmlPullParser.START_TAG, null, "Terrain");
- 
-		do
-		{
-			name = parser.getName();
-            if (name.equals("WaterHeight"))
-                settings.WaterHeight = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("TerrainRaiseLimit"))
-                settings.TerrainRaiseLimit = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("TerrainLowerLimit"))
-                settings.TerrainLowerLimit = Helpers.TryParseFloat(parser.nextText());
-            else if (name.equals("UseEstateSun"))
-                settings.UseEstateSun = Helpers.TryParseBoolean(parser.nextText());
-            else if (name.equals("FixedSun"))
-                settings.FixedSun = Helpers.TryParseBoolean(parser.nextText());
-        }
-		while (parser.nextTag() == XmlPullParser.START_TAG);
+		// at </RegionSettings>
         return settings;
     }
 
-    public void ToXML(String filename) throws IOException, XmlPullParserException
+    public void toXML(File filename) throws IOException, XmlPullParserException
     {
         Writer fileWriter = new FileWriter(filename);
 		XmlSerializer writer = XmlPullParserFactory.newInstance().newSerializer();
@@ -184,65 +203,65 @@ public class RegionSettings
         writer.startTag(null, "RegionSettings");
 
         writer.startTag(null, "General");
-        WriteBoolean(writer, "AllowDamage", AllowDamage);
-        WriteBoolean(writer, "AllowLandResell", AllowLandResell);
-        WriteBoolean(writer, "AllowLandJoinDivide", AllowLandJoinDivide);
-        WriteBoolean(writer, "BlockFly", BlockFly);
-        WriteBoolean(writer, "BlockLandShowInSearch", BlockLandShowInSearch);
-        WriteBoolean(writer, "BlockTerraform", BlockTerraform);
-        WriteBoolean(writer, "DisableCollisions", DisableCollisions);
-        WriteBoolean(writer, "DisablePhysics", DisablePhysics);
-        WriteBoolean(writer, "DisableScripts", DisableScripts);
-        WriteInteger(writer, "MaturityRating", MaturityRating);
-        WriteBoolean(writer, "RestrictPushing", RestrictPushing);
-        WriteInteger(writer, "AgentLimit", AgentLimit);
-        WriteFloat(writer, "ObjectBonus", ObjectBonus);
+        writeBoolean(writer, "AllowDamage", AllowDamage);
+        writeBoolean(writer, "AllowLandResell", AllowLandResell);
+        writeBoolean(writer, "AllowLandJoinDivide", AllowLandJoinDivide);
+        writeBoolean(writer, "BlockFly", BlockFly);
+        writeBoolean(writer, "BlockLandShowInSearch", BlockLandShowInSearch);
+        writeBoolean(writer, "BlockTerraform", BlockTerraform);
+        writeBoolean(writer, "DisableCollisions", DisableCollisions);
+        writeBoolean(writer, "DisablePhysics", DisablePhysics);
+        writeBoolean(writer, "DisableScripts", DisableScripts);
+        writeInteger(writer, "MaturityRating", MaturityRating);
+        writeBoolean(writer, "RestrictPushing", RestrictPushing);
+        writeInteger(writer, "AgentLimit", AgentLimit);
+        writeFloat(writer, "ObjectBonus", ObjectBonus);
         writer.endTag(null, "General");
 
         writer.startTag(null, "GroundTextures");
-        WriteString(writer, "Texture1", TerrainDetail0.toString());
-        WriteString(writer, "Texture2", TerrainDetail1.toString());
-        WriteString(writer, "Texture3", TerrainDetail2.toString());
-        WriteString(writer, "Texture4", TerrainDetail3.toString());
-        WriteFloat(writer, "ElevationLowSW", TerrainStartHeight00);
-        WriteFloat(writer, "ElevationLowNW", TerrainStartHeight01);
-        WriteFloat(writer, "ElevationLowSE", TerrainStartHeight10);
-        WriteFloat(writer, "ElevationLowNE", TerrainStartHeight11);
-        WriteFloat(writer, "ElevationHighSW", TerrainHeightRange00);
-        WriteFloat(writer, "ElevationHighNW", TerrainHeightRange01);
-        WriteFloat(writer, "ElevationHighSE", TerrainHeightRange10);
-        WriteFloat(writer, "ElevationHighNE", TerrainHeightRange11);
+        writeString(writer, "Texture1", TerrainDetail0.toString());
+        writeString(writer, "Texture2", TerrainDetail1.toString());
+        writeString(writer, "Texture3", TerrainDetail2.toString());
+        writeString(writer, "Texture4", TerrainDetail3.toString());
+        writeFloat(writer, "ElevationLowSW", TerrainStartHeight00);
+        writeFloat(writer, "ElevationLowNW", TerrainStartHeight01);
+        writeFloat(writer, "ElevationLowSE", TerrainStartHeight10);
+        writeFloat(writer, "ElevationLowNE", TerrainStartHeight11);
+        writeFloat(writer, "ElevationHighSW", TerrainHeightRange00);
+        writeFloat(writer, "ElevationHighNW", TerrainHeightRange01);
+        writeFloat(writer, "ElevationHighSE", TerrainHeightRange10);
+        writeFloat(writer, "ElevationHighNE", TerrainHeightRange11);
         writer.endTag(null, "GroundTextures");
             
         writer.startTag(null, "Terrain");
-        WriteFloat(writer, "WaterHeight", WaterHeight);
-        WriteFloat(writer, "TerrainRaiseLimit", TerrainRaiseLimit);
-        WriteFloat(writer, "TerrainLowerLimit", TerrainLowerLimit);
-        WriteBoolean(writer, "UseEstateSun", UseEstateSun);
-        WriteBoolean(writer, "FixedSun", FixedSun);
+        writeFloat(writer, "WaterHeight", WaterHeight);
+        writeFloat(writer, "TerrainRaiseLimit", TerrainRaiseLimit);
+        writeFloat(writer, "TerrainLowerLimit", TerrainLowerLimit);
+        writeBoolean(writer, "UseEstateSun", UseEstateSun);
+        writeBoolean(writer, "FixedSun", FixedSun);
         writer.endTag(null, "Terrain");
 
         writer.endTag(null, "RegionSettings");
         fileWriter.close();
     }
 
-    private void WriteBoolean(XmlSerializer writer, String name, boolean value) throws IllegalArgumentException, IllegalStateException, IOException
+    private void writeBoolean(XmlSerializer writer, String tag, boolean value) throws IllegalArgumentException, IllegalStateException, IOException
     {
-        writer.startTag(null, name).text(value ? "True" : "False").endTag(null, name);
+        writer.startTag(null, tag).text(value ? "True" : "False").endTag(null, tag);
     }
     
-    private void WriteInteger(XmlSerializer writer, String name, int value) throws IllegalArgumentException, IllegalStateException, IOException
+    private void writeInteger(XmlSerializer writer, String tag, int value) throws IllegalArgumentException, IllegalStateException, IOException
     {
-        writer.startTag(null, name).text(Integer.toString(value)).endTag(null, name);
+        writer.startTag(null, tag).text(Integer.toString(value)).endTag(null, tag);
     }
 
-    private void WriteFloat(XmlSerializer writer, String name, float value) throws IllegalArgumentException, IllegalStateException, IOException
+    private void writeFloat(XmlSerializer writer, String tag, float value) throws IllegalArgumentException, IllegalStateException, IOException
     {
-        writer.startTag(null, name).text(Float.toString(value)).endTag(null, name);
+        writer.startTag(null, tag).text(Float.toString(value)).endTag(null, tag);
     }
 
-    private void WriteString(XmlSerializer writer, String name, String value) throws IllegalArgumentException, IllegalStateException, IOException
+    private void writeString(XmlSerializer writer, String tag, String value) throws IllegalArgumentException, IllegalStateException, IOException
     {
-        writer.startTag(null, name).text(value).endTag(null, name);
+        writer.startTag(null, tag).text(value).endTag(null, tag);
     }
 }
