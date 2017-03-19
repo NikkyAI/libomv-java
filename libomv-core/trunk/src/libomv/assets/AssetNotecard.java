@@ -222,18 +222,20 @@ public class AssetNotecard extends AssetItem
 			// Version
 			if (!(m = match(lines[i++], "Linden text version\\s+(\\d+)")).matches())
 				throw new Exception("could not determine version");
-			int notecardVersion = Helpers.TryParseInt(m.group(1));
-			if (notecardVersion < 1 || notecardVersion > 2)
+			int version = Helpers.TryParseInt(m.group(1));
+			if (version < 1 || version > 2)
 				throw new Exception("unsupported version");
-			if (!(m = match(lines[i++], "\\s*{$")).matches())
+			m = match(lines[i++], "^\\s*\\{\\s*$");
+			if (!m.matches())
 				throw new Exception("wrong format");
 
 			// Embedded items header
 			if (!(m = match(lines[i++], "LLEmbeddedItems version\\s+(\\d+)")).matches())
 				throw new Exception("could not determine embedded items version version");
-			if (m.group(1) != "1")
+			version = Helpers.TryParseInt(m.group(1));
+			if (version != 1)
 				throw new Exception("unsuported embedded item version");
-			if (!(m = match(lines[i++], "\\s*{$")).matches())
+			if (!(m = match(lines[i++], "^\\s*\\{\\s*$")).matches())
 				throw new Exception("wrong format");
 
 			// Item count
@@ -244,7 +246,7 @@ public class AssetNotecard extends AssetItem
 			// Decode individual items
 			for (int n = 0; n < count; n++)
 			{
-				if (!(m = match(lines[i++], "\\s*{$")).matches())
+				if (!(m = match(lines[i++], "^\\s*\\{\\s*$")).matches())
 					throw new Exception("wrong format");
 
 				// Index
@@ -418,13 +420,12 @@ public class AssetNotecard extends AssetItem
 
 				EmbeddedItems.add(finalEmbedded);
 
-				if (!(m = match(lines[i++], "\\s*}$")).matches())
+				if (!(m = match(lines[i++], "^\\s*\\}\\s*$")).matches())
 					throw new Exception("wrong format");
-
 			}
 
 			// Text size
-			if (!(m = match(lines[i++], "\\s*}$")).matches())
+			if (!(m = match(lines[i++], "^\\s*\\}\\s*$")).matches())
 				throw new Exception("wrong format");
 			if (!(m = match(lines[i++], "Text length\\s+(\\d+)")).matches())
 				throw new Exception("could not determine text length");
