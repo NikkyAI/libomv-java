@@ -369,20 +369,21 @@ public class AssetPrim extends AssetItem
 	public boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");
-
+		parser.nextTag(); // Advance to <RootPart>
 		Parent = loadPrim(parser);
 		if (Parent != null)
 		{
-			parser.nextTag();
+			parser.nextTag(); // Advance to <OtherParths>
 			parser.require(XmlPullParser.START_TAG, null, "OtherParts");
 
 			ArrayList<PrimObject> children = new ArrayList<PrimObject>();
-			do
+			while (parser.nextTag() == XmlPullParser.START_TAG)
 			{
+				parser.nextTag(); // Advance to <Part>
 				PrimObject child = loadPrim(parser);
 				if (child != null)
 					children.add(child);
-			} while (parser.next() != XmlPullParser.END_DOCUMENT);
+			}
 
 			Children = children;
 			return true;
@@ -398,13 +399,16 @@ public class AssetPrim extends AssetItem
 
 		obj.Inventory = obj.new InventoryBlock();
  
-		parser.nextTag();
+		// Enter with eventType == XmlPullParser.START_TAG 
+		if (parser.getEventType() == XmlPullParser.START_TAG && (parser.getName().equals("RootPart") || parser.getName().equals("Part")))
+			parser.nextTag();  // Advance to SceneObjectPart tag
+		 
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectPart");
 
 		obj.AllowedDrop = true;
 //		obj.PassTouches = false;
 
-		do
+		while (parser.nextTag() == XmlPullParser.START_TAG)
 		{
 			String name = parser.getName();
 			if (name.equals("AllowedDrop"))
@@ -456,7 +460,7 @@ public class AssetPrim extends AssetItem
 			}
 			else if (name.equals("PassTouches"))
 			{
-//	            obj.PassTouches = Helpers.TryParseBoolean(parser.nextText().trim());
+	            obj.PassTouches = Helpers.TryParseBoolean(parser.nextText().trim());
 			}
 			else if (name.equals("RegionHandle"))
 			{
@@ -482,11 +486,11 @@ public class AssetPrim extends AssetItem
 			{
 				obj.Velocity = new Vector3(parser);
 			}
-/*			else if (name.equals("RotationalVelocity"))
+			else if (name.equals("RotationalVelocity"))
 			{
-				Vector3 rotationalVelocity = new Vector3(parser);
+				new Vector3(parser);
 			}
-*/			else if (name.equals("AngularVelocity"))
+			else if (name.equals("AngularVelocity"))
 			{
 				obj.AngularVelocity = new Vector3(parser);
 			}
@@ -558,11 +562,11 @@ public class AssetPrim extends AssetItem
 			{
 				obj.CreationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(parser.nextText().trim()));
 			}
-/*			else if (name.equals("Category"))
+			else if (name.equals("Category"))
 			{
-				int category = Helpers.TryParseInt(parser.nextText().trim());
+				Helpers.TryParseInt(parser.nextText().trim());
 			}
-*/			else if (name.equals("SalePrice"))
+			else if (name.equals("SalePrice"))
 			{
 				obj.SalePrice = Helpers.TryParseInt(parser.nextText().trim());
 			}
@@ -570,11 +574,11 @@ public class AssetPrim extends AssetItem
 			{
 				obj.SaleType = Helpers.TryParseInt(parser.nextText().trim());
 			}
-/*			else if (name.equals("OwnershipCost"))
+			else if (name.equals("OwnershipCost"))
 			{
-				int ownershipCost = Helpers.TryParseInt(parser.nextText().trim());
+				Helpers.TryParseInt(parser.nextText().trim());
 			}
-*/			else if (name.equals("GroupID"))
+			else if (name.equals("GroupID"))
 			{
 				obj.GroupID = new UUID(parser);
 			}
@@ -618,7 +622,14 @@ public class AssetPrim extends AssetItem
 			{
 				obj.CollisionSoundVolume = Helpers.TryParseFloat(parser.nextText().trim());
 			}
-		} while (parser.nextTag() == XmlPullParser.START_TAG);
+			else
+			{
+				Logger.Log("Received unrecocognized asset primitive element " + name, Logger.LogLevel.Warning);
+				Helpers.skipElement(parser);
+			}
+		}
+		// currently at </SceneObjectPart>
+		parser.nextTag(); // Advance to </RootPart> or </Part>
 
 		if (obj.ParentID == 0)
 	 		obj.Position = groupPosition;
@@ -631,13 +642,14 @@ public class AssetPrim extends AssetItem
 	private static PrimObject.ShapeBlock loadShape(XmlPullParser parser, PrimObject obj) throws XmlPullParserException, IOException
 	{
 		obj.Shape = obj.new ShapeBlock();
-	 	PrimObject.FlexibleBlock flexible = obj.new FlexibleBlock();
-	 	PrimObject.LightBlock light = obj.new LightBlock();
+		PrimObject.LightBlock light = obj.new LightBlock();
+		light.Color = new Color4(0f, 0f, 0f, 1f);
+		PrimObject.FlexibleBlock flexible = obj.new FlexibleBlock();
+		flexible.Force = new Vector3(0.0f);
 		
-		parser.nextTag();
-		parser.require(XmlPullParser.START_TAG, null, null);
+		parser.require(XmlPullParser.START_TAG, null, "Shape");
 
-		do
+		while (parser.nextTag() == XmlPullParser.START_TAG)
 		{
 			String name = parser.getName();
 			if (name.equals("ProfileCurve"))
@@ -735,11 +747,11 @@ public class AssetPrim extends AssetItem
 			}
 			else if (name.equals("ProfileShape"))
 			{
-				obj.Shape.ProfileCurve |= ProfileCurve.valueOf(parser.nextText()).getValue();
+				obj.Shape.ProfileCurve |= ProfileCurve.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
 			}
 			else if (name.equals("HollowShape"))
 			{
-				obj.Shape.ProfileCurve |= HoleType.valueOf(parser.nextText()).getValue() << 4;
+				obj.Shape.ProfileCurve |= HoleType.setValue(Helpers.TryParseInt(parser.nextText())).getValue() << 4;
 			}
 			else if (name.equals("SculptTexture"))
 			{
@@ -753,10 +765,9 @@ public class AssetPrim extends AssetItem
 			}
 			else if (name.equals("SculptType"))
 			{
-				if (obj.Sculpt != null)
-			 		obj.Sculpt.Type = SculptType.valueOf(parser.nextText()).getValue();
-				else
-					parser.nextText();
+				if (obj.Sculpt == null)
+					obj.Sculpt = obj.new SculptBlock();	
+			 	obj.Sculpt.Type = SculptType.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
 			}
 			else if (name.equals("SculptData"))
 			{
@@ -796,35 +807,35 @@ public class AssetPrim extends AssetItem
 			}
 			else if (name.equals("LightColorR"))
 			{
-			 	light.Color.R = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Color.R = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightColorG"))
 			{
-			 	light.Color.G = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Color.G = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightColorB"))
 			{
-			 	light.Color.B = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Color.B = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightColorA"))
 			{
-			 	light.Color.A = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Color.A = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightRadius"))
 			{
-			 	light.Radius = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Radius = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightCutoff"))
 			{
-			 	light.Cutoff = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Cutoff = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightFalloff"))
 			{
-			 	light.Falloff = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Falloff = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("LightIntensity"))
 			{
-			 	light.Intensity = Helpers.TryParseFloat(parser.nextText().trim());
+				light.Intensity = Helpers.TryParseFloat(parser.nextText().trim());
 			}
 			else if (name.equals("FlexiEntry"))
 			{
@@ -845,7 +856,6 @@ public class AssetPrim extends AssetItem
 				Helpers.skipElement(parser);
 			}
 		}
-		while (parser.nextTag() == XmlPullParser.START_TAG);
 		return obj.Shape; 
 	}
 
@@ -1257,6 +1267,7 @@ public class AssetPrim extends AssetItem
 		public int State;
 		public int PCode;
 		public int Material;
+		public boolean PassTouches;
 		public UUID SoundID;
 		public float SoundGain;
 		public float SoundRadius;
@@ -1328,6 +1339,7 @@ public class AssetPrim extends AssetItem
 			map.put("state", OSD.FromInteger(State));
 			map.put("prim_code", OSD.FromInteger(PCode));
 			map.put("material", OSD.FromInteger(Material));
+			map.put("pass_touches", OSD.FromBoolean(PassTouches));
 			map.put("sound_id", OSD.FromUUID(SoundID));
 			map.put("sound_gain", OSD.FromReal(SoundGain));
 			map.put("sound_radius", OSD.FromReal(SoundRadius));
@@ -1406,6 +1418,7 @@ public class AssetPrim extends AssetItem
 			State = map.get("state").AsInteger();
 			PCode = map.get("prim_code").AsInteger();
 			Material = map.get("material").AsInteger();
+            PassTouches = map.get("pass_touches").AsBoolean();
 			SoundID = map.get("sound_id").AsUUID();
 			SoundGain = (float) map.get("sound_gain").AsReal();
 			SoundRadius = (float) map.get("sound_radius").AsReal();
