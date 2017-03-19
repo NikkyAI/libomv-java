@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2006-2015, openmetaverse.org
- * Copyright (c) 2012-2015, Frederick Martian
+ * Copyright (c) 2012-2017, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

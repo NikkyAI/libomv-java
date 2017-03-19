@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2011 aki@akjava.com
- * Copyright (c) 2012, Frederick Martian
+ * Copyright (c) 2011 aki@akjava.com
+ * Copyright (c) 2012-2017, Frederick Martian
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

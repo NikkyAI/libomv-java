@@ -1,6 +1,4 @@
-package libomv.utils;
-
-/*
+/**
  * Copyright 2002-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +18,8 @@ package libomv.utils;
  * Note: originally released under the GNU LGPL v2.1,
  * but rereleased by the original author under the ASF license (above).
  */
-//package org.apache.commons.lang;
-//package uk.co.larts.util;
+package libomv.utils;
+
 /**
  * <p>
  * A hash map that uses primitive ints for the value rather than objects.
