@@ -5245,7 +5245,7 @@ public class CapsMessage implements IMessage
 					if (sculpt != null)
 					{
 						SculptID = sculpt.get("id").AsUUID();
-						SculptType = libomv.primitives.Primitive.SculptType.setValues(sculpt.get("type").AsInteger());
+						SculptType = libomv.primitives.Primitive.SculptType.setValue(sculpt.get("type").AsInteger());
 					}
 					else
 					{
