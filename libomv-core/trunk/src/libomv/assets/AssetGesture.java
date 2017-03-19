@@ -193,19 +193,74 @@ public class AssetGesture extends AssetItem
 	}
 
 	/* Keyboard key that triggers the gesture */
-	public byte TriggerKey;
+	private byte TriggerKey;
+	
+	public byte getTriggerKey()
+	{
+		return TriggerKey;
+	}
+
+	public void setTriggerKey(byte triggerKey)
+	{
+		invalidateAssetData();
+		TriggerKey = triggerKey;
+	}
 
 	/* Modifier to the trigger key */
-	public int TriggerKeyMask;
+	private int TriggerKeyMask;
+
+	public int getTriggerKeyMask()
+	{
+		return TriggerKeyMask;
+	}
+
+	public void setTriggerKeyMask(int triggerKeyMask)
+	{
+		invalidateAssetData();
+		TriggerKeyMask = triggerKeyMask;
+	}
 
 	/* String that triggers playing of the gesture sequence */
-	public String Trigger;
+	private String Trigger;
+
+	public String getTrigger()
+	{
+		return Trigger;
+	}
+
+	public void setTrigger(String trigger)
+	{
+		invalidateAssetData();
+		Trigger = trigger;
+	}
 
 	/* Text that replaces trigger in chat once gesture is triggered */
-	public String ReplaceWith;
+	private String ReplaceWith;
+
+	public String getReplaceWith()
+	{
+		return ReplaceWith;
+	}
+
+	public void setReplaceWith(String replaceWith)
+	{
+		invalidateAssetData();
+		ReplaceWith = replaceWith;
+	}
 
 	/* Sequence of gesture steps */
-	public List<GestureStep> Sequence;
+	private List<GestureStep> Sequence;
+
+	public List<GestureStep> getSequence()
+	{
+		return Sequence;
+	}
+
+	public void setSequence(List<GestureStep> sequence)
+	{
+		invalidateAssetData();
+		Sequence = sequence;
+	}
 
 	/**
 	 * Constructs gesture asset

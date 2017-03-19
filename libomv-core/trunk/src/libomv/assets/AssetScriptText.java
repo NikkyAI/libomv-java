@@ -44,8 +44,19 @@ public class AssetScriptText extends AssetItem
 		return AssetType.LSLText;
 	}
 
-	// A string of characters represting the script contents
-	public String Source;
+	// A string of characters representing the script contents
+	private String Source;
+
+	public String getSource()
+	{
+		return Source;
+	}
+	
+	public void setParent(String source)
+	{
+		invalidateAssetData();
+		Source = source;
+	}
 
 	/**
 	 * Initializes a new AssetScriptText object with parameters

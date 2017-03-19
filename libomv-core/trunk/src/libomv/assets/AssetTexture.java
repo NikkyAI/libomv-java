@@ -51,11 +51,46 @@ public class AssetTexture extends AssetItem
 	}
 
 	// A {@link Image} object containing image data
-	public ManagedImage Image;
+	private ManagedImage Image;
 
-	public J2KLayerInfo[] LayerInfo;
+	public ManagedImage getImage()
+	{
+		return Image;
+	}
 
-	public int Components;
+	public void setImage(ManagedImage image)
+	{
+		invalidateAssetData();
+		Image = image;
+	}
+
+	private J2KLayerInfo[] LayerInfo;
+
+	public J2KLayerInfo[] getLayerInfo()
+	{
+		return LayerInfo;
+	}
+
+	public int getComponents()
+	{
+		if (Image != null)
+		{
+			int components = 0;
+
+			if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
+				components = 3;
+			else if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
+				components = 1;
+
+			if ((Image.Channels & ManagedImage.ImageChannels.Bump) != 0)
+				components++;
+			if ((Image.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+				components++;
+
+			return components;
+		}
+		return 0;
+	}
 
 	/**
 	 * Initializes a new instance of an AssetTexture object
@@ -80,22 +115,8 @@ public class AssetTexture extends AssetItem
 	{
 		super(null, null);
 		Image = image;
-		Components = 0;
-		if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
-			Components += 3;
-		else if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
-			++Components;
-		if ((Image.Channels & ManagedImage.ImageChannels.Bump) != 0)
-			++Components;
-		if ((Image.Channels & ManagedImage.ImageChannels.Alpha) != 0)
-			++Components;
 	}
 
-	public boolean updateData()
-	{
-		return decode();
-	}
-	
 	/**
 	 * Populates the {@link AssetData} byte array with a JPEG2000 encoded image
 	 * created from the data in {@link Image}
@@ -113,6 +134,15 @@ public class AssetTexture extends AssetItem
 		{
 			Logger.Log("Failed to encode JPEG2000 image", LogLevel.Error, ex);
 		}
+		finally
+		{
+			try
+			{
+				bos.close();
+			}
+			catch (IOException e)
+			{ }
+		}
 	}
 
 	/**
@@ -125,7 +155,7 @@ public class AssetTexture extends AssetItem
 	@Override
 	protected boolean decode()
 	{
-		Components = 0;
+		Image = null;
 
         if (AssetData == null)
 			return false;
@@ -134,6 +164,7 @@ public class AssetTexture extends AssetItem
 		try
 		{
 			Image = new J2KImage(is);
+			return true;
 		}
 		catch (Exception ex)
 		{
@@ -146,22 +177,7 @@ public class AssetTexture extends AssetItem
 				is.close();
 			}
 			catch (IOException e)
-			{
-			}
-		}
-
-		if (Image != null)
-		{
-			if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
-				Components += 3;
-			else if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
-				++Components;
-			if ((Image.Channels & ManagedImage.ImageChannels.Bump) != 0)
-				++Components;
-			if ((Image.Channels & ManagedImage.ImageChannels.Alpha) != 0)
-				++Components;
-
-			return true;
+			{ }
 		}
 		return false;
 	}
@@ -173,9 +189,11 @@ public class AssetTexture extends AssetItem
 	 */
 	public boolean decodeLayerBoundaries()
 	{
+		if (AssetData == null)
+			encode();
+
 		LayerInfo = J2KImage.decodeLayerBoundaries(AssetData);
-		Components = LayerInfo.length;
-		return (Components > 0);
+		return (LayerInfo.length > 0);
 	}
 
 }

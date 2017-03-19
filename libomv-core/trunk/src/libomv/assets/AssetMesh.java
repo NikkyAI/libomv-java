@@ -50,9 +50,15 @@ public class AssetMesh extends AssetItem
 
     public OSDMap getMeshData()
     {
-    	decode();
     	return MeshData;
     }
+    
+    public void setMeshData(OSDMap meshData)
+    {
+    	invalidateAssetData();
+    	MeshData = meshData;
+    }
+
     // Override the base classes AssetType
 	@Override
 	public AssetItem.AssetType getAssetType()

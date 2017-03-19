@@ -3976,9 +3976,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 				// We got it, now we play it
 				if (gesture != null)
 				{
-					for (int i = 0; i < gesture.Sequence.size(); i++)
+					List<GestureStep> sequence = gesture.getSequence();
+					for (int i = 0; i < sequence.size(); i++)
 					{
-						GestureStep step = gesture.Sequence.get(i);
+						GestureStep step = sequence.get(i);
 						try
 						{
 							switch (step.getGestureStepType())

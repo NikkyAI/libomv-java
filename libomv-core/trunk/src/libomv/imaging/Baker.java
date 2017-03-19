@@ -32,6 +32,7 @@ package libomv.imaging;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -41,7 +42,6 @@ import libomv.AppearanceManager.TextureData;
 import libomv.GridClient;
 import libomv.LibSettings;
 import libomv.VisualParams.VisualAlphaParam;
-import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.imaging.ManagedImage.ImageChannels;
 import libomv.types.Color4;
@@ -54,7 +54,7 @@ public class Baker
 {
 	// #region Properties
     // Final baked texture
-    public AssetTexture getBakedTexture() { return bakedTexture; }
+    public ManagedImage getBakedTexture() { return bakedTexture; }
     // Component layers
     public List<AppearanceManager.TextureData> getTextures()  { return textures; }
     // Width of the final baked image and scratchpad
@@ -67,7 +67,7 @@ public class Baker
 
     // #region Private fields
     // Final baked texture
-    private AssetTexture bakedTexture;
+    private ManagedImage bakedTexture;
     // Component layers
     private List<AppearanceManager.TextureData> textures = new ArrayList<AppearanceManager.TextureData>();
     // Width of the final baked image and scratchpad
@@ -125,7 +125,7 @@ public class Baker
 
     public void Bake()
     {
-        bakedTexture = new AssetTexture(new ManagedImage(bakeWidth, bakeHeight, (byte)(ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump)));
+        bakedTexture = new ManagedImage(bakeWidth, bakeHeight, (byte)(ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump));
 
         // These are for head baking, they get special treatment
         AppearanceManager.TextureData skinTexture = _client.Appearance.new TextureData();
@@ -161,16 +161,16 @@ public class Baker
             if (tex.TextureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0 &&
                 tex.TextureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0) 
             {
-                if (tex.Texture.Image.Alpha != null)
-                    alphaWearableTextures.add(tex.Texture.Image.clone());
+                if (tex.Texture.getImage().Alpha != null)
+                    alphaWearableTextures.add(tex.Texture.getImage().clone());
             }
         }
 
         if (bakeType == BakeType.Head)
         {
             DrawLayer(LoadResourceLayer("head_color.tga"), false);
-            AddAlpha(bakedTexture.Image, LoadResourceLayer("head_alpha.tga"));
-            MultiplyLayerFromAlpha(bakedTexture.Image, LoadResourceLayer("head_skingrain.tga"));
+            AddAlpha(bakedTexture, LoadResourceLayer("head_alpha.tga"));
+            MultiplyLayerFromAlpha(bakedTexture, LoadResourceLayer("head_skingrain.tga"));
         }
 
         if (skinTexture.Texture == null)
@@ -202,7 +202,7 @@ public class Baker
             	textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0)
             	continue;
 
-            ManagedImage texture = tex.Texture.Image.clone();
+            ManagedImage texture = tex.Texture.getImage().clone();
             //File.WriteAllBytes(bakeType + "-texture-layer-" + textures.get(i).TextureIndex + i + ".tga", texture.ExportTGA());
 
             // Resize texture to the size of baked layer
@@ -240,11 +240,11 @@ public class Baker
                 {
                     if (texture.Alpha != null)
                     {
-                        bakedTexture.Image.Bump = texture.Alpha;
+                        bakedTexture.Bump = texture.Alpha;
                     }
                     else
                     {
-                        for (int j = 0; j < bakedTexture.Image.Bump.length; j++) bakedTexture.Image.Bump[j] = Byte.MAX_VALUE;
+                    	Arrays.fill(bakedTexture.Bump, Byte.MAX_VALUE);
                     }
                 }
                 // Apply parameterized alpha masks
@@ -279,7 +279,6 @@ public class Baker
                         if (kvp.getKey().MultiplyBlend == true && (kvp.getValue() > 0f || !kvp.getKey().SkipIfZero))
                         {
                             ApplyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
-                            //File.WriteAllBytes(bakeType + "-layer-" + i + "-mask-" + addedMasks + ".tga", combinedMask.ExportTGA());
                             addedMasks++;
                         }
                     }
@@ -294,15 +293,13 @@ public class Baker
                     // alpha as the morth for the whole bake
                     if (tex.TextureIndex == AppearanceManager.MorphLayerForBakeType(bakeType))
                     {
-                        bakedTexture.Image.Bump = combinedMask.Alpha;
+                        bakedTexture.Bump = combinedMask.Alpha;
                     }
-                    //File.WriteAllBytes(bakeType + "-masked-texture-" + i + ".tga", texture.ExportTGA());
                 }
             }
 
             boolean useAlpha = i == 0 && (bakeType == BakeType.Skirt || bakeType == BakeType.Hair);
             DrawLayer(texture, useAlpha);
-            //File.WriteAllBytes(bakeType + "-layer-" + i + ".tga", texture.ExportTGA());
         }
 
         // For head and tattoo, we add skin last
@@ -312,7 +309,7 @@ public class Baker
 
             if (skinTexture.Texture != null)
             {
-            	texture = skinTexture.Texture.Image.clone();
+            	texture = skinTexture.Texture.getImage().clone();
             	if (texture.Width != bakeWidth || texture.Height != bakeHeight)
             	{
             		try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
@@ -326,7 +323,7 @@ public class Baker
             	// Add head tattoo here (if available, order dependent)
             	if (tex.Texture != null)
             	{
-            		texture = tex.Texture.Image.clone();
+            		texture = tex.Texture.getImage().clone();
             		if (texture.Width != bakeWidth || texture.Height != bakeHeight)
             		{
             		    try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
@@ -340,11 +337,8 @@ public class Baker
         // Apply any alpha wearable textures to make parts of the avatar disappear
         for (ManagedImage img : alphaWearableTextures)
         {
-        	AddAlpha(bakedTexture.Image, img);
+        	AddAlpha(bakedTexture, img);
         }
-
-        // We are done, make sure internal data is updated for finalized bake
-        bakedTexture.updateData();
     }
 
     public ManagedImage LoadResourceLayer(String fileName)
@@ -445,12 +439,12 @@ public class Baker
         byte alpha = Byte.MAX_VALUE;
         byte alphaInv = (byte)(Byte.MAX_VALUE - alpha);
 
-        byte[] bakedRed = bakedTexture.Image.Red;
-        byte[] bakedGreen = bakedTexture.Image.Green;
-        byte[] bakedBlue = bakedTexture.Image.Blue;
-        byte[] bakedAlpha = bakedTexture.Image.Alpha;
-        byte[] bakedBump = bakedTexture.Image.Bump;
-
+        byte[] bakedRed = bakedTexture.Red;
+        byte[] bakedGreen = bakedTexture.Green;
+        byte[] bakedBlue = bakedTexture.Blue;
+        byte[] bakedAlpha = bakedTexture.Alpha;
+        byte[] bakedBump = bakedTexture.Bump;
+        
         byte[] sourceRed = source.Red;
         byte[] sourceGreen = source.Green;
         byte[] sourceBlue = source.Blue;
@@ -488,7 +482,6 @@ public class Baker
                 ++i;
             }
         }
-
         return true;
     }
 
@@ -637,11 +630,11 @@ public class Baker
 
         int i = 0;
 
-        byte[] red = bakedTexture.Image.Red;
-        byte[] green = bakedTexture.Image.Green;
-        byte[] blue = bakedTexture.Image.Blue;
-        byte[] alpha = bakedTexture.Image.Alpha;
-        byte[] bump = bakedTexture.Image.Bump;
+        byte[] red = bakedTexture.Red;
+        byte[] green = bakedTexture.Green;
+        byte[] blue = bakedTexture.Blue;
+        byte[] alpha = bakedTexture.Alpha;
+        byte[] bump = bakedTexture.Bump;
 
         for (int y = 0; y < bakeHeight; y++)
         {

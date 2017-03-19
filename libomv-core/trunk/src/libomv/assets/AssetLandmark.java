@@ -45,7 +45,11 @@ public class AssetLandmark extends AssetItem
 	}
 
 	// UUID of the Landmark target region
-	public UUID RegionID = UUID.Zero;
+	public UUID getRegionID()
+	{
+		return AssetID;
+	}
+	
 	// Local position of the target
 	public Vector3 Position = Vector3.Zero;
 
@@ -72,10 +76,8 @@ public class AssetLandmark extends AssetItem
 	 */
 	public AssetLandmark(UUID regionID, Vector3 pos)
 	{
-		super(null, null);
-		RegionID = regionID;
+		super(regionID, null);
 		Position = pos;
-		encode();
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class AssetLandmark extends AssetItem
 	protected void encode()
 	{
 		String temp = "Landmark version 2\n";
-		temp += "region_id " + RegionID + "\n";
+		temp += "region_id " + getRegionID() + "\n";
 		temp += String.format("local_pos %f %f %f\n", Position.X, Position.Y, Position.Z);
 		AssetData = Helpers.StringToBytes(temp);
 	}
@@ -108,7 +110,7 @@ public class AssetLandmark extends AssetItem
 			String text = Helpers.BytesToString(AssetData);
 			if (text.toLowerCase().contains("landmark version 2"))
 			{
-				RegionID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
+				AssetID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
 				String[] vecStrings = text.substring(text.indexOf("local_pos") + 10).split(" ");
 				if (vecStrings.length == 3)
 				{

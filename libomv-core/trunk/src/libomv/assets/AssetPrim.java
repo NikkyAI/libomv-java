@@ -34,8 +34,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.xmlpull.v1.XmlPullParser;
@@ -72,8 +74,31 @@ import libomv.utils.Logger.LogLevel;
 // A linkset asset, containing a parent primitive and zero or more children
 public class AssetPrim extends AssetItem
 {
-	public PrimObject Parent;
-	public ArrayList<PrimObject> Children;
+	private PrimObject Parent;
+	
+	public PrimObject getParent()
+	{
+		return Parent;
+	}
+	
+	public void setParent(PrimObject parent)
+	{
+		invalidateAssetData();
+		Parent = parent;
+	}
+
+	private List<PrimObject> Children;
+
+	public List<PrimObject> getChildren()
+	{
+		return Children;
+	}
+	
+	public void setChildren(List<PrimObject> children)
+	{
+		invalidateAssetData();
+		Children = children;
+	}
 
 	// Override the base classes AssetType
 	@Override
@@ -114,7 +139,7 @@ public class AssetPrim extends AssetItem
 	}
 
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		StringWriter textWriter = new StringWriter();
 		try
@@ -144,7 +169,7 @@ public class AssetPrim extends AssetItem
 	}
 
 	@Override
-	public boolean decode()
+	protected boolean decode()
 	{
 		if (AssetData != null)
 		{
@@ -175,15 +200,38 @@ public class AssetPrim extends AssetItem
 		return false;
 	}
 
-	public boolean decodeXml(String xmlData) throws XmlPullParserException, IOException
+	private boolean decodeXml(String xmlData) throws XmlPullParserException, IOException
 	{
-		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-		parser.setInput(new StringReader(xmlData));
-		parser.nextTag();
-		return decodeXml(parser);
+		StringReader reader = new StringReader(xmlData);
+		try
+		{
+			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+			parser.setInput(reader);
+			parser.nextTag();
+			return decodeXml(parser);
+		}
+		finally
+		{
+			reader.close();
+		}
+	}
+	
+	public void writeXml(Writer writer, int indentation) throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException
+	{
+   		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
+   		
+   		if (indentation > 0)
+   		{
+   			String indent = new String(new char[indentation]).replace('\0', ' ');
+   			xmlWriter.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", indent);
+   		}
+   		xmlWriter.setOutput(writer);
+   		xmlWriter.startDocument(Helpers.UTF8_ENCODING, null);
+        encodeXml(xmlWriter);
+        xmlWriter.flush();	
 	}
 
-	public void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
+	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
 	{
         writer.startTag(null, "SceneObjectGroup");
         writePrim(writer, Parent, null);
@@ -348,27 +396,27 @@ public class AssetPrim extends AssetItem
         writer.endTag(null, "SceneObjectPart");
 	}
 
-    static void writeText(XmlSerializer writer, String name, String text) throws IllegalArgumentException, IllegalStateException, IOException
+	private static void writeText(XmlSerializer writer, String name, String text) throws IllegalArgumentException, IllegalStateException, IOException
     {
     	writer.startTag(null, name).text(text).endTag(null, name);
     }
     
-    static void writeInt(XmlSerializer writer, String name, int number) throws IllegalArgumentException, IllegalStateException, IOException
+    private static void writeInt(XmlSerializer writer, String name, int number) throws IllegalArgumentException, IllegalStateException, IOException
     {
     	writer.startTag(null, name).text(Integer.toString(number)).endTag(null, name);
     }
 
-    static void writeLong(XmlSerializer writer, String name, long number) throws IllegalArgumentException, IllegalStateException, IOException
+    private static void writeLong(XmlSerializer writer, String name, long number) throws IllegalArgumentException, IllegalStateException, IOException
     {
     	writer.startTag(null, name).text(Long.toString(number)).endTag(null, name);
     }
 
-    static void writeFloat(XmlSerializer writer, String name, float number) throws IllegalArgumentException, IllegalStateException, IOException
+    private static void writeFloat(XmlSerializer writer, String name, float number) throws IllegalArgumentException, IllegalStateException, IOException
     {
     	writer.startTag(null, name).text(Float.toString(number)).endTag(null, name);
     }
 
-	public boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
+	private boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");
 		parser.nextTag(); // Advance to <RootPart> (or sometimes just <SceneObjectPart>
@@ -398,7 +446,7 @@ public class AssetPrim extends AssetItem
 		return false;
 	}
 
-	public PrimObject loadPrim(XmlPullParser parser) throws XmlPullParserException, IOException
+	private PrimObject loadPrim(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		PrimObject obj = new PrimObject();
 		Vector3 groupPosition = null, offsetPosition = null;

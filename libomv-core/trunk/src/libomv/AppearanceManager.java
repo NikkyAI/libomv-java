@@ -1828,7 +1828,7 @@ public class AppearanceManager implements PacketCallback
         {
             try
             {
-                newAssetID = UploadBake(oven.getBakedTexture().getAssetData());
+                newAssetID = UploadBake(new AssetTexture(oven.getBakedTexture()).getAssetData());
             }
             catch (IOException e)
             {

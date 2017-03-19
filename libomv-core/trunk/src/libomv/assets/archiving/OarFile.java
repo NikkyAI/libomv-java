@@ -342,7 +342,6 @@ public class OarFile
 		}
 		catch (XmlPullParserException ex)
 		{
-			String string = Helpers.BytesToString(objectData);
 			Logger.Log("What the heck", Logger.LogLevel.Debug);
 		}
 
@@ -584,12 +583,13 @@ public class OarFile
         {
             for (AssetPrim assetPrim : prims)
             {
-                SavePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.Parent.ID + ".xml"));
+                SavePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.getParent().ID + ".xml"));
 
-                CollectTextures(assetPrim.Parent, textureList);
-                if (assetPrim.Children != null)
+                CollectTextures(assetPrim.getParent(), textureList);
+                List<PrimObject> children = assetPrim.getChildren();
+                if (children != null)
                 {
-                    for (PrimObject child : assetPrim.Children)
+                    for (PrimObject child : children)
                         CollectTextures(child, textureList);
                 }
             }
@@ -784,16 +784,10 @@ public class OarFile
 
     static void SavePrim(AssetPrim prim, File filename) throws IOException
     {
-    	Writer writer = null;
+    	Writer writer = new FileWriter(filename);
         try
         {
-            writer = new FileWriter(filename);
-       		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-       		xmlWriter.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "    ");
-       		xmlWriter.setOutput(writer);
-       		xmlWriter.startDocument(Helpers.UTF8_ENCODING, null);
-            prim.encodeXml(xmlWriter);
-            xmlWriter.flush();
+            prim.writeXml(writer, 4);
         }
         catch (Exception ex)
         {
@@ -802,8 +796,7 @@ public class OarFile
         }
         finally
         {
-            if (writer != null)
-            	writer.close();	
+           	writer.close();	
         }
     }
 

@@ -221,10 +221,20 @@ public abstract class AssetItem
 		AssetID = value;
 	}
 
+	/** retrieve the binary asset data byte stream and create it if it is not available */
 	public byte[] getAssetData()
 	{
-		encode();
+		if (AssetData == null)
+			encode();
 		return AssetData;
+	}
+	
+	/** invalidate the binary asset data byte stream. This should be called whenever
+	 *  something in a derived class is changed that would change the binary asset data 
+	 */
+	public void invalidateAssetData()
+	{
+		AssetData = null;
 	}
 
 	/** The "type" of asset, Notecard, Animation, etc */

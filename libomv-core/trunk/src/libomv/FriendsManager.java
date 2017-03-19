@@ -706,6 +706,10 @@ public class FriendsManager implements PacketCallback
 	 */
 	public final void OfferFriendship(UUID agentID, String message) throws Exception
 	{
+		if (_Client.Inventory == null)
+			throw new InventoryException(
+					"Inventory not instantiated. Need to lookup CallingCard folder in order to offer friendship.");
+
 		UUID folderID = _Client.Inventory.FindFolderForType(FolderType.CallingCard).itemID;
 		_Client.Self.InstantMessage(_Client.Self.getName(), agentID, message, folderID,
 				InstantMessageDialog.FriendshipOffered, InstantMessageOnline.Online);

@@ -59,13 +59,35 @@ public class AssetNotecard extends AssetItem
 	}
 
 	/** A text string containing main text of the notecard */
-	public String BodyText = null;
+	private String BodyText = null;
+
+	public String getBodyText()
+	{
+		return BodyText;
+	}
+	
+	public void setBodyText(String bodyText)
+	{
+		invalidateAssetData();
+		BodyText = bodyText;
+	}
 
 	/**
 	 * List of <see cref="OpenMetaverse.InventoryItem"/>s embedded on the
 	 * notecard
 	 */
-	public List<InventoryItem> EmbeddedItems = null;
+	private List<InventoryItem> EmbeddedItems = null;
+
+	public List<InventoryItem> geEmbeddedItems()
+	{
+		return EmbeddedItems;
+	}
+	
+	public void setEmbeddedItems(List<InventoryItem> embeddedItems)
+	{
+		invalidateAssetData();
+		EmbeddedItems = embeddedItems;
+	}
 
 	/**
 	 * Construct an Asset object of type Notecard
@@ -98,7 +120,7 @@ public class AssetNotecard extends AssetItem
 	 * properties
 	 */
 	@Override
-	public void encode()
+	protected void encode()
 	{
 		String body = BodyText;
 
@@ -208,7 +230,10 @@ public class AssetNotecard extends AssetItem
 		EmbeddedItems = new ArrayList<InventoryItem>();
 		BodyText = Helpers.EmptyString;
 
-		try
+        if (AssetData == null)
+			return false;
+
+        try
 		{
 			String data = Helpers.BytesToString(AssetData);
 			String[] lines = data.split("\n");
