@@ -677,7 +677,7 @@ public abstract class OSDParser
 		byte[] bytes = new byte[consumeBytes];
 		if (stream.read(bytes, 0, consumeBytes) < consumeBytes)
 		{
-			throw new ParseException("Binary LLSD parsing: Unexpected end of stream.", stream.getBytePosition());
+			throw new ParseException("Binary LLSD parsing: Unexpected end of stream.", (int)stream.getBytePosition());
 		}
 		return bytes;
 	}
