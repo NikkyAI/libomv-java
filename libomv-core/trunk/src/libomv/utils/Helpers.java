@@ -1689,22 +1689,27 @@ public class Helpers
 	
 	public static String BytesToString(byte[] bytes, int offset, int length, String encoding) throws UnsupportedEncodingException
 	{
-		if (length < 0)
+		if (bytes != null)
 		{
-			/* Search for the null terminating byte */
-			for (length = 0; bytes[offset + length] != 0; length++)
-				;
-		}
-		else if (length > 0)
-		{
-			/* Backtrack possible null terminating bytes */
-			for (; length > 0 && bytes[offset + length - 1] == 0; length--);
-		}
+			if (length < 0)
+			{
+				/* Search for the null terminating byte */
+				for (length = 0; bytes[offset + length] != 0; length++)
+					;
+			}
+			else if (length > 0)
+			{
+				/* Backtrack possible null terminating bytes */
+				for (; length > 0 && bytes[offset + length - 1] == 0; length--)
+					;
+			}
 
-		if (length == 0)
-			return EmptyString;
+			if (length == 0)
+				return EmptyString;
 
-		return new String(bytes, offset, length, encoding);
+			return new String(bytes, offset, length, encoding);
+		}
+		return null;
 	}
 
 	/**
@@ -2430,11 +2435,44 @@ public class Helpers
 	        throw new IllegalArgumentException("file name == null");
 	    }
 	    int pos = fileName.lastIndexOf(seperator) + 1;
-	    if (pos > 0 && pos < fileName.length())
+	    if (pos >= 0 && pos < fileName.length())
 	    {
 	        return fileName.substring(pos, fileName.length());
 	    }
 	    return null;
+	}
+
+	public static String skipElementDebug(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		StringBuilder sb = new StringBuilder();
+		int depth = 0;
+		int tag = parser.getEventType();
+		do
+		{
+			switch (tag)
+			{
+			    case XmlPullParser.START_TAG:
+			    	if (!parser.isEmptyElementTag())
+			    	{
+			    		sb.append("<" + parser.getName() + ">");
+				    	depth++;
+			    	}
+			    	else
+			    	{
+			    		sb.append("<" + parser.getName() + " />");			    		
+			    	}
+				    break;
+			    case XmlPullParser.TEXT:
+			    	sb.append(parser.nextText());
+			    	break;
+			    case XmlPullParser.END_TAG:
+				    sb.append("</" + parser.getName() + ">\n");
+				    depth--;
+				    break;
+			}
+			tag = parser.next();
+		} while (depth > 0);
+		return sb.toString();
 	}
 
 	/**
@@ -2445,11 +2483,16 @@ public class Helpers
 	 */
 	public static String getBaseFileName(String fileName) throws IllegalArgumentException
 	{
+		return getBaseFileName(fileName, '.');
+	}
+	
+	public static String getBaseFileName(String fileName, char separater) throws IllegalArgumentException
+	{
 	    if (fileName == null)
 	    {
 	        throw new IllegalArgumentException("file name == null");
 	    }
-	    int pos = fileName.lastIndexOf('.');
+	    int pos = fileName.lastIndexOf(separater);
 	    if (pos > 0 && pos < fileName.length() - 1)
 	    {
 	        return fileName.substring(0, pos);
