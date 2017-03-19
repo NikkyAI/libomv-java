@@ -28,6 +28,7 @@ package objects;
 import java.io.IOException;
 
 import junit.framework.TestCase;
+
 import libomv.primitives.Primitive;
 import libomv.primitives.TextureEntry;
 import libomv.primitives.TextureEntry.Bumpiness;
@@ -200,4 +201,9 @@ public class PrimObjectTests extends TestCase
             assertTrue("Byte " + i + " is not equal", teBytes[i] == teBytes2[i]);
         }
     }
-}
+ 
+    public void testPrimObject() throws IOException
+    {
+    	
+    }
+ }

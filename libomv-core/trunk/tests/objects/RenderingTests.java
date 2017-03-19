@@ -1,6 +1,7 @@
 package objects;
 
 import junit.framework.TestCase;
+
 import libomv.rendering.LindenSkeleton;
 
 public class RenderingTests extends TestCase

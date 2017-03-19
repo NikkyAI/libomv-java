@@ -25,9 +25,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
 
 import junit.framework.TestCase;
 import libomv.StructuredData.OSD;
@@ -35,6 +43,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
+import libomv.types.Color4;
 import libomv.types.Matrix4;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
@@ -62,18 +71,120 @@ public class TypeTests extends TestCase
         assertTrue("UUID comparison operator failed, " + a.toString() + " should equal " + b.toString(), a.equals(b));
 
         // From string
-        a = new UUID(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
-            0x0B, 0x0C, 0x0D, 0x0E, 0x0F }, 0);
-        String zeroonetwo = "00010203-0405-0607-0809-0a0b0c0d0e0f";
-        b = new UUID(zeroonetwo);
+        String zeroonetwo1 = "000102030405060708090a0b0c0d0e0f";
+        b = new UUID(zeroonetwo1);
+        assertTrue("UUID compact string constructor failed, should have been " + a.toString() + " but we got " + b.toString(), a.equals(b));
 
-        assertTrue("UUID hyphenated string constructor failed, should have " + a.toString() + " but we got " + b.toString(), a.equals(b));
+        String zeroonetwo2 = "00010203-0405-0607-0809-0a0b0c0d0e0f";
+        b = new UUID(zeroonetwo2);
+        assertTrue("UUID hyphenated string constructor failed, should have been " + a.toString() + " but we got " + b.toString(), a.equals(b));
+
+        String zeroonetwo3 = "{00010203-0405-0607-0809-0a0b0c0d0e0f}";
+        b = new UUID(zeroonetwo3);
+        assertTrue("UUID hyphenated curly bracket string constructor failed, should have been " + a.toString() + " but we got " + b.toString(), a.equals(b));
 
         // ToString()            
-        assertTrue(a.equals(b));                        
-        assertTrue(a.toString().equals(zeroonetwo));
+        assertTrue(a.toString().equals(zeroonetwo2));
 
-        // TODO: CRC test
+        // CRC test
+        long crc = b.CRC();
+        assertTrue("CRC calculatoin error", crc == 606084120);
+        
+        // From XML
+        String xml = "<Test>\n" +
+                     " <TextureID>00010203-0405-0607-0809-0a0b0c0d0e0f</TextureID>" +
+        		     " <AvatarID><UUID>00010203-0405-0607-0809-0a0b0c0d0e0f</UUID></AvatarID>\n" +
+                     " <AvatarID><Guid>00010203-0405-0607-0809-0a0b0c0d0e0f</Guid></AvatarID>\n" +
+          	         " <AvatarID><Guid></Guid></AvatarID>\n" +
+          	         " <AvatarID><Guid /></AvatarID>\n" +
+          	         " <AvatarID></AvatarID>\n" +
+	         		 " <AvatarID />\n" +
+          	         "</Test>";	
+       	Reader reader = new StringReader(xml);
+        try
+        {
+         	XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        	parser.setInput(reader);
+        	parser.nextTag();   // skip <Test>
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("TextureID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor without inner name failed, should have been " + a.toString() + " but we got " + b.toString(), a.equals(b));
+            
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("AvatarID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor with inner name <UUID> failed, should have been " + a.toString() + " but we got " + b.toString(), a.equals(b));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("AvatarID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor with inner name <Guid> failed, should have been " + a.toString() + " but we got " + b.toString(), a.equals(b));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("AvatarID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor with empty inner tag failed, should have been UUID.Zero, but we got " + b.toString(), UUID.isZero(b));
+        
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("AvatarID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor with short-form empty inner tag failed, should have been UUID.Zero, but we got " + b.toString(), UUID.isZero(b));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("AvatarID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor with empty outer tag failed, should have been UUID.Zero, but we got " + b.toString(), UUID.isZero(b));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("AvatarID"));
+        	b = new UUID(parser);
+            assertTrue("UUID xml constructor with short-form empty outer tag failed, should have been UUID.Zero, but we got " + b.toString(), UUID.isZero(b));
+
+            assertTrue("Should be END_TAG", parser.nextTag() == XmlPullParser.END_TAG && parser.getName().equals("Test"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+				reader.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+        
+        b = new UUID(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F }, 0);
+
+        Writer writer = new StringWriter();
+        try
+        {
+         	XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
+         	serializer.setOutput(writer);
+         	serializer.startTag(null, "Test");
+         	b.serializeXml(serializer, null, "AvatarID");
+         	serializer.endTag(null, "Test");
+         	serializer.endDocument();
+         	String text = writer.toString();
+         	assertTrue(text.equals("<Test><AvatarID><UUID>00010203-0405-0607-0809-0a0b0c0d0e0f</UUID></AvatarID></Test>"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+        		writer.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }   
     }
 
     public void testVector3ApproxEquals()
@@ -103,7 +214,7 @@ public class TypeTests extends TestCase
         assertTrue("ApproxEquals failed (7)", b.approxEquals(a, 0.0001f));
     }
 
-    public void testVectorCasting()
+    public void testVector3Casting()
     {
         HashMap<String, Double> testNumbers;
         testNumbers = new HashMap<String, Double>();
@@ -152,6 +263,117 @@ public class TypeTests extends TestCase
         }
     }
 
+    public void testVector3Xml()
+    {
+        // From XML
+    	Vector3 test, onetwothree = new Vector3(1.5f, 2.5f, 3.5f),
+    			      onezerothree = new Vector3(1.5f, 0.0f, 3.5f);
+    	
+        String xml = "<Test>\n" +
+   		             " <Offset><Trash>100</Trash><X>1.5</X><Y>2.5</Y><Z>3.5</Z></Offset>\n" +
+        		     " <Offset><X>1.5</X><Y>2.5</Y><Z>3.5</Z></Offset>\n" +
+        		     " <Offset><X>1.5</X><Y>0.0</Y><Z>3.5</Z></Offset>\n" +
+        		     " <Offset><X>1.5</X><Y></Y><Z>3.5</Z></Offset>\n" +
+        		     " <Offset><X>1.5</X><Y /><Z>3.5</Z></Offset>\n" +
+          	         " <Offset><X></X><Y></Y><Z></Z></Offset>\n" +
+          	         " <Offset><X /><Y /><Z /></Offset>\n" +
+          	         " <Offset></Offset>\n" +
+	         		 " <Offset />\n" +
+          	         "</Test>";	
+       	Reader reader = new StringReader(xml);
+        try
+        {
+         	XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        	parser.setInput(reader);
+        	parser.nextTag();   // skip <Test>
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with superfluous element failed, should have been " + onetwothree.toString() + " but we got " + test.toString(), test.approxEquals(onetwothree, 0.1f));
+            
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor failed, should have been " + onetwothree.toString() + " but we got " + test.toString(), test.approxEquals(onetwothree, 0.1f));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with inner element set to 0.0 failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.approxEquals(onezerothree, 0.1f));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with empty inner element failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.approxEquals(onezerothree, 0.1f));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with short-form empty inner element failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.approxEquals(onezerothree, 0.1f));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with empty inner tags failed, should have been Vector3.Zero, but we got " + test.toString(), test.isZero());
+        
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with short-form empty inner tags failed, should have been Vector3.Zero, but we got " + test.toString(), test.isZero());
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with empty outer tag failed, should have been Vector3.Zero, but we got " + test.toString(), test.isZero());
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Offset"));
+        	test = new Vector3(parser);
+            assertTrue("Vector3 xml constructor with short-form empty outer tag failed, should have been Vector3.Zero, but we got " + test.toString(), test.isZero());
+            
+            assertTrue("Should be END_TAG", parser.nextTag() == XmlPullParser.END_TAG && parser.getName().equals("Test"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+				reader.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+        
+        Writer writer = new StringWriter();
+        try
+        {
+         	XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
+         	serializer.setOutput(writer);
+         	serializer.startTag(null, "Test");
+         	onetwothree.serializeXml(serializer, null, "Offset");
+         	serializer.endTag(null, "Test");
+         	serializer.endDocument();
+         	String text = writer.toString();
+         	assertTrue(text.equals("<Test><Offset><X>1.5</X><Y>2.5</Y><Z>3.5</Z></Offset></Test>"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+        		writer.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+    }
+
     public void testQuaternions()
     {
         Quaternion a = new Quaternion(1, 0, 0, 0);
@@ -182,7 +404,228 @@ public class TypeTests extends TestCase
             " instead of " + expected.toString(), result.equals(expected));
     }
     
+    public void testQuaternionXml()
+    {
+        // From XML
+    	Quaternion test, onetwothree = new Quaternion(1.5f, 2.5f, 3.5f, 4.5f),
+    			         onezerothree = new Quaternion(1.5f, 0.0f, 3.5f, 4.5f);
+    	
+        String xml = "<Test>\n" +
+   		             " <Rotation><Trash>100</Trash><X>1.5</X><Y>2.5</Y><Z>3.5</Z><W>4.5</W></Rotation>\n" +
+        		     " <Rotation><X>1.5</X><Y>2.5</Y><Z>3.5</Z><W>4.5</W></Rotation>\n" +
+        		     " <Rotation><X>1.5</X><Y>0.0</Y><Z>3.5</Z><W>4.5</W></Rotation>\n" +
+        		     " <Rotation><X>1.5</X><Y></Y><Z>3.5</Z><W>4.5</W></Rotation>\n" +
+        		     " <Rotation><X>1.5</X><Y /><Z>3.5</Z><W>4.5</W></Rotation>\n" +
+          	         " <Rotation><X></X><Y></Y><Z></Z><W></W></Rotation>\n" +
+          	         " <Rotation><X /><Y /><Z /><W /></Rotation>\n" +
+          	         " <Rotation></Rotation>\n" +
+	         		 " <Rotation />\n" +
+          	         "</Test>";	
+       	Reader reader = new StringReader(xml);
+        try
+        {
+         	XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        	parser.setInput(reader);
+        	parser.nextTag();   // skip <Test>
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with superfluous element failed, should have been " + onetwothree.toString() + " but we got " + test.toString(), test.approxEquals(onetwothree, 0.1f));
+            
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor failed, should have been " + onetwothree.toString() + " but we got " + test.toString(), test.approxEquals(onetwothree, 0.1f));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with inner element set to 0.0 failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.approxEquals(onezerothree, 0.1f));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Vector3 xml constructor with empty inner element failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.approxEquals(onezerothree, 0.1f));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with short-form empty inner element failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.approxEquals(onezerothree, 0.1f));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with empty inner tags failed, should have been Quaternion.Zero, but we got " + test.toString(), test.isZero());
+        
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with short-form empty inner tags failed, should have been Quaternion.Zero, but we got " + test.toString(), test.isZero());
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with empty outer tag failed, should have been Quaternion.Zero, but we got " + test.toString(), test.isZero());
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Rotation"));
+        	test = new Quaternion(parser);
+            assertTrue("Quaternion xml constructor with short-form empty outer tag failed, should have been Quaternion.Zero, but we got " + test.toString(), test.isZero());
+
+            assertTrue("Should be END_TAG", parser.nextTag() == XmlPullParser.END_TAG && parser.getName().equals("Test"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+				reader.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+
+        Writer writer = new StringWriter();
+        try
+        {
+         	XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
+         	serializer.setOutput(writer);
+         	serializer.startTag(null, "Test");
+         	onetwothree.serializeXml(serializer, null, "Rotation");
+         	serializer.endTag(null, "Test");
+         	serializer.endDocument();
+         	String text = writer.toString();
+         	assertTrue(text.equals("<Test><Rotation><X>1.5</X><Y>2.5</Y><Z>3.5</Z><W>4.5</W></Rotation></Test>"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+        		writer.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+    }
     
+    public void testColor4Xml()
+    {
+        // From XML
+    	Color4 test, onetwothree = new Color4(0.12f, 0.23f, 0.34f, 0.45f),
+    			     onezerothree = new Color4(0.12f, 0f, 0.34f, 0.45f);
+    	
+        String xml = "<Test>\n" +
+   		             " <Color><Trash>100</Trash><R>0.12</R><G>0.23</G><B>0.34</B><A>0.45</A></Color>\n" +
+        		     " <Color><R>0.12</R><G>0.23</G><B>0.34</B><A>0.45</A></Color>\n" +
+        		     " <Color><R>0.12</R><G>0.0</G><B>0.34</B><A>0.45</A></Color>\n" +
+        		     " <Color><R>0.12</R><G></G><B>0.34</B><A>0.45</A></Color>\n" +
+        		     " <Color><R>0.12</R><G /><B>0.34</B><A>0.45</A></Color>\n" +
+          	         " <Color><R></R><G></G><B></B><A></A></Color>\n" +
+          	         " <Color><R /><G /><B /><A /></Color>\n" +
+          	         " <Color></Color>\n" +
+	         		 " <Color />\n" +
+          	         "</Test>";	
+       	Reader reader = new StringReader(xml);
+        try
+        {
+         	XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+        	parser.setInput(reader);
+        	parser.nextTag();   // skip <Test>
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with superfluous element failed, should have been " + onetwothree.toString() + " but we got " + test.toString(), test.equals(onetwothree));
+            
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor failed, should have been " + onetwothree.toString() + " but we got " + test.toString(), test.equals(onetwothree));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with inner element set to 0.0 failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.equals(onezerothree));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with empty inner element failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.equals(onezerothree));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with short-form empty inner element failed, should have been " + onezerothree.toString() + " but we got " + test.toString(), test.equals(onezerothree));
+
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with empty inner tags failed, should have been Color4.Black, but we got " + test.toString(), test.equals(Color4.Black));
+        
+            assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with short-form empty inner tags failed, should have been Color4.Black, but we got " + test.toString(), test.equals(Color4.Black));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with empty outer tag failed, should have been Color4.Black, but we got " + test.toString(), test.equals(Color4.Black));
+
+        	assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
+        	assertTrue("Unexpected tag name", parser.getName().equals("Color"));
+        	test = new Color4(parser);
+            assertTrue("Color4 xml constructor with short-form empty outer tag failed, should have been Color4.Black, but we got " + test.toString(), test.equals(Color4.Black));
+            
+            assertTrue("Should be END_TAG", parser.nextTag() == XmlPullParser.END_TAG && parser.getName().equals("Test"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+				reader.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+
+        Writer writer = new StringWriter();
+        try
+        {
+         	XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
+         	serializer.setOutput(writer);
+         	serializer.startTag(null, "Test");
+         	onetwothree.serializeXml(serializer, null, "Color");
+         	serializer.endTag(null, "Test");
+         	serializer.endDocument();
+         	String text = writer.toString();
+         	assertTrue(text.equals("<Test><Color><R>0.12</R><G>0.23</G><B>0.34</B><A>0.45</A></Color></Test>"));
+        }
+        catch (Exception ex)
+        {
+        	assertTrue("Received exception: " + ex.getMessage(), false);
+        }
+        finally
+        {
+        	try
+        	{
+        		writer.close();
+			}
+        	catch (IOException e)
+        	{ }
+        }
+    }
+
     public void testMatrix() throws Exception
     {
     	Matrix4 matrix = new Matrix4(0, 0, 74, 1,
