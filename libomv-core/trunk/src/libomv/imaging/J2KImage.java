@@ -30,6 +30,7 @@ package libomv.imaging;
 
 import icc.ICCProfileException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -383,6 +384,11 @@ public class J2KImage extends ManagedImage
 		}
 	}
 
+	private J2KImage()
+	{
+		
+	}
+	
 	/**
      * create a <seealso cref="ManagedImage"/> object from a JPEG2K stream
      *
@@ -576,8 +582,7 @@ public class J2KImage extends ManagedImage
 		}
 		
 		ImgEncoder enc = new ImgEncoder(pl);
-        J2KImage j2kimage = new J2KImage(image);
-        ImgReaderMI source = j2kimage.new ImgReaderMI(components);
+        ImgReaderMI source = new J2KImage().new ImgReaderMI(components);
         
         boolean[] imsigned = new boolean[components];
         for (int i = 0; i < components; i++)
@@ -585,6 +590,15 @@ public class J2KImage extends ManagedImage
         	imsigned[i] = source.isOrigSigned(i);
         }   
 		return enc.encode(source, imsigned, components, false, os, true, false);
+    }
+    
+    public static byte[] encode(ManagedImage image, boolean lossless) throws Exception
+    {
+    	ByteArrayOutputStream os = new ByteArrayOutputStream();
+    	int length = encode(os, image, lossless);
+    	if (length > 0)
+    		return os.toByteArray();
+    	return null;
     }
 
     private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)

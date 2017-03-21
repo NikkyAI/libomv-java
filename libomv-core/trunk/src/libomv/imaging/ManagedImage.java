@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import libomv.types.Vector3;
 
@@ -249,7 +250,7 @@ public class ManagedImage implements Cloneable
         if ((add & ImageChannels.Alpha) != 0)
         {
             Alpha = new byte[n];
-            fillArray(Alpha, (byte)255);
+            Arrays.fill(Alpha, (byte)255);
         }
         else if ((del & ImageChannels.Alpha) != 0)
             Alpha = null;
@@ -397,22 +398,13 @@ public class ManagedImage implements Cloneable
     	throw new UnsupportedCodecException(codec);
 	}
 
-	private static void fillArray(byte[] array, byte value)
-    {
-        if (array != null)
-        {
-            for (int i = 0; i < array.length; i++)
-                array[i] = value;
-        }
-    }
-
     public void clear()
     {
-        fillArray(Red, (byte)0);
-        fillArray(Green, (byte)0);
-        fillArray(Blue, (byte)0);
-        fillArray(Alpha, (byte)0);
-        fillArray(Bump, (byte)0);
+        Arrays.fill(Red, (byte)0);
+        Arrays.fill(Green, (byte)0);
+        Arrays.fill(Blue, (byte)0);
+        Arrays.fill(Alpha, (byte)0);
+        Arrays.fill(Bump, (byte)0);
     }
     
     public static ManagedImage decode(InputStream input, ImageCodec codec) throws Exception
