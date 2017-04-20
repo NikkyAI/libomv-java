@@ -1109,7 +1109,7 @@ public class StdEntropyCoder extends EntropyCoder
 		{
 			time = new long[src.getNumComps()];
 			// If we are timing make sure that 'finalize' gets called.
-			System.runFinalizersOnExit(true);
+			//System.runFinalizersOnExit(true);
 		}
 
 		// If using multithreaded implementation get necessasry objects
