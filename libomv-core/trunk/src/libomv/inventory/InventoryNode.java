@@ -39,6 +39,7 @@ import java.util.Date;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.types.UUID;
+import libomv.utils.Helpers;
 
 /**
  * Base class for {@link libomv.inventory.InventoryItem}s and {@link libomv.inventory.InventoryFolder}s
@@ -91,11 +92,36 @@ public abstract class InventoryNode implements Serializable
 		/** */
 		Animation(19),
 		/**	*/
-		Gesture(20);
+		Gesture(20),
+		/** */
+		Mesh(22);
 
-		private static final String[] _InventoryTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
-				"script", "clothing", "object", "notecard", "category", "root", "script", "", "", "", "", "snapshot",
-				"", "attach", "wearable", "animation", "gesture" };
+		private static final String[] _InventoryTypeNames = new String[]
+		{
+			"texture",
+			"sound",
+			"callcard",
+			"landmark",
+			"script",
+			"clothing",
+			"object",
+			"notecard",
+			"category",
+			"root",
+			"script",
+			Helpers.EmptyString,
+			Helpers.EmptyString,
+			Helpers.EmptyString,
+			Helpers.EmptyString,
+			"snapshot",
+			Helpers.EmptyString,
+			"attach",
+			"wearable",
+			"animation",
+			"gesture",
+			Helpers.EmptyString,
+			"mesh"
+		};
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
