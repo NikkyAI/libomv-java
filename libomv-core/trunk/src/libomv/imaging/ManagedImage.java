@@ -88,32 +88,125 @@ public class ManagedImage implements Cloneable
 	}
 
 	// Image width
-	public int Width;
+	private int width;
 
+	public int getWidth()
+	{
+		return width;
+	}
+	
 	// Image height
-	public int Height;
+	private int height;
+	
+	public int getHeight()
+	{
+		return height;
+	}
 
 	// Image channel flags
-	public byte Channels;
+	private byte channels;
+	
+	public byte getChannels()
+	{
+		return channels;
+	}
 
 	// BitDepth per channel
-	public int BitDepth;
+	private int bitDepth;
 
+	public int getBitDepth()
+	{
+		return bitDepth;
+	}
+	
 	// Red channel data
-	public byte[] Red;
+	protected byte[] red;
+
+	public byte[] getRed()
+	{
+		return red;
+	}
+	public byte getRed(int index)
+	{
+		return red[index];
+	}
+
+	public void setRed(int pixelIdx, byte val)
+	{
+		if (red != null)
+			red[pixelIdx] = val;
+	}
 
 	// Green channel data
-	public byte[] Green;
+	protected byte[] green;
+
+	public byte[] getGreen()
+	{
+		return green;
+	}
+
+	public byte getGreen(int index)
+	{
+		return green[index];
+	}
+	public void setGreen(int pixelIdx, byte val)
+	{
+		if (green != null)
+			green[pixelIdx] = val;
+	}
 
 	// Blue channel data
-	public byte[] Blue;
+	protected byte[] blue;
+
+	public byte[] getBlue()
+	{
+		return blue;
+	}
+	public byte getBlue(int index)
+	{
+		return blue[index];
+	}
+
+	public void setBlue(int pixelIdx, byte val)
+	{
+		if (blue != null)
+			blue[pixelIdx] = val;
+	}
 
 	// Alpha channel data
-	public byte[] Alpha;
+	protected byte[] alpha;
 
-	// Bump channel data
-	public byte[] Bump;
+	public byte[] getAlpha()
+	{
+		return alpha;
+	}
+	public byte getAlpha(int index)
+	{
+		return alpha[index];
+	}
+
+	public void setAlpha(int pixelIdx, byte val)
+	{
+		if (alpha != null)
+			alpha[pixelIdx] = val;
+	}
 	
+	// Bump channel data
+	protected byte[] bump;
+	
+	public byte[] getBump()
+	{
+		return bump;
+	}
+	protected void setBump(byte[] array)
+	{
+		bump = array;
+	}
+	public void setBump(int pixelIdx, byte val)
+	{
+		if (bump != null)
+			bump[pixelIdx] = val;
+	}
 
 	public ManagedImage()
 	{
@@ -123,15 +216,15 @@ public class ManagedImage implements Cloneable
 	/* Only do a shallow copy of the input image */
 	public ManagedImage(ManagedImage image)
 	{
-		Height = image.Height;
-		Width = image.Width;
-		Channels = image.Channels;
-		BitDepth = image.BitDepth;
-		Alpha = image.Alpha;
-		Bump = image.Bump;
-		Red = image.Red;
-		Green = image.Green;
-		Blue = image.Blue;
+		this.height = image.getHeight();
+		this.width = image.getWidth();
+		this.channels = image.getChannels();
+		this.bitDepth = image.getBitDepth();
+		this.alpha = image.getAlpha();
+		this.bump = image.getBump();
+		this.red = image.getRed();
+		this.green = image.getGreen();
+		this.blue = image.getBlue();
 	}
 	
 	/**
@@ -146,10 +239,10 @@ public class ManagedImage implements Cloneable
 	 */
 	public ManagedImage(int width, int height, byte channels)
 	{
-		Width = width;
-		Height = height;
-		Channels = channels;
-		initialize(this);
+		this.width = width;
+		this.height = height;
+		this.channels = channels;
+		initialize();
 	}
 
 	public ManagedImage(File file)
@@ -170,54 +263,89 @@ public class ManagedImage implements Cloneable
 		}
 	}
 
-	protected static int initialize(ManagedImage image)
+    public void clear()
+    {
+        Arrays.fill(red, (byte)0);
+        Arrays.fill(green, (byte)0);
+        Arrays.fill(blue, (byte)0);
+        Arrays.fill(alpha, (byte)0);
+        Arrays.fill(bump, (byte)0);
+    }
+
+    protected int initialize()
 	{
-		int n = image.Width * image.Height;
+		int n = width * height;
 
 
-		if ((image.Channels & ImageChannels.Gray) != 0)
+		if ((channels & ImageChannels.Gray) != 0)
 		{
-			image.Red = new byte[n];
+			red = new byte[n];
+			green = null;
+			blue = null;
 		}
-		else if ((image.Channels & ImageChannels.Color) != 0)
+		else if ((channels & ImageChannels.Color) != 0)
 		{
-			image.Red = new byte[n];
-			image.Green = new byte[n];
-			image.Blue = new byte[n];
+			red = new byte[n];
+			green = new byte[n];
+			blue = new byte[n];
 		}
 
-		if ((image.Channels & ImageChannels.Alpha) != 0)
-			image.Alpha = new byte[n];
+		if ((channels & ImageChannels.Alpha) != 0)
+			alpha = new byte[n];
+		else
+			alpha = null;
 
-		if ((image.Channels & ImageChannels.Bump) != 0)
-			image.Bump = new byte[n];
+		if ((channels & ImageChannels.Bump) != 0)
+			bump = new byte[n];
+		else
+			bump = null;
 		
 		return n;
 	}
 	
-	protected static void deepCopy(ManagedImage src, ManagedImage dst)
+	protected void deepCopy(ManagedImage src)
 	{
         // Deep copy member fields here
-        if (src.Alpha != null)
+        if (src.getAlpha() != null)
         {
-        	dst.Alpha = src.Alpha.clone();
+        	alpha = src.getAlpha().clone();
         }
-        if (src.Red != null)
+        else
         {
-        	dst.Red = src.Red.clone();
+        	alpha = null;
         }
-        if (src.Green != null)
+        if (src.getRed() != null)
         {
-        	dst.Green = src.Green.clone();
+        	red = src.getRed().clone();
         }
-        if (src.Blue != null)
+        else
         {
-        	dst.Blue = src.Blue.clone();
+        	red = null;
         }
-        if (src.Bump != null)
+        if (src.getGreen() != null)
         {
-        	dst.Bump = src.Bump.clone();
+        	green = src.getGreen().clone();
+        }
+        else
+        {
+        	green = null;
+        }
+        if (src.getBlue() != null)
+        {
+        	blue = src.getBlue().clone();
+        }
+        else
+        {
+        	blue = null;
+        }
+        if (src.getBump() != null)
+        {
+        	bump = src.getBump().clone();
         }		
+        else
+        {
+        	bump = null;
+        }
 	}
 
     /**
@@ -227,61 +355,65 @@ public class ManagedImage implements Cloneable
      */
     public void convertChannels(byte channels)
     {
-        if (Channels == channels)
+        if (this.channels == channels)
             return;
 
-        int n = Width * Height;
-        byte add = (byte)(Channels ^ channels & channels);
-        byte del = (byte)(Channels ^ channels & Channels);
+        int n = this.width * this.height;
+        byte add = (byte)(this.channels ^ channels & channels);
+        byte del = (byte)(this.channels ^ channels & this.channels);
 
         if ((add & ImageChannels.Color) != 0)
         {
-            Red = new byte[n];
-            Green = new byte[n];
-            Blue = new byte[n];
+        	red = new byte[n];
+        	green = new byte[n];
+        	blue = new byte[n];
         }
         else if ((del & ImageChannels.Color) != 0)
         {
-            Red = null;
-            Green = null;
-            Blue = null;
+        	red = null;
+        	green = null;
+        	blue = null;
         }
 
         if ((add & ImageChannels.Alpha) != 0)
         {
-            Alpha = new byte[n];
-            Arrays.fill(Alpha, (byte)255);
+        	alpha = new byte[n];
+            Arrays.fill(this.getAlpha(), (byte)255);
         }
         else if ((del & ImageChannels.Alpha) != 0)
-            Alpha = null;
+        	alpha = null;
 
         if ((add & ImageChannels.Bump) != 0)
-            Bump = new byte[n];
+        {
+        	bump = new byte[n];
+        }
         else if ((del & ImageChannels.Bump) != 0)
-            Bump = null;
+        {
+        	bump = null;
+        }
 
-        Channels = channels;
+        this.channels = channels;
     }
 
     public ArrayList<ArrayList<Vector3>> toRows(boolean mirror)
     {
  
-        ArrayList<ArrayList<Vector3>> rows = new ArrayList<ArrayList<Vector3>>(Height);
+        ArrayList<ArrayList<Vector3>> rows = new ArrayList<ArrayList<Vector3>>(height);
 
         float pixScale = 1.0f / 255;
 
         int rowNdx, colNdx;
         int smNdx = 0;
 
-        for (rowNdx = 0; rowNdx < Height; rowNdx++)
+        for (rowNdx = 0; rowNdx < height; rowNdx++)
         {
-        	ArrayList<Vector3> row = new ArrayList<Vector3>(Width);
-            for (colNdx = 0; colNdx < Width; colNdx++)
+        	ArrayList<Vector3> row = new ArrayList<Vector3>(width);
+            for (colNdx = 0; colNdx < width; colNdx++)
             {
                 if (mirror)
-                    row.add(new Vector3(-(Red[smNdx] * pixScale - 0.5f), (Green[smNdx] * pixScale - 0.5f), Blue[smNdx] * pixScale - 0.5f));
+                    row.add(new Vector3(-(red[smNdx] * pixScale - 0.5f), (green[smNdx] * pixScale - 0.5f), blue[smNdx] * pixScale - 0.5f));
                 else
-                    row.add(new Vector3(Red[smNdx] * pixScale - 0.5f, Green[smNdx] * pixScale - 0.5f, Blue[smNdx] * pixScale - 0.5f));
+                    row.add(new Vector3(red[smNdx] * pixScale - 0.5f, green[smNdx] * pixScale - 0.5f, blue[smNdx] * pixScale - 0.5f));
 
                 ++smNdx;
             }
@@ -298,7 +430,7 @@ public class ManagedImage implements Cloneable
      */
     public void resizeNearestNeighbor(int width, int height)
     {
-        if (width == Width && height == Height)
+        if (this.width == width && this.height == height)
             return;
 
         byte[]
@@ -310,50 +442,43 @@ public class ManagedImage implements Cloneable
         int n = width * height;
         int di = 0, si;
 
-        if (Red != null) red = new byte[n];
-        if (Green != null) green = new byte[n];
-        if (Blue != null) blue = new byte[n];
-        if (Alpha != null) alpha = new byte[n];
-        if (Bump != null) bump = new byte[n];
+        if (this.red != null) red = new byte[n];
+        if (this.green != null) green = new byte[n];
+        if (this.blue != null) blue = new byte[n];
+        if (this.alpha != null) alpha = new byte[n];
+        if (this.bump != null) bump = new byte[n];
         
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                si = (y * Height / height) * Width + (x * Width / width);
-                if (Red != null) red[di] = Red[si];
-                if (Green != null) green[di] = Green[si];
-                if (Blue != null) blue[di] = Blue[si];
-                if (Alpha != null) alpha[di] = Alpha[si];
-                if (Bump != null) bump[di] = Bump[si];
+                si = (y * height / height) * width + (x * width / width);
+                if (this.red != null) red[di] = this.red[si];
+                if (this.green != null) green[di] = this.green[si];
+                if (this.blue != null) blue[di] = this.blue[si];
+                if (this.alpha != null) alpha[di] = this.alpha[si];
+                if (this.bump != null) bump[di] = this.bump[si];
                 di++;
             }
         }
 
-        Width = width;
-        Height = height;
-        Red = red;
-        Green = green;
-        Blue = blue;
-        Alpha = alpha;
-        Bump = bump;
+        this.width = width;
+        this.height = height;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = alpha;
+        this.bump = bump;
     }
 
     @Override
-	public ManagedImage clone()
+	public ManagedImage clone() throws CloneNotSupportedException
 	{
     	ManagedImage clone;
-        try
-        {
-        	clone = (ManagedImage) super.clone();
-        }
-        catch (CloneNotSupportedException e)
-        {
-            throw new AssertionError();
-        }
-
+       	clone = (ManagedImage) super.clone();
+ 
         // Deep copy member fields here
-        deepCopy(this, clone);
+        deepCopy(clone);
         return clone;
 	}
 
@@ -368,7 +493,7 @@ public class ManagedImage implements Cloneable
      * @return number of bytes written into the stream or -1 on error
      * @throws Exception
      */
-	public int encode(OutputStream os) throws Exception
+	protected int encode(OutputStream os) throws Exception
 	{
 		return 0;
 	}
@@ -393,18 +518,13 @@ public class ManagedImage implements Cloneable
 		    case TGA:
 		    	return TGAImage.encode(os, this);		    	
 			default:
-				break;
+				return encode(os);
 		}
-    	throw new UnsupportedCodecException(codec);
 	}
-
-    public void clear()
+    
+    private static ManagedImage decode(InputStream input) throws Exception
     {
-        Arrays.fill(Red, (byte)0);
-        Arrays.fill(Green, (byte)0);
-        Arrays.fill(Blue, (byte)0);
-        Arrays.fill(Alpha, (byte)0);
-        Arrays.fill(Bump, (byte)0);
+    	return null;
     }
     
     public static ManagedImage decode(InputStream input, ImageCodec codec) throws Exception
@@ -412,12 +532,11 @@ public class ManagedImage implements Cloneable
     	switch (codec)
     	{
     		case J2K:
-    			return new J2KImage(input);
+    			return J2KImage.decode(input);
     		case TGA:
-    			return new TGAImage(input);
+    			return TGAImage.decode(input);
 			default:
-				break;
+				return decode(input);
     	}
-    	throw new UnsupportedCodecException(codec);
     }
 }

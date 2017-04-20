@@ -123,7 +123,7 @@ public class Baker
         }
     }
 
-    public void Bake()
+    public void Bake() throws CloneNotSupportedException
     {
         bakedTexture = new ManagedImage(bakeWidth, bakeHeight, (byte)(ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump));
 
@@ -161,7 +161,7 @@ public class Baker
             if (tex.TextureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0 &&
                 tex.TextureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0) 
             {
-                if (tex.Texture.getImage().Alpha != null)
+                if (tex.Texture.getImage().getAlpha() != null)
                     alphaWearableTextures.add(tex.Texture.getImage().clone());
             }
         }
@@ -207,7 +207,7 @@ public class Baker
 
             // Resize texture to the size of baked layer
             // FIXME: if texture is smaller than the layer, don't stretch it, tile it
-            if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            if (texture.getWidth() != bakeWidth || texture.getHeight() != bakeHeight)
             {
                 try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
                 catch (Exception ex) { continue; }
@@ -218,9 +218,10 @@ public class Baker
             // and apply hair(i == 2) pattern over the texture
             if (skinTexture.Texture == null && bakeType == BakeType.Head && textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.Hair) == 0)
             {
-                if (texture.Alpha != null)
+                if (texture.getAlpha() != null)
                 {
-                    for (int j = 0; j < texture.Alpha.length; j++) texture.Alpha[j] = (byte)255;
+                    for (int j = 0; j < texture.getAlpha().length; j++)
+                    	texture.setAlpha(j, (byte)0xFF);
                 }
                 MultiplyLayerFromAlpha(texture, LoadResourceLayer("head_hair.tga"));
             }
@@ -238,13 +239,13 @@ public class Baker
                 // alpha and morph layers
                 if (bakeType == BakeType.Hair)
                 {
-                    if (texture.Alpha != null)
+                    if (texture.getAlpha() != null)
                     {
-                        bakedTexture.Bump = texture.Alpha;
+                        bakedTexture.setBump(texture.getAlpha());
                     }
                     else
                     {
-                    	Arrays.fill(bakedTexture.Bump, Byte.MAX_VALUE);
+                    	Arrays.fill(bakedTexture.getBump(), (byte)0xFF);
                     }
                 }
                 // Apply parameterized alpha masks
@@ -269,7 +270,8 @@ public class Baker
                     }
 
                     // If there were no mask in normal blend mode make aplha fully opaque
-                    if (addedMasks == 0) for (int l = 0; l < combinedMask.Alpha.length; l++) combinedMask.Alpha[l] = (byte)255;
+                    if (addedMasks == 0) for (int l = 0; l < combinedMask.getAlpha().length; l++)
+                    	combinedMask.setAlpha(l, (byte)255);
 
                     // Add masks in multiply blend mode
                     for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet())
@@ -290,10 +292,10 @@ public class Baker
                     }
                     
                     // Is this layer used for morph mask? If it is, use its
-                    // alpha as the morth for the whole bake
+                    // alpha as the morph for the whole bake
                     if (tex.TextureIndex == AppearanceManager.MorphLayerForBakeType(bakeType))
                     {
-                        bakedTexture.Bump = combinedMask.Alpha;
+                        bakedTexture.setBump(combinedMask.getAlpha());
                     }
                 }
             }
@@ -310,7 +312,7 @@ public class Baker
             if (skinTexture.Texture != null)
             {
             	texture = skinTexture.Texture.getImage().clone();
-            	if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            	if (texture.getWidth() != bakeWidth || texture.getHeight() != bakeHeight)
             	{
             		try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
             		catch (Exception ex) { }
@@ -324,7 +326,7 @@ public class Baker
             	if (tex.Texture != null)
             	{
             		texture = tex.Texture.getImage().clone();
-            		if (texture.Width != bakeWidth || texture.Height != bakeHeight)
+            		if (texture.getWidth() != bakeWidth || texture.getHeight() != bakeHeight)
             		{
             		    try { texture.resizeNearestNeighbor(bakeWidth, bakeHeight); }
             		    catch (Exception ex) { }
@@ -345,7 +347,7 @@ public class Baker
     {
         try
         {
-            return new TGAImage(new File(charDir, fileName));
+            return new ManagedImage(new File(charDir, fileName));
         }
         catch (Exception ex)
         {
@@ -429,27 +431,27 @@ public class Baker
         boolean sourceHasBump;
         int i = 0;
 
-        sourceHasColor = ((source.Channels & ManagedImage.ImageChannels.Color) != 0 &&
-                source.Red != null && source.Green != null && source.Blue != null);
-        sourceHasAlpha = ((source.Channels & ManagedImage.ImageChannels.Alpha) != 0 && source.Alpha != null);
-        sourceHasBump = ((source.Channels & ManagedImage.ImageChannels.Bump) != 0 && source.Bump != null);
+        sourceHasColor = ((source.getChannels() & ManagedImage.ImageChannels.Color) != 0 &&
+                source.getRed() != null && source.getGreen() != null && source.getBlue() != null);
+        sourceHasAlpha = ((source.getChannels() & ManagedImage.ImageChannels.Alpha) != 0 && source.getAlpha() != null);
+        sourceHasBump = ((source.getChannels() & ManagedImage.ImageChannels.Bump) != 0 && source.getBump() != null);
 
         addSourceAlpha = (addSourceAlpha && sourceHasAlpha);
 
-        byte alpha = Byte.MAX_VALUE;
-        byte alphaInv = (byte)(Byte.MAX_VALUE - alpha);
+        byte alpha = (byte)0xFF;
+        byte alphaInv = (byte)0x00;
 
-        byte[] bakedRed = bakedTexture.Red;
-        byte[] bakedGreen = bakedTexture.Green;
-        byte[] bakedBlue = bakedTexture.Blue;
-        byte[] bakedAlpha = bakedTexture.Alpha;
-        byte[] bakedBump = bakedTexture.Bump;
+        byte[] bakedRed = bakedTexture.getRed();
+        byte[] bakedGreen = bakedTexture.getGreen();
+        byte[] bakedBlue = bakedTexture.getBlue();
+        byte[] bakedAlpha = bakedTexture.getAlpha();
+        byte[] bakedBump = bakedTexture.getBump();
         
-        byte[] sourceRed = source.Red;
-        byte[] sourceGreen = source.Green;
-        byte[] sourceBlue = source.Blue;
-        byte[] sourceAlpha = sourceHasAlpha ? source.Alpha : null;
-        byte[] sourceBump = sourceHasBump ? source.Bump : null;
+        byte[] sourceRed = source.getRed();
+        byte[] sourceGreen = source.getGreen();
+        byte[] sourceBlue = source.getBlue();
+        byte[] sourceAlpha = sourceHasAlpha ? source.getAlpha() : null;
+        byte[] sourceBump = sourceHasBump ? source.getBump() : null;
 
         for (int y = 0; y < bakeHeight; y++)
         {
@@ -458,7 +460,7 @@ public class Baker
                 if (sourceHasAlpha)
                 {
                     alpha = sourceAlpha[i];
-                    alphaInv = (byte)(Byte.MAX_VALUE - alpha);
+                    alphaInv = (byte)(0xFF - Byte.toUnsignedInt(alpha));
                 }
 
                 if (sourceHasColor)
@@ -494,17 +496,24 @@ public class Baker
      */
     private boolean SanitizeLayers(ManagedImage dest, ManagedImage src)
     {
-        if (dest == null || src == null) return false;
+        if (dest == null || src == null)
+        	return false;
 
-        if ((dest.Channels & ManagedImage.ImageChannels.Alpha) == 0)
+        if ((dest.getChannels() & ManagedImage.ImageChannels.Alpha) == 0)
         {
-            dest.convertChannels((byte)(dest.Channels | ManagedImage.ImageChannels.Alpha));
+            dest.convertChannels((byte)(dest.getChannels() | ManagedImage.ImageChannels.Alpha));
         }
 
-        if (dest.Width != src.Width || dest.Height != src.Height)
+        if (dest.getWidth() != src.getWidth() || dest.getHeight() != src.getHeight())
         {
-            try { src.resizeNearestNeighbor(dest.Width, dest.Height); }
-            catch (Exception ex) { return false; }
+            try 
+            {
+            	src.resizeNearestNeighbor(dest.getWidth(), dest.getHeight()); 
+            }
+            catch (Exception ex)
+            {
+            	return false;
+            }
         }
 
         return true;
@@ -515,32 +524,33 @@ public class Baker
     {
         ManagedImage src = LoadResourceLayer(param.TGAFile);
 
-        if (dest == null || src == null || src.Alpha == null) return;
+        if (dest == null || src == null || src.getAlpha() == null)
+        	return;
 
-        if ((dest.Channels & ManagedImage.ImageChannels.Alpha) == 0)
+        if ((dest.getChannels() & ManagedImage.ImageChannels.Alpha) == 0)
         {
-            dest.convertChannels((byte)(ManagedImage.ImageChannels.Alpha | dest.Channels));
+            dest.convertChannels((byte)(ManagedImage.ImageChannels.Alpha | dest.getChannels()));
         }
 
-        if (dest.Width != src.Width || dest.Height != src.Height)
+        if (dest.getWidth() != src.getWidth() || dest.getHeight() != src.getHeight())
         {
-            try { src.resizeNearestNeighbor(dest.Width, dest.Height); }
+            try { src.resizeNearestNeighbor(dest.getWidth(), dest.getHeight()); }
             catch (Exception ex) { return; }
         }
 
-        for (int i = 0; i < dest.Alpha.length; i++)
+        for (int i = 0; i < dest.getAlpha().length; i++)
         {
-            byte alpha = src.Alpha[i] <= ((1 - val) * 255) ? (byte)0 : (byte)255;
+            byte alpha = src.getAlpha(i) <= ((1 - val) * 255) ? (byte)0 : (byte)255;
 
             if (param.MultiplyBlend)
             {
-                dest.Alpha[i] = (byte)((dest.Alpha[i] * alpha) >> 8);
+                dest.setAlpha(i, (byte)((dest.getAlpha(i) * alpha) >> 8));
             }
             else
             {
-                if (alpha > dest.Alpha[i])
+                if (alpha > dest.getAlpha(i))
                 {
-                    dest.Alpha[i] = alpha;
+                    dest.setAlpha(i, alpha);
                 }
             }
         }
@@ -550,11 +560,11 @@ public class Baker
     {
         if (!SanitizeLayers(dest, src)) return;
 
-        for (int i = 0; i < dest.Alpha.length; i++)
+        for (int i = 0; i < dest.getAlpha().length; i++)
         {
-            if (src.Alpha[i] < dest.Alpha[i])
+            if (src.getAlpha(i) < dest.getAlpha(i))
             {
-                dest.Alpha[i] = src.Alpha[i];
+                dest.setAlpha(i, src.getAlpha(i));
             }
         }
     }
@@ -563,11 +573,11 @@ public class Baker
     {
         if (!SanitizeLayers(dest, src)) return;
 
-        for (int i = 0; i < dest.Red.length; i++)
+        for (int i = 0; i < dest.getRed().length; i++)
         {
-            dest.Red[i] = (byte)((dest.Red[i] * src.Alpha[i]) >> 8);
-            dest.Green[i] = (byte)((dest.Green[i] * src.Alpha[i]) >> 8);
-            dest.Blue[i] = (byte)((dest.Blue[i] * src.Alpha[i]) >> 8);
+            dest.setRed(i, (byte)((dest.getRed(i) * src.getAlpha(i)) >> 8));
+            dest.setGreen(i, (byte)((dest.getGreen(i) * src.getAlpha(i)) >> 8));
+            dest.setBlue(i, (byte)((dest.getBlue(i) * src.getAlpha(i)) >> 8));
         }
     }
 
@@ -575,11 +585,11 @@ public class Baker
     {
         if (dest == null) return;
 
-        for (int i = 0; i < dest.Red.length; i++)
+        for (int i = 0; i < dest.getRed().length; i++)
         {
-            dest.Red[i] = (byte)((dest.Red[i] * Helpers.FloatToByte(src.R, 0f, 1f)) >> 8);
-            dest.Green[i] = (byte)((dest.Green[i] * Helpers.FloatToByte(src.G, 0f, 1f)) >> 8);
-            dest.Blue[i] = (byte)((dest.Blue[i] * Helpers.FloatToByte(src.B, 0f, 1f)) >> 8);
+            dest.setRed(i, (byte)((dest.getRed(i) * Helpers.FloatToByte(src.R, 0f, 1f)) >> 8));
+            dest.setGreen(i, (byte)((dest.getGreen(i) * Helpers.FloatToByte(src.G, 0f, 1f)) >> 8));
+            dest.setBlue(i, (byte)((dest.getBlue(i) * Helpers.FloatToByte(src.B, 0f, 1f)) >> 8));
         }
     }
 
@@ -616,25 +626,19 @@ public class Baker
         gAlt = gByte;
         bAlt = bByte;
 
-        if (rByte < Byte.MAX_VALUE)
+        if (rByte < (byte)0xFF)
             rAlt++;
         else rAlt--;
 
-        if (gByte < Byte.MAX_VALUE)
+        if (gByte < (byte)0xFF)
             gAlt++;
         else gAlt--;
 
-        if (bByte < Byte.MAX_VALUE)
+        if (bByte < (byte)0xFF)
             bAlt++;
         else bAlt--;
 
         int i = 0;
-
-        byte[] red = bakedTexture.Red;
-        byte[] green = bakedTexture.Green;
-        byte[] blue = bakedTexture.Blue;
-        byte[] alpha = bakedTexture.Alpha;
-        byte[] bump = bakedTexture.Bump;
 
         for (int y = 0; y < bakeHeight; y++)
         {
@@ -642,19 +646,19 @@ public class Baker
             {
                 if (((x ^ y) & 0x10) == 0)
                 {
-                    red[i] = rAlt;
-                    green[i] = gByte;
-                    blue[i] = bByte;
-                    alpha[i] = Byte.MAX_VALUE;
-                    bump[i] = 0;
+                	bakedTexture.setRed(i, rAlt);
+                	bakedTexture.setGreen(i, gByte);
+                	bakedTexture.setBlue(i, bByte);
+                	bakedTexture.setAlpha(i, (byte)0xFF);
+                	bakedTexture.setBump(i, (byte)0);
                 }
                 else
                 {
-                    red[i] = rByte;
-                    green[i] = gAlt;
-                    blue[i] = bAlt;
-                    alpha[i] = Byte.MAX_VALUE;
-                    bump[i] = 0;
+                	bakedTexture.setRed(i, rByte);
+                	bakedTexture.setGreen(i, gAlt);
+                	bakedTexture.setBlue(i, bAlt);
+                	bakedTexture.setAlpha(i, (byte)0xFF);
+                	bakedTexture.setBump(i, (byte)0);
                 }
 
                 ++i;

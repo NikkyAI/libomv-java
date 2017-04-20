@@ -77,14 +77,14 @@ public class AssetTexture extends AssetItem
 		{
 			int components = 0;
 
-			if ((Image.Channels & ManagedImage.ImageChannels.Color) != 0)
+			if ((Image.getChannels() & ManagedImage.ImageChannels.Color) != 0)
 				components = 3;
-			else if ((Image.Channels & ManagedImage.ImageChannels.Gray) != 0)
+			else if ((Image.getChannels() & ManagedImage.ImageChannels.Gray) != 0)
 				components = 1;
 
-			if ((Image.Channels & ManagedImage.ImageChannels.Bump) != 0)
+			if ((Image.getChannels() & ManagedImage.ImageChannels.Bump) != 0)
 				components++;
-			if ((Image.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+			if ((Image.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
 				components++;
 
 			return components;
@@ -163,7 +163,7 @@ public class AssetTexture extends AssetItem
 		InputStream is = new ByteArrayInputStream(AssetData);
 		try
 		{
-			Image = new J2KImage(is);
+			Image = J2KImage.decode(is);
 			return true;
 		}
 		catch (Exception ex)

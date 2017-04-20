@@ -36,12 +36,13 @@ import libomv.imaging.ManagedImage.ImageChannels;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
 
-public class TGAHeader {
-	public class TGAColorMap
+public class TGAHeader
+{
+	protected class TGAColorMap
     {
-        public int FirstEntryIndex;
-        public int Length;
-        public byte EntrySize;
+        public int offset;
+        public int length;
+        public byte bits;
         int alphaBits;
         int colorBits;
         
@@ -53,39 +54,38 @@ public class TGAHeader {
         byte[] BlueM;
         byte[] AlphaM;
 
-        public TGAColorMap(ManagedImage image)
+        public TGAColorMap()
         {
-        	
         }
-        	
+
         public TGAColorMap(SwappedDataInputStream is) throws EOFException, IOException
         {
-            FirstEntryIndex = is.readUnsignedShort();
-            Length = is.readUnsignedShort();
-            EntrySize = is.readByte();
+            offset = is.readUnsignedShort();
+            length = is.readUnsignedShort();
+            bits = is.readByte();
         }
         
         public void writeHeader(OutputStream os) throws IOException
         {
-        	os.write(FirstEntryIndex & 0xFF);
-        	os.write((FirstEntryIndex >> 8) & 0xFF);
-        	os.write(Length & 0xFF);
-        	os.write((Length >> 8) & 0xFF);
-        	os.write(EntrySize);
+        	os.write((byte)(offset & 0xFF));
+        	os.write((byte)((offset >> 8) & 0xFF));
+        	os.write((byte)(length & 0xFF));
+        	os.write((byte)((length >> 8) & 0xFF));
+        	os.write((byte)bits);
         }
         
         public void readMap(SwappedDataInputStream is, boolean gray) throws IOException
         {
-        	if (EntrySize == 8 || EntrySize == 32)
+        	if (bits == 8 || bits == 32)
         	{
         		alphaBits = 8;
         	}
-        	else if (EntrySize == 16)
+        	else if (bits == 16)
         	{
         		alphaBits = 1;
         	}
 
-    		colorBits = EntrySize - alphaBits;
+    		colorBits = bits - alphaBits;
         	if (!gray)
         	{
         		colorBits /= 3;
@@ -96,9 +96,9 @@ public class TGAHeader {
                 RShift = GShift + colorBits;
 
                 if (GMask > 0)
-                	GreenM = new byte[Length];
+                	GreenM = new byte[length];
                 if (BMask > 0)
-                	BlueM = new byte[Length];
+                	BlueM = new byte[length];
         	}
 
             RMask = ((2 ^ colorBits) - 1);
@@ -106,17 +106,17 @@ public class TGAHeader {
             AMask = ((2 ^ alphaBits) - 1);
 
             if (RMask > 0)
-            	RedM = new byte[Length];
+            	RedM = new byte[length];
             if (AMask > 0)
-            	AlphaM = new byte[Length];
+            	AlphaM = new byte[length];
         	
         	
-        	for (int i = 0; i < Length; i++)
+        	for (int i = 0; i < length; i++)
         	{
                 long x = 0;
-                for (int k = 0; k < EntrySize; ++k)
+                for (int k = 0; k < bits; k += 8)
                 {
-                    x |= is.readUnsignedByte() << (k << 3);
+                    x |= is.readUnsignedByte() << k;
                 }
 
         		if (RedM != null)
@@ -138,9 +138,9 @@ public class TGAHeader {
             	alphaBits = 8;
             }
 
-            Length = 0;
-            EntrySize = spec.PixelDepth;
-    		colorBits = EntrySize - alphaBits;
+            length = 0;
+            bits = spec.PixelDepth;
+    		colorBits = bits - alphaBits;
         	if (!gray)
         	{
         		colorBits /= 3;
@@ -156,7 +156,7 @@ public class TGAHeader {
         }
     }
 
-	public class TGAImageSpec
+	protected class TGAImageSpec
     {
         public int XOrigin;
         public int YOrigin;
@@ -167,20 +167,20 @@ public class TGAHeader {
 
     	public TGAImageSpec(ManagedImage image)
         {
-    		Width = image.Width;
-    		Height = image.Height;
+    		Width = image.getWidth();
+    		Height = image.getHeight();
     		
-    		if (image.Channels == ImageChannels.Gray)
+    		if (image.getChannels() == ImageChannels.Gray)
     		{
         		PixelDepth = 8;
     		}
-    		else if (image.Channels == ImageChannels.Color)
+    		else if (image.getChannels() == ImageChannels.Color)
     		{
         		PixelDepth = 24;
     		}
-    		if (image.Channels == ImageChannels.Alpha)
+    		if (image.getChannels() == ImageChannels.Alpha)
     		{
-        		Descriptor = PixelDepth > 0 ? (byte)8 : (byte)0; 
+        		Descriptor = PixelDepth > 0 ? (byte)0x28 : (byte)0x20; 
         		PixelDepth += 8;
     		}
         }
@@ -195,16 +195,16 @@ public class TGAHeader {
             Descriptor = is.readByte();
         }
 
-        public void writeHeader(OutputStream os) throws IOException
+        public void write(OutputStream os) throws IOException
         {
-        	os.write(XOrigin & 0xFF);
-        	os.write((XOrigin >> 8) & 0xFF);
-        	os.write(YOrigin & 0xFF);
-        	os.write((YOrigin >> 8) & 0xFF);
-        	os.write(Width & 0xFF);
-        	os.write((Width >> 8) & 0xFF);
-        	os.write(Height & 0xFF);
-        	os.write((Height >> 8) & 0xFF);
+        	os.write((byte)(XOrigin & 0xFF));
+        	os.write((byte)((XOrigin >> 8) & 0xFF));
+        	os.write((byte)(YOrigin & 0xFF));
+        	os.write((byte)((YOrigin >> 8) & 0xFF));
+        	os.write((byte)(Width & 0xFF));
+        	os.write((byte)((Width >> 8) & 0xFF));
+        	os.write((byte)(Height & 0xFF));
+        	os.write((byte)((Height >> 8) & 0xFF));
         	os.write(PixelDepth);
         	os.write(Descriptor);
         }
@@ -226,7 +226,7 @@ public class TGAHeader {
         
         public void setBottomUp(boolean value)
         {
-            Descriptor = (byte)((Descriptor & ~0x20) | (value ? 0x20 : 0));
+            Descriptor = (byte)((Descriptor & ~0x20) | (value ? 0x0 : 0x20));
         }
     }
 
@@ -239,7 +239,7 @@ public class TGAHeader {
 
     public TGAHeader(ManagedImage image)
     {
-        ColorMap = new TGAColorMap(image);
+        ColorMap = new TGAColorMap();
         ImageSpec = new TGAImageSpec(image);      	
     }
     
@@ -256,10 +256,10 @@ public class TGAHeader {
 
 		if (ColorMapType != 0)
         {
-        	if (ColorMap.EntrySize != 8 &&
-        		ColorMap.EntrySize != 16 &&
-        		ColorMap.EntrySize != 24 &&
-        		ColorMap.EntrySize != 24)
+        	if (ColorMap.bits != 8 &&
+        		ColorMap.bits != 16 &&
+        		ColorMap.bits != 24 &&
+        		ColorMap.bits != 24)
                 throw new IllegalArgumentException("Not a supported tga file.");        		
 
         	ColorMap.readMap(is, ImageType % 8 == 3);
@@ -270,13 +270,13 @@ public class TGAHeader {
         }
     }
 
-    public void writeHeader(OutputStream os) throws IOException
+    public void write(OutputStream os) throws IOException
     {
     	os.write(IdLength);
     	os.write(ColorMapType);
     	os.write(ImageType);
     	ColorMap.writeHeader(os);
-    	ImageSpec.writeHeader(os);
+    	ImageSpec.write(os);
     }
 
     public boolean getRleEncoded()

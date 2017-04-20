@@ -74,8 +74,8 @@ public class J2KImage extends ManagedImage
 
 		public ImgReaderMI(int numComp)
 		{
-			w = Width;
-			h = Height;
+			w = getWidth();
+			h = getHeight();
 			nc = numComp;
 			ptrs = new byte[nc][];
 			for (int i = 0; i < nc; i++)
@@ -83,22 +83,22 @@ public class J2KImage extends ManagedImage
 				switch (i)
 				{
 					case 0:
-						ptrs[i] = Red;
+						ptrs[i] = getRed();
 						break;
 					case 1:
 						if (nc > 2)
-							ptrs[i] = Green;
+							ptrs[i] = getGreen();
 						else
-							ptrs[i] = Alpha;
+							ptrs[i] = getAlpha();
 						break;
 					case 2:
-						ptrs[i] = Blue;
+						ptrs[i] = getBlue();
 						break;
 					case 3:
-						ptrs[i] = Alpha;
+						ptrs[i] = getAlpha();
 						break;
 					case 5:
-						ptrs[i] = Bump;
+						ptrs[i] = getBump();
 						break;
 	                default:
 	                	throw new InvalidParameterException();
@@ -153,7 +153,7 @@ public class J2KImage extends ManagedImage
 			if (c < 0 || c >= nc)
 				throw new IllegalArgumentException();
 
-			return BitDepth;
+			return getBitDepth();
 		}
 
 
@@ -241,7 +241,7 @@ public class J2KImage extends ManagedImage
 			}
 			
 			int i, j, k, mi = blk.uly + blk.h;
-			int levShift = 1 << (BitDepth - 1);
+			int levShift = 1 << (getBitDepth() - 1);
 			byte buf[] = ptrs[c];
 
 			for (i = blk.uly; i < mi; i++)
@@ -389,125 +389,9 @@ public class J2KImage extends ManagedImage
 		
 	}
 	
-	/**
-     * create a <seealso cref="ManagedImage"/> object from a JPEG2K stream
-     *
-     * @param is The input stream
-     */
-	public J2KImage(InputStream is) throws IllegalArgumentException, IOException, ICCProfileException
+	public J2KImage(int width, int height, byte channels)
 	{
-		BlkImgDataSrc dataSrc = decodeInternal(is);
-		
-		int ncomps = dataSrc.getNumComps();
-
-		// Check component sizes and bit depths
-		Height = dataSrc.getCompImgHeight(0);
-		Width = dataSrc.getCompImgWidth(0);
-		for (int i = dataSrc.getNumComps() - 1; i >= 0; i--)
-		{
-			if (dataSrc.getCompImgHeight(i) != Height || dataSrc.getCompImgWidth(i) != Width)
-			{
-				throw new IllegalArgumentException("All components must have the same dimensions and no subsampling");
-			}
-			if (dataSrc.getNomRangeBits(i) > 8)
-			{
-				throw new IllegalArgumentException("Depths greater than 8 bits per component is not supported");
-			}
-		}
-				
-		PixelScale[] scale = new PixelScale[ncomps];
-		
-		for (int i = 0; i < ncomps; i++)
-		{
-			scale[i] = new PixelScale();
-			scale[i].ls = 1 << (dataSrc.getNomRangeBits(i) - 1);
-			scale[i].mv = (1 << dataSrc.getNomRangeBits(i)) - 1;
-			scale[i].fb = dataSrc.getFixedPoint(i);
-		}
-		
-		switch (ncomps)
-		{
-			case 5:
-				Channels = ManagedImage.ImageChannels.Bump;
-			case 4:
-				Channels |= ManagedImage.ImageChannels.Alpha;
-			case 3:
-				Channels |= ManagedImage.ImageChannels.Color;
-				break;
-			case 2:
-				Channels = ManagedImage.ImageChannels.Alpha;
-			case 1:
-				Channels |= ManagedImage.ImageChannels.Gray;
-				break;
-			default:
-				throw new IllegalArgumentException("Decoded image with unhandled number of components: " + ncomps);
-		}		
-
-		initialize(this);
-		
-		int height; // tile height
-		int width; // tile width
-		int tOffx, tOffy; // Active tile offset
-		int tIdx = 0; // index of the current tile
-		int off, l, x, y;
-		Coord nT = dataSrc.getNumTiles(null);
-		DataBlkInt block = new DataBlkInt();
-		block.ulx = 0;
-		block.h = 1;
-	
-		// Start the data delivery to the cached consumers tile by tile
-		for (y = 0; y < nT.y; y++)
-		{
-			// Loop on horizontal tiles
-			for (x = 0; x < nT.x; x++, tIdx++)
-			{
-				dataSrc.setTile(x, y);
-
-				// Initialize tile
-				height = dataSrc.getTileCompHeight(tIdx, 0);
-				width = dataSrc.getTileCompWidth(tIdx, 0);
-
-				// The offset of the active tiles is the same for all components,
-				// since we don't support different component dimensions.
-				tOffx = dataSrc.getCompULX(0) - (int) Math.ceil(dataSrc.getImgULX() / (double) dataSrc.getCompSubsX(0));
-				tOffy = dataSrc.getCompULY(0) - (int) Math.ceil(dataSrc.getImgULY() / (double) dataSrc.getCompSubsY(0));
-				off = tOffy * Width + tOffx;
-
-				// Deliver in lines to reduce memory usage
-				for (l = 0; l < height; l++)
-				{
-					block.uly = l;
-					block.w = width;
-
-					switch (ncomps)
-					{
-						case 5:
-							dataSrc.getInternCompData(block, 4);
-							fillLine(block, scale[4], Bump, off);
-						case 4:
-							dataSrc.getInternCompData(block, 3);
-							fillLine(block, scale[3], Alpha, off);
-						case 3:
-							dataSrc.getInternCompData(block, 2);
-							fillLine(block, scale[2], Blue, off);
-							dataSrc.getInternCompData(block, 1);
-							fillLine(block, scale[1], Green, off);
-							dataSrc.getInternCompData(block, 0);
-							fillLine(block, scale[0], Red, off);
-							break;
-						case 2:
-							dataSrc.getInternCompData(block, 1);
-							fillLine(block, scale[1], Alpha, off);
-						case 1:
-							dataSrc.getInternCompData(block, 0);
-							fillLine(block, scale[0], Red, off);
-							break;
-		                default:
-		                	throw new InvalidParameterException();
-					}
-				}
-			}
-		}
+		super(width, height, channels);
 	}
 	
 	/* Only do a shallow copy of the input image */
@@ -550,16 +434,18 @@ public class J2KImage extends ManagedImage
      */
     public static int encode(OutputStream os, ManagedImage image, boolean lossless) throws Exception
     {
-        if (((image.Channels & ManagedImage.ImageChannels.Gray) != 0) && ((image.Channels & ManagedImage.ImageChannels.Color) != 0) ||
-        	((image.Channels & ManagedImage.ImageChannels.Bump) != 0) && ((image.Channels & ManagedImage.ImageChannels.Alpha) == 0))
+        if (((image.getChannels() & ManagedImage.ImageChannels.Gray) != 0) && ((image.getChannels() & ManagedImage.ImageChannels.Color) != 0) ||
+        	((image.getChannels() & ManagedImage.ImageChannels.Bump) != 0) && ((image.getChannels() & ManagedImage.ImageChannels.Alpha) == 0))
             throw new IllegalArgumentException("JPEG2000 encoding is not supported for this channel combination");
 
-        int components = 1;
-        if ((image.Channels & ManagedImage.ImageChannels.Color) != 0)
+        int components = 0;
+        if ((image.getChannels() & ManagedImage.ImageChannels.Gray) != 0)
+        	components = 1;
+        else if ((image.getChannels() & ManagedImage.ImageChannels.Color) != 0)
         	components = 3;
-        if ((image.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+        if ((image.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
         	components++;
-        if ((image.Channels & ManagedImage.ImageChannels.Bump) != 0)
+        if ((image.getChannels() & ManagedImage.ImageChannels.Bump) != 0)
         	components++;
 
         // Initialize default parameters
@@ -601,7 +487,123 @@ public class J2KImage extends ManagedImage
     	return null;
     }
 
-    private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)
+	public static J2KImage decode(InputStream is) throws IllegalArgumentException, IOException, ICCProfileException
+	{
+		BlkImgDataSrc dataSrc = decodeInternal(is);
+		
+		int ncomps = dataSrc.getNumComps();
+
+		// Check component sizes and bit depths
+		int height = dataSrc.getCompImgHeight(0);
+		int width = dataSrc.getCompImgWidth(0);
+		for (int i = dataSrc.getNumComps() - 1; i > 0; i--)
+		{
+			if (dataSrc.getCompImgHeight(i) != height || dataSrc.getCompImgWidth(i) != width)
+			{
+				throw new IllegalArgumentException("All components must have the same dimensions and no subsampling");
+			}
+			if (dataSrc.getNomRangeBits(i) > 8)
+			{
+				throw new IllegalArgumentException("Depths greater than 8 bits per component is not supported");
+			}
+		}
+				
+		byte channels = 0;
+		switch (ncomps)
+		{
+			case 5:
+				channels = ManagedImage.ImageChannels.Bump;
+			case 4:
+				channels |= ManagedImage.ImageChannels.Alpha;
+			case 3:
+				channels |= ManagedImage.ImageChannels.Color;
+				break;
+			case 2:
+				channels = ManagedImage.ImageChannels.Alpha;
+			case 1:
+				channels |= ManagedImage.ImageChannels.Gray;
+				break;
+			default:
+				throw new IllegalArgumentException("Decoded image with unhandled number of components: " + ncomps);
+		}		
+
+		J2KImage image = new J2KImage(height, width, channels);
+		
+		int tOffx, tOffy; // Active tile offset
+		int tIdx = 0; // index of the current tile
+		int off, l, x, y;
+		Coord nT = dataSrc.getNumTiles(null);
+		DataBlkInt block = new DataBlkInt();
+		block.ulx = 0;
+		block.h = 1;
+	
+		PixelScale[] scale = new PixelScale[ncomps];
+		
+		for (int i = 0; i < ncomps; i++)
+		{
+			scale[i] = image.new PixelScale();
+			scale[i].ls = 1 << (dataSrc.getNomRangeBits(i) - 1);
+			scale[i].mv = (1 << dataSrc.getNomRangeBits(i)) - 1;
+			scale[i].fb = dataSrc.getFixedPoint(i);
+		}
+		
+		// Start the data delivery to the cached consumers tile by tile
+		for (y = 0; y < nT.y; y++)
+		{
+			// Loop on horizontal tiles
+			for (x = 0; x < nT.x; x++, tIdx++)
+			{
+				dataSrc.setTile(x, y);
+
+				// Initialize tile
+				height = dataSrc.getTileCompHeight(tIdx, 0);
+				width = dataSrc.getTileCompWidth(tIdx, 0);
+
+				// The offset of the active tiles is the same for all components,
+				// since we don't support different component dimensions.
+				tOffx = dataSrc.getCompULX(0) - (int) Math.ceil(dataSrc.getImgULX() / (double) dataSrc.getCompSubsX(0));
+				tOffy = dataSrc.getCompULY(0) - (int) Math.ceil(dataSrc.getImgULY() / (double) dataSrc.getCompSubsY(0));
+				off = tOffy * image.getWidth() + tOffx;
+
+				// Deliver in lines to reduce memory usage
+				for (l = 0; l < height; l++)
+				{
+					block.uly = l;
+					block.w = width;
+
+					switch (ncomps)
+					{
+						case 5:
+							dataSrc.getInternCompData(block, 4);
+							fillLine(block, scale[4], image.getBump(), off);
+						case 4:
+							dataSrc.getInternCompData(block, 3);
+							fillLine(block, scale[3], image.getAlpha(), off);
+						case 3:
+							dataSrc.getInternCompData(block, 2);
+							fillLine(block, scale[2], image.getBlue(), off);
+							dataSrc.getInternCompData(block, 1);
+							fillLine(block, scale[1], image.getGreen(), off);
+							dataSrc.getInternCompData(block, 0);
+							fillLine(block, scale[0], image.getRed(), off);
+							break;
+						case 2:
+							dataSrc.getInternCompData(block, 1);
+							fillLine(block, scale[1], image.getAlpha(), off);
+						case 1:
+							dataSrc.getInternCompData(block, 0);
+							fillLine(block, scale[0], image.getRed(), off);
+							break;
+		                default:
+		                	throw new InvalidParameterException();
+					}
+				}
+			}
+		}
+		return image;
+	}
+
+	private static void fillLine(DataBlkInt blk, PixelScale scale, byte[] data, int off)
 	{
 		int k1 = blk.offset + blk.w - 1;
 		for (int i = blk.w - 1; i >= 0; i--)

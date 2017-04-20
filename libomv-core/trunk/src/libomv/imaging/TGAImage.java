@@ -28,10 +28,8 @@
  */
  package libomv.imaging;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import libomv.imaging.TGAHeader.TGAColorMap;
@@ -45,64 +43,34 @@ public class TGAImage extends ManagedImage
     	super(image);
 	}
     
-    public TGAImage(File file) throws Exception
+    protected TGAImage(int width, int height, byte type) throws Exception
 	{
-		SwappedDataInputStream bis = new SwappedDataInputStream(new FileInputStream(file));
-		try
-		{
-			decode(bis);	
-		}
-		finally
-		{
-			bis.close();
-		}
+    	super(width, height, type);
 	}
 		
-    public TGAImage(InputStream is) throws Exception
-	{
-    	SwappedDataInputStream bis = is instanceof SwappedDataInputStream ? (SwappedDataInputStream)is : new SwappedDataInputStream(is);
-    	try
-    	{
-    		decode(bis);
-    	}
-    	finally
-    	{
-    		if (!bis.equals(is))
-    			bis.close();
-    	}
-	}
-	
     private void UnpackColor(int[] values, int pixel, TGAColorMap cd)
     {
-    	for (int x = 0; x < Width; x++, pixel++)
+    	for (int x = 0; x < getWidth(); x++, pixel++)
     	{
     		int val = values[x];
     		if (cd.RMask == 0 && cd.GMask == 0 && cd.BMask == 0 && cd.AMask == 0xFF)
     		{
     			// Special case to deal with 8-bit TGA files that we treat as alpha masks
-    			Alpha[pixel] = (byte)val;
+          		setAlpha(pixel, (byte)val);  
     		}
-    		else if (cd.Length > x)
+    		else if (cd.length > 0)
     		{ 	
-            	if (Red != null)
-            		Red[pixel] = cd.RedM[val];  
-            	if (Green != null)
-            		Green[pixel] = cd.GreenM[val];  
-            	if (Blue != null)
-            		Blue[pixel] = cd.BlueM[val];  
-            	if (Alpha != null)
-            		Alpha[pixel] = cd.AlphaM[val];          	
+           		setRed(pixel, cd.RedM[val]);  
+           		setGreen(pixel, cd.GreenM[val]);  
+           		setBlue(pixel, cd.BlueM[val]);  
+           		setAlpha(pixel, cd.AlphaM[val]);  
             }
             else
             {
-            	if (Red != null)
-            		Red[pixel] = (byte)((val >> cd.RShift) & cd.RMask);
-            	if (Green != null)
-            		Green[pixel] = (byte)((val >> cd.GShift) & cd.GMask);
-            	if (Blue != null)
-            		Blue[pixel] = (byte)((val >> cd.BShift) & cd.BMask);
-            	if (Alpha != null)
-            		Alpha[pixel] = (byte)((val >> cd.AShift) & cd.AMask);
+            	setRed(pixel, (byte)((val >> cd.RShift) & cd.RMask));
+            	setGreen(pixel, (byte)((val >> cd.GShift) & cd.GMask));
+            	setBlue(pixel, (byte)((val >> cd.BShift) & cd.BMask));
+            	setAlpha(pixel, (byte)((val >> cd.AShift) & cd.AMask));
             }
     	}
     }
@@ -118,17 +86,17 @@ public class TGAImage extends ManagedImage
      */
     private void decodeRle(SwappedDataInputStream is, int byp, TGAColorMap cd, boolean bottomUp) throws IOException
     {
-    	int vals[] = new int[Width + 128];
-		int x = 0, pixel = bottomUp ? (Height - 1) * Width : 0;
+    	int vals[] = new int[getWidth() + 128];
+		int x = 0, pixel = bottomUp ? (getHeight() - 1) * getWidth() : 0;
     	
 		// RLE compressed
-		for (int y = 0; y < Height; y++)
+		for (int y = 0; y < getHeight(); y++)
 		{			
-            while (x < Width)
+            while (x < getWidth())
             {
             	int nb = is.readUnsignedByte(); // num of pixels
             	if ((nb & 0x80) == 0)
-            	{ // 0x80=dec 128, bits 10000000
+            	{ // 0x80 = dec 128, bits 10000000
     				for (int i = 0; i <= nb; i++, x++)
     				{
                         for (int k = 0; k < byp; k++)
@@ -152,16 +120,16 @@ public class TGAImage extends ManagedImage
     			}
             }
             UnpackColor(vals, pixel, cd);        
-            if (x > Width)
+            if (x > getWidth())
             {
-                System.arraycopy(vals, Width, vals, 0, x - Width);
-                x -= Width;
+                System.arraycopy(vals, getWidth(), vals, 0, x - getWidth());
+                x -= getWidth();
             }
             else
             {
                 x = 0;
             }
-            pixel += bottomUp ? -Width : Width; 
+            pixel += bottomUp ? -getWidth() : getWidth(); 
 		}
     }
     
@@ -176,11 +144,11 @@ public class TGAImage extends ManagedImage
      */
     private void decodePlain(SwappedDataInputStream is, int byp, TGAColorMap cd, boolean bottomUp) throws IOException
     {
-    	int vals[] = new int[Width];
-		int pixel = bottomUp ? (Height - 1) * Width : 0;
-		for (int y = 0; y < Height; y++)
+    	int vals[] = new int[getWidth()];
+		int pixel = bottomUp ? (getHeight() - 1) * getWidth() : 0;
+		for (int y = 0; y < getHeight(); y++)
 		{
-			for (int x = 0; x < Width; x++)
+			for (int x = 0; x < getWidth(); x++)
 			{
 				for (int k = 0; k < byp; k++)
 				{
@@ -188,13 +156,15 @@ public class TGAImage extends ManagedImage
 				}
 			}
             UnpackColor(vals, pixel, cd);        
-            pixel += bottomUp ? -Width : Width; 
+            pixel += bottomUp ? -getWidth() : getWidth(); 
 		}    	
     }
 
-    protected void decode(SwappedDataInputStream is) throws Exception
+    public static TGAImage decode(InputStream is) throws Exception
 	{
-		TGAHeader header = new TGAHeader(is);
+    	SwappedDataInputStream sis = is instanceof SwappedDataInputStream ? (SwappedDataInputStream)is : new SwappedDataInputStream(is);
+		TGAHeader header = new TGAHeader(sis);
+		byte channels = 0;
 
 		if (header.ImageSpec.Width > 4096 ||
             header.ImageSpec.Height > 4096)
@@ -208,25 +178,24 @@ public class TGAImage extends ManagedImage
 
         if (header.ColorMap.alphaBits > 0)
         {
-   			Channels = ImageChannels.Alpha;
+   			channels = ImageChannels.Alpha;
         }
         if (header.ColorMap.colorBits > 0)
         {
-   			Channels += ImageChannels.Color;
+   			channels += ImageChannels.Color;
         }
-        else if (header.ColorMap.EntrySize > header.ColorMap.alphaBits)
+        else if (header.ColorMap.bits > header.ColorMap.alphaBits)
         {
-   			Channels += ImageChannels.Gray;        		
+   			channels += ImageChannels.Gray;        		
         }
+        
+        TGAImage image = new TGAImage(header.ImageSpec.Width, header.ImageSpec.Height, channels);
                
-		Width = header.ImageSpec.Width;
-        Height = header.ImageSpec.Height;
-		initialize(this);
-
 		if (header.getRleEncoded())
-			decodeRle(is, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
+			image.decodeRle(sis, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
 		else
-	        decodePlain(is, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
+	        image.decodePlain(sis, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
+		return image;
 	}
 	
     @Override
@@ -238,29 +207,29 @@ public class TGAImage extends ManagedImage
     public static int encode(OutputStream os, ManagedImage image) throws Exception
 	{
 		TGAHeader header = new TGAHeader(image);
-		header.writeHeader(os);
+		header.write(os);
 		
-        int len = 18, n = image.Width * image.Height;
+        int len = 18, n = image.getWidth() * image.getHeight();
 
-        if ((image.Channels & ImageChannels.Alpha) != 0)
+        if ((image.getChannels() & ImageChannels.Alpha) != 0)
         {
-            if ((image.Channels & ImageChannels.Color) != 0)
+            if ((image.getChannels() & ImageChannels.Color) != 0)
             {
                 // RGBA
                 for (int i = 0; i < n; i++)
                 {
-                	os.write(image.Blue[i]);
-                	os.write(image.Green[i]);
-                	os.write(image.Red[i]);
-                	os.write(image.Alpha[i]);
+                	os.write(image.getBlue()[i]);
+                	os.write(image.getGreen()[i]);
+                	os.write(image.getRed()[i]);
+                	os.write(image.getAlpha()[i]);
                 }
             }
-            else if ((image.Channels & ImageChannels.Gray) != 0)
+            else if ((image.getChannels() & ImageChannels.Gray) != 0)
             {
                 for (int i = 0; i < n; i++)
                 {
-                	os.write(image.Red[i]);
-                	os.write(image.Alpha[i]);
+                	os.write(image.getRed()[i]);
+                	os.write(image.getAlpha()[i]);
                 }
             }
             else
@@ -268,28 +237,28 @@ public class TGAImage extends ManagedImage
                 // Alpha only
                 for (int i = 0; i < n; i++)
                 {
-                	os.write(image.Alpha[i]);
+                	os.write(image.getAlpha()[i]);
                 }
             }
             len += n * 4;
         }
         else
         {
-            if ((image.Channels & ImageChannels.Color) != 0)
+            if ((image.getChannels() & ImageChannels.Color) != 0)
             {
             	// RGB
             	for (int i = 0; i < n; i++)
             	{
-            		os.write(image.Blue[i]);
-            		os.write(image.Green[i]);
-            		os.write(image.Red[i]);
+            		os.write(image.getBlue()[i]);
+            		os.write(image.getGreen()[i]);
+            		os.write(image.getRed()[i]);
             	}
             }
-            else if ((image.Channels & ImageChannels.Gray) != 0)
+            else if ((image.getChannels() & ImageChannels.Gray) != 0)
             {
             	for (int i = 0; i < n; i++)
             	{
-            		os.write(image.Red[i]);
+            		os.write(image.getRed()[i]);
             	}            	
             }
             len += n * 3;
