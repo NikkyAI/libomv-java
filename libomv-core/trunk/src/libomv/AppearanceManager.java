@@ -1776,7 +1776,7 @@ public class AppearanceManager implements PacketCallback
                             if (!CreateBake(bakeType))
                                 success.set(false);
                         }
-                        catch (URISyntaxException e)
+                        catch (Exception e)
                         {
                             success.set(false);
                         }
@@ -1802,9 +1802,10 @@ public class AppearanceManager implements PacketCallback
      *
      * @param bakeType Layer to bake
      * @throws URISyntaxException 
+     * @throws CloneNotSupportedException 
      * @returns True on success, otherwise false
      */
-    private boolean CreateBake(BakeType bakeType) throws URISyntaxException
+    private boolean CreateBake(BakeType bakeType) throws URISyntaxException, CloneNotSupportedException
     {
         List<AvatarTextureIndex> textureIndices = BakeTypeToTextures(bakeType);
         Baker oven = new Baker(_Client, bakeType);
