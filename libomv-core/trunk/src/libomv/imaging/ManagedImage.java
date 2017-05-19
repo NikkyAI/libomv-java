@@ -31,13 +31,13 @@ package libomv.imaging;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import libomv.types.Vector3;
+import libomv.utils.Helpers;
 
 public class ManagedImage implements Cloneable
 {
@@ -243,24 +243,6 @@ public class ManagedImage implements Cloneable
 		this.height = height;
 		this.channels = channels;
 		initialize();
-	}
-
-	public ManagedImage(File file)
-	{
-		try
-		{
-			byte[] data = new byte[10];
-			FileInputStream is = new FileInputStream(file);
-			
-
-			
-			is.read(data);
-			is.close();
-		}
-		catch (IOException ex)
-		{
-			
-		}
 	}
 
     public void clear()
@@ -522,9 +504,33 @@ public class ManagedImage implements Cloneable
 		}
 	}
     
-    private static ManagedImage decode(InputStream input) throws Exception
+    public static ManagedImage decode(File file) throws Exception
     {
-    	return null;
+		ManagedImage image = null;
+		String ext = Helpers.getFileExtension(file.getName());
+		FileInputStream is = new FileInputStream(file);
+		try
+		{
+			if (ext.equals("j2k") || ext.equals("jp2"))
+			{
+				image = decode(is, ImageCodec.J2K);
+			}
+			else if (ext.equals("tga"))
+			{
+				image = decode(is, ImageCodec.TGA);
+			}
+			else
+			{
+				byte[] data = new byte[10];
+				is.read(data);
+				is.close();
+			}
+		}
+		finally
+		{
+			is.close();
+		}
+		return image;
     }
     
     public static ManagedImage decode(InputStream input, ImageCodec codec) throws Exception
@@ -536,7 +542,7 @@ public class ManagedImage implements Cloneable
     		case TGA:
     			return TGAImage.decode(input);
 			default:
-				return decode(input);
+				return null;
     	}
     }
 }

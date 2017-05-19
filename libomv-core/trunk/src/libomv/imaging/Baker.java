@@ -347,7 +347,7 @@ public class Baker
     {
         try
         {
-            return new ManagedImage(new File(charDir, fileName));
+            return ManagedImage.decode(new File(charDir, fileName));
         }
         catch (Exception ex)
         {
