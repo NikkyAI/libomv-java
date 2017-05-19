@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2014, Frederick Martian
+ * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -653,7 +653,7 @@ public class CommWindow extends JFrame
            	{
            		public boolean evaluate(MuteEntry me)
            	    {
-           	    	return (me.Type == MuteType.Group && (me.ID == message.IMSessionID || me.ID == message.FromAgentID));
+           	    	return (me.Type == MuteType.Group && (me.ID.equals(message.IMSessionID) || me.ID.equals(message.FromAgentID)));
            	    }
             }))
            	{

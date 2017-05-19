@@ -15,9 +15,9 @@ public class ImageUtil
 	public static Image convert(ManagedImage textureImage)
 	{
 		int imageType;
-		if ((textureImage.Channels & ManagedImage.ImageChannels.Color) != 0)
+		if ((textureImage.getChannels() & ManagedImage.ImageChannels.Color) != 0)
 		{
-			if ((textureImage.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+			if ((textureImage.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
 			{
 				imageType = BufferedImage.TYPE_INT_ARGB;
 			}
@@ -30,23 +30,23 @@ public class ImageUtil
 		{
 			imageType = BufferedImage.TYPE_BYTE_GRAY;
 		}		
-		BufferedImage image = new BufferedImage(textureImage.Width, textureImage.Height, imageType);
+		BufferedImage image = new BufferedImage(textureImage.getWidth(), textureImage.getHeight(), imageType);
 		
 		WritableRaster raster = image.getWritableTile(0, 0);
         SampleModel sampleModel = image.getSampleModel();
         
-		if ((textureImage.Channels & ManagedImage.ImageChannels.Color) != 0)
+		if ((textureImage.getChannels() & ManagedImage.ImageChannels.Color) != 0)
         {
         	if (sampleModel != null && sampleModel.getDataType() == DataBuffer.TYPE_INT)
             {
             	int bdata[] = ((DataBufferInt)raster.getDataBuffer()).getData();
 
-            	int len = textureImage.Height * textureImage.Width;
-    			if ((textureImage.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+            	int len = textureImage.getHeight() * textureImage.getWidth();
+    			if ((textureImage.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
     			{
     				for (int i = 0; i < len; i++)
     				{
-    					bdata[i] = (textureImage.Blue[i]) | (textureImage.Green[i] << 8) | (textureImage.Red[i] << 16) | (textureImage.Alpha[i] << 24);
+    					bdata[i] = (textureImage.getBlue(i)) | (textureImage.getGreen(i) << 8) | (textureImage.getRed(i) << 16) | (textureImage.getAlpha(i) << 24);
     				}
     			}
             }
@@ -55,16 +55,16 @@ public class ImageUtil
             	throw new IllegalArgumentException("Unsupported sample model for conversion of data");
             }
         }
-		else if ((textureImage.Channels & ManagedImage.ImageChannels.Gray) != 0)
+		else if ((textureImage.getChannels() & ManagedImage.ImageChannels.Gray) != 0)
         {
         	if (sampleModel != null && sampleModel.getDataType() == DataBuffer.TYPE_BYTE)
             {
             	byte bdata[] = ((DataBufferByte)raster.getDataBuffer()).getData();
 
-            	int len = textureImage.Height * textureImage.Width;
+            	int len = textureImage.getHeight() * textureImage.getWidth();
 				for (int i = 0; i < len; i++)
 				{
-					bdata[i] = textureImage.Red[i];
+					bdata[i] = textureImage.getRed(i);
 				}
             }
             else
@@ -72,16 +72,16 @@ public class ImageUtil
             	throw new IllegalArgumentException("Unsupported sample model for conversion of data");
             }
 		}
-		else if ((textureImage.Channels & ManagedImage.ImageChannels.Alpha) != 0)
+		else if ((textureImage.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
         {
         	if (sampleModel != null && sampleModel.getDataType() == DataBuffer.TYPE_BYTE)
             {
             	byte bdata[] = ((DataBufferByte)raster.getDataBuffer()).getData();
 
-            	int len = textureImage.Height * textureImage.Width;
+            	int len = textureImage.getHeight() * textureImage.getWidth();
 				for (int i = 0; i < len; i++)
 				{
-					bdata[i] = textureImage.Alpha[i];
+					bdata[i] = textureImage.getAlpha(i);
 				}
             }
             else

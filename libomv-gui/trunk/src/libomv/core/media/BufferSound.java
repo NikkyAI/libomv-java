@@ -80,11 +80,10 @@ public class BufferSound extends MediaObject
 
 	            // Decode the Ogg Vorbis buffer.
 	            AssetSound s = (AssetSound)AssetManager.CreateAssetItem(AssetType.Sound, transfer.ItemID, transfer.AssetData);
-	            s.decode();
 
 	            try
 	            {
-	            	sound = SoundSystem.createSound(new ByteArrayInputStream(s.AssetData), null);
+	            	sound = SoundSystem.createSound(new ByteArrayInputStream(s.getAssetData()), null);
                     registerSound(sound);
 
                     // If looping is requested, loop the entire thing.

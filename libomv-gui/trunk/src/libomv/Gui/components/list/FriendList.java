@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, Frederick Martian
+ * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -367,18 +367,10 @@ public class FriendList extends JPanel implements ActionListener
             			updateRights(info, row, col);
                 		break;
                 	case 4:
-                		if (set)
-                		{
-                			int result = JOptionPane.showConfirmDialog(_Main.getJFrame(), "Do you really want to enable object modifications for " + 
+                		if (!set ||
+                            JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(_Main.getJFrame(), "Do you really want to enable object modifications for " + 
                 		                                               info.getName() + "? This allows the person to modify, delete and take ownership " +
-                					                                   "of any inworld objects you own!", "Warning", JOptionPane.YES_NO_OPTION);		
-                		    if (result == JOptionPane.OK_OPTION)
-                		    {
-			               		info.setCanModifyMyObjects(set);
-	                			updateRights(info, row, col);
-                		    }
-                		}
-                		else
+                					                                   "of any inworld objects you own!", "Warning", JOptionPane.YES_NO_OPTION))
                 		{
 		               		info.setCanModifyMyObjects(set);
                 			updateRights(info, row, col);
