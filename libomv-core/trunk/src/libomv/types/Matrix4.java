@@ -228,18 +228,18 @@ public final class Matrix4
 			angleZ = Math.atan2(sz, cz);
 		}
 
-		// Return only positive angles in [0,360]
+		// Return only positive angles in [0, 2*Pi]
 		if (angleX < 0)
 		{
-			angleX += 360d;
+			angleX += Helpers.TWO_PI;
 		}
 		if (angleY < 0)
 		{
-			angleY += 360d;
+			angleY += Helpers.TWO_PI;
 		}
 		if (angleZ < 0)
 		{
-			angleZ += 360d;
+			angleZ += Helpers.TWO_PI;
 		}
 
 		roll.argvalue = (float) angleX;
