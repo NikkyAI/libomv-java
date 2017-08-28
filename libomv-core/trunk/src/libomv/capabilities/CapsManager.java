@@ -46,12 +46,15 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.Simulator;
+import libomv.AgentManager.AgentDataReplyCallbackArgs;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.packets.Packet;
+import libomv.utils.CallbackArgs;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
 
@@ -61,6 +64,24 @@ import libomv.utils.Logger.LogLevel;
  */
 public class CapsManager extends Thread
 {
+    public class CapabilitiesReceivedCallbackArgs implements CallbackArgs
+    {
+        // The simulator that received a capability
+        private Simulator simulator;
+        
+        public Simulator getSimulator()
+        {
+        	return simulator;
+        }
+
+        public CapabilitiesReceivedCallbackArgs(Simulator simulator)
+        {
+            this.simulator = simulator;
+        }
+    }
+
+	public CallbackHandler<CapabilitiesReceivedCallbackArgs> OnCapabilitiesReceived = new CallbackHandler<CapabilitiesReceivedCallbackArgs>();
+
 	/* Reference to the simulator this system is connected to */
 	private Simulator _Simulator;
 
@@ -247,7 +268,8 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("CopyInventoryFromNotecard"));
 			req.add(OSD.FromString("CreateInventoryCategory"));
 			req.add(OSD.FromString("DispatchRegionInfo"));
-			req.add(OSD.FromString("EnvironmentSettings"));
+            req.add(OSD.FromString("DirectDelivery"));
+            req.add(OSD.FromString("EnvironmentSettings"));
 			req.add(OSD.FromString("EstateChangeInfo"));
 			req.add(OSD.FromString("EventQueueGet"));
 			req.add(OSD.FromString("FacebookConnect"));
@@ -258,8 +280,21 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("FetchLib2"));
 			req.add(OSD.FromString("FetchLibDescendents2"));
 			req.add(OSD.FromString("GetDisplayNames"));
+            req.add(OSD.FromString("GetExperiences"));
+            req.add(OSD.FromString("AgentExperiences"));
+            req.add(OSD.FromString("FindExperienceByName"));
+            req.add(OSD.FromString("GetExperienceInfo"));
+            req.add(OSD.FromString("GetAdminExperiences"));
+            req.add(OSD.FromString("GetCreatorExperiences"));
+            req.add(OSD.FromString("ExperiencePreferences"));
+            req.add(OSD.FromString("GroupExperiences"));
+            req.add(OSD.FromString("UpdateExperience"));
+            req.add(OSD.FromString("IsExperienceAdmin"));
+            req.add(OSD.FromString("IsExperienceContributor"));
+            req.add(OSD.FromString("RegionExperiences"));
 			req.add(OSD.FromString("GetMesh"));
 			req.add(OSD.FromString("GetMesh2"));
+            req.add(OSD.FromString("GetMetadata"));
 			req.add(OSD.FromString("GetObjectCost"));
 			req.add(OSD.FromString("GetObjectPhysicsData"));
 			req.add(OSD.FromString("GetTexture"));
@@ -314,6 +349,9 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("ViewerStartAuction"));
 			req.add(OSD.FromString("ViewerStats"));
 			req.add(OSD.FromString("WebFetchInventoryDescendents"));
+            // AIS3
+            req.add(OSD.FromString("InventoryAPIv3"));
+            req.add(OSD.FromString("LibraryAPIv3"));
 
 			try
 			{
@@ -322,7 +360,6 @@ public class CapsManager extends Thread
 				{
 					URI eventQueueGet = null;
 					OSDMap respTable = (OSDMap) result;
-//					OSDMap meta = (OSDMap) respTable.remove("Metadata");
 					synchronized (_Capabilities)
 					{
 						for (Map.Entry<String, OSD> entry : respTable.entrySet())
@@ -337,6 +374,8 @@ public class CapsManager extends Thread
 							}
 						}
 					}
+
+					OnCapabilitiesReceived.dispatch(new CapabilitiesReceivedCallbackArgs(_Simulator));
 
 					if (eventQueueGet == null)
 					{
