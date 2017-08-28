@@ -1476,6 +1476,13 @@ public class Primitive
 		}
 
 		@Override
+		public String toString()
+		{
+			return String.format("LightTexture: %s Params; %s", LightTexture.toString(), Params.toString());
+			
+		}
+		
+		@Override
 		public int hashCode()
 		{
 			return (LightTexture == null ? 0 : LightTexture.hashCode()) ^ (Params == null ? 0 : Params.hashCode());
