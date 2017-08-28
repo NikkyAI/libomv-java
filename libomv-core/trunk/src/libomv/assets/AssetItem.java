@@ -114,7 +114,7 @@ public abstract class AssetItem
 			"simstate",   // 22
 			Helpers.EmptyString, // 23
 			"link",       // 24
-			"link_f",   // 25
+			"link_f",     // 25
 			Helpers.EmptyString, // 26
 	        Helpers.EmptyString, // 27
 	        Helpers.EmptyString, // 28
