@@ -35,10 +35,14 @@ public class ImageTests extends TestCase
 {
 	public void testJ2KImage() throws Exception
 	{
-		InputStream is = getClass().getResourceAsStream("/res/relax.jp2");
-        J2KImage image = new J2KImage(is);
+        InputStream is = getClass().getResourceAsStream("/res/relax.jp2");
+        J2KImage image = J2KImage.decode(is);
         is.close();
         assertTrue("Loading of image failed", image != null);
-        assertTrue("Loading of image failed", image.Channels == ManagedImage.ImageChannels.Color);
+        assertTrue("Loading of image failed", image.getChannels() == ManagedImage.ImageChannels.Color);
+        assertTrue("Image Width is not 400 pixels", image.getWidth() == 400);
+        assertTrue("Image Height is not 300 pixels", image.getHeight() == 300);
+        
+        
 	}
 }
