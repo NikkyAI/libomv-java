@@ -158,7 +158,7 @@ public class DumpOutfitCommand extends Command
 		                        os.close();
 		                        System.out.println("Wrote JPEG2000 image at " + file.getCanonicalPath());
 
-		                        ManagedImage imgData = new J2KImage(new ByteArrayInputStream(download.AssetData));
+		                        ManagedImage imgData = J2KImage.decode(new ByteArrayInputStream(download.AssetData));
 		                        TGAImage tgaImage = new TGAImage(imgData);
 		                        file = new File(download.ItemID.toString() + ".tga");
 		                        os = new FileOutputStream(file);
