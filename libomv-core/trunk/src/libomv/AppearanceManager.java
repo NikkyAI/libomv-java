@@ -1393,6 +1393,7 @@ public class AppearanceManager implements PacketCallback
      * Populates textures and visual params from a decoded asset
      *
      * @param wearable Wearable to decode
+     * @param textures Texture data
      */
     public void DecodeWearableParams(WearableData wearable, TextureData[] textures)
     {
