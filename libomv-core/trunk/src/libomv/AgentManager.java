@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -2421,6 +2422,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public HashMap<UUID, ArrayList<ChatSessionMember>> GroupChatSessions = new HashMap<UUID, ArrayList<ChatSessionMember>>();
     // Dictionary containing mute list keyed on mute name and key
     private HashMap<String, MuteEntry> MuteList = new HashMap<String, MuteEntry>();
+    
+    private HashMap<UUID, UUID> ActiveGestures = new HashMap<UUID, UUID>();
 
     /**
      * Finds if a MuteEntry exists by using a predicate function that is passed in as object parameter
@@ -2463,6 +2466,11 @@ public class AgentManager implements PacketCallback, CapsCallback
 				homePosition = reply.HomePosition;
 				homeLookAt = reply.HomeLookAt;
 				lookAt = reply.LookAt;
+				
+                for (Entry<UUID, UUID> gesture : reply.Gestures.entrySet())
+	            {
+	                ActiveGestures.put(gesture.getKey(), gesture.getValue());
+	            }
 			}
 			else if (e.getStatus() == LoginStatus.Success)
 			{
@@ -4072,6 +4080,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 
 		_Client.Network.sendPacket(p);
 
+		ActiveGestures.put(invID, assetID);
 	}
 
 	/**
@@ -4096,6 +4105,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		p.Data[0] = b;
 
 		_Client.Network.sendPacket(p);
+
+		ActiveGestures.remove(invID);
 	}
 
 	// #endregion

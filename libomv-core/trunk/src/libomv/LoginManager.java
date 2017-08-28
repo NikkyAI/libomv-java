@@ -34,6 +34,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.nio.concurrent.FutureCallback;
 
@@ -60,6 +61,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 import libomv.utils.TimeoutEventQueue;
 
@@ -313,6 +315,7 @@ public class LoginManager
         public int COFVersion;
         public String InitialOutfit;
         public boolean FirstLogin;
+        public Map<UUID, UUID> Gestures;
 
                  
 		// Unhandled:
@@ -495,9 +498,44 @@ public class LoginManager
                 }
             }
 
+            Gestures = new HashMap<UUID, UUID>();
+            osd = reply.get("gestures");
+            if (osd != null && osd.getType() == OSDType.Array)
+            {
+                OSDArray array = (OSDArray)osd;
+                for (int i = 0; i < array.size(); i++)
+                {
+                	osd = array.get(i);
+                	if (osd.getType() == OSDType.Map)
+                	{
+                		OSDMap map = (OSDMap)array.get(i);
+                		if (!map.containsKey("item_id") || !map.containsKey("asset_id"))
+                		{
+                			continue;
+                		}
+            
+                		UUID itemId = null;
+                		RefObject<UUID> refItemId = new RefObject<UUID>(itemId);
+                		if (!UUID.TryParse(map.get("item_id").toString(), refItemId))
+                		{
+                			continue;
+                		}
+            
+                		UUID assetId = null;
+                		RefObject<UUID> refAssetId = new RefObject<UUID>(assetId);
+                		if (!UUID.TryParse(map.get("asset_id").toString(), refAssetId))
+                		{
+                			continue;
+                		}
+            
+                		Gestures.put(itemId, assetId);
+                	}
+                }
+            }
+
             FirstLogin = false;
             osd = reply.get("login-flags");
-            if (osd != null && osd.getType() == OSDType. Array)
+            if (osd != null && osd.getType() == OSDType.Array)
             {
                 OSDArray array = (OSDArray)osd;
                 for (int i = 0; i < array.size(); i++)
