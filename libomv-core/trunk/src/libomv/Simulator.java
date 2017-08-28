@@ -95,8 +95,8 @@ public class Simulator extends Thread
 		public static final long ResetHomeOnTeleport = 1 << 3;
 		/* Sun does not move */
 		public static final long SunFixed = 1 << 4;
-		/* No object, land, etc. taxes */
-		public static final long TaxFree = 1 << 5;
+		/* Allows private parcels (ie. banlines) */
+		public static final long AllowAccessOverride = 1 << 5;
 		/* Disable heightmap alterations (agents can still plant foliage) */
 		public static final long BlockTerraform = 1 << 6;
 		/* Land cannot be released, sold, or purchased */
