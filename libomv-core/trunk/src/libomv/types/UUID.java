@@ -36,8 +36,8 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Random;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -55,7 +55,7 @@ public class UUID implements Serializable
 
 	private static byte[] makeNewGuid()
 	{
-		Random rand = new Random();
+		SecureRandom rand = new SecureRandom();
 		byte[] guid = new byte[16];
 		rand.nextBytes(guid);
 		return guid;
