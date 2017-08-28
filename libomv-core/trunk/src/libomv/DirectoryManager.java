@@ -1555,7 +1555,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 
 	// /#region Blocking Functions
 
-	@Deprecated
+	/**
+	 * deprecated: Use the async {@link StartPeopleSearch} method instead
+	 */
+	@Deprecated 
 	public final ArrayList<AgentSearchData> PeopleSearch(DirFindFlags findFlags, String searchText, int queryStart,
 			int timeoutMS) throws Exception
 	{
