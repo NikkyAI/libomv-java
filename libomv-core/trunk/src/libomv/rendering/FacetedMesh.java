@@ -105,13 +105,19 @@ public class FacetedMesh extends Mesh
                 // Decode each individual face
                 if (subMeshOsd instanceof OSDMap)
                 {
+                	OSDMap subMeshMap = (OSDMap)subMeshOsd;
+                	
+                	// As per http://wiki.secondlife.com/wiki/Mesh/Mesh_Asset_Format, some Mesh Level
+                	// of Detail Blocks (maps) contain just a NoGeometry key to signal there is no
+                	// geometry for this submesh.
+                	if (subMeshMap.containsKey("NoGeometry") && (subMeshMap.get("NoGeometry").AsBoolean()))
+                	    continue;
+
                     Face oface = mesh.new Face();
                     oface.ID = faceNr;
                     oface.Vertices = new ArrayList<Vertex>();
                     oface.Indices = new ArrayList<Integer>();
                     oface.TextureFace = prim.Textures.getFace(faceNr);
-
-                    OSDMap subMeshMap = (OSDMap)subMeshOsd;
 
                     Vector3 posMax;
                     Vector3 posMin;
