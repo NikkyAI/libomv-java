@@ -38,7 +38,7 @@ public class InventoryAISClient
     	return _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME) != null;
     }
 
-    public void CreateInventory(UUID parentUuid, OSD newInventory, Callback callback)
+    public void CreateInventory(UUID parentUuid, OSD newInventory, Callback<OSD> callback)
     {
         URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)
@@ -53,7 +53,7 @@ public class InventoryAISClient
        // Enqueue
     }
 
-    public void SlamFolder(UUID folderUuid, OSD newInventory, Callback callback)
+    public void SlamFolder(UUID folderUuid, OSD newInventory, Callback<OSD> callback)
     {
         URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)
@@ -68,7 +68,7 @@ public class InventoryAISClient
         // Enqueue
     }
 
-    public void RemoveCategory(UUID categoryUuid, Callback callback)
+    public void RemoveCategory(UUID categoryUuid, Callback<OSD> callback)
     {
         URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)
@@ -77,13 +77,12 @@ public class InventoryAISClient
             return;
         }
 
-        UUID tid = new UUID();
         String url = String.format("%s/category/%s", categoryUuid.toString());
         Logger.Log("url: " + url,  LogLevel.Debug, _Client);
         // Enqueue
     }
 
-    public void RemoveItem(UUID itemUuid, Callback callback)
+    public void RemoveItem(UUID itemUuid, Callback<OSD> callback)
     {
         URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)
@@ -97,7 +96,7 @@ public class InventoryAISClient
         // Enqueue
     }
 
-    public void CopyLibraryCategory(UUID sourceUuid, UUID destUuid, boolean copySubfolders, Callback callback)
+    public void CopyLibraryCategory(UUID sourceUuid, UUID destUuid, boolean copySubfolders, Callback<OSD> callback)
     {
         URI cap = _Client.Network.getCurrentSim().getCapabilityURI(LIBRARY_CAP_NAME);
         if (cap == null)
@@ -114,7 +113,7 @@ public class InventoryAISClient
         // Enqueue
     }
 
-    public void PurgeDescendents(UUID categoryUuid, Callback callback)
+    public void PurgeDescendents(UUID categoryUuid, Callback<OSD> callback)
     {
     	URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)
@@ -128,7 +127,7 @@ public class InventoryAISClient
         // Enqueue
     }
 
-    public void UpdateCategory(UUID categoryUuid, OSD updates, Callback callback)
+    public void UpdateCategory(UUID categoryUuid, OSD updates, Callback<OSD> callback)
     {
     	URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)
@@ -142,7 +141,7 @@ public class InventoryAISClient
         // Enqueue
     }
 
-    public void UpdateItem(UUID itemUuid, OSD updates, Callback callback)
+    public void UpdateItem(UUID itemUuid, OSD updates, Callback<OSD> callback)
     {
     	URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
         if (cap == null)

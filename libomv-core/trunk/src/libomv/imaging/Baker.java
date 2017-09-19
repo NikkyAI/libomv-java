@@ -175,11 +175,11 @@ public class Baker
 
         if (skinTexture.Texture == null)
         {
-        	if (bakeType == BakeType.Upper)
+        	if (bakeType == BakeType.UpperBody)
         	    DrawLayer(LoadResourceLayer("upperbody_color.tga"), false);
 
 
-        	if (bakeType == BakeType.Lower)
+        	if (bakeType == BakeType.LowerBody)
         		DrawLayer(LoadResourceLayer("lowerbody_color.tga"), false);
         }
 
@@ -379,7 +379,7 @@ public class Baker
             case UpperTattoo:
             case UpperAlpha:
             case UpperBaked:
-                return BakeType.Upper;
+                return BakeType.UpperBody;
 
             case LowerBodypaint:
             case LowerUnderpants:
@@ -390,7 +390,7 @@ public class Baker
             case LowerTattoo:
             case LowerAlpha:
             case LowerBaked:
-                return BakeType.Lower;
+                return BakeType.LowerBody;
 
             case EyesIris:
             case EyesAlpha:
@@ -413,9 +413,9 @@ public class Baker
 
     private boolean MaskBelongsToBake(String mask)
     {
-        if ((bakeType == BakeType.Lower && mask.contains("upper")) ||
-            (bakeType == BakeType.Lower && mask.contains("shirt")) ||
-            (bakeType == BakeType.Upper && mask.contains("lower")))
+        if ((bakeType == BakeType.LowerBody && mask.contains("upper")) ||
+            (bakeType == BakeType.LowerBody && mask.contains("shirt")) ||
+            (bakeType == BakeType.UpperBody && mask.contains("lower")))
         {
             return false;
         }

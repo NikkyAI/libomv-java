@@ -46,7 +46,6 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.Simulator;
-import libomv.AgentManager.AgentDataReplyCallbackArgs;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;

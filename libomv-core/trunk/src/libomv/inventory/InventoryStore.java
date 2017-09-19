@@ -36,9 +36,9 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
@@ -420,10 +420,10 @@ public class InventoryStore extends InventoryFolder
 	{
 		synchronized (_Folders)
 		{
-			Set<Entry<UUID, Collection<InventoryNode>>> set = _Unresolved.entrySet();
+			Set<Entry<UUID, List<InventoryNode>>> set = _Unresolved.entrySet();
 			while (set.iterator().hasNext())
 			{
-				Entry<UUID, Collection<InventoryNode>> e = set.iterator().next();
+				Entry<UUID, List<InventoryNode>> e = set.iterator().next();
 				if (_Folders.containsKey(e.getKey()))
 				{
 					InventoryFolder parent = _Folders.get(e.getKey());

@@ -1,11 +1,11 @@
 package libomv.utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -46,7 +46,7 @@ import java.util.Set;
  */
 public class MultiMap<K, V>
 {
-	private final Map<K, Collection<V>> inner;
+	private final Map<K, List<V>> inner;
 	private int valueCount;
 
 	/**
@@ -55,7 +55,7 @@ public class MultiMap<K, V>
 	 */
 	public MultiMap()
 	{
-		this(new HashMap<K, Collection<V>>());
+		this(new HashMap<K, List<V>>());
 	}
 
 	/**
@@ -64,10 +64,25 @@ public class MultiMap<K, V>
 	 * 
 	 * @param innerMap
 	 */
-	public MultiMap(Map<K, Collection<V>> innerMap)
+	public MultiMap(Map<K, List<V>> innerMap)
 	{
 		this.inner = innerMap;
 		valueCount = 0;
+		for (List<V> values : innerMap.values())
+		{
+			valueCount += values.size();
+		}
+	}
+
+	public MultiMap(MultiMap<K, V> innerMap)
+	{
+		this.inner = new HashMap<K, List<V>>();
+		valueCount = 0;
+		for (Entry<K, List<V>> values : innerMap.entrySet())
+		{
+			this.inner.put(values.getKey(), values.getValue());
+			valueCount += values.getValue().size();
+		}
 	}
 
 	/**
@@ -77,14 +92,30 @@ public class MultiMap<K, V>
 	 * @return a Collection containing each of the values associated with the
 	 *         key, or null if no values are associated with this key.
 	 */
-	public Collection<V> get(Object key)
+	public List<V> get(Object key)
 	{
-		Collection<V> values = inner.get(key);
+		return get(key, false);
+	}
+
+	/**
+	 * Retrieves all the values associated with the supplied key.
+	 * 
+	 * @param key
+	 * @param returnEmptyList
+	 * @return a List containing each of the values associated with the
+	 *         key, or null if no values are associated with this key.
+	 */
+	public List<V> get(Object key, boolean returnEmptyList)
+	{
+		List<V> values = inner.get(key);
 		if (values == null)
 		{
-			return null;
+			if (returnEmptyList)
+			    return new ArrayList<V>();
+			else
+			    return null;
 		}
-		return Collections.unmodifiableCollection(inner.get(key));
+		return inner.get(key);
 	}
 
 	/**
@@ -96,7 +127,7 @@ public class MultiMap<K, V>
 	 */
 	public int size()
 	{
-		return valueCount();
+		return valueCount;
 	}
 
 	/**
@@ -143,7 +174,7 @@ public class MultiMap<K, V>
 	 */
 	public void put(K key, V value)
 	{
-		Collection<V> values = inner.get(key);
+		List<V> values = inner.get(key);
 		if (values == null)
 		{
 			values = new ArrayList<V>();
@@ -163,15 +194,15 @@ public class MultiMap<K, V>
 	 * @return a collections containing the values previously associated with
 	 *         the key, or null if no values were previously associated with it.
 	 */
-	public Collection<V> remove(Object key)
+	public List<V> remove(Object key)
 	{
-		final Collection<V> removed = inner.remove(key);
+		List<V> removed = inner.remove(key);
 		if (removed == null)
 		{
 			return null;
 		}
 		valueCount -= removed.size();
-		return Collections.unmodifiableCollection(removed);
+		return removed;
 	}
 
 	/**
@@ -185,7 +216,7 @@ public class MultiMap<K, V>
 	public boolean remove(Object key, Object value)
 	{
 
-		final Collection<V> values = inner.get(key);
+		final List<V> values = inner.get(key);
 
 		if (values == null)
 		{
@@ -245,7 +276,7 @@ public class MultiMap<K, V>
 	 */
 	public boolean containsValue(Object value)
 	{
-		for (Collection<V> values : inner.values())
+		for (List<V> values : inner.values())
 		{
 			if (values.contains(value))
 			{
@@ -302,14 +333,14 @@ public class MultiMap<K, V>
 	 * 
 	 * @return a Collection containing all the values in the MultiMap.
 	 */
-	public Collection<V> values()
+	public List<V> values()
 	{
-		final Collection<V> allValues = new ArrayList<V>(valueCount());
-		for (Collection<V> values : inner.values())
+		List<V> allValues = new ArrayList<V>(valueCount());
+		for (List<V> values : inner.values())
 		{
 			allValues.addAll(values);
 		}
-		return Collections.unmodifiableCollection(allValues);
+		return allValues;
 	}
 
 	/**
@@ -318,7 +349,7 @@ public class MultiMap<K, V>
 	 * 
 	 * @return the entry set.
 	 */
-	public Set<Map.Entry<K, Collection<V>>> entrySet()
+	public Set<Map.Entry<K, List<V>>> entrySet()
 	{
 		return inner.entrySet();
 	}
@@ -330,10 +361,10 @@ public class MultiMap<K, V>
 	 * 
 	 * @return
 	 */
-	public Collection<MultiMapEntry> expandedEntries()
+	public List<MultiMapEntry> expandedEntries()
 	{
-		final Collection<MultiMapEntry> entries = new ArrayList<MultiMapEntry>(valueCount());
-		for (Map.Entry<K, Collection<V>> e : entrySet())
+		List<MultiMapEntry> entries = new ArrayList<MultiMapEntry>(valueCount());
+		for (Map.Entry<K, List<V>> e : entrySet())
 		{
 			final K key = e.getKey();
 			for (V value : e.getValue())
@@ -341,14 +372,14 @@ public class MultiMap<K, V>
 				entries.add(new MultiMapEntry(key, value));
 			}
 		}
-		return Collections.unmodifiableCollection(entries);
+		return entries;
 	}
 
 	@Override
 	public String toString()
 	{
 		String string = String.format("(%d keys, %d values\n", inner.size(), valueCount);
-		for (Map.Entry<K, Collection<V>> e : entrySet())
+		for (Map.Entry<K, List<V>> e : entrySet())
 		{
 			string = string + " " + e.getKey().toString() + ", count: " + e.getValue().size() + " " + e.getValue().toString() + "\n";
 		}
@@ -398,9 +429,9 @@ public class MultiMap<K, V>
 		Iterator<V> iter;
 		K key;
 		
-		public MultiMapIterator(K key, Collection<V> coll)
+		public MultiMapIterator(K key, List<V> list)
 		{
-			this.iter = coll != null ? coll.iterator() : null;
+			this.iter = list != null ? list.iterator() : null;
 			this.key = key;
 		}
 

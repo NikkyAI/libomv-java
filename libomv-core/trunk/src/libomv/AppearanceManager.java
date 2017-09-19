@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -103,6 +104,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Logger;
 import libomv.utils.Logger.LogLevel;
+import libomv.utils.MultiMap;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.TimeoutEvent;
 
@@ -111,7 +113,7 @@ public class AppearanceManager implements PacketCallback
     // Bake layers for avatar appearance
     public enum BakeType
     {
-    	Unknown, Head, Upper, Lower, Eyes, Skirt, Hair;
+    	Unknown, Head, UpperBody, LowerBody, Eyes, Skirt, Hair;
         public static BakeType setValue(int value)
         {
             if (value <= 0 && value < Hair.ordinal())
@@ -173,19 +175,23 @@ public class AppearanceManager implements PacketCallback
     // When changing outfit, kick off rebake after 20 seconds has passed since the last change 
     private static final int REBAKE_DELAY = 1000 * 20;
 
+    // Total number of wearables allowed for each avatar
+    public static final int WEARABLE_COUNT_MAX = 60;
     // Total number of wearables for each avatar 
-//    public static final  int WEARABLE_COUNT = 16;
+    public static final int WEARABLE_COUNT = 16;
+    // Total number of baked textures on each avatar
+    public static final int BAKED_TEXTURE_COUNT = 6;
     // Total number of wearables per bake layer 
-    public static final  int WEARABLES_PER_LAYER = 9;
+    public static final int WEARABLES_PER_LAYER = 9;
     // Map of what wearables are included in each bake 
     public static final WearableType[][] WEARABLE_BAKE_MAP = new WearableType[][]
     {
         new WearableType[] { WearableType.Shape, WearableType.Skin,    WearableType.Tattoo,  WearableType.Hair,    WearableType.Alpha,   WearableType.Invalid, WearableType.Invalid,    WearableType.Invalid,      WearableType.Invalid },
         new WearableType[] { WearableType.Shape, WearableType.Skin,    WearableType.Tattoo,  WearableType.Shirt,   WearableType.Jacket,  WearableType.Gloves,  WearableType.Undershirt, WearableType.Alpha,        WearableType.Invalid },
         new WearableType[] { WearableType.Shape, WearableType.Skin,    WearableType.Tattoo,  WearableType.Pants,   WearableType.Shoes,   WearableType.Socks,   WearableType.Jacket,     WearableType.Underpants,   WearableType.Alpha   },
-        new WearableType[] { WearableType.Eyes,  WearableType.Alpha,   WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid,    WearableType.Invalid,      WearableType.Invalid },
+        new WearableType[] { WearableType.Eyes,  WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid,    WearableType.Invalid,      WearableType.Invalid },
         new WearableType[] { WearableType.Skirt, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid,    WearableType.Invalid,      WearableType.Invalid },
-        new WearableType[] { WearableType.Hair,  WearableType.Alpha,   WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid,    WearableType.Invalid,      WearableType.Invalid }
+        new WearableType[] { WearableType.Hair,  WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid, WearableType.Invalid,    WearableType.Invalid,      WearableType.Invalid }
     };
 
     // Magic values to finalize the cache check hashes for each bake 
@@ -233,6 +239,7 @@ public class AppearanceManager implements PacketCallback
         public VisualParam VisualParam;
         public VisualColorParam VisualColorParam;
         public float Value;
+        public WearableType WearableType;
     }
 
     // Holds a texture assetID and the data needed to bake this layer into an outfit texture.
@@ -369,7 +376,7 @@ public class AppearanceManager implements PacketCallback
     // #region Private Members
 
     // A cache of wearables currently being worn
-    private HashMap<WearableType, WearableData> _Wearables = new HashMap<WearableType, WearableData>();
+    private MultiMap<WearableType, WearableData> _Wearables = new MultiMap<WearableType, WearableData>();
     // A cache of textures currently being worn
     private TextureData[] _Textures = new TextureData[AvatarTextureIndex.getNumValues()];
     // Incrementing serial number for AgentCachedTexture packets
@@ -601,6 +608,17 @@ public class AppearanceManager implements PacketCallback
     }
 
     /**
+     * Check if current region supports server side baking
+     *
+     * @return True if server side baking support is detected
+     */
+    public boolean ServerBakingRegion()
+    {
+        return _Client.Network.getCurrentSim() != null &&
+            ((_Client.Network.getCurrentSim().Protocols & RegionProtocols.AgentAppearanceService) != 0);
+    }
+
+    /**
      * Ask the server what textures our agent is currently wearing
      *
      * @throws Exception 
@@ -640,11 +658,16 @@ public class AppearanceManager implements PacketCallback
                 {
                     WearableType type = WEARABLE_BAKE_MAP[bakeType.getValue()][wearableIndex];
 
-                    if (type == WearableType.Invalid)
-                    	break;
-                    
-                    if (_Wearables.containsKey(type))
-                        hash = UUID.XOr(hash, _Wearables.get(type).AssetID);
+                    if (type != WearableType.Invalid)
+                    {
+                        if (_Wearables.containsKey(type))
+                        {
+                    	    for (WearableData data : _Wearables.get(type))
+                    	    {
+                    		    hash = UUID.XOr(hash, data.AssetID);
+                    	    }
+                        }
+                    }
                 }
 
                 if (!hash.equals(UUID.Zero))
@@ -679,6 +702,28 @@ public class AppearanceManager implements PacketCallback
         }
     }
 
+    /// <summary>
+    /// OBSOLETE! Returns the AssetID of the first asset that is currently 
+    /// being worn in a given WearableType slot
+    /// </summary>
+    /// <param name="type">WearableType slot to get the AssetID for</param>
+    /// <returns>The UUID of the asset being worn in the given slot, or
+    /// UUID.Zero if no wearable is attached to the given slot or wearables
+    /// have not been downloaded yet
+    public UUID GetWearableAsset(WearableType type)
+    {
+    	synchronized (_Wearables)
+    	{
+    		if (_Wearables.containsKey(type) && _Wearables.get(type).get(0) != null)
+    		{
+     			return _Wearables.get(type).get(0).AssetID;
+    		}
+    	}
+        return UUID.Zero;
+    }
+
+    
+    
     /**
      * Returns the AssetID of the asset that is currently being worn in a 
      * given WearableType slot
@@ -687,14 +732,18 @@ public class AppearanceManager implements PacketCallback
      * @returnsThe UUID of the asset being worn in the given slot, or UUID.Zero if no wearable is attached
      *          to the given slot or wearables have not been downloaded yet
      */
-    public UUID GetWearableAsset(WearableType type)
+    public Collection<UUID> GetWearableAssets(WearableType type)
     {
-    	synchronized (_Wearables)
+	    ArrayList<UUID> list = new ArrayList<UUID>();
+     	synchronized (_Wearables)
     	{
     		if (_Wearables.containsKey(type))
-    			return _Wearables.get(type).AssetID;
+    		{
+     			for (WearableData data : _Wearables.get(type))
+    				list.add(data.AssetID);
+    		}
     	}
-        return UUID.Zero;
+        return list;
     }
 
     /**
@@ -757,6 +806,8 @@ public class AppearanceManager implements PacketCallback
                 wd.ItemID = wearableItem.itemID;
                 wd.WearableType = wearableItem.getWearableType();
 
+                if (replace) // Dump everything from the key
+                    _Wearables.remove(wearableItem.getWearableType());
                 _Wearables.put(wearableItem.getWearableType(), wd);
             }
         }
@@ -797,10 +848,8 @@ public class AppearanceManager implements PacketCallback
         List<InventoryWearable> wearables = new ArrayList<InventoryWearable>();
         List<InventoryItem> attachments = new ArrayList<InventoryItem>();
 
-        for (int i = 0; i < wearableItems.size(); i++)
+        for (InventoryItem item : wearableItems)
         {
-            InventoryItem item = wearableItems.get(i);
-
             if (item instanceof InventoryWearable)
                 wearables.add((InventoryWearable)item);
             else if (item instanceof InventoryAttachment || item instanceof InventoryObject)
@@ -811,16 +860,23 @@ public class AppearanceManager implements PacketCallback
         synchronized (_Wearables)
         {
             // Remove the given wearables from the wearables collection
-            for (int i = 0; i < wearables.size(); i++)
+            for (InventoryWearable wearableItem : wearables)
             {
-                InventoryWearable wearableItem = wearables.get(i);
                 if (wearableItem.assetType != AssetType.Bodypart        // Remove if it's not a body part
-                    && _Wearables.containsKey(wearableItem.getWearableType()) // And we have that wearabe type
-                    && _Wearables.get(wearableItem.getWearableType()).ItemID.equals(wearableItem.itemID) // And we are wearing it
-                   )
+                    && _Wearables.containsKey(wearableItem.getWearableType())) // And we have that wearabe type
                 {
-                    _Wearables.remove(wearableItem.getWearableType());
-                    needSetAppearance = true;
+                    Collection<WearableData> worn = _Wearables.get(wearableItem.getWearableType());
+                    if (worn != null)
+                    {
+                    	for (WearableData wearable : worn)
+                    	{
+                    		if (wearable.ItemID.equals(wearableItem.itemID))
+                    		{
+                                _Wearables.remove(wearableItem.getWearableType(), wearable);
+                                 needSetAppearance = true;
+                    		}
+                    	}
+                    }
                 }
             }
         }
@@ -918,10 +974,13 @@ public class AppearanceManager implements PacketCallback
     {
         synchronized (_Wearables)
         {
-            for (Entry<WearableType, WearableData> entry : _Wearables.entrySet())
+            for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet())
             {
-                if (entry.getValue().ItemID.equals(item.itemID))
-                    return entry.getKey();
+                for (WearableData data : entry.getValue())
+                {
+                	if (data.ItemID.equals(item.itemID))
+                        return entry.getKey();
+                }
             }
         }
         return WearableType.Invalid;
@@ -933,11 +992,19 @@ public class AppearanceManager implements PacketCallback
      *
      * @returnsA copy of the agents currently worn wearables
      */
-    public HashMap<WearableType, WearableData> GetWearables()
+    public Collection<WearableData> GetWearables()
     {
         synchronized (_Wearables)
         {
-            return new HashMap<WearableType, WearableData>(_Wearables);
+            return new ArrayList<WearableData>(_Wearables.values());
+        }
+    }
+
+    public MultiMap<WearableType, WearableData> GetWearablesByType()
+    {
+        synchronized (_Wearables)
+        {
+            return new MultiMap<WearableType, WearableData>(_Wearables);
         }
     }
 
@@ -1164,8 +1231,9 @@ public class AppearanceManager implements PacketCallback
             		AgentIsNowWearingPacket.WearableDataBlock block = wearing.new WearableDataBlock();
             		block.WearableType = type.getValue();
 
-            		if (_Wearables.containsKey(type))
-            			block.ItemID = _Wearables.get(type).ItemID;
+                    // This appears to be hacked on SL server side to support multi-layers
+            		if (_Wearables.containsKey(type) && _Wearables.get(type).get(0) != null)
+            			block.ItemID = _Wearables.get(type).get(0).ItemID;
             		else
             			block.ItemID = UUID.Zero;
                 	wearing.WearableData[type.getValue()] = block;
@@ -1182,30 +1250,31 @@ public class AppearanceManager implements PacketCallback
      */
     private void ReplaceWearables(List<InventoryWearable> wearableItems)
     {
-        HashMap<WearableType, WearableData> newWearables = new HashMap<WearableType, WearableData>();
+        MultiMap<WearableType, WearableData> newWearables = new MultiMap<WearableType, WearableData>();
 
         synchronized (_Wearables)
         {
             // Preserve body parts from the previous set of wearables. They may be overwritten,
             // but cannot be missing in the new set
-            for (Entry<WearableType, WearableData> entry : _Wearables.entrySet())
+            for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet())
             {
-                if (entry.getValue().AssetType == AssetType.Bodypart)
-                    newWearables.put(entry.getKey(), entry.getValue());
+            	for (WearableData data : entry.getValue())
+            	{
+            		if (data.AssetType == AssetType.Bodypart)
+            			newWearables.put(entry.getKey(), data);
+            	}
             }
 
             // Add the given wearables to the new wearables collection
-            for (int i = 0; i < wearableItems.size(); i++)
+            for (InventoryWearable wearableItem : wearableItems)
             {
-                InventoryWearable wearableItem = wearableItems.get(i);
+                WearableData data = new WearableData();
+                data.AssetID = wearableItem.assetID;
+                data.AssetType = wearableItem.assetType;
+                data.ItemID = wearableItem.itemID;
+                data.WearableType = wearableItem.getWearableType();
 
-                WearableData wd = new WearableData();
-                wd.AssetID = wearableItem.assetID;
-                wd.AssetType = wearableItem.assetType;
-                wd.ItemID = wearableItem.itemID;
-                wd.WearableType = wearableItem.getWearableType();
-
-                newWearables.put(wd.WearableType, wd);
+                newWearables.put(data.WearableType, data);
             }
 
             // Replace the Wearables collection
@@ -1562,10 +1631,10 @@ public class AppearanceManager implements PacketCallback
         boolean success = true;
 
         // Make a copy of the wearables dictionary to enumerate over
-        HashMap<WearableType, WearableData> wearables;
+        MultiMap<WearableType, WearableData> wearables;
         synchronized (_Wearables)
         {
-            wearables = new HashMap<WearableType, WearableData>(_Wearables);
+            wearables = new MultiMap<WearableType, WearableData>(_Wearables);
         }
 
         // We will refresh the textures (zero out all non bake textures)
@@ -1625,7 +1694,8 @@ public class AppearanceManager implements PacketCallback
             }
         }
 
-        try {
+        try
+        {
             success = latch.await(TEXTURE_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {}
         executor.shutdown();
@@ -1643,10 +1713,8 @@ public class AppearanceManager implements PacketCallback
         List<AvatarTextureIndex> indices = BakeTypeToTextures(bakeType);
         List<UUID> textures = new ArrayList<UUID>();
 
-        for (int i = 0; i < indices.size(); i++)
+        for (AvatarTextureIndex index : indices)
         {
-            AvatarTextureIndex index = indices.get(i);
-
             // If this is not the skirt layer or we're wearing a skirt then add it
             if (index != AvatarTextureIndex.Skirt || _Wearables.containsKey(WearableType.Skirt))
                 AddTextureDownload(index, textures);
@@ -1962,16 +2030,7 @@ public class AppearanceManager implements PacketCallback
 
             int vpIndex = 0;
             int nrParams;
-            boolean wearingPhysics = false;
-
-            for (WearableData wearable : _Wearables.values())
-            {
-                if (wearable.WearableType == WearableType.Physics)
-                {
-                    wearingPhysics = true;
-                    break;
-                }
-            }
+            boolean wearingPhysics = _Wearables.containsKey(WearableType.Physics);
 
             if (wearingPhysics)
             {
@@ -1991,14 +2050,19 @@ public class AppearanceManager implements PacketCallback
                 boolean found = false;
 
                 // Try and find this value in our collection of downloaded wearables
-                for (WearableData data : _Wearables.values())
+                for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet())
                 {
-                    if (data.Asset != null && data.Asset.Params.containsKey(vp.ParamID))
-                    {
-                    	paramValue = data.Asset.Params.get(vp.ParamID);
-                        found = true;
-                        break;
-                    }
+                	for (WearableData data : entry.getValue())
+                	{
+                		if (data.Asset != null && data.Asset.Params.containsKey(vp.ParamID))
+                		{
+                			paramValue = data.Asset.Params.get(vp.ParamID);
+                			found = true;
+                			break;
+                		}
+                	}
+                	if (found)
+                		break;
                 }
 
                 // Use a default value if we don't have one set for it
@@ -2087,11 +2151,12 @@ public class AppearanceManager implements PacketCallback
                 {
                     WearableType type = WEARABLE_BAKE_MAP[bakeType.getValue()][wearableIndex];
 
-                    WearableData wearable;
                     if (type != WearableType.Invalid && _Wearables.containsKey(type))
                     {
-                        wearable = _Wearables.get(type);
-                        hash = UUID.XOr(hash, wearable.AssetID);
+                        for (WearableData wearable : _Wearables.get(type))
+                        {
+                             hash = UUID.XOr(hash, wearable.AssetID);    
+                        }
                     }
                 }
 
@@ -2223,22 +2288,34 @@ public class AppearanceManager implements PacketCallback
         synchronized (_Wearables)
         {
             // #region Test if anything changed in this update
-            for (int i = 0; i < update.WearableData.length; i++)
+            for (AgentWearablesUpdatePacket.WearableDataBlock block : update.WearableData)
             {
-                AgentWearablesUpdatePacket.WearableDataBlock block = update.WearableData[i];
                 WearableType type = WearableType.setValue(block.WearableType);
 
                 if (!block.AssetID.equals(UUID.Zero))
                 {
-                    WearableData wearable = _Wearables.get(type);
-                    if (wearable != null && wearable.AssetID.equals(block.AssetID) && wearable.ItemID.equals(block.ItemID))
-                    {
-                      	// Same wearable as before
-                        continue;
-                    }
-                    // A (new) wearable is now set for this index
-                    changed = true;
-                    break;
+                	if (_Wearables.containsKey(type))
+                	{
+                		boolean match = false;
+                		for (WearableData wearable : _Wearables.get(type))
+                		{
+                			if (wearable != null && wearable.AssetID.equals(block.AssetID) && wearable.ItemID.equals(block.ItemID))
+                			{
+                				// Same wearable as before
+                				match = true;
+                				break;
+                			}
+                		}
+                        changed = !match;
+                        if (changed)
+                    	     break;
+                	}
+                	else
+                	{
+                        // A wearable is now set for this index
+                        changed = true;
+                        break;
+                	}
                 }
                 else if (_Wearables.containsKey(type))
                 {
@@ -2302,29 +2379,23 @@ public class AppearanceManager implements PacketCallback
     {
         AgentCachedTextureResponsePacket response = (AgentCachedTextureResponsePacket)packet;
 
-        if (CacheCheckSerialNum.get() == response.AgentData.SerialNum)
+        for (AgentCachedTextureResponsePacket.WearableDataBlock block : response.WearableData)
         {
-            for (int i = 0; i < response.WearableData.length; i++)
+            AvatarTextureIndex index = AvatarTextureIndex.setValue(block.TextureIndex);
+          
+            Logger.DebugLog("Cache response for " + index + ", TextureID = " + block.TextureID, _Client);
+
+            TextureData tex = _Textures[index.getValue()];
+            if (!block.TextureID.equals(UUID.Zero))
             {
-                AgentCachedTextureResponsePacket.WearableDataBlock block = response.WearableData[i];
-                AvatarTextureIndex index = AvatarTextureIndex.setValue(block.TextureIndex);
-                
-                Logger.DebugLog("Cache response for " + index + ", TextureID = " + block.TextureID, _Client);
-                if (index != AvatarTextureIndex.Unknown)
-                {
-                	TextureData tex = _Textures[index.getValue()];
-                    if (!block.TextureID.equals(UUID.Zero))
-                    {
-                        // A simulator has a cache of this bake layer
-                        tex.TextureID = block.TextureID;
-                        tex.Host = Helpers.BytesToString(block.getHostName());
-                    }
-                    else
-                    {
-                        // The server does not have a cache of this bake layer, request upload
-                        // FIXME:
-                    }
-                }
+                // A simulator has a cache of this bake layer
+                tex.TextureID = block.TextureID;
+                tex.Host = Helpers.BytesToString(block.getHostName());
+            }
+            else
+            {
+                // The server does not have a cache of this bake layer, request upload
+                // FIXME:
             }
         }
         if (OnAgentCachedBakesReply.count() > 0)
@@ -2418,9 +2489,9 @@ public class AppearanceManager implements PacketCallback
         {
             case Head:
                 return AvatarTextureIndex.HeadBaked;
-            case Upper:
+            case UpperBody:
                 return AvatarTextureIndex.UpperBaked;
-            case Lower:
+            case LowerBody:
                 return AvatarTextureIndex.LowerBaked;
             case Eyes:
                 return AvatarTextureIndex.EyesBaked;
@@ -2452,9 +2523,9 @@ public class AppearanceManager implements PacketCallback
         {
             case Head:
                 return AvatarTextureIndex.Hair; // hair
-            case Upper:
+            case UpperBody:
                 return AvatarTextureIndex.UpperShirt; // shirt
-            case Lower:
+            case LowerBody:
                 return AvatarTextureIndex.LowerPants; // lower pants
             case Skirt:
                 return AvatarTextureIndex.Skirt; // skirt
@@ -2483,7 +2554,7 @@ public class AppearanceManager implements PacketCallback
                 // textures.add(AvatarTextureIndex.Hair);
                 textures.add(AvatarTextureIndex.HeadAlpha);
                 break;
-            case Upper:
+            case UpperBody:
                 textures.add(AvatarTextureIndex.UpperBodypaint);
                 textures.add(AvatarTextureIndex.UpperTattoo);
                 textures.add(AvatarTextureIndex.UpperGloves);
@@ -2492,7 +2563,7 @@ public class AppearanceManager implements PacketCallback
                 textures.add(AvatarTextureIndex.UpperJacket);
                 textures.add(AvatarTextureIndex.UpperAlpha);
                 break;
-            case Lower:
+            case LowerBody:
                 textures.add(AvatarTextureIndex.LowerBodypaint);
                 textures.add(AvatarTextureIndex.LowerTattoo);
                 textures.add(AvatarTextureIndex.LowerUnderpants);
