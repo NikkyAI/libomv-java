@@ -729,10 +729,10 @@ public class AppearanceManager implements PacketCallback
      * given WearableType slot
      *
      * @param type WearableType slot to get the AssetID for 
-     * @returnsThe UUID of the asset being worn in the given slot, or UUID.Zero if no wearable is attached
+     * @returns A list of UUIDs of the assets being worn in the given slot, or an empty list if no wearable is attached
      *          to the given slot or wearables have not been downloaded yet
      */
-    public Collection<UUID> GetWearableAssets(WearableType type)
+    public List<UUID> GetWearableAssets(WearableType type)
     {
 	    ArrayList<UUID> list = new ArrayList<UUID>();
      	synchronized (_Wearables)
@@ -783,10 +783,8 @@ public class AppearanceManager implements PacketCallback
         List<InventoryWearable> wearables = new ArrayList<InventoryWearable>();
         List<InventoryItem> attachments = new ArrayList<InventoryItem>();
 
-        for (int i = 0; i < wearableItems.size(); i++)
+        for (InventoryItem item : wearableItems)
         {
-            InventoryItem item = wearableItems.get(i);
-
             if (item instanceof InventoryWearable)
                 wearables.add((InventoryWearable)item);
             else if (item instanceof InventoryAttachment || item instanceof InventoryObject)
@@ -796,10 +794,8 @@ public class AppearanceManager implements PacketCallback
         synchronized (_Wearables)
         {
             // Add the given wearables to the wearables collection
-            for (int i = 0; i < wearables.size(); i++)
+            for (InventoryWearable wearableItem : wearables)
             {
-                InventoryWearable wearableItem = wearables.get(i);
-
                 WearableData wd = new WearableData();
                 wd.AssetID = wearableItem.assetID;
                 wd.AssetType = wearableItem.assetType;
