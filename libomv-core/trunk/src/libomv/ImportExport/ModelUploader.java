@@ -39,8 +39,6 @@ import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.GridClient;
-import libomv.ImportExport.Model.ModelFace;
-import libomv.ImportExport.Model.ModelPrim;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;

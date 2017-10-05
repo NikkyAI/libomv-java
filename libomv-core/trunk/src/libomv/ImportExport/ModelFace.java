@@ -29,23 +29,38 @@
  */
 package libomv.ImportExport;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
-import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDMap;
-import libomv.types.Vector3;
+import libomv.rendering.Mesh.Vertex;
+import libomv.utils.Helpers;
 
-public class Model
+public class ModelFace
 {
-	public static OSD PhysicsStub()
+    public List<Vertex> Vertices = new ArrayList<Vertex>();
+    public List<Integer> Indices = new ArrayList<Integer>();
+    public String MaterialID = Helpers.EmptyString;
+    public ModelMaterial Material = new ModelMaterial();
+
+    Hashtable<Vertex, Integer> LookUp = new Hashtable<Vertex, Integer>();
+
+    public void AddVertex(Vertex v)
     {
-		byte[] vertix = { -128, -128, -128, -128, 0, 0, 0, 0, 0, 0, -128, -128, -128, 127, 0, 0,
-				            -128, -128, -128, 127, -128, -128, -128, -128, 0, 0, 0, 0, 0, 0, 0, 0,
-				            -128, -128, 0, 0, -128, -128, 0, 0, -128, 127, -128, -128, -128, -128, -128, -128,
-				            0, 0, -128, -128, -128, -128, -128, -128, 0, 0, 0, 0, -128, -128, 0, 0, -128, -128 };
-        OSDMap ret = new OSDMap();
-        ret.put("Max", OSD.FromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
-        ret.put("Min", OSD.FromVector3(new Vector3(-0.5f, -0.5f, -0.5f)));
-        ret.put("BoundingVerts", OSD.FromBinary(vertix));
-        return ret;
-	}
+        int index;
+
+        if (LookUp.containsKey(v))
+        {
+            index = LookUp.get(v);
+        }
+        else
+        {
+            index = Vertices.size();
+            Vertices.add(v);
+            LookUp.put(v, index);
+        }
+
+        Indices.add(index);
+    }
+
 }

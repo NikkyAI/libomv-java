@@ -29,23 +29,12 @@
  */
 package libomv.ImportExport;
 
+import libomv.types.Color4;
 
-import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDMap;
-import libomv.types.Vector3;
-
-public class Model
+public class ModelMaterial
 {
-	public static OSD PhysicsStub()
-    {
-		byte[] vertix = { -128, -128, -128, -128, 0, 0, 0, 0, 0, 0, -128, -128, -128, 127, 0, 0,
-				            -128, -128, -128, 127, -128, -128, -128, -128, 0, 0, 0, 0, 0, 0, 0, 0,
-				            -128, -128, 0, 0, -128, -128, 0, 0, -128, 127, -128, -128, -128, -128, -128, -128,
-				            0, 0, -128, -128, -128, -128, -128, -128, 0, 0, 0, 0, -128, -128, 0, 0, -128, -128 };
-        OSDMap ret = new OSDMap();
-        ret.put("Max", OSD.FromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
-        ret.put("Min", OSD.FromVector3(new Vector3(-0.5f, -0.5f, -0.5f)));
-        ret.put("BoundingVerts", OSD.FromBinary(vertix));
-        return ret;
-	}
+    public String ID;
+    public Color4 DiffuseColor = Color4.White;
+    public String Texture;
+    public byte[] TextureData;
 }
