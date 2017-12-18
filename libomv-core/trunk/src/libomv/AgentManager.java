@@ -5141,7 +5141,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			@Override
 			public void cancelled()
 			{
-                Logger.Log("Max maturity unchanged at " + agentAccess, LogLevel.Info, _Client);
+                Logger.Log("Max maturity unchanged at " + agentAccess + ".", LogLevel.Info, _Client);
 			}
 
 			@Override
@@ -5149,7 +5149,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
                 OSDMap map = (OSDMap)((OSDMap)result).get("access_prefs");
                 agentAccess = map.get("max").AsString();
-                Logger.Log("Max maturity access set to " + agentAccess, LogLevel.Info, _Client );
+                Logger.Log("Max maturity access set to " + agentAccess + ".", LogLevel.Info, _Client );
 			}
 
 			@Override
@@ -5167,7 +5167,49 @@ public class AgentManager implements PacketCallback, CapsCallback
 
         request.executeHttpPost(url, req, OSDFormat.Xml, new AccessCallback(), _Client.Settings.CAPS_TIMEOUT);
     }	
-	// #endregion Misc
+
+	/**
+	 * Sets agents hover height.
+	 *
+	 * @param hoverHeight : Hover height [-2.0, 2.0]
+     */
+	public void SetHoverHeight(double hoverHeight)
+	{
+	    if (_Client == null) return;
+	    
+	    URI url = _Client.Network.getCurrentSim().getCapabilityURI("AgentPreferences");
+        if (url == null) return;
+        
+        CapsClient request = new CapsClient(_Client, "AgentPreferences");
+        
+        final class HoverHeightCallback implements FutureCallback<OSD>
+        {
+
+			@Override
+			public void cancelled()
+			{
+                Logger.Log("Hover height unchanged.", LogLevel.Info, _Client);
+			}
+
+			@Override
+			public void completed(OSD result)
+			{
+                double confirmedHeight = ((OSDMap)result).get("hover_height").AsReal();
+                Logger.Log("Hover height set to " + confirmedHeight + ".", LogLevel.Info, _Client );
+			}
+
+			@Override
+			public void failed(Exception ex)
+			{
+                Logger.Log("Failed to set hover height.", LogLevel.Warning, _Client, ex);
+			}
+        }
+
+	    OSDMap postData = new OSDMap(1);
+	    postData.put("hover_height", OSD.FromReal(hoverHeight));
+   	    request.executeHttpPost(url, postData, OSDFormat.Xml,new HoverHeightCallback(), _Client.Settings.CAPS_TIMEOUT);
+    }
+    // #endregion Misc
 
 	public void UpdateCamera(boolean reliable) throws Exception
 	{
