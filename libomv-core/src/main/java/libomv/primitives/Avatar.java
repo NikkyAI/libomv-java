@@ -32,12 +32,12 @@ package libomv.primitives;
 
 import java.util.ArrayList;
 
-import libomv.AgentManager;
-import libomv.AppearanceManager;
-import libomv.AvatarManager.Animation;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.client.AgentManager;
+import libomv.client.AppearanceManager;
+import libomv.client.AvatarManager.Animation;
 import libomv.types.NameValue;
 import libomv.types.UUID;
 import libomv.utils.Helpers;

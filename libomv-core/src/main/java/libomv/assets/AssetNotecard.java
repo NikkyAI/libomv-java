@@ -35,16 +35,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import libomv.ObjectManager.SaleType;
+import libomv.client.ObjectManager.SaleType;
+import libomv.client.inventory.InventoryManager;
 import libomv.inventory.InventoryItem;
-import libomv.inventory.InventoryManager;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
+
 
 /**
  * Represents a string of characters encoded with specific formatting properties

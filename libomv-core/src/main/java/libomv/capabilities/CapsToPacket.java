@@ -36,6 +36,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.text.ParseException;
 
+import org.apache.log4j.Logger;
+
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
@@ -49,11 +51,11 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector4;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 public class CapsToPacket
 {
+	private static final Logger logger = Logger.getLogger(CapsToPacket.class);
+
 	// #region Serialization/Deserialization
 	public static String ToXmlString(Packet packet) throws IOException, IllegalArgumentException,
 			IllegalAccessException
@@ -177,7 +179,7 @@ public class CapsToPacket
 		catch (Exception ex)
 		{
 			// FIXME
-			Logger.Log(ex.getMessage(), LogLevel.Error, ex);
+			logger.error(ex.getMessage(), ex);
 		}
 
 		return packet;

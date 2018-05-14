@@ -32,14 +32,16 @@ package libomv.assets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 /* Represents a sequence of animations, sounds, and chat actions */
 public class AssetGesture extends AssetItem
 {
+	private static final Logger logger = Logger.getLogger(AssetGesture.class);
+	
 	/* Type of gesture step */
 	public enum GestureStepType
 	{
@@ -453,7 +455,7 @@ public class AssetGesture extends AssetItem
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Decoding gesture asset failed:", LogLevel.Error, ex);
+			logger.error("Decoding gesture asset failed:", ex);
 			return false;
 		}
 	}

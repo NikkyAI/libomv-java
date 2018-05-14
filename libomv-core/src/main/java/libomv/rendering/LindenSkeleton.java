@@ -41,8 +41,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import libomv.GridClient;
-import libomv.LibSettings;
+import libomv.client.GridClient;
+import libomv.client.LibSettings;
 import libomv.utils.Helpers;
 
 public class LindenSkeleton

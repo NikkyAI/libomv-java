@@ -33,6 +33,8 @@ package libomv.primitives;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDMap;
@@ -46,11 +48,11 @@ import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.types.Vector4;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 public class Primitive
 {
+	private static final Logger logger = Logger.getLogger(Primitive.class);
+
 	protected static float CUT_QUANTA = 0.00002f;
 	protected static float SCALE_QUANTA = 0.01f;
 	protected static float SHEAR_QUANTA = 0.01f;
@@ -318,7 +320,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
-			Logger.Log(String.format("Unknown ExtraParamType value %x", value), LogLevel.Warning);
+			logger.warn(String.format("Unknown ExtraParamType value %x", value));
 			return null;
 		}
 
@@ -348,7 +350,7 @@ public class Primitive
 		{
 			if (value >= 0 && value < values().length)
 				return values()[value];
-			Logger.Log(String.format("Unknown JointType value %x", value), LogLevel.Warning);
+			logger.warn(String.format("Unknown JointType value %x", value));
 			return null;
 		}
 
@@ -369,7 +371,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
-			Logger.Log(String.format("Unknown SculptType value %x", value), LogLevel.Warning);
+			logger.warn(String.format("Unknown SculptType value %x", value));
 			return null;
 		}
 
@@ -397,7 +399,7 @@ public class Primitive
 				if (e._value == value)
 					return e;
 			}
-			Logger.Log(String.format("Unknown ObjectCategory value %x", value), LogLevel.Warning);
+			logger.warn(String.format("Unknown ObjectCategory value %x", value));
 			return null;
 		}
 

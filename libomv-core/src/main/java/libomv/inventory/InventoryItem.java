@@ -35,22 +35,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 
-import libomv.ObjectManager.SaleType;
+import org.apache.log4j.Logger;
+
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem.AssetType;
+import libomv.client.ObjectManager.SaleType;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 /**
  * A leaf node in our Inventory
  */
 public class InventoryItem extends InventoryNode
 {
+	private static final Logger logger = Logger.getLogger(InventoryItem.class);
+
 	private static final long serialVersionUID = 1L;
 
 	/* Upper half of the Flags field for inventory items */
@@ -212,7 +214,7 @@ public class InventoryItem extends InventoryNode
 				}
 				catch (Exception ex)
 				{
-					Logger.Log("Error instantiating an InventoryItem through class name", LogLevel.Error, ex);
+					logger.error("Error instantiating an InventoryItem through class name", ex);
 				}
 		}
 		return item;

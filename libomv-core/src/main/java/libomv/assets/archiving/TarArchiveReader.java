@@ -33,11 +33,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.log4j.Logger;
+
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
 
 public class TarArchiveReader
 {
+	private static final Logger logger = Logger.getLogger(TarArchiveReader.class);
+	
     public enum TarEntryType
     {
         TYPE_UNKNOWN,
@@ -177,7 +180,7 @@ public class TarArchiveReader
         	}
         }
         if (read < 0)
-        	Logger.Log("[TAR ARCHIVE READER]: Premature end of archive stream encounterd", Logger.LogLevel.Error);
+        	logger.error("[TAR ARCHIVE READER]: Premature end of archive stream encounterd");
         return data;
     }
 

@@ -32,6 +32,8 @@ package libomv.rendering;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
@@ -40,11 +42,11 @@ import libomv.primitives.Primitive;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;;
 
 public class FacetedMesh extends Mesh
 {
+	private static final Logger logger = Logger.getLogger(FacetedMesh.class);
+
     /// List of primitive faces
     public List<Mesh.Face> Faces;
 
@@ -204,7 +206,7 @@ public class FacetedMesh extends Mesh
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed to decode mesh asset: " + ex.getMessage(), LogLevel.Warning);
+            logger.warn("Failed to decode mesh asset: " + ex.getMessage());
         }
         return null;
     }

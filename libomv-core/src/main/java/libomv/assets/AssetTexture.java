@@ -34,15 +34,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
+
 import libomv.imaging.ManagedImage;
 import libomv.imaging.J2KImage;
 import libomv.imaging.J2KImage.J2KLayerInfo;
 import libomv.types.UUID;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 public class AssetTexture extends AssetItem
 {
+	private static final Logger logger = Logger.getLogger(AssetTexture.class);
+
 	// Override the base classes AssetType
 	@Override
 	public AssetType getAssetType()
@@ -132,7 +134,7 @@ public class AssetTexture extends AssetItem
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Failed to encode JPEG2000 image", LogLevel.Error, ex);
+			logger.error("Failed to encode JPEG2000 image", ex);
 		}
 		finally
 		{
@@ -168,7 +170,7 @@ public class AssetTexture extends AssetItem
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Error decoding asset texture data", LogLevel.Error, ex);
+			logger.error("Error decoding asset texture data", ex);
 		}
 		finally
 		{

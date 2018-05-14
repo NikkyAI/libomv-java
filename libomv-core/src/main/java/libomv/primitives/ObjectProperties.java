@@ -32,7 +32,7 @@ package libomv.primitives;
 
 import java.util.Date;
 
-import libomv.ObjectManager.SaleType;
+import libomv.client.ObjectManager.SaleType;
 import libomv.primitives.Primitive.ObjectCategory;
 import libomv.types.Permissions;
 import libomv.types.UUID;

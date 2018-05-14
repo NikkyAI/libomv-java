@@ -32,16 +32,18 @@ package libomv.assets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import libomv.ObjectManager.SaleType;
+import org.apache.log4j.Logger;
+
+import libomv.client.ObjectManager.SaleType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 // Represents a Wearable Asset, Clothing, Hair, Skin, Etc
 public abstract class AssetWearable extends AssetItem
 {
+	private static final Logger logger = Logger.getLogger(AssetWearable.class);
+
 	// Index of TextureEntry slots for avatar appearances
 	public enum AvatarTextureIndex
 	{
@@ -238,7 +240,7 @@ public abstract class AssetWearable extends AssetItem
 
 					if (version != 22 && version != 18 && version != 16 && version != 15)
 					{
-						Logger.Log("Unsupported asset wearable version " + version, Logger.LogLevel.Debug);
+						logger.debug("Unsupported asset wearable version " + version);
 						return false;
 					}
 				}
@@ -382,7 +384,7 @@ public abstract class AssetWearable extends AssetItem
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Failed decoding wearable asset " + AssetID + ": " + ex.getMessage(), LogLevel.Warning);
+			logger.warn("Failed decoding wearable asset " + AssetID + ": " + ex.getMessage());
 			return false;
 		}
 		return true;

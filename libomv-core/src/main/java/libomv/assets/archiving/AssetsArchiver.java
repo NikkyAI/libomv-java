@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
@@ -40,10 +41,11 @@ import org.xmlpull.v1.XmlSerializer;
 import libomv.assets.AssetItem;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
 
 public class AssetsArchiver
 {
+	private static final Logger logger = Logger.getLogger(AssetsArchiver.class);
+
     ///// Post a message to the log every x assets as a progress bar
     //static int LOG_ASSET_LOAD_NOTIFICATION_INTERVAL = 50;
 
@@ -113,9 +115,9 @@ public class AssetsArchiver
 			String extension = ArchiveConstants.getExtensionForType(asset.getAssetType());
             if (extension == null);
             {
-                Logger.Log(String.format(
+                logger.warn(String.format(
                     "Unrecognized asset type %s with uuid %s. This asset will be saved but unable to be reloaded",
-                    asset.getAssetType(), asset.getAssetID()), Logger.LogLevel.Warning);
+                    asset.getAssetType(), asset.getAssetID()));
             }
             archive.writeFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.getAssetData());
         }

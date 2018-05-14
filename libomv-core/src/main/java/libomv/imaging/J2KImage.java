@@ -37,8 +37,6 @@ import java.io.OutputStream;
 import java.security.InvalidParameterException;
 
 import jj2000.j2k.JJ2KExceptionHandler;
-import jj2000.j2k.decoder.ImgDecoder;
-import jj2000.j2k.encoder.ImgEncoder;
 import jj2000.j2k.fileformat.reader.FileFormatReader;
 import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.Coord;
@@ -48,6 +46,8 @@ import jj2000.j2k.image.input.ImgReader;
 import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.util.ISRandomAccessIO;
 import jj2000.j2k.util.ParameterList;
+import libomv.imaging.j2k.ImgDecoder;
+import libomv.imaging.j2k.ImgEncoder;
 
 public class J2KImage extends ManagedImage
 {

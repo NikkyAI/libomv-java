@@ -29,9 +29,11 @@
  */
 package libomv.assets;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+
+import org.apache.log4j.Logger;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
@@ -39,12 +41,11 @@ import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 // Represents Mesh asset
 public class AssetMesh extends AssetItem
 {
+	private static final Logger logger = Logger.getLogger(AssetMesh.class);
     // Decoded mesh data
     private OSDMap MeshData;
 
@@ -124,7 +125,7 @@ public class AssetMesh extends AssetItem
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed to decode mesh asset", LogLevel.Error, ex);
+            logger.error("Failed to decode mesh asset", ex);
             return false;
         }
         finally

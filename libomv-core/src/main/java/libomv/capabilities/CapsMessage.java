@@ -39,15 +39,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import libomv.AgentManager.InstantMessageDialog;
-import libomv.AgentManager.InstantMessageOnline;
-import libomv.AgentManager.TeleportFlags;
-import libomv.AvatarManager.AgentDisplayName;
-import libomv.ObjectManager.SaleType;
-import libomv.ParcelManager;
-import libomv.ParcelManager.LandingTypeEnum;
-import libomv.ParcelManager.ParcelCategory;
-import libomv.ParcelManager.ParcelResult;
+import org.apache.log4j.Logger;
+
 import libomv.Simulator.SimAccess;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
@@ -55,6 +48,15 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem;
 import libomv.assets.AssetItem.AssetType;
+import libomv.client.ParcelManager;
+import libomv.client.AgentManager.InstantMessageDialog;
+import libomv.client.AgentManager.InstantMessageOnline;
+import libomv.client.AgentManager.TeleportFlags;
+import libomv.client.AvatarManager.AgentDisplayName;
+import libomv.client.ObjectManager.SaleType;
+import libomv.client.ParcelManager.LandingTypeEnum;
+import libomv.client.ParcelManager.ParcelCategory;
+import libomv.client.ParcelManager.ParcelResult;
 import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
@@ -72,11 +74,11 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 public class CapsMessage implements IMessage
 {
+	private static final Logger logger = Logger.getLogger(CapsMessage.class);
+
 	public enum CapsEventType
 	{
 		Default,
@@ -1437,9 +1439,9 @@ public class CapsMessage implements IMessage
 				Request.Deserialize(map);
 			}
 			else
-				Logger.Log(
+				logger.watn(
 						"Unable to deserialize RemoteParcelRequest: No message handler exists for method: "
-								+ map.AsString(), LogLevel.Warning);
+								+ map.AsString());
 		}
 	}
 
@@ -2173,9 +2175,7 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log(
-							"Unable to deserialize UploadBakedTexture: No message handler exists for state " + value,
-							LogLevel.Warning);
+					logger.warn("Unable to deserialize UploadBakedTexture: No message handler exists for state " + value);
 			}
 		}
 	}
@@ -2377,8 +2377,7 @@ public class CapsMessage implements IMessage
 			else if (value.equals("complete"))
 				Request = new UploaderRequestComplete();
 			else
-				Logger.Log("Unable to deserialize UploadScriptTask: No message handler exists for state " + value,
-						LogLevel.Warning);
+				logger.warn("Unable to deserialize UploadScriptTask: No message handler exists for state " + value);
 		}
 
 		/**
@@ -2404,8 +2403,7 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log("Unable to deserialize UploadScriptTask: No message handler exists for state " + value,
-							LogLevel.Warning);
+					logger.warn("Unable to deserialize UploadScriptTask: No message handler exists for state " + value);
 			}
 		}
 	}
@@ -2533,13 +2531,10 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log(
-							"Unable to deserialize UpdateGestureAgentInventory: No message handler exists for state "
-									+ value, LogLevel.Warning);
+					logger.warn("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for state " + value);
 			}
 			else
-				Logger.Log("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for message "
-						+ map.AsString(), LogLevel.Warning);
+				logger.warn("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for message " + map.AsString());
 		}
 	}
 
@@ -2682,13 +2677,10 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log(
-							"Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for state "
-									+ value, LogLevel.Warning);
+					logger.warn("Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for state " + value);
 			}
 			else
-				Logger.Log("Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for message "
-						+ map.toString(), LogLevel.Warning);
+				logger.warn("Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for message " + map.toString());
 		}
 	}
 
@@ -2896,8 +2888,7 @@ public class CapsMessage implements IMessage
 				Request = new UploaderRequestScriptComplete();
 			}
 			else
-				Logger.Log("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state "
-						+ value, LogLevel.Warning);
+				logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state " + value);
 		}
 
 		/**
@@ -2933,12 +2924,10 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state "
-							+ value, LogLevel.Warning);
+					logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state " + value);
 			}
 			else
-				Logger.Log("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for message "
-						+ map.AsString(), LogLevel.Warning);
+				logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for message " + map.AsString());
 		}
 	}
 
@@ -3074,13 +3063,10 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log("Unable to deserialize UpdateScriptAgent: No message handler exists for state " + value,
-							LogLevel.Warning);
+					logger.warn("Unable to deserialize UpdateScriptAgent: No message handler exists for state " + value);
 			}
 			else
-				Logger.Log(
-						"Unable to deserialize UpdateScriptAgent: No message handler exists for message "
-								+ map.AsString(), LogLevel.Warning);
+				logger.warn("Unable to deserialize UpdateScriptAgent: No message handler exists for message " + map.AsString());
 		}
 	}
 
@@ -3307,7 +3293,7 @@ public class CapsMessage implements IMessage
 				Request.Deserialize(map);
 			}
 			else
-				Logger.Log("Unable to deserialize MapLayerMessage: No message handler exists", LogLevel.Warning);
+				logger.warn("Unable to deserialize MapLayerMessage: No message handler exists");
 		}
 	}
 
@@ -3480,9 +3466,9 @@ public class CapsMessage implements IMessage
 				Request.Deserialize(map);
 			}
 			else
-				Logger.Log(
+				logger.warn(
 						"Unable to deserialize SearchStatRequest: No message handler exists for method "
-								+ map.get("method").AsString(), LogLevel.Warning);
+								+ map.get("method").AsString());
 		}
 	}
 
@@ -3751,13 +3737,10 @@ public class CapsMessage implements IMessage
 					Request.Deserialize(map);
 				}
 				else
-					Logger.Log("Unable to deserialize ChatSessionRequest: No message handler exists for method "
-							+ value, LogLevel.Warning);
+					logger.warn("Unable to deserialize ChatSessionRequest: No message handler exists for method " + value);
 			}
 			else
-				Logger.Log(
-						"Unable to deserialize ChatSessionRequest: No message handler exists for message "
-								+ map.AsString(), LogLevel.Warning);
+				logger.warn("Unable to deserialize ChatSessionRequest: No message handler exists for message " + map.AsString());
 		}
 	}
 
@@ -4497,8 +4480,7 @@ public class CapsMessage implements IMessage
 				Messages.Deserialize(map);
 			}
 			else
-				Logger.Log("Unable to deserialize EventQueueGetMessage: No message handler exists for event",
-						LogLevel.Warning);
+				logger.warn("Unable to deserialize EventQueueGetMessage: No message handler exists for event");
 		}
 	}
 
@@ -5683,9 +5665,7 @@ public class CapsMessage implements IMessage
 				Request.Deserialize(map);
 			}
 			else
-				Logger.Log(
-						"Unable to deserialize ObjectMedia: No message handler exists for method: " + map.AsString(),
-						LogLevel.Warning);
+				logger.warn("Unable to deserialize ObjectMedia: No message handler exists for method: " + map.AsString());
 		}
 	}
 
@@ -5728,7 +5708,7 @@ public class CapsMessage implements IMessage
 	        }
 	        catch (Exception ex)
 	        {
-	            Logger.Log("Failed to decode RenderMaterials message:", LogLevel.Warning, ex);
+	            logger.warn("Failed to decode RenderMaterials message:", ex);
 	            MaterialData = new OSDMap();
 	        }
 	    }
@@ -6776,7 +6756,7 @@ public class CapsMessage implements IMessage
 			case ViewerStartAuction:
 			case UntrustedSimulatorMessage:
 			default:
-				Logger.Log("Unimplemented event " + eventType.toString(), LogLevel.Error);
+				logger.error("Unimplemented event " + eventType.toString());
 		}
 		if (message != null)
 			message.Deserialize(map);

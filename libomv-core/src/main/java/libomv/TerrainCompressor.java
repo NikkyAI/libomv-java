@@ -29,18 +29,21 @@
  */
 package libomv;
 
-import libomv.TerrainManager.GroupHeader;
-import libomv.TerrainManager.LayerType;
-import libomv.TerrainManager.TerrainHeader;
-import libomv.TerrainManager.TerrainPatch;
+import org.apache.log4j.Logger;
+
+import libomv.client.TerrainManager;
+import libomv.client.TerrainManager.GroupHeader;
+import libomv.client.TerrainManager.LayerType;
+import libomv.client.TerrainManager.TerrainHeader;
+import libomv.client.TerrainManager.TerrainPatch;
 import libomv.packets.LayerDataPacket;
 import libomv.utils.BitPack;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 public class TerrainCompressor
 {
+	private static final Logger logger = Logger.getLogger(TerrainCompressor.class);
+
     public static byte PATCHES_PER_EDGE = 16;
     public static byte END_OF_PATCHES = 97;
 
@@ -302,7 +305,7 @@ public class TerrainCompressor
 
         if (wbits > 17 || wbits < 2)
         {
-            Logger.Log("Bits needed per word in EncodePatchHeader() are outside the allowed range", LogLevel.Error);
+            logger.error("Bits needed per word in EncodePatchHeader() are outside the allowed range");
         }
 
         header.QuantWBits |= (wbits - 2);
@@ -457,7 +460,7 @@ public class TerrainCompressor
 
         if (postquant > 16 * 16 || postquant < 0)
         {
-            Logger.Log("Postquant is outside the range of allowed values in EncodePatch()", LogLevel.Error);
+            logger.error("Postquant is outside the range of allowed values in EncodePatch()");
             return;
         }
 
@@ -541,7 +544,7 @@ public class TerrainCompressor
                 block[n] = patches[CopyMatrix32[n]] * DequantizeTable32[n];
             }
 
-            Logger.Log("Implement IDCTPatchLarge", LogLevel.Error);
+            logger.error("Implement IDCTPatchLarge");
         }
 
         for (int j = 0; j < block.length; j++)

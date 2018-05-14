@@ -40,7 +40,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
 
-import libomv.GridClient;
+import libomv.client.GridClient;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;

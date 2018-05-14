@@ -39,6 +39,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import libomv.ImportExport.ModelMaterial;
 import libomv.ImportExport.ModelPrim;
@@ -76,12 +77,13 @@ import libomv.types.UUID;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
 import libomv.utils.RefObject;
 
 // Parsing Collada model files into data structures
 public class ColladaLoader
 {
+	private static final Logger logger = Logger.getLogger(ColladaLoader.class);
+
     COLLADA Model;
     List<LoaderNode> Nodes;
     List<ModelMaterial> Materials;
@@ -121,7 +123,7 @@ public class ColladaLoader
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed parsing collada file: " + ex.getMessage(), Logger.LogLevel.Error, ex);
+            logger.error("Failed parsing collada file: " + ex.getMessage(), ex);
             return new ArrayList<ModelPrim>();
         }
     }
@@ -178,7 +180,7 @@ public class ColladaLoader
                 width = width > 1024 ? 1024 : width;
                 height = height > 1024 ? 1024 : height;
 
-                Logger.Log("Image has irregular dimensions " + origWidth + "x" + origHieght + ". Resizing to " + width + "x" + height, Logger.LogLevel.Info);
+                logger.info("Image has irregular dimensions " + origWidth + "x" + origHieght + ". Resizing to " + width + "x" + height);
 
                 ManagedImage resized = new ManagedImage(image);
                 // FIXME: SmoothingMode.HighQuality && InterpolationMode.HighQualityBicubic
@@ -189,11 +191,11 @@ public class ColladaLoader
 
             material.TextureData = J2KImage.encode(image, false);
 
-            Logger.Log("Successfully encoded " + fname, Logger.LogLevel.Info);
+            logger.info("Successfully encoded " + fname);
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed loading " + fname + ": " + ex.getMessage(), Logger.LogLevel.Warning);
+            logger.warn("Failed loading " + fname + ": " + ex.getMessage());
         }
 
     }

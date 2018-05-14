@@ -51,10 +51,15 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import libomv.ParcelManager.Parcel;
+import org.apache.log4j.Logger;
+
 import libomv.Statistics.Type;
-import libomv.TerrainManager.TerrainPatch;
-import libomv.capabilities.CapsManager;
+import libomv.client.GridClient;
+import libomv.client.LibSettings;
+import libomv.client.NetworkManager;
+import libomv.client.ParcelManager.Parcel;
+import libomv.client.TerrainManager.TerrainPatch;
+import libomv.client.capabilities.CapsManager;
 import libomv.packets.AgentPausePacket;
 import libomv.packets.AgentResumePacket;
 import libomv.packets.CloseCircuitPacket;
@@ -71,14 +76,14 @@ import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // Simulator is a wrapper for a network connection to a simulator and the
 // Region class representing the block of land in the metaverse.
 public class Simulator extends Thread
 {
+	private static final Logger logger = Logger.getLogger(Simulator.class);
+
 	/* Simulator (region) properties */
 	// [Flags]
 	public static class RegionFlags
@@ -998,25 +1003,24 @@ public class Simulator extends Thread
 			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), LibSettings.PING_INTERVAL, LibSettings.PING_INTERVAL);
 		}
 
-		Logger.Log("Connecting to " + ipEndPoint.toString(), LogLevel.Info, _Client);
+		logger.info("Connecting to " + ipEndPoint.toString(), _Client);
 
 		// runs background thread to read from DatagramSocket
 		start();
 
 		Statistics.ConnectTime = System.currentTimeMillis();
 
-		Logger.Log("Waiting for connection", LogLevel.Debug, _Client);
+		logger.debug("Waiting for connection", _Client);
 		while (true)
 		{
 			if (_Connected)
 			{
-				Logger.Log(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime),
-						   LogLevel.Debug, _Client);
+				logger.debug(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime), _Client);
 				break;
 			}
 			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
 			{
-				Logger.Log("Giving up on waiting for RegionHandshake for " + this.toString(), LogLevel.Error, _Client);
+				logger.error("Giving up on waiting for RegionHandshake for " + this.toString(), _Client);
 
 				// Remove the simulator from the list, not useful if we haven't received the RegionHandshake
 				synchronized (_Client.Network.getSimulators())
@@ -1052,7 +1056,7 @@ public class Simulator extends Thread
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Failed to update our status", LogLevel.Error, _Client, ex);
+			logger.error("Failed to update our status", _Client, ex);
 		}
 		return false;
 	}
@@ -1077,7 +1081,7 @@ public class Simulator extends Thread
 			if (_Caps.getSeedCapsURI().equals(seedcaps))
 				return;
 
-			Logger.Log("Unexpected change of seed capability", LogLevel.Warning, _Client);
+			logger.warn("Unexpected change of seed capability", _Client);
 			_Caps.disconnect(true);
 			_Caps = null;
 		}
@@ -1087,7 +1091,7 @@ public class Simulator extends Thread
 			// Connect to the new CAPS system
 			if (seedcaps == null || seedcaps.isEmpty())
 			{
-				Logger.Log("Setting up a sim without a valid capabilities server!", LogLevel.Error, _Client);
+				logger.error("Setting up a sim without a valid capabilities server!", _Client);
 			}
 			else
 			{
@@ -1153,7 +1157,7 @@ public class Simulator extends Thread
 			}
 			catch (Exception ex)
 			{
-				Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
+				logger.error(ex.toString(), _Client, ex);
 			}
 		}
 	}
@@ -1227,7 +1231,7 @@ public class Simulator extends Thread
 		}
 
 		// if (oldestUnacked != 0)
-		//     Logger.DebugLog("Sending ping with oldestUnacked=" + oldestUnacked);
+		//     logger.debug("Sending ping with oldestUnacked=" + oldestUnacked);
 
 		StartPingCheckPacket ping = new StartPingCheckPacket();
 		ping.PingID.PingID = Statistics.LastPingID++;
@@ -1253,7 +1257,7 @@ public class Simulator extends Thread
 
 	private void DumpBuffer(byte[] byteBuffer, int numBytes, String head, int level)
 	{
-		Logger.Log(head + numBytes, level, _Client);
+		logger.info(head + numBytes, level, _Client);
 		StringBuffer dump = new StringBuffer(numBytes * 2);
 		for (int i = 0; i < numBytes; i++)
 		{
@@ -1261,7 +1265,7 @@ public class Simulator extends Thread
 			dump.append(Integer.toHexString(value & 0xFF));
 			dump.append(" ");
 		}
-		Logger.Log(dump, level, _Client);
+		logger.log(dump, level, _Client);
 
 	}
 
@@ -1274,7 +1278,7 @@ public class Simulator extends Thread
 		}
 		catch (SocketException e)
 		{
-			Logger.Log("Failed to startup the UDP socket", Logger.LogLevel.Error, _Client);
+			logger.error("Failed to startup the UDP socket", _Client);
 			return;
 		}
 		byte[] RecvBuffer = new byte[4096];
@@ -1323,12 +1327,12 @@ public class Simulator extends Thread
 						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
 						if (logRawPackets)
 						{
-							Logger.Log("Decoded packet " + packet.getClass().getName(), Logger.LogLevel.Debug, _Client);
+							logger.debug("Decoded packet " + packet.getClass().getName(), _Client);
 						}
 					}
 					catch (IOException ex)
 					{
-						Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), LogLevel.Info, _Client, ex);
+						logger.info(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client, ex);
 
 						_Connected = false;
 						_Client.Network.disconnectSim(this, true);
@@ -1363,8 +1367,8 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(ack) == null)
 							{
-								Logger.Log(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
-										packet.getClass().getName()), LogLevel.Warning, _Client);
+								logger.warn(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
+										packet.getClass().getName()), _Client);
 							}
 						}
 					}
@@ -1380,8 +1384,8 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(ID) == null)
 							{
-								Logger.Log(String.format("ACK for a packet (%d) we didn't send: %s", ID,
-										packet.getClass().getName()), LogLevel.Warning, _Client);
+								logger.warn(String.format("ACK for a packet (%d) we didn't send: %s", ID,
+										packet.getClass().getName()), _Client);
 							}
 						}
 					}
@@ -1407,13 +1411,13 @@ public class Simulator extends Thread
 				{
 					if (packet.getHeader().getResent())
 					{
-						Logger.DebugLog(String.format("Received a resend of already processed packet #%d, type: %s, from %s",
+						logger.debug(String.format("Received a resend of already processed packet #%d, type: %s, from %s",
 								                       sequence, packet.getType(), getName()), _Client);
 					}
 					else
 					{
-						Logger.Log(String.format("Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s", 
-								                 sequence, packet.getType(), _Client.Self.getName(), getName()), LogLevel.Warning, _Client);
+						logger.warn(String.format("Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s", 
+								                 sequence, packet.getType(), _Client.Self.getName(), getName()), _Client);
 					}
 					// Avoid firing a callback twice for the same packet
 					continue;
@@ -1429,7 +1433,7 @@ public class Simulator extends Thread
 			}
 			catch (IOException ex)
 			{
-				Logger.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), LogLevel.Info, _Client);
+				logger.info(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client);
 
 				_Connected = false;
 				return;
@@ -1452,17 +1456,17 @@ public class Simulator extends Thread
 			}
 			catch (NullPointerException ex)
 			{
-				Logger.Log(
+				logger.error(
 						"Failed to serialize " + packet.getType()
 								+ " packet to one or more payloads due to a missing block or field. StackTrace: "
-								+ ex.getStackTrace(), LogLevel.Error);
+								+ ex.getStackTrace());
 				return;
 			}
 			int packetCount = datas.length;
 
 			if (packetCount > 1)
 			{
-				Logger.DebugLog("Split " + packet.getType() + " packet into " + packetCount + " packets");
+				logger.debug("Split " + packet.getType() + " packet into " + packetCount + " packets");
 			}
 
 			for (int i = 0; i < packetCount; i++)
@@ -1543,7 +1547,7 @@ public class Simulator extends Thread
 				}
 				catch (Exception ex)
 				{
-					Logger.Log("Exception when sending Ack packet", Logger.LogLevel.Error, _Client, ex);
+					logger.error("Exception when sending Ack packet", _Client, ex);
 				}
 			}
 		}
@@ -1578,7 +1582,7 @@ public class Simulator extends Thread
 					{
 						if (_Client.Settings.LOG_RESENDS)
 						{
-							Logger.DebugLog(String.format("Resending %s packet #%d, %d ms have passed",
+							logger.debug(String.format("Resending %s packet #%d, %d ms have passed",
 									outgoing.Type, outgoing.SequenceNumber, now - outgoing.TickCount), _Client);
 						}
 
@@ -1597,7 +1601,7 @@ public class Simulator extends Thread
 					}
 					else
 					{
-						Logger.DebugLog(String.format("Dropping packet #%d after %d failed attempts",
+						logger.debug(String.format("Dropping packet #%d after %d failed attempts",
 								outgoing.SequenceNumber, outgoing.ResendCount, _Client));
 
 						synchronized (_NeedAck)
@@ -1671,7 +1675,7 @@ public class Simulator extends Thread
 		}
 		catch (IOException ex)
 		{
-			Logger.Log(ex.toString(), LogLevel.Error, _Client, ex);
+			logger.error(ex.toString(), _Client, ex);
 		}
 
 		// Stats tracking
@@ -1713,9 +1717,9 @@ public class Simulator extends Thread
 			{
 				Statistics.IncomingBPS = (int) (recv - old_in) / _InBytes.size();
 				Statistics.OutgoingBPS = (int) (sent - old_out) / _OutBytes.size();
-				Logger.Log(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
+				logger.debug(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
 						+ " bps, Lag: " + Statistics.LastLag + " ms, Pings: " + Statistics.ReceivedPongs + "/"
-						+ Statistics.SentPings, LogLevel.Debug, _Client);
+						+ Statistics.SentPings, _Client);
 			}
 		}
 	}

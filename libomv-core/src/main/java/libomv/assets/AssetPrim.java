@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -48,7 +49,7 @@ import org.xmlpull.v1.XmlSerializer;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.ObjectManager;
+import libomv.client.ObjectManager;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.primitives.ObjectProperties;
@@ -68,12 +69,12 @@ import libomv.types.UUID;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 // A linkset asset, containing a parent primitive and zero or more children
 public class AssetPrim extends AssetItem
 {
+	private static final Logger logger = Logger.getLogger(AssetPrim.class);
+
 	private PrimObject Parent;
 	
 	public PrimObject getParent()
@@ -153,7 +154,7 @@ public class AssetPrim extends AssetItem
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("XML encoding error", Logger.LogLevel.Error, ex);
+			logger.error("XML encoding error", ex);
 		}
 		finally
 		{
@@ -163,7 +164,7 @@ public class AssetPrim extends AssetItem
 			}
 			catch (IOException ex)
 			{
-				Logger.Log("XML encoding error", Logger.LogLevel.Error, ex);
+				logger.error("XML encoding error", ex);
 			}
 		}
 	}
@@ -183,7 +184,7 @@ public class AssetPrim extends AssetItem
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
+				logger.error("XML parse error", ex);
 			}
 			finally
 			{
@@ -193,7 +194,7 @@ public class AssetPrim extends AssetItem
 				}
 				catch (IOException ex)
 				{
-					Logger.Log("XML parse error", Logger.LogLevel.Error, ex);
+					logger.error("XML parse error", ex);
 				}
 			}
 		}
@@ -425,7 +426,7 @@ public class AssetPrim extends AssetItem
 		{
 			parser.nextTag(); // Advance to <OtherParths>
 			if (parser.getEventType() == XmlPullParser.END_TAG)
-				Logger.Log("Unexpected event type", Logger.LogLevel.Error);
+				logger.error("Unexpected event type");
 
 			if (!parser.isEmptyElementTag())
 			{
@@ -442,7 +443,7 @@ public class AssetPrim extends AssetItem
 			}
 			return true;
 		}
-		Logger.Log("Failed to load root linkset prim", LogLevel.Error);
+		logger.error("Failed to load root linkset prim");
 		return false;
 	}
 
@@ -686,7 +687,7 @@ public class AssetPrim extends AssetItem
 				if (parser.isEmptyElementTag())
 					Helpers.skipElement(parser);
 				else
-					Logger.Log("Received unrecocognized asset primitive element " + name + " \"" + Helpers.skipElementDebug(parser) + "\"", Logger.LogLevel.Debug);
+					logger.debug("Received unrecocognized asset primitive element " + name + " \"" + Helpers.skipElementDebug(parser) + "\"");
 			}
 		}
 		// currently at </SceneObjectPart>
