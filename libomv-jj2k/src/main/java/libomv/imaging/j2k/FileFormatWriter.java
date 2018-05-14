@@ -2,7 +2,7 @@
  * cvs identifier:
  *
  * $Id: FileFormatWriter.java,v 1.13 2001/02/16 11:53:54 qtxjoas Exp $
- * 
+ *
  * Class:                   FileFormatWriter
  *
  * Description:             Writes the file format
@@ -11,10 +11,10 @@
  *
  * COPYRIGHT:
  *
- * This software module was originally developed by Rapha�l Grosbois and
+ * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
- * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
- * Bouchard, F�lix Henry, Gerard Mozelle and Patrice Onno (Canon Research
+ * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
+ * Bouchard, Félix Henry, Gerard Mozelle and Patrice Onno (Canon Research
  * Centre France S.A) in the course of development of the JPEG2000
  * standard as specified by ISO/IEC 15444 (JPEG 2000 Standard). This
  * software module is an implementation of a part of the JPEG 2000
@@ -49,16 +49,14 @@ import java.io.OutputStream;
 
 import jj2000.j2k.fileformat.FileFormatBoxes;
 
-
 /**
  * This class writes the file format wrapper that may or may not exist around a
  * valid JPEG 2000 codestream. This class writes the simple possible legal
  * fileformat
- * 
+ *
  * @see jj2000.j2k.fileformat.reader.FileFormatReader
  */
-public class FileFormatWriter implements FileFormatBoxes
-{
+class FileFormatWriter implements FileFormatBoxes {
 	/**
 	 * The byte buffer to which to write the fileformat header
 	 */
@@ -95,28 +93,27 @@ public class FileFormatWriter implements FileFormatBoxes
 	/**
 	 * The constructor of the FileFormatWriter. It receives all the information
 	 * necessary about a codestream to generate a legal JP2 file
-	 * 
+	 *
 	 * @param os
 	 *            The output stream to write the file format header into
-	 * 
+	 *
 	 * @param height
 	 *            The height of the image
-	 * 
+	 *
 	 * @param width
 	 *            The width of the image
-	 * 
+	 *
 	 * @param nc
 	 *            The number of components
-	 * 
+	 *
 	 * @param bpc
 	 *            The number of bits per component
-	 * 
+	 *
 	 * @param clength
 	 *            Length of codestream
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public FileFormatWriter(OutputStream os, int height, int width, int nc, int[] bpc, int clength) throws IOException
-	{
+	public FileFormatWriter(OutputStream os, int height, int width, int nc, int[] bpc, int clength) throws IOException {
 		this.height = height;
 		this.width = width;
 		this.nc = nc;
@@ -126,8 +123,7 @@ public class FileFormatWriter implements FileFormatBoxes
 
 		bpcVaries = false;
 		int fixbpc = bpc[0];
-		for (int i = nc - 1; i > 0; i--)
-		{
+		for (int i = nc - 1; i > 0; i--) {
 			if (bpc[i] != fixbpc)
 				bpcVaries = true;
 		}
@@ -142,26 +138,24 @@ public class FileFormatWriter implements FileFormatBoxes
 
 		// Write JP2 Header box
 		writeJP2HeaderBox();
-			
+
 		// Write JP2 Codestream header
 		writeContiguousCodeStreamBoxHeader(clength);
-		
+
 		os.write(baos.toByteArray());
 	}
-	
-	public int length()
-	{
+
+	public int length() {
 		return baos.size();
 	}
-	
+
 	/**
 	 * This method writes the File Type box
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void writeFileTypeBox() throws IOException
-	{
+	private void writeFileTypeBox() throws IOException {
 		// Write box length (LBox)
 		// LBox(4) + TBox (4) + BR(4) + MinV(4) + CL(4) = 20
 		out.writeInt(FTB_LENGTH);
@@ -183,12 +177,11 @@ public class FileFormatWriter implements FileFormatBoxes
 
 	/**
 	 * This method writes the JP2Header box
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void writeJP2HeaderBox() throws IOException
-	{
+	private void writeJP2HeaderBox() throws IOException {
 
 		// Write box length (LBox)
 		// if the number of bits per components varies, a bpcc box is written
@@ -198,28 +191,27 @@ public class FileFormatWriter implements FileFormatBoxes
 			out.writeInt(8 + IHB_LENGTH + CSB_LENGTH);
 
 		// Write a JP2Header (TBox)
-		out.writeInt(JP2_HEADER_BOX);       // 4 bytes
+		out.writeInt(JP2_HEADER_BOX); // 4 bytes
 
 		// Write image header box
-		writeImageHeaderBox();             // 22 bytes
+		writeImageHeaderBox(); // 22 bytes
 
 		// Write Colour Bpecification Box
-		writeColourSpecificationBox();     // 15 Bytes
+		writeColourSpecificationBox(); // 15 Bytes
 
 		// if the number of bits per components varies write bpcc box
 		if (bpcVaries)
-			writeBitsPerComponentBox();    // 8 Byte + nc Bytes
+			writeBitsPerComponentBox(); // 8 Byte + nc Bytes
 	}
 
 	/**
 	 * This method writes the Bits Per Component box
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
-	 * 
+	 *
 	 */
-	private void writeBitsPerComponentBox() throws IOException
-	{
+	private void writeBitsPerComponentBox() throws IOException {
 		// Write box length (LBox)
 		out.writeInt(BPC_LENGTH + nc);
 
@@ -227,21 +219,19 @@ public class FileFormatWriter implements FileFormatBoxes
 		out.writeInt(BITS_PER_COMPONENT_BOX);
 
 		// Write bpc fields
-		for (int i = 0; i < nc; i++)
-		{
+		for (int i = 0; i < nc; i++) {
 			out.writeByte(bpc[i] - 1);
 		}
 	}
 
 	/**
 	 * This method writes the Colour Specification box
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
-	 * 
+	 *
 	 */
-	private void writeColourSpecificationBox() throws IOException
-	{
+	private void writeColourSpecificationBox() throws IOException {
 		// Write box length (LBox)
 		out.writeInt(CSB_LENGTH);
 
@@ -266,12 +256,11 @@ public class FileFormatWriter implements FileFormatBoxes
 
 	/**
 	 * This method writes the Image Header box
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void writeImageHeaderBox() throws IOException
-	{
+	private void writeImageHeaderBox() throws IOException {
 
 		// Write box length
 		out.writeInt(IHB_LENGTH);
@@ -307,17 +296,17 @@ public class FileFormatWriter implements FileFormatBoxes
 	}
 
 	/**
-	 * This method writes the Contiguous codestream box header which is directly followed by the codestream data
-	 * Call this function with the actual number of codestream data bytes after the codestream has been written
-	 * 
+	 * This method writes the Contiguous codestream box header which is directly
+	 * followed by the codestream data Call this function with the actual number
+	 * of codestream data bytes after the codestream has been written
+	 *
 	 * @param clength
 	 *            The contiguous codestream length
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void writeContiguousCodeStreamBoxHeader(int clength) throws IOException
-	{
+	private void writeContiguousCodeStreamBoxHeader(int clength) throws IOException {
 		// Write box length (LBox)
 		out.writeInt(clength + 8);
 

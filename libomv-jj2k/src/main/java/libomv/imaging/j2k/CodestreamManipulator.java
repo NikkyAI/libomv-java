@@ -11,10 +11,10 @@
  *
  * COPYRIGHT:
  *
- * This software module was originally developed by Rapha�l Grosbois and
+ * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
- * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
- * Bouchard, F�lix Henry, Gerard Mozelle and Patrice Onno (Canon Research
+ * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
+ * Bouchard, Félix Henry, Gerard Mozelle and Patrice Onno (Canon Research
  * Centre France S.A) in the course of development of the JPEG2000
  * standard as specified by ISO/IEC 15444 (JPEG 2000 Standard). This
  * software module is an implementation of a part of the JPEG 2000
@@ -52,8 +52,7 @@ import java.io.*;
  * This class takes a legal JPEG 2000 codestream and performs some manipulation
  * on it. Currently the manipulations supported are: Tile-parts
  */
-public class CodestreamManipulator
-{
+class CodestreamManipulator {
 	/**
 	 * Flag indicating whether packed packet headers in main header is used
 	 */
@@ -83,13 +82,13 @@ public class CodestreamManipulator
 	private int pptp;
 
 	/** The name of the outfile */
-	private BufferedRandomAccessIO output;
+	private OSRandomAccessIO output;
 
 	/** The length of a SOT plus a SOD marker */
 	private static int TP_HEAD_LEN = 14;
 
 	/** The maximum number of a tile part index (TPsot) */
-//	private static int MAX_TPSOT = 16;
+	// private static int MAX_TPSOT = 16;
 
 	/** The maximum number of tile parts in any tile */
 	private int maxtp;
@@ -120,19 +119,27 @@ public class CodestreamManipulator
 
 	/**
 	 * Instantiates a codestream manipulator..
-	 * 
-	 * @param outname The name of the original outfile
-	 * @param offset The offset into the stream at which the codestream starts
-	 * @param nt  The number of tiles in the image
-	 * @param pptp Packets per tile-part. If zero, no division into tileparts is performed
-	 * @param ppm Flag indicating that PPM marker is used
-	 * @param ppt Flag indicating that PPT marker is used
-	 * @param tempSop  Flag indicating whether SOP merker should be removed
-	 * @param tempEph  Flag indicating whether EPH merker should be removed
+	 *
+	 * @param outname
+	 *            The name of the original outfile
+	 * @param offset
+	 *            The offset into the stream at which the codestream starts
+	 * @param nt
+	 *            The number of tiles in the image
+	 * @param pptp
+	 *            Packets per tile-part. If zero, no division into tileparts is
+	 *            performed
+	 * @param ppm
+	 *            Flag indicating that PPM marker is used
+	 * @param ppt
+	 *            Flag indicating that PPT marker is used
+	 * @param tempSop
+	 *            Flag indicating whether SOP merker should be removed
+	 * @param tempEph
+	 *            Flag indicating whether EPH merker should be removed
 	 */
-	public CodestreamManipulator(BufferedRandomAccessIO output, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
-			boolean tempEph)
-	{
+	public CodestreamManipulator(OSRandomAccessIO output, int nt, int pptp, boolean ppm, boolean ppt, boolean tempSop,
+			boolean tempEph) {
 		this.output = output;
 		this.nt = nt;
 		this.pptp = pptp;
@@ -145,14 +152,13 @@ public class CodestreamManipulator
 	/**
 	 * This method performs the actual manipulation of the codestream which is
 	 * the reparsing for tile parts and packed packet headers
-	 * 
+	 *
 	 * @return The number of bytes that the file has increased by
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	public int doCodestreamManipulation() throws IOException
-	{
+	public int doCodestreamManipulation() throws IOException {
 		int addedHeaderBytes = 0;
 		ppt = new int[nt];
 		tileParts = new byte[nt][][];
@@ -190,16 +196,15 @@ public class CodestreamManipulator
 	 * This method parses the codestream for SOT, SOP and EPH markers and
 	 * removes header bits signalling SOP and EPH markers if packed packet
 	 * headers are used
-	 * 
+	 *
 	 * @param fi
 	 *            The file to parse the markers from
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void parseAndFind(BufferedRandomAccessIO fi) throws IOException
-	{
-		int length, pos, i, t /*, sop = 0, eph = 0*/;
+	private void parseAndFind(RandomAccessIO fi) throws IOException {
+		int length, pos, i, t /* , sop = 0, eph = 0 */;
 		short marker;
 		int halfMarker;
 		int tileEnd;
@@ -208,15 +213,13 @@ public class CodestreamManipulator
 		// Find position of first SOT marker
 		marker = (short) fi.readUnsignedShort(); // read SOC marker
 		marker = (short) fi.readUnsignedShort();
-		while (marker != Markers.SOT)
-		{
+		while (marker != Markers.SOT) {
 			pos = fi.getPos();
 			length = fi.readUnsignedShort();
 
 			// If SOP and EPH markers were only used for parsing in this
 			// class remove SOP and EPH markers from Scod field
-			if (marker == Markers.COD)
-			{
+			if (marker == Markers.COD) {
 				int scod = fi.readUnsignedByte();
 				if (tempSop)
 					scod &= 0xfd; // Remove bits indicating SOP
@@ -233,8 +236,7 @@ public class CodestreamManipulator
 		fi.seek(pos - 2);
 
 		// Find all packet headers, packed data and tile headers
-		for (t = 0; t < nt; t++)
-		{
+		for (t = 0; t < nt; t++) {
 			// Read SOT marker
 			fi.readUnsignedShort(); // Skip SOT
 			pos = fi.getPos();
@@ -246,15 +248,13 @@ public class CodestreamManipulator
 
 			// Find position of SOD marker
 			marker = (short) fi.readUnsignedShort();
-			while (marker != Markers.SOD)
-			{
+			while (marker != Markers.SOD) {
 				pos = fi.getPos();
 				length = fi.readUnsignedShort();
 
 				// If SOP and EPH markers were only used for parsing in this
 				// class remove SOP and EPH markers from Scod field
-				if (marker == Markers.COD)
-				{
+				if (marker == Markers.COD) {
 					int scod = fi.readUnsignedByte();
 					if (tempSop)
 						scod &= 0xfd; // Remove bits indicating SOP
@@ -268,30 +268,26 @@ public class CodestreamManipulator
 			}
 
 			// Find all SOP and EPH markers in tile
-//			sop = 0;
-//			eph = 0;
+			// sop = 0;
+			// eph = 0;
 
 			i = fi.getPos();
-			while (i < tileEnd)
-			{
+			while (i < tileEnd) {
 				halfMarker = (short) fi.readUnsignedByte();
-				if (halfMarker == (short) 0xff)
-				{
+				if (halfMarker == (short) 0xff) {
 					marker = (short) ((halfMarker << 8) + fi.readUnsignedByte());
 					i++;
-					if (marker == Markers.SOP)
-					{
+					if (marker == Markers.SOP) {
 						markPos.addElement(new Integer(fi.getPos()));
 						ppt[t]++;
-//						sop++;
+						// sop++;
 						fi.skipBytes(4);
 						i += 4;
 					}
 
-					if (marker == Markers.EPH)
-					{
+					if (marker == Markers.EPH) {
 						markPos.addElement(new Integer(fi.getPos()));
-//						eph++;
+						// eph++;
 					}
 				}
 				i++;
@@ -305,15 +301,14 @@ public class CodestreamManipulator
 	/**
 	 * This method reads and buffers the tile headers, packet headers and packet
 	 * data.
-	 * 
+	 *
 	 * @param fi
 	 *            The file to read the headers and data from
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void readAndBuffer(BufferedRandomAccessIO fi) throws IOException
-	{
+	private void readAndBuffer(RandomAccessIO fi) throws IOException {
 		int p, prem, length, t, markIndex;
 
 		// Buffer main header
@@ -322,8 +317,7 @@ public class CodestreamManipulator
 		fi.readFully(mainHeader, 0, length);
 		markIndex = 0;
 
-		for (t = 0; t < nt; t++)
-		{
+		for (t = 0; t < nt; t++) {
 			prem = ppt[t];
 
 			packetHeaders[t] = new byte[prem][];
@@ -336,25 +330,20 @@ public class CodestreamManipulator
 			fi.readFully(tileHeaders[t], 0, length);
 			markIndex++;
 
-			for (p = 0; p < prem; p++)
-			{
+			for (p = 0; p < prem; p++) {
 				// Read packet header
 				length = positions[markIndex + 1].intValue() - positions[markIndex].intValue();
 
-				if (tempSop)
-				{ // SOP marker is skipped
+				if (tempSop) { // SOP marker is skipped
 					length -= Markers.SOP_LENGTH;
 					fi.skipBytes(Markers.SOP_LENGTH);
-				}
-				else
-				{ // SOP marker is read and buffered
+				} else { // SOP marker is read and buffered
 					length -= Markers.SOP_LENGTH;
 					sopMarkSeg[t][p] = new byte[Markers.SOP_LENGTH];
 					fi.readFully(sopMarkSeg[t][p], 0, Markers.SOP_LENGTH);
 				}
 
-				if (!tempEph)
-				{ // EPH marker is kept in header
+				if (!tempEph) { // EPH marker is kept in header
 					length += Markers.EPH_LENGTH;
 				}
 				packetHeaders[t][p] = new byte[length];
@@ -365,8 +354,7 @@ public class CodestreamManipulator
 				length = positions[markIndex + 1].intValue() - positions[markIndex].intValue();
 
 				length -= Markers.EPH_LENGTH;
-				if (tempEph)
-				{ // EPH marker is used and is skipped
+				if (tempEph) { // EPH marker is used and is skipped
 					fi.skipBytes(Markers.EPH_LENGTH);
 				}
 
@@ -380,12 +368,11 @@ public class CodestreamManipulator
 	/**
 	 * This method creates the tileparts from the buffered tile headers, packet
 	 * headers and packet data
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void createTileParts() throws IOException
-	{
+	private void createTileParts() throws IOException {
 		int i, prem, t, length;
 		int pIndex;
 		int tppStart;
@@ -399,8 +386,7 @@ public class CodestreamManipulator
 		tileParts = new byte[nt][][];
 		maxtp = 0;
 
-		for (t = 0; t < nt; t++)
-		{
+		for (t = 0; t < nt; t++) {
 			// Calculate number of tile parts. If tileparts are not used,
 			// put all packets in the first tilepart
 			if (pptp == 0)
@@ -416,48 +402,40 @@ public class CodestreamManipulator
 			pIndex = 0;
 			p = 0;
 
-			for (tilePart = 0; tilePart < numTileParts; tilePart++)
-			{
+			for (tilePart = 0; tilePart < numTileParts; tilePart++) {
 
 				// Calculate number of packets in this tilepart
 				nomnp = (pptp > prem) ? prem : pptp;
 				np = nomnp;
 
 				// Write tile part header
-				if (tilePart == 0)
-				{
+				if (tilePart == 0) {
 					// Write original tile part header up to SOD marker
 					temp.write(tileHeaders[t], 0, tileHeaders[t].length - 2);
-				}
-				else
-				{
+				} else {
 					// Write empty header of length TP_HEAD_LEN-2
 					temp.write(new byte[TP_HEAD_LEN - 2], 0, TP_HEAD_LEN - 2);
 				}
 
 				// Write PPT marker segments if PPT used
-				if (pptUsed)
-				{
+				if (pptUsed) {
 					int pptLength = 3; // Zppt and Lppt
 					int pptIndex = 0;
 					int phLength;
 
 					p = pIndex;
-					while (np > 0)
-					{
+					while (np > 0) {
 						phLength = packetHeaders[t][p].length;
 
 						// If the total legth of the packet headers is greater
 						// than MAX_LPPT, several PPT markers are needed
-						if (pptLength + phLength > Markers.MAX_LPPT)
-						{
+						if (pptLength + phLength > Markers.MAX_LPPT) {
 							temp.write(Markers.PPT >>> 8);
 							temp.write(Markers.PPT);
 							temp.write(pptLength >>> 8);
 							temp.write(pptLength);
 							temp.write(pptIndex++);
-							for (i = pIndex; i < p; i++)
-							{
+							for (i = pIndex; i < p; i++) {
 								temp.write(packetHeaders[t][i], 0, packetHeaders[t][i].length);
 							}
 							pptLength = 3; // Zppt and Lppt
@@ -473,8 +451,7 @@ public class CodestreamManipulator
 					temp.write(pptLength >>> 8);
 					temp.write(pptLength);
 					temp.write(pptIndex);
-					for (i = pIndex; i < p; i++)
-					{
+					for (i = pIndex; i < p; i++) {
 
 						temp.write(packetHeaders[t][i], 0, packetHeaders[t][i].length);
 					}
@@ -487,15 +464,12 @@ public class CodestreamManipulator
 				temp.write(Markers.SOD);
 
 				// Write packet data and packet headers if PPT and PPM not used
-				for (p = tppStart; p < tppStart + np; p++)
-				{
-					if (!tempSop)
-					{
+				for (p = tppStart; p < tppStart + np; p++) {
+					if (!tempSop) {
 						temp.write(sopMarkSeg[t][p], 0, Markers.SOP_LENGTH);
 					}
 
-					if (!(ppmUsed || pptUsed))
-					{
+					if (!(ppmUsed || pptUsed)) {
 						temp.write(packetHeaders[t][p], 0, packetHeaders[t][p].length);
 					}
 
@@ -508,8 +482,7 @@ public class CodestreamManipulator
 				tileParts[t][tilePart] = tempByteArr;
 				length = temp.size();
 
-				if (tilePart == 0)
-				{
+				if (tilePart == 0) {
 					// Edit first tile part header
 					tempByteArr[6] = (byte) (length >>> 24); // Psot
 					tempByteArr[7] = (byte) (length >>> 16);
@@ -517,9 +490,7 @@ public class CodestreamManipulator
 					tempByteArr[9] = (byte) (length);
 					tempByteArr[10] = (byte) (0); // TPsot
 					tempByteArr[11] = (byte) (numTileParts); // TNsot
-				}
-				else
-				{
+				} else {
 					// Edit tile part header
 					tempByteArr[0] = (byte) (Markers.SOT >>> 8); // SOT
 					tempByteArr[1] = (byte) (Markers.SOT);
@@ -543,15 +514,14 @@ public class CodestreamManipulator
 
 	/**
 	 * This method writes the new codestream to the file.
-	 * 
+	 *
 	 * @param fi
 	 *            The file to write the new codestream to
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                If an I/O error occurred.
 	 */
-	private void writeNewCodestream(BufferedRandomAccessIO fi) throws IOException
-	{
+	private void writeNewCodestream(OSRandomAccessIO fi) throws IOException {
 		int t, p, tp;
 		int numTiles = tileParts.length;
 		int[][] packetHeaderLengths = new int[numTiles][maxtp];
@@ -562,8 +532,7 @@ public class CodestreamManipulator
 		fi.write(mainHeader, 0, mainHeader.length);
 
 		// If PPM used write all packet headers in PPM markers
-		if (ppmUsed)
-		{
+		if (ppmUsed) {
 			ByteArrayOutputStream ppmMarkerSegment = new ByteArrayOutputStream();
 			int numPackets;
 			int totNumPackets;
@@ -573,18 +542,14 @@ public class CodestreamManipulator
 			int prem[] = new int[numTiles];
 
 			// Set number of remaining packets
-			for (t = 0; t < numTiles; t++)
-			{
+			for (t = 0; t < numTiles; t++) {
 				prem[t] = packetHeaders[t].length;
 			}
 
 			// Calculate Nppm values
-			for (tp = 0; tp < maxtp; tp++)
-			{
-				for (t = 0; t < numTiles; t++)
-				{
-					if (tileParts[t].length > tp)
-					{
+			for (tp = 0; tp < maxtp; tp++) {
+				for (t = 0; t < numTiles; t++) {
+					if (tileParts[t].length > tp) {
 						totNumPackets = packetHeaders[t].length;
 						// Calculate number of packets in this tilepart
 						numPackets = (tp == tileParts[t].length - 1) ? prem[t] : pptp;
@@ -616,13 +581,10 @@ public class CodestreamManipulator
 				prem[t] = packetHeaders[t].length;
 
 			// Write all PPM markers and information
-			for (tp = 0; tp < maxtp; tp++)
-			{
-				for (t = 0; t < numTiles; t++)
-				{
+			for (tp = 0; tp < maxtp; tp++) {
+				for (t = 0; t < numTiles; t++) {
 
-					if (tileParts[t].length > tp)
-					{
+					if (tileParts[t].length > tp) {
 						totNumPackets = packetHeaders[t].length;
 
 						// Calculate number of packets in this tilepart
@@ -633,8 +595,7 @@ public class CodestreamManipulator
 
 						// If Nppm value wont fit in current PPM marker segment
 						// write current PPM marker segment and start new
-						if (ppmLength + 4 > Markers.MAX_LPPM)
-						{
+						if (ppmLength + 4 > Markers.MAX_LPPM) {
 							// Write current PPM marker
 							temp = ppmMarkerSegment.toByteArray();
 							length = temp.length - 2;
@@ -661,15 +622,13 @@ public class CodestreamManipulator
 						ppmLength += 4;
 
 						// Write packet headers
-						for (p = pStart; p < pStop; p++)
-						{
+						for (p = pStart; p < pStop; p++) {
 							length = packetHeaders[t][p].length;
 
 							// If next packet header value wont fit in
 							// current PPM marker segment write current PPM
 							// marker segment and start new
-							if (ppmLength + length > Markers.MAX_LPPM)
-							{
+							if (ppmLength + length > Markers.MAX_LPPM) {
 								// Write current PPM marker
 								temp = ppmMarkerSegment.toByteArray();
 								length = temp.length - 2;
@@ -704,12 +663,9 @@ public class CodestreamManipulator
 		}
 
 		// Write tile parts interleaved
-		for (tp = 0; tp < maxtp; tp++)
-		{
-			for (t = 0; t < nt; t++)
-			{
-				if (tileParts[t].length > tp)
-				{
+		for (tp = 0; tp < maxtp; tp++) {
+			for (t = 0; t < nt; t++) {
+				if (tileParts[t].length > tp) {
 					temp = tileParts[t][tp];
 					length = temp.length;
 					fi.write(temp, 0, length);
