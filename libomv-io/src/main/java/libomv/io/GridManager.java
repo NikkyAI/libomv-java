@@ -46,7 +46,7 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
-import libomv.client.capabilities.CapsClient;
+import libomv.io.capabilities.CapsClient;
 import libomv.packets.CoarseLocationUpdatePacket;
 import libomv.packets.MapBlockReplyPacket;
 import libomv.packets.MapBlockRequestPacket;

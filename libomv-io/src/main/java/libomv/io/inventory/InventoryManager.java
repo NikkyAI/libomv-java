@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.client.inventory;
+package libomv.io.inventory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -55,9 +55,6 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.CopyInventoryFromNotecardMessage;
 import libomv.capabilities.CapsMessage.ScriptRunningReplyMessage;
 import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
-import libomv.client.assets.AssetManager.XferDownload;
-import libomv.client.capabilities.CapsCallback;
-import libomv.client.capabilities.CapsClient;
 import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryFolder;
@@ -75,6 +72,9 @@ import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginResponseData;
 import libomv.io.LoginManager.LoginStatus;
 import libomv.io.ObjectManager.SaleType;
+import libomv.io.assets.AssetManager.XferDownload;
+import libomv.io.capabilities.CapsCallback;
+import libomv.io.capabilities.CapsClient;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
 import libomv.packets.CopyInventoryItemPacket;

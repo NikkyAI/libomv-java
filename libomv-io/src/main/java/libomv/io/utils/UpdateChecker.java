@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.client.utils;
+package libomv.io.utils;
 
 import java.net.URI;
 
@@ -36,7 +36,7 @@ import org.apache.http.nio.reactor.IOReactorException;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
-import libomv.client.capabilities.CapsClient;
+import libomv.io.capabilities.CapsClient;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 

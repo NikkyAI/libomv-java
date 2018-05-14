@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.client.assets.archiving;
+package libomv.io.assets.archiving;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -67,12 +67,12 @@ import libomv.assets.archiving.RegionSettings;
 import libomv.assets.archiving.TarArchiveReader;
 import libomv.assets.archiving.TarArchiveWriter;
 import libomv.assets.archiving.TarArchiveReader.TarHeader;
-import libomv.client.assets.AssetManager;
-import libomv.client.assets.AssetManager.AssetDownload;
-import libomv.client.assets.AssetManager.ImageDownload;
-import libomv.client.assets.AssetManager.SourceType;
 import libomv.io.ParcelManager;
 import libomv.io.ParcelManager.Parcel;
+import libomv.io.assets.AssetManager;
+import libomv.io.assets.AssetManager.AssetDownload;
+import libomv.io.assets.AssetManager.ImageDownload;
+import libomv.io.assets.AssetManager.SourceType;
 import libomv.primitives.TextureEntry.TextureEntryFace;
 import libomv.types.UUID;
 import libomv.utils.Callback;

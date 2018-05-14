@@ -31,11 +31,11 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 import libomv.assets.archiving.RegionSettings;
-import libomv.client.assets.archiving.OarFile;
-import libomv.client.assets.archiving.OarFile.AssetLoadedData;
-import libomv.client.assets.archiving.OarFile.SceneObjectLoadedData;
-import libomv.client.assets.archiving.OarFile.SettingsLoadedData;
-import libomv.client.assets.archiving.OarFile.TerrainLoadedData;
+import libomv.io.assets.archiving.OarFile;
+import libomv.io.assets.archiving.OarFile.AssetLoadedData;
+import libomv.io.assets.archiving.OarFile.SceneObjectLoadedData;
+import libomv.io.assets.archiving.OarFile.SettingsLoadedData;
+import libomv.io.assets.archiving.OarFile.TerrainLoadedData;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 

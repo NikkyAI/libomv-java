@@ -40,10 +40,10 @@ import java.util.TimerTask;
 
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ObjectPhysicsPropertiesMessage;
-import libomv.client.capabilities.CapsCallback;
 import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginStatus;
 import libomv.io.NetworkManager.DisconnectedCallbackArgs;
+import libomv.io.capabilities.CapsCallback;
 import libomv.Simulator;
 import libomv.capabilities.IMessage;
 import libomv.packets.ImprovedTerseObjectUpdatePacket;

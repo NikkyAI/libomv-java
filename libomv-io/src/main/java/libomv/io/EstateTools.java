@@ -38,7 +38,7 @@ import libomv.Simulator;
 import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.LandStatReplyMessage;
-import libomv.client.capabilities.CapsCallback;
+import libomv.io.capabilities.CapsCallback;
 import libomv.capabilities.IMessage;
 import libomv.packets.EjectUserPacket;
 import libomv.packets.EstateCovenantReplyPacket;

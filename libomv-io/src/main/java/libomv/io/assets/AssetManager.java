@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.client.assets;
+package libomv.io.assets;
 
 import java.io.IOException;
 import java.net.URI;
@@ -67,14 +67,14 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.UploadBakedTextureMessage;
 import libomv.capabilities.CapsMessage.UploaderRequestComplete;
 import libomv.capabilities.CapsMessage.UploaderRequestUpload;
-import libomv.client.assets.TexturePipeline.TextureRequestState;
-import libomv.client.capabilities.CapsClient;
 import libomv.imaging.ManagedImage.ImageCodec;
 import libomv.inventory.InventoryItem;
 import libomv.io.DownloadManager;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
 import libomv.io.DownloadManager.DownloadResult;
+import libomv.io.assets.TexturePipeline.TextureRequestState;
+import libomv.io.capabilities.CapsClient;
 import libomv.packets.AbortXferPacket;
 import libomv.packets.AssetUploadCompletePacket;
 import libomv.packets.AssetUploadRequestPacket;

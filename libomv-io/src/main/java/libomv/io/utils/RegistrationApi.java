@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv.client.utils;
+package libomv.io.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -50,7 +50,7 @@ import org.apache.http.nio.reactor.IOReactorException;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
-import libomv.client.capabilities.CapsClient;
+import libomv.io.capabilities.CapsClient;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.types.UUID;
