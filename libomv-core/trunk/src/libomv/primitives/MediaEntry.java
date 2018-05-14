@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2006-2014, openmetaverse.org
  * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.

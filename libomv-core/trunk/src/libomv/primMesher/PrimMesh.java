@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2010-2012, Dahlia Trimble
  * Copyright (c) 2011-2017, Frederick Martian
  * All rights reserved.
