@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>libomv</groupId>
+		<artifactId>libomv-java</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+	<artifactId>libomv-core</artifactId>
+
+	<name>libomv-core</name>
+	<description>https://sourceforge.net/p/libomv-java/code/HEAD/tree/libomv-core/ rev:1211</description>
+	<url>https://github.com/djBo/libomv-core</url>
+
+	<packaging>jar</packaging>
+
+	<properties>
+		<libomv-jj2k.version>1.0.0-SNAPSHOT</libomv-jj2k.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>libomv</groupId>
+			<artifactId>libomv-jj2k</artifactId>
+			<version>${libomv-jj2k.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>xpp3</groupId>
+			<artifactId>xpp3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>pre-compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<failOnError>false</failOnError>
+							<showWarnings>false</showWarnings>
+							<includes>
+								<include>libomv/types/PacketFrequency.java</include>
+								<include>libomv/utils/HashMapInt.java</include>
+								<include>libomv/ProtocolManager.java</include>
+								<include>libomv/mapgenerator/mapgenerator.java</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-source</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<mainClass>libomv.mapgenerator.mapgenerator</mainClass>
+							<arguments>
+								<argument>src/main/java/libomv/mapgenerator/message_template.msg</argument>
+								<argument>src/main/java/libomv/mapgenerator/template.java.txt</argument>
+								<argument>target/generated-sources/src/main/java/libomv/packets/Packet.java</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+	</build>
+
+</project>

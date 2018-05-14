@@ -41,14 +41,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.apache.log4j.Logger;
+
 import libomv.types.PacketFrequency;
 import libomv.utils.HashMapInt;
-import libomv.utils.Helpers;
-import libomv.utils.Logger;
-import libomv.utils.Logger.LogLevel;
 
 public class ProtocolManager
 {
+	private static final Logger logger = Logger.getLogger(ProtocolManager.class);
+	
 	public static class FieldType
 	{
 		public static final int U8 = 0;
@@ -566,7 +567,7 @@ public class ProtocolManager
 								}
 								else
 								{
-									Logger.Log("Unknown packet frequency : " + tokens[1], LogLevel.Error);
+									logger.error("Unknown packet frequency : " + tokens[1]);
 								}
 							}
 						}
@@ -643,7 +644,7 @@ public class ProtocolManager
 							}
 							else
 							{
-								Logger.Log("Unknown block frequency", LogLevel.Error);
+								logger.error("Unknown block frequency");
 							}
 							// #endregion
 						}
@@ -770,7 +771,7 @@ public class ProtocolManager
 			if (field.count == 1)
 				return (short)(message[offset] + 1);
 			else if (field.count == 2)
-				return (short)(Helpers.BytesToInt16L(message, offset) + 2);
+				return (short) (BytesToInt16L(message, offset) + 2);
 			else
 				throw new Exception("Invalid count for variable sized field!");
 		}
@@ -797,5 +798,25 @@ public class ProtocolManager
 		KeywordList.add(keyword);
 		KeywordPositions.put(keyword, position);
 		return position;
+	}
+
+	/**
+	 * Convert the first two bytes starting at the given position in little
+	 * endian ordering to a signed short integer
+	 * 
+	 * @param bytes
+	 *            An array two bytes or longer
+	 * @param pos
+	 *            Position in the array to start reading
+	 * @return A signed short integer, will be zero if a short can't be read at
+	 *         the given position
+	 */
+	public static short BytesToInt16L(byte[] bytes, int pos)
+	{
+		if (bytes.length < pos + 2)
+		{
+			return 0;
+		}
+		return (short) (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8));
 	}
 }

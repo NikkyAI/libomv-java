@@ -36,16 +36,21 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import org.apache.log4j.Logger;
+
 import libomv.ProtocolManager;
 import libomv.ProtocolManager.FieldType;
 import libomv.ProtocolManager.MapBlock;
 import libomv.ProtocolManager.MapField;
 import libomv.ProtocolManager.MapPacket;
 import libomv.types.PacketFrequency;
-import libomv.utils.Helpers;
+//import libomv.utils.Helpers;
 
 public class mapgenerator
 {
+	private static final Logger logger = Logger.getLogger(mapgenerator.class);
+	
 	static String spaces = new String("                        ");
 
 	static String FieldTypeString(int type)
@@ -308,7 +313,7 @@ public class mapgenerator
 	static void WriteFieldToString(PrintWriter writer, int indent, String fieldName, MapField field, String index)
 	{
 		String lead = spaces.substring(0, indent);
-		String index1 = Helpers.EmptyString, index2 = Helpers.EmptyString;
+		String index1 = new String(), index2 = new String();
 		if (!index.isEmpty())
 		{
 			index1 = "[\" + " + index + " + \"]";
@@ -366,6 +371,7 @@ public class mapgenerator
 	
 	static PrintWriter WriteHeader(File file, String template) throws IOException
 	{
+		file.getParentFile().mkdirs(); // Useful if we want this during the build, and the target directory does not exist yet ;)
 		PrintWriter writer = new PrintWriter(new FileWriter(file));
 		BufferedReader reader = new BufferedReader(new FileReader(template));
 		while (reader.ready())
@@ -451,7 +457,7 @@ public class mapgenerator
 		{
 			MapField field = block.Fields.get(k);
 			String fieldName = protocol.keywordPosition(field.keywordIndex);
-			WriteFieldFromBytes(writer, 12, fieldName, field, "bytes", Helpers.EmptyString);
+			WriteFieldFromBytes(writer, 12, fieldName, field, "bytes", new String());
 		}
 
 		writer.println("        }\n");
@@ -463,7 +469,7 @@ public class mapgenerator
 		{
 			MapField field = block.Fields.get(k);
 			String fieldName = protocol.keywordPosition(field.keywordIndex);
-			WriteFieldToBytes(writer, 12, fieldName, field, "bytes", Helpers.EmptyString);
+			WriteFieldToBytes(writer, 12, fieldName, field, "bytes", new String());
 		}
 
 		writer.println("        }\n");
@@ -477,7 +483,7 @@ public class mapgenerator
 		{
 			MapField field = block.Fields.get(k);
 			String fieldName = protocol.keywordPosition(field.keywordIndex);
-			WriteFieldToString(writer, 16, fieldName, field, Helpers.EmptyString);
+			WriteFieldToString(writer, 16, fieldName, field, new String());
 		}
 		writer.println("                output = output.trim();");
 		writer.println("            }");
@@ -713,7 +719,7 @@ public class mapgenerator
 				if (block.count == 1)
 				{
 					// Single count block
-					WriteFieldFromBytes(writer, 8, fieldName, field, "bytes", Helpers.EmptyString);
+					WriteFieldFromBytes(writer, 8, fieldName, field, "bytes", new String());
 				}
 				else if (block.count == -1)
 				{
@@ -795,7 +801,7 @@ public class mapgenerator
 				if (block.count == 1)
 				{
 					// Single count block
-					WriteFieldFromBytes(writer, 8, fieldName, field, "bytes", Helpers.EmptyString);
+					WriteFieldFromBytes(writer, 8, fieldName, field, "bytes", new String());
 				}
 				else if (block.count == -1)
 				{
@@ -956,7 +962,7 @@ public class mapgenerator
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
-					WriteFieldToBytes(writer, 8, fieldName, field, "bytes", Helpers.EmptyString);
+					WriteFieldToBytes(writer, 8, fieldName, field, "bytes", new String());
 				}
 				else if (block.count == -1)
 				{
@@ -1044,7 +1050,7 @@ public class mapgenerator
 					String fieldName = protocol.keywordPosition(field.keywordIndex);
 					if (block.count == 1)
 					{
-						WriteFieldToBytes(writer, 8, fieldName, field, "fixedBytes", Helpers.EmptyString);
+						WriteFieldToBytes(writer, 8, fieldName, field, "fixedBytes", new String());
 					}
 					else
 					{
@@ -1226,7 +1232,7 @@ public class mapgenerator
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
 				if (block.count == 1)
 				{
-					WriteFieldToString(writer, 8, fieldName, field, Helpers.EmptyString);
+					WriteFieldToString(writer, 8, fieldName, field, new String());
 				}
 				else if (block.count == -1)
 				{
@@ -1259,10 +1265,10 @@ public class mapgenerator
 		{
 			if (args.length < 3)
 			{
-				System.out
-						.println("Invalid arguments, using default values for [message_template.msg] [template.java.txt] [Packet.java]");
-				args = new String[] { "src/libomv/mapgenerator/message_template.msg",
-						"src/libomv/mapgenerator/template.java.txt", "src/libomv/packets/Packet.java" };
+				logger.error(
+						"Invalid arguments, using default values for [message_template.msg] [template.java.txt] [Packet.java]");
+				args = new String[] { "src/main/java/libomv/mapgenerator/message_template.msg",
+						"src/main/java/libomv/mapgenerator/template.java.txt", "src/main/java/libomv/packets/Packet.java" };
 			}
 
 			File packets_dir = new File(args[2]).getParentFile();

@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package structuredData;
+package libomv.structuredData;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -287,7 +287,7 @@ public class JsonLLSDTest extends TestCase
 
         DoSomeStringSerializingActionsAndAsserts("\"\"");
 
-        DoSomeStringSerializingActionsAndAsserts("ÄÖÜäöü-these-should-be-some-german-umlauts");
+        DoSomeStringSerializingActionsAndAsserts("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-these-should-be-some-german-umlauts");
 
         DoSomeStringSerializingActionsAndAsserts("\t\n\r");
 

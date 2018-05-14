@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package structuredData;
+package libomv.structuredData;
 
 /* 
  * This tests are based upon the description at
@@ -627,7 +627,7 @@ public class BinaryLLSDTests extends TestCase
     {
         // each 80 chars
         String sOne = "asdklfjasadlfkjaerotiudfgjkhsdklgjhsdklfghasdfklhjasdfkjhasdfkljahsdfjklaasdfkj8";
-        String sTwo = "asdfkjlaaweoiugsdfjkhsdfg,.mnasdgfkljhrtuiohfglökajsdfoiwghjkdlaaaaseldkfjgheus9";
+        String sTwo = "asdfkjlaaweoiugsdfjkhsdfg,.mnasdgfkljhrtuiohfglï¿½kajsdfoiwghjkdlaaaaseldkfjgheus9";
 
         OSD stringOne = OSD.FromString( sOne );
         OSD stringTwo = OSD.FromString(sTwo);

@@ -1,3 +1,5 @@
+package libomv;
+
 /**
  * Copyright (c) 2006-2014, openmetaverse.org
  * Copyright (c) 2012-2017, Frederick Martian
