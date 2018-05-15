@@ -37,13 +37,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import libomv.Simulator;
+import org.apache.log4j.Logger;
+
 import libomv.imaging.ManagedImage.ImageCodec;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
 import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginStatus;
 import libomv.io.NetworkManager.DisconnectedCallbackArgs;
+import libomv.io.SimulatorManager;
+import libomv.io.assets.AssetManager.DelayedTransfer;
+import libomv.io.assets.AssetManager.ImageDownload;
+import libomv.io.assets.AssetManager.ImageType;
+import libomv.io.assets.AssetManager.StatusCode;
+import libomv.model.Simulator;
 import libomv.packets.ImageDataPacket;
 import libomv.packets.ImageNotInDatabasePacket;
 import libomv.packets.ImagePacketPacket;
@@ -57,6 +64,8 @@ import libomv.utils.TimeoutEvent;
 
 public class TexturePipeline implements PacketCallback
 {
+	private static final Logger logger = Logger.getLogger(TexturePipeline.class);
+
 	// The current status of a texture request as it moves through the pipeline
 	// or final result of a texture request.
 	public enum TextureRequestState
@@ -86,7 +95,7 @@ public class TexturePipeline implements PacketCallback
 	/**
 	 * Texture request download handler, allows a configurable number of
 	 * download slots which manage multiple concurrent texture downloads from
-	 * the {@link Simulator}
+	 * the {@link SimulatorManager}
 	 * 
 	 * This class makes full use of the internal {@link TextureCache} system for
 	 * full texture downloads.
@@ -256,9 +265,10 @@ public class TexturePipeline implements PacketCallback
 			return;
 		}
 		// #if DEBUG_TIMING
-		Logger.Log(String.format(
+		
+		logger.debug(GridClient.Log(String.format(
 				"Combined Execution Time: %d, Network Execution Time %d, Network %d k/sec, Image Size %d", TotalTime,
-				NetworkTime, getNetworkThroughput(TotalBytes, NetworkTime), TotalBytes), LogLevel.Debug, _Client);
+				NetworkTime, getNetworkThroughput(TotalBytes, NetworkTime), TotalBytes), _Client));
 		// #endif
 		if (null != RefreshDownloadsTimer)
 		{
@@ -437,7 +447,7 @@ public class TexturePipeline implements PacketCallback
 
 					if (percentComplete > 0f)
 					{
-						Logger.DebugLog(String.format("Updating priority on image transfer %s to %d, %d% complete",
+						logger.debug(String.format("Updating priority on image transfer %s to %d, %d% complete",
 								imageID.toString(), task.Request.Priority, Math.round(percentComplete)));
 					}
 				}
@@ -462,8 +472,7 @@ public class TexturePipeline implements PacketCallback
 			}
 			else
 			{
-				Logger.Log("Received texture download request for a texture that isn't in the download queue: "
-						+ imageID, LogLevel.Warning);
+				logger.warn("Received texture download request for a texture that isn't in the download queue: " + imageID);
 			}
 		}
 	}
@@ -568,7 +577,7 @@ public class TexturePipeline implements PacketCallback
 						nextTask.Request.State = TextureRequestState.Started;
 						nextTask.RequestSlot = slot;
 
-						Logger.DebugLog(String.format("Sending Worker thread new download request %d", slot));
+						logger.debug(String.format("Sending Worker thread new download request %d", slot));
 						Future<?> request = _ThreadPool.submit(new TextureRequestDoWork(nextTask));
 						synchronized (_ThreadRequests)
 						{
@@ -587,7 +596,7 @@ public class TexturePipeline implements PacketCallback
 				{
 				}
 			}
-			Logger.Log("Texture pipeline download thread shutting down", LogLevel.Info, _Client);
+			logger.info(GridClient.Log("Texture pipeline download thread shutting down", _Client));
 		}
 	}
 
@@ -642,9 +651,8 @@ public class TexturePipeline implements PacketCallback
 				if (timeout == null || !timeout)
 				{
 					// Timed out
-					Logger.Log("Worker " + task.RequestSlot + " timeout waiting for texture " + task.Request.ItemID
-							+ " to download got " + task.Request.Transferred + " of " + task.Request.Size,
-							LogLevel.Warning);
+					logger.warn("Worker " + task.RequestSlot + " timeout waiting for texture " + task.Request.ItemID
+							+ " to download got " + task.Request.Transferred + " of " + task.Request.Size);
 
 					RemoveTransfer(task.Request.ItemID);
 
@@ -736,8 +744,7 @@ public class TexturePipeline implements PacketCallback
 		}
 		else
 		{
-			Logger.Log("Received an ImageNotFound packet for an image we did not request: "
-					+ imageNotFoundData.ID, LogLevel.Warning);
+			logger.warn("Received an ImageNotFound packet for an image we did not request: " + imageNotFoundData.ID);
 		}
 	}
 
@@ -767,14 +774,14 @@ public class TexturePipeline implements PacketCallback
 				download.Success = download.State == TextureRequestState.Finished;
 				if (download.Success)
 				{
-					Logger.DebugLog("Transfer for asset " + download.ItemID.toString() + " completed", _Client);
+					logger.debug(GridClient.Log("Transfer for asset " + download.ItemID.toString() + " completed", _Client));
 
 					// Cache successful asset download
 					_Cache.put(download.ItemID, download.AssetData, download.suffix);
 				}
 				else
 				{
-					Logger.Log("Transfer failed with status code " + download.State, LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Transfer failed with status code " + download.State, _Client));
 				}
 					
 				download.callbacks.dispatch(download);
@@ -807,8 +814,8 @@ public class TexturePipeline implements PacketCallback
 		TaskInfo task = GetTransferValue(data.ImageID.ID);
 		if (task == null)
 		{
-			Logger.Log("Received a ImageData packet for a texture we didn't request, Image ID: "
-					+ data.ImageID.ID, LogLevel.Warning, _Client);			
+			logger.warn(GridClient.Log("Received a ImageData packet for a texture we didn't request, Image ID: "
+					+ data.ImageID.ID, _Client));			
 			return;
 		}
 

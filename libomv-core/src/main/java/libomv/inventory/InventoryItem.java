@@ -39,9 +39,9 @@ import org.apache.log4j.Logger;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
-import libomv.assets.AssetItem.AssetType;
-import libomv.client.ObjectManager.SaleType;
 import libomv.inventory.InventoryNode.InventoryType;
+import libomv.model.Asset.AssetType;
+import libomv.model.LLObject.SaleType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Helpers;

@@ -36,10 +36,10 @@ import java.util.Date;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.DirLandReplyMessage;
 import libomv.capabilities.CapsMessage.PlacesReplyMessage;
-import libomv.io.ParcelManager.ParcelCategory;
-import libomv.io.capabilities.CapsCallback;
-import libomv.Simulator;
 import libomv.capabilities.IMessage;
+import libomv.io.capabilities.CapsCallback;
+import libomv.model.Parcel.ParcelCategory;
+import libomv.model.Simulator;
 import libomv.packets.DirClassifiedQueryPacket;
 import libomv.packets.DirClassifiedReplyPacket;
 import libomv.packets.DirEventsReplyPacket;
@@ -61,12 +61,12 @@ import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3d;
 import libomv.utils.Callback;
-import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackArgs;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
 /* Access to the data server which allows searching for land, events, people, etc */
-public class DirectoryManager implements PacketCallback, CapsCallback
+public class DirectoryManager implements PacketCallback, CapsCallback, libomv.model.Directory
 {
 	// /#region Enums
 	/* Classified Ad categories */
@@ -1005,7 +1005,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{

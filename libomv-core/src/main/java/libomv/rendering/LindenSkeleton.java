@@ -41,8 +41,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import libomv.client.GridClient;
-import libomv.client.LibSettings;
 import libomv.utils.Helpers;
 
 public class LindenSkeleton
@@ -306,7 +304,7 @@ public class LindenSkeleton
      */
     static public LindenSkeleton load() throws Exception
 	{
-    	return load(null, null);
+    	return load(null);
 	}
 
     /**
@@ -317,7 +315,7 @@ public class LindenSkeleton
      * @return the loaded skeleton object or null
      * @throws Exception
      */
-    static public LindenSkeleton load(GridClient client, String fileName) throws Exception
+    static public LindenSkeleton load(String fileName) throws Exception
     {
     	File charFile = null;
     	FileInputStream skeletonData = null;
@@ -325,9 +323,11 @@ public class LindenSkeleton
 
     	if (fileName == null)
         {
-    		String characterDir = client != null ? client.Settings.getString(LibSettings.CHARACTER_DIR) : "character";
-       		File charDir = new File(Helpers.getBaseDirectory(client != null ? client.getClass() : null), characterDir);
-       		charFile = new File(charDir, "avatar_skeleton.xml");
+			// TODO:FIXME
+    		// Fix this by reading the loaded client Settings as before.
+			// String characterDir = client != null ? client.Settings.getString(LibSettings.CHARACTER_DIR) : "character";
+			ClassLoader classLoader = LindenSkeleton.class.getClassLoader();
+			charFile = new File(classLoader.getResource("character/avatar_skeleton.xml").getFile());
         }
         else
         {

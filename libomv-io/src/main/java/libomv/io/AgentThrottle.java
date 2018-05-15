@@ -29,7 +29,6 @@
  */
 package libomv.io;
 
-import libomv.Simulator;
 import libomv.packets.AgentThrottlePacket;
 import libomv.utils.Helpers;
 
@@ -276,7 +275,7 @@ public class AgentThrottle
 	 *            the simulator to which to send the packet
 	 * @throws Exception
 	 */
-	public final void Set(Simulator simulator) throws Exception
+	public final void Set(SimulatorManager simulator) throws Exception
 	{
 		AgentThrottlePacket throttle = new AgentThrottlePacket();
 		throttle.AgentData.AgentID = Client.Self.getAgentID();

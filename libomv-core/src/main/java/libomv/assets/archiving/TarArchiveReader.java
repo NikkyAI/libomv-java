@@ -77,7 +77,7 @@ public class TarArchiveReader
         m_br = s;
     }
     
-    protected byte[] ReadEntry(TarHeader header) throws IOException
+    public byte[] ReadEntry(TarHeader header) throws IOException
     {
     	TarHeader hdr = ReadHeader();
     	if (hdr != null && hdr.FileSize > 0)

@@ -43,12 +43,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
+
 import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode;
-import libomv.inventory.InventoryFolder.FolderType;
-import libomv.inventory.InventoryNode.InventoryType;
 import libomv.io.GridClient;
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -74,6 +74,8 @@ import libomv.utils.MultiMap;
  */
 public class InventoryStore extends InventoryFolder
 {
+	private static final Logger logger = Logger.getLogger(InventoryStore.class);
+
 	private static final long serialVersionUID = 1L;
 
 	// #region CallbackArgs classes
@@ -157,7 +159,7 @@ public class InventoryStore extends InventoryFolder
 
 		if (owner == null || owner.equals(UUID.Zero))
 		{
-			Logger.Log("Inventory owned by nobody!", LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Inventory owned by nobody!", _Client));
 		}
 		_Items = new HashMap<UUID, InventoryItem>();
 		_Folders = new HashMap<UUID, InventoryFolder>();
@@ -460,7 +462,7 @@ public class InventoryStore extends InventoryFolder
 			ObjectOutputStream out = new ObjectOutputStream(fos);
 			try
 			{
-				Logger.Log("Caching inventory to " + filename, LogLevel.Info);
+				logger.info("Caching inventory to " + filename);
 				out.writeLong(serialVersionUID);
 				out.writeObject(ownerID);				
 				super.writeObject(out);
@@ -472,7 +474,7 @@ public class InventoryStore extends InventoryFolder
 		}
 		catch (Throwable ex)
 		{
-			Logger.Log("Error saving inventory cache to disk :" + ex.getMessage(), LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log("Error saving inventory cache to disk :" + ex.getMessage(), _Client), ex);
 		}
 		finally
 		{
@@ -512,7 +514,7 @@ public class InventoryStore extends InventoryFolder
 		}
 		catch (Throwable ex)
 		{
-			Logger.Log("Error accessing inventory cache file :" + ex.getMessage(), LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log("Error accessing inventory cache file :" + ex.getMessage(), _Client), ex);
 		}
 		finally
 		{
@@ -543,7 +545,7 @@ public class InventoryStore extends InventoryFolder
 				}
 			}
 		}
-		Logger.Log("Read " + folder_count + " folders and " + item_count + " items from inventory cache file", LogLevel.Info, _Client);
+		logger.info(GridClient.Log("Read " + folder_count + " folders and " + item_count + " items from inventory cache file", _Client));
 		return item_count;
 	}
 }

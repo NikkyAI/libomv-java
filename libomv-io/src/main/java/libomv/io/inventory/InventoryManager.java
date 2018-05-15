@@ -36,19 +36,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.http.client.HttpResponseException;
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDUUID;
-import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetWearable.WearableType;
 import libomv.capabilities.CapsMessage.BulkUpdateInventoryMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
@@ -58,23 +58,27 @@ import libomv.capabilities.CapsMessage.UpdateScriptTaskUpdateMessage;
 import libomv.capabilities.IMessage;
 import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryFolder;
+import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode;
-import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryNode.InventoryType;
-import libomv.io.GridClient;
-import libomv.io.LibSettings;
 import libomv.io.AgentManager.InstantMessage;
 import libomv.io.AgentManager.InstantMessageCallbackArgs;
-import libomv.io.AgentManager.InstantMessageDialog;
-import libomv.io.AgentManager.InstantMessageOnline;
+import libomv.io.GridClient;
+import libomv.io.LibSettings;
 import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginResponseData;
 import libomv.io.LoginManager.LoginStatus;
-import libomv.io.ObjectManager.SaleType;
+import libomv.io.SimulatorManager;
 import libomv.io.assets.AssetManager.XferDownload;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
+import libomv.model.Agent.InstantMessageDialog;
+import libomv.model.Agent.InstantMessageOnline;
+import libomv.model.Asset.AssetType;
+import libomv.model.Inventory;
+import libomv.model.LLObject.SaleType;
+import libomv.model.Simulator;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
 import libomv.packets.CopyInventoryItemPacket;
@@ -87,6 +91,7 @@ import libomv.packets.FetchInventoryReplyPacket;
 import libomv.packets.GetScriptRunningPacket;
 import libomv.packets.ImprovedInstantMessagePacket;
 import libomv.packets.InventoryDescendentsPacket;
+import libomv.packets.LinkInventoryItemPacket;
 import libomv.packets.MoveInventoryFolderPacket;
 import libomv.packets.MoveInventoryItemPacket;
 import libomv.packets.MoveTaskInventoryPacket;
@@ -106,24 +111,25 @@ import libomv.packets.UpdateCreateInventoryItemPacket;
 import libomv.packets.UpdateInventoryFolderPacket;
 import libomv.packets.UpdateInventoryItemPacket;
 import libomv.packets.UpdateTaskInventoryPacket;
-import libomv.packets.LinkInventoryItemPacket;
+import libomv.types.PacketCallback;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
-import libomv.types.PacketCallback;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 
 /* Tools for dealing with agents inventory */
-public class InventoryManager implements PacketCallback, CapsCallback
+public class InventoryManager implements PacketCallback, CapsCallback, libomv.model.Inventory
 {
+	private static final Logger logger = Logger.getLogger(InventoryManager.class);
+
 	// [Flags]
 	public static class InventorySortOrder
 	{
@@ -188,9 +194,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			return (byte) ordinal();
 		}
 	}
-
-	/* Used for converting shadow_id to asset_id */
-	public static final UUID MAGIC_ID = new UUID("3c115e51-04f4-523c-9fa6-98aff1034730");
 
 	protected final class InventorySearch
 	{
@@ -455,7 +458,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		return _Store;
 	}
 	
-	public ArrayList<InventoryNode> getChildren(InventoryFolder folder)
+	public List<InventoryNode> getChildren(InventoryFolder folder)
 	{
 		if (folder != null)
 			return folder.children;
@@ -512,7 +515,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -635,7 +638,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         URI url = _Client.Network.getCurrentSim().getCapabilityURI("FetchInventory2");
         if (url == null)
         {
-            Logger.Log("FetchInventory2 capability not available in the current sim", LogLevel.Warning, _Client);        	
+            logger.warn(GridClient.Log("FetchInventory2 capability not available in the current sim", _Client));        	
         	return false;
         }
         CapsClient request = new CapsClient(_Client, "FetchInventory2");
@@ -659,13 +662,13 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			@Override
 			public void cancelled()
 			{
-               Logger.Log("Failed getting data from FetchInventory2 capability.", LogLevel.Error, _Client);
+               logger.error(GridClient.Log("Failed getting data from FetchInventory2 capability.", _Client));
 			}
 
 			@Override
 			public void failed(Exception ex)
 			{
-	               Logger.Log("Failed getting data from FetchInventory2 capability.", LogLevel.Error, _Client, ex);
+	           logger.error(GridClient.Log("Failed getting data from FetchInventory2 capability.", _Client), ex);
 			}
         };
         
@@ -771,7 +774,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			URI url = _Client.Network.getCapabilityURI(capability);
 	        if (url == null)
 	        {
-	            Logger.Log(capability + " capability not available in the current sim", LogLevel.Warning, _Client);
+	            logger.warn(GridClient.Log(capability + " capability not available in the current sim", _Client));
 	        }
 	        else 
 	        {
@@ -881,7 +884,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Failed to fetch inventory descendants", LogLevel.Warning, _Client, ex);
+                        logger.warn(GridClient.Log("Failed to fetch inventory descendants", _Client), ex);
                         for (InventoryNode node : batch)
                         {
                             OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
@@ -892,7 +895,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				@Override
 				public void cancelled()
 				{
-                    Logger.Log("Fetch inventory descendants canceled", LogLevel.Warning, _Client);
+                    logger.warn(GridClient.Log("Fetch inventory descendants canceled", _Client));
                     for (InventoryNode node : batch)
                     {
                         OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
@@ -902,7 +905,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				@Override
 				public void failed(Exception ex)
 				{
-                    Logger.Log("Failed to fetch inventory descendants", LogLevel.Warning, _Client, ex);
+                    logger.warn(GridClient.Log("Failed to fetch inventory descendants", _Client), ex);
                     for (InventoryNode node : batch)
                     {
                         OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
@@ -930,7 +933,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed to fetch inventory descendants", LogLevel.Warning, _Client, ex);
+            logger.warn(GridClient.Log("Failed to fetch inventory descendants", _Client), ex);
             for (InventoryNode node : batch)
             {
                 OnFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(node.itemID, false));
@@ -963,7 +966,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 	{
 		if (_Store == null)
 		{
-			Logger.Log("Inventory is null, FindFolderForType() lookup cannot continue", LogLevel.Error, _Client);
+			logger.error(GridClient.Log("Inventory is null, FindFolderForType() lookup cannot continue", _Client));
 			return null;
 		}
 
@@ -2777,15 +2780,15 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					return ParseTaskInventory(taskList);
 				}
 
-				Logger.Log("Timed out waiting for task inventory download for " + filename, LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("Timed out waiting for task inventory download for " + filename, _Client));
 				return null;
 			}
 
-			Logger.DebugLog("Task is empty for " + objectLocalID, _Client);
+			logger.debug(GridClient.Log("Task is empty for " + objectLocalID, _Client));
 			return new ArrayList<InventoryNode>(0);
 		}
 
-		Logger.Log("Timed out waiting for task inventory reply for " + objectLocalID, LogLevel.Warning, _Client);
+		logger.warn(GridClient.Log("Timed out waiting for task inventory reply for " + objectLocalID, _Client));
 		return null;
 	}
 
@@ -3010,7 +3013,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				id = ++_CallbackPos;
 				if (_ItemCreatedCallbacks.containsKey(id))
 				{
-					Logger.Log("Overwriting an existing ItemCreatedCallback", LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Overwriting an existing ItemCreatedCallback", _Client));
 				}
 				_ItemCreatedCallbacks.put(id, callback);
 			}
@@ -3038,7 +3041,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 				if (_ItemCopiedCallbacks.containsKey(id))
 				{
-					Logger.Log("Overwriting an existing ItemsCopiedCallback", LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Overwriting an existing ItemsCopiedCallback", _Client));
 				}
 				_ItemCopiedCallbacks.put(id, callback);
 			}
@@ -3089,37 +3092,6 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 		return CRC;
 	}
-
-	/**
-	 * Reverses a cheesy XORing with a fixed UUID to convert a shadow_id to an
-	 * asset_id
-	 * 
-	 * @param shadowID
-	 *            Obfuscated shadow_id value
-	 * @return Deobfuscated asset_id value
-	 */
-	public static UUID DecryptShadowID(UUID shadowID)
-	{
-		UUID uuid = new UUID(shadowID);
-		uuid.XOr(MAGIC_ID);
-		return uuid;
-	}
-
-	/**
-	 * Does a cheesy XORing with a fixed UUID to convert an asset_id to a
-	 * shadow_id
-	 * 
-	 * @param assetID
-	 *            asset_id value to obfuscate
-	 * @return Obfuscated shadow_id value
-	 */
-	public static UUID EncryptAssetID(UUID assetID)
-	{
-		UUID uuid = new UUID(assetID);
-		uuid.XOr(MAGIC_ID);
-		return uuid;
-	}
-
 
 	private InventoryFolder SafeCreateInventoryFolder(UUID folderID, UUID ownerID)
 	{
@@ -3414,7 +3386,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 							}
 							else if (key.equals("shadow_id"))
 							{
-								assetID = DecryptShadowID(new UUID(val));
+								assetID = Inventory.DecryptShadowID(new UUID(val));
 							}
 							else if (key.equals("asset_id"))
 							{
@@ -3449,7 +3421,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 								}
 								else
 								{
-									Logger.Log("Failed to parse creation_date " + val, LogLevel.Warning);
+									logger.warn("Failed to parse creation_date " + val);
 								}
 							}
 						}
@@ -3471,7 +3443,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				else
 				{
-					Logger.Log("Unrecognized token " + key + " in: " + taskData, LogLevel.Error);
+					logger.error("Unrecognized token " + key + " in: " + taskData);
 				}
 			}
 		}
@@ -3507,7 +3479,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					}
 					else
 					{
-						Logger.Log("Malformed inventory offer from agent", LogLevel.Warning, _Client);
+						logger.warn(GridClient.Log("Malformed inventory offer from agent", _Client));
 						return false;
 					}
 				}
@@ -3520,7 +3492,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					}
 					else
 					{
-						Logger.Log("Malformed inventory offer from object", LogLevel.Warning, _Client);
+						logger.warn(GridClient.Log("Malformed inventory offer from object", _Client));
 						return false;
 					}
 				}
@@ -3592,7 +3564,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				catch (Exception ex)
 				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 				}
 			}
 			return false;
@@ -3631,7 +3603,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			{
 				String uploadURL = contents.get("uploader").AsString();
 
-				Logger.DebugLog("CreateItemFromAsset: uploading to " + uploadURL);
+				logger.debug("CreateItemFromAsset: uploading to " + uploadURL);
 
 				// This makes the assumption that all uploads go to CurrentSim,
 				// to avoid the problem of HttpRequestState not knowing anything
@@ -3649,7 +3621,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 			}
 			else if (status.equals("complete"))
 			{
-				Logger.DebugLog("CreateItemFromAsset: completed");
+				logger.debug("CreateItemFromAsset: completed");
 
 				if (contents.containsKey("new_inventory_item") && contents.containsKey("new_asset"))
 				{
@@ -3712,14 +3684,14 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 				synchronized (_Store)
 				{
-					Logger.DebugLog("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client);
+					logger.debug(GridClient.Log("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client));
 					_Store.setInventoryFolder(replyData.InventoryRoot);
 					for (int i = 0; i < replyData.InventorySkeleton.length; i++)
 					{
 						_Store.add(replyData.InventorySkeleton[i]);
 					}
 
-					Logger.DebugLog("Setting LibraryRoot to " + replyData.LibraryRoot.toString(), _Client);
+					logger.debug(GridClient.Log("Setting LibraryRoot to " + replyData.LibraryRoot.toString(), _Client));
 					_Store.setLibraryFolder(replyData.LibraryRoot, replyData.LibraryOwner);
 					for (int i = 0; i < replyData.LibrarySkeleton.length; i++)
 					{
@@ -4069,16 +4041,16 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 			if (parent == null)
 			{
-				Logger.Log("Don't have a reference to FolderID " + reply.AgentData.FolderID.toString()
-						+ " or it is not a folder", LogLevel.Error, _Client);
+				logger.error(GridClient.Log("Don't have a reference to FolderID " + reply.AgentData.FolderID.toString()
+						+ " or it is not a folder", _Client));
 				return;
 			}
 
 			if (reply.AgentData.Version < parent.version)
 			{
-				Logger.Log("Got an outdated InventoryDescendents packet for folder " + parent.name
+				logger.warn(GridClient.Log("Got an outdated InventoryDescendents packet for folder " + parent.name
 						+ ", this version = " + reply.AgentData.Version + ", latest version = " + parent.version,
-						LogLevel.Warning, _Client);
+						_Client));
 				return;
 			}
 
@@ -4120,7 +4092,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 								if (search.Level == search.Path.length - 1)
 								{
-									Logger.DebugLog("Finished path search of " + string, _Client);
+									logger.debug(GridClient.Log("Finished path search of " + string, _Client));
 
 									// This is the last node in the path, fire
 									// the callback and clean up
@@ -4130,8 +4102,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 
 								// We found a match but it is not the end of the
 								// path, request the next level
-								Logger.DebugLog(String.format("Matched level %d/%d in a path search of %s",
-										search.Level, search.Path.length - 1, string), _Client);
+								logger.debug(GridClient.Log(String.format("Matched level %d/%d in a path search of %s",
+										search.Level, search.Path.length - 1, string), _Client));
 
 								search.Folder = folderContents.get(j).itemID;
 								search.Level++;
@@ -4170,8 +4142,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		{
 			if (dataBlock.InvType == InventoryType.Folder.getValue())
 			{
-				Logger.Log("Received InventoryFolder in an UpdateCreateInventoryItem packet, this should not happen!",
-						LogLevel.Error, _Client);
+				logger.error(GridClient.Log("Received InventoryFolder in an UpdateCreateInventoryItem packet, this should not happen!",
+						_Client));
 				continue;
 			}
 
@@ -4199,8 +4171,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				// assign default folder for type
 				item.parent = FindFolderForType(item.assetType);
 
-				Logger.Log("Received an item through UpdateCreateInventoryItem with no parent folder, assigning to folder "
-								+ item.parent.itemID, LogLevel.Info);
+				logger.info("Received an item through UpdateCreateInventoryItem with no parent folder, assigning to folder "
+								+ item.parent.itemID);
 
 				// send update to the sim
 				RequestUpdateItem(item);
@@ -4224,7 +4196,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				catch (Throwable ex)
 				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 				}
 			}
 
@@ -4241,7 +4213,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				catch (Throwable ex)
 				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 				}
 			}
 
@@ -4331,7 +4303,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					}
 					catch (Throwable ex)
 					{
-						Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 					}
 				}
 
@@ -4346,7 +4318,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 					}
 					catch (Throwable ex)
 					{
-						Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 					}
 				}
 			}
@@ -4416,7 +4388,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				catch (Throwable ex)
 				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 				}
 			}
 
@@ -4431,7 +4403,7 @@ public class InventoryManager implements PacketCallback, CapsCallback
 				}
 				catch (Throwable ex)
 				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 				}
 			}
         }
@@ -4448,8 +4420,8 @@ public class InventoryManager implements PacketCallback, CapsCallback
 		{
 			if (dataBlock.InvType == InventoryType.Folder.getValue())
 			{
-				Logger.Log("Received FetchInventoryReply for an inventory folder, this should not happen!",
-						LogLevel.Error, _Client);
+				logger.error(GridClient.Log("Received FetchInventoryReply for an inventory folder, this should not happen!",
+						_Client));
 				continue;
 			}
 

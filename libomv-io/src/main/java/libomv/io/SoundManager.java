@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
-import libomv.Simulator;
+import libomv.model.Simulator;
 import libomv.packets.AttachedSoundGainChangePacket;
 import libomv.packets.AttachedSoundPacket;
 import libomv.packets.Packet;
@@ -46,7 +46,7 @@ import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 
-public class SoundManager implements PacketCallback
+public class SoundManager implements PacketCallback, libomv.model.Sound
 {
     // pre-defined built in sounds
     // From http://wiki.secondlife.com/wiki/Client_sounds

@@ -24,15 +24,28 @@
  */
 package libomv.objects;
 
+import java.io.InputStream;
+
 import junit.framework.TestCase;
+import libomv.imaging.J2KImage;
+import libomv.imaging.ManagedImage;
 
-import libomv.rendering.LindenSkeleton;
-
-public class RenderingTests extends TestCase
+public class ImageTest extends TestCase
 {
-    public void testLindenSkeleton() throws Exception
-    {
-    	LindenSkeleton skeleton = LindenSkeleton.load();
-    	assertTrue("Loading of skeleton failed", skeleton != null);
-    }
+	public void testJ2KImage() throws Exception
+	{
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("Bretagne1.j2k");
+        J2KImage image = J2KImage.decode(is);
+        is.close();
+        assertTrue("Loading of image failed", image != null);
+        assertTrue("Loading of image failed", image.getChannels() == ManagedImage.ImageChannels.Color);
+        assertTrue("Image Width is not 480 pixels", image.getWidth() == 480);
+        assertTrue("Image Height is not 640 pixels", image.getHeight() == 640);
+        
+        // TODO:FIXME
+        // So this test provides insight that the ManagedImage class is not doing it's job
+        // correctly. For one, width and height are reversed.
+        
+        
+	}
 }

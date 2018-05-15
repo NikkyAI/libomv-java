@@ -38,15 +38,16 @@ import java.util.List;
 //import java.util.Hashtable;
 import java.util.Map.Entry;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.io.capabilities.CapsClient;
+import libomv.model.Simulator;
 import libomv.packets.CoarseLocationUpdatePacket;
 import libomv.packets.MapBlockReplyPacket;
 import libomv.packets.MapBlockRequestPacket;
@@ -60,18 +61,20 @@ import libomv.packets.PacketType;
 import libomv.packets.RegionHandleRequestPacket;
 import libomv.packets.RegionIDAndHandleReplyPacket;
 import libomv.packets.SimulatorViewerTimeMessagePacket;
+import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3;
-import libomv.types.PacketCallback;
 import libomv.utils.Callback;
-import libomv.utils.CallbackHandler;
 import libomv.utils.CallbackArgs;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
 
 // Manages grid-wide tasks such as the world map
-public class GridManager implements PacketCallback
+public class GridManager implements PacketCallback, libomv.model.Grid
 {
+	private static final Logger logger = Logger.getLogger(GridManager.class);
+	
 	/* Map layer request type */
 	public enum GridLayerType
 	{
@@ -362,14 +365,14 @@ public class GridManager implements PacketCallback
 				if (body.containsKey("MapBlocks"))
 				{
 					// TODO: At one point this will become activated
-					Logger.Log("Got MapBlocks through CAPS, please finish this function!", LogLevel.Error);
+					logger.error("Got MapBlocks through CAPS, please finish this function!");
 				}
 			}
 
 			@Override
 			public void failed(Exception ex)
 			{
-                Logger.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), LogLevel.Error, _Client);
+                logger.error(GridClient.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), _Client));
 			}
 
 			@Override
@@ -561,7 +564,7 @@ public class GridManager implements PacketCallback
 	{
 		if (name == null || name.isEmpty())
 		{
-			Logger.Log("GetGridRegion called with a null or empty region name", LogLevel.Error);
+			logger.error("GetGridRegion called with a null or empty region name");
 			return null;
 		}
 
@@ -603,7 +606,7 @@ public class GridManager implements PacketCallback
 		region = Regions.get(name);
 		if (region == null)
 		{
-			Logger.Log("Couldn't find region " + name, LogLevel.Warning);
+			logger.warn("Couldn't find region " + name);
 		}
 		return region;
 	}
@@ -747,14 +750,14 @@ public class GridManager implements PacketCallback
 						break;
 					case Classified:
 						// DEPRECATED: not used anymore
-						Logger.Log("FIXME: Classified MapItem", LogLevel.Error, _Client);
+						logger.error(GridClient.Log("FIXME: Classified MapItem", _Client));
 						break;
 					case Popular:
 						// FIXME:
-						Logger.Log("FIXME: Popular MapItem", LogLevel.Error, _Client);
+						logger.error(GridClient.Log("FIXME: Popular MapItem", _Client));
 						break;
 					default:
-						Logger.Log("Unknown map item type " + type, LogLevel.Warning, _Client);
+						logger.warn(GridClient.Log("Unknown map item type " + type, _Client));
 						break;
 				}
 			}
@@ -792,9 +795,10 @@ public class GridManager implements PacketCallback
 	 * @param packet
 	 *            The packet data
 	 */
-	private final void HandleCoarseLocation(Packet packet, Simulator simulator)
+	private final void HandleCoarseLocation(Packet packet, Simulator sim)
 	{
 		CoarseLocationUpdatePacket coarse = (CoarseLocationUpdatePacket) packet;
+		SimulatorManager simulator = (SimulatorManager) sim;
 
 		// populate a dictionary from the packet, for local use
 		HashMap<UUID, Vector3> coarseEntries = new HashMap<UUID, Vector3>();
@@ -871,11 +875,11 @@ public class GridManager implements PacketCallback
 
 	public class CoarseLocationUpdateCallbackArgs implements CallbackArgs
 	{
-		private final Simulator m_Simulator;
+		private final SimulatorManager m_Simulator;
 		private final ArrayList<UUID> m_NewEntries;
 		private final ArrayList<UUID> m_RemovedEntries;
 
-		public final Simulator getSimulator()
+		public final SimulatorManager getSimulator()
 		{
 			return m_Simulator;
 		}
@@ -890,7 +894,7 @@ public class GridManager implements PacketCallback
 			return m_RemovedEntries;
 		}
 
-		public CoarseLocationUpdateCallbackArgs(Simulator simulator, ArrayList<UUID> newEntries,
+		public CoarseLocationUpdateCallbackArgs(SimulatorManager simulator, ArrayList<UUID> newEntries,
 				ArrayList<UUID> removedEntries)
 		{
 			this.m_Simulator = simulator;

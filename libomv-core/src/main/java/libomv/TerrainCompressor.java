@@ -31,16 +31,11 @@ package libomv;
 
 import org.apache.log4j.Logger;
 
-import libomv.client.TerrainManager;
-import libomv.client.TerrainManager.GroupHeader;
-import libomv.client.TerrainManager.LayerType;
-import libomv.client.TerrainManager.TerrainHeader;
-import libomv.client.TerrainManager.TerrainPatch;
 import libomv.packets.LayerDataPacket;
 import libomv.utils.BitPack;
 import libomv.utils.Helpers;
 
-public class TerrainCompressor
+public class TerrainCompressor implements libomv.model.Terrain
 {
 	private static final Logger logger = Logger.getLogger(TerrainCompressor.class);
 
@@ -72,12 +67,12 @@ public class TerrainCompressor
         BuildQuantizeTable16();
     }
 
-    public static LayerDataPacket CreateLayerDataPacket(TerrainManager mgr, TerrainPatch[] patches, LayerType type) throws Exception
+    public static LayerDataPacket CreateLayerDataPacket(TerrainPatch[] patches, LayerType type) throws Exception
     {
         LayerDataPacket layer = new LayerDataPacket();
         layer.Type = type.getValue();
 
-        GroupHeader header = mgr.new GroupHeader();
+        GroupHeader header = new GroupHeader();
         header.Stride = STRIDE;
         header.PatchSize = 16;
         header.Type = type;
@@ -90,7 +85,7 @@ public class TerrainCompressor
         bitpack.PackBits(header.Type.getValue(), 8);
         
         for (int j = 0; j < patches.length; j++)
-            CreatePatch(mgr, bitpack, patches[j].Data, patches[j].X, patches[j].Y);
+            CreatePatch(bitpack, patches[j].Data, patches[j].X, patches[j].Y);
 
         bitpack.PackBits(END_OF_PATCHES, 8);
 
@@ -110,12 +105,12 @@ public class TerrainCompressor
      * @throws Exception 
      * @returns the layer data packet
      */
-    public static LayerDataPacket CreateLandPacket(TerrainManager mgr, float[] heightmap, int[] patches) throws Exception
+    public static LayerDataPacket CreateLandPacket(float[] heightmap, int[] patches) throws Exception
     {
         LayerDataPacket layer = new LayerDataPacket();
         layer.Type = LayerType.Land.getValue();
 
-        GroupHeader header = mgr.new GroupHeader();
+        GroupHeader header = new GroupHeader();
         header.Stride = STRIDE;
         header.PatchSize = 16;
         header.Type = LayerType.Land;
@@ -127,7 +122,7 @@ public class TerrainCompressor
         bitpack.PackBits(header.Type.getValue(), 8);
 
         for (int j = 0; j < patches.length; j++)
-            CreatePatchFromHeightmap(mgr, bitpack, heightmap, patches[j] % 16, (patches[j] - (patches[j] % 16)) / 16);
+            CreatePatchFromHeightmap(bitpack, heightmap, patches[j] % 16, (patches[j] - (patches[j] % 16)) / 16);
 
         bitpack.PackBits(END_OF_PATCHES, 8);
 
@@ -135,12 +130,12 @@ public class TerrainCompressor
         return layer;
     }
 
-    public static LayerDataPacket CreateLandPacket(TerrainManager mgr, float[] patchData, int x, int y) throws Exception
+    public static LayerDataPacket CreateLandPacket(float[] patchData, int x, int y) throws Exception
     {
         LayerDataPacket layer = new LayerDataPacket();
         layer.Type = LayerType.Land.getValue();
 
-        GroupHeader header = mgr.new GroupHeader();
+        GroupHeader header = new GroupHeader();
         header.Stride = STRIDE;
         header.PatchSize = 16;
         header.Type = LayerType.Land;
@@ -151,7 +146,7 @@ public class TerrainCompressor
         bitpack.PackBits(header.PatchSize, 8);
         bitpack.PackBits(header.Type.getValue(), 8);
 
-        CreatePatch(mgr, bitpack, patchData, x, y);
+        CreatePatch(bitpack, patchData, x, y);
 
         bitpack.PackBits(END_OF_PATCHES, 8);
 
@@ -159,12 +154,12 @@ public class TerrainCompressor
         return layer;
     }
 
-    public static void CreatePatch(TerrainManager mgr, BitPack bitpack, float[] patchData, int x, int y)
+    public static void CreatePatch(BitPack bitpack, float[] patchData, int x, int y)
     {
         if (patchData.length != 16 * 16)
             throw new IllegalArgumentException("Patch data must be a 16x16 array");
 
-        TerrainHeader header = PrescanPatch(mgr, patchData);
+        TerrainHeader header = PrescanPatch(patchData);
         header.QuantWBits = 136;
         header.PatchIDs = (y & 0x1F);
         header.PatchIDs += (x << 5);
@@ -183,7 +178,7 @@ public class TerrainCompressor
      * @param x X offset of the patch to create, valid values are from 0 to 15
      * @param y Y offset of the patch to create, valid values are from 0 to 15
      */
-    public static void CreatePatchFromHeightmap(TerrainManager mgr, BitPack bitpack, float[] heightmap, int x, int y)
+    public static void CreatePatchFromHeightmap(BitPack bitpack, float[] heightmap, int x, int y)
     {
         if (heightmap.length != 256 * 256)
             throw new IllegalArgumentException("Heightmap data must be 256x256");
@@ -191,7 +186,7 @@ public class TerrainCompressor
         if (x < 0 || x > 15 || y < 0 || y > 15)
             throw new IllegalArgumentException("X and Y patch offsets must be from 0 to 15");
 
-        TerrainHeader header = PrescanPatch(mgr, heightmap, x, y);
+        TerrainHeader header = PrescanPatch(heightmap, x, y);
         header.QuantWBits = 136;
         header.PatchIDs = (y & 0x1F);
         header.PatchIDs += (x << 5);
@@ -202,9 +197,9 @@ public class TerrainCompressor
         EncodePatch(bitpack, patch, 0, wbits);
     }
 
-    private static TerrainHeader PrescanPatch(TerrainManager mgr, float[] patch)
+    private static TerrainHeader PrescanPatch(float[] patch)
     {
-    	TerrainHeader header = mgr.new TerrainHeader();
+    	TerrainHeader header = new TerrainHeader();
         float zmax = -99999999.0f;
         float zmin = 99999999.0f;
 
@@ -224,9 +219,9 @@ public class TerrainCompressor
         return header;
     }
 
-    private static TerrainHeader PrescanPatch(TerrainManager mgr, float[] heightmap, int patchX, int patchY)
+    private static TerrainHeader PrescanPatch(float[] heightmap, int patchX, int patchY)
     {
-    	TerrainHeader header = mgr.new TerrainHeader();
+    	TerrainHeader header = new TerrainHeader();
         float zmax = -99999999.0f;
         float zmin = 99999999.0f;
 
@@ -246,9 +241,9 @@ public class TerrainCompressor
         return header;
     }
 
-    public static TerrainHeader DecodePatchHeader(TerrainManager mgr, BitPack bitpack)
+    public static TerrainHeader DecodePatchHeader(BitPack bitpack)
     {
-    	TerrainHeader header = mgr.new TerrainHeader();
+    	TerrainHeader header = new TerrainHeader();
 
         // Quantized word bits
         header.QuantWBits = bitpack.UnpackBits(8);

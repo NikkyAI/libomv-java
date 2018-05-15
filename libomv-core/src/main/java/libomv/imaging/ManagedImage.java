@@ -198,7 +198,7 @@ public class ManagedImage implements Cloneable
 	{
 		return bump;
 	}
-	protected void setBump(byte[] array)
+	public void setBump(byte[] array)
 	{
 		bump = array;
 	}

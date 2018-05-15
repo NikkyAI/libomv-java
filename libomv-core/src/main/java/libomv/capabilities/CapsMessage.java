@@ -41,25 +41,27 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import libomv.Simulator.SimAccess;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.assets.AssetItem;
-import libomv.assets.AssetItem.AssetType;
-import libomv.client.ParcelManager;
-import libomv.client.AgentManager.InstantMessageDialog;
-import libomv.client.AgentManager.InstantMessageOnline;
-import libomv.client.AgentManager.TeleportFlags;
-import libomv.client.AvatarManager.AgentDisplayName;
-import libomv.client.ObjectManager.SaleType;
-import libomv.client.ParcelManager.LandingTypeEnum;
-import libomv.client.ParcelManager.ParcelCategory;
-import libomv.client.ParcelManager.ParcelResult;
 import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
+import libomv.model.Agent.AgentDisplayName;
+import libomv.model.Agent.InstantMessageDialog;
+import libomv.model.Agent.InstantMessageOnline;
+import libomv.model.Agent.TeleportFlags;
+import libomv.model.Asset;
+import libomv.model.Asset.AssetType;
+import libomv.model.LLObject.SaleType;
+import libomv.model.Parcel;
+import libomv.model.Parcel.LandingTypeEnum;
+import libomv.model.Parcel.ParcelCategory;
+import libomv.model.Parcel.ParcelResult;
+import libomv.model.Parcel.ParcelStatus;
+import libomv.model.Simulator.SimAccess;
 import libomv.primitives.MediaEntry;
 import libomv.primitives.PhysicsProperties;
 import libomv.primitives.Primitive.AttachmentPoint;
@@ -250,7 +252,7 @@ public class CapsMessage implements IMessage
 			LocationID = blockMap.get("LocationID").AsInteger();
 			RegionHandle = blockMap.get("RegionHandle").AsULong();
 			SeedCapability = blockMap.get("SeedCapability").AsUri();
-			SimAccess = libomv.Simulator.SimAccess.setValue(blockMap.get("SimAccess").AsInteger());
+			SimAccess = libomv.model.Simulator.SimAccess.setValue(blockMap.get("SimAccess").AsInteger());
 			IP = blockMap.get("SimIP").AsInetAddress();
 			Port = blockMap.get("SimPort").AsInteger();
 			Flags = TeleportFlags.setValue(blockMap.get("TeleportFlags").AsUInteger());
@@ -901,7 +903,7 @@ public class CapsMessage implements IMessage
 		// Key of parcel snapshot
 		public UUID SnapshotID;
 		// Parcel ownership status
-		public ParcelManager.ParcelStatus Status;
+		public ParcelStatus Status;
 		// Total number of primitives on this parcel
 		public int TotalPrims;
 		//
@@ -1052,16 +1054,16 @@ public class CapsMessage implements IMessage
 			if (parcelDataMap.get("ParcelFlags").getType() == OSDType.Binary)
 			{
 				byte[] bytes = parcelDataMap.get("ParcelFlags").AsBinary();
-				ParcelFlags = ParcelManager.ParcelFlags.getValue((int) Helpers.BytesToUInt32B(bytes));
+				ParcelFlags = Parcel.ParcelFlags.getValue((int) Helpers.BytesToUInt32B(bytes));
 			}
 			else
 			{
-				ParcelFlags = ParcelManager.ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").AsUInteger());
+				ParcelFlags = Parcel.ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").AsUInteger());
 			}
 			GroupID = parcelDataMap.get("GroupID").AsUUID();
 			GroupPrims = parcelDataMap.get("GroupPrims").AsInteger();
 			IsGroupOwned = parcelDataMap.get("IsGroupOwned").AsBoolean();
-			LandingType = ParcelManager.LandingTypeEnum.setValue(parcelDataMap.get("LandingType").AsInteger());
+			LandingType = LandingTypeEnum.setValue(parcelDataMap.get("LandingType").AsInteger());
 			MaxPrims = parcelDataMap.get("MaxPrims").AsInteger();
 			MediaID = parcelDataMap.get("MediaID").AsUUID();
 			MediaURL = parcelDataMap.get("MediaURL").AsString();
@@ -1092,7 +1094,7 @@ public class CapsMessage implements IMessage
 			SimWideTotalPrims = parcelDataMap.get("SimWideTotalPrims").AsInteger();
 			SnapSelection = parcelDataMap.get("SnapSelection").AsBoolean();
 			SnapshotID = parcelDataMap.get("SnapshotID").AsUUID();
-			Status = ParcelManager.ParcelStatus.setValue(parcelDataMap.get("Status").AsInteger());
+			Status = Parcel.ParcelStatus.setValue(parcelDataMap.get("Status").AsInteger());
 			TotalPrims = parcelDataMap.get("TotalPrims").AsInteger();
 			UserLocation = parcelDataMap.get("UserLocation").AsVector3();
 			UserLookAt = parcelDataMap.get("UserLookAt").AsVector3();
@@ -1266,7 +1268,7 @@ public class CapsMessage implements IMessage
 			Name = map.get("name").AsString();
 			ObscureMedia = map.get("obscure_media").AsBoolean();
 			ObscureMusic = map.get("obscure_music").AsBoolean();
-			ParcelFlags = ParcelManager.ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
+			ParcelFlags = Parcel.ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
 			PassHours = (float) map.get("pass_hours").AsReal();
 			PassPrice = map.get("pass_price").AsUInteger();
             Privacy = map.get("privacy").AsBoolean();
@@ -1439,7 +1441,7 @@ public class CapsMessage implements IMessage
 				Request.Deserialize(map);
 			}
 			else
-				logger.watn(
+				logger.warn(
 						"Unable to deserialize RemoteParcelRequest: No message handler exists for method: "
 								+ map.AsString());
 		}
@@ -1559,7 +1561,7 @@ public class CapsMessage implements IMessage
                 NextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").AsUInteger());
                 GroupOwned = map.get("GroupOwned").AsBoolean();
                 AssetID = map.get("AssetID").AsUUID();
-                Type = AssetType.setValue(map.get("Type").AsInteger());
+                Type = Asset.AssetType.setValue(map.get("Type").AsInteger());
                 InvType = InventoryType.setValue(map.get("InvType").AsInteger());
                 Flags = map.get("Flags").AsUInteger();
                 saleType = SaleType.setValue(map.get("SaleType").AsInteger());

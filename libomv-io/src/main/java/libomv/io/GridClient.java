@@ -54,15 +54,16 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import libomv.ProtocolManager;
 import libomv.Statistics;
 import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDArray;
-import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
+import libomv.StructuredData.OSDArray;
+import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.StructuredData.OSDString;
 import libomv.capabilities.CapsMessage;
 import libomv.io.assets.AssetManager;
 import libomv.io.inventory.InventoryManager;
+import libomv.model.Grid;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
@@ -70,7 +71,7 @@ import libomv.utils.Helpers;
 /* Main class to expose the functionality of a particular grid to clients. All of the
  * classes needed for sending and receiving data are accessible throug this class.
  */
-public class GridClient
+public class GridClient implements Grid
 {
 	// #region gridlist definitions
 	public class GridInfo implements Cloneable
@@ -1003,4 +1004,12 @@ public class GridClient
 	{
 		Thread.sleep(0);
 	}
+	
+	public static String Log(String message, GridClient client) {
+		if (client != null && client.Settings.LOG_NAMES) {
+			return String.format("<%s>: {%s}", client.Self.getName(), message);
+		}
+		return message;
+	}
+	
 }

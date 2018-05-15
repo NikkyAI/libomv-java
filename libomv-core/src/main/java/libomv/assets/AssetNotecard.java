@@ -35,21 +35,24 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import libomv.client.ObjectManager.SaleType;
-import libomv.client.inventory.InventoryManager;
+import org.apache.log4j.Logger;
+
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
+import libomv.model.Inventory;
+import libomv.model.LLObject.SaleType;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
-
 
 /**
  * Represents a string of characters encoded with specific formatting properties
  */
 public class AssetNotecard extends AssetItem
 {
+	private static final Logger logger = Logger.getLogger(AssetNotecard.class);
+		
 	/* Override the base classes getAssetType */
 	@Override
 	public AssetType getAssetType()
@@ -177,7 +180,7 @@ public class AssetNotecard extends AssetItem
 				}
 				else
 				{
-					output.append("\t\tshadow_id\t" + InventoryManager.EncryptAssetID(item.assetID) + "\n");
+					output.append("\t\tshadow_id\t" + Inventory.EncryptAssetID(item.assetID) + "\n");
 				}
 
 				output.append("\t\ttype\t" + item.assetType.toString() + "\n");
@@ -460,7 +463,7 @@ public class AssetNotecard extends AssetItem
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Decoding notecard asset failed: " + ex.getMessage(), LogLevel.Error);
+			logger.error("Decoding notecard asset failed: " + ex.getMessage());
 			return false;
 		}
 	}

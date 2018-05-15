@@ -40,8 +40,8 @@ import java.util.Iterator;
 import java.util.concurrent.Future;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package libomv;
+package libomv.io;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,12 +55,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 
 import libomv.Statistics.Type;
-import libomv.client.GridClient;
-import libomv.client.LibSettings;
-import libomv.client.NetworkManager;
-import libomv.client.ParcelManager.Parcel;
-import libomv.client.TerrainManager.TerrainPatch;
-import libomv.client.capabilities.CapsManager;
+import libomv.io.capabilities.CapsManager;
+import libomv.model.Network.OutgoingPacket;
+import libomv.model.Parcel;
+import libomv.model.Terrain.TerrainPatch;
 import libomv.packets.AgentPausePacket;
 import libomv.packets.AgentResumePacket;
 import libomv.packets.CloseCircuitPacket;
@@ -80,9 +79,9 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // Simulator is a wrapper for a network connection to a simulator and the
 // Region class representing the block of land in the metaverse.
-public class Simulator extends Thread
+public class SimulatorManager extends Thread implements libomv.model.Simulator
 {
-	private static final Logger logger = Logger.getLogger(Simulator.class);
+	private static final Logger logger = Logger.getLogger(SimulatorManager.class);
 
 	/* Simulator (region) properties */
 	// [Flags]
@@ -220,47 +219,6 @@ public class Simulator extends Thread
 		private static final long _mask = 0x7FFFFFFFL;
     }
   	
-  	/* Access level for a simulator */
-	public static enum SimAccess
-	{
-		/* Minimum access level, no additional checks */
-		Min(0),
-		/* Trial accounts allowed */
-		Trial(7),                 //          4 + 2 + 1
-		/* PG rating */
-		PG(13),                   //  8 +     4     + 1
-		/* Mature rating */
-		Mature(21),               // 16 +     4     + 1
-		/* Adult rating */
-		Adult(42),                // 32 + 8 + 4
-		/* Simulator is offline */
-		Down(0xFE),
-		/* Simulator does not exist */
-		NonExistent(0xFF);
-
-		public static SimAccess setValue(int value)
-		{
-			for (SimAccess e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return Min;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		private byte _value;
-
-		private SimAccess(int value)
-		{
-			_value = (byte) value;
-		}
-	}
-
 	public static enum SimStatType
 	{
 		Unknown,		// -1
@@ -561,6 +519,11 @@ public class Simulator extends Thread
 	// Provides access to an internal thread-safe dictionary containing parcel
 	// information found in this simulator
 	public HashMap<Integer, Parcel> Parcels = new HashMap<Integer, Parcel>();
+
+	@Override
+	public Map<Integer, Parcel> getParcels() {
+		return Parcels;
+	}
 
 	// simulator <> parcel LocalID Map
 	private int[] _ParcelMap = new int[4096];
@@ -914,13 +877,13 @@ public class Simulator extends Thread
 		return ((Long) getHandle()).hashCode();
 	}
 
-	public Simulator(GridClient client, InetAddress ip, short port, long handle) throws Exception
+	public SimulatorManager(GridClient client, InetAddress ip, short port, long handle) throws Exception
 	{
 		// Create an endpoint that we will be communicating with
 		this(client, new InetSocketAddress(ip, port), handle);
 	}
 
-	public Simulator(GridClient client, InetSocketAddress endPoint, long handle) throws Exception
+	public SimulatorManager(GridClient client, InetSocketAddress endPoint, long handle) throws Exception
 	{
 		super("Simulator: " + endPoint.getHostName());
 		_Client = client;
@@ -1003,24 +966,24 @@ public class Simulator extends Thread
 			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), LibSettings.PING_INTERVAL, LibSettings.PING_INTERVAL);
 		}
 
-		logger.info("Connecting to " + ipEndPoint.toString(), _Client);
+		logger.info(GridClient.Log("Connecting to " + ipEndPoint.toString(), _Client));
 
 		// runs background thread to read from DatagramSocket
 		start();
 
 		Statistics.ConnectTime = System.currentTimeMillis();
 
-		logger.debug("Waiting for connection", _Client);
+		logger.debug(GridClient.Log("Waiting for connection", _Client));
 		while (true)
 		{
 			if (_Connected)
 			{
-				logger.debug(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime), _Client);
+				logger.debug(GridClient.Log(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime), _Client));
 				break;
 			}
 			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
 			{
-				logger.error("Giving up on waiting for RegionHandshake for " + this.toString(), _Client);
+				logger.error(GridClient.Log("Giving up on waiting for RegionHandshake for " + this.toString(), _Client));
 
 				// Remove the simulator from the list, not useful if we haven't received the RegionHandshake
 				synchronized (_Client.Network.getSimulators())
@@ -1056,7 +1019,7 @@ public class Simulator extends Thread
 		}
 		catch (Exception ex)
 		{
-			logger.error("Failed to update our status", _Client, ex);
+			logger.error(GridClient.Log("Failed to update our status", _Client), ex);
 		}
 		return false;
 	}
@@ -1081,7 +1044,7 @@ public class Simulator extends Thread
 			if (_Caps.getSeedCapsURI().equals(seedcaps))
 				return;
 
-			logger.warn("Unexpected change of seed capability", _Client);
+			logger.warn(GridClient.Log("Unexpected change of seed capability", _Client));
 			_Caps.disconnect(true);
 			_Caps = null;
 		}
@@ -1091,7 +1054,7 @@ public class Simulator extends Thread
 			// Connect to the new CAPS system
 			if (seedcaps == null || seedcaps.isEmpty())
 			{
-				logger.error("Setting up a sim without a valid capabilities server!", _Client);
+				logger.error(GridClient.Log("Setting up a sim without a valid capabilities server!", _Client));
 			}
 			else
 			{
@@ -1157,7 +1120,7 @@ public class Simulator extends Thread
 			}
 			catch (Exception ex)
 			{
-				logger.error(ex.toString(), _Client, ex);
+				logger.error(GridClient.Log(ex.toString(), _Client), ex);
 			}
 		}
 	}
@@ -1255,9 +1218,9 @@ public class Simulator extends Thread
 		return false;
 	}
 
-	private void DumpBuffer(byte[] byteBuffer, int numBytes, String head, int level)
+	private void DumpBuffer(byte[] byteBuffer, int numBytes, String head)
 	{
-		logger.info(head + numBytes, level, _Client);
+		logger.debug(GridClient.Log(head + numBytes, _Client));
 		StringBuffer dump = new StringBuffer(numBytes * 2);
 		for (int i = 0; i < numBytes; i++)
 		{
@@ -1265,7 +1228,7 @@ public class Simulator extends Thread
 			dump.append(Integer.toHexString(value & 0xFF));
 			dump.append(" ");
 		}
-		logger.log(dump, level, _Client);
+		logger.debug(GridClient.Log(dump.toString(), _Client));
 
 	}
 
@@ -1278,7 +1241,7 @@ public class Simulator extends Thread
 		}
 		catch (SocketException e)
 		{
-			logger.error("Failed to startup the UDP socket", _Client);
+			logger.error(GridClient.Log("Failed to startup the UDP socket", _Client));
 			return;
 		}
 		byte[] RecvBuffer = new byte[4096];
@@ -1306,7 +1269,7 @@ public class Simulator extends Thread
 					{
 						if (logRawPackets)
 						{
-							DumpBuffer(byteBuffer, numBytes, "<=============== Received packet, length = ", LogLevel.Debug);
+							DumpBuffer(byteBuffer, numBytes, "<=============== Received packet, length = ");
 						}
 
 						if ((RecvBuffer[0] & PacketHeader.MSG_ZEROCODED) != 0)
@@ -1320,19 +1283,19 @@ public class Simulator extends Thread
 							numBytes = ZeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
 							if (logRawPackets)
 							{
-								DumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet, length=", LogLevel.Debug);
+								DumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet, length=");
 							}
 						}
 
 						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
 						if (logRawPackets)
 						{
-							logger.debug("Decoded packet " + packet.getClass().getName(), _Client);
+							logger.debug(GridClient.Log("Decoded packet " + packet.getClass().getName(), _Client));
 						}
 					}
 					catch (IOException ex)
 					{
-						logger.info(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client, ex);
+						logger.info(GridClient.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client), ex);
 
 						_Connected = false;
 						_Client.Network.disconnectSim(this, true);
@@ -1340,13 +1303,15 @@ public class Simulator extends Thread
 					}
 					catch (BufferUnderflowException ex)
 					{
-						DumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet, length = ", LogLevel.Debug);
+						DumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet, length = ");
 					}
 				}
 
 				if (packet == null)
 				{
-					DumpBuffer(RecvBuffer, numBytes, "<=========== Couldn't build a message from the incoming data, length = ", LogLevel.Warning);
+					// TODO:FIXME
+					// This used to be a warning
+					DumpBuffer(RecvBuffer, numBytes, "<=========== Couldn't build a message from the incoming data, length = ");
 					continue;
 				}
 
@@ -1367,8 +1332,8 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(ack) == null)
 							{
-								logger.warn(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
-										packet.getClass().getName()), _Client);
+								logger.warn(GridClient.Log(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
+										packet.getClass().getName()), _Client));
 							}
 						}
 					}
@@ -1384,8 +1349,8 @@ public class Simulator extends Thread
 						{
 							if (_NeedAck.remove(ID) == null)
 							{
-								logger.warn(String.format("ACK for a packet (%d) we didn't send: %s", ID,
-										packet.getClass().getName()), _Client);
+								logger.warn(GridClient.Log(String.format("ACK for a packet (%d) we didn't send: %s", ID,
+										packet.getClass().getName()), _Client));
 							}
 						}
 					}
@@ -1411,13 +1376,13 @@ public class Simulator extends Thread
 				{
 					if (packet.getHeader().getResent())
 					{
-						logger.debug(String.format("Received a resend of already processed packet #%d, type: %s, from %s",
-								                       sequence, packet.getType(), getName()), _Client);
+						logger.debug(GridClient.Log(String.format("Received a resend of already processed packet #%d, type: %s, from %s",
+								                       sequence, packet.getType(), getName()), _Client));
 					}
 					else
 					{
-						logger.warn(String.format("Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s", 
-								                 sequence, packet.getType(), _Client.Self.getName(), getName()), _Client);
+						logger.warn(GridClient.Log(String.format("Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s", 
+								                 sequence, packet.getType(), _Client.Self.getName(), getName()), _Client));
 					}
 					// Avoid firing a callback twice for the same packet
 					continue;
@@ -1433,7 +1398,7 @@ public class Simulator extends Thread
 			}
 			catch (IOException ex)
 			{
-				logger.info(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client);
+				logger.info(GridClient.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client));
 
 				_Connected = false;
 				return;
@@ -1502,7 +1467,7 @@ public class Simulator extends Thread
 		}
 
 		// #region Queue or Send
-		NetworkManager.OutgoingPacket outgoingPacket = _Client.Network.new OutgoingPacket(this, type, data);
+		NetworkManager.OutgoingPacket outgoingPacket = new OutgoingPacket(this, type, data);
 
 		// Send ACK and logout packets directly, everything else goes through
 		// the queue
@@ -1547,7 +1512,7 @@ public class Simulator extends Thread
 				}
 				catch (Exception ex)
 				{
-					logger.error("Exception when sending Ack packet", _Client, ex);
+					logger.error(GridClient.Log("Exception when sending Ack packet", _Client), ex);
 				}
 			}
 		}
@@ -1582,8 +1547,8 @@ public class Simulator extends Thread
 					{
 						if (_Client.Settings.LOG_RESENDS)
 						{
-							logger.debug(String.format("Resending %s packet #%d, %d ms have passed",
-									outgoing.Type, outgoing.SequenceNumber, now - outgoing.TickCount), _Client);
+							logger.debug(GridClient.Log(String.format("Resending %s packet #%d, %d ms have passed",
+									outgoing.Type, outgoing.SequenceNumber, now - outgoing.TickCount), _Client));
 						}
 
 						// The TickCount will be set to the current time when
@@ -1675,7 +1640,7 @@ public class Simulator extends Thread
 		}
 		catch (IOException ex)
 		{
-			logger.error(ex.toString(), _Client, ex);
+			logger.error(GridClient.Log(ex.toString(), _Client), ex);
 		}
 
 		// Stats tracking
@@ -1717,9 +1682,9 @@ public class Simulator extends Thread
 			{
 				Statistics.IncomingBPS = (int) (recv - old_in) / _InBytes.size();
 				Statistics.OutgoingBPS = (int) (sent - old_out) / _OutBytes.size();
-				logger.debug(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
+				logger.debug(GridClient.Log(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
 						+ " bps, Lag: " + Statistics.LastLag + " ms, Pings: " + Statistics.ReceivedPongs + "/"
-						+ Statistics.SentPings, _Client);
+						+ Statistics.SentPings, _Client));
 			}
 		}
 	}

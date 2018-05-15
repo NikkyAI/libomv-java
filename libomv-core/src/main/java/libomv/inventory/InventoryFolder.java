@@ -36,6 +36,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
@@ -232,9 +233,9 @@ public class InventoryFolder extends InventoryNode
 	public int version;
 	// The number of descendents in this folder. This value can be different to the actual
 	// number of children, if the contents of the folder hasn't been completely fetched yet. 
-	protected int descendentCount;
+	public int descendentCount;
 	// The list of children this folder contains
-	protected ArrayList<InventoryNode> children;
+	public List<InventoryNode> children;
 	
 	/**
 	 * Constructor

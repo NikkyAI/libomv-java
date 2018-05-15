@@ -63,7 +63,7 @@ import libomv.StructuredData.OSDString;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class BinaryLLSDTests extends TestCase
+public class BinaryLLSDTest extends TestCase
 {
 	private static final byte[] llsdBinaryHead = { '<','?','l','l','s','d','/','b','i','n','a','r','y','?','>','\n'};
 

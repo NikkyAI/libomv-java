@@ -39,14 +39,16 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
+import org.apache.log4j.Logger;
 
-import libomv.client.GridClient;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
 public class LindenMesh extends ReferenceMesh
 {
+	private static final Logger logger = Logger.getLogger(LindenMesh.class);
+
     // #region Mesh Structs
 
     public class Vertex
@@ -153,7 +155,7 @@ public class LindenMesh extends ReferenceMesh
     	return vertex;
     }
  
-    private GridClient _client;
+    //private GridClient _client;
     protected short _numSkinJoints;
     public short getNumSkinJoints() { return _numSkinJoints; }
     protected String[] _skinJoints;
@@ -169,24 +171,26 @@ public class LindenMesh extends ReferenceMesh
 
     public LindenMesh(String name) throws Exception
     {
-        this(null, name, null);
+        //this(null, name, null);
+        this(name, null);
     }
     
-    public LindenMesh(GridClient client, String name) throws Exception
-    {
-        this(client, name, null);
-    }
+//    public LindenMesh(GridClient client, String name) throws Exception
+//    {
+//        this(client, name, null);
+//    }
 
-    public LindenMesh(GridClient client, String name, LindenSkeleton skeleton) throws Exception
+    //public LindenMesh(GridClient client, String name, LindenSkeleton skeleton) throws Exception
+    public LindenMesh(String name, LindenSkeleton skeleton) throws Exception
     {
-        _client = client;
+        //_client = client;
         _name = name;
         _skeleton = skeleton;
         _meshes = new TreeMap<Integer, ReferenceMesh>();
         
         if (_skeleton == null)
         {
-        	_skeleton = LindenSkeleton.load(client, null);
+        	_skeleton = LindenSkeleton.load(null);
         }
     }
 
@@ -399,7 +403,7 @@ public class LindenMesh extends ReferenceMesh
         }
         else
         {
-        	mesh = new LindenMesh(_client, "");
+        	mesh = new LindenMesh("");
         }
         mesh.load(filename);
         _meshes.put(level, mesh);

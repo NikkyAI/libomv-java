@@ -48,16 +48,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import libomv.Simulator;
+import org.apache.log4j.Logger;
+
 import libomv.VisualParams;
-import libomv.Simulator.RegionProtocols;
 import libomv.VisualParams.VisualAlphaParam;
 import libomv.VisualParams.VisualColorParam;
 import libomv.VisualParams.VisualParam;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
-import libomv.assets.AssetItem.AssetType;
 import libomv.assets.AssetTexture;
 import libomv.assets.AssetWearable;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
@@ -68,8 +67,11 @@ import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode;
 import libomv.inventory.InventoryNode.InventoryType;
+import libomv.inventory.InventoryObject;
+import libomv.inventory.InventoryWearable;
 import libomv.io.NetworkManager.DisconnectedCallbackArgs;
 import libomv.io.NetworkManager.EventQueueRunningCallbackArgs;
+import libomv.io.SimulatorManager.RegionProtocols;
 import libomv.io.assets.AssetManager;
 import libomv.io.assets.AssetManager.AssetDownload;
 import libomv.io.assets.AssetManager.ImageDownload;
@@ -77,8 +79,8 @@ import libomv.io.assets.TexturePipeline.TextureRequestState;
 import libomv.io.capabilities.CapsClient;
 import libomv.io.imaging.Baker;
 import libomv.io.inventory.InventoryManager.InventorySortOrder;
-import libomv.inventory.InventoryObject;
-import libomv.inventory.InventoryWearable;
+import libomv.model.Asset.AssetType;
+import libomv.model.Simulator;
 import libomv.packets.AgentCachedTexturePacket;
 import libomv.packets.AgentCachedTexturePacket.WearableDataBlock;
 import libomv.packets.AgentCachedTextureResponsePacket;
@@ -108,54 +110,9 @@ import libomv.utils.MultiMap;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.TimeoutEvent;
 
-public class AppearanceManager implements PacketCallback
+public class AppearanceManager implements PacketCallback, libomv.model.Appearance
 {
-    // Bake layers for avatar appearance
-    public enum BakeType
-    {
-    	Unknown, Head, UpperBody, LowerBody, Eyes, Skirt, Hair;
-        public static BakeType setValue(int value)
-        {
-            if (value <= 0 && value < Hair.ordinal())
-            	return values()[value + 1];
-            return Unknown;
-        }
-
-        public static byte getValue(BakeType value)
-        {
-            return (byte) (value.ordinal() - 1);
-        }
-        
-        public static int getNumValues()
-        {
-        	return values().length - 1;
-        }
- 
-        public byte getValue()
-        {
-            return (byte) (ordinal() - 1);
-        }
-     }
-
-    // Appearance Flags, introdued with server side baking, currently unused
-    // [Flags]
-    public enum AppearanceFlags
-    {
-        None;
-
-        public static AppearanceFlags setValue(int value)
-        {
-            if (value >= 0 && value < values().length)
-            	return values()[value];
-            Logger.Log("Unknown Appearance flag value" + value, LogLevel.Warning);
-            return None;
-        }
-
-        public static byte getValue(BakeType value)
-        {
-            return (byte) (value.ordinal());
-        }
-    }
+	private static final Logger logger = Logger.getLogger(AppearanceManager.class);
 
     // #region Constants
     // Maximum number of concurrent downloads for wearable assets and textures 
@@ -437,7 +394,7 @@ public class AppearanceManager implements PacketCallback
         }
 
         if (_Client.Assets == null)
-        	Logger.Log("AppearanceManager requires a working AssetManager!", LogLevel.Error, _Client);
+        	logger.error(GridClient.Log("AppearanceManager requires a working AssetManager!", _Client));
         
         _Client.Network.RegisterCallback(PacketType.AgentWearablesUpdate, this);
         _Client.Network.RegisterCallback(PacketType.AgentCachedTextureResponse, this);
@@ -495,7 +452,7 @@ public class AppearanceManager implements PacketCallback
     {
         if (_AppearanceThread != null && _AppearanceThread.isAlive())
         {
-            Logger.Log("Appearance thread is already running, skipping", LogLevel.Warning, _Client);
+            logger.warn(GridClient.Log(	"Appearance thread is already running, skipping", _Client));
             return;
         }
 
@@ -553,7 +510,7 @@ public class AppearanceManager implements PacketCallback
                     		// Fetch a list of the current agent wearables
                     		if (!GetAgentWearables())
                     		{
-                    			Logger.Log("Failed to retrieve a list of current agent wearables, appearance cannot be set", LogLevel.Error, _Client);
+                    			logger.error(GridClient.Log("Failed to retrieve a list of current agent wearables, appearance cannot be set", _Client));
                     			throw new Exception("Failed to retrieve a list of current agent wearables, appearance cannot be set");
                     		}
                     		GotWearables = true;
@@ -566,8 +523,7 @@ public class AppearanceManager implements PacketCallback
                         success = DownloadWearables();
                         if (!success)
                         {
-                            Logger.Log("One or more agent wearables failed to download, appearance will be incomplete",
-                                LogLevel.Warning, _Client);
+                            logger.warn(GridClient.Log("One or more agent wearables failed to download, appearance will be incomplete", _Client));
                         }
 
                         // If this is the first time setting appearance and we're not forcing rebakes, check the server
@@ -577,7 +533,7 @@ public class AppearanceManager implements PacketCallback
                             // Compute hashes for each bake layer and compare against what the simulator currently has
                             if (!GetCachedBakes())
                             {
-                                Logger.Log("Failed to get a list of cached bakes from the simulator, appearance will be rebaked", LogLevel.Warning, _Client);
+                                logger.warn(GridClient.Log("Failed to get a list of cached bakes from the simulator, appearance will be rebaked", _Client));
                             }
                         }
 
@@ -585,7 +541,7 @@ public class AppearanceManager implements PacketCallback
                         if (!CreateBakes())
                         {
                             success = false;
-                            Logger.Log("Failed to create or upload one or more bakes, appearance will be incomplete", LogLevel.Warning, _Client);
+                            logger.warn(GridClient.Log("Failed to create or upload one or more bakes, appearance will be incomplete", _Client));
                         }
 
                         // Send the appearance packet
@@ -595,7 +551,7 @@ public class AppearanceManager implements PacketCallback
                 catch (Exception ex)
                 {
                     success = false;
-                    Logger.Log("Failed to get cached bakes from the simulator, appearance will be rebaked", LogLevel.Warning, _Client, ex);
+                    logger.warn(GridClient.Log("Failed to get cached bakes from the simulator, appearance will be rebaked", _Client), ex);
                 }
                 finally
                 {
@@ -681,7 +637,7 @@ public class AppearanceManager implements PacketCallback
                     block.TextureIndex = BakeTypeToAgentTextureIndex(bakeType).getValue();
                     hashes.add(block);
 
-                    Logger.DebugLog("Checking cache for " + bakeType + ", hash = " + block.ID, _Client);
+                    logger.debug(GridClient.Log("Checking cache for " + bakeType + ", hash = " + block.ID, _Client));
                 }
             }
         }
@@ -943,7 +899,7 @@ public class AppearanceManager implements PacketCallback
 
             if (needsCurrentWearables && !GetAgentWearables())
             {
-                Logger.Log("Failed to fetch the current agent wearables, cannot safely replace outfit", LogLevel.Error, _Client);
+                logger.error(GridClient.Log("Failed to fetch the current agent wearables, cannot safely replace outfit", _Client));
                 return;
             }
         }
@@ -1092,7 +1048,7 @@ public class AppearanceManager implements PacketCallback
             }
             else
             {
-                Logger.Log("Cannot attach inventory item " + attachment.name, LogLevel.Warning, _Client);
+                logger.warn(GridClient.Log("Cannot attach inventory item " + attachment.name, _Client));
             }
         }
         _Client.Network.sendPacket(attachmentsPacket);
@@ -1371,7 +1327,7 @@ public class AppearanceManager implements PacketCallback
                 //{
                 //    carray += c.ToString() + " - ";
                 //}
-                //Logger.DebugLog("Calculating color for " + p.WearableType + " from " + p.VisualParam.Name + ", value is " + p.Value + " in range " + p.VisualParam.MinValue + " - " + p.VisualParam.MaxValue + " step " + step + " with " + n + " elements " + carray + " A: " + indexa + " B: " + indexb + " at distance " + distance);
+                //logger.debug("Calculating color for " + p.WearableType + " from " + p.VisualParam.Name + ", value is " + p.Value + " in range " + p.VisualParam.MinValue + " - " + p.VisualParam.MaxValue + " step " + step + " with " + n + " elements " + carray + " A: " + indexa + " B: " + indexb + " at distance " + distance);
             }
 
             // Now that we have calculated color from the scale of colors
@@ -1553,7 +1509,7 @@ public class AppearanceManager implements PacketCallback
         if (colorParams.size() > 0)
         {
             wearableColor = GetColorFromParams(colorParams);
-            Logger.DebugLog("Setting tint " + wearableColor + " for " + wearable.WearableType);
+            logger.debug("Setting tint " + wearableColor + " for " + wearable.WearableType);
         }
 
         // Loop through all of the texture IDs in this decoded asset and put them in our cache of worn textures
@@ -1573,7 +1529,7 @@ public class AppearanceManager implements PacketCallback
                     textures[i].TextureID = UUID.Zero;
                 else
                     textures[i].TextureID = entry.getValue();
-                Logger.DebugLog("Set " + entry.getKey() + " to " + textures[i].TextureID, _Client);
+                logger.debug(GridClient.Log("Set " + entry.getKey() + " to " + textures[i].TextureID, _Client));
 
                 textures[i].Texture = null;
             }
@@ -1599,19 +1555,18 @@ public class AppearanceManager implements PacketCallback
                 if (wearable.Asset != null)
                 {
                     DecodeWearableParams(wearable, _Textures);
-                    Logger.DebugLog("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
-                        " visual params and " + wearable.Asset.Textures.size() + " textures", _Client);
+                    logger.debug(GridClient.Log("Downloaded wearable asset " + wearable.WearableType + " with " + wearable.Asset.Params.size() +
+                        " visual params and " + wearable.Asset.Textures.size() + " textures", _Client));
 
                 }
                 else
                 {
-                    Logger.Log("Failed to decode wearable asset: " + transfer.ItemID, LogLevel.Error, _Client);
+                    logger.error(GridClient.Log("Failed to decode wearable asset: " + transfer.ItemID, _Client));
                 }
             }
             else
             {
-                Logger.Log("Wearable " + wearable.WearableType + " {" + wearable.AssetID + "} failed to download, status:  " + transfer.Status,
-                		   LogLevel.Warning, _Client);
+                logger.warn(GridClient.Log("Wearable " + wearable.WearableType + " {" + wearable.AssetID + "} failed to download, status:  " + transfer.Status, _Client));
             }
             latch.countDown();
             return true;
@@ -1667,7 +1622,7 @@ public class AppearanceManager implements PacketCallback
         if (pendingWearables == 0)
             return true;
 
-        Logger.DebugLog("Downloading " + pendingWearables + " wearable assets");
+        logger.debug("Downloading " + pendingWearables + " wearable assets");
 
         ExecutorService executor = Executors.newFixedThreadPool(Math.min(pendingWearables, MAX_CONCURRENT_DOWNLOADS));
         for (final WearableData wearable : wearables.values())
@@ -1756,7 +1711,7 @@ public class AppearanceManager implements PacketCallback
             }
         }
 
-        Logger.DebugLog("Downloading " + textureIDs.size() + " textures for baking");
+        logger.debug("Downloading " + textureIDs.size() + " textures for baking");
 
         final CountDownLatch latch = new CountDownLatch(textureIDs.size());
         for (UUID textureID : textureIDs)
@@ -1771,7 +1726,7 @@ public class AppearanceManager implements PacketCallback
                         AssetTexture texture = (AssetTexture)AssetManager.CreateAssetItem(AssetType.Texture, download.ItemID, download.AssetData);
                         if (texture == null)
                         {
-                            Logger.Log("Failed to decode texture: " + textureID, LogLevel.Error, _Client);
+                            logger.error(GridClient.Log("Failed to decode texture: " + textureID, _Client));
                         }
  
                         for (int i = 0; i < _Textures.length; i++)
@@ -1782,7 +1737,7 @@ public class AppearanceManager implements PacketCallback
                     }
                     else
                     {
-                        Logger.Log("Texture " + download.ItemID + " failed to download, one or more bakes will be incomplete", LogLevel.Warning, _Client);
+                        logger.warn(GridClient.Log("Texture " + download.ItemID + " failed to download, one or more bakes will be incomplete", _Client));
                     }
                     latch.countDown();
                     return true;
@@ -1885,7 +1840,7 @@ public class AppearanceManager implements PacketCallback
 
         long start = System.currentTimeMillis();;
         oven.Bake();
-        Logger.DebugLog("Baking " + bakeType + " took " + (System.currentTimeMillis() - start) + "ms");
+        logger.debug("Baking " + bakeType + " took " + (System.currentTimeMillis() - start) + "ms");
 
         UUID newAssetID = UUID.Zero;
         int retries = UPLOAD_RETRIES;
@@ -1912,7 +1867,7 @@ public class AppearanceManager implements PacketCallback
 
         if (UUID.isZeroOrNull(newAssetID))
         {
-            Logger.Log("Failed uploading bake " + bakeType, LogLevel.Warning, _Client);
+            logger.warn(GridClient.Log("Failed uploading bake " + bakeType, _Client));
             return false;
         }
         return true;
@@ -1984,7 +1939,7 @@ public class AppearanceManager implements PacketCallback
             OSDMap result = (OSDMap)res;
             if (result.get("success").AsBoolean())
             {
-                Logger.Log("Successfully set appearance", LogLevel.Info, _Client);
+                logger.info(GridClient.Log("Successfully set appearance", _Client));
                 // TODO: Set local visual params and baked textures based on the result here
                 return true;
             }
@@ -1994,7 +1949,7 @@ public class AppearanceManager implements PacketCallback
             }
         }
         capsRequest.shutdown(true);
-        Logger.Log(msg, LogLevel.Error, _Client);
+        logger.error(GridClient.Log(msg, _Client));
 
         return false;
     }
@@ -2117,12 +2072,12 @@ public class AppearanceManager implements PacketCallback
                 if ((i == 0 || i == 5 || i == 6) && !_Client.Settings.CLIENT_IDENTIFICATION_TAG.equals(UUID.Zero))
                 {
                     face.setTextureID(_Client.Settings.CLIENT_IDENTIFICATION_TAG);
-                    Logger.DebugLog("Sending client identification tag: " + _Client.Settings.CLIENT_IDENTIFICATION_TAG, _Client);
+                    logger.debug(GridClient.Log("Sending client identification tag: " + _Client.Settings.CLIENT_IDENTIFICATION_TAG, _Client));
                 }
                 else if (_Textures[i].TextureID != UUID.Zero)
                 {
                     face.setTextureID(_Textures[i].TextureID);
-                    Logger.DebugLog("Sending texture entry for " + i + " to " + _Textures[i].TextureID, _Client);
+                    logger.debug(GridClient.Log("Sending texture entry for " + i + " to " + _Textures[i].TextureID, _Client));
                 }
             }
 
@@ -2167,7 +2122,7 @@ public class AppearanceManager implements PacketCallback
                 block.TextureIndex = BakeTypeToAgentTextureIndex(bakeType).getValue();
                 block.CacheID = hash;
                 set.WearableData[bakeType.getValue()] = block;
-                Logger.DebugLog("Sending TextureIndex " + bakeType + " with CacheID " + hash, _Client);
+                logger.debug(GridClient.Log("Sending TextureIndex " + bakeType + " with CacheID " + hash, _Client));
             }
 
             // #endregion WearableData
@@ -2197,7 +2152,7 @@ public class AppearanceManager implements PacketCallback
             }
         }
         _Client.Network.sendPacket(set);
-        Logger.DebugLog("Sent AgentSetAppearance packet", _Client);        
+        logger.debug(GridClient.Log("Sent AgentSetAppearance packet", _Client));        
     }
 
     private void DelayedRequestSetAppearance()
@@ -2228,7 +2183,7 @@ public class AppearanceManager implements PacketCallback
         {
             return GetFolderWearables(folder, wearables, attachments);
         }
-        Logger.Log("Failed to resolve outfit folder path " + folderPath, LogLevel.Error, _Client);
+        logger.error(GridClient.Log("Failed to resolve outfit folder path " + folderPath, _Client));
         wearables = null;
         attachments = null;
         return false;
@@ -2244,28 +2199,28 @@ public class AppearanceManager implements PacketCallback
             {
                 if (ib.getType() == InventoryType.Wearable)
                 {
-                    Logger.DebugLog("Adding wearable " + ib.name, _Client);
+                    logger.debug(GridClient.Log("Adding wearable " + ib.name, _Client));
                     wearables.add((InventoryWearable)ib);
                 }
                 else if (ib.getType() == InventoryType.Attachment)
                 {
-                    Logger.DebugLog("Adding attachment (attachment) " + ib.name, _Client);
+                    logger.debug(GridClient.Log("Adding attachment (attachment) " + ib.name, _Client));
                     attachments.add((InventoryItem)ib);
                 }
                 else if (ib.getType() == InventoryType.Object)
                 {
-                    Logger.DebugLog("Adding attachment (object) " + ib.name, _Client);
+                    logger.debug(GridClient.Log("Adding attachment (object) " + ib.name, _Client));
                     attachments.add((InventoryItem)ib);
                 }
                 else
                 {
-                    Logger.DebugLog("Ignoring inventory item " + ib.name, _Client);
+                    logger.debug(GridClient.Log("Ignoring inventory item " + ib.name, _Client));
                 }
             }
         }
         else
         {
-            Logger.Log("Failed to download folder contents of + " + folder, LogLevel.Error, _Client);
+            logger.error(GridClient.Log("Failed to download folder contents of + " + folder, _Client));
             return false;
         }
 
@@ -2325,7 +2280,7 @@ public class AppearanceManager implements PacketCallback
 
         if (changed)
         {
-            Logger.DebugLog("New wearables received in AgentWearablesUpdate", _Client);
+            logger.debug(GridClient.Log("New wearables received in AgentWearablesUpdate", _Client));
             synchronized (_Wearables)
             {
                 _Wearables.clear();
@@ -2355,7 +2310,7 @@ public class AppearanceManager implements PacketCallback
         }
         else
         {
-            Logger.DebugLog("Duplicate AgentWearablesUpdate received, discarding", _Client);
+            logger.debug(GridClient.Log("Duplicate AgentWearablesUpdate received, discarding", _Client));
         }
     }
 
@@ -2379,7 +2334,7 @@ public class AppearanceManager implements PacketCallback
         {
             AvatarTextureIndex index = AvatarTextureIndex.setValue(block.TextureIndex);
           
-            Logger.DebugLog("Cache response for " + index + ", TextureID = " + block.TextureID, _Client);
+            logger.debug(GridClient.Log("Cache response for " + index + ", TextureID = " + block.TextureID, _Client));
 
             TextureData tex = _Textures[index.getValue()];
             if (!block.TextureID.equals(UUID.Zero))
@@ -2406,7 +2361,7 @@ public class AppearanceManager implements PacketCallback
             if (sendAppearanceUpdates && e.getSimulator().equals(_Client.Network.getCurrentSim()))
             {
                 // Update appearance each time we enter a new sim and capabilities have been retrieved
-                Logger.Log("Starting AppearanceRequest from server " + e.getSimulator().getSimName(), LogLevel.Warning, _Client);
+                logger.warn(GridClient.Log("Starting AppearanceRequest from server " + e.getSimulator().getSimName(), _Client));
                 RequestSetAppearance(false);
             }
             return false;

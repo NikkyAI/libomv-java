@@ -35,8 +35,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
 import libomv.ImportExport.ModelFace;
 import libomv.ImportExport.ModelPrim;
@@ -56,6 +57,8 @@ import libomv.utils.Helpers;
 /* Implements mesh upload communications with the simulator */
 public class ModelUploader
 {
+	private static final Logger logger = Logger.getLogger(ModelUploader.class);
+
     /* Inlcude stub convex hull physics, required for uploading to Second Life */
     public boolean IncludePhysicsStub;
 
@@ -213,7 +216,7 @@ public class ModelUploader
 						}
  						catch (IOReactorException ex)
  						{
-	                        Logger.Log("Error performing upload", Logger.LogLevel.Error, ex);
+	                        logger.error("Error performing upload", ex);
 						}
  					}
  				}
@@ -231,7 +234,7 @@ public class ModelUploader
 							}
  	                        catch (Exception ex)
  	                        {
- 	                           Logger.Log("Error requesting inventory item", Logger.LogLevel.Warning, ex);
+ 	                           logger.warn("Error requesting inventory item", ex);
 							}
  	                    }
  	                }
@@ -268,13 +271,13 @@ public class ModelUploader
 	        	OSDMap res = (OSDMap)result;
 	        	try
 	        	{
-					Logger.Log("Response from mesh upload:\n" + OSDParser.serializeToString(result, OSD.OSDFormat.Notation), Logger.LogLevel.Debug);
+					logger.debug("Response from mesh upload:\n" + OSDParser.serializeToString(result, OSD.OSDFormat.Notation));
 		        	if (callback != null)
 		        		callback.callback(res);
 				}
 	        	catch (IOException ex)
 	        	{
-	                Logger.Log("Serializing to string failed: " + res.get("message"), Logger.LogLevel.Error, ex);
+	                logger.error("Serializing to string failed: " + res.get("message"), ex);
 	                if (callback != null)
 	                	callback.callback(null);
 				}
@@ -284,7 +287,7 @@ public class ModelUploader
 		@Override
 		public void failed(Exception ex)
 		{
-            Logger.Log("Mesh upload request failure", Logger.LogLevel.Error, ex);
+            logger.error("Mesh upload request failure", ex);
             if (callback != null)
             	callback.callback(null);
 		}
@@ -300,7 +303,7 @@ public class ModelUploader
         URI url = _Client.Network.getCapabilityURI("NewFileAgentInventory");
         if (url == null)
         {
-            Logger.Log("Cannot upload mesh, no connection or NewFileAgentInventory not available", Logger.LogLevel.Warning);
+            logger.warn("Cannot upload mesh, no connection or NewFileAgentInventory not available");
             if (callback != null) callback.callback(null);
             return;
         }

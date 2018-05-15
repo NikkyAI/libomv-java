@@ -39,26 +39,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
-import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsMessage.AgentDropGroupMessage;
 import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.capabilities.IMessage;
 import libomv.io.AgentManager.InstantMessageCallbackArgs;
-import libomv.io.AgentManager.InstantMessageDialog;
-import libomv.io.AgentManager.InstantMessageOnline;
 import libomv.io.GroupManager.GroupAccountTransactions.TransactionEntry;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.capabilities.IMessage;
+import libomv.model.Agent.InstantMessageDialog;
+import libomv.model.Agent.InstantMessageOnline;
+import libomv.model.Asset.AssetType;
+import libomv.model.Simulator;
 import libomv.packets.ActivateGroupPacket;
 import libomv.packets.AgentDataUpdateRequestPacket;
 import libomv.packets.AgentDropGroupPacket;
@@ -117,6 +118,8 @@ import libomv.utils.Helpers;
 // information
 public class GroupManager implements PacketCallback, CapsCallback
 {
+	private static final Logger logger = Logger.getLogger(GroupManager.class);
+
 	// /#region Structs
 
 	// Avatar group management
@@ -817,7 +820,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1048,20 +1051,20 @@ public class GroupManager implements PacketCallback, CapsCallback
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Failed to decode result of GroupMemberData capability: ", LogLevel.Error, _Client, ex);
+				logger.error(GridClient.Log("Failed to decode result of GroupMemberData capability: ", _Client), ex);
 			}
 		}
 		
 		@Override
 		public void failed(Exception ex)
 		{
-			Logger.Log("Failed to request GroupMemberData capability: ", LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log("Failed to request GroupMemberData capability: ", _Client), ex);
 		}
 		
 		@Override
 		public void cancelled()
 		{
-			Logger.Log("GroupMemberData capability request canceled!", LogLevel.Error, _Client);
+			logger.error(GridClient.Log("GroupMemberData capability request canceled!", _Client));
 		}
 	}
 
@@ -1750,7 +1753,7 @@ public class GroupManager implements PacketCallback, CapsCallback
         	@Override
         	public void failed(Exception ex)
         	{
-        		Logger.Log("Failed to get a list of banned group members: " + ex.getMessage(), LogLevel.Warning, _Client);
+        		logger.warn(GridClient.Log("Failed to get a list of banned group members: " + ex.getMessage(), _Client));
         		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
         		if (callback != null)
         		{
@@ -1829,7 +1832,7 @@ public class GroupManager implements PacketCallback, CapsCallback
         	@Override
         	public void failed(Exception ex)
         	{
-        		Logger.Log("Failed to ban or unban group members: " + ex.getMessage(), LogLevel.Warning, _Client);
+        		logger.warn(GridClient.Log("Failed to ban or unban group members: " + ex.getMessage(), _Client));
         		if (callback != null)
         		{
         			try

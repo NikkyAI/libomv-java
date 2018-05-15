@@ -48,8 +48,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
+
 import libomv.Animations;
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
@@ -58,7 +61,6 @@ import libomv.assets.AssetGesture.GestureStep;
 import libomv.assets.AssetGesture.GestureStepAnimation;
 import libomv.assets.AssetGesture.GestureStepChat;
 import libomv.assets.AssetGesture.GestureStepWait;
-import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsMessage.AgentStateUpdateMessage;
 import libomv.capabilities.CapsMessage.AttachmentResourcesMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
@@ -76,7 +78,7 @@ import libomv.capabilities.CapsMessage.SetDisplayNameReplyMessage;
 import libomv.capabilities.CapsMessage.TeleportFailedMessage;
 import libomv.capabilities.CapsMessage.TeleportFinishMessage;
 import libomv.capabilities.CapsMessage.UpdateAgentLanguageMessage;
-import libomv.io.AvatarManager.AgentDisplayName;
+import libomv.capabilities.IMessage;
 import libomv.io.DirectoryManager.ClassifiedCategories;
 import libomv.io.DirectoryManager.ClassifiedFlags;
 import libomv.io.GridManager.GridLayerType;
@@ -91,7 +93,8 @@ import libomv.io.assets.AssetManager.AssetDownload;
 import libomv.io.assets.AssetManager.XferDownload;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.capabilities.IMessage;
+import libomv.model.Asset.AssetType;
+import libomv.model.Simulator;
 import libomv.packets.ActivateGesturesPacket;
 import libomv.packets.AgentAnimationPacket;
 import libomv.packets.AgentDataUpdatePacket;
@@ -161,19 +164,18 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.types.Vector4;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.TimeoutEvent;
 
-import org.apache.http.nio.concurrent.FutureCallback;
-import org.apache.http.nio.reactor.IOReactorException;
-
 // Class to hold Client Avatar's data
-public class AgentManager implements PacketCallback, CapsCallback
+public class AgentManager implements PacketCallback, CapsCallback, libomv.model.Agent
 {
+	private static final Logger logger = Logger.getLogger(AgentManager.class);
+
 	private static final Vector3 X_AXIS = new Vector3(1f, 0f, 0f);
 	private static final Vector3 Y_AXIS = new Vector3(0f, 1f, 0f);
 	private static final Vector3 Z_AXIS = new Vector3(0f, 0f, 1f);
@@ -235,142 +237,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		private static final int _mask = 0xFFF;
 	}
 
-	/** Special commands used in Instant Messages */
-	public enum InstantMessageDialog
-	{
-		/* Indicates a regular IM from another agent, ID is meaningless, nothing in the binary bucket.*/
-		MessageFromAgent, // 0
-		/* Simple notification box with an OK button */
-		MessageBox, // 1
-		/* Used to show a countdown notification with an OK button, deprecated now */
-		Deprecated_MessageBoxCountdown, // 2
-		/* You've been invited to join a group. ID is the group id.
-		 * The binary bucket contains a null terminated string representation of the officer/member status
-		 * and join cost for the invitee. The format is 1 byte for officer/member (O for officer, M for member),
-		 * and as many bytes as necessary for cost. */
-		GroupInvitation, // 3
-		/* Inventory offer, ID is the transaction id, binary bucket is a list of inventory uuid and type. */
-		InventoryOffered, // 4
-		/* Accepted inventory offer */
-		InventoryAccepted, // 5
-		/* Declined inventory offer */
-		InventoryDeclined, // 6
-		/* Group vote, Name is name of person who called vote, ID is vote ID used for internal tracking */
-		GroupVote, // 7
-		/* A message to everyone in the agent's group, no longer used */
-		Deprecated_GroupMessage, // 8
-		/* An object is offering its inventory, ID is the transaction id, Binary bucket is a (mostly) complete packed inventory item */
-		TaskInventoryOffered, // 9
-		/* Accept an inventory offer from an object */
-		TaskInventoryAccepted, // 10
-		/* Decline an inventory offer from an object */
-		TaskInventoryDeclined, // 11
-		/* Unknown */
-		NewUserDefault, // 12
-		/* Start a session, or add users to a session */
-		SessionAdd, // 13
-		/* Start a session, but don't prune offline users */
-		SessionOfflineAdd, // 14
-		/* Start a session with your group */
-		SessionGroupStart, // 15
-		/* Start a session without a calling card (finder or objects) */
-		SessionCardlessStart, // 16
-		/* Send a message to a session */
-		SessionSend, // 17
-		/* Leave a session */
-		SessionDrop, // 18
-		/* Indicates that the IM is from an object */
-		MessageFromObject, // 19
-		/* Sent an IM to a busy user, this is the auto response */
-		BusyAutoResponse, // 20
-		/* Shows the message in the console and chat history */
-		ConsoleAndChatHistory, // 21
-		/* Send a teleport lure */
-		RequestTeleport, // 22
-		/* Response sent to the agent which inititiated a teleport invitation */
-		AcceptTeleport, // 23
-		/* Response sent to the agent which inititiated a teleport invitation */
-		DenyTeleport, // 24
-		/* Only useful if you have Linden permissions */
-		GodLikeRequestTeleport, // 25
-		/* Request a teleport lure */
-		RequestLure, // 26
-		/* Notification of a new group election, this is depreciated */
-		@Deprecated
-		Deprecated_GroupElection, // 27
-		/* IM to tell the user to go to an URL. Put a text message in the message field, and put the
-		 * url with a trailing \0 in the binary bucket. */
-		GotoUrl, // 28
-		/* IM for help */
-		Session911Start, // 29
-		/* IM sent automatically on call for help, sends a lure to each Helper reached */
-		Lure911, // 30
-		/* Like an IM but won't go to email */
-		FromTaskAsAlert, // 31
-		/* IM from a group officer to all group members */
-		GroupNotice, // 32
-		/* Unknown */
-		GroupNoticeInventoryAccepted, // 33
-		/* Unknown */
-		GroupNoticeInventoryDeclined, // 34
-		/* Accept a group invitation */
-		GroupInvitationAccept, // 35
-		/* Decline a group invitation */
-		GroupInvitationDecline, // 36
-		/* Unknown */
-		GroupNoticeRequested, // 37
-		/* An avatar is offering you friendship */
-		FriendshipOffered, // 38
-		/* An avatar has accepted your friendship offer */
-		FriendshipAccepted, // 39
-		/* An avatar has declined your friendship offer */
-		FriendshipDeclined, // 40
-		/* Indicates that a user has started typing */
-		StartTyping, // 41
-		/* Indicates that a user has stopped typing */
-		StopTyping; // 42
 
-		public static InstantMessageDialog setValue(int value)
-		{
-			if (values().length > value)
-				return values()[value];
-			Logger.Log("Invalid InstantMessageDialog value: " + value , Logger.LogLevel.Error);
-			return MessageFromAgent;
-		}
 
-		public byte getValue()
-		{
-			return (byte) ordinal();
-		}
-	}
-
-	/**
-	 * Flag in Instant Messages, whether the IM should be delivered to offline
-	 * avatars as well
-	 */
-	public enum InstantMessageOnline
-	{
-		/* Only deliver to online avatars */
-		Online, // 0
-		/*
-		 * If the avatar is offline the message will be held until they login
-		 * next, and possibly forwarded to their e-mail account
-		 */
-		Offline; // 1
-
-		public static InstantMessageOnline setValue(int value)
-		{
-			if (values().length > value)
-				return values()[value];
-			Logger.Log("Invalid InstantMessageOnline value: " + value , Logger.LogLevel.Error);
-			return Offline;
-		}
-
-		public byte getValue()
-		{
-			return (byte) ordinal();
-		}
-	}
 
 	/*
 	 * Conversion type to denote Chat Packet types in an easier-to-understand
@@ -893,63 +761,6 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	/* */
-	public static class TeleportFlags
-	{
-		/* No flags set, or teleport failed */
-		public static final int Default = 0;
-		/* Set when newbie leaves help island for first time */
-		public static final int SetHomeToTarget = 1 << 0;
-		/* */
-		public static final int SetLastToTarget = 1 << 1;
-		/* Via Lure */
-		public static final int ViaLure = 1 << 2;
-		/* Via Landmark */
-		public static final int ViaLandmark = 1 << 3;
-		/* Via Location */
-		public static final int ViaLocation = 1 << 4;
-		/* Via Home */
-		public static final int ViaHome = 1 << 5;
-		/* Via Telehub */
-		public static final int ViaTelehub = 1 << 6;
-		/* Via Login */
-		public static final int ViaLogin = 1 << 7;
-		/* Linden Summoned */
-		public static final int ViaGodlikeLure = 1 << 8;
-		/* Linden Forced me */
-		public static final int Godlike = 1 << 9;
-		/* */
-		public static final int NineOneOne = 1 << 10;
-		/* Agent Teleported Home via Script */
-		public static final int DisableCancel = 1 << 11;
-		/* */
-		public static final int ViaRegionID = 1 << 12;
-		/* */
-		public static final int IsFlying = 1 << 13;
-		/* */
-		public static final int ResetHome = 1 << 14;
-		/* forced to new location for example when avatar is banned or ejected */
-		public static final int ForceRedirect = 1 << 15;
-		/* Teleport Finished via a Lure */
-		public static final int FinishedViaLure = 1 << 26;
-		/* Finished, Sim Changed */
-		public static final int FinishedViaNewSim = 1 << 28;
-		/* Finished, Same Sim */
-		public static final int FinishedViaSameSim = 1 << 29;
-
-		public static int setValue(int value)
-		{
-			return (value & _mask);
-		}
-
-		public static int getValue(int value)
-		{
-			return (value & _mask);
-		}
-
-		private static final int _mask = 0x3400FFFF;
-	}
-
-	/* */
 	public enum TeleportLureFlags
 	{
 		/* */
@@ -1287,7 +1098,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	public class InstantMessageCallbackArgs
 	{
 		private final InstantMessage m_IM;
-		private final Simulator m_Simulator;
+		private final SimulatorManager m_Simulator;
 
 		/* Get the InstantMessage object */
 		public final InstantMessage getIM()
@@ -1296,7 +1107,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 
 		/* Get the simulator where the InstantMessage origniated */
-		public final Simulator getSimulator()
+		public final SimulatorManager getSimulator()
 		{
 			return m_Simulator;
 		}
@@ -1309,7 +1120,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 * @param simulator
 		 *            the simulator where the InstantMessage origniated
 		 */
-		public InstantMessageCallbackArgs(InstantMessage im, Simulator simulator)
+		public InstantMessageCallbackArgs(InstantMessage im, SimulatorManager simulator)
 		{
 			this.m_IM = im;
 			this.m_Simulator = simulator;
@@ -1393,19 +1204,19 @@ public class AgentManager implements PacketCallback, CapsCallback
 	
 	public class RegionCrossedCallbackArgs implements CallbackArgs
 	{
-		private final Simulator oldSim, newSim;
+		private final SimulatorManager oldSim, newSim;
 		
-		public Simulator getOldSim()
+		public SimulatorManager getOldSim()
 		{
 			return oldSim;
 		}
 		
-		public Simulator getNewSim()
+		public SimulatorManager getNewSim()
 		{
 			return newSim;
 		}
 
-		public RegionCrossedCallbackArgs(Simulator oldSim, Simulator newSim)
+		public RegionCrossedCallbackArgs(SimulatorManager oldSim, SimulatorManager newSim)
 		{
 			this.oldSim = oldSim;
 			this.newSim = newSim;
@@ -2311,7 +2122,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		Primitive p, t;
 		Vector3 fullPosition = relativePosition;
 
-		Simulator sim = _Client.Network.getCurrentSim();
+		SimulatorManager sim = _Client.Network.getCurrentSim();
 		HashMap<Integer, Primitive> primitives = sim.getObjectsPrimitives();
 		synchronized (primitives)
 		{
@@ -2355,7 +2166,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			return sim.getAvatarPositions().get(agentID);
 		}
 
-		Logger.Log("Failed to determine agents sim position", LogLevel.Warning, _Client);
+		logger.warn(GridClient.Log("Failed to determine agents sim position", _Client));
 		return relativePosition;
 	}
 
@@ -2379,8 +2190,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 				}
 			}
 
-			Logger.Log("Currently sitting on object " + sittingOn
-					+ " which is not tracked, SimRotation will be inaccurate", LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Currently sitting on object " + sittingOn
+					+ " which is not tracked, SimRotation will be inaccurate", _Client));
 			return relativeRotation;
 
 		}
@@ -2479,7 +2290,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				}
 				catch (Exception ex)
 				{
-					Logger.Log("", Logger.LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log("", _Client), ex);
 				}
 			}
 			return false;
@@ -2610,7 +2421,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -2645,7 +2456,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HandleAgentStateUpdate(message, simulator);
 				break;
 			default:
-				Logger.Log("AgentManager: Unhandled message " + message.getType().toString(), LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("AgentManager: Unhandled message " + message.getType().toString(), _Client));
 		}
 	}
 
@@ -2714,7 +2525,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				HandleCameraConstraint(packet, simulator);
 				break;
 			default:
-				Logger.Log("AgentManager: Unhandled packet " + packet.getType().toString(), LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("AgentManager: Unhandled packet " + packet.getType().toString(), _Client));
 		}
 	}
 
@@ -2908,8 +2719,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 		else
 		{
-			Logger.Log(String.format("Suppressing instant message \"%s\" to UUID.Zero", message), LogLevel.Error,
-					_Client);
+			logger.error(GridClient.Log(String.format("Suppressing instant message \"%s\" to UUID.Zero", message), _Client));
 		}
 	}
 
@@ -3360,7 +3170,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			_Movement.SendUpdate();
 			return true;
 		}
-		Logger.Log("Attempted to Stand() but agent updates are disabled", LogLevel.Warning, _Client);
+		logger.warn(GridClient.Log("Attempted to Stand() but agent updates are disabled", _Client));
 		return false;
 	}
 
@@ -3523,7 +3333,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			_Movement.SendUpdate();
 			return true;
 		}
-		Logger.Log("Attempted to AutoPilotCancel() but agent updates are disabled", LogLevel.Warning, _Client);
+		logger.warn(GridClient.Log("Attempted to AutoPilotCancel() but agent updates are disabled", _Client));
 		return false;
 	}
 
@@ -4250,7 +4060,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			p.Info.SessionID = _Client.Self.getSessionID();
 			p.Info.LandmarkID = landmark;
 
-			Logger.Log("Requesting teleport to simulator " + landmark.toString(), LogLevel.Info);
+			logger.info("Requesting teleport to simulator " + landmark.toString());
 
 			_Client.Network.sendPacket(p);
 		}
@@ -4376,8 +4186,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleport.Info.Position = position;
 			teleport.Info.RegionHandle = regionHandle;
 
-			Logger.Log("Requesting teleport to region handle " + ((Long) regionHandle).toString(), LogLevel.Info,
-					_Client);
+			logger.info(GridClient.Log("Requesting teleport to region handle " + ((Long) regionHandle).toString(), _Client));
 
 			_Client.Network.sendPacket(teleport);
 		}
@@ -4753,7 +4562,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 *            {@link T:OpenMetaverse.Simulator} Object
 	 * @throws Exception
 	 */
-	public void CompleteAgentMovement(Simulator simulator) throws Exception
+	public void CompleteAgentMovement(SimulatorManager simulator) throws Exception
 	{
 		CompleteAgentMovementPacket move = new CompleteAgentMovementPacket();
 
@@ -4764,7 +4573,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		simulator.sendPacket(move);
 	}
 
-	public void SendMovementUpdate(boolean reliable, Simulator simulator) throws Exception
+	public void SendMovementUpdate(boolean reliable, SimulatorManager simulator) throws Exception
 	{
 		_Movement.SendUpdate(reliable, simulator);
 	}
@@ -4783,7 +4592,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 *            allow
 	 * @throws Exception
 	 */
-	public final void ScriptQuestionReply(Simulator simulator, UUID itemID, UUID taskID, int permissions)
+	public final void ScriptQuestionReply(SimulatorManager simulator, UUID itemID, UUID taskID, int permissions)
 			throws Exception
 	{
 		ScriptAnswerYesPacket yes = new ScriptAnswerYesPacket();
@@ -4835,7 +4644,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 */
 	public final void RequestScriptSensor(String name, UUID searchID, byte type, float range, float arc,
-			UUID requestID, Simulator simulator) throws Exception
+			UUID requestID, SimulatorManager simulator) throws Exception
 	{
 		ScriptSensorRequestPacket request = new ScriptSensorRequestPacket();
 		request.Requester.Arc = arc;
@@ -5068,7 +4877,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		URI url = _Client.Network.getCapabilityURI(CapsEventType.SetDisplayName.toString());
 		if (url == null)
 		{
-			Logger.Log("Unable to invoke SetDisplyName capability at this time", LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Unable to invoke SetDisplyName capability at this time", _Client));
 			throw new IOException("Unable to retrieve SetDisplayName capability");
 		}
 
@@ -5104,7 +4913,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Failes to update agent language", LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log("Failes to update agent language", _Client), ex);
 		}
 	}
 
@@ -5141,7 +4950,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			@Override
 			public void cancelled()
 			{
-                Logger.Log("Max maturity unchanged at " + agentAccess + ".", LogLevel.Info, _Client);
+                logger.info(GridClient.Log("Max maturity unchanged at " + agentAccess + ".", _Client));
 			}
 
 			@Override
@@ -5149,13 +4958,13 @@ public class AgentManager implements PacketCallback, CapsCallback
 			{
                 OSDMap map = (OSDMap)((OSDMap)result).get("access_prefs");
                 agentAccess = map.get("max").AsString();
-                Logger.Log("Max maturity access set to " + agentAccess + ".", LogLevel.Info, _Client );
+                logger.info(GridClient.Log("Max maturity access set to " + agentAccess + ".", _Client));
 			}
 
 			@Override
 			public void failed(Exception ex)
 			{
-                Logger.Log("Failed setting max maturity access.", LogLevel.Warning, _Client, ex);
+                logger.warn(GridClient.Log("Failed setting max maturity access.", _Client), ex);
                 callback.callback(new AgentAccessCallbackArgs(agentAccess, false));
 			}
         }
@@ -5180,34 +4989,39 @@ public class AgentManager implements PacketCallback, CapsCallback
 	    URI url = _Client.Network.getCurrentSim().getCapabilityURI("AgentPreferences");
         if (url == null) return;
         
-        CapsClient request = new CapsClient(_Client, "AgentPreferences");
-        
-        final class HoverHeightCallback implements FutureCallback<OSD>
-        {
-
-			@Override
-			public void cancelled()
-			{
-                Logger.Log("Hover height unchanged.", LogLevel.Info, _Client);
-			}
-
-			@Override
-			public void completed(OSD result)
-			{
-                double confirmedHeight = ((OSDMap)result).get("hover_height").AsReal();
-                Logger.Log("Hover height set to " + confirmedHeight + ".", LogLevel.Info, _Client );
-			}
-
-			@Override
-			public void failed(Exception ex)
-			{
-                Logger.Log("Failed to set hover height.", LogLevel.Warning, _Client, ex);
-			}
+        try {
+	        CapsClient request = new CapsClient(_Client, "AgentPreferences");
+	        
+	        final class HoverHeightCallback implements FutureCallback<OSD>
+	        {
+	
+				@Override
+				public void cancelled()
+				{
+	                logger.info(GridClient.Log("Hover height unchanged.", _Client));
+				}
+	
+				@Override
+				public void completed(OSD result)
+				{
+	                double confirmedHeight = ((OSDMap)result).get("hover_height").AsReal();
+	                logger.info(GridClient.Log("Hover height set to " + confirmedHeight + ".", _Client));
+				}
+	
+				@Override
+				public void failed(Exception ex)
+				{
+	                logger.warn(GridClient.Log("Failed to set hover height.", _Client), ex);
+				}
+	        }
+	
+		    OSDMap postData = new OSDMap(1);
+		    postData.put("hover_height", OSD.FromReal(hoverHeight));
+	   	    request.executeHttpPost(url, postData, OSDFormat.Xml,new HoverHeightCallback(), _Client.Settings.CAPS_TIMEOUT);   	    
+        } catch (IOReactorException e) {
+        	logger.error(e);
         }
-
-	    OSDMap postData = new OSDMap(1);
-	    postData.put("hover_height", OSD.FromReal(hoverHeight));
-   	    request.executeHttpPost(url, postData, OSDFormat.Xml,new HoverHeightCallback(), _Client.Settings.CAPS_TIMEOUT);
+   	    
     }
     // #endregion Misc
 
@@ -5261,9 +5075,10 @@ public class AgentManager implements PacketCallback, CapsCallback
 		return sessionID;
 	}
 
-	private void HandleInstantMessage(Packet packet, Simulator simulator) throws Exception
+	private void HandleInstantMessage(Packet packet, Simulator sim) throws Exception
 	{
 		ImprovedInstantMessagePacket im = (ImprovedInstantMessagePacket) packet;
+		SimulatorManager simulator = (SimulatorManager) sim;
 
 		InstantMessageDialog dialog = InstantMessageDialog.setValue(im.MessageBlock.Dialog);
 		String fromName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
@@ -5320,7 +5135,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			/* An URL sent form the system, not a script */
 			String url = Helpers.BytesToString(im.MessageBlock.getBinaryBucket());
 			if (url.length() <= 0)
-				Logger.Log("No URL in binary bucket for GotoURL IM", LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("No URL in binary bucket for GotoURL IM", _Client));
 			return;
 /*          TODO:
   			if (OnGotoURL.count() > 0)
@@ -5358,8 +5173,8 @@ public class AgentManager implements PacketCallback, CapsCallback
 		{
 			String message = Helpers.BytesToString(chat.ChatData.getMessage());
 			String from = Helpers.BytesToString(chat.ChatData.getFromName());
-			Logger.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType) + " From: " + from
-					+ " Message: " + message, Logger.LogLevel.Debug, _Client);
+			logger.debug(GridClient.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType) + " From: " + from
+					+ " Message: " + message, _Client));
 
 			OnChat.dispatch(new ChatCallbackArgs(ChatAudibleLevel.setValue(chat.ChatData.Audible), ChatType
 					.setValue(chat.ChatData.ChatType), ChatSourceType.setValue(chat.ChatData.SourceType), from,
@@ -5367,13 +5182,14 @@ public class AgentManager implements PacketCallback, CapsCallback
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Exception in ChatFromSimulator", Logger.LogLevel.Debug, _Client, ex);
+			logger.debug(GridClient.Log("Exception in ChatFromSimulator", _Client), ex);
 		}
 	}
 
-	private void HandleAgentMovementComplete(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+	private void HandleAgentMovementComplete(Packet packet, Simulator sim) throws UnsupportedEncodingException
 	{
 		AgentMovementCompletePacket movement = (AgentMovementCompletePacket) packet;
+		SimulatorManager simulator = (SimulatorManager) sim;
 
 		relativePosition = movement.Data.Position;
 		_Movement.Camera.LookDirection(movement.Data.LookAt);
@@ -5402,7 +5218,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleportMessage = "Teleport started";
 			flags = start.TeleportFlags;
 
-			Logger.DebugLog("TeleportStart received, Flags: " + flags, _Client);
+			logger.debug(GridClient.Log("TeleportStart received, Flags: " + flags, _Client));
 		}
 		else if (packet.getType() == PacketType.TeleportProgress)
 		{
@@ -5412,7 +5228,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleportMessage = Helpers.BytesToString(progress.Info.getMessage());
 			flags = progress.Info.TeleportFlags;
 
-			Logger.DebugLog("TeleportProgress received, Message: " + teleportMessage + ", Flags: " + flags, _Client);
+			logger.debug(GridClient.Log("TeleportProgress received, Message: " + teleportMessage + ", Flags: " + flags, _Client));
 		}
 		else if (packet.getType() == PacketType.TeleportFailed)
 		{
@@ -5422,7 +5238,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleportStatus = TeleportStatus.Failed;
 			finished = true;
 
-			Logger.DebugLog("TeleportFailed received, Reason: " + teleportMessage, _Client);
+			logger.debug(GridClient.Log("TeleportFailed received, Reason: " + teleportMessage, _Client));
 		}
 		else if (packet.getType() == PacketType.TeleportCancel)
 		{
@@ -5432,7 +5248,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			teleportStatus = TeleportStatus.Cancelled;
 			finished = true;
 
-			Logger.DebugLog("TeleportCancel received from " + simulator.toString(), _Client);
+			logger.debug(GridClient.Log("TeleportCancel received from " + simulator.toString(), _Client));
 		}
 		else if (packet.getType() == PacketType.TeleportFinish)
 		{
@@ -5442,7 +5258,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			String seedcaps = Helpers.BytesToString(finish.Info.getSeedCapability());
 			finished = true;
 
-			Logger.DebugLog("TeleportFinish received, Flags: " + flags, _Client);
+			logger.debug(GridClient.Log("TeleportFinish received, Flags: " + flags, _Client));
 
 			// update home location if we are teleporting out of prelude - specific to teleporting to welcome area 
 			if ((flags & TeleportFlags.SetHomeToTarget) != 0)
@@ -5453,7 +5269,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			// Connect to the new sim
             _Client.Network.getCurrentSim().AgentMovementComplete = false; // we're not there anymore
 			InetAddress addr = InetAddress.getByAddress(Helpers.Int32ToBytesB(finish.Info.SimIP));
-			Simulator newSimulator = _Client.Network.connect(addr, finish.Info.SimPort, finish.Info.RegionHandle, true,
+			SimulatorManager newSimulator = _Client.Network.connect(addr, finish.Info.SimPort, finish.Info.RegionHandle, true,
 					seedcaps);
 
 			if (newSimulator != null)
@@ -5461,15 +5277,15 @@ public class AgentManager implements PacketCallback, CapsCallback
 				teleportMessage = "Teleport finished";
 				teleportStatus = TeleportStatus.Finished;
 
-				Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getName() + " ("
-						+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
+				logger.info(GridClient.Log("Moved to new sim " + _Client.Network.getCurrentSim().getName() + " ("
+						+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", _Client));
 			}
 			else
 			{
 				teleportMessage = "Failed to connect to the new sim after a teleport";
 				teleportStatus = TeleportStatus.Failed;
 
-				Logger.Log(teleportMessage, LogLevel.Error, _Client);
+				logger.error(GridClient.Log(teleportMessage, _Client));
 			}
 		}
 		else if (packet.getType() == PacketType.TeleportLocal)
@@ -5485,7 +5301,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			// local.Info.LocationID;
 			finished = true;
 
-			Logger.DebugLog("TeleportLocal received, Flags: " + flags, _Client);
+			logger.debug(GridClient.Log("TeleportLocal received, Flags: " + flags, _Client));
 		}
 		OnTeleport.dispatch(new TeleportCallbackArgs(teleportMessage, teleportStatus, flags));
 		if (finished)
@@ -5498,62 +5314,61 @@ public class AgentManager implements PacketCallback, CapsCallback
 	 * Process TeleportFailed message sent via CapsEventQueue, informs agent its
 	 * last teleport has failed and why.
 	 */
-	private void HandleTeleportFailed(IMessage message, Simulator simulator)
+	private void HandleTeleportFailed(IMessage message, SimulatorManager simulator)
 	{
 		TeleportFailedMessage failed = (TeleportFailedMessage) message;
 		OnTeleport.dispatch(new TeleportCallbackArgs(failed.Reason, TeleportStatus.Failed, 0));
 		teleportTimeout.set(TeleportStatus.Failed);
 	}
 
-	private void HandleTeleportFinish(IMessage message, Simulator simulator) throws Exception
+	private void HandleTeleportFinish(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		TeleportStatus teleportStatus = TeleportStatus.None;
 		String teleportMessage = Helpers.EmptyString;
 		TeleportFinishMessage msg = (TeleportFinishMessage) message;
 
-		Logger.DebugLog("TeleportFinish received, Flags: " + msg.Flags, _Client);
+		logger.debug(GridClient.Log("TeleportFinish received, Flags: " + msg.Flags, _Client));
 
 		// Connect to the new sim
-		Simulator newSimulator = _Client.Network.connect(msg.IP, (short) msg.Port, msg.RegionHandle, true,
+		SimulatorManager newSimulator = _Client.Network.connect(msg.IP, (short) msg.Port, msg.RegionHandle, true,
 				msg.SeedCapability.toString());
 		if (newSimulator != null)
 		{
 			teleportMessage = "Teleport finished";
 			teleportStatus = TeleportStatus.Finished;
 
-			Logger.Log("Moved to new sim " + _Client.Network.getCurrentSim().getName() + " ("
-					+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", LogLevel.Info, _Client);
+			logger.info(GridClient.Log("Moved to new sim " + _Client.Network.getCurrentSim().getName() + " ("
+					+ _Client.Network.getCurrentSim().getIPEndPoint().toString() + ")", _Client));
 		}
 		else
 		{
 			teleportMessage = "Failed to connect to the new sim after a teleport";
 			teleportStatus = TeleportStatus.Failed;
 
-			Logger.Log(teleportMessage, LogLevel.Error, _Client);
+			logger.error(GridClient.Log(teleportMessage, _Client));
 		}
 		OnTeleport.dispatch(new TeleportCallbackArgs(teleportMessage, teleportStatus, msg.Flags));
 		teleportTimeout.set(teleportStatus);
 	}
 
-    private void HandleEstablishAgentComm(IMessage message, Simulator simulator) throws InterruptedException, IOException
+    private void HandleEstablishAgentComm(IMessage message, SimulatorManager simulator) throws InterruptedException, IOException
     {
         EstablishAgentCommunicationMessage msg = (EstablishAgentCommunicationMessage)message;
 
         if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS))
         {
             InetSocketAddress endPoint = new InetSocketAddress(msg.Address, msg.Port);
-            Simulator sim = _Client.Network.FindSimulator(endPoint);
+            SimulatorManager sim = _Client.Network.FindSimulator(endPoint);
 
             if (sim == null)
             {
-                Logger.Log("Got EstablishAgentCommunication for unknown sim " + msg.Address + ":" + msg.Port,
-                    LogLevel.Error, _Client);
+                logger.error(GridClient.Log("Got EstablishAgentCommunication for unknown sim " + msg.Address + ":" + msg.Port, _Client));
 
                 // FIXME: Should we use this opportunity to connect to the simulator?
             }
             else
             {
-                Logger.Log("Got EstablishAgentCommunication for " + sim.getName(), LogLevel.Debug, _Client);
+                logger.debug(GridClient.Log("Got EstablishAgentCommunication for " + sim.getName(), _Client));
 
                 sim.setSeedCaps(msg.SeedCapability.toString());
             }
@@ -5564,9 +5379,10 @@ public class AgentManager implements PacketCallback, CapsCallback
      * 
      * @throws UnsupportedEncodingException 
      */
-    private void HandleAgentDataUpdate(Packet packet, Simulator simulator) throws UnsupportedEncodingException
+    private void HandleAgentDataUpdate(Packet packet, Simulator sim) throws UnsupportedEncodingException
     {
         AgentDataUpdatePacket p = (AgentDataUpdatePacket)packet;
+        SimulatorManager simulator = (SimulatorManager) sim;
 
         if (p.AgentData.AgentID.equals(simulator.getClient().Self.getAgentID()))
         {
@@ -5585,11 +5401,11 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
         else
         {
-            Logger.Log("Got an AgentDataUpdate packet for avatar " + p.AgentData.AgentID.toString() + " instead of " + _Client.Self.getAgentID().toString() + ", this shouldn't happen", LogLevel.Error, _Client);
+            logger.error(GridClient.Log("Got an AgentDataUpdate packet for avatar " + p.AgentData.AgentID.toString() + " instead of " + _Client.Self.getAgentID().toString() + ", this shouldn't happen", _Client));
         }
     }
 
-    private void HandleAgentStateUpdate(IMessage message, Simulator simulator)
+    private void HandleAgentStateUpdate(IMessage message, SimulatorManager simulator)
     {
         AgentStateStatus = (AgentStateUpdateMessage)message;
     }
@@ -5632,7 +5448,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 	/**
 	 * EQ Message fired with the result of SetDisplayName request
 	 */
-	private void HandleSetDisplayNameReply(IMessage message, Simulator simulator)
+	private void HandleSetDisplayNameReply(IMessage message, SimulatorManager simulator)
 	{
 		SetDisplayNameReplyMessage msg = (SetDisplayNameReplyMessage) message;
 		OnSetDisplayNameReply.dispatch(new SetDisplayNameReplyCallbackArgs(msg.Status, msg.Reason, msg.DisplayName));
@@ -5729,7 +5545,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param simulator The <see cref="Simulator"/> which originated the packet
      * @throws Exception 
      */
-    private void HandleCrossedRegion(IMessage message, Simulator simulator) throws Exception
+    private void HandleCrossedRegion(IMessage message, SimulatorManager simulator) throws Exception
     {
         CrossedRegionMessage crossed = (CrossedRegionMessage)message;
         HandleCrossedRegion(new InetSocketAddress(crossed.IP, crossed.Port), crossed.RegionHandle, crossed.SeedCapability.toString());
@@ -5744,21 +5560,21 @@ public class AgentManager implements PacketCallback, CapsCallback
     
     private void HandleCrossedRegion(InetSocketAddress endPoint, long regionHandle, String seedCap) throws Exception
     {
-        Logger.DebugLog("Crossed in to new region area, attempting to connect to " + endPoint.toString(), _Client);
+        logger.debug(GridClient.Log("Crossed in to new region area, attempting to connect to " + endPoint.toString(), _Client));
 
-        Simulator oldSim = _Client.Network.getCurrentSim();
-        Simulator newSim = _Client.Network.connect(endPoint, regionHandle, true, seedCap);
+        SimulatorManager oldSim = _Client.Network.getCurrentSim();
+        SimulatorManager newSim = _Client.Network.connect(endPoint, regionHandle, true, seedCap);
 
         if (newSim != null)
         {
-            Logger.Log("Finished crossing over in to region " + newSim.toString(), LogLevel.Info, _Client);
+            logger.info(GridClient.Log("Finished crossing over in to region " + newSim.toString(), _Client));
             oldSim.AgentMovementComplete = false; // We're no longer there
             OnRegionCrossed.dispatch(new RegionCrossedCallbackArgs(oldSim, newSim));
         }
         else
         {
             // The old simulator will still (poorly) handle our movement, so the connection isn't completely shot yet
-            Logger.Log("Failed to connect to new region " + endPoint.toString() + " after crossing over", LogLevel.Warning, _Client);
+            logger.warn(GridClient.Log("Failed to connect to new region " + endPoint.toString() + " after crossing over", _Client));
         } 	
     }
 
@@ -5769,14 +5585,14 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param simulator The <see cref="Simulator"/> which originated the packet
      * @throws Exception 
      */
-    private void HandleChatterBoxSessionEventReply(IMessage message, Simulator simulator) throws Exception
+    private void HandleChatterBoxSessionEventReply(IMessage message, SimulatorManager simulator) throws Exception
     {
         ChatterBoxSessionEventReplyMessage msg = (ChatterBoxSessionEventReplyMessage)message;
 
         if (!msg.Success)
         {
             RequestJoinGroupChat(msg.SessionID);
-            Logger.Log("Attempt to send group chat to non-existant session for group " + msg.SessionID, LogLevel.Info, _Client);
+            logger.info(GridClient.Log("Attempt to send group chat to non-existant session for group " + msg.SessionID, _Client));
         }
     }
 
@@ -5786,7 +5602,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param message IMessage object containing the deserialized data sent from the simulator
      * @param simulator The <see cref="Simulator"/> which originated the packet
      */
-    private void HandleChatterBoxSessionStartReply(IMessage message, Simulator simulator)
+    private void HandleChatterBoxSessionStartReply(IMessage message, SimulatorManager simulator)
     {
         ChatterBoxSessionStartReplyMessage msg = (ChatterBoxSessionStartReplyMessage)message;
 
@@ -5807,7 +5623,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param message IMessage object containing the deserialized data sent from the simulator
      * @param simulator The <see cref="Simulator"/> which originated the packet
      */
-    private void HandleChatterBoxSessionAgentListUpdates(IMessage message, Simulator simulator)
+    private void HandleChatterBoxSessionAgentListUpdates(IMessage message, SimulatorManager simulator)
     {
         ChatterBoxSessionAgentListUpdatesMessage msg = (ChatterBoxSessionAgentListUpdatesMessage)message;
 
@@ -5883,7 +5699,7 @@ public class AgentManager implements PacketCallback, CapsCallback
      * @param message IMessage object containing the deserialized data sent from the simulator
      * @param simulator The <see cref="Simulator"/> which originated the packet
      */
-    private void HandleChatterBoxInvitation(IMessage message, Simulator simulator)
+    private void HandleChatterBoxInvitation(IMessage message, SimulatorManager simulator)
     {
         if (OnInstantMessage.count() > 0)
         {
@@ -5915,7 +5731,7 @@ public class AgentManager implements PacketCallback, CapsCallback
             }
             catch (Exception ex)
             {
-                Logger.Log("Failed joining IM:", LogLevel.Warning, _Client, ex);
+                logger.warn(GridClient.Log("Failed joining IM:", _Client), ex);
             }
             OnInstantMessage.dispatch(new InstantMessageCallbackArgs(im, simulator));
         }
@@ -5974,7 +5790,7 @@ public class AgentManager implements PacketCallback, CapsCallback
     	   }
     	   else
     	   {
-               Logger.Log("GenericMessage: " + method + ", " + message.ParamList.length + " parameter(s)", LogLevel.Info, _Client);
+               logger.info(GridClient.Log("GenericMessage: " + method + ", " + message.ParamList.length + " parameter(s)", _Client));
 
                List<String> parameters = new ArrayList<String>(message.ParamList.length);
                for (GenericMessagePacket.ParamListBlock block : message.ParamList)
@@ -6099,7 +5915,7 @@ public class AgentManager implements PacketCallback, CapsCallback
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Failed to parse the mute list line: " + line, LogLevel.Warning, _Client, ex);
+                        logger.warn(GridClient.Log("Failed to parse the mute list line: " + line, _Client), ex);
                     }
                 }
             }
@@ -6107,133 +5923,11 @@ public class AgentManager implements PacketCallback, CapsCallback
         }
         else
         {
-            Logger.Log("Timed out waiting for mute list download", LogLevel.Warning, _Client);
+            logger.warn(GridClient.Log("Timed out waiting for mute list download", _Client));
         }
         _Client.Assets.OnXferReceived.remove(xferCallback);
     }
 	
-	
-	private static final int CONTROL_AT_POS_INDEX = 0;
-	private static final int CONTROL_AT_NEG_INDEX = 1;
-	private static final int CONTROL_LEFT_POS_INDEX = 2;
-	private static final int CONTROL_LEFT_NEG_INDEX = 3;
-	private static final int CONTROL_UP_POS_INDEX = 4;
-	private static final int CONTROL_UP_NEG_INDEX = 5;
-	private static final int CONTROL_PITCH_POS_INDEX = 6;
-	private static final int CONTROL_PITCH_NEG_INDEX = 7;
-	private static final int CONTROL_YAW_POS_INDEX = 8;
-	private static final int CONTROL_YAW_NEG_INDEX = 9;
-	private static final int CONTROL_FAST_AT_INDEX = 10;
-	private static final int CONTROL_FAST_LEFT_INDEX = 11;
-	private static final int CONTROL_FAST_UP_INDEX = 12;
-	private static final int CONTROL_FLY_INDEX = 13;
-	private static final int CONTROL_STOP_INDEX = 14;
-	private static final int CONTROL_FINISH_ANIM_INDEX = 15;
-	private static final int CONTROL_STAND_UP_INDEX = 16;
-	private static final int CONTROL_SIT_ON_GROUND_INDEX = 17;
-	private static final int CONTROL_MOUSELOOK_INDEX = 18;
-	private static final int CONTROL_NUDGE_AT_POS_INDEX = 19;
-	private static final int CONTROL_NUDGE_AT_NEG_INDEX = 20;
-	private static final int CONTROL_NUDGE_LEFT_POS_INDEX = 21;
-	private static final int CONTROL_NUDGE_LEFT_NEG_INDEX = 22;
-	private static final int CONTROL_NUDGE_UP_POS_INDEX = 23;
-	private static final int CONTROL_NUDGE_UP_NEG_INDEX = 24;
-	private static final int CONTROL_TURN_LEFT_INDEX = 25;
-	private static final int CONTROL_TURN_RIGHT_INDEX = 26;
-	private static final int CONTROL_AWAY_INDEX = 27;
-	private static final int CONTROL_LBUTTON_DOWN_INDEX = 28;
-	private static final int CONTROL_LBUTTON_UP_INDEX = 29;
-	private static final int CONTROL_ML_LBUTTON_DOWN_INDEX = 30;
-	private static final int CONTROL_ML_LBUTTON_UP_INDEX = 31;
-
-	/* Used to specify movement actions for your agent */
-	public static class ControlFlags
-	{
-		// Empty flag
-		public static final int NONE = 0;
-		// Move Forward (SL Keybinding: W/Up Arrow)
-		public static final int AGENT_CONTROL_AT_POS = 0x1 << CONTROL_AT_POS_INDEX;
-		// t Move Backward (SL Keybinding: S/Down Arrow)
-		public static final int AGENT_CONTROL_AT_NEG = 0x1 << CONTROL_AT_NEG_INDEX;
-		// Move Left (SL Keybinding: Shift-(A/Left Arrow))
-		public static final int AGENT_CONTROL_LEFT_POS = 0x1 << CONTROL_LEFT_POS_INDEX;
-		// Move Right (SL Keybinding: Shift-(D/Right Arrow))
-		public static final int AGENT_CONTROL_LEFT_NEG = 0x1 << CONTROL_LEFT_NEG_INDEX;
-		// Not Flying: Jump/Flying: Move Up (SL Keybinding: E)
-		public static final int AGENT_CONTROL_UP_POS = 0x1 << CONTROL_UP_POS_INDEX;
-		// Not Flying: Croutch/Flying: Move Down (SL Keybinding: C)
-		public static final int AGENT_CONTROL_UP_NEG = 0x1 << CONTROL_UP_NEG_INDEX;
-		// Unused
-		public static final int AGENT_CONTROL_PITCH_POS = 0x1 << CONTROL_PITCH_POS_INDEX;
-		// Unused
-		public static final int AGENT_CONTROL_PITCH_NEG = 0x1 << CONTROL_PITCH_NEG_INDEX;
-		// Unused
-		public static final int AGENT_CONTROL_YAW_POS = 0x1 << CONTROL_YAW_POS_INDEX;
-		// Unused
-		public static final int AGENT_CONTROL_YAW_NEG = 0x1 << CONTROL_YAW_NEG_INDEX;
-		// ORed with AGENT_CONTROL_AT_* if the keyboard is being used
-		public static final int AGENT_CONTROL_FAST_AT = 0x1 << CONTROL_FAST_AT_INDEX;
-		// ORed with AGENT_CONTROL_LEFT_* if the keyboard is being used
-		public static final int AGENT_CONTROL_FAST_LEFT = 0x1 << CONTROL_FAST_LEFT_INDEX;
-		// ORed with AGENT_CONTROL_UP_* if the keyboard is being used
-		public static final int AGENT_CONTROL_FAST_UP = 0x1 << CONTROL_FAST_UP_INDEX;
-		// Fly
-		public static final int AGENT_CONTROL_FLY = 0x1 << CONTROL_FLY_INDEX;
-		//
-		public static final int AGENT_CONTROL_STOP = 0x1 << CONTROL_STOP_INDEX;
-		// Finish our current animation
-		public static final int AGENT_CONTROL_FINISH_ANIM = 0x1 << CONTROL_FINISH_ANIM_INDEX;
-		// Stand up from the ground or a prim seat
-		public static final int AGENT_CONTROL_STAND_UP = 0x1 << CONTROL_STAND_UP_INDEX;
-		// Sit on the ground at our current location
-		public static final int AGENT_CONTROL_SIT_ON_GROUND = 0x1 << CONTROL_SIT_ON_GROUND_INDEX;
-		// Whether mouselook is currently enabled
-		public static final int AGENT_CONTROL_MOUSELOOK = 0x1 << CONTROL_MOUSELOOK_INDEX;
-		// Legacy, used if a key was pressed for less than a certain amount of
-		// time
-		public static final int AGENT_CONTROL_NUDGE_AT_POS = 0x1 << CONTROL_NUDGE_AT_POS_INDEX;
-		// Legacy, used if a key was pressed for less than a certain amount of
-		// time
-		public static final int AGENT_CONTROL_NUDGE_AT_NEG = 0x1 << CONTROL_NUDGE_AT_NEG_INDEX;
-		// Legacy, used if a key was pressed for less than a certain amount of
-		// time
-		public static final int AGENT_CONTROL_NUDGE_LEFT_POS = 0x1 << CONTROL_NUDGE_LEFT_POS_INDEX;
-		// Legacy, used if a key was pressed for less than a certain amount of
-		// time
-		public static final int AGENT_CONTROL_NUDGE_LEFT_NEG = 0x1 << CONTROL_NUDGE_LEFT_NEG_INDEX;
-		// Legacy, used if a key was pressed for less than a certain amount of
-		// time
-		public static final int AGENT_CONTROL_NUDGE_UP_POS = 0x1 << CONTROL_NUDGE_UP_POS_INDEX;
-		// Legacy, used if a key was pressed for less than a certain amount of
-		// time
-		public static final int AGENT_CONTROL_NUDGE_UP_NEG = 0x1 << CONTROL_NUDGE_UP_NEG_INDEX;
-		//
-		public static final int AGENT_CONTROL_TURN_LEFT = 0x1 << CONTROL_TURN_LEFT_INDEX;
-		//
-		public static final int AGENT_CONTROL_TURN_RIGHT = 0x1 << CONTROL_TURN_RIGHT_INDEX;
-		// Set when the avatar is idled or set to away. Note that the away
-		// animation is
-		// activated separately from setting this flag
-		public static final int AGENT_CONTROL_AWAY = 0x1 << CONTROL_AWAY_INDEX;
-		//
-		public static final int AGENT_CONTROL_LBUTTON_DOWN = 0x1 << CONTROL_LBUTTON_DOWN_INDEX;
-		//
-		public static final int AGENT_CONTROL_LBUTTON_UP = 0x1 << CONTROL_LBUTTON_UP_INDEX;
-		//
-		public static final int AGENT_CONTROL_ML_LBUTTON_DOWN = 0x1 << CONTROL_ML_LBUTTON_DOWN_INDEX;
-		//
-		public static final int AGENT_CONTROL_ML_LBUTTON_UP = 0x1 << CONTROL_ML_LBUTTON_UP_INDEX;
-
-		public static int setValue(int value)
-		{
-			return value;
-		}
-
-		public static int getValue(int value)
-		{
-			return value;
-		}
-	}
 
 	/*
 	 * Agent movement and camera control
@@ -7095,8 +6789,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 						}
 						else
 						{
-							Logger.Log("Attempted TurnToward but parent prim is not in dictionary", LogLevel.Warning,
-									Client);
+							logger.warn(GridClient.Log("Attempted TurnToward but parent prim is not in dictionary", Client));
 							return false;
 						}
 					}
@@ -7116,7 +6809,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				return true;
 			}
 
-			Logger.Log("Attempted TurnToward but agent updates are disabled", LogLevel.Warning, Client);
+			logger.warn(GridClient.Log("Attempted TurnToward but agent updates are disabled", Client));
 			return false;
 		}
 
@@ -7154,7 +6847,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 		 *            Simulator to send the update to
 		 * @throws Exception
 		 */
-		public final void SendUpdate(boolean reliable, Simulator simulator) throws Exception
+		public final void SendUpdate(boolean reliable, SimulatorManager simulator) throws Exception
 		{
             // Since version 1.40.4 of the Linden simulator, sending this update
             // causes corruption of the agent position in the simulator
@@ -7220,7 +6913,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 				Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags,
 				byte state, boolean reliable) throws Exception
 		{
-			Simulator simulator = _Client.Network.getCurrentSim();
+			SimulatorManager simulator = _Client.Network.getCurrentSim();
 			
 			// Since version 1.40.4 of the Linden simulator, sending this update
 			// causes corruption of the agent position in the simulator
@@ -7231,7 +6924,7 @@ public class AgentManager implements PacketCallback, CapsCallback
 			SendUpdate(simulator, controlFlags, origin, forwardAxis, leftAxis, upAxis, bodyRotation, headRotation, farClip, flags, state, reliable);
 		}
 
-		private final void SendUpdate(Simulator simulator, int controlFlags, Vector3 origin, Vector3 forwardAxis, Vector3 leftAxis,
+		private final void SendUpdate(SimulatorManager simulator, int controlFlags, Vector3 origin, Vector3 forwardAxis, Vector3 leftAxis,
 				Vector3 upAxis, Quaternion bodyRotation, Quaternion headRotation, float farClip, AgentFlags flags,
 				byte state, boolean reliable) throws Exception
 		{

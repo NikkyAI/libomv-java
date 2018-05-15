@@ -49,7 +49,6 @@ import org.xmlpull.v1.XmlSerializer;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.client.ObjectManager;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.primitives.ObjectProperties;
@@ -1211,7 +1210,7 @@ public class AssetPrim extends AssetItem
 					AssetID = map.get("asset_id").AsUUID();
                     LastOwnerID = map.get("last_owner_id").AsUUID();
                     PermsGranterID = map.get("perms_granter_id").AsUUID();
- 					Type = AssetType.setValue(map.get("asset_type").AsInteger());
+ 					Type = Type.setValue(map.get("asset_type").AsInteger());
                     InvType = InventoryType.setValue(map.get("inv_type").AsInteger());
 					Description = map.get("description").AsString();
 					PermsBase = map.get("perms_base").AsInteger();
@@ -1238,7 +1237,7 @@ public class AssetPrim extends AssetItem
                     Flags = item.ItemFlags;
                     GroupID = item.Permissions.groupID;
                     ID = item.itemID;
-                    InvType = item.getType() == InventoryType.Unknown && item.assetType == AssetType.LSLText ? InventoryType.LSL : item.getType(); ;
+                    InvType = item.getType() == InventoryType.Unknown && item.assetType == Type.LSLText ? InventoryType.LSL : item.getType(); ;
                     LastOwnerID = item.Permissions.lastOwnerID;
                     Name = item.name;
                     OwnerID = item.getOwnerID();
@@ -1677,7 +1676,7 @@ public class AssetPrim extends AssetItem
 				prim.Flags |= PrimFlags.ReturnAtEdge;
 			prim.Rotation = this.Rotation;
 			prim.Properties.SalePrice = this.SalePrice;
-			prim.Properties.SaleType = ObjectManager.SaleType.setValue(this.SaleType);
+			prim.Properties.SaleType = libomv.model.LLObject.SaleType.setValue(this.SaleType);
 			if (this.Sandbox)
 				prim.Flags |= PrimFlags.Sandbox;
 			prim.Scale = this.Scale;

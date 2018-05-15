@@ -39,7 +39,7 @@ import libomv.types.Color4;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class PrimObjectTests extends TestCase
+public class PrimObjectTest extends TestCase
 {
     public void testPathBegin()
     {

@@ -34,12 +34,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import libomv.Simulator;
-import libomv.assets.AssetItem.AssetType;
+import org.apache.log4j.Logger;
+
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.LandStatReplyMessage;
-import libomv.io.capabilities.CapsCallback;
 import libomv.capabilities.IMessage;
+import libomv.io.capabilities.CapsCallback;
+import libomv.model.Asset.AssetType;
+import libomv.model.Simulator;
 import libomv.packets.EjectUserPacket;
 import libomv.packets.EstateCovenantReplyPacket;
 import libomv.packets.EstateCovenantRequestPacket;
@@ -57,8 +59,10 @@ import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
-public class EstateTools implements PacketCallback, CapsCallback
+public class EstateTools implements PacketCallback, CapsCallback, libomv.model.Estate
 {
+	private static final Logger logger = Logger.getLogger(EstateTools.class);
+
 	private GridClient _Client;
 
     /// Textures for each of the four terrain height levels
@@ -630,7 +634,7 @@ public class EstateTools implements PacketCallback, CapsCallback
 
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1260,7 +1264,7 @@ public class EstateTools implements PacketCallback, CapsCallback
                                     }
                                     catch (Exception ex)
                                     {
-                                    	Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+                                    	logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
                                     }
                                 }
                                 OnEstateManagersReply.dispatch(new EstateManagersReplyCallbackArgs(estateID, param, managers));
@@ -1290,7 +1294,7 @@ public class EstateTools implements PacketCallback, CapsCallback
                                     }
                                     catch (Exception ex)
                                     {
-                                    	Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+                                    	logger.error(GridClient.Log(ex.getMessage(),  _Client), ex);
                                     }
                                 }
                                 OnEstateBansReply.dispatch(new EstateBansReplyCallbackArgs(estateID, param, bannedUsers));
@@ -1320,7 +1324,7 @@ public class EstateTools implements PacketCallback, CapsCallback
                                     }
                                     catch (Exception ex)
                                     {
-                                    	Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+                                    	logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
                                     }
                                 }
                                 OnEstateUsersReply.dispatch(new EstateUsersReplyCallbackArgs(estateID, param, allowedUsers));
@@ -1350,7 +1354,7 @@ public class EstateTools implements PacketCallback, CapsCallback
                                     }
                                     catch (Exception ex)
                                     {
-                                    	Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+                                    	logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
                                     }
                                 }
                                 OnEstateGroupsReply.dispatch(new EstateGroupsReplyCallbackArgs(estateID, param, allowedGroups));

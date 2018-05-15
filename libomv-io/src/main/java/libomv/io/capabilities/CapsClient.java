@@ -40,22 +40,24 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.nio.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
 import libomv.Statistics.Type;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
+import libomv.StructuredData.OSDParser;
 import libomv.capabilities.IMessage;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
-import libomv.StructuredData.OSDParser;
 import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 public class CapsClient extends AsyncHTTPClient<OSD>
 {
+	private static final Logger logger = Logger.getLogger(CapsClient.class);
 	private GridClient _Client;
 	
 	private boolean trackUtilization;
@@ -348,8 +350,7 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 		}
 		catch (ParseException ex)
 		{
-			Logger.Log("Error converting the HTTP response into structured data at offset " + ex.getErrorOffset(),
-					   Logger.LogLevel.Error);
+			logger.error("Error converting the HTTP response into structured data at offset " + ex.getErrorOffset());
 		}
 		return null;
 	}

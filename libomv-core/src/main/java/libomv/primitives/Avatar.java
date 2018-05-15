@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.client.AgentManager;
-import libomv.client.AppearanceManager;
-import libomv.client.AvatarManager.Animation;
+import libomv.model.Agent;
+import libomv.model.Appearance;
+import libomv.model.Avatar.Animation;
 import libomv.types.NameValue;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -367,7 +367,7 @@ public class Avatar extends Primitive
 	public int COFVersion = 0;
 
 	// Appearance flags. Introduced with server side baking, currently unused.
-	public AppearanceManager.AppearanceFlags AppearanceFlags = AppearanceManager.AppearanceFlags.None;
+	public Appearance.AppearanceFlags AppearanceFlags = Appearance.AppearanceFlags.None;
     
 	// List of current avatar animations
     public ArrayList<Animation> Animations;
@@ -529,7 +529,7 @@ public class Avatar extends Primitive
 		Avi.put("profile_statistics", ProfileStatistics.Serialize());
 		Avi.put("profile_properties", ProfileProperties.Serialize());
 		Avi.put("profile_interest", ProfileInterests.Serialize());
-		Avi.put("control_flags", OSD.FromInteger(AgentManager.ControlFlags.getValue(ControlFlags)));
+		Avi.put("control_flags", OSD.FromInteger(Agent.ControlFlags.getValue(ControlFlags)));
 		Avi.put("visual_parameters", vp);
 		Avi.put("first_name", OSD.FromString(getFirstName()));
 		Avi.put("last_name", OSD.FromString(getLastName()));
@@ -571,7 +571,7 @@ public class Avatar extends Primitive
 		ProfileStatistics = new Statistics(tex.get("profile_statistics"));
 		ProfileProperties = new AvatarProperties(tex.get("profile_properties"));
 		ProfileInterests = new Interests(tex.get("profile_interest"));
-		ControlFlags = AgentManager.ControlFlags.setValue(tex.get("control_flags").AsInteger());
+		ControlFlags = Agent.ControlFlags.setValue(tex.get("control_flags").AsInteger());
 
 		OSDArray vp = (OSDArray) tex.get("visual_parameters");
 		VisualParameters = new byte[vp.size()];

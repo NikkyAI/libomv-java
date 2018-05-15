@@ -46,6 +46,7 @@ import libomv.utils.Helpers;
 public class AssetMesh extends AssetItem
 {
 	private static final Logger logger = Logger.getLogger(AssetMesh.class);
+
     // Decoded mesh data
     private OSDMap MeshData;
 

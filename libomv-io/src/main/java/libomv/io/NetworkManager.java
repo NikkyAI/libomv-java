@@ -35,7 +35,6 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -47,17 +46,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import libomv.Simulator;
-import libomv.Simulator.RegionFlags;
-import libomv.Simulator.RegionProtocols;
-import libomv.Simulator.SimAccess;
-import libomv.Simulator.SimStatType;
+import org.apache.log4j.Logger;
+
 import libomv.StructuredData.OSD;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.EnableSimulatorMessage;
+import libomv.capabilities.IMessage;
+import libomv.io.SimulatorManager.RegionFlags;
+import libomv.io.SimulatorManager.RegionProtocols;
+import libomv.io.SimulatorManager.SimStatType;
 import libomv.io.capabilities.AsyncHTTPClient;
 import libomv.io.capabilities.CapsCallback;
-import libomv.capabilities.IMessage;
+import libomv.model.Simulator;
+import libomv.model.Simulator.SimAccess;
 import libomv.packets.CompletePingCheckPacket;
 import libomv.packets.EnableSimulatorPacket;
 import libomv.packets.KickUserPacket;
@@ -69,8 +70,8 @@ import libomv.packets.RegionHandshakePacket;
 import libomv.packets.RegionHandshakeReplyPacket;
 import libomv.packets.SimStatsPacket;
 import libomv.packets.StartPingCheckPacket;
-import libomv.types.UUID;
 import libomv.types.PacketCallback;
+import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
@@ -83,73 +84,9 @@ import libomv.utils.TimeoutEvent;
 // outgoing traffic and deserializes incoming traffic, and provides
 // instances of delegates for network-related events.
 
-public class NetworkManager implements PacketCallback, CapsCallback
+public class NetworkManager implements PacketCallback, CapsCallback, libomv.model.Network
 {
-	/** Explains why a simulator or the grid disconnected from us */
-	public enum DisconnectType
-	{
-		/** The client requested the logout or simulator disconnect */
-		ClientInitiated,
-		/** The server notified us that it is disconnecting */
-		ServerInitiated,
-		/** Either a socket was closed or network traffic timed out */
-		NetworkTimeout,
-		/** The last active simulator shut down */
-		SimShutdown
-	}
-
-	/**
-	 * Holds a simulator reference and a decoded packet, these structs are put
-	 * in the packet inbox for event handling
-	 */
-	public final class IncomingPacket
-	{
-		/** Reference to the simulator that this packet came from */
-		public Simulator Simulator;
-		/** Packet that needs to be processed */
-		public Packet Packet;
-		/** CapsMessage that needs to be processed */
-		public IMessage Message;
-
-		public IncomingPacket(Simulator simulator, Packet packet)
-		{
-			Simulator = simulator;
-			Packet = packet;
-		}
-
-		public IncomingPacket(Simulator simulator, IMessage message)
-		{
-			Simulator = simulator;
-			Message = message;
-		}
-	}
-
-	/**
-	 * Holds a simulator reference and a serialized packet, these structs are
-	 * put in the packet outbox for sending
-	 */
-	public class OutgoingPacket
-	{
-		/** Reference to the simulator this packet is destined for */
-		public final Simulator Simulator;
-		/** Packet that needs to be sent */
-		public final ByteBuffer Buffer;
-		/** PacketType */
-		public PacketType Type;
-		/** Sequence number of the wrapped packet */
-		public int SequenceNumber;
-		/** Number of times this packet has been resent */
-		public int ResendCount;
-		/** Environment.TickCount when this packet was last sent over the wire */
-		public long TickCount;
-
-		public OutgoingPacket(Simulator simulator, PacketType type, ByteBuffer buffer)
-		{
-			Simulator = simulator;
-			Type = type;
-			Buffer = buffer;
-		}
-	}
+	private static final Logger logger = Logger.getLogger(NetworkManager.class);
 
 	/** Callback arguments classes */
 	public class SimConnectingCallbackArgs implements CallbackArgs
@@ -300,14 +237,14 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	public class EventQueueRunningCallbackArgs implements CallbackArgs
 	{
-		private final Simulator m_Simulator;
+		private final SimulatorManager m_Simulator;
 
-		public final Simulator getSimulator()
+		public final SimulatorManager getSimulator()
 		{
 			return m_Simulator;
 		}
 
-		public EventQueueRunningCallbackArgs(Simulator simulator)
+		public EventQueueRunningCallbackArgs(SimulatorManager simulator)
 		{
 			this.m_Simulator = simulator;
 		}
@@ -315,7 +252,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
 
-	public final void raiseConnectedEvent(Simulator simulator)
+	public final void raiseConnectedEvent(SimulatorManager simulator)
 	{
 		OnEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
 	}
@@ -394,7 +331,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			{
 				for (String s : blacklist.split(","))
 					_UDPBlacklist.add(PacketType.valueOf(s));
-				Logger.Log("UDP blacklisted packets: " + _UDPBlacklist.toString(), LogLevel.Debug, _Client);
+				logger.debug(GridClient.Log("UDP blacklisted packets: " + _UDPBlacklist.toString(), _Client));
 			}
 		}
 	}
@@ -422,7 +359,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void cleanClosableClients() throws InterruptedException
+	private void cleanClosableClients() throws InterruptedException, IOException
 	{
 		synchronized (closableClients)
 		{
@@ -434,13 +371,13 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 			if (closableClients.size() > 0)
 			{
-				Logger.Log("Closing " + closableClients.size() + " clients in " + (System.currentTimeMillis() - time) + " ms.", LogLevel.Info, _Client);
+				logger.info(GridClient.Log("Closing " + closableClients.size() + " clients in " + (System.currentTimeMillis() - time) + " ms.", _Client));
 				closableClients.clear();
 			}
 		}
 	}
 
-	private ArrayList<Simulator> _Simulators;
+	private ArrayList<SimulatorManager> _Simulators;
 
 	/**
 	 * Get the array with all currently known simulators. This list must be
@@ -448,7 +385,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *
 	 * @return array of simulator objects known to this client
 	 */
-	public ArrayList<Simulator> getSimulators()
+	public ArrayList<SimulatorManager> getSimulators()
 	{
 		return _Simulators;
 	}
@@ -496,7 +433,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 						if (remains > 0)
 						{
-//							Logger.DebugLog(String.format("Rate limiting, last packet was %d ms ago", remains), _Client);
+//							logger.debug(String.format("Rate limiting, last packet was %d ms ago", remains), _Client);
 							Thread.sleep(remains);
 						}
 						outgoingPacket.Simulator.sendPacketFinal(outgoingPacket);
@@ -513,9 +450,9 @@ public class NetworkManager implements PacketCallback, CapsCallback
 						count = 0;
 					}	
 				}
-				catch (InterruptedException ex)
+				catch (InterruptedException | IOException ex)
 				{
-					Logger.DebugLog("Call interrupted", _Client, ex);
+					logger.debug(GridClient.Log("Call interrupted", _Client), ex);
 				}
 			}
 		}
@@ -540,7 +477,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Default packet event handler: " + type, LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log("Default packet event handler: " + type, _Client), ex);
 					}
 				}
 			}
@@ -556,7 +493,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Packet event handler: " + type, LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log("Packet event handler: " + type, _Client), ex);
 					}
 					specialHandler = true;
 				}
@@ -565,11 +502,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 		if (!specialHandler && type != PacketType.Default && type != PacketType.PacketAck)
 		{
-//			Logger.Log("No handler registered for packet event " + type, LogLevel.Warning, _Client);
+//			logger.test("No handler registered for packet event " + type, LogLevel.Warning, _Client);
 		}
 	}
 
-	private void FireCapsCallbacks(IMessage message, Simulator simulator)
+	private void FireCapsCallbacks(IMessage message, SimulatorManager simulator)
 	{
 		boolean specialHandler = false;
 
@@ -587,7 +524,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("CAPS event handler: " + message.getType(), LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log("CAPS event handler: " + message.getType(), _Client), ex);
 					}
 				}
 			}
@@ -603,7 +540,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("CAPS event handler: " + message.getType(), LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log("CAPS event handler: " + message.getType(), _Client), ex);
 					}
 					specialHandler = true;
 				}
@@ -611,7 +548,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 		if (!specialHandler)
 		{
-			Logger.Log("Unhandled CAPS event " + message.getType(), LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Unhandled CAPS event " + message.getType(), _Client));
 		}
 	}
 
@@ -630,7 +567,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			if (packet.Packet != null)
 				FirePacketCallbacks(packet.Packet, packet.Simulator);
 			else
-				FireCapsCallbacks(packet.Message, packet.Simulator);
+				FireCapsCallbacks(packet.Message, (SimulatorManager) packet.Simulator);
 		}
 	}
 
@@ -658,10 +595,10 @@ public class NetworkManager implements PacketCallback, CapsCallback
 							// skip blacklisted packets
 							if (_UDPBlacklist.contains(incomingPacket.Packet.getType()))
 							{
-								Logger.Log(
+								logger.warn(GridClient.Log(
 										String.format("Discarding Blacklisted packet %s from %s",
 												incomingPacket.Packet.getType(),
-												incomingPacket.Simulator.getIPEndPoint()), LogLevel.Warning, _Client);
+												((SimulatorManager) incomingPacket.Simulator).getIPEndPoint()), _Client));
 							}
 							else if (syncPacketCallbacks)
 							{
@@ -677,7 +614,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 						{
 							if (syncPacketCallbacks)
 							{
-								FireCapsCallbacks(incomingPacket.Message, incomingPacket.Simulator);
+								FireCapsCallbacks(incomingPacket.Message, (SimulatorManager) incomingPacket.Simulator);
 							}
 							else
 							{
@@ -698,14 +635,14 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	private Timer _LogoutTimer;
 	
 	// The simulator that the logged in avatar is currently occupying
-	private Simulator _CurrentSim;
+	private SimulatorManager _CurrentSim;
 
-	public Simulator getCurrentSim()
+	public SimulatorManager getCurrentSim()
 	{
 		return _CurrentSim;
 	}
 
-	public final void setCurrentSim(Simulator value)
+	public final void setCurrentSim(SimulatorManager value)
 	{
 		_CurrentSim = value;
 	}
@@ -753,7 +690,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception 
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception 
 	{
 		switch (message.getType())
 		{
@@ -808,7 +745,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	public NetworkManager(GridClient client) throws Exception
 	{
 		_Client = client;
-		_Simulators = new ArrayList<Simulator>();
+		_Simulators = new ArrayList<SimulatorManager>();
 		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
 		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
 		_LogoutTimer = new Timer("LogoutTimer");
@@ -852,7 +789,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *                  If "simulator" is null, this function uses the current simulator
 	 * @return The URI for the capability or null if it doesn't exist
 	 */
-	public URI getCapabilityURI(String capability, Simulator simulator)
+	public URI getCapabilityURI(String capability, SimulatorManager simulator)
 	{
 		synchronized (_Simulators)
 		{
@@ -903,8 +840,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		{
 			if (!capCallbacks.containsKey(capability))
 			{
-				Logger.Log("Trying to unregister a callback for capability " + capability
-						+ " when no callbacks are setup for that capability", LogLevel.Info, _Client);
+				logger.info(GridClient.Log("Trying to unregister a callback for capability " + capability
+						+ " when no callbacks are setup for that capability", _Client));
 				return;
 			}
 
@@ -920,8 +857,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			}
 			else
 			{
-				Logger.Log("Trying to unregister a non-existant callback for capability " + capability, LogLevel.Info,
-						_Client);
+				logger.info(GridClient.Log("Trying to unregister a non-existant callback for capability " + capability, _Client));
 			}
 		}
 	}
@@ -954,8 +890,8 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		{
 			if (!simCallbacks.containsKey(type))
 			{
-				Logger.Log("Trying to unregister a callback for packet " + type
-						+ " when no callbacks are setup for that packet", LogLevel.Info, _Client);
+				logger.info(GridClient.Log("Trying to unregister a callback for packet " + type
+						+ " when no callbacks are setup for that packet", _Client));
 				return;
 			}
 
@@ -970,7 +906,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			}
 			else
 			{
-				Logger.Log("Trying to unregister a non-existant callback for packet " + type, LogLevel.Info, _Client);
+				logger.info(GridClient.Log("Trying to unregister a non-existant callback for packet " + type, _Client));
 			}
 		}
 	}
@@ -986,14 +922,14 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	{
 		// try CurrentSim, however directly after login this will be null, so if it is, we'll
 		// try to find the first simulator we're connected to in order to send the packet.
-		Simulator simulator = _CurrentSim;
+		SimulatorManager simulator = _CurrentSim;
 		if (simulator == null)
 		{
 			synchronized (_Simulators)
 			{
 				if (_Simulators.size() >= 1)
 				{
-					Logger.DebugLog("CurrentSim object was null, using first found connected simulator", _Client);
+					logger.debug(GridClient.Log("CurrentSim object was null, using first found connected simulator", _Client));
 					simulator = _Simulators.get(0);
 				}
 			}
@@ -1007,7 +943,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		{
 			ConnectException ex = new ConnectException(
 					"Packet received before simulator packet processing threads running, make certain you are completely logged in");
-			Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 			throw ex;
 		}
 	}
@@ -1025,7 +961,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Suppressing packet " + packet.toString(), LogLevel.Warning, _Client, ex);
+			logger.warn(GridClient.Log("Suppressing packet " + packet.toString(), _Client), ex);
 		}
 	}
 
@@ -1037,11 +973,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Suppressing message " + message.toString(), LogLevel.Warning, _Client, ex);
+			logger.warn(GridClient.Log("Suppressing message " + message.toString(), _Client), ex);
 		}
 	}
 
-	public Simulator connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)
+	public SimulatorManager connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)
 			throws Exception
 	{
 		return connect(new InetSocketAddress(ip, port), handle, setDefault, seedcaps);
@@ -1062,15 +998,15 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *            URL of the capabilities server to use for this sim connection
 	 * @return A Simulator object on success, otherwise null
 	 * */
-	public Simulator connect(InetSocketAddress endPoint, long handle, boolean setDefault, String seedcaps)
+	public SimulatorManager connect(InetSocketAddress endPoint, long handle, boolean setDefault, String seedcaps)
 			throws Exception
 	{
-		Simulator simulator = FindSimulator(endPoint);
+		SimulatorManager simulator = FindSimulator(endPoint);
 
 		if (simulator == null)
 		{
 			// We're not tracking this sim, create a new Simulator object
-			simulator = new Simulator(_Client, endPoint, handle);
+			simulator = new SimulatorManager(_Client, endPoint, handle);
 
 			synchronized (_Simulators)
 			{
@@ -1283,7 +1219,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		_Client.setCurrentGrid((String)null);
 		_PacketHandlerThread.shutdown();
 
-		Logger.Log("Logging out", LogLevel.Info, _Client);
+		logger.info(GridClient.Log("Logging out", _Client));
 
 		// Send a logout request to the current sim
 		LogoutRequestPacket logout = new LogoutRequestPacket();
@@ -1293,7 +1229,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		_CurrentSim.sendPacket(logout);
 	}
 	
-	private void setCurrentSim(Simulator simulator, String seedcaps) throws InterruptedException, IOException
+	private void setCurrentSim(SimulatorManager simulator, String seedcaps) throws InterruptedException, IOException
 	{
 		if (!simulator.equals(getCurrentSim()))
 		{
@@ -1313,10 +1249,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	public void disconnectSim(Simulator simulator, boolean sendCloseCircuit) throws Exception
+	public void disconnectSim(Runnable sim, boolean sendCloseCircuit) throws Exception
 	{
-		if (simulator != null)
+		if (sim != null)
 		{
+			SimulatorManager simulator = (SimulatorManager) sim;
 			simulator.disconnect(sendCloseCircuit);
 
 			// Fire the SimDisconnected event if a handler is registered
@@ -1333,7 +1270,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 		else
 		{
-			Logger.Log("DisconnectSim() called with a null Simulator reference", LogLevel.Warning);
+			logger.warn("DisconnectSim() called with a null Simulator reference");
 		}
 	}
 
@@ -1353,7 +1290,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	private void shutdown(DisconnectType type, String message) throws Exception
 	{
-		Logger.Log("NetworkManager shutdown initiated", LogLevel.Info, _Client);
+		logger.info(GridClient.Log("NetworkManager shutdown initiated", _Client));
 
 		// Send a CloseCircuit packet to simulators if we are initiating the
 		// disconnect
@@ -1364,7 +1301,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			// Disconnect all simulators except the current one
 			for (int i = 0; i < _Simulators.size(); i++)
 			{
-				Simulator simulator = _Simulators.get(i);
+				SimulatorManager simulator = _Simulators.get(i);
 				// Don't disconnect the current sim, we'll use LogoutRequest for
 				// that
 				if (simulator != null && !simulator.equals(_CurrentSim))
@@ -1415,8 +1352,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			else if (_CurrentSim.getDisconnectCandidate())
 			{
 				// The currently occupied simulator hasn't sent us any traffic in a while, shutdown
-				Logger.Log("Network timeout for the current simulator (" + _CurrentSim.getName() + "), logging out",
-						LogLevel.Warning);
+				logger.warn("Network timeout for the current simulator (" + _CurrentSim.getName() + "), logging out");
 
 				if (_DisconnectTimer != null)
 				{
@@ -1438,18 +1374,18 @@ public class NetworkManager implements PacketCallback, CapsCallback
 				return;
 			}
 
-			ArrayList<Simulator> disconnectedSims = null;
+			ArrayList<SimulatorManager> disconnectedSims = null;
 
 			// Check all of the connected sims for disconnects
 			synchronized (_Simulators)
 			{
-				for (Simulator simulator : _Simulators)
+				for (SimulatorManager simulator : _Simulators)
 				{
 					if (simulator.getDisconnectCandidate())
 					{
 						if (disconnectedSims == null)
 						{
-							disconnectedSims = new ArrayList<Simulator>();
+							disconnectedSims = new ArrayList<SimulatorManager>();
 						}
 						disconnectedSims.add(simulator);
 					}
@@ -1463,10 +1399,10 @@ public class NetworkManager implements PacketCallback, CapsCallback
 			// Actually disconnect each sim we detected as disconnected
 			if (disconnectedSims != null)
 			{
-				for (Simulator simulator : disconnectedSims)
+				for (SimulatorManager simulator : disconnectedSims)
 				{
 					// This sim hasn't received any network traffic since the timer last elapsed, consider it disconnected
-					Logger.Log("Network timeout for simulator " + simulator.getName() + ", disconnecting", LogLevel.Warning);
+					logger.warn("Network timeout for simulator " + simulator.getName() + ", disconnecting");
 
 					try
 					{
@@ -1488,11 +1424,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 *            InetSocketAddress of the Simulator to search for
 	 * @return A Simulator reference on success, otherwise null
 	 */
-	public final Simulator FindSimulator(InetSocketAddress endPoint)
+	public final SimulatorManager FindSimulator(InetSocketAddress endPoint)
 	{
 		synchronized (_Simulators)
 		{
-			for (Simulator simulator : _Simulators)
+			for (SimulatorManager simulator : _Simulators)
 			{
 				if (simulator.getIPEndPoint().equals(endPoint))
 				{
@@ -1503,10 +1439,10 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		return null;
 	}
 
-	private void HandleRegionHandshake(Packet packet, Simulator simulator) throws Exception
+	private void HandleRegionHandshake(Packet packet, Simulator sim) throws Exception
 	{
 		RegionHandshakePacket handshake = (RegionHandshakePacket) packet;
-
+		SimulatorManager simulator = (SimulatorManager) sim;
 		simulator.ID = handshake.RegionInfo.CacheID;
 
 		simulator.IsEstateManager = handshake.RegionInfo.IsEstateManager;
@@ -1556,7 +1492,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		reply.Flags = (int)RegionProtocols.SelfAppearanceSupport;
 		simulator.sendPacket(reply);
 
-		Logger.Log("Received a region handshake for " + simulator.getName(), LogLevel.Debug, _Client);
+		logger.debug(GridClient.Log("Received a region handshake for " + simulator.getName(), _Client));
 	}
 
 	/**
@@ -1583,11 +1519,12 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	/**
 	 * Process a ping answer
 	 */
-	private final void HandleCompletePingCheck(Packet packet, Simulator simulator)
+	private final void HandleCompletePingCheck(Packet packet, Simulator sim)
 	{
 		CompletePingCheckPacket pong = (CompletePingCheckPacket) packet;
 		long timeMilli = System.currentTimeMillis();
 
+		SimulatorManager simulator = (SimulatorManager) sim;
 		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
 		simulator.Statistics.ReceivedPongs++;
 
@@ -1600,7 +1537,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
  				retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";
  			}
 
- 			Logger.Log(retval, LogLevel.Debug, _Client);
+ 			logger.debug(GridClient.Log(retval, _Client));
 		}
 	}
 
@@ -1612,10 +1549,11 @@ public class NetworkManager implements PacketCallback, CapsCallback
 	 * @param simulator
 	 *            The sender
 	 */
-	private final void HandleSimStats(Packet packet, Simulator simulator)
+	private final void HandleSimStats(Packet packet, Simulator sim)
 	{
 		if (enableSimStats)
 		{
+			SimulatorManager simulator = (SimulatorManager) sim;
 			SimStatsPacket stats = (SimStatsPacket) packet;
 			for (int i = 0; i < stats.Stat.length; i++)
 			{
@@ -1741,7 +1679,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 						simulator.Statistics.SimPctSteppedCharacters = (int)s.StatValue;
 						break;
 					default:
-						Logger.Log("Unknown stat id: " + s.StatID, LogLevel.Debug, _Client);
+						logger.debug(GridClient.Log("Unknown stat id: " + s.StatID, _Client));
 						break;
 				}
 			}
@@ -1763,7 +1701,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 	            if (connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null)
 	            {
-	                Logger.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port, LogLevel.Error, _Client);
+	                logger.error(GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port, _Client));
 	            }
 	        }
 		}
@@ -1782,7 +1720,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 
 			if (connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null)
 			{
-				Logger.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, LogLevel.Error, _Client);
+				logger.error(GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, _Client));
 			}
 		}
 	}
@@ -1816,7 +1754,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		if ((logout.AgentData.SessionID.equals(_Client.Self.getSessionID()))
 				&& (logout.AgentData.AgentID.equals(_Client.Self.getAgentID())))
 		{
-			Logger.DebugLog("Logout reply received", _Client);
+			logger.debug(GridClient.Log("Logout reply received", _Client));
 
 			// Deal with callbacks, if any
 			if (OnLoggedOut.count() > 0)
@@ -1836,7 +1774,7 @@ public class NetworkManager implements PacketCallback, CapsCallback
 		}
 		else
 		{
-			Logger.Log("Invalid Session or Agent ID received in Logout Reply... ignoring", LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Invalid Session or Agent ID received in Logout Reply... ignoring", _Client));
 		}
 	}
 

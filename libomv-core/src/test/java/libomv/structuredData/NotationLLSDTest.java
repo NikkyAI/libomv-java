@@ -63,7 +63,7 @@ import libomv.StructuredData.LLSD.LLSDNotation;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class NotationLLSDTests extends TestCase
+public class NotationLLSDTest extends TestCase
 {
     public void testDeserializeUndef() throws IOException, ParseException
     {

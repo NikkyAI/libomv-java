@@ -37,12 +37,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Future;
 
-import libomv.utils.Helpers;
+import javax.net.ssl.SSLContext;
 
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -60,26 +61,36 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.concurrent.BasicFuture;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.ContentEncoder;
 import org.apache.http.nio.IOControl;
-import org.apache.http.nio.client.HttpAsyncRequestProducer;
-import org.apache.http.nio.client.HttpAsyncResponseConsumer;
-import org.apache.http.nio.concurrent.BasicFuture;
-import org.apache.http.nio.concurrent.FutureCallback;
-import org.apache.http.nio.conn.scheme.Scheme;
-import org.apache.http.nio.conn.ssl.SSLLayeringStrategy;
+import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.nio.entity.NFileEntity;
 import org.apache.http.nio.entity.NHttpEntityWrapper;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.nio.entity.ProducingNHttpEntity;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.ssl.TrustStrategy;
+import org.apache.log4j.Logger;
+
+import libomv.utils.Helpers;
 
 public abstract class AsyncHTTPClient<T>
 {
+	private static final Logger logger = Logger.getLogger(AsyncHTTPClient.class);
+
 	public static final long TIMEOUT_INFINITE = -1;
 
 	public interface ProgressCallback
@@ -87,7 +98,8 @@ public abstract class AsyncHTTPClient<T>
 		public void progress(long bytesTransceived, long totalBytes);
 	}
 	
-	private DefaultHttpAsyncClient asyncClient;
+	private HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
+	private CloseableHttpAsyncClient asyncClient;
 	private X509Certificate certificate;
 	private Timer timeout;
 	private Future<T> resultFuture;
@@ -115,9 +127,10 @@ public abstract class AsyncHTTPClient<T>
 	 */
 	public synchronized void setBasicAuthentication(URI uri, String username, String password)
 	{
-		asyncClient.getCredentialsProvider().setCredentials(
-				new AuthScope(uri.getHost(), uri.getPort(), AuthScope.ANY_REALM),
+		BasicCredentialsProvider provider = new BasicCredentialsProvider();
+		provider.setCredentials(new AuthScope(uri.getHost(), uri.getPort(), AuthScope.ANY_REALM),
 				new UsernamePasswordCredentials(username, password));
+		builder.setDefaultCredentialsProvider(provider);
 	}
 
 	/**
@@ -128,10 +141,10 @@ public abstract class AsyncHTTPClient<T>
 	 * @param scheme The scheme to add to the connection manager for this connection
 	 * @return The scheme registered
 	 */
-	public synchronized Scheme register(Scheme scheme)
-	{
-		return asyncClient.getConnectionManager().getSchemeRegistry().register(scheme);
-	}
+	//public synchronized Scheme register(Scheme scheme)
+	//{
+	//	return asyncClient.getConnectionManager().getSchemeRegistry().register(scheme);
+	//}
 	
 	protected synchronized void cancel(boolean mayInterruptIfRunning)
 	{
@@ -150,17 +163,17 @@ public abstract class AsyncHTTPClient<T>
 		}
 	}
 	
-	public synchronized void shutdown(boolean mayInterruptIfRunning) throws InterruptedException
+	public synchronized void shutdown(boolean mayInterruptIfRunning) throws InterruptedException, IOException
 	{
 		cancel(mayInterruptIfRunning);
-		asyncClient.shutdown();
+		asyncClient.close();
 		asyncClient = null;
 	}
 
 	public AsyncHTTPClient(String name) throws IOReactorException
 	{
 		this.name = name;
-		asyncClient = new DefaultHttpAsyncClient();
+		asyncClient = HttpAsyncClients.createDefault();
 		asyncClient.start();
 	}
 
@@ -354,7 +367,22 @@ public abstract class AsyncHTTPClient<T>
 				{
 					KeyStore store = Helpers.getExtendedKeyStore();
 					store.setCertificateEntry(hostname, certificate);
-					register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
+
+					// Trust own CA and all self-signed certs
+					SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(store, new TrustStrategy() {
+
+						@Override
+						public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+							return true;
+						}
+
+					}).build();
+					// Allow TLSv1 protocol only
+					SSLIOSessionStrategy sslSessionStrategy = new SSLIOSessionStrategy(sslcontext,
+							new String[] { "TLSv1" }, null, SSLIOSessionStrategy.getDefaultHostnameVerifier());
+					builder.setSSLStrategy(sslSessionStrategy);					
+					
+					//register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 				}
 			}
 			catch (Exception ex)
@@ -369,7 +397,7 @@ public abstract class AsyncHTTPClient<T>
 	{
 		if (timeout != null)
 		{
-			Logger.Log("This Capability Client is already waiting for a response", Logger.LogLevel.Error, new Throwable());
+			logger.error("This Capability Client is already waiting for a response");
 			return null;
 		}
 
@@ -517,6 +545,18 @@ public abstract class AsyncHTTPClient<T>
 		{
 			this.producer.finish();
 		}
+
+		@Override
+		public void failed(Exception arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void requestCompleted(HttpContext arg0) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	protected abstract T convertContent(InputStream in, String encoding) throws IOException;
@@ -623,25 +663,25 @@ public abstract class AsyncHTTPClient<T>
 		/**
 		 * Notification that any resources allocated for reading can be released.
 		 */
-		@Override
-		public synchronized void responseCompleted()
-		{
-			if (completed)
-			{
-				return;
-			}
-			completed = true;
-		}
+		//@Override
+		//public synchronized void responseCompleted()
+		//{
+		//	if (completed)
+		//	{
+		//		return;
+		//	}
+		//	completed = true;
+		//}
 
 		@Override
-		public synchronized void cancel()
+		public synchronized boolean cancel()
 		{
-			if (completed)
+			if (!completed)
 			{
-				return;
+				completed = true;
+				result = null;
 			}
-			completed = true;
-			result = null;
+			return completed;
 		}
 
 		@Override
@@ -665,6 +705,24 @@ public abstract class AsyncHTTPClient<T>
 		public Exception getException()
 		{
 			return ex;
+		}
+		
+		@Override
+		public void close() throws IOException {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public boolean isDone() {
+			// TODO Auto-generated method stub
+			return completed;
+		}
+
+		@Override
+		public void responseCompleted(HttpContext arg0) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 }

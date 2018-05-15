@@ -34,25 +34,26 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.AgentGroupDataUpdateMessage;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.DisplayNameUpdateMessage;
 import libomv.capabilities.CapsMessage.GetDisplayNamesMessage;
+import libomv.capabilities.IMessage;
 import libomv.io.AgentManager.EffectType;
-import libomv.io.AppearanceManager.AppearanceFlags;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.capabilities.IMessage;
+import libomv.model.Agent.AgentDisplayName;
+import libomv.model.Appearance.AppearanceFlags;
+import libomv.model.Simulator;
 import libomv.packets.AvatarAnimationPacket;
 import libomv.packets.AvatarAppearancePacket;
 import libomv.packets.AvatarGroupsReplyPacket;
@@ -71,107 +72,17 @@ import libomv.packets.ViewerEffectPacket;
 import libomv.primitives.Avatar;
 import libomv.primitives.Avatar.ProfileFlags;
 import libomv.primitives.TextureEntry;
-import libomv.types.UUID;
 import libomv.types.PacketCallback;
+import libomv.types.UUID;
 import libomv.types.Vector3d;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
-public class AvatarManager implements PacketCallback, CapsCallback
+public class AvatarManager implements PacketCallback, CapsCallback, libomv.model.Avatar
 {
-	// Information about agents display name
-	public class AgentDisplayName
-	{
-		// Agent UUID
-		public UUID ID;
-		// Username
-		public String UserName;
-		// Display name
-		public String DisplayName;
-		// First name (legacy)
-		public String LegacyFirstName;
-		// Last name (legacy)
-		public String LegacyLastName;
-		// Full name (legacy)
-		public String LegacyFullName;
-		// Is display name default display name </summary>
-		public boolean IsDefaultDisplayName;
-		// Cache display name until
-		public Date NextUpdate;
-		// Last updated timestamp
-		public Date Updated;
-		
-		public String getLegacyFullName()
-		{
-			return String.format("%s %s", LegacyFirstName, LegacyLastName);
-		}
-
-		/**
-		 * Creates AgentDisplayName object from OSD
-		 * 
-		 * @param data
-		 *            Incoming OSD data AgentDisplayName object
-		 */
-		public AgentDisplayName FromOSD(OSD data)
-		{
-			AgentDisplayName ret = new AgentDisplayName();
-
-			OSDMap map = (OSDMap) data;
-			ret.ID = map.get("id").AsUUID();
-			ret.UserName = map.get("username").AsString();
-			ret.DisplayName = map.get("display_name").AsString();
-			ret.LegacyFirstName = map.get("legacy_first_name").AsString();
-			ret.LegacyLastName = map.get("legacy_last_name").AsString();
-			ret.IsDefaultDisplayName = map.get("is_display_name_default").AsBoolean();
-			ret.NextUpdate = map.get("display_name_next_update").AsDate();
-			ret.Updated = map.get("last_updated").AsDate();
-			return ret;
-		}
-
-		/**
-		 * Return object as OSD map
-		 * 
-		 * @returns OSD containing agent's display name data
-		 */
-		public OSD GetOSD()
-		{
-			OSDMap map = new OSDMap();
-
-			map.put("id", OSD.FromUUID(ID));
-			map.put("username", OSD.FromString(UserName));
-			map.put("display_name", OSD.FromString(DisplayName));
-			map.put("legacy_first_name", OSD.FromString(LegacyFirstName));
-			map.put("legacy_last_name", OSD.FromString(LegacyLastName));
-			map.put("is_display_name_default", OSD.FromBoolean(IsDefaultDisplayName));
-			map.put("display_name_next_update", OSD.FromDate(NextUpdate));
-			map.put("last_updated", OSD.FromDate(Updated));
-
-			return map;
-		}
-
-		@Override
-		public String toString()
-		{
-			return Helpers.StructToString(this);
-		}
-	}
-
-	/**
-	 * Contains an animation currently being played by an agent
-	 */
-	public class Animation
-	{
-		// The ID of the animation asset
-		public UUID AnimationID;
-		// A number to indicate start order of currently playing animations
-		// On Linden Grids this number is unique per region, with OpenSim it is
-		// per client
-		public int AnimationSequence;
-		//
-		public UUID AnimationSourceObjectID;
-	}
+	private static final Logger logger = Logger.getLogger(AvatarManager.class);
 
 	/**
 	 * Holds group information on an individual profile pick
@@ -629,12 +540,12 @@ public class AvatarManager implements PacketCallback, CapsCallback
 //				// HandleClassifiedInfoReply(packet, simulator);
 //				break;
 			default:
-				Logger.Log("AvatarManager: Unhandled packet" + packet.getType().toString(), LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("AvatarManager: Unhandled packet" + packet.getType().toString(), _Client));
 		}
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator)
+	public void capsCallback(IMessage message, SimulatorManager simulator)
 	{
 		switch (message.getType())
 		{
@@ -646,7 +557,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 				HandleAvatarGroupsReply(message, simulator);
 				break;
 			default:
-				Logger.Log("AvatarManager: Unhandled message " + message.getType().toString(), LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("AvatarManager: Unhandled message " + message.getType().toString(), _Client));
 		}
 	}
 
@@ -1001,7 +912,6 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		}
 	}
 
-
 	private Avatar findAvatar(Simulator simulator, UUID uuid)
 	{
 		Avatar av = simulator.findAvatar(uuid);
@@ -1174,7 +1084,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
     /**
 	 * EQ Message fired when someone nearby changes their display name
 	 */
-	private void HandleDisplayNameUpdate(IMessage message, Simulator simulator)
+	private void HandleDisplayNameUpdate(IMessage message, SimulatorManager simulator)
 	{
 		DisplayNameUpdateMessage msg = (DisplayNameUpdateMessage) message;
 		synchronized (_Avatars)
@@ -1189,7 +1099,7 @@ public class AvatarManager implements PacketCallback, CapsCallback
 		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
 	}
 
-    private void HandleAvatarGroupsReply(IMessage message, Simulator simulator)
+    private void HandleAvatarGroupsReply(IMessage message, SimulatorManager simulator)
     {
         if (OnAvatarGroupsReply.count() > 0)
         {
@@ -1283,8 +1193,8 @@ public class AvatarManager implements PacketCallback, CapsCallback
                     }
                     else
                     {
-                        Logger.Log("Received a " + type.toString() + " ViewerEffect with an incorrect TypeData size of " +
-                                block.getTypeData().length + " bytes", Logger.LogLevel.Warning, _Client);
+                        logger.warn(GridClient.Log("Received a " + type.toString() + " ViewerEffect with an incorrect TypeData size of " +
+                                block.getTypeData().length + " bytes", _Client));
                     }
                     break;
                 case LookAt:
@@ -1299,8 +1209,8 @@ public class AvatarManager implements PacketCallback, CapsCallback
                     }
                     else
                     {
-                        Logger.Log("Received a LookAt " + type.toString() + " ViewerEffect with an incorrect TypeData size of " +
-                                   block.getTypeData().length + " bytes", Logger.LogLevel.Warning, _Client);
+                        logger.warn(GridClient.Log("Received a LookAt " + type.toString() + " ViewerEffect with an incorrect TypeData size of " +
+                                   block.getTypeData().length + " bytes", _Client));
                     }
                     break;
                 case Text:
@@ -1312,8 +1222,8 @@ public class AvatarManager implements PacketCallback, CapsCallback
                 case Cloth:
                 case Glow:
                 default:
-                    Logger.Log("Received a ViewerEffect with an unknown type " + type.toString() + " and length " +
-                    		   block.getTypeData().length + " bytes", Logger.LogLevel.Warning, _Client);
+                    logger.warn(GridClient.Log("Received a ViewerEffect with an unknown type " + type.toString() + " and length " +
+                    		   block.getTypeData().length + " bytes", _Client));
                     break;
             }
         }

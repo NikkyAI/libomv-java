@@ -30,7 +30,7 @@
  */
 package libomv.types;
 
-import libomv.Simulator;
+import libomv.model.Simulator;
 import libomv.packets.Packet;
 
 public interface PacketCallback

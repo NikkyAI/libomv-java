@@ -41,9 +41,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSDMap;
@@ -62,7 +62,6 @@ import libomv.assets.AssetScriptBinary;
 import libomv.assets.AssetScriptText;
 import libomv.assets.AssetSound;
 import libomv.assets.AssetTexture;
-import libomv.assets.AssetItem.AssetType;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.UploadBakedTextureMessage;
 import libomv.capabilities.CapsMessage.UploaderRequestComplete;
@@ -70,11 +69,14 @@ import libomv.capabilities.CapsMessage.UploaderRequestUpload;
 import libomv.imaging.ManagedImage.ImageCodec;
 import libomv.inventory.InventoryItem;
 import libomv.io.DownloadManager;
+import libomv.io.DownloadManager.DownloadResult;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
-import libomv.io.DownloadManager.DownloadResult;
 import libomv.io.assets.TexturePipeline.TextureRequestState;
 import libomv.io.capabilities.CapsClient;
+import libomv.model.Asset;
+import libomv.model.Asset.AssetType;
+import libomv.model.Simulator;
 import libomv.packets.AbortXferPacket;
 import libomv.packets.AssetUploadCompletePacket;
 import libomv.packets.AssetUploadRequestPacket;
@@ -88,10 +90,10 @@ import libomv.packets.TransferAbortPacket;
 import libomv.packets.TransferInfoPacket;
 import libomv.packets.TransferPacketPacket;
 import libomv.packets.TransferRequestPacket;
-import libomv.types.UUID;
 import libomv.types.PacketCallback;
-import libomv.utils.CallbackArgs;
+import libomv.types.UUID;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
@@ -100,6 +102,8 @@ import libomv.utils.TimeoutEvent;
 // Summary description for AssetManager.
 public class AssetManager implements PacketCallback
 {
+	private static final Logger logger = Logger.getLogger(AssetManager.class);
+
 	// #region Enums
 	public enum EstateAssetType
 	{
@@ -938,7 +942,7 @@ public class AssetManager implements PacketCallback
 				}
 				catch (Throwable ex)
 				{
-					Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 				}
 			}
 			return null;
@@ -1001,7 +1005,7 @@ public class AssetManager implements PacketCallback
 		}
 		return RequestUpload(null, asset.getAssetType(), asset.AssetData, storeLocal, new UUID());
 	}
-
+	
 	/**
 	 * Request an asset be uploaded to the simulator
 	 *
@@ -1072,8 +1076,8 @@ public class AssetManager implements PacketCallback
 
 		if (data.length + 100 < LibSettings.MAX_PACKET_SIZE)
 		{
-			Logger.Log(String.format("Beginning asset upload [Single Packet], ID: %s, AssetID: %s, Size: %d",
-					upload.TransactionID, upload.AssetID, upload.Size), LogLevel.Info, _Client);
+			logger.info(GridClient.Log(String.format("Beginning asset upload [Single Packet], ID: %s, AssetID: %s, Size: %d",
+					upload.TransactionID, upload.AssetID, upload.Size), _Client));
 
 			synchronized (_ActiveDownloads) 
 			{
@@ -1086,8 +1090,8 @@ public class AssetManager implements PacketCallback
 		}
 		else
 		{
-			Logger.Log(String.format("Beginning asset upload [Multiple Packets], ID: %s, AssetID: %s, Size: %d",
-					upload.TransactionID, upload.AssetID, upload.Size), LogLevel.Info, _Client);
+			logger.info(GridClient.Log(String.format("Beginning asset upload [Multiple Packets], ID: %s, AssetID: %s, Size: %d",
+					upload.TransactionID, upload.AssetID, upload.Size), _Client));
 
 			// Asset is too big, send in multiple packets
 			request.AssetBlock.setAssetData(Helpers.EmptyBytes);
@@ -1141,28 +1145,28 @@ public class AssetManager implements PacketCallback
 								}
 								catch (IOException ex)
 								{
-									Logger.Log("Bake upload failed", LogLevel.Warning, _Client);
+									logger.warn(GridClient.Log("Bake upload failed", _Client));
 									callback.callback(UUID.Zero);
 								}
 							}
 							return;
 						}
 					}
-					Logger.Log("Bake upload failed", LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Bake upload failed", _Client));
 					callback.callback(UUID.Zero);
 				}
 
 				@Override
 				public void cancelled()
 				{
-					Logger.Log("Bake upload canelled", LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Bake upload canelled", _Client));
 					callback.callback(UUID.Zero);
 				}
 
 				@Override
 				public void failed(Exception ex)
 				{
-					Logger.Log("Bake upload failed", LogLevel.Warning, _Client, ex);
+					logger.warn(GridClient.Log("Bake upload failed", _Client), ex);
 					callback.callback(UUID.Zero);
 				}
 			}
@@ -1170,7 +1174,7 @@ public class AssetManager implements PacketCallback
 		}
 		else
 		{
-			Logger.Log("UploadBakedTexture not available, falling back to UDP method", LogLevel.Info, _Client);
+			logger.info(GridClient.Log("UploadBakedTexture not available, falling back to UDP method", _Client));
 
 			_ThreadResult = _ThreadPool.submit(new Runnable()
 			{
@@ -1455,13 +1459,13 @@ public class AssetManager implements PacketCallback
 			}
 			catch (URISyntaxException ex)
 			{
-				Logger.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), LogLevel.Warning, _Client);
+				logger.warn(GridClient.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), _Client));
 				callback.callback(null);
 			}
 		}
 		else
 		{
-			Logger.Log("GetMesh capability not available", LogLevel.Error, _Client);
+			logger.error(GridClient.Log("GetMesh capability not available", _Client));
 			callback.callback(null);
 		}
 		return false;
@@ -1528,7 +1532,7 @@ public class AssetManager implements PacketCallback
 						download.State = TextureRequestState.Timeout;
 						download.AssetData = result.data; 
 						callback.callback(download);
-						Logger.Log("Failed to fetch server bake {" + textureID + "}: empty data", LogLevel.Warning, _Client);
+						logger.warn(GridClient.Log("Failed to fetch server bake {" + textureID + "}: empty data", _Client));
 					}
 				}
 				else
@@ -1558,7 +1562,7 @@ public class AssetManager implements PacketCallback
 		}
 		catch (Throwable ex)
 		{
-			Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 		}
 	}
 
@@ -1605,7 +1609,7 @@ public class AssetManager implements PacketCallback
 						{
 							download.State = TextureRequestState.Pending;
 							download.callbacks.dispatch(download);
-							Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP", download.ItemID), LogLevel.Warning, _Client);
+							logger.warn(GridClient.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP", download.ItemID), _Client));
 							_TexDownloads.RequestTexture(download);
 						}
 					}
@@ -1625,7 +1629,7 @@ public class AssetManager implements PacketCallback
 		{
 			download.State = TextureRequestState.Pending;
 			download.callbacks.dispatch(download);
-			Logger.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}", download.ItemID, ex.getMessage()), LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}", download.ItemID, ex.getMessage()), _Client));
 		}
 		return false;
 	}
@@ -1664,12 +1668,12 @@ public class AssetManager implements PacketCallback
 				case Texture:
 					return new AssetTexture(assetID, assetData);
 				default:
-					Logger.Log("Unimplemented asset type: " + type, LogLevel.Error);
+					logger.error("Unimplemented asset type: " + type);
 			}
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Exception occurred when creating an asset", Logger.LogLevel.Error, ex);
+			logger.error("Exception occurred when creating an asset", ex);
 		}
 		return new AssetMutable(type, assetID, assetData);
 	}
@@ -1704,14 +1708,14 @@ public class AssetManager implements PacketCallback
 				download.Success = download.Status == StatusCode.Done;
 				if (download.Success)
 				{
-					Logger.DebugLog("Transfer for asset " + download.ItemID.toString() + " completed", _Client);
+					logger.debug(GridClient.Log("Transfer for asset " + download.ItemID.toString() + " completed", _Client));
 
 					// Cache successful asset download
 					_Cache.put(download.ItemID, download.AssetData, download.suffix);
 				}
 				else
 				{
-					Logger.Log("Transfer failed with status code " + download.Status, LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Transfer failed with status code " + download.Status, _Client));
 				}
 					
 				download.callbacks.dispatch(download);
@@ -1738,8 +1742,8 @@ public class AssetManager implements PacketCallback
 		}
 		if (download == null)
 		{
-			Logger.Log("Received a TransferInfo packet for an asset we didn't request, TransferID: "
-					+ info.TransferInfo.TransferID, LogLevel.Warning, _Client);			
+			logger.warn(GridClient.Log("Received a TransferInfo packet for an asset we didn't request, TransferID: "
+					+ info.TransferInfo.TransferID, _Client));			
 			return;
 		}
 
@@ -1750,7 +1754,7 @@ public class AssetManager implements PacketCallback
 
 		if (download.Status != StatusCode.OK)
 		{
-			Logger.Log("Transfer failed with status code " + download.Status, LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Transfer failed with status code " + download.Status, _Client));
 
 			synchronized (_ActiveDownloads)
 			{
@@ -1775,7 +1779,7 @@ public class AssetManager implements PacketCallback
 				download.ItemID = new UUID(data, 0);
 				download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 16));
 
-				Logger.DebugLog(String.format("TransferInfo packet received. AssetID: %s Type: %s",
+				logger.debug(String.format("TransferInfo packet received. AssetID: %s Type: %s",
 						download.ItemID, download.AssetType));
 			}
 			else if (download.Source == SourceType.SimInventoryItem && data.length == 100)
@@ -1789,15 +1793,15 @@ public class AssetManager implements PacketCallback
 				download.ItemID = new UUID(data, 80);
 				download.AssetType = AssetType.setValue(Helpers.BytesToInt32L(data, 96));
 
-				Logger.DebugLog(String
+				logger.debug(String
 						.format("TransferInfo packet received. AgentID: %s SessionID: %s OwnerID: %s TaskID: %s ItemID: %s AssetID: %s Type: %s",
 								agentID, sessionID, ownerID, taskID, itemID, download.ItemID, download.AssetType));
 			}
 			else
 			{
-				Logger.Log(String.format(
+				logger.warn(GridClient.Log(String.format(
 						"Received a TransferInfo packet with a SourceType of %s and a Params field length of %d",
-						download.Source, data.length), LogLevel.Warning, _Client);
+						download.Source, data.length), _Client));
 			}
 			processDelayedData(download, download.delayed.remove(download.PacketNum));
 		}
@@ -1852,7 +1856,7 @@ public class AssetManager implements PacketCallback
 		}
 		catch (Exception ex)
 		{
-			Logger.Log(ex.getMessage(), LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
 		}
 	}
 
@@ -1904,7 +1908,7 @@ public class AssetManager implements PacketCallback
 		AssetUpload upload = _PendingUpload.poll();
 		if (upload == null)
 		{
-			Logger.Log("Received a RequestXferPacket for an unknown asset upload", LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Received a RequestXferPacket for an unknown asset upload", _Client));
 			return;
 		}
 
@@ -1933,7 +1937,7 @@ public class AssetManager implements PacketCallback
 		{
 			upload = (AssetUpload) _XferTransfers.get(confirm.XferID.ID);
 		}
-		Logger.DebugLog(String.format("ACK for upload %s of asset type %s (%d/%d)", upload.AssetID, upload.AssetType,
+		logger.debug(String.format("ACK for upload %s of asset type %s (%d/%d)", upload.AssetID, upload.AssetType,
 					upload.Transferred, upload.Size));
 
 		OnUploadProgress.dispatch(upload);
@@ -1966,10 +1970,10 @@ public class AssetManager implements PacketCallback
 		}
 		else
 		{
-			Logger.Log(String.format(
+			logger.debug(String.format(
 					"Got an AssetUploadComplete on an unrecognized asset, AssetID: %s, Type: %s, Success: %s",
 					complete.AssetBlock.UUID, AssetType.setValue(complete.AssetBlock.Type),
-					complete.AssetBlock.Success), LogLevel.Warning);
+					complete.AssetBlock.Success));
 		}
 	}
 
@@ -1996,13 +2000,13 @@ public class AssetManager implements PacketCallback
 			{
 				if (packetNum == download.PacketNum - 1)
 				{
-					Logger.DebugLog("Resending Xfer download confirmation for packet " + packetNum, _Client);
+					logger.debug(GridClient.Log("Resending Xfer download confirmation for packet " + packetNum, _Client));
 					SendConfirmXferPacket(download.XferID, packetNum);
 				}
 				else
 				{
-					Logger.Log("Out of order Xfer packet in a download, got " + packetNum + " expecting "
-							+ download.PacketNum, LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Out of order Xfer packet in a download, got " + packetNum + " expecting "
+							+ download.PacketNum, _Client));
 					// Re-confirm the last packet we actually received
 					SendConfirmXferPacket(download.XferID, download.PacketNum - 1);
 				}
@@ -2018,7 +2022,7 @@ public class AssetManager implements PacketCallback
 				download.Size = Helpers.BytesToInt32L(bytes);
 				download.AssetData = new byte[download.Size];
 
-				Logger.DebugLog("Received first packet in an Xfer download of size " + download.Size);
+				logger.debug("Received first packet in an Xfer download of size " + download.Size);
 
 				System.arraycopy(bytes, 4, download.AssetData, 0, bytes.length - 4);
 				download.Transferred += bytes.length - 4;
@@ -2040,11 +2044,11 @@ public class AssetManager implements PacketCallback
 				// This is the last packet in the transfer
 				if (!Helpers.isEmpty(download.Filename))
 				{
-					Logger.DebugLog("Xfer download for asset " + download.Filename + " completed", _Client);
+					logger.debug(GridClient.Log("Xfer download for asset " + download.Filename + " completed", _Client));
 				}
 				else
 				{
-					Logger.DebugLog("Xfer download for asset " + download.ItemID.toString() + " completed", _Client);
+					logger.debug(GridClient.Log("Xfer download for asset " + download.ItemID.toString() + " completed", _Client));
 				}
 
 				download.Success = true;

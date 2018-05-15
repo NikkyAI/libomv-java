@@ -24,25 +24,15 @@
  */
 package libomv.objects;
 
-import java.io.InputStream;
-
 import junit.framework.TestCase;
 
-import libomv.imaging.J2KImage;
-import libomv.imaging.ManagedImage;
+import libomv.rendering.LindenSkeleton;
 
-public class ImageTests extends TestCase
+public class RenderingTest extends TestCase
 {
-	public void testJ2KImage() throws Exception
-	{
-        InputStream is = getClass().getResourceAsStream("/res/relax.jp2");
-        J2KImage image = J2KImage.decode(is);
-        is.close();
-        assertTrue("Loading of image failed", image != null);
-        assertTrue("Loading of image failed", image.getChannels() == ManagedImage.ImageChannels.Color);
-        assertTrue("Image Width is not 400 pixels", image.getWidth() == 400);
-        assertTrue("Image Height is not 300 pixels", image.getHeight() == 300);
-        
-        
-	}
+    public void testLindenSkeleton() throws Exception
+    {
+    	LindenSkeleton skeleton = LindenSkeleton.load();
+    	assertTrue("Loading of skeleton failed", skeleton != null);
+    }
 }

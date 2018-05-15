@@ -38,14 +38,17 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ObjectPhysicsPropertiesMessage;
+import libomv.capabilities.IMessage;
 import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginStatus;
 import libomv.io.NetworkManager.DisconnectedCallbackArgs;
 import libomv.io.capabilities.CapsCallback;
-import libomv.Simulator;
-import libomv.capabilities.IMessage;
+import libomv.model.LLObject.SaleType;
+import libomv.model.Simulator;
 import libomv.packets.ImprovedTerseObjectUpdatePacket;
 import libomv.packets.KillObjectPacket;
 import libomv.packets.MultipleObjectUpdatePacket;
@@ -97,85 +100,34 @@ import libomv.primitives.Primitive.JointType;
 import libomv.primitives.Primitive.LightData;
 import libomv.primitives.Primitive.Material;
 import libomv.primitives.Primitive.ObjectCategory;
+import libomv.primitives.Primitive.PCode;
 import libomv.primitives.Primitive.PathCurve;
 import libomv.primitives.Primitive.PrimFlags;
 import libomv.primitives.Primitive.ProfileCurve;
-import libomv.primitives.Primitive.PCode;
 import libomv.primitives.Primitive.SculptData;
 import libomv.primitives.Primitive.SoundFlags;
 import libomv.primitives.Primitive.Tree;
 import libomv.primitives.TextureEntry;
 import libomv.types.Color4;
+import libomv.types.NameValue;
+import libomv.types.PacketCallback;
 import libomv.types.Permissions;
 import libomv.types.Quaternion;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector4;
-import libomv.types.NameValue;
-import libomv.types.PacketCallback;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
-import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 import libomv.utils.RefObject;
+import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // Handles all network traffic related to prims and avatar positions and
 // movement.
 public class ObjectManager implements PacketCallback, CapsCallback
 {
-	/** Item Sale Status */
-	public enum SaleType
-	{
-		/** Not for sale */
-		Not,
-		/** The original is for sale */
-		Original,
-		/** Copies are for sale */
-		Copy,
-		/** The contents of the object are for sale */
-		Contents;
-
-		private static final String[] _SaleTypeNames = new String[] { "not", "orig", "copy", "cntn" };
-
-		/**
-		 * Translate a string name of an SaleType into the proper Type
-		 * 
-		 * @param type
-		 *            A string containing the SaleType name
-		 * @return The SaleType which matches the string name, or
-		 *         SaleType.Unknown if no match was found
-		 */
-		public static SaleType setValue(String value)
-		{
-			for (int i = 0; i < _SaleTypeNames.length; i++)
-			{
-				if (value.compareToIgnoreCase(_SaleTypeNames[i]) == 0)
-				{
-					return values()[i];
-				}
-			}
-			return Not;
-		}
-
-		public static SaleType setValue(int value)
-		{
-			if (value >= 0 && value < values().length)
-				return values()[value];
-			return null;
-		}
-
-		public byte getValue()
-		{
-			return (byte) ordinal();
-		}
-
-		@Override
-		public String toString()
-		{
-			return _SaleTypeNames[ordinal()];
-		}
-	}
+	private static final Logger logger = Logger.getLogger(ObjectManager.class);
 
 	public enum ReportType
 	{
@@ -1084,11 +1036,11 @@ public class ObjectManager implements PacketCallback, CapsCallback
 				long interval = start - lastInterpolation;
 				float seconds = interval / 1000f;
 
-				ArrayList<Simulator> simulators = _Client.Network.getSimulators();
+				ArrayList<SimulatorManager> simulators = _Client.Network.getSimulators();
 				synchronized (simulators)
 				{
 					// Iterate through all of the simulators
-					for (Simulator sim : simulators)
+					for (SimulatorManager sim : simulators)
 					{
 						float adjSeconds = seconds * sim.Statistics.Dilation;
 
@@ -1168,7 +1120,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	                                }
 	                                else
 	                                {
-										Logger.Log("Unhandled joint type " + prim.Joint, LogLevel.Warning, _Client);
+										logger.warn(GridClient.Log("Unhandled joint type " + prim.Joint, _Client));
 										break;
 									}
 								}
@@ -1290,7 +1242,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1702,7 +1654,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Create (rez) a new prim object in a simulator
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object to
+	 *            A reference to the {@link Simulator.Simulator} object to
 	 *            place the object in
 	 * @param prim
 	 *            Data describing the prim object to rez
@@ -1806,7 +1758,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Rez a Linden tree
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param scale
 	 *            The size of the tree
@@ -1849,7 +1801,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Rez grass and ground cover
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param scale
 	 *            The size of the grass
@@ -1890,7 +1842,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the textures to apply to the faces of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -1910,7 +1862,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the textures to apply to the faces of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -1941,7 +1893,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the Light data on an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -1980,7 +1932,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the flexible data on an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2011,7 +1963,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the sculptie texture and data on an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2058,7 +2010,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Unset additional primitive parameters on an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2088,7 +2040,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Link multiple prims into a linkset
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to link The
@@ -2117,7 +2069,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Delink/Unlink multiple prims from a linkset
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to delink
@@ -2144,7 +2096,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Change the rotation of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2171,7 +2123,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the name of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2189,7 +2141,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the name of multiple objects
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to change the
@@ -2220,7 +2172,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the description of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2238,7 +2190,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the descriptions of multiple objects
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to change the
@@ -2269,7 +2221,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Attach an object to this avatar
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2300,7 +2252,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Drop an attached object from this avatar
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside. This will always be the simulator
 	 *            the avatar is currently in
 	 * 
@@ -2324,7 +2276,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Detach an object from yourself
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * 
 	 *            This will always be the simulator the avatar is currently in
@@ -2352,7 +2304,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Change the position of an object, Will change position of entire linkset
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2371,7 +2323,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Change the position of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2400,7 +2352,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Change the Scale (size) of an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2437,7 +2389,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * linkset
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2478,7 +2430,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * rotation of a primitive
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2510,7 +2462,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * can be accomplished with SetPermissions()
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localID
 	 *            The objects ID which is local to the simulator the object is
@@ -2542,7 +2494,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * group which can be accomplished with SetPermissions()
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to deed
@@ -2574,7 +2526,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the permissions on multiple objects
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to set the
@@ -2617,7 +2569,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Request additional properties for an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param objectID
 	 * @throws Exception
@@ -2631,7 +2583,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Request additional properties for an object
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the object resides
 	 * @param objectID
 	 *            Absolute UUID of the object
@@ -2660,7 +2612,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * Set the ownership of a list of objects to the specified group
 	 * 
 	 * @param simulator
-	 *            A reference to the {@link OpenMetaverse.Simulator} object
+	 *            A reference to the {@link Simulator.Simulator} object
 	 *            where the objects reside
 	 * @param localIds
 	 *            An array which contains the IDs of the objects to set the
@@ -2684,7 +2636,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		simulator.sendPacket(packet);
 	}
 
-	protected final void UpdateDilation(Simulator s, int dilation)
+	protected final void UpdateDilation(SimulatorManager s, int dilation)
 	{
 		s.Statistics.Dilation = dilation / 65535.0f;
 	}
@@ -2717,8 +2669,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		return data;
 	}
 
-	private void HandleObjectUpdate(Packet packet, Simulator simulator)
+	private void HandleObjectUpdate(Packet packet, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		ObjectUpdatePacket update = (ObjectUpdatePacket) packet;
 
 		UpdateDilation(simulator, update.RegionData.TimeDilation);
@@ -2896,8 +2849,8 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					pos += 3;
 					break;
 				default:
-					Logger.Log("Got an ObjectUpdate block with ObjectUpdate field length of "
-							+ block.getObjectData().length, LogLevel.Warning, _Client);
+					logger.warn(GridClient.Log("Got an ObjectUpdate block with ObjectUpdate field length of "
+							+ block.getObjectData().length, _Client));
 					continue;
 			}
 			// #endregion
@@ -2922,7 +2875,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Failed to create Texture for object update.", LogLevel.Warning, ex);
+						logger.warn("Failed to create Texture for object update.", ex);
 					}
 
 					OnObjectDataBlockUpdate.dispatch(new ObjectDataBlockUpdateCallbackArgs(simulator, prim, data,
@@ -2932,7 +2885,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					prim.Flags = PrimFlags.setValue(block.UpdateFlags);
 					if ((prim.Flags & PrimFlags.ZlibCompressed) != 0)
 					{
-						Logger.Log("Got a ZlibCompressed ObjectUpdate, implement me!", LogLevel.Warning, _Client);
+						logger.warn(GridClient.Log("Got a ZlibCompressed ObjectUpdate, implement me!", _Client));
 						continue;
 					}
 
@@ -2945,7 +2898,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 						}
 						catch (Exception e)
 						{
-							Logger.Log("Requesting object properties update failed.", LogLevel.Warning, e);
+							logger.warn("Requesting object properties update failed.", e);
 						}
 					}
 
@@ -2962,8 +2915,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 					catch (UnsupportedEncodingException e)
 					{
-						Logger.Log("Extracting MediaURL or Text for object properties update failed.",
-								LogLevel.Warning, e);
+						logger.warn("Extracting MediaURL or Text for object properties update failed.", e);
 					}
 					prim.TextColor = new Color4(block.TextColor, 0, false, true);
 					prim.IsAttachment = attachment;
@@ -3002,7 +2954,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 							}
 							else
 							{
-								Logger.Log("Got a foliage update with an invalid TreeSpecies field", LogLevel.Warning);
+								logger.warn("Got a foliage update with an invalid TreeSpecies field");
 							}
 							// prim.ScratchPad = Utils.EmptyBytes;
 							// break;
@@ -3070,7 +3022,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Failed to create Texture for avatar update.", LogLevel.Warning, ex);
+						logger.warn("Failed to create Texture for avatar update.", ex);
 					}
 
 					OnObjectDataBlockUpdate.dispatch(new ObjectDataBlockUpdateCallbackArgs(simulator, avatar, data,
@@ -3089,8 +3041,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					avatar.PrimData = data;
 					if (block.getData().length > 0)
 					{
-						Logger.Log("Unexpected Data field for an avatar update, length " + block.getData().length,
-								LogLevel.Warning);
+						logger.warn("Unexpected Data field for an avatar update, length " + block.getData().length);
 					}
 					avatar.ParentID = block.ParentID;
 					avatar.RegionHandle = update.RegionData.RegionHandle;
@@ -3109,7 +3060,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 					/* Obselete */
 					break;
 				default:
-					Logger.DebugLog("Got an ObjectUpdate block with an unrecognized PCode " + pcode.toString(), _Client);
+					logger.debug(GridClient.Log("Got an ObjectUpdate block with an unrecognized PCode " + pcode.toString(), _Client));
 					break;
 			}
 		}
@@ -3120,8 +3071,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * velocity/acceleration for an object changes but nothing else
 	 * (scale/position/rotation/acceleration/velocity)
 	 */
-	private final void HandleTerseObjectUpdate(Packet packet, Simulator simulator)
+	private final void HandleTerseObjectUpdate(Packet packet, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		ImprovedTerseObjectUpdatePacket terse = (ImprovedTerseObjectUpdatePacket) packet;
 		UpdateDilation(simulator, terse.RegionData.TimeDilation);
 
@@ -3236,7 +3188,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			catch (Throwable ex)
 			{
-				Logger.Log(ex.getMessage(), LogLevel.Warning, _Client, ex);
+				logger.warn(GridClient.Log(ex.getMessage(), _Client), ex);
 			}
 		}
 	}
@@ -3246,8 +3198,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 * 
 	 * 
 	 */
-	private final void HandleObjectUpdateCompressed(Packet packet, Simulator simulator)
+	private final void HandleObjectUpdateCompressed(Packet packet, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		ObjectUpdateCompressedPacket update = (ObjectUpdateCompressedPacket) packet;
 		UpdateDilation(simulator, update.RegionData.TimeDilation);
 
@@ -3490,7 +3443,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 
 			if (data.length > i)
 			{
-				Logger.Log("CompressedUpdate has extra data of " + (data.length - i) + " bytes.", LogLevel.Debug);
+				logger.debug("CompressedUpdate has extra data of " + (data.length - i) + " bytes.");
 			}
 			// #endregion
 
@@ -3532,8 +3485,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private final void HandleKillObject(Packet packet, Simulator simulator)
+	private final void HandleKillObject(Packet packet, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		KillObjectPacket kill = (KillObjectPacket) packet;
 
 		// Notify first, so that handler has a chance to get a
@@ -3629,8 +3583,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private final void HandleObjectProperties(Packet packet, Simulator simulator)
+	private final void HandleObjectProperties(Packet packet, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		ObjectPropertiesPacket op = (ObjectPropertiesPacket) packet;
 		ObjectPropertiesPacket.ObjectDataBlock[] datablocks = op.ObjectData;
 
@@ -3664,7 +3619,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 			}
 			catch (UnsupportedEncodingException e)
 			{
-				Logger.Log("Encoding Exception when decoding object properties reply.", LogLevel.Warning, e);
+				logger.warn("Encoding Exception when decoding object properties reply.", e);
 				return;
 			}
 
@@ -3701,8 +3656,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private final void HandleObjectPropertiesFamily(Packet packet, Simulator simulator)
+	private final void HandleObjectPropertiesFamily(Packet packet, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		ObjectPropertiesFamilyPacket op = (ObjectPropertiesFamilyPacket) packet;
 		ObjectProperties props = new ObjectProperties();
 
@@ -3722,7 +3678,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			Logger.Log("Encoding Exception when decoding object properties family reply.", LogLevel.Warning, e);
+			logger.warn("Encoding Exception when decoding object properties family reply.", e);
 			return;
 		}
 
@@ -3771,8 +3727,9 @@ public class ObjectManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private void HandleObjectPhysicsProperties(IMessage message, Simulator simulator)
+	private void HandleObjectPhysicsProperties(IMessage message, Simulator sim)
 	{
+		SimulatorManager simulator = (SimulatorManager) sim;
 		ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage) message;
 
 		if (objectTracking)
@@ -3903,7 +3860,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *            list, when the object could not be found.
 	 * @return the object that corresponds to the localID
 	 */
-	protected final Primitive getPrimitive(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
+	protected final Primitive getPrimitive(SimulatorManager simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
 		if (objectTracking)
 		{
@@ -3944,7 +3901,7 @@ public class ObjectManager implements PacketCallback, CapsCallback
 	 *            simulator list, when the avatar could not be found.
 	 * @return the avatar object that corresponds to the localID
 	 */
-	protected final Avatar getAvatar(Simulator simulator, int localID, UUID fullID, RefObject<Boolean> created)
+	protected final Avatar getAvatar(SimulatorManager simulator, int localID, UUID fullID, RefObject<Boolean> created)
 	{
 		if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING))
 		{

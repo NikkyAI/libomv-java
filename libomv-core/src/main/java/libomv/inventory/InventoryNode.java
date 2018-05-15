@@ -180,16 +180,11 @@ public abstract class InventoryNode implements Serializable
 	// Name of item/folder */
 	public String name;
     // Item/Folder Owners {@link libomv.types.UUID}
-    protected UUID ownerID;
+    public UUID ownerID;
     // Item/Folder Parent {@link libomv.types.UUID}
-    protected UUID parentID;
+    public UUID parentID;
 	// parent of item/folder in tree hierarchy
-	protected InventoryFolder parent;
-	
-	public InventoryFolder getParentFolder()
-	{
-		return parent;
-	}
+	public InventoryFolder parent;
 	
 	public abstract InventoryType getType();
 	
@@ -248,7 +243,7 @@ public abstract class InventoryNode implements Serializable
 		ownerID = map.get("agent_id").AsUUID();
 	}
 	
-	protected static InventoryNode fromOSD(OSD osd)
+	public static InventoryNode fromOSD(OSD osd)
 	{
 		if (osd instanceof OSDMap)
 		{

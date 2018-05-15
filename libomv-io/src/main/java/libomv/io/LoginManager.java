@@ -36,7 +36,8 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.log4j.Logger;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDFormat;
@@ -46,7 +47,6 @@ import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.inventory.InventoryFolder;
 import libomv.inventory.InventoryFolder.FolderType;
-import libomv.io.GridClient;
 import libomv.io.GridClient.GridInfo;
 import libomv.io.capabilities.AsyncHTTPClient;
 import libomv.io.capabilities.CapsClient;
@@ -55,16 +55,18 @@ import libomv.packets.EconomyDataRequestPacket;
 import libomv.types.UUID;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 import libomv.utils.TimeoutEventQueue;
 
-public class LoginManager
+public class LoginManager implements libomv.model.Login
 {
+	private static final Logger logger = Logger.getLogger(LoginManager.class);
+
 	// #region Enums
 	public enum LoginStatus
 	{
@@ -413,7 +415,7 @@ public class LoginManager
 			}
 			catch (Exception ex)
 			{
-				Logger.Log("Login server returned (some) invalid data: " + ex.getMessage(), LogLevel.Warning, ex);
+				logger.warn("Login server returned (some) invalid data: " + ex.getMessage(), ex);
 			}
 
 			// TODO: add options parsing
@@ -1060,7 +1062,7 @@ public class LoginManager
         
         if (loginParams.Channel == null || loginParams.Channel.isEmpty())
         {
-	 	    Logger.Log("Viewer channel not set. This is a TOS violation on some grids.", LogLevel.Warning);
+	 	    logger.warn("Viewer channel not set. This is a TOS violation on some grids.");
    	 	    loginParams.Channel = LibSettings.LIBRARY_NAME;
         }
 
@@ -1078,8 +1080,8 @@ public class LoginManager
 		}
 		catch (Exception ex)
 		{
-			Logger.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()),
-					LogLevel.Error, _Client);
+			logger.error(GridClient.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()),
+					_Client));
 			throw ex;
 		}
 
@@ -1237,7 +1239,7 @@ public class LoginManager
 		@Override
 		public void failed(Exception ex)
 		{
-			Logger.Log(String.format("Login exception %s", ex.getMessage()), LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log(String.format("Login exception %s", ex.getMessage()), _Client), ex);
 			// Connection error
 			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 		}
@@ -1264,7 +1266,7 @@ public class LoginManager
 
 			// Sleep for some amount of time while the servers work
 			int seconds = reply.NextDuration;
-			Logger.Log("Sleeping for " + seconds + " seconds during a login redirect", LogLevel.Info, _Client);
+			logger.info(GridClient.Log("Sleeping for " + seconds + " seconds during a login redirect", _Client));
 			try
 			{
 				Thread.sleep(seconds * 1000);

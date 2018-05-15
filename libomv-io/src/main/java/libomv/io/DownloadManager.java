@@ -48,6 +48,9 @@ import java.util.concurrent.ThreadFactory;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+
+import org.apache.log4j.Logger;
+
 import javax.net.ssl.HttpsURLConnection;
 
 import libomv.utils.Callback;
@@ -57,6 +60,8 @@ import libomv.utils.Helpers;
 /// Manages HTTP texture downloads with a limit on maximum concurrent downloads
 public class DownloadManager
 {
+	private static final Logger logger = Logger.getLogger(DownloadManager.class);
+
      public class DownloadResult
     {
         public boolean finished;
@@ -184,19 +189,19 @@ public class DownloadManager
 					}
 					catch (MalformedURLException ex)
 					{
-						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
 					}
 					catch (UnknownServiceException ex)
 					{
-						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
 					}
 			        catch (ProtocolException ex)
 					{
-						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
 					}
 					catch (IOException ex)
 					{
-						Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);						
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
 					}
 					finally
 					{
@@ -205,7 +210,7 @@ public class DownloadManager
 				}
 				catch (Exception ex)
 				{
-					Logger.Log("HTTP Texture download failed, attempt " + attempt + " from " + retries, LogLevel.Debug, ex);
+					logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);
 				}
 			}
 			callbacks.dispatch(new DownloadResult(null));

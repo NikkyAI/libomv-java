@@ -29,10 +29,12 @@
  */
 package libomv.io.utils;
 
+import java.io.IOException;
 import java.net.URI;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
@@ -42,6 +44,8 @@ import libomv.utils.CallbackHandler;
 
 public class UpdateChecker
 {
+	private static final Logger logger = Logger.getLogger(UpdateChecker.class);
+	
 	public class UpdateInfo
 	{
 	    private boolean Error;
@@ -90,7 +94,7 @@ public class UpdateChecker
    		Package = clazz.getPackage();
     }
 
-    public void dispose() throws InterruptedException
+    public void dispose() throws InterruptedException, IOException
     {
         if (client != null)
         {
@@ -134,7 +138,7 @@ public class UpdateChecker
 		@Override
 		public void cancelled()
 		{
-            Logger.Log("Failed fetching updatede information", Logger.LogLevel.Warning);
+            logger.warn("Failed fetching updatede information");
             OnUpdateInfoReceived.dispatch(checkArgs);
 		}
 
@@ -157,7 +161,7 @@ public class UpdateChecker
             }
             catch (Exception ex)
             {
-                Logger.Log("Failed decoding updatede information: ", Logger.LogLevel.Warning, ex);
+                logger.warn("Failed decoding updatede information: ", ex);
             }
             OnUpdateInfoReceived.dispatch(checkArgs);
 		}
@@ -165,7 +169,7 @@ public class UpdateChecker
 		@Override
 		public void failed(Exception ex)
 		{
-            Logger.Log("Failed fetching updated information: ", Logger.LogLevel.Warning, ex);
+            logger.warn("Failed fetching updated information: ", ex);
             OnUpdateInfoReceived.dispatch(checkArgs);
 		}
     }

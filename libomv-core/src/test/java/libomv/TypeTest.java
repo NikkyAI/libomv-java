@@ -53,7 +53,7 @@ import libomv.types.Vector3d;
 import libomv.utils.BitPack;
 import libomv.utils.Helpers;
 
-public class TypeTests extends TestCase
+public class TypeTest extends TestCase
 {
     public void testUUIDs()
     {

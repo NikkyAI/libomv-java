@@ -51,28 +51,29 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-import libomv.assets.AssetPrim;
-import libomv.Simulator;
-import libomv.Simulator.RegionFlags;
 import libomv.assets.AssetItem;
-import libomv.assets.AssetItem.AssetType;
+import libomv.assets.AssetPrim;
 import libomv.assets.AssetPrim.PrimObject;
 import libomv.assets.archiving.ArchiveConstants;
 import libomv.assets.archiving.RegionSettings;
 import libomv.assets.archiving.TarArchiveReader;
 import libomv.assets.archiving.TarArchiveWriter;
-import libomv.assets.archiving.TarArchiveReader.TarHeader;
 import libomv.io.ParcelManager;
-import libomv.io.ParcelManager.Parcel;
+import libomv.io.SimulatorManager;
+import libomv.io.SimulatorManager.RegionFlags;
 import libomv.io.assets.AssetManager;
 import libomv.io.assets.AssetManager.AssetDownload;
 import libomv.io.assets.AssetManager.ImageDownload;
 import libomv.io.assets.AssetManager.SourceType;
+import libomv.io.impl.ParcelImpl;
+import libomv.model.Asset.AssetType;
+import libomv.model.Parcel;
 import libomv.primitives.TextureEntry.TextureEntryFace;
 import libomv.types.UUID;
 import libomv.utils.Callback;
@@ -83,6 +84,7 @@ import libomv.utils.TimeoutEvent;
 
 public class OarFile
 {
+	private static final Logger logger = Logger.getLogger(OarFile.class);
 	
     public class AssetLoadedData
     {
@@ -197,7 +199,7 @@ public class OarFile
        	}
        	catch (Exception ex)
        	{
-       		Logger.Log("[OarFile] Error loading OAR file: ", Logger.LogLevel.Error, ex);
+       		logger.error("[OarFile] Error loading OAR file: ", ex);
        		return;
        	}
        	finally
@@ -217,9 +219,9 @@ public class OarFile
        		{}
        	}
         
-        Logger.Log(String.format("[OarFile]: Restored " + successfulAssetRestores + " assets"), Logger.LogLevel.Debug);
+        logger.debug(String.format("[OarFile]: Restored " + successfulAssetRestores + " assets"));
         if (failedAssetRestores > 0)
-            Logger.Log(String.format("[OarFile]: Failed to load " + failedAssetRestores + " assets"), Logger.LogLevel.Warning);
+            logger.warn(String.format("[OarFile]: Failed to load " + failedAssetRestores + " assets"));
     }
 
     private static boolean LoadAsset(String assetPath, byte[] data, Callback<AssetLoadedData> assetCallback, long bytesRead, long totalBytes)
@@ -233,9 +235,9 @@ public class OarFile
 
         if (extension == null)
         {
-            Logger.Log(String.format(
+            logger.warn(String.format(
                 "[OarFile]: Could not find extension information in asset path %s since it's missing the separator %c. Skipping",
-                assetPath, ArchiveConstants.ASSET_EXTENSION_SEPARATOR), Logger.LogLevel.Warning);
+                assetPath, ArchiveConstants.ASSET_EXTENSION_SEPARATOR));
             return false;
         }
 
@@ -251,7 +253,7 @@ public class OarFile
                 return true;
             }
         }
-        Logger.Log("[OarFile] Failed to load asset", Logger.LogLevel.Warning);
+        logger.warn("[OarFile] Failed to load asset");
         return false;
     }
 
@@ -268,7 +270,7 @@ public class OarFile
         }
         catch (Exception ex)
         {
-            Logger.Log("[OarFile] Failed to parse region settings file " + filePath + ": ", Logger.LogLevel.Warning, ex);
+            logger.warn("[OarFile] Failed to parse region settings file " + filePath + ": ", ex);
         }
 
         // Parse the region name out of the filename
@@ -305,8 +307,7 @@ public class OarFile
             }
             else
             {
-                Logger.Log("[OarFile] RAW32 terrain file " + filePath + " has the wrong number of bytes: " + data.length,
-                    Logger.LogLevel.Warning);
+                logger.warn("[OarFile] RAW32 terrain file " + filePath + " has the wrong number of bytes: " + data.length);
             }
         }
         else if (extension.equals("ter"))
@@ -326,7 +327,7 @@ public class OarFile
         	     extension.equals("tiff"))
             ; // TIFF
         else
-            Logger.Log("[OarFile] Unrecognized terrain format in " + filePath, Logger.LogLevel.Warning);
+            logger.warn("[OarFile] Unrecognized terrain format in " + filePath);
 
         if (loaded)
             terrainCallback.callback(new OarFile().new TerrainLoadedData(terrain, bytesRead, totalBytes));
@@ -346,7 +347,7 @@ public class OarFile
 		}
 		catch (XmlPullParserException ex)
 		{
-			Logger.Log("What the heck", Logger.LogLevel.Debug);
+			logger.debug("What the heck");
 		}
 
   		if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("scene"))
@@ -415,7 +416,7 @@ public class OarFile
         archive.close();
     }
 
-    public static void SaveTerrain(Simulator sim, File terrainPath) throws IOException, InterruptedException
+    public static void SaveTerrain(SimulatorManager sim, File terrainPath) throws IOException, InterruptedException
     {
         if (terrainPath.exists())
             FileUtils.deleteDirectory(terrainPath);
@@ -427,7 +428,7 @@ public class OarFile
         stream.close();
     }
 
-    private static void SaveTerrainStream(OutputStream stream, Simulator sim) throws IOException
+    private static void SaveTerrainStream(OutputStream stream, SimulatorManager sim) throws IOException
     {
         int x, y;
         for (y = 0; y < 256; y++)
@@ -440,7 +441,7 @@ public class OarFile
         }
     }
 
-    public static void SaveParcels(Simulator sim, File parcelPath) throws IOException, InterruptedException, IllegalArgumentException, IllegalStateException, XmlPullParserException
+    public static void SaveParcels(SimulatorManager sim, File parcelPath) throws IOException, InterruptedException, IllegalArgumentException, IllegalStateException, XmlPullParserException
     {
         if (parcelPath.exists())
             FileUtils.deleteDirectory(parcelPath);
@@ -455,8 +456,10 @@ public class OarFile
         }
     }
 
-    private static void SerializeParcel(Parcel parcel, UUID globalID, File fileName) throws IllegalArgumentException, IllegalStateException, IOException, XmlPullParserException
+    private static void SerializeParcel(Parcel p, UUID globalID, File fileName) throws IllegalArgumentException, IllegalStateException, IOException, XmlPullParserException
     {
+    	ParcelImpl parcel = (ParcelImpl) p;
+    	
         Writer fileWriter = new FileWriter(fileName);
 		XmlSerializer writer = XmlPullParserFactory.newInstance().newSerializer();
    		writer.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "  ");
@@ -519,7 +522,7 @@ public class OarFile
         fileWriter.close();
     }
 
-    public static void SaveRegionSettings(Simulator sim, File settingsPath) throws IOException, InterruptedException, XmlPullParserException
+    public static void SaveRegionSettings(SimulatorManager sim, File settingsPath) throws IOException, InterruptedException, XmlPullParserException
     {
         if (settingsPath.exists())
             FileUtils.deleteDirectory(settingsPath);
@@ -579,7 +582,7 @@ public class OarFile
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed saving prims: ", Logger.LogLevel.Error, ex);
+            logger.error("Failed saving prims: ", ex);
             return;
         }
         Thread.sleep(100);
@@ -644,7 +647,7 @@ public class OarFile
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed saving assets: ", Logger.LogLevel.Error, ex);
+            logger.error("Failed saving assets: ", ex);
             return;
         }
         Thread.sleep(100);
@@ -747,7 +750,7 @@ public class OarFile
 
         allReceived.waitOne(5000 + 350 * assets.size());
 
-        Logger.Log("Copied " + (assets.size() - remainingTextures.size()) + " textures to the asset archive folder", Logger.LogLevel.Info);
+        logger.info("Copied " + (assets.size() - remainingTextures.size()) + " textures to the asset archive folder");
     }
 
     public static void SaveSimAssets(AssetManager assetManager, AssetType assetType, UUID assetID, UUID itemID, UUID primID, File assetsPath) throws Exception
@@ -783,7 +786,7 @@ public class OarFile
         });
         Integer count = allReceived.waitOne(5000);
         if (count != null)
-        	Logger.Log("Copied " + count + " textures to the asset archive folder", Logger.LogLevel.Info);
+        	logger.info("Copied " + count + " textures to the asset archive folder");
     }
 
     static void SavePrim(AssetPrim prim, File filename) throws IOException
@@ -795,7 +798,7 @@ public class OarFile
         }
         catch (Exception ex)
         {
-            Logger.Log("Failed saving linkset: ", Logger.LogLevel.Error, ex);
+            logger.error("Failed saving linkset: ", ex);
             throw new IOException("failed saving linkset", ex);
         }
         finally

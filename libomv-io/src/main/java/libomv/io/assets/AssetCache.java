@@ -38,6 +38,8 @@ import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
 import libomv.io.LoginManager.LoginProgressCallbackArgs;
@@ -50,6 +52,8 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 // Class that handles the local asset cache
 public class AssetCache
 {
+	private static final Logger logger = Logger.getLogger(AssetCache.class);
+	
 	// User can plug in a routine to compute the asset cache location
 	public interface ComputeAssetCacheFilenameDelegate
 	{
@@ -250,11 +254,11 @@ public class AssetCache
 					file = getStaticAssetFile(assetID);
 					exists = file.exists() && file.length() > 0;
 					if (exists)
-						Logger.DebugLog("Reading " + file + " from static asset cache.", _Client);
+						logger.debug(GridClient.Log("Reading " + file + " from static asset cache.", _Client));
 				}
 				else
 				{
-					Logger.DebugLog("Reading " + file + " from asset cache.", _Client);
+					logger.debug(GridClient.Log("Reading " + file + " from asset cache.", _Client));
 				}
 				
 				if (exists)
@@ -274,7 +278,7 @@ public class AssetCache
 			}
 			catch (Throwable ex)
 			{
-				Logger.Log("Failed reading asset from cache (" + ex.getMessage() + ")", LogLevel.Warning, _Client, ex);
+				logger.warn(GridClient.Log("Failed reading asset from cache (" + ex.getMessage() + ")", _Client), ex);
 			}
 		}
 		return null;
@@ -328,7 +332,7 @@ public class AssetCache
 			try
 			{
 				File file = cachedAssetFile(assetID, suffix);
-				Logger.DebugLog("Saving " + file + " to asset cache.", _Client);
+				logger.debug(GridClient.Log("Saving " + file + " to asset cache.", _Client));
 				FileOutputStream fos = new FileOutputStream(file);
 				try
 				{
@@ -342,7 +346,7 @@ public class AssetCache
 			}
 			catch (Throwable ex)
 			{
-				Logger.Log("Failed saving asset to cache (" + ex.getMessage() + ")", LogLevel.Warning, _Client, ex);
+				logger.warn(GridClient.Log("Failed saving asset to cache (" + ex.getMessage() + ")", _Client), ex);
 			}
 		}
 		return false;
@@ -405,7 +409,7 @@ public class AssetCache
 				file.delete();
 				++num;
 			}
-			Logger.Log("Wiped out " + num + " files from the cache directory.", LogLevel.Debug, _Client);
+			logger.debug(GridClient.Log("Wiped out " + num + " files from the cache directory.", _Client));
 		}
 	}
 
@@ -433,11 +437,11 @@ public class AssetCache
 					break;
 				}
 			}
-			Logger.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size), LogLevel.Debug, _Client);
+			logger.debug(GridClient.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size), _Client));
 		}
 		else
 		{
-			Logger.Log("Cache size is " + NiceFileSize(size) + ", file deletion not needed", LogLevel.Debug, _Client);
+			logger.debug(GridClient.Log("Cache size is " + NiceFileSize(size) + ", file deletion not needed", _Client));
 		}
 
 	}

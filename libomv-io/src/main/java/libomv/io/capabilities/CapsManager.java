@@ -44,15 +44,17 @@ import java.util.concurrent.TimeoutException;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
+import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsToPacket;
 import libomv.capabilities.IMessage;
-import libomv.capabilities.CapsMessage.CapsEventType;
+import libomv.io.GridClient;
+import libomv.io.SimulatorManager;
 import libomv.packets.Packet;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
@@ -63,17 +65,19 @@ import libomv.utils.CallbackHandler;
  */
 public class CapsManager extends Thread
 {
+	private static final Logger logger = Logger.getLogger(CapsManager.class);
+
     public class CapabilitiesReceivedCallbackArgs implements CallbackArgs
     {
         // The simulator that received a capability
-        private Simulator simulator;
+        private SimulatorManager simulator;
         
-        public Simulator getSimulator()
+        public SimulatorManager getSimulator()
         {
         	return simulator;
         }
 
-        public CapabilitiesReceivedCallbackArgs(Simulator simulator)
+        public CapabilitiesReceivedCallbackArgs(SimulatorManager simulator)
         {
             this.simulator = simulator;
         }
@@ -82,7 +86,7 @@ public class CapsManager extends Thread
 	public CallbackHandler<CapabilitiesReceivedCallbackArgs> OnCapabilitiesReceived = new CallbackHandler<CapabilitiesReceivedCallbackArgs>();
 
 	/* Reference to the simulator this system is connected to */
-	private Simulator _Simulator;
+	private SimulatorManager _Simulator;
 
 	/* Asynchronous HTTP Client used for both the seedRequest as well as the eventQueue */
 	private CapsClient _Client;
@@ -192,7 +196,7 @@ public class CapsManager extends Thread
 	 * @param seedcaps
 	 * @throws IOReactorException
 	 */
-	public CapsManager(Simulator simulator, String seedcaps) throws IOReactorException
+	public CapsManager(SimulatorManager simulator, String seedcaps) throws IOReactorException
 	{
 		super("CapsManager");
 		_Simulator = simulator;
@@ -208,7 +212,7 @@ public class CapsManager extends Thread
 		if (isActiveAndMakeClosing())
 		{
 			_Client.cancel(immediate);
-			Logger.Log("Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"), LogLevel.Info, _Simulator.getClient());
+			logger.info(GridClient.Log("Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"), _Simulator.getClient()));
 		}
 	}
 
@@ -229,7 +233,7 @@ public class CapsManager extends Thread
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Couldn't startup capability system", LogLevel.Error, _Simulator.getClient(), ex);
+			logger.error(GridClient.Log("Couldn't startup capability system", _Simulator.getClient()), ex);
 			setState(CapsState.Closed);
 		}
 		finally
@@ -238,7 +242,7 @@ public class CapsManager extends Thread
 			{
 				_Client.shutdown(true);
 			}
-			catch (InterruptedException ex)
+			catch (InterruptedException | IOException ex)
 			{				
 			}
 			finally
@@ -378,7 +382,7 @@ public class CapsManager extends Thread
 
 					if (eventQueueGet == null)
 					{
-						Logger.Log("Caps seed: Returned capabilities does not contain an EventQueueGet caps", LogLevel.Warning, _Simulator.getClient());
+						logger.warn(GridClient.Log("Caps seed: Returned capabilities does not contain an EventQueueGet caps", _Simulator.getClient()));
 					}
 					/* when successful: return and startup eventqueue */
 					return eventQueueGet;
@@ -388,10 +392,10 @@ public class CapsManager extends Thread
 			{
 				if (ex.getStatusCode() == HttpStatus.SC_NOT_FOUND)
 				{
-					Logger.Log("Caps seed: Seed capability returned a 404 status, capability system is aborting", LogLevel.Error, _Simulator.getClient());
+					logger.error(GridClient.Log("Caps seed: Seed capability returned a 404 status, capability system is aborting", _Simulator.getClient()));
 					throw ex;
 				}
-				Logger.Log("Caps seed: Seed capability returned an error status", LogLevel.Warning, _Simulator.getClient(), ex);
+				logger.warn(GridClient.Log("Caps seed: Seed capability returned an error status", _Simulator.getClient()), ex);
 			}
 		}
 		/* Retry seed request */
@@ -400,7 +404,7 @@ public class CapsManager extends Thread
 	
 	private void runEventQueueLoop(URI eventQueueGet)
 	{
-		Logger.Log("Starting event queue for " + _Simulator.getName(), LogLevel.Info, _Simulator.getClient());
+		logger.info(GridClient.Log("Starting event queue for " + _Simulator.getName(), _Simulator.getClient()));
 
 		OSDMap osdRequest = new OSDMap(2);
 		osdRequest.put("ack", new OSD());
@@ -432,26 +436,26 @@ public class CapsManager extends Thread
 						IMessage message = _Simulator.getClient().Messages.DecodeEvent(eventName, body);
 						if (message != null)
 						{
-							Logger.Log("Caps message: " + eventName + ".", LogLevel.Debug, _Simulator.getClient());
+							logger.debug(GridClient.Log("Caps message: " + eventName + ".", _Simulator.getClient()));
 							_Simulator.getClient().Network.DistributeCaps(_Simulator, message);
 						}
 						else
 						{
-							Logger.Log("Caps loop: No Message handler exists for event " + eventName + ". Unable to decode. Will try Generic Handler next",
-									   LogLevel.Warning, _Simulator.getClient());
-							Logger.Log("Caps loop: Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
-									   LogLevel.Debug, _Simulator.getClient());
+							logger.warn(GridClient.Log("Caps loop: No Message handler exists for event " + eventName + ". Unable to decode. Will try Generic Handler next",
+									   _Simulator.getClient()));
+							logger.debug(GridClient.Log("Caps loop: Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
+									   _Simulator.getClient()));
 
 							// try generic decoder next which takes a caps event and tries to match it to an existing packet
 							Packet packet = CapsToPacket.BuildPacket(eventName, body);
 							if (packet != null)
 							{
-								Logger.Log("Caps loop: Serializing " + packet.getType() + " capability with generic handler", LogLevel.Debug, _Simulator.getClient());
+								logger.debug(GridClient.Log("Caps loop: Serializing " + packet.getType() + " capability with generic handler", _Simulator.getClient()));
 								_Simulator.getClient().Network.DistributePacket(_Simulator, packet);
 							}
 							else
 							{
-								Logger.Log("Caps loop: No Packet or Message handler exists for " + eventName, LogLevel.Warning, _Simulator.getClient());
+								logger.warn(GridClient.Log("Caps loop: No Packet or Message handler exists for " + eventName, _Simulator.getClient()));
 							}
 						}
 					}
@@ -467,7 +471,7 @@ public class CapsManager extends Thread
 					if (result == null)
 					{
 						++errorCount;
-						Logger.Log("Caps loop: Got an unparseable response from the event queue!", LogLevel.Warning, _Simulator.getClient());
+						logger.warn(GridClient.Log("Caps loop: Got an unparseable response from the event queue!", _Simulator.getClient()));
 					}
 					else if (result instanceof OSDMap)
 					{
@@ -491,7 +495,7 @@ public class CapsManager extends Thread
 						if (status == HttpStatus.SC_NOT_FOUND || status == HttpStatus.SC_GONE)
 						{
 							setState(CapsState.Closed);
-							Logger.Log(String.format("Closing event queue at %s due to missing caps URI", eventQueueGet), LogLevel.Info, _Simulator.getClient());
+							logger.info(GridClient.Log(String.format("Closing event queue at %s due to missing caps URI", eventQueueGet), _Simulator.getClient()));
 						}
 						else if (status == HttpStatus.SC_BAD_GATEWAY)
 						{
@@ -508,18 +512,15 @@ public class CapsManager extends Thread
 							// Try to log a meaningful error message
 							if (status != HttpStatus.SC_OK)
 							{
-								Logger.Log(String.format("Unrecognized caps connection problem from %s: %d", eventQueueGet, status),
-										   LogLevel.Warning, _Simulator.getClient());
+								logger.warn(GridClient.Log(String.format("Unrecognized caps connection problem from %s: %d", eventQueueGet, status), _Simulator.getClient()));
 							}
 							else if (ex.getCause() != null)
 							{
-								Logger.Log("Unrecognized internal caps exception from " + eventQueueGet + ": " + ex.getCause().getMessage(),
-										    LogLevel.Warning, _Simulator.getClient());
+								logger.warn(GridClient.Log("Unrecognized internal caps exception from " + eventQueueGet + ": " + ex.getCause().getMessage(), _Simulator.getClient()));
 							}
 							else
 							{
-								Logger.Log("Unrecognized caps exception from " + eventQueueGet + ": " + ex.getMessage(),
-										    LogLevel.Warning, _Simulator.getClient());
+								logger.warn(GridClient.Log("Unrecognized caps exception from " + eventQueueGet + ": " + ex.getMessage(), _Simulator.getClient()));
 							}
 						}
 					}
@@ -527,13 +528,13 @@ public class CapsManager extends Thread
 					{
 						++errorCount;
 
-						Logger.Log("No response from the event queue but no reported HTTP error either", LogLevel.Warning, _Simulator.getClient(), ex);
+						logger.warn(GridClient.Log("No response from the event queue but no reported HTTP error either", _Simulator.getClient()), ex);
 					}
 				}
 				catch (Exception ex)
 				{
 					++errorCount;
-					Logger.Log("Error retrieving response from the event queue request!", LogLevel.Warning, _Simulator.getClient(), ex);
+					logger.warn(GridClient.Log("Error retrieving response from the event queue request!", _Simulator.getClient()), ex);
 				} 
 				request = null;
 
@@ -554,6 +555,6 @@ public class CapsManager extends Thread
 				setState(CapsState.Closed);
 			}
 		}
-		Logger.Log("Terminated event queue for " + _Simulator.getName(), LogLevel.Info, _Simulator.getClient());
+		logger.info(GridClient.Log("Terminated event queue for " + _Simulator.getName(), _Simulator.getClient()));
 	}
 }

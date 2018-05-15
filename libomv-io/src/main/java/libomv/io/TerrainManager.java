@@ -29,8 +29,10 @@
  */
 package libomv.io;
 
-import libomv.Simulator;
+import org.apache.log4j.Logger;
+
 import libomv.TerrainCompressor;
+import libomv.model.Simulator;
 import libomv.packets.LayerDataPacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
@@ -42,90 +44,9 @@ import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
-public class TerrainManager implements PacketCallback
+public class TerrainManager implements PacketCallback, libomv.model.Terrain
 {
-	public enum LayerType
-	{
-		Land            (0x4C), // 'L'
-        LandExtended    (0x4D), // 'M'
-        Water           (0x57), // 'W'
-        WaterExtended   (0x58), // 'X'
-        Wind            (0x37), // '7'
-        WindExtended    (0x39), // '9'
-        Cloud           (0x38), // '8'
-        CloudExtended   (0x3A); // ':'
-
-
-		public static LayerType setValue(int value)
-		{
-			for (LayerType e : values())
-			{
-				if (e._value == value)
-				{
-					return e;
-				}
-			}
-			return Land;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		private final byte _value;
-
-		private LayerType(int value)
-		{
-			_value = (byte) value;
-		}
-	}
-
-	public class TerrainHeader
-	{
-		public float DCOffset;
-		public int Range;
-		public int QuantWBits;
-		public int PatchIDs;
-		public int WordBits;
-
-		public int getX()
-		{
-			return PatchIDs >> 5;
-		}
-
-		public void setX(int value)
-		{
-			PatchIDs += (value << 5);
-		}
-
-		public int getY()
-		{
-			return PatchIDs & 0x1F;
-		}
-
-		public void setY(int value)
-		{
-			PatchIDs |= value & 0x1F;
-		}
-	}
-
-	public final class GroupHeader
-	{
-		public int Stride;
-		public int PatchSize;
-		public LayerType Type;
-	}
-
-	public class TerrainPatch
-	{
-		/* X position of this patch */
-		public int X;
-		/* Y position of this patch */
-		public int Y;
-		/* A 16x16 array of floats holding decompressed layer data */
-		public float[] Data;
-	}
+	private static final Logger logger = Logger.getLogger(TerrainManager.class);
 
 	// #region EventHandling
 
@@ -224,7 +145,7 @@ public class TerrainManager implements PacketCallback
 		}
 	}
 
-	private void DecompressLand(Simulator simulator, BitPack bitpack, GroupHeader group)
+	private void DecompressLand(SimulatorManager simulator, BitPack bitpack, GroupHeader group)
     {
         int x, y;
         int[] patches = new int[32 * 32];
@@ -232,7 +153,7 @@ public class TerrainManager implements PacketCallback
 
         while (true)
         {
-        	TerrainHeader header = TerrainCompressor.DecodePatchHeader(this, bitpack);
+        	TerrainHeader header = TerrainCompressor.DecodePatchHeader(bitpack);
 
             if (header.QuantWBits == TerrainCompressor.END_OF_PATCHES)
                 break;
@@ -242,10 +163,10 @@ public class TerrainManager implements PacketCallback
 
             if (x >= TerrainCompressor.PATCHES_PER_EDGE || y >= TerrainCompressor.PATCHES_PER_EDGE)
             {
-                Logger.Log(String.format(
+                logger.warn(GridClient.Log(String.format(
                     "Invalid LayerData land packet, x=%d, y=%d, dc_offset=%f, range=%d, quant_wbits=%d, patchids=%d, count=%d",
                     x, y, header.DCOffset, header.Range, header.QuantWBits, header.PatchIDs, count),
-                    LogLevel.Warning, _Client);
+                    _Client));
                 return;
             }
 
@@ -263,7 +184,7 @@ public class TerrainManager implements PacketCallback
             }
             catch (Exception e)
             { 
-            	Logger.Log(e.getMessage(), LogLevel.Error, _Client, e);
+            	logger.error(GridClient.Log(e.getMessage(), _Client), e);
             }
 
             if (storeLandPatches)
@@ -277,7 +198,7 @@ public class TerrainManager implements PacketCallback
         }
     }
 
-    private void DecompressWind(Simulator simulator, BitPack bitpack, GroupHeader group)
+    private void DecompressWind(SimulatorManager simulator, BitPack bitpack, GroupHeader group)
     {
         int[] patches = new int[32 * 32];
 
@@ -291,12 +212,12 @@ public class TerrainManager implements PacketCallback
         // wind_direction = vec2(x,y)
 
         // X values
-        TerrainHeader header = TerrainCompressor.DecodePatchHeader(this, bitpack);
+        TerrainHeader header = TerrainCompressor.DecodePatchHeader(bitpack);
         TerrainCompressor.DecodePatch(patches, bitpack, header, group.PatchSize);
         float[] xvalues = TerrainCompressor.DecompressPatch(patches, header, group);
 
         // Y values
-        header = TerrainCompressor.DecodePatchHeader(this, bitpack);
+        header = TerrainCompressor.DecodePatchHeader(bitpack);
         TerrainCompressor.DecodePatch(patches, bitpack, header, group.PatchSize);
         float[] yvalues = TerrainCompressor.DecompressPatch(patches, header, group);
 
@@ -312,8 +233,9 @@ public class TerrainManager implements PacketCallback
         // FIXME:
     }
 
-    private void LayerDataHandler(Packet packet, Simulator simulator)
+    private void LayerDataHandler(Packet packet, Simulator sim)
     {
+    	SimulatorManager simulator = (SimulatorManager) sim;
         LayerDataPacket layer = (LayerDataPacket)packet;
         BitPack bitpack = new BitPack(layer.LayerData.getData());
         GroupHeader header = new GroupHeader();
@@ -333,7 +255,7 @@ public class TerrainManager implements PacketCallback
                     DecompressLand(simulator, bitpack, header);
                 break;
             case Water:
-                Logger.Log("Got a Water LayerData packet, implement me!", LogLevel.Error, _Client);
+                logger.error(GridClient.Log("Got a Water LayerData packet, implement me!", _Client));
                 break;
             case Wind:
                 DecompressWind(simulator, bitpack, header);
@@ -342,7 +264,7 @@ public class TerrainManager implements PacketCallback
                 DecompressCloud(simulator, bitpack, header);
                 break;
             default:
-                Logger.Log("Unrecognized LayerData type " + type.toString(), LogLevel.Warning, _Client);
+                logger.warn(GridClient.Log("Unrecognized LayerData type " + type.toString(), _Client));
                 break;
         }
     }

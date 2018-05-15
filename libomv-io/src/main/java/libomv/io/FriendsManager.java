@@ -32,15 +32,17 @@ package libomv.io;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import libomv.Simulator;
+import org.apache.log4j.Logger;
+
 import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryFolder.FolderType;
 import libomv.io.AgentManager.InstantMessageCallbackArgs;
-import libomv.io.AgentManager.InstantMessageDialog;
-import libomv.io.AgentManager.InstantMessageOnline;
 import libomv.io.LoginManager.BuddyListEntry;
 import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginStatus;
+import libomv.model.Agent.InstantMessageDialog;
+import libomv.model.Agent.InstantMessageOnline;
+import libomv.model.Simulator;
 import libomv.packets.AcceptFriendshipPacket;
 import libomv.packets.ChangeUserRightsPacket;
 import libomv.packets.DeclineFriendshipPacket;
@@ -57,8 +59,8 @@ import libomv.packets.UUIDNameReplyPacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3;
-import libomv.utils.CallbackArgs;
 import libomv.utils.Callback;
+import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.HashList;
 import libomv.utils.Helpers;
@@ -67,8 +69,10 @@ import libomv.utils.Helpers;
  * This class is used to add and remove avatars from your friends list and to
  * manage their permission.
  */
-public class FriendsManager implements PacketCallback
+public class FriendsManager implements PacketCallback, libomv.model.Friend
 {
+	private static final Logger logger = Logger.getLogger(FriendsManager.class);
+	
 	public static class FriendRights
 	{
 		/** The avatar has no rights */
@@ -1051,7 +1055,7 @@ public class FriendsManager implements PacketCallback
 					}
 					catch (Exception ex)
 					{
-						Logger.Log("Error requesting online notification", LogLevel.Error, _Client, ex);
+						logger.error(GridClient.Log("Error requesting online notification", _Client), ex);
 					}
 					break;
 				case FriendshipDeclined:

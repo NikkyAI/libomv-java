@@ -36,6 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import libomv.VisualParams.VisualAlphaParam;
 import libomv.assets.AssetWearable.AvatarTextureIndex;
 import libomv.imaging.ManagedImage;
@@ -43,7 +45,7 @@ import libomv.imaging.ManagedImage.ImageChannels;
 import libomv.io.AppearanceManager;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
-import libomv.io.AppearanceManager.BakeType;
+import libomv.model.Appearance.BakeType;
 import libomv.io.AppearanceManager.TextureData;
 import libomv.types.Color4;
 import libomv.utils.Helpers;
@@ -51,6 +53,8 @@ import libomv.utils.Helpers;
 // A set of textures that are layered on each other and "baked" in to a single texture, for avatar appearances
 public class Baker
 {
+	private static final Logger logger = Logger.getLogger(Baker.class);
+
 	// #region Properties
     // Final baked texture
     public ManagedImage getBakedTexture() { return bakedTexture; }
@@ -350,7 +354,7 @@ public class Baker
         }
         catch (Exception ex)
         {
-            Logger.Log(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()), LogLevel.Error, ex);
+            logger.error(String.format("Failed loading resource file: %s (%s)", fileName, ex.getMessage()), ex);
             return null;
         }
     }

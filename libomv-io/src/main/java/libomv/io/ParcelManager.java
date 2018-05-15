@@ -36,14 +36,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.http.nio.concurrent.FutureCallback;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.log4j.Logger;
 
-import libomv.Simulator;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
-import libomv.capabilities.CapsMessage.LandResourcesMessage;
 import libomv.capabilities.CapsMessage.LandResourcesInfo;
+import libomv.capabilities.CapsMessage.LandResourcesMessage;
 import libomv.capabilities.CapsMessage.LandResourcesRequest;
 import libomv.capabilities.CapsMessage.ParcelObjectOwnersReplyMessage;
 import libomv.capabilities.CapsMessage.ParcelPropertiesMessage;
@@ -51,9 +51,12 @@ import libomv.capabilities.CapsMessage.ParcelPropertiesUpdateMessage;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestMessage;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestReply;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestRequest;
+import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.capabilities.IMessage;
+import libomv.io.impl.ParcelImpl;
+import libomv.model.Parcel;
+import libomv.model.Simulator;
 import libomv.packets.EjectUserPacket;
 import libomv.packets.ForceObjectSelectPacket;
 import libomv.packets.FreezeUserPacket;
@@ -83,8 +86,8 @@ import libomv.packets.ParcelReleasePacket;
 import libomv.packets.ParcelReturnObjectsPacket;
 import libomv.packets.ParcelSelectObjectsPacket;
 import libomv.packets.ParcelSetOtherCleanTimePacket;
-import libomv.types.UUID;
 import libomv.types.PacketCallback;
+import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
@@ -92,40 +95,10 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 
-public class ParcelManager implements PacketCallback, CapsCallback
+public class ParcelManager implements PacketCallback, CapsCallback, libomv.model.Parcel
 {
-	// #region Enums
-
-	/** Type of return to use when returning objects from a parcel */
-	// [Flags]
-	public static class ObjectReturnType
-	{
-		//
-		public static final byte None = 0;
-		// Return objects owned by parcel owner
-		public static final byte Owner = 1 << 1;
-		// Return objects set to group
-		public static final byte Group = 1 << 2;
-		// Return objects not owned by parcel owner or set to group
-		public static final byte Other = 1 << 3;
-		// Return a specific list of objects on parcel
-		public static final byte List = 1 << 4;
-		// Return objects that are marked for-sale
-		public static final byte Sell = 1 << 5;
-
-		public static byte setValue(int value)
-		{
-			return (byte) (value & _mask);
-		}
-
-		public static int getValue(byte value)
-		{
-			return value & _mask;
-		}
-
-		private static final byte _mask = 0x1F;
-	}
-
+	private static final Logger logger = Logger.getLogger(ParcelManager.class);
+	
 	/** Blacklist/Whitelist flags used in parcels Access List */
 	public enum ParcelAccessFlags
 	{
@@ -142,39 +115,6 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		public byte getValue()
 		{
 			return (byte) ordinal();
-		}
-	}
-
-	/** The result of a request for parcel properties */
-	public enum ParcelResult
-	{
-		// No matches were found for the request
-		NoData(-1),
-		// Request matched a single parcel
-		Single(0),
-		// Request matched multiple parcels
-		Multiple(1);
-
-		public static ParcelResult setValue(int value)
-		{
-			for (ParcelResult e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return NoData;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		private byte _value;
-
-		private ParcelResult(int value)
-		{
-			this._value = (byte) value;
 		}
 	}
 
@@ -394,210 +334,6 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	/** Various parcel properties */
-	public static class ParcelFlags
-	{
-		// No flags set
-		public static final int None = 0;
-		// Allow avatars to fly = a client-side only restriction)
-		public static final int AllowFly = 1 << 0;
-		// Allow foreign scripts to run
-		public static final int AllowOtherScripts = 1 << 1;
-		// This parcel is for sale
-		public static final int ForSale = 1 << 2;
-		// Allow avatars to create a landmark on this parcel
-		public static final int AllowLandmark = 1 << 3;
-		// Allows all avatars to edit the terrain on this parcel
-		public static final int AllowTerraform = 1 << 4;
-		// Avatars have health and can take damage on this parcel.
-		// If set, avatars can be killed and sent home here
-		public static final int AllowDamage = 1 << 5;
-		// Foreign avatars can create objects here
-		public static final int CreateObjects = 1 << 6;
-		// All objects on this parcel can be purchased
-		public static final int ForSaleObjects = 1 << 7;
-		// Access is restricted to a group
-		public static final int UseAccessGroup = 1 << 8;
-		// Access is restricted to a whitelist
-		public static final int UseAccessList = 1 << 9;
-		// Ban blacklist is enabled
-		public static final int UseBanList = 1 << 10;
-		// Unknown
-		public static final int UsePassList = 1 << 11;
-		// List this parcel in the search directory
-		public static final int ShowDirectory = 1 << 12;
-		// Allow personally owned parcels to be deeded to group
-		public static final int AllowDeedToGroup = 1 << 13;
-		// If Deeded, owner contributes required tier to group parcel is deeded
-		// to
-		public static final int ContributeWithDeed = 1 << 14;
-		// Restrict sounds originating on this parcel to the
-		// parcel boundaries
-		public static final int SoundLocal = 1 << 15;
-		// Objects on this parcel are sold when the land is purchsaed
-		public static final int SellParcelObjects = 1 << 16;
-		// Allow this parcel to be published on the web
-		public static final int AllowPublish = 1 << 17;
-		// The information for this parcel is mature content
-		public static final int MaturePublish = 1 << 18;
-		// The media URL is an HTML page
-		public static final int UrlWebPage = 1 << 19;
-		// The media URL is a raw HTML string
-		public static final int UrlRawHtml = 1 << 20;
-		// Restrict foreign object pushes
-		public static final int RestrictPushObject = 1 << 21;
-		// Ban all non identified/transacted avatars
-		public static final int DenyAnonymous = 1 << 22;
-		// Ban all identified avatars [OBSOLETE]</summary>
-		// [Obsolete]
-		// This was obsoleted in 1.19.0 but appears to be recycled and is used
-		// on linden homes parcels
-		public static final int LindenHome = 1 << 23;
-		// Ban all transacted avatars [OBSOLETE]</summary>
-		// [Obsolete]
-		// DenyTransacted = 1 << 24;
-		// Allow group-owned scripts to run
-		public static final int AllowGroupScripts = 1 << 25;
-		// Allow object creation by group members or group objects
-		public static final int CreateGroupObjects = 1 << 26;
-		// Allow all objects to enter this parcel
-		public static final int AllowAPrimitiveEntry = 1 << 27;
-		// Only allow group and owner objects to enter this parcel
-		public static final int AllowGroupObjectEntry = 1 << 28;
-		// Voice Enabled on this parcel
-		public static final int AllowVoiceChat = 1 << 29;
-		// Use Estate Voice channel for Voice on this parcel
-		public static final int UseEstateVoiceChan = 1 << 30;
-		// Deny Age Unverified Users
-		public static final int DenyAgeUnverified = 1 << 31;
-
-		public static int setValue(int value)
-		{
-			return value & _mask;
-		}
-
-		public static int getValue(int value)
-		{
-			return value & _mask;
-		}
-
-		private static final int _mask = 0xFFFFFFFF;
-	}
-
-	/** Parcel ownership status */
-	public enum ParcelStatus
-	{
-		// Placeholder
-		None(-1),
-		// Parcel is leased (owned) by an avatar or group
-		Leased(0),
-		// Parcel is in process of being leased (purchased) by an avatar or
-		// group
-		LeasePending(1),
-		// Parcel has been abandoned back to Governor Linden
-		Abandoned(2);
-
-		public static ParcelStatus setValue(int value)
-		{
-			for (ParcelStatus e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return None;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		private byte _value;
-
-		private ParcelStatus(int value)
-		{
-			this._value = (byte) value;
-		}
-	}
-
-	/** Category parcel is listed in under search */
-	public enum ParcelCategory
-	{
-		// No assigned category
-		None(0),
-		// Linden Infohub or public area
-		Linden(1),
-		// Adult themed area
-		Adult(2),
-		// Arts and Culture
-		Arts(3),
-		// Business
-		Business(4),
-		// Educational
-		Educational(5),
-		// Gaming
-		Gaming(6),
-		// Hangout or Club
-		Hangout(7),
-		// Newcomer friendly
-		Newcomer(8),
-		// Parks and Nature
-		Park(9),
-		// Residential
-		Residential(10),
-		// Shopping
-		Shopping(11),
-		// Not Used?
-		Stage(12),
-		// Other
-		Other(13),
-		// Not an actual category, only used for queries
-		Any(-1);
-
-		public static ParcelCategory setValue(int value)
-		{
-			for (ParcelCategory e : values())
-			{
-				if (e._value == value)
-					return e;
-			}
-			return None;
-		}
-
-		public byte getValue()
-		{
-			return _value;
-		}
-
-		private byte _value;
-
-		private ParcelCategory(int value)
-		{
-			this._value = (byte) value;
-		}
-	}
-
-	/** Type of teleport landing for a parcel */
-	public enum LandingTypeEnum
-	{
-		// Unset, simulator default
-		None,
-		// Specific landing point set for this parcel
-		LandingPoint,
-		// No landing point set, direct teleports enabled for this parcel
-		Direct;
-
-		public static LandingTypeEnum setValue(int value)
-		{
-			return values()[value];
-		}
-
-		public byte getValue()
-		{
-			return (byte) ordinal();
-		}
-	}
-
 	/** Parcel Media Command used in ParcelMediaCommandMessage */
 	public enum ParcelMediaCommand
 	{
@@ -658,279 +394,6 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 	// #region Structs
 
-	// Parcel information retrieved from a simulator
-	public class Parcel
-	{
-		// The total number of contiguous 4x4 meter blocks your agent owns
-		// within this parcel
-		public int SelfCount;
-		// The total number of contiguous 4x4 meter blocks contained in this
-		// parcel owned by a group or agent other than your own
-		public int OtherCount;
-		// Deprecated, Value appears to always be 0
-		public int PublicCount;
-		// Simulator-local ID of this parcel
-		public int LocalID;
-		// UUID of the owner of this parcel
-		public UUID OwnerID;
-		// Whether the land is deeded to a group or not
-		public boolean IsGroupOwned;
-		//
-		public int AuctionID;
-		// Date land was claimed
-		public Date ClaimDate;
-		// Appears to always be zero
-		public int ClaimPrice;
-		// This field is no longer used
-		public int RentPrice;
-		// Minimum corner of the axis-aligned bounding box for this
-		// Tangible_doc_comment_body parcel
-		public Vector3 AABBMin;
-		// Maximum corner of the axis-aligned bounding box for this
-		// Tangible_doc_comment_body parcel
-		public Vector3 AABBMax;
-		// Bitmap describing land layout in 4x4m squares across the
-		// Tangible_doc_comment_body entire region
-		public byte[] Bitmap;
-		// Total parcel land area
-		public int Area;
-		//
-		public ParcelStatus Status;
-		// Maximum primitives across the entire simulator owned by the same
-		// agent or group that owns this parcel that can be used
-		public int SimWideMaxPrims;
-		// Total primitives across the entire simulator calculated by combining
-		// the allowed prim counts for each parcel
-		// Tangible_doc_comment_body owned by the agent or group that owns this
-		// parcel
-		public int SimWideTotalPrims;
-		// Maximum number of primitives this parcel supports
-		public int MaxPrims;
-		// Total number of primitives on this parcel
-		public int TotalPrims;
-		// For group-owned parcels this indicates the total number of prims
-		// deeded to the group,
-		// for parcels owned by an individual this inicates the number of prims
-		// owned by the individual
-		public int OwnerPrims;
-		// Total number of primitives owned by the parcel group on this parcel,
-		// or for parcels owned by an individual with a group set the total
-		// number of prims set to that group.
-		public int GroupPrims;
-		// Total number of prims owned by other avatars that are not set to
-		// group, or not the parcel owner
-		public int OtherPrims;
-		// A bonus multiplier which allows parcel prim counts to go over times
-		// this amount, this does not affect
-		// the max prims per simulator. e.g: 117 prim parcel limit x 1.5 bonus =
-		// 175 allowed
-		public float ParcelPrimBonus;
-		// Autoreturn value in minutes for others' objects
-		public int OtherCleanTime;
-		//
-		public int Flags;
-		// Sale price of the parcel, only useful if ForSale is set
-		// The SalePrice will remain the same after an ownership transfer
-		// (sale), so it can be used to
-		// see the purchase price after a sale if the new owner has not changed
-		// it
-		public int SalePrice;
-		// Parcel Name
-		public String Name;
-		// Parcel Description
-		public String Desc;
-		// URL For Music Stream
-		public String MusicURL;
-		//
-		public UUID GroupID;
-		// Price for a temporary pass
-		public int PassPrice;
-		// How long is pass valid for
-		public float PassHours;
-		//
-		public ParcelCategory Category;
-		// Key of authorized buyer
-		public UUID AuthBuyerID;
-		// Key of parcel snapshot
-		public UUID SnapshotID;
-		// The landing point location
-		public Vector3 UserLocation;
-		// The landing point LookAt
-		public Vector3 UserLookAt;
-		// The type of landing enforced from the <see cref="LandingType"/> enum
-		public LandingTypeEnum Landing;
-		//
-		public float Dwell;
-		//
-		public boolean RegionDenyAnonymous;
-		//
-		public boolean RegionPushOverride;
-		// Access list of who is whitelisted on this
-		// Tangible_doc_comment_body parcel
-		public ArrayList<ParcelManager.ParcelAccessEntry> AccessWhiteList;
-		// Access list of who is blacklisted on this
-		// Tangible_doc_comment_body parcel
-		public ArrayList<ParcelManager.ParcelAccessEntry> AccessBlackList;
-		// TRUE of region denies access to age unverified users
-		public boolean RegionDenyAgeUnverified;
-		// true to obscure (hide) media url
-		public boolean ObscureMedia;
-		// true to obscure (hide) music url
-		public boolean ObscureMusic;
-		// A struct containing media details
-		public ParcelMedia Media;
-		// true if avatars in this parcel should be invisible to people outside
-		public boolean SeeAVs;
-		// true if avatars outside can hear any sounds avatars inside play
-		public boolean AnyAVSounds;
-		// true if group members outside can hear any sounds avatars inside play
-		public boolean GroupAVSounds;
-
-		/**
-		 * Displays a parcel object in string format
-		 * 
-		 * @return string containing key=value pairs of a parcel object
-		 */
-		@Override
-		public String toString()
-		{
-			String result = "";
-			Class<? extends Parcel> parcelType = this.getClass();
-			Field[] fields = parcelType.getFields();
-			for (Field field : fields)
-			{
-				try
-				{
-					result += (field.getName() + " = " + field.get(this) + " ");
-				}
-				catch (Exception ex)
-				{
-				}
-			}
-			return result;
-		}
-
-		/**
-		 * Default constructor
-		 * 
-		 * @param localID
-		 *            Local ID of this parcel
-		 */
-		public Parcel(int localID)
-		{
-			LocalID = localID;
-			ClaimDate = Helpers.Epoch;
-			Bitmap = Helpers.EmptyBytes;
-			Name = Helpers.EmptyString;
-			Desc = Helpers.EmptyString;
-			MusicURL = Helpers.EmptyString;
-			AccessWhiteList = new ArrayList<ParcelManager.ParcelAccessEntry>(0);
-			AccessBlackList = new ArrayList<ParcelManager.ParcelAccessEntry>(0);
-			Media = new ParcelMedia();
-		}
-
-		/**
-		 * Update the simulator with any local changes to this Parcel object
-		 * 
-		 * @param simulator
-		 *            Simulator to send updates to
-		 * @param wantReply
-		 *            Whether we want the simulator to confirm the update with a
-		 *            reply packet or not
-		 * @throws Exception
-		 */
-		public final void Update(Simulator simulator, boolean wantReply) throws Exception
-		{
-			URI url = simulator.getClient().Network.getCapabilityURI("ParcelPropertiesUpdate");
-			if (url != null)
-			{
-				ParcelPropertiesUpdateMessage req = simulator.getClient().Messages.new ParcelPropertiesUpdateMessage();
-				req.AuthBuyerID = this.AuthBuyerID;
-				req.Category = this.Category;
-				req.Desc = this.Desc;
-				req.GroupID = this.GroupID;
-				req.LandingType = this.Landing;
-				req.LocalID = this.LocalID;
-				req.MediaAutoScale = this.Media.MediaAutoScale;
-				req.MediaDesc = this.Media.MediaDesc;
-				req.MediaHeight = this.Media.MediaHeight;
-				req.MediaID = this.Media.MediaID;
-				req.MediaLoop = this.Media.MediaLoop;
-				req.MediaType = this.Media.MediaType;
-				req.MediaURL = this.Media.MediaURL;
-				req.MediaWidth = this.Media.MediaWidth;
-				req.MusicURL = this.MusicURL;
-				req.Name = this.Name;
-				req.ObscureMedia = this.ObscureMedia;
-				req.ObscureMusic = this.ObscureMusic;
-				req.ParcelFlags = this.Flags;
-				req.PassHours = this.PassHours;
-				req.PassPrice = this.PassPrice;
-				req.SalePrice = this.SalePrice;
-				req.SnapshotID = this.SnapshotID;
-				req.UserLocation = this.UserLocation;
-				req.UserLookAt = this.UserLookAt;
-				req.SeeAVs = this.SeeAVs;
-				req.AnyAVSounds = this.AnyAVSounds;
-				req.GroupAVSounds = this.GroupAVSounds;
-
-				new CapsClient(_Client, "UpdateParcel").executeHttpPost(url, req, null, simulator.getClient().Settings.CAPS_TIMEOUT);
-			}
-			else
-			{
-				ParcelPropertiesUpdatePacket request = new ParcelPropertiesUpdatePacket();
-
-				request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
-				request.AgentData.SessionID = simulator.getClient().Self.getSessionID();
-
-				request.ParcelData.LocalID = this.LocalID;
-
-				request.ParcelData.AuthBuyerID = this.AuthBuyerID;
-				request.ParcelData.Category = this.Category.getValue();
-				request.ParcelData.setDesc(Helpers.StringToBytes(this.Desc));
-				request.ParcelData.GroupID = this.GroupID;
-				request.ParcelData.LandingType = this.Landing.getValue();
-				request.ParcelData.MediaAutoScale = (this.Media.MediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
-				request.ParcelData.MediaID = this.Media.MediaID;
-				request.ParcelData.setMediaURL(Helpers.StringToBytes(this.Media.MediaURL.toString()));
-				request.ParcelData.setMusicURL(Helpers.StringToBytes(this.MusicURL.toString()));
-				request.ParcelData.setName(Helpers.StringToBytes(this.Name));
-				if (wantReply)
-				{
-					request.ParcelData.Flags = 1;
-				}
-				request.ParcelData.ParcelFlags = this.Flags;
-				request.ParcelData.PassHours = this.PassHours;
-				request.ParcelData.PassPrice = this.PassPrice;
-				request.ParcelData.SalePrice = this.SalePrice;
-				request.ParcelData.SnapshotID = this.SnapshotID;
-				request.ParcelData.UserLocation = this.UserLocation;
-				request.ParcelData.UserLookAt = this.UserLookAt;
-
-				simulator.sendPacket(request);
-			}
-			UpdateOtherCleanTime(simulator);
-		}
-
-		/**
-		 * Set Autoreturn time
-		 * 
-		 * @param simulator
-		 *            Simulator to send the update to
-		 * @throws Exception
-		 */
-		public final void UpdateOtherCleanTime(Simulator simulator) throws Exception
-		{
-			ParcelSetOtherCleanTimePacket request = new ParcelSetOtherCleanTimePacket();
-			request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
-			request.AgentData.SessionID = simulator.getClient().Self.getSessionID();
-			request.ParcelData.LocalID = this.LocalID;
-			request.ParcelData.OtherCleanTime = this.OtherCleanTime;
-
-			simulator.sendPacket(request);
-		}
-	}
-
 	// Some information about a parcel of land returned from a DirectoryManager
 	// search
 	public final class ParcelInfo
@@ -969,27 +432,6 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		public int AuctionID;
 	}
 
-	// Parcel Media Information
-	public final class ParcelMedia
-	{
-		// A byte, if 0x1 viewer should auto scale media to fit object
-		public boolean MediaAutoScale;
-		// A boolean, if true the viewer should loop the media
-		public boolean MediaLoop;
-		// The Asset UUID of the Texture which when applied to a primitive will
-		// display the media
-		public UUID MediaID;
-		// A URL which points to any Quicktime supported media type
-		public String MediaURL;
-		// A description of the media
-		public String MediaDesc;
-		// An Integer which represents the height of the media
-		public int MediaHeight;
-		// An integer which represents the width of the media
-		public int MediaWidth;
-		// A string which contains the mime type of the media
-		public String MediaType;
-	}
 
 	public final class ParcelAccessEntry
 	{
@@ -1534,7 +976,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, Simulator simulator) throws Exception
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		switch (message.getType())
 		{
@@ -1669,7 +1111,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *            Simulator to request parcels from (must be connected)
 	 * @throws Exception
 	 */
-	public final void RequestAllSimParcels(Simulator simulator) throws Exception
+	public final void RequestAllSimParcels(SimulatorManager simulator) throws Exception
 	{
 		RequestAllSimParcels(simulator, false, 750);
 	}
@@ -1686,12 +1128,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *            Number of milliseconds to pause in between each request
 	 * @throws Exception
 	 */
-	public final void RequestAllSimParcels(final Simulator simulator, boolean refresh, final int msDelay)
+	public final void RequestAllSimParcels(final SimulatorManager simulator, boolean refresh, final int msDelay)
 			throws Exception
 	{
 		if (simulator.getDownloadingParcelMap())
 		{
-			Logger.Log("Already downloading parcels in " + simulator.getName(), LogLevel.Info, _Client);
+			logger.info(GridClient.Log("Already downloading parcels in " + simulator.getName(), _Client));
 			return;
 		}
 		simulator.setDownloadingParcelMap(true);
@@ -1738,10 +1180,10 @@ public class ParcelManager implements PacketCallback, CapsCallback
 						}
 					}
 				}
-				Logger.Log(
+				logger.info(GridClient.Log(
 						String.format(
 								"Full simulator parcel information retrieved. Sent %d parcel requests. Current outgoing queue: %d, Retry Count %d",
-								count, _Client.Network.getOutboxCount(), timeouts), LogLevel.Info, _Client);
+								count, _Client.Network.getOutboxCount(), timeouts), _Client));
 				WaitForSimParcel = null;
 				simulator.setDownloadingParcelMap(false);
 			}
@@ -1976,7 +1418,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *         <code>Parcels.RequestAllSimParcels</code> is required to populate
 	 *         map and dictionary.
 	 */
-	public final int GetParcelLocalID(Simulator simulator, Vector3 position)
+	public final int GetParcelLocalID(SimulatorManager simulator, Vector3 position)
 	{
 		int value = simulator.getParcelMap((int)position.X / 4, (int)position.Y / 4);
 		if (value > 0)
@@ -1984,9 +1426,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			return value;
 		}
 
-		Logger.Log(String.format(
+		logger.warn(String.format(
 						"ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?",
-						(int)position.X / 4, (int)position.Y / 4), LogLevel.Warning);
+						(int)position.X / 4, (int)position.Y / 4));
 		return 0;
 	}
 
@@ -2006,7 +1448,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
-	public final boolean Terraform(Simulator simulator, int localID, TerraformAction action, float brushSize)
+	public final boolean Terraform(SimulatorManager simulator, int localID, TerraformAction action, float brushSize)
 			throws Exception
 	{
 		return Terraform(simulator, localID, 0f, 0f, 0f, 0f, action, brushSize, 1);
@@ -2034,7 +1476,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
-	public final boolean Terraform(Simulator simulator, float west, float south, float east, float north,
+	public final boolean Terraform(SimulatorManager simulator, float west, float south, float east, float north,
 			TerraformAction action, float brushSize) throws Exception
 	{
 		return Terraform(simulator, -1, west, south, east, north, action, brushSize, 1);
@@ -2066,7 +1508,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
-	public final boolean Terraform(Simulator simulator, int localID, float west, float south, float east, float north,
+	public final boolean Terraform(SimulatorManager simulator, int localID, float west, float south, float east, float north,
 			TerraformAction action, float brushSize, int seconds) throws Exception
 	{
 		float height = 0f;
@@ -2078,21 +1520,20 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 		else
 		{
-			Parcel p;
+			ParcelImpl p;
 			if (!simulator.Parcels.containsKey(localID))
 			{
-				Logger.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator), LogLevel.Warning,
-						_Client);
+				logger.warn(GridClient.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator), _Client));
 				return false;
 			}
-			p = simulator.Parcels.get(localID);
+			p = (ParcelImpl) simulator.getParcels().get(localID);
 			x = (int) p.AABBMax.X - (int) p.AABBMin.X / 2;
 			y = (int) p.AABBMax.Y - (int) p.AABBMin.Y / 2;
 		}
 		RefObject<Float> ref = new RefObject<Float>(height);
 		if (Float.isNaN(simulator.TerrainHeightAtPoint(x, y)))
 		{
-			Logger.Log("Land Patch not stored for location", LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Land Patch not stored for location", _Client));
 			return false;
 		}
 
@@ -2279,7 +1720,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 			}
 			catch (Throwable t)
 			{
-				Logger.Log("Failed to fetch remote parcel ID", LogLevel.Debug, _Client);
+				logger.debug(GridClient.Log("Failed to fetch remote parcel ID", _Client));
 			}
 		}
 
@@ -2315,7 +1756,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 		catch (Exception ex)
 		{
-			Logger.Log("Failed fetching land resources:", LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log("Failed fetching land resources:", _Client), ex);
 			callback.callback(false, null);
 		}
 	}
@@ -2364,14 +1805,14 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		@Override
 		public void cancelled()
 		{
-			Logger.Log("Fetching land resources was cancelled", LogLevel.Error, _Client);
+			logger.error(GridClient.Log("Fetching land resources was cancelled", _Client));
 			callback.callback(false, null);
 		}
 
 		@Override
 		public void failed(Exception ex)
 		{
-			Logger.Log("Failed fetching land resources", LogLevel.Error, _Client, ex);
+			logger.error(GridClient.Log("Failed fetching land resources", _Client), ex);
 			callback.callback(false, null);
 		}
 
@@ -2381,24 +1822,24 @@ public class ParcelManager implements PacketCallback, CapsCallback
 	{
 		ParcelDwellReplyPacket dwell = (ParcelDwellReplyPacket) packet;
 
-		synchronized (simulator.Parcels)
+		synchronized (simulator.getParcels())
 		{
-			if (dwell.Data.Dwell != 0.0F && simulator.Parcels.containsKey(dwell.Data.LocalID))
+			if (dwell.Data.Dwell != 0.0F && simulator.getParcels().containsKey(dwell.Data.LocalID))
 			{
-				simulator.Parcels.get(dwell.Data.LocalID).Dwell = dwell.Data.Dwell;
+				((ParcelImpl) simulator.getParcels().get(dwell.Data.LocalID)).Dwell = dwell.Data.Dwell;
 			}
 		}
 		OnParcelDwellReply.dispatch(new ParcelDwellReplyCallbackArgs(dwell.Data.ParcelID, dwell.Data.LocalID,
 				dwell.Data.Dwell));
 	}
 
-	private final void HandleParcelPropertiesReply(IMessage message, Simulator simulator) throws Exception
+	private final void HandleParcelPropertiesReply(IMessage message, SimulatorManager simulator) throws Exception
 	{
 		if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true)
 		{
 			ParcelPropertiesMessage msg = (ParcelPropertiesMessage) message;
 
-			Parcel parcel = new Parcel(msg.LocalID);
+			ParcelImpl parcel = new ParcelImpl(msg.LocalID);
 
 			parcel.AABBMax = msg.AABBMax;
 			parcel.AABBMin = msg.AABBMin;
@@ -2460,9 +1901,9 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 			if (_Client.Settings.PARCEL_TRACKING)
 			{
-				synchronized (simulator.Parcels)
+				synchronized (simulator.getParcels())
 				{
-					simulator.Parcels.put(parcel.LocalID, parcel);
+					simulator.getParcels().put(parcel.LocalID, parcel);
 				}
 
 				boolean set = false;
@@ -2485,7 +1926,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 
 				if (!set)
 				{
-					Logger.Log("Received a parcel with a bitmap that did not map to any locations", LogLevel.Warning);
+					logger.warn("Received a parcel with a bitmap that did not map to any locations");
 				}
 			}
 
@@ -2573,11 +2014,11 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				accessList.add(pae);
 			}
 
-			synchronized (simulator.Parcels)
+			synchronized (simulator.getParcels())
 			{
-				if (simulator.Parcels.containsKey(reply.Data.LocalID))
+				if (simulator.getParcels().containsKey(reply.Data.LocalID))
 				{
-					Parcel parcel = simulator.Parcels.get(reply.Data.LocalID);
+					ParcelImpl parcel = (ParcelImpl) simulator.getParcels().get(reply.Data.LocalID);
 					if (reply.Data.Flags == AccessList.Ban)
 					{
 						parcel.AccessBlackList = accessList;
@@ -2587,7 +2028,7 @@ public class ParcelManager implements PacketCallback, CapsCallback
 						parcel.AccessWhiteList = accessList;
 					}
 
-					simulator.Parcels.put(reply.Data.LocalID, parcel);
+					simulator.getParcels().put(reply.Data.LocalID, parcel);
 				}
 			}
 			OnParcelAccessListReply.dispatch(new ParcelAccessListReplyCallbackArgs(simulator, reply.Data.SequenceID,
@@ -2689,11 +2130,12 @@ public class ParcelManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private final void HandleParcelOverlay(Packet packet, Simulator simulator)
+	private final void HandleParcelOverlay(Packet packet, Simulator sim)
 	{
 		final int OVERLAY_COUNT = 4;
 		ParcelOverlayPacket overlay = (ParcelOverlayPacket) packet;
-
+		SimulatorManager simulator = (SimulatorManager) sim;
+		
 		if (overlay.ParcelData.SequenceID >= 0 && overlay.ParcelData.SequenceID < OVERLAY_COUNT)
 		{
 			int length = overlay.ParcelData.getData().length;
@@ -2707,13 +2149,13 @@ public class ParcelManager implements PacketCallback, CapsCallback
 				// TODO: ParcelOverlaysReceived should become internal, and
 				// reset to zero every time it hits four. Also need a callback
 				// here
-				Logger.Log("Finished building the " + simulator.getName() + " parcel overlay", LogLevel.Info);
+				logger.info("Finished building the " + simulator.getName() + " parcel overlay");
 			}
 		}
 		else
 		{
-			Logger.Log("Parcel overlay with sequence ID of " + overlay.ParcelData.SequenceID + " received from "
-					+ simulator.toString(), LogLevel.Warning, _Client);
+			logger.warn(GridClient.Log("Parcel overlay with sequence ID of " + overlay.ParcelData.SequenceID + " received from "
+					+ simulator.toString(), _Client));
 		}
 	}
 

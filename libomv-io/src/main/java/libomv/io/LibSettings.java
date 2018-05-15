@@ -31,7 +31,9 @@ package libomv.io;
 
 import java.net.InetSocketAddress;
 
-import libomv.Simulator;
+import org.apache.log4j.Logger;
+
+import libomv.model.Simulator;
 import libomv.packets.EconomyDataPacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
@@ -50,6 +52,8 @@ import libomv.utils.Settings;
  */
 public class LibSettings extends Settings implements PacketCallback
 {
+	private static final Logger logger = Logger.getLogger(LibSettings.class);
+
 	/* Main grid login server */
     public static String AGNI_LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
 
@@ -473,7 +477,7 @@ public class LibSettings extends Settings implements PacketCallback
     	}
     	catch (Exception ex)
     	{
-			Logger.Log("Failed to load settings", LogLevel.Error, ex);
+			logger.error("Failed to load settings", ex);
     	}
     	return this;
     }

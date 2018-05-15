@@ -3,7 +3,7 @@ package libomv.assets.archiving;
 import java.util.HashMap;
 import java.util.Map;
 
-import libomv.assets.AssetItem.AssetType;
+import libomv.model.Asset.AssetType;
 import libomv.utils.Helpers;
 
 public class ArchiveConstants
