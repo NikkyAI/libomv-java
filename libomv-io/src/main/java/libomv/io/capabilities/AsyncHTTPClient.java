@@ -87,6 +87,7 @@ import org.apache.log4j.Logger;
 
 import libomv.utils.Helpers;
 
+@SuppressWarnings("deprecation")
 public abstract class AsyncHTTPClient<T>
 {
 	private static final Logger logger = Logger.getLogger(AsyncHTTPClient.class);
